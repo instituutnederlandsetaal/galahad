@@ -2,7 +2,10 @@ package org.ivdnt.galahad.port.tsv
 
 import org.ivdnt.galahad.data.document.DocumentFormat
 import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
+import org.ivdnt.galahad.data.layer.AnnotationType
 import org.ivdnt.galahad.data.layer.Layer
+import org.ivdnt.galahad.data.layer.Annotations
+import org.ivdnt.galahad.data.layer.token
 import org.ivdnt.galahad.port.DocumentTransformMetadata
 import org.ivdnt.galahad.port.InternalFile
 import org.ivdnt.galahad.port.PlainTextableFile
@@ -19,12 +22,17 @@ open class TSVFile(
 
     private val plainTextFile = File.createTempFile("galahad-${file.name}-plaintext", ".txt")
     override val format: DocumentFormat = DocumentFormat.Tsv
-    val entries = ArrayList<TSVEntry>()
+    val entries = ArrayList<Annotations>()
     private var sourceLayer: Layer = Layer.EMPTY
-    open var lemmaIndex: Int? = null
-    open var posIndex: Int? = null
-    open var literalIndex: Int? = null
     private var isParsed: Boolean = false
+
+    open val columnIndices: MutableMap<AnnotationType, Int> = mutableMapOf()
+
+    val columnNames: Map<AnnotationType, List<String>> = mapOf(
+        AnnotationType.TOKEN to listOf("word", "token", "literal", "term", "form"),
+        AnnotationType.LEMMA to listOf("lemma"),
+        AnnotationType.POS to listOf("pos", "xpos"),
+    )
 
     override fun plainTextReader(): Reader {
         if (!isParsed) parse()
@@ -80,9 +88,13 @@ open class TSVFile(
         headers: List<String>,
         errors: MutableList<String>,
     ) {
-        literalIndex = indexOfHeaderNamedAnyOf(headers, listOf("word", "token", "literal", "term", "form"), errors)
-        lemmaIndex = indexOfHeaderNamedAnyOf(headers, listOf("lemma"), errors)
-        posIndex = indexOfHeaderNamedAnyOf(headers, listOf("pos", "upos", "xpos"), errors)
+        for (annotationType in AnnotationType.entries) {
+            val columnName: List<String> = columnNames[annotationType] ?: listOf(annotationType.name)
+            val index = indexOfHeaderNamedAnyOf(headers, columnName, mutableListOf()) // TODO for now ignore errors
+            if (index != null) {
+                columnIndices[annotationType] = index
+            }
+        }
     }
 
     /**
@@ -119,19 +131,20 @@ open class TSVFile(
         val values: List<String> = line.split("\t")
 
         // Retrieve values
-        val literal: String? = getColumn(literalIndex!!, values)
-        val lemma: String? = getColumn(lemmaIndex!!, values)
-        val pos: String? = getPos(values)
+        val mutAnnot: MutableMap<AnnotationType, String?> = mutableMapOf()
+        for (column in columnIndices.entries) {
+            val annotation = getColumn(column.value, values)
+            mutAnnot[column.key] = annotation
+        }
+
 
         // Skip newlines by checking for non-empty literals.
-        if (!literal.isNullOrEmpty() && values.size >= 3) {
+        if (mutAnnot[AnnotationType.TOKEN] != null && values.size >= 2) {
+            val annotation: Annotations = mutAnnot
             // Commit values if non-empty
-            val tsvEntry = TSVEntry(
-                literal = literal, lemma = lemma, pos = pos
-            )
-            entries.add(tsvEntry)
+            entries.add(annotation)
             // Write to plaintext
-            stream.write("$literal ".toByteArray()) // Note space between words.
+            stream.write("${annotation.token} ".toByteArray()) // Note space between words.
         } else {
             stream.write("\n".toByteArray())
         }
@@ -150,7 +163,7 @@ open class TSVFile(
     }
 
     // Derived classes may have to construct a PoS differently.
-    protected open fun getPos(values: List<String>): String? = getColumn(posIndex!!, values)
+    //protected open fun getPos(values: List<String>): String? = getColumn(posIndex!!, values)
 
     /**
      * Assumes the TSV file is mappable onto the provided plaintext
@@ -166,7 +179,7 @@ open class TSVFile(
         for (i in 0..plaintext.length) {
             if (i >= lastPlainOffset) {
                 if (index < entries.size) {
-                    val literal = entries[index].literal
+                    val literal = entries[index].token
                     if (i + literal.length <= plaintext.length) {
                         val candidate = plaintext.substring(i until i + literal.length)
                         if (literal == candidate) {

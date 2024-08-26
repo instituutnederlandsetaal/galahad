@@ -9,6 +9,7 @@ import org.ivdnt.galahad.BaseFileSystemStore
 import org.ivdnt.galahad.FileBackedCache
 import org.ivdnt.galahad.FileBackedValue
 import org.ivdnt.galahad.data.corpus.Corpus
+import org.ivdnt.galahad.data.document.DocumentFormat
 import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.data.layer.LayerPreview
 import org.ivdnt.galahad.data.layer.LayerSummary

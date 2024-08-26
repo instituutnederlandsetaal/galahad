@@ -4,9 +4,9 @@ tagset: "TDN-Core"
 eraFrom: "1600"
 eraTo: "1900"
 produces:
-  - LEM
-  - POS
-  - TOK
+  - lemma
+  - pos
+  - token
 model:
   name: hug-tdn-1600-1900
   href: https://github.com/INL/galahad-huggingface-models/tree/1.0.0/models/galahad/tagger/pos_model_tdn_1600-1900

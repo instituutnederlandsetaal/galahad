@@ -3,7 +3,6 @@ package org.ivdnt.galahad.data.layer
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
-import org.ivdnt.galahad.port.tsv.TSVEntry
 import org.ivdnt.galahad.tagset.Tagset
 
 /**
@@ -59,11 +58,11 @@ open class Layer(
         return wf
     }
 
-    /** Adds a [WordForm] and a [Term] to this [Layer] based on a [TSVEntry] */
-    fun addTSVEntryOnOffset(tsvEntry: TSVEntry, offset: Int) {
-        val wordForm = addWordFormWithAnonymousId(tsvEntry.literal, offset, tsvEntry.literal.length)
+    /** Adds a [WordForm] and a [Term] to this [Layer] based on a [Annotations] */
+    fun addTSVEntryOnOffset(tsvEntry: Annotations, offset: Int) {
+        val wordForm = addWordFormWithAnonymousId(tsvEntry.token, offset, tsvEntry.token.length)
         val term = Term(
-            lemma = tsvEntry.lemma, pos = tsvEntry.pos, targets = mutableListOf(wordForm)
+            tsvEntry, targets = mutableListOf(wordForm)
         )
         terms.add(term)
     }

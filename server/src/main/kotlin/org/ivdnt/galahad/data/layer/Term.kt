@@ -8,16 +8,23 @@ fun Term.toNonEmptyPair(): Pair<String, String> {
     return (this.pos ?: Term.NO_POS) to (this.lemma ?: Term.NO_LEMMA)
 }
 
+
 /**
  * A term in a [Layer]. A term has a [lemma], a [pos] and refers to one or multiple [WordForm].
  * Referring to multiple [WordForm] is used to represent multi-word terms, although it is currently not used.
  * Lemma and pos can be null.
  */
 data class Term(
-    @JsonProperty("lemma") val lemma: String?,
-    @JsonProperty("pos") val pos: String?,
+    @JsonProperty("annotations") val annotations: Annotations,
     @JsonProperty("targets") val targets: MutableList<WordForm>,
 ) {
+    constructor(lemma: String?, pos: String?, targets: MutableList<WordForm>) : this(
+        mapOf(AnnotationType.LEMMA to lemma, AnnotationType.POS to pos),
+        targets)
+
+    @get:JsonIgnore val lemma: String? = annotations[AnnotationType.LEMMA]
+    @get:JsonIgnore val pos: String? = annotations[AnnotationType.POS]
+
     /** Whether the lemma is not null. */
     @get:JsonIgnore
     val hasLemma: Boolean = lemma != null
@@ -66,18 +73,6 @@ data class Term(
     val posHeadGroupOrEmpty
         get() = posHeadGroup ?: ""
 
-    /** The features of [pos]. E.g. "num=sg" for "NOU(num=sg)". Does not support multi-pos. */
-    @get:JsonIgnore
-    val posFeatures: String?
-        get() {
-            if (pos == null) return null
-            val featureStart: Int = pos.indexOf('(')
-            val featureEnd: Int = pos.indexOf(')')
-            return if (featureStart != -1 && featureEnd != -1) {
-                return pos.slice(featureStart + 1 until featureEnd)
-            } else null
-        }
-
     /** Offset of the first [WordForm] in [targets].*/
     @get:JsonIgnore
     val firstOffset get() = targets.minOfOrNull { it.offset } ?: -1
@@ -90,8 +85,9 @@ data class Term(
     companion object {
         const val NO_POS = "NO_POS"
         const val NO_LEMMA = "NO_LEMMA"
-        val EMPTY = Term(null, null, mutableListOf())
-        private fun posToPosHead(pos: String?): String? {
+        val EMPTY = Term(mapOf(), mutableListOf())
+
+        fun posToPosHead(pos: String?): String? {
             return if (pos == null) {
                 null
             } else if (pos.contains('(')) {
@@ -107,6 +103,16 @@ data class Term(
                 // pos is 0 or more letters only
                 pos
             }
+        }
+
+        /** The features of [pos]. E.g. "num=sg" for "NOU(num=sg)". Does not support multi-pos. */
+        fun features(pos: String?): String? {
+            if (pos == null) return null
+            val featureStart: Int = pos.indexOf('(')
+            val featureEnd: Int = pos.indexOf(')')
+            return if (featureStart != -1 && featureEnd != -1) {
+                return pos.slice(featureStart + 1 until featureEnd)
+            } else null
         }
     }
 }

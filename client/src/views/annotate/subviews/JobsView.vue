@@ -48,7 +48,7 @@
                     &ndash;
                     <b v-if="eraRange[1] >= d.item.tagger.eraTo">{{ d.item.tagger.eraTo }}</b><span v-else>{{
                         d.item.tagger.eraTo
-                    }}</span>
+                        }}</span>
                 </div>
             </template>
 
@@ -93,9 +93,10 @@
                     </div>
 
                     <div class="table-control">
-                        Require type:
+                        Require annotation:
                         <div v-for="type in types" :key="type" style="white-space: nowrap;">
-                            <GInput type="checkbox" v-model="requireType[type]"> {{ type }}</GInput>
+                            <GInput type="checkbox" v-model="requireType[type]"> {{ type }}
+                            </GInput>
                         </div>
                     </div>
 

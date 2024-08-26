@@ -22,7 +22,8 @@ internal class ConlluLayerMerger(
     }
 
     override fun replaceColumns(columns: MutableList<String>, layer: Layer, termIndex: Int) {
-        columns[sourceFile.lemmaIndex!!] = layer.terms[termIndex].lemma ?: "_"
-        columns[sourceFile.posIndex!!] = layer.terms[termIndex].pos ?: "_"
+        for (sourceColumn in sourceFile.columnIndices) {
+            columns[sourceColumn.value] = layer.terms[termIndex].annotations[sourceColumn.key] ?: "_"
+        }
     }
 }

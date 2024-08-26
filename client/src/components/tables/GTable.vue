@@ -436,7 +436,7 @@ table.compact {
         padding: .1em 2em;
     }
 
-    margin: 0;
+    margin: 0 auto;
 }
 
 table.selectable {

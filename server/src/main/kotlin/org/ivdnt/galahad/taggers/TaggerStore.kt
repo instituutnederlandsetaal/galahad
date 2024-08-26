@@ -24,7 +24,7 @@ class TaggerStore : BaseFileSystemStore (
     val taggers: List<ExpensiveGettable<Tagger>>
         get() = ids.map { getSummaryOrThrow(it, null) } // We can provide null since there is nothing like SOURCE_LAYER.yaml in ids
 
-    fun getSummaryOrThrow(tagger: String, sourceLayerTagger: ExpensiveGettable<Tagger>? ) = object : ExpensiveGettable<Tagger> {
+    fun getSummaryOrThrow(tagger: String, sourceLayerTagger: ExpensiveGettable<Tagger>? = null) = object : ExpensiveGettable<Tagger> {
         override fun expensiveGet(): Tagger {
             return getSummaryOrNull( tagger, sourceLayerTagger ).expensiveGet() ?: throw Exception("Failed to read tagger $tagger")
         }

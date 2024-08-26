@@ -2,7 +2,9 @@ package org.ivdnt.galahad.evaluation.metrics
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
+import org.ivdnt.galahad.data.layer.AnnotationType
 import org.ivdnt.galahad.data.layer.Term
+import org.ivdnt.galahad.data.layer.upos
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
 
 interface MetricsSettings {
@@ -17,6 +19,9 @@ interface MetricsSettings {
 
     @get:JsonIgnore
     val nullTerm: String
+
+    @get:JsonIgnore
+    val requiredAnnotations: List<AnnotationType>
 
     @get:JsonProperty("id")
     val id: String
@@ -33,6 +38,7 @@ open class PosByPosMetricsSettings : MetricsSettings {
     override val annotation: String = "PoS"
     override val group: String = "PoS"
     override val nullTerm: String = Term.NO_POS
+    override val requiredAnnotations = listOf(AnnotationType.POS)
 
     override fun termsEqual(comp: TermComparison): Boolean {
         return comp.equalPOS
@@ -64,6 +70,7 @@ open class LemmaByLemmaMetricsSettings : MetricsSettings {
     override val annotation: String = "Lemma"
     override val group: String = "Lemma"
     override val nullTerm: String = Term.NO_LEMMA
+    override val requiredAnnotations = listOf(AnnotationType.LEMMA)
 
     override fun termsEqual(comp: TermComparison): Boolean {
         return comp.equalLemma
@@ -71,6 +78,38 @@ open class LemmaByLemmaMetricsSettings : MetricsSettings {
 
     override fun groupBy(term: Term): String {
         return term.lemma ?: nullTerm
+    }
+}
+
+class DeprelByDeprel : MetricsSettings {
+    override val id: String = "deprelByDeprel"
+    override val annotation: String = "Deprel"
+    override val group: String = "Deprel"
+    override val nullTerm: String = "NO_DEPREL"
+    override val requiredAnnotations = listOf(AnnotationType.DEPREL)
+
+    override fun termsEqual(comp: TermComparison): Boolean {
+        return comp.equalAnnotation(AnnotationType.DEPREL)
+    }
+
+    override fun groupBy(term: Term): String {
+        return term.annotations[AnnotationType.DEPREL] ?: nullTerm
+    }
+}
+
+class HeadByHead : MetricsSettings {
+    override val id: String = "headByHead"
+    override val annotation: String = "Head"
+    override val group: String = "Head"
+    override val nullTerm: String = "NO_HEAD"
+    override val requiredAnnotations = listOf(AnnotationType.HEAD)
+
+    override fun termsEqual(comp: TermComparison): Boolean {
+        return comp.equalAnnotation(AnnotationType.HEAD)
+    }
+
+    override fun groupBy(term: Term): String {
+        return term.annotations[AnnotationType.HEAD] ?: nullTerm
     }
 }
 
@@ -94,6 +133,8 @@ class SingleLemmaByLemmaMetricsSettings : LemmaByLemmaMetricsSettings() {
 class LemmaByPosMetricsSettings : PosByPosMetricsSettings() {
     override val id: String = "lemmaByPos"
     override val annotation: String = "Lemma"
+    override val requiredAnnotations = listOf(AnnotationType.LEMMA, AnnotationType.POS)
+
     override fun termsEqual(comp: TermComparison): Boolean {
         return comp.equalLemma
     }
@@ -102,6 +143,8 @@ class LemmaByPosMetricsSettings : PosByPosMetricsSettings() {
 class PosByLemmaMetricsSettings : LemmaByLemmaMetricsSettings() {
     override val id: String = "posByLemma"
     override val annotation: String = "PoS"
+    override val requiredAnnotations = listOf(AnnotationType.LEMMA, AnnotationType.POS)
+
     override fun termsEqual(comp: TermComparison): Boolean {
         return comp.equalPOS
     }
@@ -110,6 +153,8 @@ class PosByLemmaMetricsSettings : LemmaByLemmaMetricsSettings() {
 class LemmaPosByPosMetricsSettings : PosByPosMetricsSettings() {
     override val id: String = "lemmaPosByPos"
     override val annotation: String = "Lemma + PoS"
+    override val requiredAnnotations = listOf(AnnotationType.LEMMA, AnnotationType.POS)
+
     override fun termsEqual(comp: TermComparison): Boolean {
         return comp.equalPosLemma
     }
@@ -118,8 +163,26 @@ class LemmaPosByPosMetricsSettings : PosByPosMetricsSettings() {
 class LemmaPosByLemmaMetricsSettings : LemmaByLemmaMetricsSettings() {
     override val id: String = "lemmaPosByLemma"
     override val annotation: String = "Lemma + PoS"
+    override val requiredAnnotations = listOf(AnnotationType.LEMMA, AnnotationType.POS)
+
     override fun termsEqual(comp: TermComparison): Boolean {
         return comp.equalPosLemma
+    }
+}
+
+class UposByUposMetricsSettings : MetricsSettings {
+    override val id: String = "uposByUpos"
+    override val annotation: String = "upos"
+    override val group: String = "upos"
+    override val nullTerm: String = Term.NO_POS
+    override val requiredAnnotations = listOf(AnnotationType.UPOS)
+
+    override fun termsEqual(comp: TermComparison): Boolean {
+        return comp.equalAnnotation(AnnotationType.UPOS)
+    }
+
+    override fun groupBy(term: Term): String {
+        return Term.posToPosHead(term.annotations.upos) ?: nullTerm
     }
 }
 
@@ -138,4 +201,8 @@ val METRIC_TYPES = listOf(
     // Lemma + Pos
     LemmaPosByPosMetricsSettings(),
     LemmaPosByLemmaMetricsSettings(),
+    // UD
+    DeprelByDeprel(),
+    HeadByHead(),
+    UposByUposMetricsSettings(),
 )

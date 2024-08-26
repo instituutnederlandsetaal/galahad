@@ -38,35 +38,43 @@ const props = defineProps({
     samples: { type: Object },
     referenceJob: { type: String },
     hypothesisJob: { type: String },
-    downloading: { type: Boolean, default: false }
+    downloading: { type: Boolean, default: false },
+    annotationType: { type: String }
 })
 
 // Emits
 defineEmits(['hide', 'download'])
 
 // Fields
+const ignorableAnnotations = ['token', 'id', 'misc']
 const title = computed(() => {
     if (props.samples.title) return props.samples.title
     return props.samples.agreement ? 'PoS agree samples' : 'Pos Confusion samples'
 })
+const annotations = computed(() => {
+    return Object.keys(props.samples.samples[0].hypoTerm.annotations).filter(i => !ignorableAnnotations.includes(i))
+})
+
 const columns = computed(() => {
+    // Currently we take annotations from the first sample of the hypothesis.
+    const referenceColumns = annotations.value.map(i => ({ key: props.referenceJob + '-' + i, label: i }))
+    const hypothesisColumns = annotations.value.map(i => ({ key: props.hypothesisJob + '-' + i, label: i }))
+
     return [
         { key: 'literal', label: 'token' },
-        { key: 'lemma2', label: props.referenceJob + ' lemma' },
-        { key: 'pos2', label: props.referenceJob + ' PoS' },
-        { key: 'lemma1', label: props.hypothesisJob + ' lemma' },
-        { key: 'pos1', label: props.hypothesisJob + ' PoS' },
+        ...hypothesisColumns,
+        ...referenceColumns,
     ]
 })
 const items = computed(() => {
     if (!props.samples.samples) return []
     return props.samples.samples.map((sample: TermComparison) => {
+        const hypoAnnotations = Object.entries(sample.hypoTerm.annotations).map(i => ({ [props.hypothesisJob + '-' + i[0]]: i[1] }))
+        const refAnnotations = Object.entries(sample.refTerm.annotations).map(i => ({ [props.referenceJob + '-' + i[0]]: i[1] }))
+
         return {
             literal: literalsForTermComparison(sample),
-            lemma1: sample.hypoTerm.lemma,
-            pos1: sample.hypoTerm.pos,
-            lemma2: sample.refTerm.lemma,
-            pos2: sample.refTerm.pos
+            ...Object.assign({}, ...hypoAnnotations, ...refAnnotations)
         }
     })
 })

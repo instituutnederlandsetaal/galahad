@@ -1,5 +1,6 @@
 package org.ivdnt.galahad.port
 
+import org.ivdnt.galahad.app.ExpensiveGettable
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.data.corpus.Corpus
 import org.ivdnt.galahad.data.document.Document
@@ -7,6 +8,7 @@ import org.ivdnt.galahad.data.document.DocumentFormat
 import org.ivdnt.galahad.data.layer.Layer
 import org.ivdnt.galahad.data.layer.Term
 import org.ivdnt.galahad.jobs.Job
+import org.ivdnt.galahad.taggers.Tagger
 
 open class CorpusTransformMetadata(
     val corpus: Corpus,
@@ -35,6 +37,8 @@ class DocumentTransformMetadata(
 ) {
 
     val layer: Layer = job.document(document.name).result
+
+    val tagger: ExpensiveGettable<Tagger> = job.taggerStore.getSummaryOrThrow(job.name)
 
     val plainText: String
         get() = document.plaintext

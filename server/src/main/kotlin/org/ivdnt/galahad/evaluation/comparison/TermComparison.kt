@@ -1,6 +1,7 @@
 package org.ivdnt.galahad.evaluation.comparison
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import org.ivdnt.galahad.data.layer.AnnotationType
 import org.ivdnt.galahad.data.layer.Term
 import org.ivdnt.galahad.data.layer.WordForm
 
@@ -63,7 +64,7 @@ data class TermComparison(
     val equalLemma: Boolean
         get() {
             if (refTerm.lemma == null) return true
-            if (refTerm.lemma.isEmpty()) return true
+            if (refTerm.lemma!!.isEmpty()) return true
             if (hypoTerm.lemma == null) return false
             return hypoTerm.lemma.equals(refTerm.lemma, true)
         }
@@ -73,10 +74,17 @@ data class TermComparison(
     val equalPOS: Boolean
         get() {
             if (refTerm.pos == null) return true
-            if (refTerm.pos.isEmpty()) return true
+            if (refTerm.pos!!.isEmpty()) return true
             if (hypoTerm.pos == null) return false
             return hypoTerm.pos.equals(refTerm.pos, true)
         }
+
+    fun equalAnnotation(annotation: AnnotationType): Boolean {
+        if (refTerm.annotations[annotation] == null) return true
+        if (refTerm.annotations[annotation]!!.isEmpty()) return true
+        if (hypoTerm.annotations[annotation] == null) return false
+        return hypoTerm.annotations[annotation].equals(refTerm.annotations[annotation], true)
+    }
 
     @get:JsonIgnore
     val equalGroupPosHead: Boolean

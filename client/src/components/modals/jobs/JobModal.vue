@@ -78,9 +78,7 @@
             </div>
 
             <!-- Layer preview -->
-            <GCard noHelp title="Preview" style="text-align: center">
-                <LayerViewer :layer="job.preview" :uid="job.tagger.id" />
-            </GCard>
+            <LayerViewer :layer="job.preview" />
 
             <!-- errors -->
             <GInfo :error="job.progress.failed > 0" v-if="job.progress.failed > 0">

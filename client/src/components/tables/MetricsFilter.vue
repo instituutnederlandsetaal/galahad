@@ -20,28 +20,36 @@
 <script setup lang='ts'>
 // Libraries & stores
 import { ref, computed } from 'vue'
+import { storeToRefs } from 'pinia'
+import stores from "@/stores"
+
+const { metrics } = storeToRefs(stores.useMetrics())
 
 // Fields
 const metricOptions = computed(() => {
-    return [
-        { value: "pos", text: "PoS" },
-        { value: "lemma", text: "Lemma" },
-        { value: "lemmaPos", text: "PoS + Lemma" }
-    ]
     if (metrics.value?.metrics == null) return []
-    return Object.keys(metrics.value.metrics).map((key) => ({ value: key, text: key.split(/(?=[A-Z])/).join(" ") }))
+    const names = Object.keys(metrics.value.metrics)
+        .filter(key => !(key.startsWith("single") || key.startsWith("multi")))
+        .map((key) => key.split("By")[0].toLowerCase())
+    const uniqueNames = [...new Set(names)]
+    return uniqueNames.map((name) => ({ value: name, text: name }))
 })
-const groupOptions = [
-    { value: "pos", text: "PoS" },
-    { value: "lemma", text: "Lemma" },
-]
+const groupOptions = computed(() => {
+    if (metrics.value?.metrics == null) return []
+    const names = Object.keys(metrics.value.metrics)
+        .filter(key => !(key.startsWith("single") || key.startsWith("multi")))
+        .map((key) => key.split("By")[1].toLowerCase())
+    const uniqueNames = [...new Set(names)]
+    return uniqueNames.map((name) => ({ value: name, text: name }))
+})
+
 const singleOrMultipleOptions = [
     { value: "both", text: "Both" },
     { value: "single", text: "Single" },
     { value: "multi", text: "Multiple" },
 ]
 const selectedMetric = ref(metricOptions.value[0]?.value)
-const selectedGroup = ref(metricOptions.value[0]?.value)
+const selectedGroup = ref(groupOptions.value[0]?.value)
 const selectedSingleOrMultiple = ref(singleOrMultipleOptions[0]?.value)
 
 const metricName = computed(() => {
@@ -53,7 +61,6 @@ const metricName = computed(() => {
     }
     const group = capitalize(selectedGroup.value)
     return annotation + "By" + group
-
 })
 
 // Methods

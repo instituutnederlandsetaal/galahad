@@ -4,9 +4,9 @@ tagset: "TDN-Core"
 eraFrom: "1400"
 eraTo: "1900"
 produces:
-  - LEM
-  - POS
-  - TOK
+  - lemma
+  - pos
+  - token
 model:
   name: hug-tdn-all
   href: https://github.com/INL/galahad-huggingface-models/tree/1.0.0/models/galahad/tagger/pos_model_tdn_ALL
@@ -18,5 +18,5 @@ dataset:
   href: https://github.com/INL/galahad-corpus-data/tree/1.0.1/combinations/ALL.combination.json
 trainedBy: "INT"
 date: "2024-06-12"
-devport: 8112
+devport: 8120
 version: "1.0.0"

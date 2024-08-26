@@ -1,113 +1,44 @@
 <template>
   <div class="layerpreview">
-    <table v-if="layerNotEmpty">
-      <thead>
-        <tr>
-          <th>Token</th>
-          <th>Lemma</th>
-          <th>PoS</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(term, i) in layer.terms.slice(cursor, cursor + pagesize)" :key="uid + 'term' + i">
-          <td>{{ term.targets.map(x => x.literal).join('_') }}</td>
-          <td>{{ term.lemma }}</td>
-          <td>{{ term.pos }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <GTable v-if="layerNotEmpty" compact :columns :items noHelp title="Preview" />
     <p v-else><i>No layer found</i></p>
-    <div v-if="layerNotEmpty">
-      <GButton plain :disabled="cursor < pagesize" @click="cursor -= pagesize" title="Previous">
-        <i class="fa fa-arrow-left"></i>
-      </GButton>
-      {{ cursor + 1 }} - {{ cursor + pagesize }}
-      <GButton plain :disabled="cursor >= layer.terms.length - pagesize" @click="cursor += pagesize" title="Next">
-        <i class="fa fa-arrow-right"></i>
-      </GButton>
-    </div>
   </div>
 </template>
 
-<script lang='ts'>
-import { defineComponent } from 'vue'
-import { LayerPreview } from '@/types/jobs'
+<script setup lang="ts">
+// Libraries & stores
+import { computed } from "vue"
+// API & types
+import { LayerPreview } from "@/types/jobs"
 // Component dependencies.
-import { GButton } from '@/components'
+import { GTable } from "@/components"
 
-export default defineComponent({
-  name: "LayerViewer",
-  props: {
-    layer: {
-      type: Object as () => LayerPreview
-    },
-    uid: {
-      type: String
-    }
-  },
-  computed: {
-    layerNotEmpty() { return this.layer?.terms?.length > 0 }
-  },
-  data() {
-    return {
-      cursor: 0,
-      pagesize: 10,
-    }
-  },
-  watch: {
-    layer() {
-      this.cursor = 0
-    }
-  }
-});
+const props = defineProps({ layer: Object as () => LayerPreview })
+const layerNotEmpty = computed(() => { return props.layer?.terms?.length > 0 })
+
+const columns = computed(() => {
+  const annotations = Object.keys(props.layer?.terms[0].annotations).filter((i) => i != "token")
+  const columns = annotations.map((annotation) => ({ key: annotation, label: annotation }))
+  // Token always as the first column
+  columns.unshift({ key: "token", label: "Token" })
+  return columns
+})
+
+const items = computed(() => {
+  return props.layer?.terms.map((term) => {
+    delete term.annotations["token"]
+    term.annotations["token"] = term.targets.map(x => x.literal).join('_')
+    return term.annotations
+  })
+})
 </script>
 
-<style scoped>
-table {
-  display: block;
-  border-collapse: collapse;
+<style scoped lang="scss">
+:deep(h3) {
   margin: 0;
-  margin-top: 5px;
-  margin-bottom: 10px;
-  padding: 0;
+}
 
-  caption {
-    font-size: 1.5em;
-    margin: .5em 0 .75em;
-  }
-
-  tr {
-    border: 1px solid #ddd;
-
-    &:nth-child(even) {
-      background: #fff;
-    }
-
-    &:nth-child(odd) {
-      background: var(--int-very-light-grey);
-    }
-  }
-
-  thead {
-    >tr {
-      background-color: var(--int-theme) !important;
-    }
-  }
-
-  th {
-    padding: .6em;
-    text-align: center;
-    font-size: .85em;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-  }
-
-  td {
-    padding: .2em 1em;
-    text-align: center;
-    min-width: 60px;
-  }
-
-  overflow-x: auto;
+p {
+  text-align: center;
 }
 </style>

@@ -18,6 +18,7 @@ import org.ivdnt.galahad.evaluation.metrics.METRIC_TYPES
 import org.ivdnt.galahad.evaluation.metrics.MetricsSettings
 import org.ivdnt.galahad.evaluation.metrics.PosByPosMetricsSettings
 import org.ivdnt.galahad.port.csv.CSVFile
+import org.ivdnt.galahad.taggers.TaggerStore
 import org.ivdnt.galahad.util.createZipFile
 import org.ivdnt.galahad.util.setContentDisposition
 import org.springframework.beans.factory.annotation.Autowired
@@ -41,6 +42,8 @@ class EvaluationController(
     @Autowired
     private val response: HttpServletResponse? = null
 
+    private val taggerStore = TaggerStore()
+
     @GetMapping(DISTRIBUTION_URL)
     @CrossOrigin
     fun getDistribution(
@@ -63,9 +66,12 @@ class EvaluationController(
     ): CorpusMetrics {
         logger.info("Get metrics for reference layer $reference and hypothesis layer $job in $corpus")
 
+        val corpusObj = corpora.getReadAccessOrThrow(corpus, request)
+        val jobObj = taggerStore.getSummaryOrThrow(job, null).expensiveGet().annotationTypes
+        val settings = METRIC_TYPES.filter { it.requiredAnnotations.all { jobObj.contains(it) } }
         val cm = CorpusMetrics(
-            corpora.getReadAccessOrThrow(corpus, request),
-            settings = METRIC_TYPES,
+            corpusObj,
+            settings = settings,
             hypothesis = job,
             reference = if (reference.isNullOrBlank()) SOURCE_LAYER_NAME else reference
         )

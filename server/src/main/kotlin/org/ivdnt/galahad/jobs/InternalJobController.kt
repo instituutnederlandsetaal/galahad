@@ -7,9 +7,11 @@ import org.ivdnt.galahad.app.INTERNAL_JOBS_RESULT_URL
 import org.ivdnt.galahad.data.CorporaController
 import org.ivdnt.galahad.data.document.Document
 import org.ivdnt.galahad.data.document.DocumentFormat
+import org.ivdnt.galahad.data.document.FormatInducer
 import org.ivdnt.galahad.data.layer.Layer
 import org.ivdnt.galahad.port.InternalFile
 import org.ivdnt.galahad.port.SourceLayerableFile
+import org.ivdnt.galahad.port.conllu.ConlluFile
 import org.ivdnt.galahad.port.tsv.TSVFile
 import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.tagset.Tagset
@@ -63,31 +65,43 @@ class InternalJobController (
             val job: Job = corpora.getUncheckedCorpusAccess( corpusID ).jobs.readOrThrow( jobName )
             val taggerTagger: Tagger? = job.taggerStore.getSummaryOrNull(job.name, null ).expensiveGet()
             val tagset: Tagset? = tagsets.getOrNull(taggerTagger?.tagset)
-
-            when (val uploadedFile = InternalFile.from(tempFile, DocumentFormat.Tsv).expensiveGet()) {
+            val format = FormatInducer.determineFormat(tempFile)
+            when (val uploadedFile = InternalFile.from(tempFile, format).expensiveGet()) {
                 // Treat TSVFiles separately form SourceLayerableFiles, because calling sourceLayer() on a TSV
                 // Would default its alignment to offset=0. Instead, we force it to align with the original plaintext.
+                is ConlluFile -> {
+                    val alignedLayer = uploadedFile.mapOnPlainText(
+                        plaintext =   original.plaintext,
+                        layerName = jobName
+                    )
+                    job.document(documentName).setResult(Layer(
+                        name = jobName,
+                        tagset = tagset ?: Tagset.UNKNOWN,
+                        wordForms = alignedLayer.wordForms,
+                        terms = alignedLayer.terms
+                    ))
+                }
                 is TSVFile -> {
                     val alignedLayer = uploadedFile.mapOnPlainText(
                             plaintext =   original.plaintext,
                             layerName = jobName
                     )
-                    job.document( documentName ).setResult( Layer(
+                    job.document(documentName).setResult(Layer(
                             name = jobName,
                             tagset = tagset ?: Tagset.UNKNOWN,
                             wordForms = alignedLayer.wordForms,
                             terms = alignedLayer.terms
-                    ) )
+                    ))
                 }
                 // To my knowledge, not a single tagger outputs non-tsv, so this is unused for now.
                 is SourceLayerableFile -> {
                     val sourceLayer = uploadedFile.sourceLayer()
-                    job.document( documentName ).setResult( Layer(
+                    job.document(documentName).setResult(Layer(
                         name = jobName,
                         tagset = tagset ?: Tagset.UNKNOWN,
                         wordForms = sourceLayer.wordForms,
                         terms = sourceLayer.terms
-                    ) )
+                    ))
                 }
                 else -> {
                     throw Exception("File types is not supported")
@@ -114,7 +128,7 @@ class InternalJobController (
     @PostMapping(INTERNAL_JOBS_ERROR_URL)
     @CrossOrigin
     fun receiveTaggerError(
-        @RequestParam fileId: UUID,
+        @RequestParam(value="file_id") fileId: UUID,
         @RequestBody message: String
     ): String {
         logger.info( "Received error with processing id $fileId: $message" )
