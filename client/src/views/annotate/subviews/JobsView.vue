@@ -48,7 +48,7 @@
                     &ndash;
                     <b v-if="eraRange[1] >= d.item.tagger.eraTo">{{ d.item.tagger.eraTo }}</b><span v-else>{{
                         d.item.tagger.eraTo
-                        }}</span>
+                    }}</span>
                 </div>
             </template>
 
@@ -94,10 +94,8 @@
 
                     <div class="table-control">
                         Require annotation:
-                        <div v-for="type in types" :key="type" style="white-space: nowrap;">
-                            <GInput type="checkbox" v-model="requireType[type]"> {{ type }}
-                            </GInput>
-                        </div>
+                        <MultiSelect v-model="requireType" :options="types" placeholder="Annotation"
+                            :maxSelectedLabels="5" />
                     </div>
 
                     <div class="table-control slider">
@@ -143,6 +141,8 @@ import { sort_tagger_produces } from "@/stores/taggers"
 // Components
 import { GButton, GNav, GTable, GInput, GSpinner, AnnotateTab, JobModal } from '@/components'
 import help from '@/components/help'
+import MultiSelect from 'primevue/multiselect';
+
 
 // Stores
 const userStore = stores.useUser() as UserStore
@@ -153,7 +153,7 @@ const corporaStore = stores.useCorpora() as CorporaStore
 // Fields
 const taggerNameFilter = ref('')
 const includeTagset = ref({} as { [tagset: string]: boolean })
-const requireType = ref({} as { [type: string]: boolean })
+const requireType = ref([])
 const eraRange = ref([500, 2050])
 const jobId = ref(null as null | string)
 
@@ -171,13 +171,12 @@ const displayJobs = computed(() =>
             return includeTagset.value[job.tagger.tagset]
         })
         .filter(job => {
-            let pass = true
-            Object.keys(requireType.value).forEach(key => {
-                if (requireType.value[key] && !(job.tagger.produces.includes(key))) {
-                    pass = false
+            for (const type of requireType.value) {
+                if (!job.tagger.produces.includes(type)) {
+                    return false
                 }
-            })
-            return pass
+            }
+            return true
         })
 )
 
@@ -257,7 +256,6 @@ function unixToString(time: number) {
 
 /* Set a width even when there are no results after filtering.*/
 :deep(#prepend) {
-    width: 900px;
     max-width: 100%;
 }
 

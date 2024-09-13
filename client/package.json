@@ -8,6 +8,7 @@
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src"
   },
   "dependencies": {
+    "@primevue/themes": "^4.0.5",
     "@types/uuid": "^8.3.4",
     "@vitejs/plugin-vue": "^5.0.4",
     "axios": "^1.6.2",
@@ -16,6 +17,7 @@
     "js-yaml": "^4.1.0",
     "json-loader": "^0.5.7",
     "pinia": "^2.0.16",
+    "primevue": "^4.0.5",
     "safe-buffer": "^5.2.1",
     "uuid": "^8.3.2",
     "vue": "^3.2.37",
