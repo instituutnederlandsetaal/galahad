@@ -44,11 +44,7 @@ const confusion = defineStore('confusion', () => {
             corpus,
             hypothesis,
             reference
-        ).then(() => {
-            if (Object.keys(confusion?.value?.table).length == 0) {
-                return
-            }
-        })
+        )
     }
 
     // Exports

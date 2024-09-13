@@ -1,5 +1,6 @@
 package org.ivdnt.galahad.evaluation.confusion
 
+import org.ivdnt.galahad.data.layer.AnnotationType
 import org.ivdnt.galahad.data.layer.Layer
 import org.ivdnt.galahad.data.layer.Term
 import org.ivdnt.galahad.evaluation.comparison.LayerComparison
@@ -13,7 +14,8 @@ class DocumentConfusion (
     hypothesis: Layer,
     reference: Layer,
     layerFilter: LayerFilter? = null,
-) : Confusion(truncate = layerFilter == null) {
+    annotation: AnnotationType = AnnotationType.POS
+) : Confusion(truncate = layerFilter == null, annotation) {
 
     init {
         val layerComparison = LayerComparison(
@@ -26,7 +28,7 @@ class DocumentConfusion (
 
         layerComparison.hypothesisTermsWithoutMatches.forEach {
             add(
-                hypoPos = it.posHeadGroup ?: Term.NO_POS,
+                hypoPos = it.annotationToGroupHeadOrDefault(annotation),
                 refPos = TermComparison.MISSING_MATCH,
                 sample = TermComparison(hypoTerm = it, refTerm = Term.EMPTY)
             )
@@ -35,7 +37,7 @@ class DocumentConfusion (
         layerComparison.referenceTermsWithoutMatches.forEach {
             add(
                 hypoPos = TermComparison.MISSING_MATCH,
-                refPos = it.posHeadGroup ?: Term.NO_POS,
+                refPos = it.annotationToGroupHeadOrDefault(annotation),
                 sample = TermComparison(hypoTerm = Term.EMPTY, refTerm = it)
             )
         }

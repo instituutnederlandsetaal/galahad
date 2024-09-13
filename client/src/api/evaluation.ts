@@ -15,8 +15,8 @@ const evaluationPath = (corpus: UUID, hypothesis: string) => `/corpora/${corpus}
 const confusionPath = (corpus: UUID, hypothesis: string, reference: string) => {
     return `${evaluationPath(corpus, hypothesis)}/confusion?reference=${reference}`
 }
-const posConfusionPath = (corpus: UUID, hypothesis: string, reference: string, hypothesisPOS: string, referencePOS: string) => {
-    return `${evaluationPath(corpus, hypothesis)}/confusion/download?reference=${reference}&hypoPosFilter=${hypothesisPOS}&refPosFilter=${referencePOS}`
+const confusionSamplesPath = (corpus: UUID, hypothesis: string, reference: string, hypoFilter: string, refFilter: string, annotationType: string) => {
+    return `${evaluationPath(corpus, hypothesis)}/confusion/download?reference=${reference}&hypoFilter=${hypoFilter}&refFilter=${refFilter}&annotationType=${annotationType}`
 }
 
 const distributionPath = (corpus: UUID, hypothesis: string) => `${evaluationPath(corpus, hypothesis)}/distribution`
@@ -77,15 +77,15 @@ export function getDownloadEvaluation(corpus: UUID, hypothesis: string, referenc
 }
 
 /**
- * Download PoS confusion entries as zip.
+ * Download confusion entries as zip.
  * @param corpus UUID of the corpus.
  * @param hypothesis Tagger job name as hypothesis layer.
  * @param reference  Tagger job name as reference layer.
- * @param hypothesisPOS PoS tag of the hypothesis layer to filter on.
- * @param referencePOS PoS tag of the reference layer to filter on.
+ * @param hypoAnnot PoS tag of the hypothesis layer to filter on.
+ * @param refAnnot PoS tag of the reference layer to filter on.
  */
-export function getDownloadPosConfusion(corpus: UUID, hypothesis: string, reference: string, hypothesisPOS: string, referencePOS: string): Promise<BlobResponse> {
-    return Utils.getBlob(posConfusionPath(corpus, hypothesis, reference, hypothesisPOS, referencePOS))
+export function getConfusionSamples(corpus: UUID, hypothesis: string, reference: string, hypoAnnot: string, refAnnot: string, annotationType: string): Promise<BlobResponse> {
+    return Utils.getBlob(confusionSamplesPath(corpus, hypothesis, reference, hypoAnnot, refAnnot, annotationType))
 }
 
 /**

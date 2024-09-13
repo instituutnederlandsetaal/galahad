@@ -3,6 +3,8 @@ package org.ivdnt.galahad.evaluation.confusion
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.ivdnt.galahad.data.corpus.Corpus
 import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
+import org.ivdnt.galahad.data.layer.AnnotationType
+import org.ivdnt.galahad.data.layer.Annotations
 import org.ivdnt.galahad.evaluation.comparison.LayerFilter
 
 /**
@@ -13,8 +15,9 @@ class CorpusConfusion(
     corpus: Corpus,
     val hypothesis: String,
     val reference: String = SOURCE_LAYER_NAME,
+    annotation: AnnotationType = AnnotationType.POS,
     layerFilter: LayerFilter? = null,
-) : Confusion(truncate = layerFilter == null) {
+) : Confusion(truncate = layerFilter == null, annotation) {
 
     private val hypothesisJob = corpus.jobs.readOrNull(hypothesis) ?: throw Exception("Hypothesis layer does not exist")
     private val referenceJob = corpus.jobs.readOrNull(reference) ?: throw Exception("Reference layer does not exist")
@@ -33,7 +36,8 @@ class CorpusConfusion(
                 DocumentConfusion(
                     hypothesisJob.document(name).result,
                     referenceJob.document(name).result,
-                    layerFilter
+                    layerFilter,
+                    annotation
                 )
             )
         }

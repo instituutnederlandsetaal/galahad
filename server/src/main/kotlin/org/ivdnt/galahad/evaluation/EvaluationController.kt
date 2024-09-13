@@ -57,6 +57,59 @@ class EvaluationController(
         ).trim(DISTRIBUTION_MAX_SIZE) as CorpusDistribution
     }
 
+    @GetMapping(CONFUSION_URL)
+    @CrossOrigin
+    fun getConfusion(
+        @PathVariable corpus: UUID,
+        @PathVariable job: String,
+        @RequestParam reference: String?,
+    ): Map<AnnotationType, Confusion> {
+        logger.info("Get confusion for reference layer $reference and hypothesis layer $job in $corpus")
+        val jobObj = annotationTypesforTagger(job)
+        val annotationTypes = CONFUSION_TYPES.filter { jobObj.contains(it) }
+        val confusions = annotationTypes.associateWith {
+            CorpusConfusion(
+                corpora.getReadAccessOrThrow(corpus, request),
+                hypothesis = job,
+                annotation = it,
+                reference = if (reference.isNullOrBlank()) SOURCE_LAYER_NAME else reference,
+            )
+        }
+        return confusions
+    }
+
+    @GetMapping(CONFUSION_SAMPLES_URL)
+    @CrossOrigin
+    fun getConfusionSamples(
+        @PathVariable corpus: UUID,
+        @PathVariable  job: String,
+        @RequestParam reference: String,
+        @RequestParam annotation: String,
+        @RequestParam hypoFilter: String?,
+        @RequestParam refFilter: String?,
+    ): ByteArray {
+        var layerFilter: ConfusionLayerFilter? = null
+        if ((hypoFilter != null) xor (refFilter != null)) {
+            throw IllegalArgumentException("Both hypothesis and reference PoS filters, or neither must be provided")
+        } else if (hypoFilter != null && refFilter != null) {
+            val annotationType = AnnotationType.fromString(annotation)
+            layerFilter = ConfusionLayerFilter(
+                HeadGroupTermFilter(annotationType, hypoFilter),
+                HeadGroupTermFilter(annotationType, refFilter),
+            )
+        }
+        val cc = CorpusConfusion(
+            corpus = corpora.getReadAccessOrThrow(corpus, request),
+            hypothesis = job,
+            reference = reference,
+            layerFilter = layerFilter,
+            annotation = AnnotationType.fromString(annotation)
+        )
+        val fileName = "confusion-${refFilter}-${hypoFilter}.csv"
+        val csv = cc.samplesToCSV()
+        return samplesToZip(corpus, job, reference, csv, fileName)
+    }
+
     @GetMapping(METRICS_URL)
     @CrossOrigin
     fun getMetrics(
@@ -67,7 +120,7 @@ class EvaluationController(
         logger.info("Get metrics for reference layer $reference and hypothesis layer $job in $corpus")
 
         val corpusObj = corpora.getReadAccessOrThrow(corpus, request)
-        val jobObj = taggerStore.getSummaryOrThrow(job, null).expensiveGet().annotationTypes
+        val jobObj = annotationTypesforTagger(job)
         val settings = METRIC_TYPES.filter { it.requiredAnnotations.all { jobObj.contains(it) } }
         val cm = CorpusMetrics(
             corpusObj,
@@ -130,66 +183,6 @@ class EvaluationController(
             layerFilter = null
         }
         return layerFilter
-    }
-
-    fun samplesToZip(
-        corpus: UUID,
-        job: String,
-        reference: String?,
-        csvBody: String,
-        fileName: String
-    ): ByteArray {
-        // Create csv file.
-        val dir: File = createTempDirectory("samples").toFile()
-        val file = CSVFile(dir.resolve(fileName))
-        file.appendText(CSVFile.toCSVHeader(listOf("token","$reference lemma","$reference pos","$job lemma","$job pos")))
-        file.appendText(csvBody)
-        // Write metadata & create zip
-        val metadata = writeMetadataToDir(corpus, job, reference, dir)
-        val zipFile = createZipFile(dir.listFiles()!!.asSequence())
-        // Configure response for zip.
-        response!!.contentType = "application/zip"
-        response.setContentDisposition(metadata.name + "-evaluation.zip")
-        // zip the directory
-        return zipFile.readBytes()
-    }
-
-    @GetMapping(CONFUSION_URL)
-    @CrossOrigin
-    fun getConfusion(
-        @PathVariable corpus: UUID,
-        @PathVariable job: String,
-        @RequestParam reference: String?,
-    ): Confusion {
-        logger.info("Get confusion for reference layer $reference and hypothesis layer $job in $corpus")
-        return CorpusConfusion(
-            corpora.getReadAccessOrThrow(corpus, request),
-            hypothesis = job,
-            reference = if (reference.isNullOrBlank()) SOURCE_LAYER_NAME else reference,
-        )
-    }
-
-    @GetMapping(CONFUSION_CSV_URL)
-    @CrossOrigin
-    fun getConfusionSamples(
-        @PathVariable corpus: UUID,
-        @PathVariable  job: String,
-        @RequestParam reference: String,
-        @RequestParam hypoPosFilter: String?,
-        @RequestParam refPosFilter: String?,
-    ): ByteArray {
-        val cc = CorpusConfusion(
-            corpus = corpora.getReadAccessOrThrow(corpus, request),
-            hypothesis = job,
-            reference = reference,
-            layerFilter = ConfusionLayerFilter(
-                PosLemmaTermFilter(hypoPosFilter, null),
-                PosLemmaTermFilter(refPosFilter, null)
-            )
-        )
-        val fileName = "confusion-${refPosFilter}-${hypoPosFilter}.csv"
-        val csv = cc.samplesToCSV()
-        return samplesToZip(corpus, job, reference, csv, fileName)
     }
 
     @GetMapping(EVALUATION_CSV_URL)
@@ -258,5 +251,32 @@ class EvaluationController(
         metadataFile.appendText("Hypothesis: $job\n")
         if (reference != null) metadataFile.appendText("Reference: $reference\n")
         return metadata
+    }
+
+    private fun annotationTypesforTagger(job: String): List<AnnotationType> {
+        val jobObj = taggerStore.getSummaryOrThrow(job, null).expensiveGet().annotationTypes
+        return jobObj
+    }
+
+    fun samplesToZip(
+        corpus: UUID,
+        job: String,
+        reference: String?,
+        csvBody: String,
+        fileName: String
+    ): ByteArray {
+        // Create csv file.
+        val dir: File = createTempDirectory("samples").toFile()
+        val validFileName = fileName.toValidFileName()
+        val file = CSVFile(dir.resolve(validFileName))
+        file.appendText(csvBody)
+        // Write metadata & create zip
+        val metadata = writeMetadataToDir(corpus, job, reference, dir)
+        val zipFile = createZipFile(dir.listFiles()!!.asSequence())
+        // Configure response for zip.
+        response!!.contentType = "application/zip"
+        response.setContentDisposition(metadata.name + "-evaluation.zip")
+        // zip the directory
+        return zipFile.readBytes()
     }
 }
