@@ -32,7 +32,7 @@ class LayerToConlluConverter(
             val i = indexer(index, term)
             if (i == "1") outputStream.write("\n".encodeToByteArray())
 
-            val upos = Term.posToPosHead(term.annotations[AnnotationType.UPOS]) ?: "_"
+            val upos = Term.annotationToHead(term.annotations[AnnotationType.UPOS]) ?: "_"
             val feats = Term.features(term.annotations[AnnotationType.UPOS]) ?: "_"
 
             val row = listOf(

@@ -55,17 +55,21 @@ data class Term(
 
     /** The head of the first [pos]. E.g. "PD" for "PD(type=art)+NOU(num=sg)". */
     @get:JsonIgnore
-    val posHead: String? = posToPosHead(pos)
+    val posHead: String? = annotationToHead(pos)
 
     @get:JsonIgnore
     val isMultiPos: Boolean = pos?.contains("+") ?: false
+
+    fun isMulti(annotation: AnnotationType): Boolean {
+        return annotations[annotation]?.contains("+") ?: false
+    }
 
     /** The head of all [pos]. E.g. "PD+NOU" for "PD(type=art)+NOU(num=sg)". */
     @get:JsonIgnore
     val posHeadGroup: String? = run {
         // Split on +
         if (!isMultiPos) return@run posHead
-        val result: String? = pos?.split("+")?.mapNotNull { posToPosHead(it) }?.joinToString("+")
+        val result: String? = pos?.split("+")?.mapNotNull { annotationToHead(it) }?.joinToString("+")
         result
     }
 
@@ -82,27 +86,49 @@ data class Term(
     val literals: String
         get() = targets.joinToString(" ") { it.literal }
 
+    fun annotationToGroupHeadOrDefault(annotation: AnnotationType): String {
+        val annot = annotations[annotation] ?: return missingName(annotation)
+        if (!annot.contains("+")) return annotationToHead(annot)!!
+        return annot.split("+").mapNotNull { annotationToHead(it) }.joinToString("+")
+    }
+
+    fun annotationOrMissing(annotation: AnnotationType): String {
+        return annotations[annotation] ?: missingName(annotation)
+    }
+
     companion object {
         const val NO_POS = "NO_POS"
         const val NO_LEMMA = "NO_LEMMA"
         val EMPTY = Term(mapOf(), mutableListOf())
 
-        fun posToPosHead(pos: String?): String? {
-            return if (pos == null) {
-                null
-            } else if (pos.contains('(')) {
-                // pos contains a non-letter non-digit character
-                val headEnd = pos.indexOf('(')
-                val head = pos.slice(0 until headEnd)
-                if (head.isEmpty()) {
-                    pos // pos is non-empty and starts with a non-letter character, e.g.: _
-                } else {
-                    head
-                }
-            } else {
-                // pos is 0 or more letters only
-                pos
+        fun missingName(annotationType: AnnotationType): String {
+            // simply uppercase and prepend "NO_"
+            return "NO_${annotationType.value.uppercase()}"
+        }
+
+        /**
+         * The head of [annotation]. E.g. "PD" for "PD(type=art)" or "VG" for "VG|neven".
+         * But does not support groups like "ADP()+VRB()"
+         */
+        fun annotationToHead(annotation: String?): String? {
+            if (annotation == null) {
+                return null
             }
+
+            val headSeparators = listOf('(', '|')
+            for (separator in headSeparators) {
+                if (annotation.contains(separator)) {
+                    val head = annotation.split(separator)[0]
+                    return head.ifEmpty { annotation }
+                }
+            }
+            // for NER
+            if (annotation.contains('-')) {
+                return annotation.split('-')[1]
+            }
+
+            // pos is 0 or more letters only
+            return annotation
         }
 
         /** The features of [pos]. E.g. "num=sg" for "NOU(num=sg)". Does not support multi-pos. */
