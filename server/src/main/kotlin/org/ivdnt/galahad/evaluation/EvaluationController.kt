@@ -7,20 +7,19 @@ import org.ivdnt.galahad.app.*
 import org.ivdnt.galahad.data.CorporaController
 import org.ivdnt.galahad.data.corpus.CorpusMetadata
 import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
-import org.ivdnt.galahad.evaluation.comparison.ConfusionLayerFilter
-import org.ivdnt.galahad.evaluation.comparison.MetricsLayerFilter
-import org.ivdnt.galahad.evaluation.comparison.PosLemmaTermFilter
+import org.ivdnt.galahad.data.layer.AnnotationType
+import org.ivdnt.galahad.evaluation.comparison.*
+import org.ivdnt.galahad.evaluation.confusion.CONFUSION_TYPES
 import org.ivdnt.galahad.evaluation.confusion.Confusion
 import org.ivdnt.galahad.evaluation.confusion.CorpusConfusion
 import org.ivdnt.galahad.evaluation.distribution.CorpusDistribution
 import org.ivdnt.galahad.evaluation.metrics.CorpusMetrics
 import org.ivdnt.galahad.evaluation.metrics.METRIC_TYPES
-import org.ivdnt.galahad.evaluation.metrics.MetricsSettings
-import org.ivdnt.galahad.evaluation.metrics.PosByPosMetricsSettings
 import org.ivdnt.galahad.port.csv.CSVFile
 import org.ivdnt.galahad.taggers.TaggerStore
 import org.ivdnt.galahad.util.createZipFile
 import org.ivdnt.galahad.util.setContentDisposition
+import org.ivdnt.galahad.util.toValidFileName
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 import java.io.File
@@ -49,12 +48,18 @@ class EvaluationController(
     fun getDistribution(
         @PathVariable corpus: UUID,
         @PathVariable job: String,
-    ): CorpusDistribution {
+    ): Map<AnnotationType,CorpusDistribution> {
         logger.info("Get distribution for hypothesis layer $job in $corpus")
-        return CorpusDistribution(
-            corpora.getReadAccessOrThrow(corpus, request),
-            job
-        ).trim(DISTRIBUTION_MAX_SIZE) as CorpusDistribution
+        val jobObj = annotationTypesforTagger(job)
+        val annotationTypes = CONFUSION_TYPES.filter { jobObj.contains(it) }
+        val distributions = annotationTypes.associateWith {
+            CorpusDistribution(
+                corpora.getReadAccessOrThrow(corpus, request),
+                job,
+                it
+            ).trim(DISTRIBUTION_MAX_SIZE) as CorpusDistribution
+        }
+        return distributions
     }
 
     @GetMapping(CONFUSION_URL)

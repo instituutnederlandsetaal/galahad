@@ -1,13 +1,12 @@
 <template>
     <div>
-        <div class="left">
-        </div>
+
         <GTable class="right" :title="'Distribution of ' + (jobSelection.hypothesisJobId || 'the hypothesis layer')"
             helpSubject="evaluation" :columns :items="itemsToDisplay" :loading="distributionStore.loading"
-            sortedByColumn="count">
+            displayOnEmpty sortedByColumn="count">
             <template #table-empty-instruction>
                 <p v-if="distribution.generated">No results for current filter settings.</p>
-                <p v-else>Select a hypothesis layer to generate a distribution.</p>
+                <p v-else>Select a hypothesis layer and an annotation to generate a distribution.</p>
             </template>
             <template #help>
                 <p>The distribution shows what lemma, part-of-speech pairs have been assigned to which types. When there
@@ -62,36 +61,39 @@
                 </div>
             </template>
 
-            <template #prepend v-if="distribution.generated">
-                <div class="table-controls">
-                    <!-- search lemma-->
-                    <div class="table-control" id="searchLemma">
-                        Search lemma:
-                        <GInput type="text" v-model="lemmaFilter" placeholder="Lemma" clearBtn />
-                    </div>
-                    <!-- search literals -->
-                    <div class="table-control" id="searchWordForms">
-                        Search types:
-                        <GInput type="text" v-model="literalFilter" placeholder="Type" clearBtn />
-                    </div>
-                    <div class="table-control" id="searchWordForms">
-                        Single/multiple PoS:
-                        <GInput type="select" :options="singMultiPosOptions" v-model="selectedSingMultiPos"
-                            placeholder="Type" clearBtn />
-                    </div>
-                    <!-- filter PoS -->
-                </div>
-                <div id="filterPos">
-                    Include PoS: <br>
-                    <div class="posGrid">
-                        <span v-for="pos in filteredPosses" :key="pos">
-                            <GInput style="display: inline-block" type="checkbox" v-model="includePos[pos]">
-                                <span v-if="pos">{{ pos }}</span>
-                                <span v-else><i>None</i></span>
-                            </GInput>
-                        </span>
+            <template #prepend>
+                <div style="display: flex; justify-content: center">
+                    <div>
+                        Annotation:
+                        <GInput type="select" :options="distributionStore.distributionOptions"
+                            v-model="selectedDistribution" />
                     </div>
                 </div>
+                <template v-if="distribution.generated">
+                    <div class="table-controls">
+                        <!-- search lemma-->
+                        <div class="table-control" id="searchLemma">
+                            Search lemma:
+                            <GInput type="text" v-model="lemmaFilter" placeholder="Lemma" clearBtn />
+                        </div>
+                        <!-- search literals -->
+                        <div class="table-control" id="searchWordForms">
+                            Search types:
+                            <GInput type="text" v-model="literalFilter" placeholder="Type" clearBtn />
+                        </div>
+                    </div>
+                    <div class="table-controls">
+                        <div class="table-control">
+                            Single/multiple PoS:
+                            <GInput type="select" :options="singMultiPosOptions" v-model="selectedSingMultiPos" />
+                        </div>
+                        <div class="table-control">
+                            Include PoS: <br>
+                            <MultiSelect v-model="selectedPosses" :options="filteredPosses" placeholder="Select PoS"
+                                :maxSelectedLabels="5" />
+                        </div>
+                    </div>
+                </template>
             </template>
 
         </GTable>
@@ -112,14 +114,17 @@ import { storeToRefs } from 'pinia'
 import { Distribution } from '@/types/evaluation'
 // Components
 import { GInput, GTable, EvaluationInfoBox, InspectButton, RightFloatCell, VariantsModal } from '@/components'
+import MultiSelect from 'primevue/multiselect';
+
 
 // Stores
 const distributionStore = stores.useDistribution() as DistributionStore
 // Doesn't need to be ref'ed, but it's easier to read.
-const { distribution } = storeToRefs(distributionStore)
+const { distribution, selectedDistribution } = storeToRefs(distributionStore)
 const jobSelection = stores.useJobSelection()
 
 // Fields
+const selectedPosses = ref([])
 // Table controls.
 const includePos = ref({} as { [pos: string]: boolean })
 const lemmaFilter = ref('')
@@ -134,7 +139,7 @@ const itemsToDisplay = computed((): Distribution[] => {
     return distribution.value?.distribution
         // Case insensitive string comparison.
         .filter(x => x.lemma.toLowerCase().includes(lemmaFilter.value.toLowerCase()))
-        .filter(x => includePos.value[x.pos] !== false)
+        .filter(x => selectedPosses.value.includes(x.pos))
         // Filter by single/multiple PoS
         .filter(x => {
             if (selectedSingMultiPos.value == "single") return !x.pos.includes("+")
@@ -176,9 +181,21 @@ const filteredPosses = computed(() => {
 watch(() => distributionStore.posses, () => {
     distributionStore.posses.forEach(pos => includePos.value[pos] = true)
 }, { immediate: true })
+
+watch(() => filteredPosses.value, () => {
+    selectedPosses.value = filteredPosses.value
+}, { immediate: true })
 </script>
 
 <style scoped lang="scss">
+.table-controls {
+    padding-top: 10px;
+}
+
+.table-control {
+    min-height: 0px !important;
+}
+
 #searchWordForms,
 #searchLemma {
     flex: 1;

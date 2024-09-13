@@ -16,7 +16,10 @@ const defaultDistribution = () => ({ distribution: {} } as DistributionWrapper)
  */
 const useDistribution = defineStore('distribution', () => {
     // Fields
-    const distribution = ref(defaultDistribution())
+    const distributions = ref({} as Record<string, DistributionWrapper>)
+    const distribution = computed(() => distributions.value[selectedDistribution.value] ?? defaultDistribution())
+    const selectedDistribution = ref(null)
+    const distributionOptions = computed(() => Object.keys(distributions.value).map(x => ({ value: x, text: x })))
     const loading = ref(false)
     const posses = computed(() => {
         // A bit hacky using Object.entries, but .map throws on undefined.
@@ -44,18 +47,19 @@ const useDistribution = defineStore('distribution', () => {
             reset,
             "fetch distribution",
             loading,
-            distribution,
+            distributions,
             stores,
             corpus,
             hypothesis,
             ""
         )
+        selectedDistribution.value = null
     }
 
     // Exports
     return {
         // Fields
-        loading, distribution, posses,
+        loading, distribution, posses, selectedDistribution, distributionOptions,
         // Methods
         reloadForUUIDHypothesis, reset,
     }

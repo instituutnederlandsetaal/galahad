@@ -1,13 +1,14 @@
 package org.ivdnt.galahad.evaluation.distribution
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import org.ivdnt.galahad.data.layer.AnnotationType
 import org.ivdnt.galahad.data.layer.Term
 
 /**
  * Generic class for frequency distributions of terms in a corpus or document.
  * The idea is to sum up the distribution as we go through the terms one by one using [add].
  */
-open class Distribution {
+open class Distribution(val annotation: AnnotationType) {
 
     /**
      * (lem, pos) -> (count, literal[])
@@ -40,7 +41,7 @@ open class Distribution {
         coveredAlphabeticChars += literal.count { char -> char.isLetter() }
         add(
             lemma = term.lemma ?: Term.NO_LEMMA,
-            pos = term.posHeadGroup ?: Term.NO_POS,
+            pos = term.annotationToGroupHeadOrDefault(annotation),
             count = 1,
             literals = LiteralsEntry(mapOf(term.literals to 1))
         )
