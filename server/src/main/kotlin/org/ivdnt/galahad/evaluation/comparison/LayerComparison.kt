@@ -3,6 +3,7 @@ package org.ivdnt.galahad.evaluation.comparison
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.ivdnt.galahad.data.layer.Layer
 import org.ivdnt.galahad.data.layer.Term
+import org.ivdnt.galahad.data.layer.WordForm
 
 fun ListIterator<Term>.nextOrNull(): Term? {
     val iter = iterator()
@@ -13,8 +14,10 @@ fun ListIterator<Term>.nextOrNull(): Term? {
 val PUNCTUATION = listOf(",", ".", "?", "!", ":", ";", ")", "(", "'", "\"")
 
 /**
- * Match the [Layer.terms] of two layers based on their position (offset and length), not on their actual value (literal/pos/lemma).
- * When pos filters are provide, only match [TermComparison] of that pos.
+ * Match the [Layer.terms] of two layers based on their [WordForm] position (offset and length)
+ * When filters are provided, only match [TermComparison] that match the filter (on annotation value).
+ * In this way, matches only contain samples that you want to download.
+ * (Still, aggregating these matches is up to the (corpus/documents) evaluation classes)
  */
 class LayerComparison(
     private val hypothesisLayer: Layer,

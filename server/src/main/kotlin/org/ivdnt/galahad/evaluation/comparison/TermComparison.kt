@@ -53,47 +53,12 @@ data class TermComparison(
             return false
         }
 
-    @get:JsonIgnore
-    val equalPosLemma: Boolean
-        get() {
-            return (equalLemma) && (equalPOS)
-        }
-
-    /** Whether the lemma is equal. When the reference lemma is empty or null, any hypothesis lemma is fine. */
-    @get:JsonIgnore
-    val equalLemma: Boolean
-        get() {
-            if (refTerm.lemma == null) return true
-            if (refTerm.lemma!!.isEmpty()) return true
-            if (hypoTerm.lemma == null) return false
-            return hypoTerm.lemma.equals(refTerm.lemma, true)
-        }
-
-    /** Whether the pos is equal. When the reference pos is empty or null, any hypothesis pos is fine. */
-    @get:JsonIgnore
-    val equalPOS: Boolean
-        get() {
-            if (refTerm.pos == null) return true
-            if (refTerm.pos!!.isEmpty()) return true
-            if (hypoTerm.pos == null) return false
-            return hypoTerm.pos.equals(refTerm.pos, true)
-        }
-
     fun equalAnnotation(annotation: AnnotationType): Boolean {
         if (refTerm.annotations[annotation] == null) return true
         if (refTerm.annotations[annotation]!!.isEmpty()) return true
         if (hypoTerm.annotations[annotation] == null) return false
         return hypoTerm.annotations[annotation].equals(refTerm.annotations[annotation], true)
     }
-
-    @get:JsonIgnore
-    val equalGroupPosHead: Boolean
-        get() {
-            if (refTerm.posHeadGroup == null) return true
-            if (refTerm.posHeadGroup!!.isEmpty()) return true
-            if (hypoTerm.posHeadGroup == null) return false
-            return hypoTerm.posHeadGroup.equals(refTerm.posHeadGroup, true)
-        }
 
     companion object {
         const val MISSING_MATCH = "Missing match"
