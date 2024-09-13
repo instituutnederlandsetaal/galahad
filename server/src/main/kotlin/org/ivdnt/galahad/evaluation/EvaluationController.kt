@@ -136,7 +136,7 @@ class EvaluationController(
         return cm
     }
 
-    @GetMapping(METRICS_CSV_URL)
+    @GetMapping(METRICS_SAMPLES_URL)
     @CrossOrigin
     fun getMetricsSamples(
         @PathVariable corpus: UUID,
@@ -148,7 +148,11 @@ class EvaluationController(
     ): ByteArray {
         val setting = METRIC_TYPES.first { it.id == setting }
 
-        val layerFilter: MetricsLayerFilter? = getLayerFilter(group, setting)
+        val layerFilter = if (group == null) null else {
+            val hypoFilter = BasicTermFilter(setting.groupAnnotation, group)
+            val refFilter = BasicTermFilter(setting.groupAnnotation, group)
+            MetricsLayerFilter(hypoFilter, refFilter)
+        }
 
         val cm = CorpusMetrics(
             corpus = corpora.getReadAccessOrThrow(corpus, request),
@@ -169,25 +173,6 @@ class EvaluationController(
             val csv = mt.samplesToCsv(classType)
             return samplesToZip(corpus, job, reference, csv, fileName)
         }
-    }
-
-    private fun getLayerFilter(group: String?, setting: MetricsSettings): MetricsLayerFilter? {
-        val layerFilter: MetricsLayerFilter?
-        if (group != null) {
-            val hypoFilter: PosLemmaTermFilter
-            val refFilter: PosLemmaTermFilter
-            if (setting is PosByPosMetricsSettings) {
-                hypoFilter = PosLemmaTermFilter(group, null)
-                refFilter = PosLemmaTermFilter(group, null)
-            } else {
-                hypoFilter = PosLemmaTermFilter(null, group)
-                refFilter = PosLemmaTermFilter(null, group)
-            }
-            layerFilter = MetricsLayerFilter(hypoFilter, refFilter)
-        } else {
-            layerFilter = null
-        }
-        return layerFilter
     }
 
     @GetMapping(EVALUATION_CSV_URL)

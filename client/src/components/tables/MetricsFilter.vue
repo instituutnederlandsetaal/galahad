@@ -24,19 +24,20 @@ import { storeToRefs } from 'pinia'
 import stores from "@/stores"
 
 const { metrics } = storeToRefs(stores.useMetrics())
+const props = defineProps(["annotations"])
 
 // Fields
 const metricOptions = computed(() => {
-    if (metrics.value?.metrics == null) return []
-    const names = Object.keys(metrics.value.metrics)
+    if (props.annotations == null) return []
+    const names = Object.keys(props.annotations)
         .filter(key => !(key.startsWith("single") || key.startsWith("multi")))
         .map((key) => key.split("By")[0].toLowerCase())
     const uniqueNames = [...new Set(names)]
     return uniqueNames.map((name) => ({ value: name, text: name }))
 })
 const groupOptions = computed(() => {
-    if (metrics.value?.metrics == null) return []
-    const names = Object.keys(metrics.value.metrics)
+    if (props.annotations == null) return []
+    const names = Object.keys(props.annotations)
         .filter(key => !(key.startsWith("single") || key.startsWith("multi")))
         .map((key) => key.split("By")[1].toLowerCase())
     const uniqueNames = [...new Set(names)]

@@ -22,7 +22,7 @@
             Here should be an instruction how to fill the content.
         </slot>
         <table :class="`${cssClass} ${loading ? ' loading' : ''} ${selectable ? ' selectable' : ''}`">
-            <thead v-if="!(isEmpty && !displayOnEmpty)">
+            <thead v-if="!(isEmpty)">
                 <tr>
                     <th v-for="field in visibleFields" :key="field.key" style="text-align: center;">
                         <div style="white-space: pre-line">
