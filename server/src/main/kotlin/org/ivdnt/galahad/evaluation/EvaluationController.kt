@@ -185,9 +185,6 @@ class EvaluationController(
         @RequestParam hypothesisPos: String?,
         @RequestParam referencePos: String?,
     ): ByteArray {
-        if (reference != null && hypothesisPos != null && referencePos != null)
-            return getConfusionSamples(corpus, job, reference, hypothesisPos, referencePos)
-
         return executeAndLogTime("GetEvaluationCSVs") {
             val dir: File = createTempDirectory("evaluation").toFile()
             createDistributionCsv(dir, corpus, job)
@@ -205,9 +202,20 @@ class EvaluationController(
         }
     }
 
+    private fun createDistributionCsv(dir: File, corpus: UUID, job: String) {
+        val distributions = getDistribution(corpus, job)
+        distributions.forEach { (annotation, distribution) ->
+            val file = CSVFile(dir.resolve("distribution-${annotation.value}.csv"))
+            file.appendText(distribution.toCSV())
+        }
+    }
+
     private fun createConfusionCsv(dir: File, corpus: UUID, job: String, reference: String?) {
-        val file = CSVFile(dir.resolve("confusion.csv"))
-        file.appendText(getConfusion(corpus, job, reference).countsToCSV())
+        val confusions = getConfusion(corpus, job, reference)
+        confusions.forEach { (annotation, confusion) ->
+            val file = CSVFile(dir.resolve("confusion-${annotation.value}.csv"))
+            file.appendText(confusion.countsToCSV())
+        }
     }
 
     private fun createMetricsCsv(dir: File, corpus: UUID, job: String, reference: String?) {
@@ -219,11 +227,6 @@ class EvaluationController(
             val file = CSVFile(dir.resolve("metrics-${mt.setting.id}.csv"))
             file.appendText(mt.toGroupedCsv())
         }
-    }
-
-    private fun createDistributionCsv(dir: File, corpus: UUID, job: String) {
-        val file = CSVFile(dir.resolve("distribution.csv"))
-        file.appendText(getDistribution(corpus, job).toCSV())
     }
 
     private fun writeMetadataToDir(
