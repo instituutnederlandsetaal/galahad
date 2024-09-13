@@ -81,7 +81,7 @@ const modalData = ref({})
  */
 function openModal(data) {
     modalData.value = data
-    samples.value = { title: `${data.field.label} ${data.item.name} samples`, samples: data.value.samples }
+    samples.value = { title: `${data.field.label} ${data.item.name} samples`, samples: data.value.samples, annotationType: data.item.column.toLowerCase() }
     showModal.value = true
 }
 </script>
