@@ -3,7 +3,9 @@ package org.ivdnt.galahad.data.layer
 import com.fasterxml.jackson.annotation.JsonValue
 
 enum class AnnotationType(@JsonValue val value: String) {
-    TOKEN("token"), LEMMA("lemma"), POS("pos"), UPOS("upos"), HEAD("head"), DEPREL("deprel"), MISC("misc"), ID("id");
+    TOKEN("token"), LEMMA("lemma"), POS("pos"),
+    UPOS("upos"), HEAD("head"), DEPREL("deprel"),
+    MISC("misc"), ID("id"), NER("named-entity");
 
     companion object {
         fun fromString(s: String): AnnotationType = values().firstOrNull { it.value == s.lowercase() } ?: throw Exception(

@@ -32,6 +32,7 @@ open class TSVFile(
         AnnotationType.TOKEN to listOf("word", "token", "literal", "term", "form"),
         AnnotationType.LEMMA to listOf("lemma"),
         AnnotationType.POS to listOf("pos", "xpos"),
+        AnnotationType.NER to listOf("entity"),
     )
 
     override fun plainTextReader(): Reader {
@@ -137,14 +138,13 @@ open class TSVFile(
             mutAnnot[column.key] = annotation
         }
 
-
         // Skip newlines by checking for non-empty literals.
         if (mutAnnot[AnnotationType.TOKEN] != null && values.size >= 2) {
-            val annotation: Annotations = mutAnnot
+            val annotations: Annotations = mutAnnot
             // Commit values if non-empty
-            entries.add(annotation)
+            entries.add(annotations)
             // Write to plaintext
-            stream.write("${annotation.token} ".toByteArray()) // Note space between words.
+            stream.write("${annotations.token} ".toByteArray()) // Note space between words.
         } else {
             stream.write("\n".toByteArray())
         }
