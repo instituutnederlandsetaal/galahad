@@ -72,7 +72,7 @@ setInterval(() => { user.fetchUser() }, 5000)
 
 $galahad-theme: #62b6ff;
 
-:root {
+:root:root {
     // INT theme colors
     //blue
     --int-blue: #359ff0;
@@ -110,6 +110,28 @@ $galahad-theme: #62b6ff;
     --int-theme-hover: #{darken($galahad-theme, 7%)};
     --int-theme-active: #{darken($galahad-theme, 20%)};
     --int-theme-outline: #{darken($galahad-theme, 15%)};
+    // --p-form-field-background: #E8503D;
+    --p-multiselect-background: rgb(233, 233, 237);
+    --p-multiselect-border-radius: 0;
+    --p-primary-color: #{$galahad-theme};
+    --p-checkbox-icon-checked-color: black;
+    --p-checkbox-border-radius: 0;
+}
+
+#app .p-multiselect {
+    border: none;
+
+    &:hover {
+        background-color: var(--int-very-light-grey-hover);
+    }
+}
+
+.p-multiselect-header {
+    border-bottom: 1px solid var(--int-light-grey);
+}
+
+.p-multiselect-header::after {
+    content: "select all";
 }
 
 
@@ -165,12 +187,16 @@ body {
     overflow-y: hidden;
 }
 
-#app {
+html {
     font-family: Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-align: left;
     color: var(--black);
+}
+
+#app {
+
+    text-align: left;
     background-color: var(--int-very-light-grey);
     line-height: 1.5;
     padding: 0;
