@@ -49,16 +49,13 @@
             </template>
 
             <template #head-layerSummary>
-                source annotations<br>
-                (token / PoS / lemma)
+                tokens
             </template>
             <!-- layerSummary cell -->
             <template #cell-layerSummary="data">
                 <RightFloatCell>
                     <template #left>
-                        {{ data.value.numWordForms }} /
-                        {{ data.value.numPOS }} /
-                        {{ data.value.numLemma }}
+                        {{ data.value.numWordForms }}
                     </template>
                     <template #right>
                         <InspectButton v-if="data.value.numWordForms > 0" @click="previewDocument = data.item" />
