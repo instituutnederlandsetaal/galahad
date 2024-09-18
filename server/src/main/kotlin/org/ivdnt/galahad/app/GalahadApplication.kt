@@ -176,19 +176,24 @@ class ApplicationController : ErrorController, Logging {
         @JsonProperty val message: String,
     )
 
-    @RequestMapping("/error")
-    @Hidden
-    @CrossOrigin
-    fun handleError(request: HttpServletRequest): ErrorResponse {
-        val statusCode = HttpStatus.valueOf(request.getAttribute("jakarta.servlet.error.status_code") as Int? ?: 500)
-        val exception = request.getAttribute("jakarta.servlet.error.exception") as Exception?
-        if (exception?.cause is FileUploadException) {
-            // The error message is good as is. No need to wrap it
-            return ErrorResponse(statusCode, (exception.cause as FileUploadException).message ?: "exception inception")
-        }
-        return ErrorResponse(statusCode, "${if (exception == null) "N/A" else exception.message}")
-    }
+	@RequestMapping("/error")
+	@Hidden
+	@CrossOrigin
+	fun handleError(request: HttpServletRequest): ErrorResponse {
+		val statusCode = HttpStatus.valueOf( request.getAttribute("jakarta.servlet.error.status_code") as Int? ?: 500 )
 
+		var jakartaErrorMsg = request.getAttribute("jakarta.servlet.error.message") as String?
+		if (jakartaErrorMsg?.isBlank() == true) {
+			jakartaErrorMsg = null
+		}
+
+		val jakartaException = request.getAttribute("jakarta.servlet.error.exception") as Exception?
+		val springException = request.getAttribute("org.springframework.web.servlet.DispatcherServlet.EXCEPTION") as Exception?
+
+
+		val errorMsg = jakartaErrorMsg ?: jakartaException?.cause?.message ?: springException?.message ?: "No error message available."
+		return ErrorResponse(statusCode, errorMsg)
+	}
 }
 
 @Configuration
