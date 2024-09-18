@@ -2,11 +2,11 @@ package org.ivdnt.galahad.app
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import io.swagger.v3.oas.annotations.Hidden
-import io.swagger.v3.oas.models.servers.Server
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Contact
 import io.swagger.v3.oas.models.info.License
+import io.swagger.v3.oas.models.servers.Server
 import jakarta.servlet.http.HttpServletRequest
 import org.apache.logging.log4j.kotlin.Logging
 import org.apache.tomcat.util.http.fileupload.FileUploadException
@@ -20,7 +20,10 @@ import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.CrossOrigin
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.filter.CommonsRequestLoggingFilter
 import java.io.File
 import java.io.IOException
@@ -102,10 +105,14 @@ class Config {
 
     companion object {
         fun galahadVersion(): String {
+            return galahadVersionYaml().getProperty("GITHUB_REF_NAME")
+        }
+
+        fun galahadVersionYaml(): Properties {
             val versionStream = this::class.java.classLoader.getResource("version.yml")!!.openStream()
             val versionProperties = Properties()
             versionProperties.load(versionStream)
-			return versionProperties.getProperty("GITHUB_REF_NAME")
+            return versionProperties
         }
     }
 }
@@ -144,32 +151,23 @@ class ApplicationController : ErrorController, Logging {
 
     @GetMapping(BASE_URL)
     @CrossOrigin
+    @Hidden
     fun getApplication(): ResponseEntity<Void> {
         // Since we have nothing to show at this URL, we redirect to the API UI instead
-		logger.info( "Get root" )
-		return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(request?.contextPath + SWAGGER_API_URL)).build()
+        return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(request?.contextPath + SWAGGER_API_URL))
+            .build()
     }
 
     @GetMapping("/user")
     @CrossOrigin
     fun getUser(): User {
-		logger.info( "Get user" )
         return User.getUserFromRequestOrThrow(request)
     }
 
-	@GetMapping( BENCHMARKS_URL )
-	@CrossOrigin
-	fun getBenchmarks(): ByteArray? {
-		logger.info( "Get benchmarks" )
-		val file = File( "benchmarks.yml" )
-		return if( file.exists() ) file.readBytes() else null
-	}
-
     @GetMapping(VERSION_URL)
     @CrossOrigin
-	fun getVersion(): ByteArray {
-		logger.info( "Get version" )
-		return this::class.java.classLoader.getResourceAsStream("version.yml")!!.readBytes()
+    fun getVersion(): Properties {
+        return Config.galahadVersionYaml()
     }
 
 
