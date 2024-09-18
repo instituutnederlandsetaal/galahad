@@ -1,14 +1,19 @@
 package org.ivdnt.galahad.app
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import io.swagger.v3.oas.annotations.Hidden
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Contact
 import io.swagger.v3.oas.models.info.License
 import io.swagger.v3.oas.models.servers.Server
 import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.apache.logging.log4j.kotlin.Logging
+import org.ivdnt.galahad.exceptions.CorpusNotFoundException
+import org.ivdnt.galahad.exceptions.ErrorResponse
+import org.ivdnt.galahad.exceptions.RESTException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -142,55 +147,73 @@ fun main(args: Array<String>) {
     runApplication<GalahadApplication>(*args)
 }
 
-data class ErrorResponse(
-    @JsonProperty val error: HttpStatus,
-    @JsonProperty val message: String,
-)
-
 @RestController
 class ApplicationController : ErrorController, Logging {
-
     @Autowired
     private val request: HttpServletRequest? = null
+    @Autowired
+    private val response: HttpServletResponse? = null
 
-    @GetMapping(BASE_URL)
+    @Operation(
+        summary = "Get version information",
+        description = "Get version information and GitHub build information and commit version.",
+        responses = [
+            ApiResponse(
+                description = "Version information."
+            )
+        ]
+    )
     @CrossOrigin
+    @GetMapping(VERSION_URL)
+    fun getVersion(): Map<String, String> {
+        return Config.galahadVersionYaml().entries.associate { it.key.toString() to it.value.toString() }
+    }
+
     @Hidden
+    @CrossOrigin
+    @GetMapping(BASE_URL)
     fun getApplication(): ResponseEntity<Void> {
         // Since we have nothing to show at this URL, we redirect to the API UI instead
         return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(request?.contextPath + SWAGGER_API_URL))
             .build()
     }
 
-    @GetMapping("/user")
+    @Operation(
+        summary = "Get user information",
+        description = "Get the username and whether the user is an admin.",
+        responses = [
+            ApiResponse(
+                description = "User information."
+            )
+        ]
+    )
     @CrossOrigin
+    @GetMapping("/user")
     fun getUser(): User {
         return User.getUserFromRequestOrThrow(request)
     }
 
-    @GetMapping(VERSION_URL)
-    @CrossOrigin
-    fun getVersion(): Properties {
-        return Config.galahadVersionYaml()
-    }
 
-
-
-	@RequestMapping("/error")
+    @RequestMapping("/error")
 	@Hidden
 	@CrossOrigin
 	fun handleError(request: HttpServletRequest): ErrorResponse {
-		val statusCode = HttpStatus.valueOf( request.getAttribute("jakarta.servlet.error.status_code") as Int? ?: 500 )
-
-		var jakartaErrorMsg = request.getAttribute("jakarta.servlet.error.message") as String?
-		if (jakartaErrorMsg?.isBlank() == true) {
-			jakartaErrorMsg = null
-		}
-
+        // Get the default status code (probably 500), or override it with the actual status code if it is a RESTException.
+		var statusCode = HttpStatus.valueOf( request.getAttribute("jakarta.servlet.error.status_code") as Int? ?: 500 )
 		val jakartaException = request.getAttribute("jakarta.servlet.error.exception") as Exception?
+        jakartaException?.cause?.let {
+            if (it is RESTException) {
+                statusCode = it.statusCode
+            }
+        }
+        response?.status = statusCode.value()
+
+        // Error message
+        var jakartaErrorMsg = request.getAttribute("jakarta.servlet.error.message") as String?
+        if (jakartaErrorMsg?.isBlank() == true) {
+            jakartaErrorMsg = null
+        }
 		val springException = request.getAttribute("org.springframework.web.servlet.DispatcherServlet.EXCEPTION") as Exception?
-
-
 		val errorMsg = jakartaErrorMsg ?: jakartaException?.cause?.message ?: springException?.message ?: "No error message available."
 		return ErrorResponse(statusCode, errorMsg)
 	}

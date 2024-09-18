@@ -10,14 +10,10 @@ import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.app.*
 import org.ivdnt.galahad.data.corpus.CorpusMetadata
 import org.ivdnt.galahad.data.corpus.MutableCorpusMetadata
-import org.ivdnt.galahad.exceptions.CorpusNameInvalidException
-import org.ivdnt.galahad.exceptions.CorpusNotFoundException
-import org.ivdnt.galahad.exceptions.CorpusUnauthorizedException
-import org.springframework.http.HttpStatus
+import org.ivdnt.galahad.exceptions.*
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.server.ResponseStatusException
 import java.util.*
 import io.swagger.v3.oas.annotations.parameters.RequestBody as SwaggerRequestBody
 
@@ -55,14 +51,13 @@ class CorporaController(
             ApiResponse(
                 responseCode = "200",
                 description = "CorpusMetadata of the requested corpus.",
-                content = [Content(array = ArraySchema(schema = Schema(implementation = CorpusMetadata::class)))]
             ),
         ]
     )
     @CrossOrigin
     @GetMapping(CORPUS_URL)
     fun getCorpus(@PathVariable @Parameter(description = "Corpus UUID") corpus: UUID): CorpusMetadata {
-        return handleExceptions { corporaService.readOrThrow(corpus) }.metadata.expensiveGet()
+        return corporaService.readOrThrow(corpus).metadata.expensiveGet()
     }
 
     @Operation(
@@ -72,7 +67,6 @@ class CorporaController(
             ApiResponse(
                 responseCode = "200",
                 description = "UUID of the created corpus.",
-                content = [Content(array = ArraySchema(schema = Schema(implementation = UUID::class)))]
             ), ApiResponse(
                 responseCode = "400",
                 description = "The corpus name is invalid.",
@@ -87,7 +81,7 @@ class CorporaController(
     @CrossOrigin
     @PostMapping(value = [CORPORA_URL], consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun postCorpus(@RequestBody @SwaggerRequestBody(description = "Corpus metadata.") value: MutableCorpusMetadata): UUID {
-        return handleExceptions { corporaService.create(value) }
+        return corporaService.create(value)
     }
 
     @Operation(
@@ -97,7 +91,6 @@ class CorporaController(
             ApiResponse(
                 responseCode = "200",
                 description = "The updated metadata.",
-                content = [Content(array = ArraySchema(schema = Schema(implementation = CorpusMetadata::class)))]
             ),
             ApiResponse(
                 responseCode = "400",
@@ -122,7 +115,7 @@ class CorporaController(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @RequestBody @SwaggerRequestBody(description = "Corpus metadata.") value: MutableCorpusMetadata,
     ): CorpusMetadata? {
-        return handleExceptions { corporaService.update(corpus, value) }
+        return corporaService.update(corpus, value)
     }
 
     @Operation(
@@ -148,22 +141,8 @@ class CorporaController(
     @CrossOrigin
     @DeleteMapping(CORPUS_URL)
     fun deleteCorpus(@PathVariable @Parameter(description = "Corpus UUID") corpus: UUID): ResponseEntity<String> {
-        handleExceptions { corporaService.delete(corpus) }
+        corporaService.delete(corpus)
         return ResponseEntity.noContent().build()
-    }
-
-    companion object {
-        fun <T> handleExceptions(func: () -> T): T {
-            try {
-                return func()
-            } catch (e: CorpusNotFoundException) {
-                throw ResponseStatusException(HttpStatus.NOT_FOUND, e.message)
-            } catch (e: CorpusUnauthorizedException) {
-                throw ResponseStatusException(HttpStatus.FORBIDDEN, e.message)
-            } catch (e: CorpusNameInvalidException) {
-                throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message)
-            }
-        }
     }
 }
 
