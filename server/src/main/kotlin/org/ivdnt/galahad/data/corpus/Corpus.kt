@@ -68,7 +68,6 @@ class Corpus(
                 eraFrom = mutableCorpusMetadata.eraFrom,
                 tagset = mutableCorpusMetadata.tagset,
                 dataset = mutableCorpusMetadata.isDataset,
-                public = mutableCorpusMetadata.isDataset, // Note that we set isPublic the same as isDataset.
                 collaborators = mutableCorpusMetadata.collaborators ?: setOf(),
                 viewers = mutableCorpusMetadata.viewers ?: setOf(),
                 sourceName = mutableCorpusMetadata.sourceName,
@@ -122,9 +121,9 @@ class Corpus(
      * If a user appears multiple times in the permission hierarchy, only the upper level remains.
      */
     fun updateMetadata(newMeta: MutableCorpusMetadata, user: User): ExpensiveGettable<CorpusMetadata> {
-        if (!mutableCorpusMetadata.isPublic && newMeta.isPublic) {
+        if (!mutableCorpusMetadata.isDataset && newMeta.isDataset) {
             // Corpus is being set to public
-            if (!mutableCorpusMetadata.canMakePublic(user)) {
+            if (!mutableCorpusMetadata.canDefineDataset(user)) {
                 throw Exception("Unauthorized")
             }
         }
@@ -146,9 +145,6 @@ class Corpus(
         newMeta.tagset = newMeta.tagset?.trim()
         newMeta.collaborators = newMeta.collaborators?.map { it.trim() }?.toSet()
         newMeta.viewers = newMeta.viewers?.map { it.trim() }?.toSet()
-
-        // merge isPublic and isDataset
-        newMeta.isPublic = newMeta.isDataset
 
         // Remove owner from list of collaborators & viewers
         newMeta.collaborators = newMeta.collaborators?.filter { it != owner }?.toSet()

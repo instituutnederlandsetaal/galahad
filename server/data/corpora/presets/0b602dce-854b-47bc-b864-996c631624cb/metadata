@@ -5,7 +5,6 @@
     "eraTo": "1500",
     "tagset": "TDN-Core",
     "dataset": true,
-    "public": true,
     "sourceName": "dbnl-excerpts-15",
     "sourceURL": "https://dbnl.org"
 }

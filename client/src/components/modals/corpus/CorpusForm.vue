@@ -125,7 +125,6 @@ export default defineComponent({
     },
     data() {
         return {
-            public: false,
             dataset: false,
             name: "",
             eraFrom: null,
@@ -158,7 +157,6 @@ export default defineComponent({
                 this.viewers.join('\n') === item.viewers.join('\n') &&
                 this.sourceName === item.sourceName &&
                 this.sourceURL === item.sourceURL &&
-                this.public === item.public &&
                 this.dataset === item.dataset
             )
         },
@@ -181,7 +179,6 @@ export default defineComponent({
                 eraTo: this.eraTo,
                 tagset: this.tagset,
                 dataset: this.dataset,
-                public: this.public,
                 collaborators: this.collaborators,
                 viewers: this.viewers,
                 sourceName: this.sourceName,
@@ -203,7 +200,6 @@ export default defineComponent({
             this.tagset = ""
             this.sourceName = ""
             this.sourceURL = ""
-            this.public = false
             this.dataset = false
         },
         validateCorpusName(name: string) {
@@ -232,18 +228,9 @@ export default defineComponent({
                 this.tagset = newValue.tagset
                 this.sourceName = newValue.sourceName
                 this.sourceURL = newValue.sourceURL
-                this.public = newValue.public
                 this.dataset = newValue.dataset
             }, immediate: true,
             deep: true
-        },
-        dataset() {
-            // datasets are always public
-            if (this.dataset) this.public = true
-        },
-        public() {
-            // datasets can't be private
-            if (!this.public) this.dataset = false
         }
     }
 });

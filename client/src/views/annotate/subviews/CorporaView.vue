@@ -21,8 +21,8 @@
             </template>
         </CorpusTable>
 
-        <!-- Public corpus table -->
-        <CorpusTable :type="TableCorporaType.Public" :corpora="corporaStore.publicCorpora"
+        <!-- Benchmark corpus table -->
+        <CorpusTable :type="TableCorporaType.Dataset" :corpora="corporaStore.datasetCorpora"
             @delete="corpus => deleteCorpusData = corpus" @update="corpus => editMode(corpus)" selectable
             @create="showNewCorpusModal = true">
             <template #help>

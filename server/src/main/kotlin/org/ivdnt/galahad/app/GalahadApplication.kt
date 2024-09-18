@@ -48,7 +48,6 @@ const val INTERNAL_JOBS_RESULT_URL = "$INTERNAL_JOBS_URL/result"
 const val INTERNAL_JOBS_ERROR_URL = "$INTERNAL_JOBS_URL/error"
 
 const val CORPORA_URL = "/corpora"
-const val PUBLIC_CORPORA_URL = "/public_corpora"
 const val DATASETS_CORPORA_URL = "/datasets_corpora"
 const val CORPUS_URL = "$CORPORA_URL/{corpus}"
 

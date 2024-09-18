@@ -45,7 +45,6 @@ class CorporaController(
     val presets get() = presetsDir.listFiles()?.map { it.corpus() } ?: listOf()
     val all: List<Corpus> get() = custom + presets
     val datasets get() = all.filter { it.metadata.expensiveGet().isDataset }
-    val publics get() = all.filter { it.metadata.expensiveGet().isPublic }
 
     /** Get all corpora the user can see. */
     private fun getCorporaForUser(user: User): Set<Corpus> {
@@ -117,7 +116,6 @@ class CorporaController(
             eraFrom = value.eraFrom,
             eraTo = value.eraTo,
             tagset = value.tagset,
-            isPublic = value.isPublic || value.isDataset, // any dataset is public
             isDataset = value.isDataset,
             collaborators = value.collaborators,
             viewers = value.viewers,
@@ -182,10 +180,6 @@ class CorporaController(
     @GetMapping(DATASETS_CORPORA_URL)
     @CrossOrigin
     fun getDatasetsCorpora(): Set<CorpusMetadata> = datasets.map { it.metadata.expensiveGet() }.toSet()
-
-    @GetMapping(PUBLIC_CORPORA_URL)
-    @CrossOrigin
-    fun getPublicCorpora(): Set<CorpusMetadata> = publics.map { it.metadata.expensiveGet() }.toSet()
 
     @GetMapping(CORPUS_URL)
     @CrossOrigin

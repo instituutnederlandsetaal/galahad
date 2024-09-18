@@ -10,7 +10,6 @@ import { UUID, CorpusMetadata, MutableCorpusMetadata } from "@/types/corpora"
 // Paths
 const corporaPath = `/corpora`
 const datasetCorporaPath = `/datasets_corpora`
-const publicCorporaPath = `/public_corpora`
 const corpusPath = (uuid: UUID) => `${corporaPath}/${uuid}`
 
 // Custom types
@@ -39,13 +38,6 @@ export function getCorpus(uuid: UUID): Promise<CorpusResponse> {
  */
 export function getDatasetCorpora(): Promise<CorporaResponse> {
     return axios.get(datasetCorporaPath)
-}
-
-/**
- * Fetch all public corpora. Cheaper than getCorpora().
- */
-export function getPublicCorpora(): Promise<CorporaResponse> {
-    return axios.get(publicCorporaPath)
 }
 
 /**

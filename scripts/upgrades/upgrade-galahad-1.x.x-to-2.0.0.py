@@ -2,6 +2,7 @@
 # 
 # In 2.0.0, lemma and pos were moved from Term.lemma and Term.pos to Term.annotation["lemma"] and Term.annotation["pos"]
 # in order to allow for more annotations to be added to a Term.
+# Additionally, the public field was removed from the corpus metadata.
 # 
 # This upgrade script parses all json in the ARG1 folder and updates the json to the new format.
 
@@ -19,7 +20,24 @@ def upgrade_corpora(folder):
         corpus_folder = os.path.join(folder, corpus)
         upgrade_jobs(corpus_folder)
         upgrade_docs(corpus_folder)
+        update_corpus(corpus_folder)
         print()
+
+def update_corpus(corpus):
+    # remove the public field from the metadata.json
+    metadata_path = os.path.join(corpus, "metadata")
+    if os.path.exists(metadata_path):
+        with open(metadata_path, "r") as file:
+            metadata = json.load(file)
+        if "public" in metadata:
+            metadata.pop("public")
+            with open(metadata_path, "w") as file:
+                json.dump(metadata, file)
+            print("\tRemoved public field from metadata.json")
+        else:
+            print("\tpublic field not found in metadata.json")
+    else:
+        print("\tmetadata not found")
 
 def upgrade_jobs(corpus):
     # list all jobs in the corpus/jobs/ folder

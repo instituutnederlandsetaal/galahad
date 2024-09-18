@@ -139,14 +139,14 @@ watch(() => selectedCorpus.value, () => {
 
 // Methods
 function formatCollaborators(i: CorpusMetadata): string {
-    if (i.public) return "Public"
+    if (i.dataset) return "Dataset"
     const numPeople = i.collaborators.length + i.viewers.length
     if (numPeople == 0) return "No one"
     return numPeople == 1 ? `${numPeople} person` : `${numPeople} people`
 }
 
 function customSharedSort(i: CorpusMetadata) {
-    if (i.public) return -1
+    if (i.dataset) return -1
     return i.collaborators.length + i.viewers.length
 }
 </script>
