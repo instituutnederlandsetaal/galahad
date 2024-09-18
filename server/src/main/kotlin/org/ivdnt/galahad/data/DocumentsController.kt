@@ -11,6 +11,7 @@ import org.ivdnt.galahad.data.document.Document
 import org.ivdnt.galahad.data.document.DocumentMetadata
 import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.data.layer.Layer
+import org.ivdnt.galahad.exceptions.FileUploadException
 import org.ivdnt.galahad.util.setContentDisposition
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
@@ -21,10 +22,6 @@ import java.nio.file.Paths
 import java.util.*
 import java.util.zip.ZipFile
 
-class FileUploadException(
-    override val message: String,
-) : Exception(message)
-
 class DocumentWriteType(
     val filename: String,
     val inputStream: InputStream,
@@ -32,7 +29,7 @@ class DocumentWriteType(
 
 @RestController
 class DocumentsController(
-    val corpora: CorporaController,
+    val corpora: CorporaService,
 ) : Logging {
 
     @Autowired

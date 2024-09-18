@@ -9,7 +9,6 @@ import io.swagger.v3.oas.models.info.License
 import io.swagger.v3.oas.models.servers.Server
 import jakarta.servlet.http.HttpServletRequest
 import org.apache.logging.log4j.kotlin.Logging
-import org.apache.tomcat.util.http.fileupload.FileUploadException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -143,6 +142,11 @@ fun main(args: Array<String>) {
     runApplication<GalahadApplication>(*args)
 }
 
+data class ErrorResponse(
+    @JsonProperty val error: HttpStatus,
+    @JsonProperty val message: String,
+)
+
 @RestController
 class ApplicationController : ErrorController, Logging {
 
@@ -171,10 +175,6 @@ class ApplicationController : ErrorController, Logging {
     }
 
 
-    data class ErrorResponse(
-        @JsonProperty val statusCode: HttpStatus,
-        @JsonProperty val message: String,
-    )
 
 	@RequestMapping("/error")
 	@Hidden

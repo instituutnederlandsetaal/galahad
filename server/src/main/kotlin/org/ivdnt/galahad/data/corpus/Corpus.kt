@@ -10,6 +10,8 @@ import org.ivdnt.galahad.data.document.Document
 import org.ivdnt.galahad.data.document.DocumentFormat
 import org.ivdnt.galahad.data.document.Documents
 import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
+import org.ivdnt.galahad.exceptions.CorpusNameInvalidException
+import org.ivdnt.galahad.exceptions.CorpusUnauthorizedException
 import org.ivdnt.galahad.jobs.Jobs
 import org.ivdnt.galahad.port.CmdiMetadata
 import org.ivdnt.galahad.port.CorpusTransformMetadata
@@ -114,6 +116,12 @@ class Corpus(
         workDirectory.deleteRecursively()
     }
 
+    private fun assertCorpusNameValidOrThrow(corpusName: String) {
+        if (!Regex("^.{3,100}$").matches(corpusName.trim())) {
+            throw CorpusNameInvalidException(corpusName)
+        }
+    }
+
     /**
      * Overwrite the [CorpusMetadata] in [metadata] with [newMeta],
      * except for the owner, which should be grabbed from the existing [metadata].
@@ -121,16 +129,17 @@ class Corpus(
      * If a user appears multiple times in the permission hierarchy, only the upper level remains.
      */
     fun updateMetadata(newMeta: MutableCorpusMetadata, user: User): ExpensiveGettable<CorpusMetadata> {
+        assertCorpusNameValidOrThrow(newMeta.name)
         if (!mutableCorpusMetadata.isDataset && newMeta.isDataset) {
             // Corpus is being set to public
             if (!mutableCorpusMetadata.canDefineDataset(user)) {
-                throw Exception("Unauthorized")
+                throw CorpusUnauthorizedException("Cannot create a dataset.")
             }
         }
         if (mutableCorpusMetadata.collaborators != newMeta.collaborators || mutableCorpusMetadata.viewers != newMeta.viewers) {
             // Collaborators have changed
             if (!mutableCorpusMetadata.canAddNewUsers(user) && mutableCorpusMetadata.owner != "") {
-                throw Exception("Unauthorized")
+                throw CorpusUnauthorizedException("Cannot change collaborators or viewers.")
             }
         }
         // If mutableCorpusMetadata.owner is "", we are working with the InitValue of FileBackedValue,

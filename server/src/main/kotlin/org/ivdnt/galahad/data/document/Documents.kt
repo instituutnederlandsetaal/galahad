@@ -12,7 +12,7 @@ import java.io.File
  */
 class Documents(
     workDirectory: File,
-) : BaseFileSystemStore(workDirectory), CRUDSet<String, Document, DocumentWriteType> {
+) : BaseFileSystemStore(workDirectory), CRUDSet<String, Document, DocumentWriteType, Document> {
 
     val allNames: List<String>
         get() = workDirectory.list()?.toList() ?: throw Exception("Could not read document names")

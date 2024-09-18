@@ -5,13 +5,14 @@ import jakarta.servlet.http.HttpServletResponse
 import org.ivdnt.galahad.app.JOBS_URL
 import org.ivdnt.galahad.app.JOB_URL
 import org.ivdnt.galahad.data.CorporaController
+import org.ivdnt.galahad.data.CorporaService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
 class JobsController(
-    val corpora: CorporaController,
+    val corpora: CorporaService,
 ) {
 
     @Autowired

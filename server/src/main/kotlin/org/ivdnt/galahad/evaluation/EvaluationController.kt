@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.app.*
 import org.ivdnt.galahad.data.CorporaController
+import org.ivdnt.galahad.data.CorporaService
 import org.ivdnt.galahad.data.corpus.CorpusMetadata
 import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.data.layer.AnnotationType
@@ -32,7 +33,7 @@ const val DISTRIBUTION_MAX_SIZE = 1000
 
 @RestController
 class EvaluationController(
-    val corpora: CorporaController,
+    val corpora: CorporaService,
 ) : Logging {
 
     @Autowired

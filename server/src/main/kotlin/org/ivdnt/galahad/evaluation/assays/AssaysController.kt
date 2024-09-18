@@ -7,6 +7,7 @@ import org.ivdnt.galahad.FileBackedCache
 import org.ivdnt.galahad.app.ASSAYS_URL
 import org.ivdnt.galahad.app.ASSAY_URL
 import org.ivdnt.galahad.data.CorporaController
+import org.ivdnt.galahad.data.CorporaService
 import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.evaluation.metrics.FlatMetricType
 import org.ivdnt.galahad.evaluation.metrics.FlatMetricTypeAssay
@@ -33,7 +34,7 @@ typealias MutableAssaysMatrix = MutableMap<String, MutableMap<String, MutableMap
 
 @RestController
 class AssaysController(
-    val corpora: CorporaController,
+    val corpora: CorporaService,
 ) : Logging {
 
     @Autowired

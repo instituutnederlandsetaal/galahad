@@ -1,203 +1,169 @@
 package org.ivdnt.galahad.data
 
-import jakarta.servlet.http.HttpServletRequest
-import jakarta.servlet.http.HttpServletResponse
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.media.ArraySchema
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
 import org.apache.logging.log4j.kotlin.Logging
-import org.ivdnt.galahad.BaseFileSystemStore
 import org.ivdnt.galahad.app.*
-import org.ivdnt.galahad.data.corpus.Corpus
 import org.ivdnt.galahad.data.corpus.CorpusMetadata
 import org.ivdnt.galahad.data.corpus.MutableCorpusMetadata
-import org.springframework.beans.factory.annotation.Autowired
+import org.ivdnt.galahad.exceptions.CorpusNameInvalidException
+import org.ivdnt.galahad.exceptions.CorpusNotFoundException
+import org.ivdnt.galahad.exceptions.CorpusUnauthorizedException
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.io.File
+import org.springframework.web.server.ResponseStatusException
 import java.util.*
+import io.swagger.v3.oas.annotations.parameters.RequestBody as SwaggerRequestBody
 
 @RestController
 class CorporaController(
-    config: Config,
-) : BaseFileSystemStore(config.getWorkingDirectory().resolve("corpora")), CRUDSet<UUID, Corpus, MutableCorpusMetadata>,
-    Logging {
+    private val corporaService: CorporaService,
+) : Logging {
 
-    @Autowired
-    private val request: HttpServletRequest? = null
-    @Autowired
-    private val response: HttpServletResponse? = null
-    private fun File.corpus(): Corpus {
-        return Corpus(this)
+    @Operation(
+        summary = "List all corpora",
+        description = "List all corpora the current user has access to, either as owner or shared by others."
+    )
+    @CrossOrigin
+    @GetMapping(CORPORA_URL)
+    fun getUserCorpora(): Set<CorpusMetadata> = corporaService.readAll().map { it.metadata.expensiveGet() }.toSet()
+
+    @Operation(
+        summary = "List benchmark datasets",
+        description = "List all benchmark datasets, available to anyone for viewing and evaluation."
+    )
+    @CrossOrigin
+    @GetMapping(DATASETS_CORPORA_URL)
+    fun getDatasetsCorpora(): Set<CorpusMetadata> = corporaService.datasets.map { it.metadata.expensiveGet() }.toSet()
+
+
+    @Operation(
+        summary = "Get single corpus",
+        description = "Get the metadata of a corpus.",
+        responses = [
+            ApiResponse(
+                responseCode = "404",
+                description = "The corpus was not found.",
+                content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+            ),
+            ApiResponse(
+                responseCode = "200",
+                description = "CorpusMetadata of the requested corpus.",
+                content = [Content(array = ArraySchema(schema = Schema(implementation = CorpusMetadata::class)))]
+            ),
+        ]
+    )
+    @CrossOrigin
+    @GetMapping(CORPUS_URL)
+    fun getCorpus(@PathVariable @Parameter(description = "Corpus UUID") corpus: UUID): CorpusMetadata {
+        return handleExceptions { corporaService.readOrThrow(corpus) }.metadata.expensiveGet()
     }
 
-    private fun assertCorpusNameValidOrThrow(corpus: String) {
-        if (Regex("^.{3,100}$").matches(corpus.trim())) {
-            // name is valid
-        } else {
-            // name is invalid
-            throw Exception("Corpus name is invalid. No newlines and length 3-100.")
-        }
+    @Operation(
+        summary = "Create a new corpus",
+        description = "Create a new corpus with the provided CorpusMetadata. The user doing the request becomes owner.",
+        responses = [
+            ApiResponse(
+                responseCode = "200",
+                description = "UUID of the created corpus.",
+                content = [Content(array = ArraySchema(schema = Schema(implementation = UUID::class)))]
+            ), ApiResponse(
+                responseCode = "400",
+                description = "The corpus name is invalid.",
+                content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+            ), ApiResponse(
+                responseCode = "403",
+                description = "The user is not authorized to create a corpus as a dataset.",
+                content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+            )
+        ]
+    )
+    @CrossOrigin
+    @PostMapping(value = [CORPORA_URL], consumes = [MediaType.APPLICATION_JSON_VALUE])
+    fun postCorpus(@RequestBody @SwaggerRequestBody(description = "Corpus metadata.") value: MutableCorpusMetadata): UUID {
+        return handleExceptions { corporaService.create(value) }
     }
 
-    private val customDir = workDirectory.resolve("custom")
-    private val presetsDir = workDirectory.resolve("presets")
-    val assaysFile get() = workDirectory.resolve("assays.cache")
-
-    val custom get() = customDir.listFiles()?.map { it.corpus() } ?: listOf()
-    val presets get() = presetsDir.listFiles()?.map { it.corpus() } ?: listOf()
-    val all: List<Corpus> get() = custom + presets
-    val datasets get() = all.filter { it.metadata.expensiveGet().isDataset }
-
-    /** Get all corpora the user can see. */
-    private fun getCorporaForUser(user: User): Set<Corpus> {
-        // We don't want to pollute the admin's corpora list.
-        return all.filter { corpus ->
-            corpus.metadata.expensiveGet().hasReadAccess(user, excludeAdmin = true)
-        }.toSet()
+    @Operation(
+        summary = "Update corpus metadata",
+        description = "Update the metadata of an existing corpus.",
+        responses = [
+            ApiResponse(
+                responseCode = "200",
+                description = "The updated metadata.",
+                content = [Content(array = ArraySchema(schema = Schema(implementation = CorpusMetadata::class)))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "The corpus name is invalid.",
+                content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "The user is not authorized to perform this action. E.g. changing the dataset status as a non-admin or changing metadata as a viewer.",
+                content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "The corpus was not found.",
+                content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+            )
+        ]
+    )
+    @CrossOrigin
+    @PatchMapping(CORPUS_URL)
+    fun patchCorpus(
+        @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
+        @RequestBody @SwaggerRequestBody(description = "Corpus metadata.") value: MutableCorpusMetadata,
+    ): CorpusMetadata? {
+        return handleExceptions { corporaService.update(corpus, value) }
     }
 
-    override fun readAll(): Set<Corpus> {
-        val user = User.getUserFromRequestOrThrow(request)
-        return getCorporaForUser(user)
+    @Operation(
+        summary = "Delete single corpus",
+        description = "Delete a corpus, its documents and jobs.",
+        responses = [
+            ApiResponse(
+                responseCode = "404",
+                description = "The corpus was not found.",
+                content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+            ),
+            ApiResponse(
+                responseCode = "204",
+                description = "Corpus deleted."
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "The user is not authorized to delete this corpus. Only the owner is.",
+                content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+            )
+        ]
+    )
+    @CrossOrigin
+    @DeleteMapping(CORPUS_URL)
+    fun deleteCorpus(@PathVariable @Parameter(description = "Corpus UUID") corpus: UUID): ResponseEntity<String> {
+        handleExceptions { corporaService.delete(corpus) }
+        return ResponseEntity.noContent().build()
     }
 
-    /**
-     * Gives unauthorized access to the corpus given a UUID,
-     * therefore it should not be directly used for external access.
-     */
-    fun getUncheckedCorpusAccess(corpus: UUID): Corpus {
-        return if (presetsDir.resolve(corpus.toString()).exists()) {
-            presetsDir.resolve(corpus.toString()).corpus()
-        } else {
-            customDir.resolve(corpus.toString()).corpus()
-        }
-    }
-
-    //We should have the return type of this method be an object or interface of only read-methods
-    //Since this is currently not the case, the 'Read' or 'Write' is just a marker of intended actions
-    //but nothing is enforced, could be worth the refactor
-    fun getReadAccessOrNull(corpus: UUID, request: HttpServletRequest?): Corpus? {
-        if (request == null) return null
-        val cs = getUncheckedCorpusAccess(corpus)
-        // security like a pro
-        val metadata: MutableCorpusMetadata = cs.mutableCorpusMetadata
-        val user: User = User.getUserFromRequestOrThrow(request)
-        if (metadata.hasReadAccess(user)) return cs
-        return null
-    }
-
-    fun getWriteAccessOrNull(corpus: UUID, request: HttpServletRequest?): Corpus? {
-        if (request == null) return null
-        val cs = getReadAccessOrNull(corpus, request)
-        // security like a pro
-        val metadata: MutableCorpusMetadata? = cs?.mutableCorpusMetadata
-        val user: User = User.getUserFromRequestOrThrow(request)
-        if (metadata?.hasWriteAccess(user) == true) return cs
-        return null
-    }
-
-    fun getReadAccessOrThrow(corpus: UUID, request: HttpServletRequest?): Corpus {
-        return getReadAccessOrNull(corpus, request) ?: throw Exception("Corpus not found")
-    }
-
-    fun getWriteAccessOrThrow(corpus: UUID, request: HttpServletRequest?): Corpus {
-        return getWriteAccessOrNull(corpus, request) ?: throw Exception("Corpus not found")
-    }
-
-    override fun readOrNull(key: UUID) = getReadAccessOrNull(key, request)
-
-    override fun create(value: MutableCorpusMetadata): UUID {
-        assertCorpusNameValidOrThrow(value.name)
-        val uuid = UUID.randomUUID()
-        val corpusDir = customDir.resolve(uuid.toString())
-        val corpusStore = corpusDir.corpus()
-        val user = User.getUserFromRequestOrThrow(request)
-        val newVal = MutableCorpusMetadata(
-            owner = user.id, // The creator of the request is the owner.
-            name = value.name,
-            eraFrom = value.eraFrom,
-            eraTo = value.eraTo,
-            tagset = value.tagset,
-            isDataset = value.isDataset,
-            collaborators = value.collaborators,
-            viewers = value.viewers,
-            sourceName = value.sourceName,
-            sourceURL = value.sourceURL,
-        )
-        corpusStore.updateMetadata(newVal, user)
-
-        return corpusStore.metadata.expensiveGet().uuid
-    }
-
-    override fun update(key: UUID, value: MutableCorpusMetadata): Corpus? {
-        assertCorpusNameValidOrThrow(value.name)
-        val user = User.getUserFromRequestOrThrow(request)
-
-        // Viewers are allowed to remove themselves, but no more than that.
-        val cp = getUncheckedCorpusAccess(key)
-        if (!value.isViewer(user) && cp.metadata.expensiveGet().isViewer(user)) {
-            cp.removeAsViewer(user)
-            return null
-        }
-
-        // Same for collaborators
-        if (!value.isCollaborator(user) && cp.metadata.expensiveGet().isCollaborator(user)) {
-            cp.removeAsCollaborator(user)
-            // Although collaborators could change other metadata,
-            // if you have chosen to remove yourself as a collaborator,
-            // you probably don't want to change anything else.
-            return null
-        }
-
-        val corpus = getWriteAccessOrThrow(key, request)
-        if (corpus.metadata.expensiveGet().isDataset) {
-            if (!value.isDataset) {
-                // This corpus is no longer a dataset.
-                // Invalidate assays.cache
-                assaysFile.delete()
+    companion object {
+        fun <T> handleExceptions(func: () -> T): T {
+            try {
+                return func()
+            } catch (e: CorpusNotFoundException) {
+                throw ResponseStatusException(HttpStatus.NOT_FOUND, e.message)
+            } catch (e: CorpusUnauthorizedException) {
+                throw ResponseStatusException(HttpStatus.FORBIDDEN, e.message)
+            } catch (e: CorpusNameInvalidException) {
+                throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message)
             }
         }
-        corpus.updateMetadata(value, user)
-        return corpus
     }
-
-    override fun delete(key: UUID): Corpus? {
-        val corpus = getReadAccessOrThrow(key, request)
-        // security like a pro
-        val metadata: CorpusMetadata = corpus.metadata.expensiveGet()
-        val user = User.getUserFromRequestOrThrow(request)
-        if (!metadata.canDelete(user)) {
-            throw Exception("Unauthorized")
-        }
-        getWriteAccessOrThrow(key, request).delete()
-        // Invalidate assays.cache
-        assaysFile.delete()
-        return null
-    }
-
-    @GetMapping(CORPORA_URL)
-    @CrossOrigin
-    fun getCorpora(): Set<CorpusMetadata> = readAll().map { it.metadata.expensiveGet() }.toSet()
-
-    @GetMapping(DATASETS_CORPORA_URL)
-    @CrossOrigin
-    fun getDatasetsCorpora(): Set<CorpusMetadata> = datasets.map { it.metadata.expensiveGet() }.toSet()
-
-    @GetMapping(CORPUS_URL)
-    @CrossOrigin
-    fun getCorpus(@PathVariable corpus: UUID): CorpusMetadata? = readOrNull(corpus)?.metadata?.expensiveGet()
-
-    @PostMapping(value = [CORPORA_URL], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    @CrossOrigin
-    fun postCorpus(@RequestBody value: MutableCorpusMetadata): UUID = create(value)
-
-    /**
-     * Note that this patch operation allows editing (so also removing) collaborators. Call it carefully!
-     */
-    @PatchMapping(CORPUS_URL)
-    @CrossOrigin
-    fun patchCorpus(@PathVariable corpus: UUID, @RequestBody value: MutableCorpusMetadata): CorpusMetadata? =
-        update(corpus, value)?.metadata?.expensiveGet()
-
-    @DeleteMapping(CORPUS_URL)
-    @CrossOrigin
-    fun deleteCorpus(@PathVariable corpus: UUID): CorpusMetadata? = delete(corpus)?.metadata?.expensiveGet()
 }
+

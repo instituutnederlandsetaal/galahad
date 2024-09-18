@@ -20,7 +20,7 @@ import java.util.*
 
 @RestController
 class ExportController(
-    val corpora: CorporaController,
+    val corpora: CorporaService,
 ) : Logging {
 
     @Autowired

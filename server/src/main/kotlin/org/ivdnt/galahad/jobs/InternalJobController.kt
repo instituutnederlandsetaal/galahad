@@ -6,6 +6,7 @@ import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.INTERNAL_JOBS_ERROR_URL
 import org.ivdnt.galahad.app.INTERNAL_JOBS_RESULT_URL
 import org.ivdnt.galahad.data.CorporaController
+import org.ivdnt.galahad.data.CorporaService
 import org.ivdnt.galahad.data.document.Document
 import org.ivdnt.galahad.data.document.DocumentFormat
 import org.ivdnt.galahad.data.document.FormatInducer
@@ -30,7 +31,7 @@ typealias DocumentName = String
 @RestController
 @Hidden
 class InternalJobController (
-    val corpora: CorporaController,
+    val corpora: CorporaService,
     val config: Config
 ) : Logging {
 
