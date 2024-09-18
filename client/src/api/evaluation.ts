@@ -12,23 +12,23 @@ import { BlobResponse } from "@/api/utils"
 
 // Paths
 const evaluationPath = (corpus: UUID, hypothesis: string) => `/corpora/${corpus}/jobs/${hypothesis}/evaluation`
-const confusionPath = (corpus: UUID, hypothesis: string, reference: string) => {
-    return `${evaluationPath(corpus, hypothesis)}/confusion?reference=${reference}`
+const confusionPath = (corpus: UUID, hypothesis: string) => {
+    return `${evaluationPath(corpus, hypothesis)}/confusion`
 }
-const confusionSamplesPath = (corpus: UUID, hypothesis: string, reference: string, hypoFilter: string, refFilter: string, annotationType: string) => {
-    return `${evaluationPath(corpus, hypothesis)}/confusion/download?reference=${reference}&hypoFilter=${hypoFilter}&refFilter=${refFilter}&annotationType=${annotationType}`
+const confusionSamplesPath = (corpus: UUID, hypothesis: string) => {
+    return `${evaluationPath(corpus, hypothesis)}/confusion/download`
 }
 
 const distributionPath = (corpus: UUID, hypothesis: string) => `${evaluationPath(corpus, hypothesis)}/distribution`
-const metricsPath = (corpus: UUID, hypothesis: string, reference: string) => {
-    return `${evaluationPath(corpus, hypothesis)}/metrics?reference=${reference}`
+const metricsPath = (corpus: UUID, hypothesis: string) => {
+    return `${evaluationPath(corpus, hypothesis)}/metrics`
 }
-const metricsSamplesPath = (corpus: UUID, hypothesis: string, reference: string, setting: string, classType: string, group?: string) => {
-    return `${evaluationPath(corpus, hypothesis)}/metrics/download?reference=${reference}&setting=${setting}&class=${classType}` + (group ? `&group=${group}` : '')
+const metricsSamplesPath = (corpus: UUID, hypothesis: string) => {
+    return `${evaluationPath(corpus, hypothesis)}/metrics/download`
 }
 
-const downloadPath = (corpus: UUID, hypothesis: string, reference: string) => {
-    return `${evaluationPath(corpus, hypothesis)}/download?reference=${reference}`
+const downloadPath = (corpus: UUID, hypothesis: string) => {
+    return `${evaluationPath(corpus, hypothesis)}/download`
 }
 
 // Custom Types
@@ -53,7 +53,7 @@ export function getDistribution(corpus: UUID, hypothesis: string): Promise<Distr
  * @param reference Tagger job name as reference layer.
  */
 export function getConfusion(corpus: UUID, hypothesis: string, reference: string): Promise<ConfusionResponse> {
-    return axios.get(confusionPath(corpus, hypothesis, reference))
+    return axios.get(confusionPath(corpus, hypothesis), { params: { reference }})
 }
 
 /**
@@ -63,7 +63,7 @@ export function getConfusion(corpus: UUID, hypothesis: string, reference: string
  * @param reference Tagger job name as reference layer.
  */
 export function getMetrics(corpus: UUID, hypothesis: string, reference: string): Promise<MetricsResponse> {
-    return axios.get(metricsPath(corpus, hypothesis, reference))
+    return axios.get(metricsPath(corpus, hypothesis), { params: { reference }})
 }
 
 /**
@@ -73,7 +73,7 @@ export function getMetrics(corpus: UUID, hypothesis: string, reference: string):
  * @param reference  Tagger job name as reference layer.
  */
 export function getDownloadEvaluation(corpus: UUID, hypothesis: string, reference: string): Promise<BlobResponse> {
-    return Utils.getBlob(downloadPath(corpus, hypothesis, reference))
+    return Utils.getBlob(downloadPath(corpus, hypothesis), { params: { reference }})
 }
 
 /**
@@ -84,8 +84,8 @@ export function getDownloadEvaluation(corpus: UUID, hypothesis: string, referenc
  * @param hypoAnnot PoS tag of the hypothesis layer to filter on.
  * @param refAnnot PoS tag of the reference layer to filter on.
  */
-export function getConfusionSamples(corpus: UUID, hypothesis: string, reference: string, hypoAnnot: string, refAnnot: string, annotationType: string): Promise<BlobResponse> {
-    return Utils.getBlob(confusionSamplesPath(corpus, hypothesis, reference, hypoAnnot, refAnnot, annotationType))
+export function getConfusionSamples(corpus: UUID, hypothesis: string, reference: string, hypoFilter: string, refFilter: string, annotationType: string): Promise<BlobResponse> {
+    return Utils.getBlob(confusionSamplesPath(corpus, hypothesis), { params: {reference, hypoFilter, refFilter, annotationType}})
 }
 
 /**
@@ -98,8 +98,9 @@ export function getConfusionSamples(corpus: UUID, hypothesis: string, reference:
  * @param group Group for the metrics. E.g. 'pos' or 'lemma'.
  */
 export function getMetricsSamples(corpus: UUID, hypothesis: string, reference: string, setting: string, classType: string, group?: string): Promise<BlobResponse> {
+    const params: Record<string, string> = { reference, setting, class: classType }
     if (group) {
-        group = encodeURIComponent(group)
+        params.group = group
     }
-    return Utils.getBlob(metricsSamplesPath(corpus, hypothesis, reference, setting, classType, group))
+    return Utils.getBlob(metricsSamplesPath(corpus, hypothesis), { params })
 }
