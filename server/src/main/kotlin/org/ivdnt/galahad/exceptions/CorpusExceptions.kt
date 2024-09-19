@@ -3,10 +3,6 @@ package org.ivdnt.galahad.exceptions
 import org.springframework.http.HttpStatus
 import java.util.*
 
-interface RESTException {
-    val statusCode: HttpStatus
-}
-
 class CorpusNotFoundException(
     corpusID: UUID
 ) : Exception("Corpus with ID $corpusID not found."), RESTException {

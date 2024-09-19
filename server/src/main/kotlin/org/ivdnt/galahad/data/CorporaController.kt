@@ -7,10 +7,12 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import org.apache.logging.log4j.kotlin.Logging
-import org.ivdnt.galahad.app.*
+import org.ivdnt.galahad.app.CORPORA_URL
+import org.ivdnt.galahad.app.CORPUS_URL
+import org.ivdnt.galahad.app.DATASETS_CORPORA_URL
 import org.ivdnt.galahad.data.corpus.CorpusMetadata
 import org.ivdnt.galahad.data.corpus.MutableCorpusMetadata
-import org.ivdnt.galahad.exceptions.*
+import org.ivdnt.galahad.exceptions.ErrorResponse
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -23,8 +25,8 @@ class CorporaController(
 ) : Logging {
 
     @Operation(
-        summary = "List all corpora",
-        description = "List all corpora the current user has access to, either as owner or shared by others."
+        summary = "List all corpora metadata",
+        description = "List the metadata of all corpora the current user has access to, either as owner or shared by others."
     )
     @CrossOrigin
     @GetMapping(CORPORA_URL)
@@ -32,7 +34,7 @@ class CorporaController(
 
     @Operation(
         summary = "List benchmark datasets",
-        description = "List all benchmark datasets, available to anyone for viewing and evaluation."
+        description = "List the metadata of all benchmark datasets, available to anyone for viewing and evaluation."
     )
     @CrossOrigin
     @GetMapping(DATASETS_CORPORA_URL)
@@ -40,7 +42,7 @@ class CorporaController(
 
 
     @Operation(
-        summary = "Get single corpus",
+        summary = "Get single corpus metadata",
         description = "Get the metadata of a corpus.",
         responses = [
             ApiResponse(

@@ -8,3 +8,7 @@ data class ErrorResponse(
     @JsonProperty val error: HttpStatus,
     @JsonProperty val message: String,
 )
+
+interface RESTException {
+    val statusCode: HttpStatus
+}

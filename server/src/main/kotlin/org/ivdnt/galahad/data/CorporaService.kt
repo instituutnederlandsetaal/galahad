@@ -183,6 +183,8 @@ class CorporaService(
     }
 
     fun getWriteAccessOrThrow(corpus: UUID, request: HttpServletRequest?): Corpus {
+        // Try read access first. If that fails it throws a 404.
+        getReadAccessOrThrow(corpus, request)
         return getWriteAccessOrNull(corpus, request) ?: throw CorpusUnauthorizedException("No write access to corpus.")
     }
 

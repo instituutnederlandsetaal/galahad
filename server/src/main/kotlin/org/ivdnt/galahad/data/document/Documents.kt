@@ -3,6 +3,7 @@ package org.ivdnt.galahad.data.document
 import org.ivdnt.galahad.BaseFileSystemStore
 import org.ivdnt.galahad.app.CRUDSet
 import org.ivdnt.galahad.data.DocumentWriteType
+import org.ivdnt.galahad.exceptions.DocumentNotFoundException
 import java.io.File
 
 /**
@@ -16,6 +17,10 @@ class Documents(
 
     val allNames: List<String>
         get() = workDirectory.list()?.toList() ?: throw Exception("Could not read document names")
+
+    override fun readOrThrow(key: String): Document {
+        return readOrNull(key) ?: throw DocumentNotFoundException(key)
+    }
 
     /** Retrieve a single document */
     override fun readOrNull(key: String) =
