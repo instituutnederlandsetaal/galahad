@@ -17,7 +17,7 @@ import org.ivdnt.galahad.data.document.Document
 import org.ivdnt.galahad.data.document.DocumentMetadata
 import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.data.layer.Layer
-import org.ivdnt.galahad.exceptions.DocumentInvalidFormatException
+import org.ivdnt.galahad.exceptions.DocumentInvalidException
 import org.ivdnt.galahad.exceptions.ErrorResponse
 import org.ivdnt.galahad.exceptions.FileUploadException
 import org.ivdnt.galahad.util.setContentDisposition
@@ -183,7 +183,7 @@ class DocumentsController(
         try {
             documentName = corpus.writeDocs().create(value)
         } catch (e: SAXParseException) {
-            throw DocumentInvalidFormatException(value.filename, e.message)
+            throw DocumentInvalidException(value.filename, e.message)
         }
         catch (e: Exception) {
             // Document is somehow invalid.
@@ -198,7 +198,7 @@ class DocumentsController(
         corpora.readOrNull(corpus)?.invalidateCache()
         // Set the sourceLayer as job.
         val sourceLayerJob = corpus.writeJobs().createOrThrow(SOURCE_LAYER_NAME)
-        sourceLayerJob.documentOrThrow(documentName).setResult(document.sourceLayer.read<Layer>())
+        sourceLayerJob.documentOrEmpty(documentName).setResult(document.sourceLayer.read<Layer>())
 
         return documentName
     }
@@ -214,10 +214,10 @@ class DocumentsController(
         responses = [
             ApiResponse(
                 responseCode = "200",
-                description = "The raw file of the document. JSON media type is for errors only.",
+                description = "The raw file of the document.",
                 // Although this API response does not produce JSON.
                 // For swagger to work, the json media type needs to be defined on the 200 response.
-                content = [Content(mediaType = "text/plain, application/json")],
+                content = [Content(mediaType = "*/*")],
             ),
             ApiResponse(
                 responseCode = "404",
@@ -232,7 +232,7 @@ class DocumentsController(
         ]
     )
     @CrossOrigin
-    @GetMapping(DOCUMENT_RAW_FILE_URL, produces = ["text/plain", "application/json"])
+    @GetMapping(DOCUMENT_RAW_FILE_URL)
     fun getRawFile(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Document name") document: String,

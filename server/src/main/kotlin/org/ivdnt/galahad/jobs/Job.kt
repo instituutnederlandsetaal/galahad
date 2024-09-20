@@ -202,6 +202,7 @@ class Job(
             throw DocumentJobNotFoundException(name)
     }
 
+    // Note that this creates the folder if it doesn't exist
     fun documentOrEmpty(name: String): DocumentJob {
         return DocumentJob(documentsWorkDirectory.resolve(name))
 
@@ -245,9 +246,8 @@ class Job(
         // Upload the documents to the tagger
         corpus.documents.readAll().filter {
             val metadata = it.metadata.expensiveGet()
-            metadata.valid && documentOrThrow(metadata.name).status == DocumentProcessingStatus.PENDING || documentOrThrow(
-                metadata.name
-            ).status == DocumentProcessingStatus.ERROR
+            val docJob = documentOrEmpty(metadata.name)
+            metadata.valid && docJob.status == DocumentProcessingStatus.PENDING || docJob.status == DocumentProcessingStatus.ERROR
         }.take(numberToUpload).forEach {
             val processingID = postInputToTagger(it.plainTextFile)
             // Store the processingID, so we can match it with the incoming file later

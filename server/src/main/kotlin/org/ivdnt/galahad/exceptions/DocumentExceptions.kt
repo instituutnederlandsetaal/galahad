@@ -8,9 +8,15 @@ class DocumentNotFoundException(
     override val statusCode: HttpStatus = HttpStatus.NOT_FOUND
 }
 
-class DocumentInvalidFormatException(
+class DocumentInvalidException(
     documentName: String,
     details: String? = null
-) : Exception("Document $documentName has an invalid format. ${details ?: ""}"), RESTException {
+) : Exception("Document $documentName is invalid. ${details ?: ""}"), RESTException {
+    override val statusCode: HttpStatus = HttpStatus.BAD_REQUEST
+}
+
+class InvalidDocumentFormatException(
+    details: String
+) : Exception(details), RESTException {
     override val statusCode: HttpStatus = HttpStatus.BAD_REQUEST
 }

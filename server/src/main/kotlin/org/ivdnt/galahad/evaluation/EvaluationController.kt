@@ -177,7 +177,6 @@ class EvaluationController(
     }
 
     @GetMapping(EVALUATION_CSV_URL)
-    @ResponseBody
     @CrossOrigin
     fun download(
         @PathVariable corpus: UUID,

@@ -98,11 +98,12 @@ class CorporaController(
             ApiResponse(
                 responseCode = "200",
                 description = "The updated metadata.",
+                content = [Content(array = ArraySchema(schema = Schema(implementation = CorpusMetadata::class)), mediaType = "application/json")],
             ),
             ApiResponse(
                 responseCode = "400",
                 description = "The corpus name is invalid.",
-                content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+                content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
             ),
             ApiResponse(
                 responseCode = "403",

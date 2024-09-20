@@ -17,3 +17,9 @@ class DocumentJobNotFoundException(
 ) : Exception("Document $name has not been tagged yet."), RESTException {
     override val statusCode: HttpStatus = HttpStatus.NOT_FOUND
 }
+
+class MergeNotImplementedException(
+    format: String
+) : Exception("Merging of $format is not possible."), RESTException {
+    override val statusCode: HttpStatus = HttpStatus.BAD_REQUEST
+}

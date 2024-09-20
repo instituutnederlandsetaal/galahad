@@ -5,6 +5,7 @@ import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.data.layer.Layer
 import org.ivdnt.galahad.data.layer.Term
 import org.ivdnt.galahad.data.layer.WordForm
+import org.ivdnt.galahad.exceptions.MergeNotImplementedException
 import org.ivdnt.galahad.port.DocumentTransformMetadata
 import org.ivdnt.galahad.port.PlainTextableFile
 import org.ivdnt.galahad.port.SourceLayerableFile
@@ -74,6 +75,6 @@ class NAFFile (
         }
 
     override fun merge(transformMetadata: DocumentTransformMetadata): NAFFile {
-        throw Exception("Not implemented")
+        throw MergeNotImplementedException(format.identifier)
     }
 }

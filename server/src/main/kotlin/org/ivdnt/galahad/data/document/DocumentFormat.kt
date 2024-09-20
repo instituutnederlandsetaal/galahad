@@ -1,6 +1,7 @@
 package org.ivdnt.galahad.data.document
 
 import com.fasterxml.jackson.annotation.JsonCreator
+import org.ivdnt.galahad.exceptions.InvalidDocumentFormatException
 
 /**
  * The DocumentFormat will be used to declare the format for indexing in BlackLab and
@@ -22,7 +23,7 @@ enum class DocumentFormat(val identifier: String, val extension: String) {
          * BlackLab uses formats that contain -, which is not allowed in an enum, so we need this mapping
          */
         @JsonCreator
-        fun fromString(s: String): DocumentFormat = entries.firstOrNull { it.identifier == s } ?: throw Exception(
+        fun fromString(s: String): DocumentFormat = entries.firstOrNull { it.identifier == s } ?: throw InvalidDocumentFormatException(
             "Invalid format $s, valid formats are ${entries.map { it.identifier }}"
         )
     }

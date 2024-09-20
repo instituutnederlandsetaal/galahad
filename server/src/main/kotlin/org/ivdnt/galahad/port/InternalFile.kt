@@ -2,7 +2,7 @@ package org.ivdnt.galahad.port
 
 import org.ivdnt.galahad.app.ExpensiveGettable
 import org.ivdnt.galahad.data.document.DocumentFormat
-import org.ivdnt.galahad.exceptions.DocumentInvalidFormatException
+import org.ivdnt.galahad.exceptions.DocumentInvalidException
 import org.ivdnt.galahad.port.conllu.ConlluFile
 import org.ivdnt.galahad.port.folia.FoliaFile
 import org.ivdnt.galahad.port.naf.NAFFile
@@ -38,7 +38,7 @@ interface InternalFile {
                     DocumentFormat.Naf -> NAFFile(file)
                     DocumentFormat.Txt -> PlainFile(file)
                     DocumentFormat.Conllu -> ConlluFile(file)
-                    else -> throw DocumentInvalidFormatException(file.name)
+                    else -> throw DocumentInvalidException(file.name, "Unsupported format.")
                 }
             }
         }
