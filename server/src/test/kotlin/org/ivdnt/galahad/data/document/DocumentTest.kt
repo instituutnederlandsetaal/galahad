@@ -86,7 +86,7 @@ class DocumentTest {
             // create the layer based on the plaintext parsing
             val plaintext = doc.plaintext
             val layer = LayerBuilder().loadLayerFromTSV("all-formats/input/pie-tdn.tsv", plaintext).build()
-            job.document(name).setResult(layer)
+            job.documentOrThrow(name).setResult(layer)
 
             // Convert to each other format
             for (formatTo in DocumentFormat.entries) {

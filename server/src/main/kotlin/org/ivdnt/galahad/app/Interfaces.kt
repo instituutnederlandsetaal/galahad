@@ -30,4 +30,4 @@ interface NamedCRUDSet<Key, ReadType, WriteType> : RUDSet<Key, ReadType, WriteTy
     fun createOrNull( key: Key ): ReadType?
     fun createOrThrow( key: Key ) = createOrNull( key ) ?: throw Exception("Failed to create $key")
     fun readOrCreateOrNull( key: Key ) = readOrNull( key ) ?: createOrNull( key )
-}
+    fun readOrCreateOrThrow( key: Key ) = readOrNull( key ) ?: createOrThrow( key ) }

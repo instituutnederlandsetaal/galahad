@@ -36,7 +36,7 @@ class DocumentTransformMetadata(
     val targetFormat: DocumentFormat
 ) {
 
-    val layer: Layer = job.document(document.name).result
+    val layer: Layer = job.documentOrThrow(document.name).result
 
     val tagger: ExpensiveGettable<Tagger> = job.taggerStore.getSummaryOrThrow(job.name)
 

@@ -26,7 +26,7 @@ class DocumentJobTest {
         // create a job
         val job: Job = corpus.jobs.createOrThrow(TestConfig.TAGGER_NAME)
 
-        val dj: DocumentJob = job.document(name)
+        val dj: DocumentJob = job.documentOrThrow(name)
         // verify
         assertEquals(name, dj.name)
         assertNull(dj.getError)

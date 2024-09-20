@@ -13,14 +13,12 @@ import org.ivdnt.galahad.port.TestResult
 import org.ivdnt.galahad.uploadFile
 import org.junit.jupiter.api.Test
 
-import org.junit.jupiter.api.Assertions.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import java.io.File
-import java.nio.charset.StandardCharsets
 import java.util.zip.ZipInputStream
 
 @WebMvcTest(properties = ["spring.main.allow-bean-definition-overriding=true"])
@@ -74,7 +72,7 @@ class ExportControllerTest(
         // hardcode layer
         val layer: Layer = LayerBuilder().loadLayerFromTSV("all-formats/input/pie-tdn.tsv", Resource.get("all-formats/input/input.txt").readText()).build()
         val job = corpus.jobs.createOrThrow(TestConfig.TAGGER_NAME)
-        job.document("input.tei.xml").setResult(layer)
+        job.documentOrThrow("input.tei.xml").setResult(layer)
         mvc.uploadFile(Resource.get("all-formats/input/input.folia.xml"), corpus)
         return corpus
     }

@@ -2,7 +2,6 @@ package org.ivdnt.galahad.data
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
-import io.swagger.v3.oas.annotations.headers.Header
 import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -57,7 +56,7 @@ class DocumentsController(
 
     @Operation(
         summary = "List all documents metadata",
-        description = "List all documents in a corpus."
+        description = "List all documents metadata in a corpus."
     )
     @CrossOrigin
     @GetMapping(DOCUMENTS_URL)
@@ -98,8 +97,8 @@ class DocumentsController(
         corpus.readDocs().readOrThrow(document).metadata?.expensiveGet()
 
     @Operation(
-        summary = "Upload a document or zip file",
-        description = "Upload a document or zip file with documents.",
+        summary = "Upload document or zip file",
+        description = "Upload a document or zip file (.zip) with documents.",
         responses = [
             ApiResponse(
                 responseCode = "404",
@@ -117,7 +116,7 @@ class DocumentsController(
                 content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
             ),
             ApiResponse(
-                responseCode = "200",
+                responseCode = "201",
                 description = "Document/zip uploaded.",
             )
         ]
@@ -129,6 +128,7 @@ class DocumentsController(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
     ) {
         logger.info("Upload file ${file.originalFilename} to corpus $corpus")
+        response?.status = HttpServletResponse.SC_CREATED
         executeAndLogTime("handelFileUpload") {
             if (file.contentType == "application/zip" || file.contentType == "application/x-zip-compressed" || file.contentType == "application/octet-stream") {
                 uploadZipFile(file, corpus)
@@ -138,7 +138,6 @@ class DocumentsController(
                     corpus,
                     DocumentWriteType(file.originalFilename.toString(), file.inputStream)
                 )
-                return // needed so executeAndLogTime doesn't think we return a value
             }
         }
     }
@@ -199,7 +198,7 @@ class DocumentsController(
         corpora.readOrNull(corpus)?.invalidateCache()
         // Set the sourceLayer as job.
         val sourceLayerJob = corpus.writeJobs().createOrThrow(SOURCE_LAYER_NAME)
-        sourceLayerJob.document(documentName).setResult(document.sourceLayer.read<Layer>())
+        sourceLayerJob.documentOrThrow(documentName).setResult(document.sourceLayer.read<Layer>())
 
         return documentName
     }
@@ -277,7 +276,7 @@ class DocumentsController(
         @PathVariable @Parameter(description = "Document name") document: String,
     ): ResponseEntity<String> {
         // Delete all jobs and results of this document.
-        corpus.writeJobs().readAll().forEach { it.document(document).delete() }
+        corpus.writeJobs().readAll().forEach { it.documentOrThrow(document).delete() }
         // Invalidate corpus cache
         corpora.readOrNull(corpus)?.invalidateCache()
         // Now delete it

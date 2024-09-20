@@ -4,10 +4,17 @@ import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import com.beust.klaxon.Parser.Companion.default
 import com.fasterxml.jackson.annotation.JsonProperty
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.media.ArraySchema
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.app.TAGGERS_URL
 import org.ivdnt.galahad.app.TAGGER_HEALTH_URL
 import org.ivdnt.galahad.app.TAGGER_URL
+import org.ivdnt.galahad.exceptions.ErrorResponse
 import org.springframework.http.HttpMethod
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
@@ -26,16 +33,56 @@ class TaggersController : Logging {
 
     private val taggerStore = TaggerStore()
 
-    @GetMapping( TAGGERS_URL ) @CrossOrigin fun getTaggers(): Set<Tagger> =
+    @Operation(
+        summary = "List all taggers",
+        description = "List the metadata of all taggers."
+    )
+    @CrossOrigin
+    @GetMapping(TAGGERS_URL)
+    fun getTaggers(): Set<Tagger> =
         taggerStore.taggers.map { it.expensiveGet() }.toSet()
 
-    @GetMapping( TAGGER_URL ) @CrossOrigin fun getTagger( @PathVariable tagger: String ): Tagger? =
-        taggerStore.getSummaryOrNull( tagger, null ).expensiveGet() // Note: sourceLayer is not a tagger here
+    @Operation(
+        summary = "Get single tagger",
+        description = "Get the metadata of a single tagger.",
+        responses = [
+            ApiResponse(
+                responseCode = "404",
+                description = "The tagger was not found.",
+                content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+            ),
+            ApiResponse(
+                responseCode = "200",
+                description = "Metadata of the requested tagger.",
+            ),
+        ]
+    )
+    @CrossOrigin
+    @GetMapping(TAGGER_URL)
+    fun getTagger(@PathVariable @Parameter(description = "Tagger ID") tagger: String): Tagger? =
+        taggerStore.getSummaryOrThrow(tagger, null).expensiveGet() // Note: sourceLayer is not a tagger here
 
-    @GetMapping( TAGGER_HEALTH_URL ) @CrossOrigin fun getTaggerHealth( @PathVariable tagger: String ): TaggerHealth =
-        expensiveGetHealthFor( tagger )
+    @Operation(
+        summary = "Get tagger health",
+        description = "Get the health of a tagger service.",
+        responses = [
+            ApiResponse(
+                responseCode = "404",
+                description = "The tagger was not found.",
+                content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+            ),
+            ApiResponse(
+                responseCode = "200",
+                description = "Health of the requested tagger.",
+            )
+        ]
+    )
+    @CrossOrigin
+    @GetMapping(TAGGER_HEALTH_URL)
+    fun getTaggerHealth(@PathVariable @Parameter(description = "Tagger ID") tagger: String): TaggerHealth =
+        expensiveGetHealthFor(tagger)
 
-    fun expensiveGetHealthFor( tagger: String ): TaggerHealth {
+    fun expensiveGetHealthFor(tagger: String): TaggerHealth {
         // If there are multiple replicas for the same service, we only get health check response from one replica.
         // However, we still think it is representative/informative
         val client = HttpClient.newBuilder().build()
@@ -45,8 +92,8 @@ class TaggersController : Logging {
 
         return try {
             val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-            val parser: Parser = default(  )
-            val json: JsonObject = parser.parse( StringBuilder( response.body() ) ) as JsonObject
+            val parser: Parser = default()
+            val json: JsonObject = parser.parse(StringBuilder(response.body())) as JsonObject
 
             /**
              * Note that this queuesize only represents the queue present at a single instance of the tagger,
@@ -55,24 +102,28 @@ class TaggersController : Logging {
              * We could get this by count all pending document for this tagger in all corpora
              */
             TaggerHealth(
-                status = if( json.boolean("healthy") == true ) TaggerHealthStatus.HEALTHY else TaggerHealthStatus.NOT_HEALTHY,
+                status = if (json.boolean("healthy") == true) TaggerHealthStatus.HEALTHY else TaggerHealthStatus.NOT_HEALTHY,
                 queueSizeAtTagger = json.int("queueSizeAtTagger") ?: 0,
                 processingSpeed = json.int("processingSpeed") ?: 0,
                 message = "Can connect to tagger. Taggers health response: ${response.body()}"
             )
-        } catch ( e: Exception ) {
+        } catch (e: Exception) {
             logger.error("Failed to connect to tagger $tagger on url ${taggerStore.getURL(tagger)}. Error: $e")
             // If we cannot connect, there is no use in tagging, so just return
-            return TaggerHealth( status = TaggerHealthStatus.ERROR, message = "Cannot connect to tagger" )
+            return TaggerHealth(status = TaggerHealthStatus.ERROR, message = "Cannot connect to tagger")
         }
     }
 
-    /**
-     * Get the active number of documents actively being tagged by retrieving the taggers' status dicts
-     * and counting the number of pending and busy docs.
-     */
-    @GetMapping("$TAGGERS_URL/active")
+    @Operation(
+        summary = "Number of active document jobs",
+        description = "Get the number of documents actively being tagged, cumulative over all taggers. Indicates server load."
+    )
     @CrossOrigin
+    @GetMapping("$TAGGERS_URL/active")
+            /**
+             * Get the active number of documents actively being tagged by retrieving the taggers' status dicts
+             * and counting the number of pending and busy docs.
+             */
     fun getActiveDocsAtTaggers(): Int {
         var count = 0
         for (tagger in taggerStore.taggers) {
@@ -91,11 +142,10 @@ class TaggersController : Logging {
                 for (key in json.keys) {
                     val status = json.obj(key)
                     if (status?.boolean("pending") == true || status?.boolean("busy") == true) {
-                            count++
+                        count++
                     }
                 }
-            }
-            catch (e: Exception) {
+            } catch (e: Exception) {
                 logger.error("Failed to connect to tagger $name. Error: $e")
             }
         }
@@ -109,10 +159,10 @@ class TaggersController : Logging {
         UNKNOWN
     }
 
-    class TaggerHealth (
+    class TaggerHealth(
         @JsonProperty val status: TaggerHealthStatus = TaggerHealthStatus.UNKNOWN,
         @JsonProperty val queueSizeAtTagger: Int = 0, // bytes
         @JsonProperty val processingSpeed: Int = 0, // 'chars/s'
-        @JsonProperty val message: String = ""
+        @JsonProperty val message: String = "",
     )
 }

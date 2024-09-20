@@ -33,8 +33,8 @@ class CorpusMetrics(
             val name = it.metadata.expensiveGet().name
             add(
                 DocumentMetrics(
-                    hypothesisJob.document(name).result,
-                    referenceJob.document(name).result,
+                    hypothesisJob.documentOrThrow(name).result,
+                    referenceJob.documentOrThrow(name).result,
                     settings,
                     layerFilter,
                     truncate

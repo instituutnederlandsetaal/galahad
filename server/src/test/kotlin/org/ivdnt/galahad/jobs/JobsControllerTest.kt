@@ -69,11 +69,11 @@ class JobsControllerTest(
         ).body!!
     }
 
-    private fun getJobs(uuid: UUID): Set<State> {
+    private fun getJobs(uuid: UUID): Set<JobState> {
         return rest.exchange("/corpora/$uuid/jobs?includePotentialJobs=true",
                              HttpMethod.GET,
                              getHeaders(),
-                             object : ParameterizedTypeReference<Set<State>>() {}).body!!
+                             object : ParameterizedTypeReference<Set<JobState>>() {}).body!!
     }
 
     private fun getDocumentJobResult(uuid: UUID, job: String, document: String): DocumentJobResult {

@@ -28,10 +28,9 @@ export type ProgressResponse = AxiosResponse<Progress>
 /**
  * Fetch all jobs for a corpus.
  * @param corpus UUID of the corpus.
- * @param includePotentialJobs If true, will also include untagged jobs (so all jobs will be present).
  */
-export function getJobs(corpus: UUID, includePotentialJobs: boolean): Promise<JobsResponse> {
-    return axios.get(jobsPath(corpus), { params: { includePotentialJobs: includePotentialJobs } })
+export function getJobs(corpus: UUID): Promise<JobsResponse> {
+    return axios.get(jobsPath(corpus))
 }
 
 /**

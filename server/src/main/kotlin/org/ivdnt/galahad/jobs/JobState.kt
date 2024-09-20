@@ -8,7 +8,7 @@ import org.ivdnt.galahad.taggers.Tagger
 /**
  * Cache-able job metadata.
  */
-class State(
+class JobState(
     @JsonProperty("tagger") val tagger: Tagger = Tagger(),
     @JsonProperty("progress") val progress: Progress = Progress(),
     @JsonProperty("preview") val preview: LayerPreview = LayerPreview(),

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import org.ivdnt.galahad.data.corpus.Corpus
 import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.data.layer.AnnotationType
-import org.ivdnt.galahad.data.layer.Annotations
 import org.ivdnt.galahad.evaluation.comparison.LayerFilter
 
 /**
@@ -34,8 +33,8 @@ class CorpusConfusion(
             val name = it.metadata.expensiveGet().name
             add(
                 DocumentConfusion(
-                    hypothesisJob.document(name).result,
-                    referenceJob.document(name).result,
+                    hypothesisJob.documentOrThrow(name).result,
+                    referenceJob.documentOrThrow(name).result,
                     layerFilter,
                     annotation
                 )

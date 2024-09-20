@@ -5,10 +5,8 @@ import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.INTERNAL_JOBS_ERROR_URL
 import org.ivdnt.galahad.app.INTERNAL_JOBS_RESULT_URL
-import org.ivdnt.galahad.data.CorporaController
 import org.ivdnt.galahad.data.CorporaService
 import org.ivdnt.galahad.data.document.Document
-import org.ivdnt.galahad.data.document.DocumentFormat
 import org.ivdnt.galahad.data.document.FormatInducer
 import org.ivdnt.galahad.data.layer.Layer
 import org.ivdnt.galahad.port.InternalFile
@@ -76,7 +74,7 @@ class InternalJobController (
                         plaintext =   original.plaintext,
                         layerName = jobName
                     )
-                    job.document(documentName).setResult(Layer(
+                    job.documentOrThrow(documentName).setResult(Layer(
                         name = jobName,
                         tagset = tagset ?: Tagset.UNKNOWN,
                         wordForms = alignedLayer.wordForms,
@@ -88,7 +86,7 @@ class InternalJobController (
                             plaintext =   original.plaintext,
                             layerName = jobName
                     )
-                    job.document(documentName).setResult(Layer(
+                    job.documentOrThrow(documentName).setResult(Layer(
                             name = jobName,
                             tagset = tagset ?: Tagset.UNKNOWN,
                             wordForms = alignedLayer.wordForms,
@@ -98,7 +96,7 @@ class InternalJobController (
                 // To my knowledge, not a single tagger outputs non-tsv, so this is unused for now.
                 is SourceLayerableFile -> {
                     val sourceLayer = uploadedFile.sourceLayer()
-                    job.document(documentName).setResult(Layer(
+                    job.documentOrThrow(documentName).setResult(Layer(
                         name = jobName,
                         tagset = tagset ?: Tagset.UNKNOWN,
                         wordForms = sourceLayer.wordForms,
@@ -134,7 +132,7 @@ class InternalJobController (
     ): String {
         logger.info( "Received error with processing id $fileId: $message" )
         val (corpusID, jobName, documentName) = dataForProcessingID(fileId) ?: throw Exception("Processing ID not found, was this file uploaded by me?")
-        corpora.getUncheckedCorpusAccess( corpusID ).jobs.readOrThrow( jobName ).document( documentName ).setError( message )
+        corpora.getUncheckedCorpusAccess( corpusID ).jobs.readOrThrow( jobName ).documentOrThrow( documentName ).setError( message )
 
         // TODO Even thought we had an error, we can consider job.next() here
         return "KEEP" // or "DELETE"

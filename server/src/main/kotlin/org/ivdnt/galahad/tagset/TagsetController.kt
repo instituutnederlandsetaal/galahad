@@ -1,36 +1,55 @@
 package org.ivdnt.galahad.tagset
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.media.ArraySchema
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.app.TAGSETS_URL
-import org.springframework.http.HttpStatus
+import org.ivdnt.galahad.exceptions.ErrorResponse
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.server.ResponseStatusException
 
 @RestController
 class TagsetController : Logging {
 
     val tagsets = TagsetStore()
 
-    @GetMapping( TAGSETS_URL )
+    @Operation(
+        summary = "List all tagsets",
+        description = "List the metadata of all tagsets."
+    )
     @CrossOrigin
+    @GetMapping(TAGSETS_URL)
     fun getTagsets(): Set<Tagset> {
-        logger.info( "Get tagsets" )
         return tagsets.tagsets
     }
 
-    @GetMapping("$TAGSETS_URL/{tagset}")
+    @Operation(
+        summary = "Get single tagset",
+        description = "Get the metadata of a single tagset.",
+        responses = [
+            ApiResponse(
+                responseCode = "404",
+                description = "The tagset was not found.",
+                content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+            ),
+            ApiResponse(
+                responseCode = "200",
+                description = "Metadata of the requested tagset.",
+            ),
+        ]
+    )
     @CrossOrigin
+    @GetMapping("$TAGSETS_URL/{tagset}")
     fun getTagset(
-        @PathVariable("tagset") tagsetName: String
+        @PathVariable("tagset") @Parameter(description = "Tagset identifier") identifier: String,
     ): Tagset {
-        logger.info( "Get tagset for $tagsetName")
-        val tagset = tagsets.getOrNull( tagsetName )
-        return tagset ?: throw  ResponseStatusException(
-                HttpStatus.NOT_FOUND, "tagset not found"
-        )
+        return tagsets.getOrThrow(identifier)
     }
 
 }

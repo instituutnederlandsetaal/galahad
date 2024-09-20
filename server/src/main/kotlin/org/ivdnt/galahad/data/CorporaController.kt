@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import jakarta.servlet.http.HttpServletResponse
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.app.CORPORA_URL
 import org.ivdnt.galahad.app.CORPUS_URL
@@ -13,6 +14,7 @@ import org.ivdnt.galahad.app.DATASETS_CORPORA_URL
 import org.ivdnt.galahad.data.corpus.CorpusMetadata
 import org.ivdnt.galahad.data.corpus.MutableCorpusMetadata
 import org.ivdnt.galahad.exceptions.ErrorResponse
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -23,6 +25,8 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody as SwaggerRequestBod
 class CorporaController(
     private val corporaService: CorporaService,
 ) : Logging {
+    @Autowired
+    private val response: HttpServletResponse? = null
 
     @Operation(
         summary = "List all corpora metadata",
@@ -67,7 +71,7 @@ class CorporaController(
         description = "Create a new corpus with the provided CorpusMetadata. The user doing the request becomes owner.",
         responses = [
             ApiResponse(
-                responseCode = "200",
+                responseCode = "201",
                 description = "UUID of the created corpus.",
             ), ApiResponse(
                 responseCode = "400",
@@ -83,6 +87,7 @@ class CorporaController(
     @CrossOrigin
     @PostMapping(value = [CORPORA_URL], consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun postCorpus(@RequestBody @SwaggerRequestBody(description = "Corpus metadata.") value: MutableCorpusMetadata): UUID {
+        response?.status = HttpServletResponse.SC_CREATED
         return corporaService.create(value)
     }
 

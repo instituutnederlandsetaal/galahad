@@ -1,12 +1,19 @@
 package org.ivdnt.galahad.jobs
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.media.ArraySchema
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.ivdnt.galahad.app.JOBS_URL
 import org.ivdnt.galahad.app.JOB_URL
-import org.ivdnt.galahad.data.CorporaController
 import org.ivdnt.galahad.data.CorporaService
+import org.ivdnt.galahad.exceptions.ErrorResponse
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
@@ -17,45 +24,148 @@ class JobsController(
 
     @Autowired
     private val request: HttpServletRequest? = null
+
     @Autowired
     private val response: HttpServletResponse? = null
 
     fun UUID.readJobs(): Jobs = corpora.getReadAccessOrThrow(this, request).jobs
     fun UUID.writeJobs(): Jobs = corpora.getWriteAccessOrThrow(this, request).jobs
 
-    @GetMapping(JOBS_URL)
+    // TODO could this be replaced by /taggers?
+    @Operation(
+        summary = "Get all job metadata",
+        description = "Get a summary of the state of all tagger jobs and the source layer.",
+    )
     @CrossOrigin
-    fun getJobs(@PathVariable corpus: UUID, @RequestParam includePotentialJobs: Boolean = false): Set<State> {
-        return if (includePotentialJobs) corpus.readJobs().readAllJobStatesIncludingPotentialJobs()
-        else corpus.readJobs().readAll().map { it.state }.toSet()
+    @GetMapping(JOBS_URL)
+    fun getJobs(@PathVariable @Parameter(description = "Corpus UUID") corpus: UUID): Set<JobState> {
+        return corpus.readJobs().readAllJobStatesIncludingPotentialJobs()
     }
 
+    @Operation(
+        summary = "Get single job metadata",
+        description = "Get a summary of the state of a tagger job.",
+        responses = [
+            ApiResponse(
+                responseCode = "200",
+                description = "The job state."
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Corpus or job was not found.",
+                content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+            )
+        ]
+    )
+    @CrossOrigin
     @GetMapping(JOB_URL)
+    fun getJob(
+        @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
+        @PathVariable @Parameter(description = "Tagger ID") job: String,
+    ): JobState? =
+        corpus.readJobs().readOrThrow(job).state
+
+    @Operation(
+        summary = "Start job",
+        description = "Start a job. Requires write access to the corpus.",
+        responses = [
+            ApiResponse(
+                responseCode = "202",
+                description = "The job progress."
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "The user is not authorized to start jobs. Starting jobs requires write access to the corpus.",
+                content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Corpus or job was not found.",
+                content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "The sourceLayer is not a tagger.",
+                content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+            )
+        ]
+    )
     @CrossOrigin
-    fun getJob(@PathVariable corpus: UUID, @PathVariable job: String): State? = corpus.readJobs().readOrNull(job)?.state
     @PostMapping(JOB_URL)
-    @CrossOrigin
-    fun postJob(@PathVariable corpus: UUID, @PathVariable job: String): Progress? {
-        corpus.writeJobs().readOrCreateOrNull(job)?.start()
+    fun postJob(
+        @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
+        @PathVariable @Parameter(description = "Tagger ID") job: String,
+    ): Progress? {
+        corpus.writeJobs().readOrCreateOrThrow(job).start()
+        response?.status = HttpServletResponse.SC_ACCEPTED
         return progress(corpus, job)
     }
 
-    @DeleteMapping(JOB_URL)
+    @Operation(
+        summary = "Cancel or delete job",
+        description = "Cancel or delete a job. Requires write access to the corpus.",
+        responses = [
+            ApiResponse(
+                responseCode = "204",
+                description = "Job cancelled or deleted."
+            ),
+            ApiResponse(
+                responseCode = "403",
+                description = "The user is not authorized to cancel or delete jobs. Cancelling or deleting jobs requires write access to the corpus.",
+                content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Corpus or job was not found.",
+                content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "The sourceLayer is not a tagger.",
+                content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+            )
+        ]
+    )
     @CrossOrigin
+    @DeleteMapping(JOB_URL)
     fun cancelOrDeleteJob(
-        @PathVariable corpus: UUID,
-        @PathVariable job: String,
-        @RequestParam hard: Boolean,
-    ): Progress? {
-        val jobObject = corpus.writeJobs().readOrNull(job)
-        if (hard) jobObject?.delete() else jobObject?.cancel()
-        return progress(corpus, job) // I don't know if progress is the correct return type here
+        @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
+        @PathVariable @Parameter(description = "Tagger ID") job: String,
+        @RequestParam @Parameter(description = "Whether to only cancel the current tagging queue (soft), or delete all job results (hard)") hard: Boolean,
+    ): ResponseEntity<String> {
+        val jobObject = corpus.writeJobs().readOrThrow(job)
+        if (hard) jobObject.delete() else jobObject.cancel()
+        return ResponseEntity.noContent().build()
     }
 
-    @GetMapping("${JOB_URL}/documents/{document}/result")
+    @Operation(
+        summary = "Get job result sample",
+        description = "Get a sample summary of the resulting tagged layer of a job.",
+        responses = [
+            ApiResponse(
+                responseCode = "200",
+                description = "The job layer result."
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Corpus, document or job result was not found.",
+                content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "The sourceLayer is not a tagger.",
+                content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+            )
+        ]
+    )
     @CrossOrigin
-    fun getDocumentResult(@PathVariable corpus: UUID, @PathVariable job: String, @PathVariable document: String): DocumentJobResult? {
-        val result = corpus.readJobs().readOrNull(job)?.document(document)?.result
+    @GetMapping("${JOB_URL}/documents/{document}/result")
+    fun getDocumentResult(
+        @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
+        @PathVariable @Parameter(description = "Tagger ID") job: String,
+        @PathVariable @Parameter(description = "Document name") document: String,
+    ): DocumentJobResult? {
+        val result = corpus.readJobs().readOrThrow(job).documentOrThrow(document)?.result
         return if (result == null) {
             null
         } else {
@@ -68,18 +178,31 @@ class JobsController(
         }
     }
 
+    @Operation(
+        summary = "Get job progress",
+        description = "Get the progress of a job.",
+        responses = [
+            ApiResponse(
+                responseCode = "200",
+                description = "The job progress."
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "Corpus or job was not found.",
+                content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+            ),
+            ApiResponse(
+                responseCode = "400",
+                description = "The sourceLayer is not a tagger.",
+                content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+            )
+        ]
+    )
+    @CrossOrigin
     @GetMapping("$JOB_URL/progress")
-    @CrossOrigin
-    fun progress(@PathVariable corpus: UUID, @PathVariable job: String): Progress? =
-        corpus.readJobs().readOrNull(job)?.progress
-
-    /** This is a utility simplified version of poll, because for some purposes the data from progress() is too detailed. */
-    @GetMapping("$JOB_URL/isBusy")
-    @CrossOrigin
-    fun isBusy(@PathVariable corpus: UUID, @PathVariable job: String): Boolean? = progress(corpus, job)?.busy
-
-    /** This is a utility simplified version of poll, because for some purposes the data from progress() is too detailed. */
-    @GetMapping("$JOB_URL/hasError")
-    @CrossOrigin
-    fun hasError(@PathVariable corpus: UUID, @PathVariable job: String): Boolean? = progress(corpus, job)?.hasError
+    fun progress(
+        @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
+        @PathVariable @Parameter(description = "Tagger ID") job: String,
+    ): Progress? =
+        corpus.readJobs().readOrThrow(job).progress
 }

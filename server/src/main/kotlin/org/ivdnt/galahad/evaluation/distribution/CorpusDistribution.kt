@@ -26,7 +26,7 @@ class CorpusDistribution(
     init {
         corpus.documents.readAll().forEach {
             val meta = it.metadata.expensiveGet()
-            val documentJob = hypothesisJob.document(meta.name)
+            val documentJob = hypothesisJob.documentOrThrow(meta.name)
             // Add to ourselves
             this.add(DocumentDistribution(documentJob.result, meta, annotation))
         }
