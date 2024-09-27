@@ -68,9 +68,9 @@ internal class TEIExportTest {
         val tagset = TagsetStore().getOrNull("TDN-Core")!!
 
         val layer = LayerBuilder()
-            .loadLayerFromTSV( "tei/export/mock-TDN-with-punctuation.tsv", teiFile.plainTextReader().readText() )
-            .assertWordFromsAndTermsSize( 5, 5 )
-            .setTagset( tagset )
+            .loadLayerFromTSV("tei/export/mock-TDN-with-punctuation.tsv", teiFile.plainTextReader().readText())
+            .assertWordFromsAndTermsSize(5, 5)
+            .setTagset(tagset)
             .build()
 
         DocTest.builder(corpus)
@@ -141,10 +141,11 @@ internal class TEIExportTest {
 
         // build a layer that is a valid annotation of the temp file
         val layer = LayerBuilder()
-            .loadDummies( testsize * 1000 )
-            .setTagset( tagset )
+            .loadDummies(testsize * 1000)
+            .setTagset(tagset)
             .build()
-        corpus.jobs.readOrCreateOrNull(jobName)?.documentOrThrow(docName)?.setResult(layer) ?: throw Exception("Could not set layer result")
+        corpus.jobs.readOrCreateOrNull(jobName)?.documentOrThrow(docName)?.setResult(layer)
+            ?: throw Exception("Could not set layer result")
 
         println("Created layer. Layer size: ${layer.wordForms.size} wordforms")
 
@@ -154,14 +155,15 @@ internal class TEIExportTest {
         // remember the output to reuse as TEI-file in the merge test
         val teiConvertedFile = executeAndLogTime("convert large TEI file") {
             corpus.documents.readOrThrow(docName).generateAs(
-                DocumentFormat.TeiP5, DocumentTransformMetadata(
+                DocumentTransformMetadata(
                     corpus = corpus,
                     job = corpus.jobs.readOrThrow(jobName),
                     document = corpus.documents.readOrThrow(docName),
                     user = User("test-user"),
                     targetFormat = DocumentFormat.TeiP5
                 )
-        ) }
+            )
+        }
 
         displayMemory()
         println("Created teiFile. teiFile size: ${teiConvertedFile.length()} bytes")

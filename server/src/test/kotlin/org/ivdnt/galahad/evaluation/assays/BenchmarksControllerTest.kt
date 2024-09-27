@@ -8,6 +8,8 @@ import org.ivdnt.galahad.evaluation.EvaluationUtil
 import org.ivdnt.galahad.evaluation.metrics.FlatMetricType
 import org.ivdnt.galahad.port.LayerBuilder
 import org.ivdnt.galahad.port.createCorpus
+import org.ivdnt.galahad.web.BenchmarksMatrix
+import org.ivdnt.galahad.web.controller.BenchmarksController
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,15 +22,15 @@ import java.io.File
 
 @WebMvcTest(properties = ["spring.main.allow-bean-definition-overriding=true"])
 @ContextConfiguration(classes = [GalahadApplication::class, TestConfig::class])
-class AssaysControllerTest(
+class BenchmarksControllerTest(
     @Autowired val mvc: MockMvc,
     @Autowired val config: Config,
-    @Autowired val ctrl: AssaysController,
+    @Autowired val ctrl: BenchmarksController,
 ) {
     @Test
     fun getAssays() {
         // No assays should exist
-        var assays = ctrl.assaysMatrix.get<AssaysMatrix>()
+        var assays = ctrl.benchmarksMatrix.get<BenchmarksMatrix>()
         assertEquals(0, assays.size)
 
         // Need a corpus first
@@ -50,13 +52,13 @@ class AssaysControllerTest(
         EvaluationUtil.addLayersAsJobs(corpus, name, layer, layer)
 
         // job assay should exist
-        assertNotNull(corpus.jobs.readOrThrow(TestConfig.TAGGER_NAME).assay.get<Map<String,FlatMetricType>>())
+        assertNotNull(corpus.jobs.readOrThrow(TestConfig.TAGGER_NAME).assay.get<Map<String, FlatMetricType>>())
 
         // /GET
         val assaysRequest: MvcResult = mvc.perform(
             MockMvcRequestBuilders.get("/assays")
         ).andReturn()
-        assays = JSON.fromStr<AssaysMatrix>(assaysRequest.response.contentAsString)
+        assays = JSON.fromStr<BenchmarksMatrix>(assaysRequest.response.contentAsString)
         assertEquals(1, assays.size)
         assertEquals(1f, assays["testCorpus"]!!["lemmaPosByPos"]!![TestConfig.TAGGER_NAME]!!.micro.accuracy, 0.00001f)
         // We don't want the source layer, as it would always 100% agree with itself.

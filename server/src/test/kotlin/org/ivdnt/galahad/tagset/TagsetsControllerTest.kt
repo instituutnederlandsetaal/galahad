@@ -1,6 +1,7 @@
 package org.ivdnt.galahad.tagset
 
 import org.ivdnt.galahad.app.GalahadApplication
+import org.ivdnt.galahad.web.controller.TagsetsController
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,9 +11,9 @@ import org.springframework.test.web.servlet.MockMvc
 
 @WebMvcTest(properties = ["spring.main.allow-bean-definition-overriding=true"])
 @ContextConfiguration(classes = [GalahadApplication::class])
-class TagsetControllerTest(
+class TagsetsControllerTest(
     @Autowired val mvc: MockMvc,
-    @Autowired val ctrl: TagsetController,
+    @Autowired val ctrl: TagsetsController,
 ) {
 
     @Test

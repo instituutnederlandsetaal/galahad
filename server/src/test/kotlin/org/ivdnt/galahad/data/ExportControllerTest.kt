@@ -11,6 +11,7 @@ import org.ivdnt.galahad.port.LayerBuilder
 import org.ivdnt.galahad.port.Resource
 import org.ivdnt.galahad.port.TestResult
 import org.ivdnt.galahad.uploadFile
+import org.ivdnt.galahad.web.controller.ExportController
 import org.junit.jupiter.api.Test
 
 import org.springframework.beans.factory.annotation.Autowired
@@ -37,11 +38,15 @@ class ExportControllerTest(
         val bytes = mvc.perform(
             MockMvcRequestBuilders.get("/corpora/$uuid/jobs/${TestConfig.TAGGER_NAME}/export/convert")
                 .param("format", "folia").headers(
-                    UserHeader.get())
+                    UserHeader.get()
+                )
         ).andReturn().response.contentAsByteArray
         val files = unzip(bytes)
         val teiToFolia: File = files.first { it.name.endsWith("tei.folia.xml") }
-        val result = TestResult(Resource.get("all-formats/output/from-TeiP5-to-Folia.folia.xml").readText(), teiToFolia.readText())
+        val result = TestResult(
+            Resource.get("all-formats/output/from-TeiP5-to-Folia.folia.xml").readText(),
+            teiToFolia.readText()
+        )
         result.ignoreLineEndings().result()
     }
 
@@ -70,7 +75,10 @@ class ExportControllerTest(
         val corpus = createCorpus(config)
         mvc.uploadFile(Resource.get("all-formats/input/input.tei.xml"), corpus)
         // hardcode layer
-        val layer: Layer = LayerBuilder().loadLayerFromTSV("all-formats/input/pie-tdn.tsv", Resource.get("all-formats/input/input.txt").readText()).build()
+        val layer: Layer = LayerBuilder().loadLayerFromTSV(
+            "all-formats/input/pie-tdn.tsv",
+            Resource.get("all-formats/input/input.txt").readText()
+        ).build()
         val job = corpus.jobs.createOrThrow(TestConfig.TAGGER_NAME)
         job.documentOrThrow("input.tei.xml").setResult(layer)
         mvc.uploadFile(Resource.get("all-formats/input/input.folia.xml"), corpus)
