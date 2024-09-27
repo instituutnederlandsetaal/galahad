@@ -98,7 +98,7 @@ export function getConfusionSamples(corpus: UUID, hypothesis: string, reference:
  * @param group Group for the metrics. E.g. 'pos' or 'lemma'.
  */
 export function getMetricsSamples(corpus: UUID, hypothesis: string, reference: string, setting: string, classType: string, group?: string): Promise<BlobResponse> {
-    const params: Record<string, string> = { reference, setting, class: classType }
+    const params: Record<string, string> = { reference, metricsType: setting, class: classType }
     if (group) {
         params.group = group
     }

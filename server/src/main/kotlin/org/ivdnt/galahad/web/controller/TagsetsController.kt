@@ -1,4 +1,4 @@
-package org.ivdnt.galahad.tagset
+package org.ivdnt.galahad.web.controller
 
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -9,13 +9,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.app.TAGSETS_URL
 import org.ivdnt.galahad.exceptions.ErrorResponse
+import org.ivdnt.galahad.tagset.Tagset
+import org.ivdnt.galahad.tagset.TagsetStore
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class TagsetController : Logging {
+class TagsetsController : Logging {
 
     val tagsets = TagsetStore()
 
@@ -32,17 +34,15 @@ class TagsetController : Logging {
     @Operation(
         summary = "Get single tagset",
         description = "Get the metadata of a single tagset.",
-        responses = [
-            ApiResponse(
-                responseCode = "404",
-                description = "The tagset was not found.",
-                content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
-            ),
-            ApiResponse(
-                responseCode = "200",
-                description = "Metadata of the requested tagset.",
-            ),
-        ]
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "Metadata of the requested tagset.",
+    )
+    @ApiResponse(
+        responseCode = "404",
+        description = "The tagset was not found.",
+        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
     )
     @CrossOrigin
     @GetMapping("$TAGSETS_URL/{tagset}")

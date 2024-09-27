@@ -1,25 +1,16 @@
 package org.ivdnt.galahad.exceptions
 
 import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.ResponseStatus
 
-class JobNotFoundException(
-    identifier: String
-) : Exception("Job $identifier not found. Has the tagger tagged the corpus already?"), RESTException {
-    override val statusCode: HttpStatus = HttpStatus.NOT_FOUND
-}
+@ResponseStatus(value = HttpStatus.NOT_FOUND)
+class JobNotFoundException(job: String) : Exception("Job $job not found. Has the tagger tagged the corpus already?")
 
-class SourceLayerNotATaggerException : Exception("The sourceLayer is not a tagger."), RESTException {
-    override val statusCode: HttpStatus = HttpStatus.BAD_REQUEST
-}
+@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+class SourceLayerNotATaggerException : Exception("The sourceLayer is not a tagger.")
 
-class DocumentJobNotFoundException(
-    name: String
-) : Exception("Document $name has not been tagged yet."), RESTException {
-    override val statusCode: HttpStatus = HttpStatus.NOT_FOUND
-}
+@ResponseStatus(value = HttpStatus.NOT_FOUND)
+class DocumentJobNotFoundException(name: String) : Exception("Document $name has not been tagged yet.")
 
-class MergeNotImplementedException(
-    format: String
-) : Exception("Merging of $format is not possible."), RESTException {
-    override val statusCode: HttpStatus = HttpStatus.BAD_REQUEST
-}
+@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+class MergeNotImplementedException(format: String) : Exception("Merging of $format is not possible.")

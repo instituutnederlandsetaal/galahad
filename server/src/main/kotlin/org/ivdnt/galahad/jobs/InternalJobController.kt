@@ -5,7 +5,6 @@ import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.INTERNAL_JOBS_ERROR_URL
 import org.ivdnt.galahad.app.INTERNAL_JOBS_RESULT_URL
-import org.ivdnt.galahad.data.CorporaService
 import org.ivdnt.galahad.data.document.Document
 import org.ivdnt.galahad.data.document.FormatInducer
 import org.ivdnt.galahad.data.layer.Layer
@@ -16,7 +15,11 @@ import org.ivdnt.galahad.port.tsv.TSVFile
 import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.tagset.Tagset
 import org.ivdnt.galahad.tagset.TagsetStore
-import org.springframework.web.bind.annotation.*
+import org.ivdnt.galahad.web.service.CorporaService
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 import java.io.File
 import java.util.*
@@ -28,15 +31,15 @@ typealias DocumentName = String
 
 @RestController
 @Hidden
-class InternalJobController (
+class InternalJobController(
     val corpora: CorporaService,
-    val config: Config
+    val config: Config,
 ) : Logging {
 
     val tagsets = TagsetStore()
 
     // This is not an efficient implementation. TODO: efficient implementation
-    private fun dataForProcessingID( processingID: UUID ): Triple<CorpusID, JobName, DocumentName>?  {
+    private fun dataForProcessingID(processingID: UUID): Triple<CorpusID, JobName, DocumentName>? {
         corpora.all.forEach { corpus ->
             corpus.jobs.readAll().forEach { job ->
                 val candidate = job.documentNameForProcessingIDOrNull(processingID)
@@ -52,18 +55,19 @@ class InternalJobController (
      */
     @PostMapping(INTERNAL_JOBS_RESULT_URL)
     fun receiveTaggerResult(
-        @RequestParam(value="file_id", required=false) fileId: UUID,
-        @RequestBody file: MultipartFile
+        @RequestParam(value = "file_id", required = false) fileId: UUID,
+        @RequestBody file: MultipartFile,
     ): String {
-        logger.info( "Received result with processing id $fileId" )
+        logger.info("Received result with processing id $fileId")
         return try {
             // TODO remove the processing ID after processing
             val tempFile = File.createTempFile("job", file.originalFilename!!)
             file.transferTo(tempFile)
-            val (corpusID, jobName, documentName) = dataForProcessingID( fileId ) ?: throw Exception("Processing ID not found, was this file uploaded by me?")
-            val original: Document = corpora.getUncheckedCorpusAccess( corpusID ).documents.readOrThrow( documentName )
-            val job: Job = corpora.getUncheckedCorpusAccess( corpusID ).jobs.readOrThrow( jobName )
-            val taggerTagger: Tagger? = job.taggerStore.getSummaryOrNull(job.name, null ).expensiveGet()
+            val (corpusID, jobName, documentName) = dataForProcessingID(fileId)
+                ?: throw Exception("Processing ID not found, was this file uploaded by me?")
+            val original: Document = corpora.getUncheckedCorpusAccess(corpusID).documents.readOrThrow(documentName)
+            val job: Job = corpora.getUncheckedCorpusAccess(corpusID).jobs.readOrThrow(jobName)
+            val taggerTagger: Tagger? = job.taggerStore.getSummaryOrNull(job.name, null).expensiveGet()
             val tagset: Tagset? = tagsets.getOrNull(taggerTagger?.tagset)
             val format = FormatInducer.determineFormat(tempFile)
             when (val uploadedFile = InternalFile.from(tempFile, format).expensiveGet()) {
@@ -71,38 +75,46 @@ class InternalJobController (
                 // Would default its alignment to offset=0. Instead, we force it to align with the original plaintext.
                 is ConlluFile -> {
                     val alignedLayer = uploadedFile.mapOnPlainText(
-                        plaintext =   original.plaintext,
+                        plaintext = original.plaintext,
                         layerName = jobName
                     )
-                    job.documentOrThrow(documentName).setResult(Layer(
-                        name = jobName,
-                        tagset = tagset ?: Tagset.UNKNOWN,
-                        wordForms = alignedLayer.wordForms,
-                        terms = alignedLayer.terms
-                    ))
-                }
-                is TSVFile -> {
-                    val alignedLayer = uploadedFile.mapOnPlainText(
-                            plaintext =   original.plaintext,
-                            layerName = jobName
-                    )
-                    job.documentOrThrow(documentName).setResult(Layer(
+                    job.documentOrThrow(documentName).setResult(
+                        Layer(
                             name = jobName,
                             tagset = tagset ?: Tagset.UNKNOWN,
                             wordForms = alignedLayer.wordForms,
                             terms = alignedLayer.terms
-                    ))
+                        )
+                    )
+                }
+
+                is TSVFile -> {
+                    val alignedLayer = uploadedFile.mapOnPlainText(
+                        plaintext = original.plaintext,
+                        layerName = jobName
+                    )
+                    job.documentOrThrow(documentName).setResult(
+                        Layer(
+                            name = jobName,
+                            tagset = tagset ?: Tagset.UNKNOWN,
+                            wordForms = alignedLayer.wordForms,
+                            terms = alignedLayer.terms
+                        )
+                    )
                 }
                 // To my knowledge, not a single tagger outputs non-tsv, so this is unused for now.
                 is SourceLayerableFile -> {
                     val sourceLayer = uploadedFile.sourceLayer()
-                    job.documentOrThrow(documentName).setResult(Layer(
-                        name = jobName,
-                        tagset = tagset ?: Tagset.UNKNOWN,
-                        wordForms = sourceLayer.wordForms,
-                        terms = sourceLayer.terms
-                    ))
+                    job.documentOrThrow(documentName).setResult(
+                        Layer(
+                            name = jobName,
+                            tagset = tagset ?: Tagset.UNKNOWN,
+                            wordForms = sourceLayer.wordForms,
+                            terms = sourceLayer.terms
+                        )
+                    )
                 }
+
                 else -> {
                     throw Exception("File types is not supported")
                 }
@@ -127,12 +139,14 @@ class InternalJobController (
      */
     @PostMapping(INTERNAL_JOBS_ERROR_URL)
     fun receiveTaggerError(
-        @RequestParam(value="file_id") fileId: UUID,
-        @RequestBody message: String
+        @RequestParam(value = "file_id") fileId: UUID,
+        @RequestBody message: String,
     ): String {
-        logger.info( "Received error with processing id $fileId: $message" )
-        val (corpusID, jobName, documentName) = dataForProcessingID(fileId) ?: throw Exception("Processing ID not found, was this file uploaded by me?")
-        corpora.getUncheckedCorpusAccess( corpusID ).jobs.readOrThrow( jobName ).documentOrThrow( documentName ).setError( message )
+        logger.info("Received error with processing id $fileId: $message")
+        val (corpusID, jobName, documentName) = dataForProcessingID(fileId)
+            ?: throw Exception("Processing ID not found, was this file uploaded by me?")
+        corpora.getUncheckedCorpusAccess(corpusID).jobs.readOrThrow(jobName).documentOrThrow(documentName)
+            .setError(message)
 
         // TODO Even thought we had an error, we can consider job.next() here
         return "KEEP" // or "DELETE"

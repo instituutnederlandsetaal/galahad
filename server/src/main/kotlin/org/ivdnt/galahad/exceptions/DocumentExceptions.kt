@@ -1,22 +1,13 @@
 package org.ivdnt.galahad.exceptions
 
 import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.ResponseStatus
 
-class DocumentNotFoundException(
-    documentName: String
-) : Exception("Document $documentName not found."), RESTException {
-    override val statusCode: HttpStatus = HttpStatus.NOT_FOUND
-}
+@ResponseStatus(value = HttpStatus.NOT_FOUND)
+class DocumentNotFoundException(document: String) : Exception("Document $document not found.")
 
-class DocumentInvalidException(
-    documentName: String,
-    details: String? = null
-) : Exception("Document $documentName is invalid. ${details ?: ""}"), RESTException {
-    override val statusCode: HttpStatus = HttpStatus.BAD_REQUEST
-}
+@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+class DocumentInvalidException(document: String, details: String? = null) : Exception("Document $document is invalid. ${details ?: ""}")
 
-class InvalidDocumentFormatException(
-    details: String
-) : Exception(details), RESTException {
-    override val statusCode: HttpStatus = HttpStatus.BAD_REQUEST
-}
+@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+class InvalidDocumentFormatException(details: String) : Exception(details)

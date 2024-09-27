@@ -17,11 +17,11 @@ open class CorpusTransformMetadata(
     val targetFormat: DocumentFormat,
 ) {
 
-    fun documentMetadata( document: String ): DocumentTransformMetadata {
+    fun documentMetadata(document: String): DocumentTransformMetadata {
         return DocumentTransformMetadata(
             corpus = corpus,
             job = job,
-            document = corpus.documents.readOrThrow( document ),
+            document = corpus.documents.readOrThrow(document),
             user = user,
             targetFormat = targetFormat,
         )
@@ -33,7 +33,7 @@ class DocumentTransformMetadata(
     val job: Job,
     val document: Document,
     val user: User,
-    val targetFormat: DocumentFormat
+    val targetFormat: DocumentFormat,
 ) {
 
     val layer: Layer = job.documentOrThrow(document.name).result
@@ -47,9 +47,8 @@ class DocumentTransformMetadata(
         for (i in layer.terms.indices) {
             val t = layer.terms[i]
             layer.terms[i] = Term(
-                lemma = t.lemma,
-                pos = t.posHeadGroup,
-                targets = t.targets)
+                lemma = t.lemma, pos = t.posHeadGroup, targets = t.targets
+            )
         }
     }
 }

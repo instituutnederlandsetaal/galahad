@@ -2,9 +2,9 @@ package org.ivdnt.galahad.data.document
 
 import org.ivdnt.galahad.BaseFileSystemStore
 import org.ivdnt.galahad.app.CRUDSet
-import org.ivdnt.galahad.data.DocumentWriteType
 import org.ivdnt.galahad.exceptions.DocumentNotFoundException
 import java.io.File
+import java.io.InputStream
 
 /**
  * Used as a collection for all documents in a corpus and to create and delete new documents.
@@ -53,3 +53,8 @@ class Documents(
         return value.filename
     }
 }
+
+class DocumentWriteType(
+    val filename: String,
+    val inputStream: InputStream,
+)

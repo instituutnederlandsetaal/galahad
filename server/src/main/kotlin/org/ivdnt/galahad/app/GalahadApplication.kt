@@ -11,9 +11,7 @@ import io.swagger.v3.oas.models.servers.Server
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.apache.logging.log4j.kotlin.Logging
-import org.ivdnt.galahad.exceptions.CorpusNotFoundException
 import org.ivdnt.galahad.exceptions.ErrorResponse
-import org.ivdnt.galahad.exceptions.RESTException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -29,7 +27,6 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.filter.CommonsRequestLoggingFilter
-import org.xml.sax.SAXParseException
 import java.io.File
 import java.io.IOException
 import java.math.BigDecimal
@@ -46,14 +43,14 @@ const val BASE_URL = "/"
 const val SWAGGER_API_URL = "/swagger-ui/index.html"
 
 const val TAGSETS_URL = "/tagsets"
-const val BENCHMARKS_URL = "/benchmarks"
 const val VERSION_URL = "/version"
 
 const val TAGGERS_URL = "/taggers"
 const val TAGGER_URL = "$TAGGERS_URL/{tagger}"
 const val TAGGER_HEALTH_URL = "$TAGGER_URL/health"
 
-const val ASSAYS_URL = "/assays"
+const val BENCHMARKS_URL = "/benchmarks"
+const val BENCHMARK_URL = "$BENCHMARKS_URL/{corpus}/{job}"
 
 const val INTERNAL_JOBS_URL = "/internal/jobs"
 const val INTERNAL_JOBS_RESULT_URL = "$INTERNAL_JOBS_URL/result"
@@ -68,7 +65,6 @@ const val JOB_URL = "$JOBS_URL/{job}"
 const val JOB_DOCUMENT_URL = "$JOB_URL/documents/{document}"
 
 const val EVALUATION_URL = "$JOB_URL/evaluation"
-const val ASSAY_URL = "$EVALUATION_URL/assay"
 const val DISTRIBUTION_URL = "$EVALUATION_URL/distribution"
 const val METRICS_URL = "$EVALUATION_URL/metrics"
 const val METRICS_SAMPLES_URL = "$METRICS_URL/download"
@@ -202,11 +198,6 @@ class ApplicationController : ErrorController, Logging {
         // Get the default status code (probably 500), or override it with the actual status code if it is a RESTException.
 		var statusCode = HttpStatus.valueOf( request.getAttribute("jakarta.servlet.error.status_code") as Int? ?: 500 )
 		val jakartaException = request.getAttribute("jakarta.servlet.error.exception") as Exception?
-        jakartaException?.cause?.let {
-            if (it is RESTException) {
-                statusCode = it.statusCode
-            }
-        }
         response?.status = statusCode.value()
 
         // Error message

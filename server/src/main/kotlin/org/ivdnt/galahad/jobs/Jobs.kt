@@ -17,14 +17,16 @@ class Jobs(
 
     private val taggerStore = TaggerStore()
 
+    fun readAllExistingJobs(): Set<JobState> = readAll().map { it.state }.toSet()
+
     // better be verbose than sorry
     fun readAllJobStatesIncludingPotentialJobs(): Set<JobState> {
         val existingJobs = readAll().map { it.state }
         val potentialJobs = taggerStore.taggers.map { it.expensiveGet() }.map {
-                JobState(
-                    it, Progress(pending = corpus.documents.readAll().size), LayerPreview.EMPTY, LayerSummary(), 0
-                )
-            }
+            JobState(
+                it, Progress(pending = corpus.documents.readAll().size), LayerPreview.EMPTY, LayerSummary(), 0
+            )
+        }
         val sourceJobs = setOf(
             JobState(
                 tagger = corpus.sourceTagger.expensiveGet()

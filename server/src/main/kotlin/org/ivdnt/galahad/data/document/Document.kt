@@ -142,9 +142,9 @@ class Document(
     }
 
     /** Convert document to desired format. */
-    fun generateAs(format: DocumentFormat, transformMetadata: DocumentTransformMetadata): File {
+    fun generateAs(transformMetadata: DocumentTransformMetadata): File {
         val docName = workDirectory.resolve(transformMetadata.document.name).nameWithoutExtension
-        return when (format) {
+        return when (transformMetadata.targetFormat) {
             // The file is what we are interested in, and it is expensive to initialize the documents, so we just pass the file
             DocumentFormat.Folia -> LayerToFoliaConverter(transformMetadata).convertToFileNamed(docName)
             DocumentFormat.Naf -> LayerToNAFConverter(transformMetadata).convertToFileNamed(docName)
@@ -159,7 +159,7 @@ class Document(
                 File(tempPath.toString(), "$docName.txt")
             }
 
-            else -> throw Exception("Conversion to $format not supported")
+            else -> throw Exception("Conversion to ${transformMetadata.targetFormat} not supported")
         }
     }
 
@@ -167,3 +167,4 @@ class Document(
     fun merge(transformMetadata: DocumentTransformMetadata) =
         getUploadedFile().expensiveGet().merge(transformMetadata)
 }
+

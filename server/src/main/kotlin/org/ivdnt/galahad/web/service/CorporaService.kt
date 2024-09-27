@@ -1,4 +1,4 @@
-package org.ivdnt.galahad.data
+package org.ivdnt.galahad.web.service
 
 import jakarta.servlet.http.HttpServletRequest
 import org.ivdnt.galahad.BaseFileSystemStore
@@ -8,9 +8,8 @@ import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.data.corpus.Corpus
 import org.ivdnt.galahad.data.corpus.CorpusMetadata
 import org.ivdnt.galahad.data.corpus.MutableCorpusMetadata
-import org.ivdnt.galahad.exceptions.CorpusNameInvalidException
-import org.ivdnt.galahad.exceptions.CorpusUnauthorizedException
 import org.ivdnt.galahad.exceptions.CorpusNotFoundException
+import org.ivdnt.galahad.exceptions.CorpusUnauthorizedException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.io.File
@@ -23,7 +22,8 @@ private fun File.corpus(): Corpus {
 @Service
 class CorporaService(
     config: Config,
-) : BaseFileSystemStore(config.getWorkingDirectory().resolve("corpora")), CRUDSet<UUID, Corpus, MutableCorpusMetadata, CorpusMetadata> {
+) : BaseFileSystemStore(config.getWorkingDirectory().resolve("corpora")),
+    CRUDSet<UUID, Corpus, MutableCorpusMetadata, CorpusMetadata> {
 
     @Autowired
     private val request: HttpServletRequest? = null
@@ -31,12 +31,14 @@ class CorporaService(
     // The two folders in which corpora reside
     private val customDir: File = workDirectory.resolve("custom")
     private val presetsDir: File = workDirectory.resolve("presets")
+
     // The corpora in these folders
     val custom: List<Corpus> get() = customDir.listFiles()?.map { it.corpus() } ?: listOf()
     val presets: List<Corpus> get() = presetsDir.listFiles()?.map { it.corpus() } ?: listOf()
 
     // Combined sets
     val all: List<Corpus> get() = custom + presets
+
     // You can't just look at presets. Some datasets may reside in the customDir.
     val datasets get() = all.filter { it.metadata.expensiveGet().isDataset }
 

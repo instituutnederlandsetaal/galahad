@@ -1,21 +1,16 @@
 package org.ivdnt.galahad.exceptions
 
 import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.ResponseStatus
 import java.util.*
 
-class CorpusNotFoundException(
-    corpusID: UUID
-) : Exception("Corpus with ID $corpusID not found."), RESTException {
-    override val statusCode: HttpStatus = HttpStatus.NOT_FOUND
-}
+@ResponseStatus(value = HttpStatus.NOT_FOUND)
+class CorpusNotFoundException(corpusID: UUID) : Exception("Corpus with ID $corpusID not found.")
 
-class CorpusNameInvalidException(
-    corpusName: String
-) : Exception("Corpus name $corpusName is invalid. No newlines and length 3-100."), RESTException {
-    override val statusCode: HttpStatus = HttpStatus.BAD_REQUEST
-}
+@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+class CorpusNameInvalidException(corpusName: String) :
+    Exception("Corpus name $corpusName is invalid. No newlines and length 3-100.")
 
-class CorpusUnauthorizedException(action: String) : Exception("Unauthorized. $action"), RESTException {
-    // UNAUTHORIZED is for login, FORBIDDEN is for access rights after login
-    override val statusCode: HttpStatus = HttpStatus.FORBIDDEN
-}
+// UNAUTHORIZED is for login, FORBIDDEN is for access rights after login
+@ResponseStatus(value = HttpStatus.FORBIDDEN)
+class CorpusUnauthorizedException(action: String) : Exception("Unauthorized. $action")

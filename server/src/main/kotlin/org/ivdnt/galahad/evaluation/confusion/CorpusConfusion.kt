@@ -18,13 +18,15 @@ class CorpusConfusion(
     layerFilter: LayerFilter? = null,
 ) : Confusion(truncate = layerFilter == null, annotation) {
 
-    private val hypothesisJob = corpus.jobs.readOrNull(hypothesis) ?: throw Exception("Hypothesis layer does not exist")
-    private val referenceJob = corpus.jobs.readOrNull(reference) ?: throw Exception("Reference layer does not exist")
+    private val hypothesisJob = corpus.jobs.readOrThrow(hypothesis)
+    private val referenceJob = corpus.jobs.readOrThrow(reference)
 
     @JsonProperty
     val hypothesisLastModified = hypothesisJob.lastModified
+
     @JsonProperty
     val referenceLastModified = referenceJob.lastModified
+
     @JsonProperty
     val generated = System.currentTimeMillis()
 
