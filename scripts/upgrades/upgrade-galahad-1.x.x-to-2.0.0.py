@@ -16,7 +16,7 @@ def upgrade_corpora(folder):
     total = len(corpora)
     print(f"Upgrading [{total}] corpora")
     for i, corpus in enumerate(corpora):
-        print(f"[{i+1}/{total}] Upgrading {corpus}")
+        print(f"[{i+1}/{total}] Upgrading corpus {corpus}")
         corpus_folder = os.path.join(folder, corpus)
         upgrade_jobs(corpus_folder)
         upgrade_docs(corpus_folder)
@@ -25,6 +25,7 @@ def upgrade_corpora(folder):
 
 def update_corpus(corpus):
     # remove the public field from the metadata.json
+    print("  Upgrading metadata")
     metadata_path = os.path.join(corpus, "metadata")
     if os.path.exists(metadata_path):
         with open(metadata_path, "r") as file:
@@ -33,25 +34,25 @@ def update_corpus(corpus):
             metadata.pop("public")
             with open(metadata_path, "w") as file:
                 json.dump(metadata, file)
-            print("\tRemoved public field from metadata.json")
+            print("    Removed public field from metadata.json")
         else:
-            print("\tpublic field not found in metadata.json")
+            print("    Successfully upgraded")
     else:
-        print("\tmetadata not found")
+        print("    metadata not found")
 
 def upgrade_jobs(corpus):
     # list all jobs in the corpus/jobs/ folder
     jobs = os.listdir(os.path.join(corpus, "jobs"))
     num_jobs = len(jobs)
-    print(f"\tUpgrading [{num_jobs}] jobs")
+    print(f"  Upgrading [{num_jobs}] jobs")
     for job_i, job in enumerate(jobs):
-        print(f"\t\t[{job_i+1}/{num_jobs}] Upgrading {job}")
+        print(f"    [{job_i+1}/{num_jobs}] Upgrading {job}")
         # list all documents in the corpus/jobs/job/documents/ folder
         documents = os.listdir(os.path.join(corpus, "jobs", job, "documents"))
         num_docs = len(documents)
-        print(f"\t\tUpgrading {num_docs} job documents")
+        print(f"    Upgrading [{num_docs}] job documents")
         for doc_i, doc in enumerate(documents):
-            print(f"\t\t[{doc_i+1}/{num_docs}] Upgrading {doc}")
+            print(f"      [{doc_i+1}/{num_docs}] Upgrading {doc}")
             # for each document folder, try to access corpus/jobs/job/documents/document/result
             json_path = os.path.join(corpus, "jobs", job, "documents", doc, "result")
             upgrade_json(json_path)
@@ -61,9 +62,9 @@ def upgrade_docs(corpus):
     # list all docs in the corpus/documents/ folder
     documents = os.listdir(os.path.join(corpus, "documents"))
     num_docs = len(documents)
-    print(f"\tUpgrading [{num_docs}] documents")
+    print(f"    Upgrading [{num_docs}] documents")
     for doc_i, doc in enumerate(documents):
-        print(f"\t\t[{doc_i+1}/{num_docs}] Upgrading {doc}")
+        print(f"      [{doc_i+1}/{num_docs}] Upgrading {doc}")
         json_path = os.path.join(corpus, "documents", doc, "sourceLayer")
         upgrade_json(json_path)
 
@@ -81,9 +82,9 @@ def upgrade_json(path):
         # write the updated json back to the file
         with open(path, "w") as file:
             json.dump(data, file)
-        print(f"\t\tSuccefully upgraded")
+        print(f"        Successfully upgraded")
     else:
-        print(f"\t\tJson absent. No need to upgrade")
+        print(f"        Json absent. No need to upgrade")
 
 def upgrade_term(term):
     if "lemma" in term or "pos" in term:
