@@ -1,0 +1,22 @@
+id: flair
+description: "flair"
+tagset: "Universal Dependencies"
+eraFrom: "1400"
+eraTo: "1900"
+produces:
+  - token
+  - upos
+  - named-entity
+model:
+  name: ud-parser
+  href: https://github.com/INL/
+software:
+  name: ud-parser
+  href: https://github.com/INL/
+dataset:
+  name: ud-parser
+  href: https://github.com/INL/
+trainedBy: "INT"
+date: "2024-07-01"
+devport: 8122
+version: "1.0.0"
