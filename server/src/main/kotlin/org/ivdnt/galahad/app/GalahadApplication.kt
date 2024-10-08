@@ -71,6 +71,7 @@ const val METRICS_SAMPLES_URL = "$METRICS_URL/download"
 const val CONFUSION_URL = "$EVALUATION_URL/confusion"
 const val CONFUSION_SAMPLES_URL = "$CONFUSION_URL/download"
 const val EVALUATION_CSV_URL = "$EVALUATION_URL/download"
+const val DOCUMENT_EVALUATION_URL = "$JOB_DOCUMENT_URL/evaluation"
 
 const val DOCUMENTS_URL = "$CORPUS_URL/documents"
 const val DOCUMENT_URL = "$DOCUMENTS_URL/{document}"

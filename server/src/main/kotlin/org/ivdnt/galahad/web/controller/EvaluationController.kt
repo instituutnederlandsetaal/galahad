@@ -10,6 +10,7 @@ import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.app.*
 import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.data.layer.AnnotationType
+import org.ivdnt.galahad.evaluation.comparison.TermComparison
 import org.ivdnt.galahad.evaluation.confusion.Confusion
 import org.ivdnt.galahad.evaluation.distribution.CorpusDistribution
 import org.ivdnt.galahad.evaluation.metrics.CorpusMetrics
@@ -46,6 +47,21 @@ class EvaluationController(
         @PathVariable @Parameter(description = "Tagger name or sourceLayer") job: String,
     ): Map<AnnotationType, CorpusDistribution> {
         return evaluationService.getDistribution(corpus, job)
+    }
+
+    @Operation(
+        summary = "Get document layer comparison",
+        description = "A comparison between two tagger jobs on document level. Sequential tokens."
+    )
+    @CrossOrigin
+    @GetMapping(DOCUMENT_EVALUATION_URL)
+    fun getDocumentLevelLayerVisualisation(
+        @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
+        @PathVariable @Parameter(description = "Document name") document: String,
+        @PathVariable @Parameter(description = "Tagger name or sourceLayer") job: String,
+        @RequestParam(defaultValue = SOURCE_LAYER_NAME) @Parameter(description = "Tagger name or sourceLayer") reference: String? = SOURCE_LAYER_NAME,
+    ): List<TermComparison> {
+        return evaluationService.getDocumentLevelLayerVisualisation(corpus, document, job, reference)
     }
 
     @Operation(

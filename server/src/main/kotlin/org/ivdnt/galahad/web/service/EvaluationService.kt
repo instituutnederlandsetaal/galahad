@@ -5,9 +5,7 @@ import jakarta.servlet.http.HttpServletResponse
 import org.ivdnt.galahad.data.corpus.CorpusMetadata
 import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.data.layer.AnnotationType
-import org.ivdnt.galahad.evaluation.comparison.ConfusionLayerFilter
-import org.ivdnt.galahad.evaluation.comparison.HeadGroupTermFilter
-import org.ivdnt.galahad.evaluation.comparison.MetricsLayerFilter
+import org.ivdnt.galahad.evaluation.comparison.*
 import org.ivdnt.galahad.evaluation.confusion.CONFUSION_TYPES
 import org.ivdnt.galahad.evaluation.confusion.CorpusConfusion
 import org.ivdnt.galahad.evaluation.distribution.CorpusDistribution
@@ -44,8 +42,8 @@ class EvaluationService(val corpora: CorporaService) {
         corpus: UUID,
         job: String,
     ): Map<AnnotationType, CorpusDistribution> {
-        val jobObj = annotationTypesforTagger(job)
-        val annotationTypes = CONFUSION_TYPES.filter { jobObj.contains(it) }
+        val allAnnots = annotationTypesForTagger(job)
+        val annotationTypes = CONFUSION_TYPES.filter { allAnnots.contains(it) }
         val distributions = annotationTypes.associateWith {
             CorpusDistribution(
                 corpora.getReadAccessOrThrow(corpus, request),
@@ -61,8 +59,8 @@ class EvaluationService(val corpora: CorporaService) {
         job: String,
         reference: String?,
     ): Map<AnnotationType, CorpusConfusion> {
-        val jobObj = annotationTypesforTagger(job)
-        val annotationTypes = CONFUSION_TYPES.filter { jobObj.contains(it) }
+        val allAnnots = annotationTypesForTagger(job)
+        val annotationTypes = CONFUSION_TYPES.filter { allAnnots.contains(it) }
         val confusions = annotationTypes.associateWith {
             CorpusConfusion(
                 corpora.getReadAccessOrThrow(corpus, request),
@@ -84,7 +82,7 @@ class EvaluationService(val corpora: CorporaService) {
     ): ByteArray {
         // Ensure the job has the required annotation types.
         val annotationType = AnnotationType.fromString(annotation)
-        if (!annotationTypesforTagger(job).contains(annotationType)) {
+        if (!annotationTypesForTagger(job).contains(annotationType)) {
             throw AnnotationNotSupported(job, annotationType)
         }
         var layerFilter: ConfusionLayerFilter? = ConfusionLayerFilter(
@@ -109,8 +107,8 @@ class EvaluationService(val corpora: CorporaService) {
         reference: String?,
     ): CorpusMetrics {
         val corpusObj = corpora.getReadAccessOrThrow(corpus, request)
-        val jobObj = annotationTypesforTagger(job)
-        val settings = METRIC_TYPES.filter { it.requiredAnnotations.all { jobObj.contains(it) } }
+        val allAnnots = annotationTypesForTagger(job)
+        val settings = METRIC_TYPES.filter { it.requiredAnnotations.all { allAnnots.contains(it) } }
         val cm = CorpusMetrics(
             corpusObj,
             settings = settings,
@@ -162,6 +160,18 @@ class EvaluationService(val corpora: CorporaService) {
         }
     }
 
+    fun getDocumentLevelLayerVisualisation(
+        corpus: UUID, document: String, job: String, reference: String?
+    ): List<TermComparison> {
+        val reference: String = reference ?: SOURCE_LAYER_NAME
+        return DocumentLayerComparison(
+            hypothesisLayer = corpora.getReadAccessOrThrow(corpus, request).jobs.readOrThrow(job).documentOrThrow(document).result,
+            referenceLayer = corpora.getReadAccessOrThrow(corpus, request).jobs.readOrThrow(reference).documentOrThrow(document).result,
+            layerFilter = null
+        ).matches
+    }
+
+
     fun getEvaluation(
         corpus: UUID,
         job: String,
@@ -181,7 +191,6 @@ class EvaluationService(val corpora: CorporaService) {
         val zipFile = createZipFile(dir.listFiles()!!.asSequence())
         return zipFile.readBytes()
     }
-
 
     private fun createDistributionCsv(dir: File, corpus: UUID, job: String) {
         val distributions = getDistribution(corpus, job)
@@ -226,9 +235,8 @@ class EvaluationService(val corpora: CorporaService) {
         return metadata
     }
 
-    private fun annotationTypesforTagger(job: String): List<AnnotationType> {
-        val jobObj = taggerStore.getSummaryOrThrow(job, null).expensiveGet().annotationTypes
-        return jobObj
+    private fun annotationTypesForTagger(job: String): List<AnnotationType> {
+        return taggerStore.getSummaryOrThrow(job, null).expensiveGet().annotationTypes
     }
 
     fun samplesToZip(

@@ -5,7 +5,7 @@
 // Libraries & stores
 import axios, { AxiosResponse } from "axios"
 // API & types
-import { ConfusionWrapper, DistributionWrapper, Metrics } from "@/types/evaluation"
+import { ConfusionWrapper, DistributionWrapper, Metrics, TermComparison } from "@/types/evaluation"
 import { UUID } from "@/types/corpora"
 import * as Utils from "@/api/utils"
 import { BlobResponse } from "@/api/utils"
@@ -29,6 +29,10 @@ const metricsSamplesPath = (corpus: UUID, hypothesis: string) => {
 
 const downloadPath = (corpus: UUID, hypothesis: string) => {
     return `${evaluationPath(corpus, hypothesis)}/download`
+}
+
+const documentLayerComparisonPath = (corpus: UUID, job: string, document: string) => {
+    return `/corpora/${corpus}/jobs/${job}/documents/${document}/evaluation`
 }
 
 // Custom Types
@@ -103,4 +107,8 @@ export function getMetricsSamples(corpus: UUID, hypothesis: string, reference: s
         params.group = group
     }
     return Utils.getBlob(metricsSamplesPath(corpus, hypothesis), { params })
+}
+
+export function getDocumentLayerComparison(corpus: UUID, job: string, document: string, reference: string): Promise<AxiosResponse<TermComparison[]>> {
+    return axios.get(documentLayerComparisonPath(corpus, job, document), { params: { reference }})
 }
