@@ -192,13 +192,28 @@ class Job(
 
     fun documentOrThrow(name: String): DocumentJob {
         // Does the document exist?
-        corpus.documents.readOrThrow(name) // Throws DocumentNotFoundException
+        // Throws DocumentNotFoundException which we don't want to obscure by throwing DocumentJobNotFoundException
+        corpus.documents.readOrThrow(name)
         // Retrieve the documentJob then.
         val file = documentsWorkDirectory.resolve(name)
         if (file.exists())
             return DocumentJob(file)
         else
             throw DocumentJobNotFoundException(name)
+    }
+
+    // We can't unduplicate this from documentOrThrow, because of throwing specific exceptions.
+    fun documentOrNull(name: String): DocumentJob? {
+        // Does the document exist?
+        if (corpus.documents.readOrNull(name) == null) {
+            return null
+        }
+        // Retrieve the documentJob then.
+        val file = documentsWorkDirectory.resolve(name)
+        return if (file.exists())
+            DocumentJob(file)
+        else
+            null
     }
 
     // Note that this creates the folder if it doesn't exist
