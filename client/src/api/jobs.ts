@@ -30,7 +30,7 @@ export type ProgressResponse = AxiosResponse<Progress>
  * @param corpus UUID of the corpus.
  */
 export function getJobs(corpus: UUID): Promise<JobsResponse> {
-    return axios.get(jobsPath(corpus))
+    return axios.get(jobsPath(corpus), { params:{ hasResult: false }})
 }
 
 /**
