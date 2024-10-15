@@ -8,13 +8,13 @@
                 :class="{ 'incorrect': tc.refTerm.annotations[selectedAnnotation] != tc.hypoTerm.annotations[selectedAnnotation] }">
                 <tbody>
                     <tr>
-                        {{ tc.refTerm.targets[0].literal }}
+                        <b>{{ tc.refTerm.targets[0].literal }}</b>
                     </tr>
                     <tr>
-                        {{ tc.refTerm.annotations[selectedAnnotation] }}
+                        {{ tc.refTerm.annotations[selectedAnnotation] ?? 'MISSING' }}
                     </tr>
                     <tr>
-                        {{ tc.hypoTerm.annotations[selectedAnnotation] }}
+                        {{ tc.hypoTerm.annotations[selectedAnnotation] ?? 'MISSING' }}
                     </tr>
                 </tbody>
             </table>
@@ -60,7 +60,7 @@ watch(selectedDoc, async (newVal) => {
 
 watch(termcomps, () => {
     if (!termcomps.value) return
-    annotationOptions.value = Object.keys(termcomps.value[0].hypoTerm.annotations).map(key => ({ value: key, text: key }))
+    annotationOptions.value = Object.keys(termcomps.value[0].refTerm.annotations).map(key => ({ value: key, text: key }))
 })
 </script>
 
@@ -68,12 +68,15 @@ watch(termcomps, () => {
 .wordComparison {
     display: inline-block;
     margin: 0;
-    margin-right: 0.1rem;
-    border: 1px solid var(--int-light-grey);
-    padding: 0.1rem;
+    margin-right: 0.2rem;
+    padding: 0.2rem;
+    background-color: rgba(0, 255, 0, 0.1);
+    text-align: center;
+    font-size: 0.8rem;
+    line-height: 0.8rem;
 }
 
 .incorrect {
-    border-color: red;
+    background-color: rgba(255, 0, 0, 0.1);
 }
 </style>
