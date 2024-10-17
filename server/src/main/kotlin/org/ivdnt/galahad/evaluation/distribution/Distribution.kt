@@ -40,7 +40,7 @@ open class Distribution(val annotation: AnnotationType) {
         coveredChars += literal.length
         coveredAlphabeticChars += literal.count { char -> char.isLetter() }
         add(
-            lemma = term.lemma ?: Term.NO_LEMMA,
+            lemma = term.lemma ?: Term.missingName(AnnotationType.LEMMA),
             pos = term.annotationToGroupHeadOrDefault(annotation),
             count = 1,
             literals = LiteralsEntry(mapOf(term.literals to 1))

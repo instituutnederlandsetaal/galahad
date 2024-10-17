@@ -11,10 +11,13 @@ import org.ivdnt.galahad.util.*
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
+import kotlin.collections.contains
 
 fun HashSet<String>.contains(s: String?, ignoreCase: Boolean = false): Boolean {
     return any { it.equals(s, ignoreCase) }
 }
+
+private val alphaNumeric = Regex("""[a-zA-Z0-9]""")
 
 open class TEITextMerger(
     var node: Node,
@@ -228,16 +231,24 @@ open class TEITextMerger(
 
     protected open fun createWTag(wf: WordForm): Element {
         val termToAdd = layer.termForWordForm(wf)
-        val wTag = if (layer.tagset.punctuationTags.contains(termToAdd.pos)) {
-            val n = document.createElement("pc")
-            n
+        
+        val wTag = if (layer.tagset.punctuationTags.contains(termToAdd.pos) && !termToAdd.literals.contains(alphaNumeric)) {
+            val element = document.createElement("pc")
+            element
         } else {
-            val n = document.createElement("w")
-            n.setAttribute("lemma", termToAdd.lemmaOrEmpty)
-            n
+            val element = document.createElement("w")
+            element.setAttribute("lemma", termToAdd.lemmaOrEmpty)
+            element
         }
-        // Both <w> and <pc> have a pos.
-        wTag.setAttribute(posType(), termToAdd.posOrEmpty)
+
+        // Empty pos if it is a PC and it contains alphanumeric characters (so it can't be PC anyway).
+        if (layer.tagset.punctuationTags.contains(termToAdd.pos) && termToAdd.literals.contains(alphaNumeric)) {
+            wTag.setAttribute(posType(), "") // empty
+        } else {
+            wTag.setAttribute(posType(), termToAdd.posOrEmpty)
+        }
+
+        wTag.setAttribute("xml:id", termToAdd.targets.first().id)
         return wTag
     }
 
@@ -301,12 +312,24 @@ open class TEITextMerger(
 
     private fun mergeWTag(wordFormToAdd: WordForm, element: Element) {
         val termToAdd = layer.termForWordForm(wordFormToAdd)
+
         // <pc> tags do not have a lemma.
         if (element.tagName == "w") {
             element.setAttribute("lemma", termToAdd.lemmaOrEmpty)
         }
-        element.setAttribute(posType(), termToAdd.posOrEmpty)
+
+        // Clear the pos if it is a PC, and it contains alphanumeric characters (so it can't be PC anyway).
+        if (layer.tagset.punctuationTags.contains(termToAdd.pos) && termToAdd.literals.contains(alphaNumeric)) {
+            element.setAttribute(posType(), "") // Clear the pos
+        } else {
+            element.setAttribute(posType(), termToAdd.posOrEmpty)
+        }
+
         element.removeAttribute("type") // Update legacy formats to TEI p5
+        // First check if the element has an id already, else add it.
+        if (element.getAttribute("xml:id").isNullOrBlank()) {
+            element.setAttribute("xml:id", termToAdd.targets.first().id)
+        }
     }
 
     private fun getWordFormsToAdd(): List<WordForm> {

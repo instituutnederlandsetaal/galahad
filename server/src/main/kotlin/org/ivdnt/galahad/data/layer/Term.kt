@@ -3,11 +3,6 @@ package org.ivdnt.galahad.data.layer
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 
-/** Avoid empty strings in the CSV representation. */
-fun Term.toNonEmptyPair(): Pair<String, String> {
-    return (this.pos ?: Term.NO_POS) to (this.lemma ?: Term.NO_LEMMA)
-}
-
 
 /**
  * A term in a [Layer]. A term has a [lemma], a [pos] and refers to one or multiple [WordForm].
@@ -32,14 +27,6 @@ data class Term(
     /** Whether the pos is not null. */
     @get:JsonIgnore
     val hasPOS: Boolean = pos != null
-
-    @get:JsonIgnore
-    val posHeadGroupOrDefault
-        get() = posHeadGroup ?: NO_POS
-
-    @get:JsonIgnore
-    val lemmaOrDefault
-        get() = lemma ?: NO_LEMMA
 
     @get:JsonIgnore
     val lemmaOrEmpty
@@ -97,8 +84,6 @@ data class Term(
     }
 
     companion object {
-        const val NO_POS = "NO_POS"
-        const val NO_LEMMA = "NO_LEMMA"
         val EMPTY = Term(mapOf(), mutableListOf())
 
         fun missingName(annotationType: AnnotationType): String {

@@ -41,7 +41,7 @@ open class PosByPosMetricsSettings : MetricsSettings {
     override val annotation: String = "PoS"
     override val group: String = "PoS"
     override val groupAnnotation = AnnotationType.POS
-    override val nullTerm: String = Term.NO_POS
+    override val nullTerm: String = "NO_POS"
     override val requiredAnnotations = listOf(AnnotationType.POS)
 
     override fun termsEqual(comp: TermComparison): Boolean {
@@ -74,7 +74,7 @@ open class LemmaByLemmaMetricsSettings : MetricsSettings {
     override val annotation: String = "Lemma"
     override val group: String = "Lemma"
     override val groupAnnotation = AnnotationType.LEMMA
-    override val nullTerm: String = Term.NO_LEMMA
+    override val nullTerm: String = "NO_LEMMA"
     override val requiredAnnotations = listOf(AnnotationType.LEMMA)
 
     override fun termsEqual(comp: TermComparison): Boolean {
@@ -192,7 +192,7 @@ class UposByUposMetricsSettings : MetricsSettings {
     override val annotation: String = "upos"
     override val group: String = "upos"
     override val groupAnnotation = AnnotationType.UPOS
-    override val nullTerm: String = Term.NO_POS
+    override val nullTerm: String = "NO_UPOS"
     override val requiredAnnotations = listOf(AnnotationType.UPOS)
 
     override fun termsEqual(comp: TermComparison): Boolean {

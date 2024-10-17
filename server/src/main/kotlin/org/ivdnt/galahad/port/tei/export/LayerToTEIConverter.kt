@@ -89,7 +89,7 @@ class LayerToTEIConverter(
             }
             // none of the case above happened, so the text is not covered
             // insert plain text
-            writer.writeRaw(plaintext[offset].toString())
+            writer.writeRaw(plaintext[offset].toString().escapeXML())
             offset += 1 // actually we can look at currentTerm etc. and add multiple characters at once
         }
         currentTerm = if (sortedTerms.hasNext()) sortedTerms.next() else null
@@ -108,10 +108,18 @@ class LayerToTEIConverter(
             }
         }
         if (punctuationTags.contains(term.pos)) {
-            // Interpret as pc tag
-            writer.writeRaw("<pc xml:id=\"${term.targets[0].id}\">${getLiteral()}</pc>")
+            val alphaNumeric = Regex("""[a-zA-Z0-9]""")
+            if (!term.literals.contains(alphaNumeric)) {
+                // Interpret as punctuation only if it doesn't contain any alphanumeric characters
+                val pos = term.posOrEmpty.escapeXML()
+                writer.writeRaw("<pc pos=\"$pos\" xml:id=\"${term.targets[0].id}\">${getLiteral()}</pc>")
+            } else {
+                // Clear the pos and interpret as <w>
+                val lemma = term.lemmaOrEmpty.escapeXML()
+                writer.writeRaw("<w lemma=\"$lemma\" pos=\"\" xml:id=\"${term.targets[0].id}\">${getLiteral()}</w>")
+            }
         } else {
-            // If it is not punctuation, safely assume it can be interpreted as <w>
+            // Assume it can be interpreted as <w>
             val lemma = term.lemmaOrEmpty.escapeXML()
             val pos = term.posOrEmpty.escapeXML()
             writer.writeRaw("<w lemma=\"$lemma\" pos=\"$pos\" xml:id=\"${term.targets[0].id}\">${getLiteral()}</w>")
