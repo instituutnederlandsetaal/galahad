@@ -30,7 +30,7 @@
     "@typescript-eslint/parser": "^8.9.0",
     "@vue/eslint-config-typescript": "^14.1.1",
     "eslint": "^9.12.0",
-    "eslint-plugin-vue": "^9.29.0",
+    "eslint-plugin-vue": "^9.29.1",
     "mutationobserver-shim": "^0.3.7",
     "node-sass": "^9.0.0",
     "sass": "^1.79.5",
