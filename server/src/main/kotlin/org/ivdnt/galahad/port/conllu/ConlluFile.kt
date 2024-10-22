@@ -28,6 +28,8 @@ class ConlluFile(file: File) : TSVFile(file) {
         AnnotationType.MISC to 9,
         AnnotationType.NER to 10,
     )
+    /** Supported names for the ner attribute in the MISC column. */
+    private val nerAttrNames: List<String> = listOf("NamedEntity", "ner")
 
     // CoNLL-U has a fixed order of columns.
     override fun getColumnIndices(headers: List<String>, errors: MutableList<String>) {}
@@ -48,7 +50,7 @@ class ConlluFile(file: File) : TSVFile(file) {
     fun getNER(values: List<String>): String? {
         val misc = super.getColumn(miscIndex, values)
         if (misc.isNullOrBlank() || misc == "_") return "O"
-        val ner = misc.split("|").firstOrNull { it.startsWith("NamedEntity=") } ?: return "O"
+        val ner = misc.split("|").firstOrNull { nerAttrNames.contains(it.split("=").first()) } ?: return "O"
         return ner.substringAfter('=')
     }
 
