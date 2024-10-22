@@ -8,8 +8,8 @@ import axios, { AxiosResponse } from "axios"
 import { UUID } from "@/types/corpora"
 import { Assays, IndividualAssay } from "@/types/assays"
 
-const assaysPath = `/assays`
-const assayPath = (corpus: UUID, job: string) => `/corpora/${corpus}/jobs/${job}/evaluation/assay`
+const assaysPath = `/benchmarks`
+const assayPath = (corpus: UUID, job: string) => `/benchmarks/${corpus}/${job}`
 
 // Custom types
 type AssaysResponse = AxiosResponse<Assays>
