@@ -32,7 +32,7 @@ open class TSVFile(
         AnnotationType.TOKEN to listOf("word", "token", "literal", "term", "form"),
         AnnotationType.LEMMA to listOf("lemma"),
         AnnotationType.POS to listOf("pos", "xpos"),
-        AnnotationType.NER to listOf("entity"),
+        AnnotationType.NER to listOf("entity", "ner", "named-entity", "NamedEntity"),
     )
 
     override fun plainTextReader(): Reader {
