@@ -25,7 +25,7 @@ repositories {
 
 dependencies {
 	// Spring
-	implementation("org.springframework.boot:spring-boot-starter-web:3.3.4")
+	implementation("org.springframework.boot:spring-boot-starter-web:3.3.5")
 	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-devtools
 	implementation("org.springframework.boot:spring-boot-devtools:3.3.4")
 
