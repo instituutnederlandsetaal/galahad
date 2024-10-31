@@ -111,8 +111,7 @@ class LayerToTEIConverter(
             val alphaNumeric = Regex("""[a-zA-Z0-9]""")
             if (!term.literals.contains(alphaNumeric)) {
                 // Interpret as punctuation only if it doesn't contain any alphanumeric characters
-                val pos = term.posOrEmpty.escapeXML()
-                writer.writeRaw("<pc pos=\"$pos\" xml:id=\"${term.targets[0].id}\">${getLiteral()}</pc>")
+                writer.writeRaw("<pc xml:id=\"${term.targets[0].id}\">${getLiteral()}</pc>")
             } else {
                 // Clear the pos and interpret as <w>
                 val lemma = term.lemmaOrEmpty.escapeXML()

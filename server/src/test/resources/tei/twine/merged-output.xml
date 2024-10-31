@@ -5,9 +5,9 @@
         <body>
             <p><w lemma="net" pos="AA(degree=pos,position=free)" xml:id="w0">n<hi rend="bold">e</hi>t</w><milestone n="1va" unit="fol"/> <w lemma="zijn" pos="VRB(finiteness=fin,tense=past)" xml:id="w1"><hi rend="bold">w</hi><hi rend="bold">a</hi><hi rend="bold">s</hi></w> <w lemma="ik" pos="PD(type=pers,position=free)" xml:id="w2">ik</w><w lemma="naar" pos="ADP(type=pre)" xml:id="w3"><hi rend="bold">n</hi>aar</w> <w lemma="school" pos="NOU-C(number=sg)" xml:id="w4">sc<hi rend="bold">h</hi><hi rend="bold">o</hi>o<hi rend="bold">l</hi></w> <w lemma="heengaan" pos="ADV(type=reg)" xml:id="w5">heen</w> <w lemma="en" pos="CONJ(type=coor)" xml:id="w6">en</w> <w lemma="terugkomen" pos="VRB(finiteness=fin,tense=past)" xml:id="w7">t<hi rend="bold">e</hi>r<hi rend="bold">u</hi>g</w> <w lemma="wezen" pos="VRB(finiteness=inf)" xml:id="w8">w<hi rend="bold">eze</hi>n</w> <w lemma="lopen" pos="VRB(finiteness=inf)" xml:id="w9">lope<hi rend="bold">n</hi></w> <w lemma="hetzovoor" pos="ADV(type=reg)" xml:id="w10"><hi rend="bold">enz</hi>o</w></p>
 
-            <pc lemma="onzin" pos="LET" xml:id="w11">.</pc>
-            <pc pos="LET" xml:id="w12">.</pc>
-            <pc pos="LET" xml:id="w13">.</pc>
+            <pc lemma="onzin" xml:id="w11">.</pc>
+            <pc pos="onzin" xml:id="w12">.</pc>
+            <pc xml:id="w13">.</pc>
             <w lemma="school" pos="NOU-C(number=pl)" xml:id="w14">scholen</w>
             <w lemma="school" pos="NOU-C(number=pl)" xml:id="w15">scholen</w>
 

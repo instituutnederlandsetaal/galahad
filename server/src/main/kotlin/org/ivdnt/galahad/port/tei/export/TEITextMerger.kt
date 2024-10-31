@@ -238,14 +238,13 @@ open class TEITextMerger(
         } else {
             val element = document.createElement("w")
             element.setAttribute("lemma", termToAdd.lemmaOrEmpty)
+            // Empty pos if it is a PC and it contains alphanumeric characters (so it can't be PC anyway).
+            if (layer.tagset.punctuationTags.contains(termToAdd.pos) && termToAdd.literals.contains(alphaNumeric)) {
+                element.setAttribute(posType(), "") // empty
+            } else {
+                element.setAttribute(posType(), termToAdd.posOrEmpty)
+            }
             element
-        }
-
-        // Empty pos if it is a PC and it contains alphanumeric characters (so it can't be PC anyway).
-        if (layer.tagset.punctuationTags.contains(termToAdd.pos) && termToAdd.literals.contains(alphaNumeric)) {
-            wTag.setAttribute(posType(), "") // empty
-        } else {
-            wTag.setAttribute(posType(), termToAdd.posOrEmpty)
         }
 
         wTag.setAttribute("xml:id", termToAdd.targets.first().id)
@@ -316,13 +315,12 @@ open class TEITextMerger(
         // <pc> tags do not have a lemma.
         if (element.tagName == "w") {
             element.setAttribute("lemma", termToAdd.lemmaOrEmpty)
+            element.setAttribute(posType(), termToAdd.posOrEmpty)
         }
 
         // Clear the pos if it is a PC, and it contains alphanumeric characters (so it can't be PC anyway).
         if (layer.tagset.punctuationTags.contains(termToAdd.pos) && termToAdd.literals.contains(alphaNumeric)) {
             element.setAttribute(posType(), "") // Clear the pos
-        } else {
-            element.setAttribute(posType(), termToAdd.posOrEmpty)
         }
 
         element.removeAttribute("type") // Update legacy formats to TEI p5
