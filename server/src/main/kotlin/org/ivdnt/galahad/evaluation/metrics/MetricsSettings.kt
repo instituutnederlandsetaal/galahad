@@ -78,7 +78,7 @@ open class LemmaByLemmaMetricsSettings : MetricsSettings {
     override val requiredAnnotations = listOf(AnnotationType.LEMMA)
 
     override fun termsEqual(comp: TermComparison): Boolean {
-        return comp.equalAnnotation(AnnotationType.LEMMA)
+        return comp.equalAnnotation(AnnotationType.LEMMA, Regex("_"))
     }
 
     override fun groupBy(term: Term): String {

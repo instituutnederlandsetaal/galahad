@@ -53,11 +53,34 @@ data class TermComparison(
             return false
         }
 
+    /**
+     * Apply a removal regex transformation to the annotation before comparing. E.g. removing _ from lemmas.
+     */
+    fun equalAnnotation(annotation: AnnotationType, regex: Regex): Boolean {
+        var refAnnot: String? = refTerm.annotations[annotation]
+        var hypAnnot: String? = hypoTerm.annotations[annotation]
+
+        if (refAnnot != null) {
+            refAnnot = regex.replace(refAnnot, "")
+        }
+        if (hypAnnot != null) {
+            hypAnnot = regex.replace(hypAnnot, "")
+        }
+
+        return equalAnnotation(refAnnot, hypAnnot)
+    }
+
     fun equalAnnotation(annotation: AnnotationType): Boolean {
-        if (refTerm.annotations[annotation] == null) return true
-        if (refTerm.annotations[annotation]!!.isEmpty()) return true
-        if (hypoTerm.annotations[annotation] == null) return false
-        return hypoTerm.annotations[annotation].equals(refTerm.annotations[annotation], true)
+        val refAnnot: String? = refTerm.annotations[annotation]
+        val hypAnnot: String? = hypoTerm.annotations[annotation]
+        return equalAnnotation(refAnnot, hypAnnot)
+    }
+
+    fun equalAnnotation(ref: String?, hyp: String?): Boolean {
+        if (ref == null) return true
+        if (ref.isEmpty()) return true
+        if (hyp == null) return false
+        return hyp.equals(ref, true)
     }
 
     companion object {
