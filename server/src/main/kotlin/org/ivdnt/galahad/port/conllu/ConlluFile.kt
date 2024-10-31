@@ -51,7 +51,10 @@ class ConlluFile(file: File) : TSVFile(file) {
         val misc = super.getColumn(miscIndex, values)
         if (misc.isNullOrBlank() || misc == "_") return "O"
         val ner = misc.split("|").firstOrNull { nerAttrNames.contains(it.split("=").first()) } ?: return "O"
-        return ner.substringAfter('=')
+        // Replace /^S\-/ with B- and /^E\-/ with I-. E.g.: S-LOC -> B-LOC, E-LOC -> I-LOC
+        val replaceS: Regex = Regex("^S-")
+        val replaceE: Regex = Regex("^E-")
+        return ner.substringAfter('=').replace(replaceS, "B-").replace(replaceE, "I-")
     }
 
     override fun getColumn(index: Int?, values: List<String>): String? {
