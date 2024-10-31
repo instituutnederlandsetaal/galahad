@@ -3,7 +3,7 @@ import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	id("org.springframework.boot") version "3.3.4"
+	id("org.springframework.boot") version "3.3.5"
 	id("io.spring.dependency-management") version "1.1.6"
 	id("org.jetbrains.dokka") version "1.9.20"
 	kotlin("jvm") version "2.0.21"
@@ -25,9 +25,9 @@ repositories {
 
 dependencies {
 	// Spring
-	implementation("org.springframework.boot:spring-boot-starter-web:3.3.4")
+	implementation("org.springframework.boot:spring-boot-starter-web:3.3.5")
 	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-devtools
-	implementation("org.springframework.boot:spring-boot-devtools:3.3.4")
+	implementation("org.springframework.boot:spring-boot-devtools:3.3.5")
 
 	// kotlin
 	implementation("org.jetbrains.kotlin:kotlin-reflect:2.0.21")
@@ -48,7 +48,7 @@ dependencies {
 	implementation("org.yaml:snakeyaml:2.3")
 
 	// Tests
-	testImplementation ("org.springframework.boot:spring-boot-starter-test:3.3.4")
+	testImplementation ("org.springframework.boot:spring-boot-starter-test:3.3.5")
 }
 
 tasks.test {
