@@ -174,8 +174,9 @@ class Job(
             // This is very expensive
             val resultSummary: LayerSummary =
                 documents.map { it.result.summary }.reduceOrNull { a, b -> a + b } ?: LayerSummary()
+
             return JobState(
-                taggerStore.getSummaryOrNull(name, corpus.sourceTagger).expensiveGet() ?: Tagger(),
+                taggerStore.getSummaryOrThrow(name, corpus.sourceTagger).expensiveGet(),
                 progress,
                 preview,
                 resultSummary,
@@ -183,6 +184,24 @@ class Job(
             )
         }
     }
+
+    val annotationTypes: Set<String>
+        get() {
+            // loop through each document's sourceLayer and keep track of the used annotations
+            // VERY EXPENSIVE
+            val produces = mutableSetOf<String>()
+            documents.forEach { documentJob ->
+                val layer = documentJob.result
+                // You might think that only checking the first term is enough
+                // But throughout the document, different annotations might be present.
+                // E.G. a TEI document like:
+                // <p> <pc pos="PC">.</w> <w pos="NOU" lemma="word">word</w> </p>
+                layer.terms.forEach { term ->
+                    term.annotations.keys.forEach { produces.add(it.value) }
+                }
+            }
+            return produces
+        }
 
     val state: JobState
         get() {

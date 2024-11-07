@@ -75,6 +75,7 @@ class Corpus(
                 sourceName = mutableCorpusMetadata.sourceName,
                 sourceURL = mutableCorpusMetadata.sourceURL,
                 // Immutable/calculated fields
+                sourceAnnotationTypes = jobs.readOrThrow(SOURCE_LAYER_NAME).annotationTypes,
                 uuid = UUID.fromString(workDirectory.name),
                 activeJobs = jobs.readAll().filter { it.isActive }.size,
                 numDocs = documents.readAll().size,
@@ -92,7 +93,14 @@ class Corpus(
     }
 
     val metadata: ExpensiveGettable<CorpusMetadata> = object : ExpensiveGettable<CorpusMetadata> {
-        override fun expensiveGet() = metadataCache.get<CorpusMetadata>()
+        override fun expensiveGet(): CorpusMetadata {
+            try {
+                return metadataCache.get<CorpusMetadata>()
+            } catch (e: Exception) {
+                invalidateCache()
+                return metadataCache.get<CorpusMetadata>()
+            }
+        }
     }
 
     val sourceTagger: ExpensiveGettable<Tagger> = object : ExpensiveGettable<Tagger> {
@@ -104,7 +112,7 @@ class Corpus(
                 tagset = metadata.tagset,
                 eraFrom = metadata.eraFrom,
                 eraTo = metadata.eraTo,
-                produces = setOf("TODO"),
+                produces = metadata.sourceAnnotationTypes,
             )
         }
     }

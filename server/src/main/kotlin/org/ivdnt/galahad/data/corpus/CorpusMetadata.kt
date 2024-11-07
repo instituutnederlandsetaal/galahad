@@ -27,6 +27,7 @@ class CorpusMetadata(
     @JsonProperty("sourceName") sourceName: String? = null,
     @JsonProperty("sourceURL") sourceURL: URL? = null,
     // Immutable fields
+    @JsonProperty("sourceAnnotationTypes") val sourceAnnotationTypes: Set<String> = setOf(),
     @JsonProperty("uuid") val uuid: UUID = UUID(0, 0),
     @JsonProperty("activeJobs") val activeJobs: Int = 0,
     @JsonProperty("numDocs") val numDocs: Int = 0,
