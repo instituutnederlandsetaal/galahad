@@ -14,7 +14,7 @@
         <template #header>
             <slot name="header"></slot>
         </template>
-        <div id="prepend">
+        <div id="prepend" v-if="$slots.prepend">
             <slot name="prepend"></slot>
         </div>
 
@@ -386,7 +386,7 @@ table .loading-symbol {
 table {
     border-collapse: collapse;
     margin: 0 auto;
-    margin-top: 5px;
+    // margin-top: 5px;
     padding: 0;
 
     caption {

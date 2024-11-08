@@ -5,51 +5,19 @@
         <GInput type="select" :options="annotationOptions" v-model="selectedAnnotation" />
         <div v-if="selectedDoc && selectedAnnotation" class="document">
 
-            <template v-for="tc in termcomps" :key="tc.refTerm.targets[0].id">
+            <template v-for="tc in termcomps.slice(firstRecord, firstRecord + rowsToDisplay)"
+                :key="tc.refTerm.targets[0].id">
 
                 <span class="wordComparison" :class="{ 'incorrect': !annotationsEqual(tc) }">
                     {{ tc.refTerm.targets[0].literal }}
-                    <table class="tooltip">
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <b>{{ jobSelection.referenceJobId }}</b>
-                                </td>
-                                <td>
-                                    {{ tc.refTerm.annotations[selectedAnnotation] ?? 'MISSING' }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <b>{{ jobSelection.hypothesisJobId }}</b>
-                                </td>
-                                <td>
-                                    {{ tc.hypoTerm.annotations[selectedAnnotation] ?? 'MISSING' }}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <SingleTermComparisonTable :hypoTerm="tc.hypoTerm" :refTerm="tc.refTerm" class="tooltip" />
                 </span>
 
                 <!-- add newline after . -->
                 <br v-if="tc.refTerm.targets[0].literal == '.'" />
 
             </template>
-
-            <!-- <table v-for="tc in termcomps" :key="tc.refTerm.targets[0].id" class="wordComparison"
-                :class="{ 'incorrect': tc.refTerm.annotations[selectedAnnotation] != tc.hypoTerm.annotations[selectedAnnotation] }">
-                <tbody>
-                    <tr>
-                        <b>{{ tc.refTerm.targets[0].literal }}</b>
-                    </tr>
-                    <tr>
-                        {{ tc.refTerm.annotations[selectedAnnotation] ?? 'MISSING' }}
-                    </tr>
-                    <tr>
-                        {{ tc.hypoTerm.annotations[selectedAnnotation] ?? 'MISSING' }}
-                    </tr>
-                </tbody>
-            </table> -->
+            <Paginator v-model:first="firstRecord" :rows="rowsToDisplay" :totalRecords="termcomps.length"></Paginator>
         </div>
     </div>
 </template>
@@ -60,9 +28,11 @@ import { onMounted, watch, computed, ref } from 'vue'
 import * as API from '@/api/evaluation'
 // Types & Stores
 import { TermComparison } from '@/types/evaluation'
-import stores, { CorporaStore, JobsStore, ExportStore, DocumentsStore } from "@/stores"
+import stores, { CorporaStore, JobsStore, ExportStore, DocumentsStore, JobSelectionStore } from "@/stores"
 // Components
 import { GInput } from "@/components"
+import SingleTermComparisonTable from '@/components/tables/SingleTermComparisonTable.vue'
+import Paginator from 'primevue/paginator';
 
 // Stores
 const documentsStore = stores.useDocuments() as DocumentsStore
@@ -76,6 +46,9 @@ const selectedAnnotation = ref(null)
 const annotationOptions = ref(null)
 const termcomps = ref<TermComparison[]>(null)
 const loading = ref(false)
+/** Paginator */
+const firstRecord = ref(0)
+const rowsToDisplay = ref(200)
 
 // Watches & mounts
 watch(selectedDoc, async (newVal) => {
@@ -97,7 +70,13 @@ watch(termcomps, () => {
 
 // Methods
 function annotationsEqual(tc: TermComparison) {
-    return tc.refTerm.annotations[selectedAnnotation.value]?.toLowerCase().replace("_", "") == tc.hypoTerm.annotations[selectedAnnotation.value]?.toLowerCase()
+    const refAnnot = cleanAnnotation(tc.refTerm)
+    const hypoAnnot = cleanAnnotation(tc.hypoTerm)
+    return refAnnot == hypoAnnot
+}
+
+function cleanAnnotation(term) {
+    return term.annotations[selectedAnnotation.value]?.toLowerCase().replace("_", "")
 }
 
 </script>
@@ -125,12 +104,11 @@ function annotationsEqual(tc: TermComparison) {
     visibility: hidden;
     position: absolute;
     z-index: 1;
-    background-color: var(--white);
-    border: 1px solid var(--int-grey);
     width: max-content;
     bottom: 100%;
-    padding: 0.3rem;
     text-align: left;
+    padding: 0;
+    margin: 0;
 }
 
 .wordComparison:hover .tooltip {
