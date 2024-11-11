@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.evaluation.confusion
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import org.ivdnt.galahad.data.layer.Term
+import org.ivdnt.galahad.data.layer.AnnotationType
 import org.ivdnt.galahad.evaluation.CsvSampleExporter
 import org.ivdnt.galahad.evaluation.EvaluationEntry
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
@@ -15,7 +15,7 @@ const val OTHER_POS_REGEX = """^[^a-zA-Z]"""
  * Generic class for the part of speech confusion of a corpus or document.
  * The idea is to sum up the confusions as we go through the terms one by one using [add].
  */
-open class Confusion(private val truncate: Boolean = true): CsvSampleExporter {
+open class Confusion(private val truncate: Boolean = true, val annotation: AnnotationType) : CsvSampleExporter {
 
     /**
      * null-key if there is no match
@@ -84,8 +84,8 @@ open class Confusion(private val truncate: Boolean = true): CsvSampleExporter {
 
     fun add(termComp: TermComparison) {
         add(
-            termComp.hypoTerm.posHeadGroup ?: Term.NO_POS,
-            termComp.refTerm.posHeadGroup ?: Term.NO_POS,
+            termComp.hypoTerm.annotationToGroupHeadOrDefault(annotation),
+            termComp.refTerm.annotationToGroupHeadOrDefault(annotation),
             termComp
         )
     }

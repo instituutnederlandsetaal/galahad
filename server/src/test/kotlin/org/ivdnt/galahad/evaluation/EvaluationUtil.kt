@@ -71,8 +71,8 @@ object EvaluationUtil {
         source: Layer,
     ) {
         val taggerJob = corpus.jobs.createOrThrow(TestConfig.TAGGER_NAME)
-        taggerJob.document(docName).setResult(tagger)
+        taggerJob.documentOrThrow(docName).setResult(tagger)
         val sourceJob = corpus.jobs.createOrThrow(SOURCE_LAYER_NAME)
-        sourceJob.document(docName).setResult(source)
+        sourceJob.documentOrThrow(docName).setResult(source)
     }
 }

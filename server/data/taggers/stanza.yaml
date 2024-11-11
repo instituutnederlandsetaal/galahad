@@ -1,0 +1,28 @@
+id: stanza
+description: "stanza"
+tagset: "Universal Dependencies"
+eraFrom: "1400"
+eraTo: "1900"
+produces:
+  - token
+  - lemma
+  - pos
+  - upos
+  - head
+  - deprel
+  - misc
+  - id
+  - named-entity
+model:
+  name: ud-parser
+  href: https://github.com/INL/
+software:
+  name: ud-parser
+  href: https://github.com/INL/
+dataset:
+  name: ud-parser
+  href: https://github.com/INL/
+trainedBy: "INT"
+date: "2024-07-01"
+devport: 8121
+version: "1.0.0"

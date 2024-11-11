@@ -7,6 +7,7 @@ import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.GalahadApplication
 import org.ivdnt.galahad.data.corpus.CorpusMetadata
 import org.ivdnt.galahad.data.corpus.MutableCorpusMetadata
+import org.ivdnt.galahad.web.controller.CorporaController
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
@@ -74,9 +75,9 @@ class CorporaControllerTest(
         }
 
         // Try to update as viewer
-        assertThrows(Exception::class.java) { patchCorpus(uuid, moreSharers, "viewer1") }
+        assertThrows(Exception::class.java) { updateCorpus(uuid, moreSharers, "viewer1") }
         // Try to update as collaborator
-        val moreSharersResponse = patchCorpus(uuid, moreSharers)
+        val moreSharersResponse = updateCorpus(uuid, moreSharers)
 
         // Check if updated correctly
         assertEquals(setOf("collab1", "collab2"), moreSharersResponse?.collaborators)
@@ -87,7 +88,7 @@ class CorporaControllerTest(
             it.collaborators = setOf("collab1", "collab2")
             it.viewers = setOf("viewer1")
         }
-        assertDoesNotThrow { patchCorpus(uuid, viewer2gone, "viewer2") }
+        assertDoesNotThrow { updateCorpus(uuid, viewer2gone, "viewer2") }
 
         // Try to delete it as viewer1
         assertThrows(Exception::class.java) { deleteCorpus(uuid, "viewer1") }
@@ -117,7 +118,7 @@ class CorporaControllerTest(
         return UUID.fromString(JSON.fromStr<String>(result.response.getContentAsString(StandardCharsets.UTF_8)))
     }
 
-    private fun patchCorpus(uuid: UUID?, meta: MutableCorpusMetadata, username: String = "testUser"): CorpusMetadata? {
+    private fun updateCorpus(uuid: UUID?, meta: MutableCorpusMetadata, username: String = "testUser"): CorpusMetadata? {
         val result: MvcResult = mvc.perform(
             MockMvcRequestBuilders.patch("/corpora/$uuid").headers(UserHeader.get(username))
                 // utf-8

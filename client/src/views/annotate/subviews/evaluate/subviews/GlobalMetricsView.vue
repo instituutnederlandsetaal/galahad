@@ -77,6 +77,7 @@ const items = computed(() => {
             const annoAndGroup = annotationAndGroupFromName(i.name)
             return {
                 id: i.setting.id,
+                column: i.setting.annotation,
                 name: i.setting.annotation,
                 group: i.setting.group,
                 count: i.classes.classCount,

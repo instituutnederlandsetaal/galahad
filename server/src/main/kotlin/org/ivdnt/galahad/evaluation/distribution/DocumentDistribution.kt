@@ -1,6 +1,7 @@
 package org.ivdnt.galahad.evaluation.distribution
 
 import org.ivdnt.galahad.data.document.DocumentMetadata
+import org.ivdnt.galahad.data.layer.AnnotationType
 import org.ivdnt.galahad.data.layer.Layer
 
 /**
@@ -9,7 +10,8 @@ import org.ivdnt.galahad.data.layer.Layer
 class DocumentDistribution(
     hypothesis: Layer,
     meta: DocumentMetadata,
-) : Distribution() {
+    annotation: AnnotationType
+) : Distribution(annotation) {
     init {
         totalChars = meta.numChars
         totalAlphabeticChars = meta.numAlphabeticChars

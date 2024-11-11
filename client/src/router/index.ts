@@ -13,6 +13,7 @@ import DistributionView from '@/views/annotate/subviews/evaluate/subviews/Distri
 import GlobalMetricsView from '@/views/annotate/subviews/evaluate/subviews/GlobalMetricsView.vue'
 import GroupedMetricsView from '@/views/annotate/subviews/evaluate/subviews/GroupedMetricsView.vue'
 import ConfusionView from '@/views/annotate/subviews/evaluate/subviews/ConfusionView.vue'
+import DocumentLayerComparisonView from '@/views/annotate/subviews/evaluate/subviews/DocumentLayerComparisonView.vue'
 
 import ExportView from '@/views/annotate/subviews/ExportView.vue'
 
@@ -92,6 +93,10 @@ const routes = [
           {
             path: 'confusion',
             component: ConfusionView
+          },
+          {
+            path: 'document_layer_comparison',
+            component: DocumentLayerComparisonView
           }
         ]
       },

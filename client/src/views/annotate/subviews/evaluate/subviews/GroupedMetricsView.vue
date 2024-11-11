@@ -15,7 +15,7 @@
                         Only the 100 most frequent groups are shown.
                     </b>
                 </p>
-                <MetricsFilter ref="metricsFilter" />
+                <MetricsFilter ref="metricsFilter" :annotations="metrics.metrics" />
             </template>
         </MetricsTable>
 
@@ -58,6 +58,7 @@ const posMetrics = computed(() => {
     // to:
     // { ADJ: { ADJ: { f1, recall, ..., } } }
     const ret = metrics.value.metrics[metricName.value].grouped.map((i) => ({
+        column: metricName.value.split("By")[1].toLowerCase(),
         name: i.name,
         count: i.classes.classCount,
         truePositive: i.classes.truePositive,

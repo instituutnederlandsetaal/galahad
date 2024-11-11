@@ -4,7 +4,7 @@
 
 // Libraries & stores
 import { AppStore } from "@/stores"
-import axios, { AxiosResponse, AxiosError } from "axios"
+import axios, { AxiosResponse, AxiosError, AxiosRequestConfig } from "axios"
 import { parse } from 'content-disposition'
 
 // Custom types
@@ -14,8 +14,8 @@ export type BlobResponse = AxiosResponse<Blob>
  * Fetch a blob from a path.
  * @param path Request path.
  */
-export function getBlob(path: string): Promise<BlobResponse> {
-    return axios.get(path, { responseType: 'blob' })
+export function getBlob(path: string, config?: AxiosRequestConfig): Promise<BlobResponse> {
+    return axios.get(path, { responseType: 'blob', ...config })
 }
 
 /**

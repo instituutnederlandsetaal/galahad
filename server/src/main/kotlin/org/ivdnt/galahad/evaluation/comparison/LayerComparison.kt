@@ -3,6 +3,7 @@ package org.ivdnt.galahad.evaluation.comparison
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.ivdnt.galahad.data.layer.Layer
 import org.ivdnt.galahad.data.layer.Term
+import org.ivdnt.galahad.data.layer.WordForm
 
 fun ListIterator<Term>.nextOrNull(): Term? {
     val iter = iterator()
@@ -13,22 +14,23 @@ fun ListIterator<Term>.nextOrNull(): Term? {
 val PUNCTUATION = listOf(",", ".", "?", "!", ":", ";", ")", "(", "'", "\"")
 
 /**
- * Match the [Layer.terms] of two layers based on their position (offset and length), not on their actual value (literal/pos/lemma).
- * When pos filters are provide, only match [TermComparison] of that pos.
+ * Match the [Layer.terms] of two layers based on their [WordForm] position (offset and length)
+ * When filters are provided, only match [TermComparison] that match the filter (on annotation value).
+ * In this way, matches only contain samples that you want to download.
+ * (Still, aggregating these matches is up to the (corpus/documents) evaluation classes)
  */
-class LayerComparison(
+open class LayerComparison(
     private val hypothesisLayer: Layer,
     private val referenceLayer: Layer,
     private val layerFilter: LayerFilter? = null,
 ) {
     @JsonIgnore
     val matches: MutableList<TermComparison> = ArrayList()
-
     @JsonIgnore
     val referenceTermsWithoutMatches: MutableList<Term> = ArrayList()
-
     @JsonIgnore
     val hypothesisTermsWithoutMatches: MutableList<Term> = ArrayList()
+
     @JsonIgnore
     private val hypoIter: ListIterator<Term> = iterForTermsInLayer(hypothesisLayer)
     @JsonIgnore
@@ -101,7 +103,7 @@ class LayerComparison(
         nextHypo()
     }
 
-    private fun hypoNoMatch(t: Term) {
+    protected open fun hypoNoMatch(t: Term) {
         // Note how layerFilter can be null, and both null and true != false.
         if (layerFilter?.hypoTermFilter?.filter(t) != false) {
             hypothesisTermsWithoutMatches.add(t)
@@ -113,7 +115,7 @@ class LayerComparison(
         nextRef()
     }
 
-    private fun refNoMatch(t: Term) {
+    protected open fun refNoMatch(t: Term) {
         if (layerFilter?.refTermFilter?.filter(t) != false) {
             referenceTermsWithoutMatches.add(t)
         }
@@ -152,5 +154,26 @@ class LayerComparison(
             }
             return false
         }
+    }
+}
+
+class DocumentLayerComparison(
+    private val hypothesisLayer: Layer,
+    private val referenceLayer: Layer,
+    private val layerFilter: LayerFilter? = null,
+) : LayerComparison(hypothesisLayer, referenceLayer, layerFilter) {
+
+    override fun hypoNoMatch(t: Term) {
+        // ignore
+    }
+
+    override fun refNoMatch(t: Term) {
+        if (layerFilter?.refTermFilter?.filter(t) != false) {
+            matches.add(TermComparison(hypoTerm = Term.EMPTY, refTerm = t))
+        }
+    }
+
+    init {
+        matches.addAll(referenceTermsWithoutMatches.map { TermComparison(hypoTerm = Term.EMPTY, refTerm = it) })
     }
 }

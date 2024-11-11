@@ -14,7 +14,7 @@
         <template #header>
             <slot name="header"></slot>
         </template>
-        <div id="prepend">
+        <div id="prepend" v-if="$slots.prepend">
             <slot name="prepend"></slot>
         </div>
 
@@ -22,7 +22,7 @@
             Here should be an instruction how to fill the content.
         </slot>
         <table :class="`${cssClass} ${loading ? ' loading' : ''} ${selectable ? ' selectable' : ''}`">
-            <thead v-if="!(isEmpty && !displayOnEmpty)">
+            <thead v-if="!(isEmpty)">
                 <tr>
                     <th v-for="field in visibleFields" :key="field.key" style="text-align: center;">
                         <div style="white-space: pre-line">
@@ -386,7 +386,7 @@ table .loading-symbol {
 table {
     border-collapse: collapse;
     margin: 0 auto;
-    margin-top: 5px;
+    // margin-top: 5px;
     padding: 0;
 
     caption {
@@ -436,7 +436,7 @@ table.compact {
         padding: .1em 2em;
     }
 
-    margin: 0;
+    margin: 0 auto;
 }
 
 table.selectable {

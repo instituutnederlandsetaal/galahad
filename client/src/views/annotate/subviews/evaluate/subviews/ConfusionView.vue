@@ -18,7 +18,17 @@
                 <DifferentTagsetsHelp />
             </template>
 
-            <template #table-empty-instruction>Select a reference layer and a hypothesis layer to generate a confusion
+            <template #prepend>
+                <div class="table-controls">
+                    <div class="table-control">
+                        Annotation:
+                        <GInput type="select" :options="confusionableAnnotations" v-model="selectedAnnotation" />
+                    </div>
+                </div>
+            </template>
+
+            <template #table-empty-instruction>Select a reference layer, a hypothesis layer and an annotation to
+                generate a confusion
                 table.</template>
 
             <!-- top left header -->
@@ -49,7 +59,7 @@
             @download="(data) => download(data)" :referenceJob="jobSelection.referenceJobId"
             :hypothesisJob="jobSelection.hypothesisJobId" />
 
-        <EvaluationInfoBox :eval="confusion" />
+        <EvaluationInfoBox :eval="selectedConfusion" />
 
     </div>
 </template>
@@ -79,16 +89,19 @@ type Item = { [key: string]: EvaluationEntry } & { referenceJob: string }
 type Cell = { field: Field; item: Item; value: EvaluationEntry }
 
 // Fields
+const confusionableAnnotations = computed(() => Object.keys(confusion.value || {}).map((key) => ({ value: key, text: key })))
+const selectedAnnotation = ref(null)
 const downloading = ref(false)
 const modalData = ref({})
 const samples = ref({ title: "", samples: [] } as { title: string, samples: TermComparison[] })
 const showModal = ref(false)
+const selectedConfusion = computed(() => confusion?.value[selectedAnnotation.value] || { table: {} })
 
 const columns = computed((): Field[] => {
     // add the entries
     const entries = {} as { [key: string]: boolean }
-    Object.keys(confusion?.value?.table)?.map((k1) => {
-        Object.keys(confusion?.value?.table[k1])?.forEach((k2) => entries[k2] = true)
+    Object.keys(selectedConfusion?.value?.table)?.map((k1) => {
+        Object.keys(selectedConfusion?.value?.table[k1])?.forEach((k2) => entries[k2] = true)
     })
 
     // add referenceJob, sort, map and return
@@ -120,12 +133,12 @@ const columns = computed((): Field[] => {
 })
 
 const rows = computed((): Item[] => {
-    return Object.keys(confusion.value.table).map((k1) => {
+    return Object.keys(selectedConfusion.value.table).map((k1) => {
         const ret = { referenceJob: k1 } as { [key: string]: EvaluationEntry } & {
             referenceJob: string
         }
-        Object.keys(confusion.value.table[k1]).forEach(
-            (k2) => (ret[k2] = confusion.value.table[k1][k2])
+        Object.keys(selectedConfusion.value.table[k1]).forEach(
+            (k2) => (ret[k2] = selectedConfusion.value.table[k1][k2])
         )
         return ret
     })
@@ -137,7 +150,7 @@ function download() {
     const hypothesisPos = data.field.key
     const referencePos = data.item.referenceJob
     downloading.value = true
-    API.getDownloadPosConfusion(corporaStore.activeUUID, jobSelection.hypothesisJobId, jobSelection.referenceJobId, hypothesisPos, referencePos)
+    API.getConfusionSamples(corporaStore.activeUUID, jobSelection.hypothesisJobId, jobSelection.referenceJobId, hypothesisPos, referencePos, selectedAnnotation.value)
         .then((response) => {
             Utils.browserDownloadResponseFile(response)
         })
@@ -182,7 +195,8 @@ function openModal(data) {
         agreement: strEqual(data.field.key, data.item.referenceJob),
         samples: data.value.samples,
         hypothesisPos: data.field.key,
-        referencePos: data.item.referenceJob
+        referencePos: data.item.referenceJob,
+        annotationType: selectedAnnotation.value
     }
     showModal.value = true
 }
@@ -192,6 +206,10 @@ function openModal(data) {
 #confusionTable :deep(td) {
     padding: 0 !important;
     margin: 0;
+}
+
+#confusionTable :deep(.table-control) {
+    min-height: auto;
 }
 
 #confusionTable td {

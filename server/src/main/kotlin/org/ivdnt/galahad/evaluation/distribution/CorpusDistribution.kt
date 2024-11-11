@@ -3,6 +3,7 @@ package org.ivdnt.galahad.evaluation.distribution
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.ivdnt.galahad.data.corpus.Corpus
 import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
+import org.ivdnt.galahad.data.layer.AnnotationType
 
 /**
  * The frequency distribution of terms in a corpus for a specific tagger layer.
@@ -11,7 +12,8 @@ import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
 class CorpusDistribution(
     corpus: Corpus,
     hypothesis: String = SOURCE_LAYER_NAME,
-) : Distribution() {
+    annotation: AnnotationType
+) : Distribution(annotation) {
 
     private val hypothesisJob = corpus.jobs.readOrNull(hypothesis) ?: throw Exception("Hypothesis layer does not exist")
 
@@ -24,9 +26,9 @@ class CorpusDistribution(
     init {
         corpus.documents.readAll().forEach {
             val meta = it.metadata.expensiveGet()
-            val documentJob = hypothesisJob.document(meta.name)
+            val documentJob = hypothesisJob.documentOrThrow(meta.name)
             // Add to ourselves
-            this.add(DocumentDistribution(documentJob.result, meta))
+            this.add(DocumentDistribution(documentJob.result, meta, annotation))
         }
     }
 }

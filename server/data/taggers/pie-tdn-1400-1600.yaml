@@ -4,9 +4,9 @@ tagset: "TDN-Core"
 eraFrom: "1400"
 eraTo: "1600"
 produces:
-  - LEM
-  - POS
-  - TOK
+  - lemma
+  - pos
+  - token
 model:
   name: pie-tdn-1400-1600
   href: https://github.com/INL/galahad-taggers-dockerized/tree/1.0.2/pie/TDN-1400-1600

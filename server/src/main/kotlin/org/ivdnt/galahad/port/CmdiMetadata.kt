@@ -1,5 +1,6 @@
 package org.ivdnt.galahad.port
 
+import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.data.corpus.CorpusMetadata
 import org.ivdnt.galahad.tagset.TagsetStore
 import org.ivdnt.galahad.util.escapeXML
@@ -63,12 +64,7 @@ class CmdiMetadata(transformMetadata: DocumentTransformMetadata) : LayerTransfor
         val month = SimpleDateFormat("MM").format(now)
         val day = SimpleDateFormat("dd").format(now)
         val date = "$year-$month-$day"
-
-        // Retrieve GaLAHaD version from the same version.yml used in the client about page.
-        val versionStream = this::class.java.classLoader.getResource("version.yml")!!.openStream()
-        val versionProperties = Properties()
-        versionProperties.load(versionStream)
-        val galahadVersion = versionProperties.getProperty("GITHUB_REF_NAME")
+        val galahadVersion = Config.galahadVersion()
 
         // Define replacements
         return mapOf(

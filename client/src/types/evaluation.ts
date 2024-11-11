@@ -71,10 +71,9 @@ export type TermComparison = {
     partialOverlap: boolean
 }
 
-export type Term = {
-    lemma: string
-    pos: string
+export interface Term {
     targets: WordForm[]
+    annotations: Record<string, string>
 }
 
 export type WordForm = {

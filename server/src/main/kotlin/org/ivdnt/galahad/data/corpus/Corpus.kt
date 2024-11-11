@@ -10,6 +10,8 @@ import org.ivdnt.galahad.data.document.Document
 import org.ivdnt.galahad.data.document.DocumentFormat
 import org.ivdnt.galahad.data.document.Documents
 import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
+import org.ivdnt.galahad.exceptions.CorpusNameInvalidException
+import org.ivdnt.galahad.exceptions.CorpusUnauthorizedException
 import org.ivdnt.galahad.jobs.Jobs
 import org.ivdnt.galahad.port.CmdiMetadata
 import org.ivdnt.galahad.port.CorpusTransformMetadata
@@ -68,12 +70,12 @@ class Corpus(
                 eraFrom = mutableCorpusMetadata.eraFrom,
                 tagset = mutableCorpusMetadata.tagset,
                 dataset = mutableCorpusMetadata.isDataset,
-                public = mutableCorpusMetadata.isDataset, // Note that we set isPublic the same as isDataset.
                 collaborators = mutableCorpusMetadata.collaborators ?: setOf(),
                 viewers = mutableCorpusMetadata.viewers ?: setOf(),
                 sourceName = mutableCorpusMetadata.sourceName,
                 sourceURL = mutableCorpusMetadata.sourceURL,
                 // Immutable/calculated fields
+                sourceAnnotationTypes = jobs.readOrThrow(SOURCE_LAYER_NAME).annotationTypes,
                 uuid = UUID.fromString(workDirectory.name),
                 activeJobs = jobs.readAll().filter { it.isActive }.size,
                 numDocs = documents.readAll().size,
@@ -91,7 +93,14 @@ class Corpus(
     }
 
     val metadata: ExpensiveGettable<CorpusMetadata> = object : ExpensiveGettable<CorpusMetadata> {
-        override fun expensiveGet() = metadataCache.get<CorpusMetadata>()
+        override fun expensiveGet(): CorpusMetadata {
+            try {
+                return metadataCache.get<CorpusMetadata>()
+            } catch (e: Exception) {
+                invalidateCache()
+                return metadataCache.get<CorpusMetadata>()
+            }
+        }
     }
 
     val sourceTagger: ExpensiveGettable<Tagger> = object : ExpensiveGettable<Tagger> {
@@ -103,7 +112,7 @@ class Corpus(
                 tagset = metadata.tagset,
                 eraFrom = metadata.eraFrom,
                 eraTo = metadata.eraTo,
-                produces = setOf("TODO"),
+                produces = metadata.sourceAnnotationTypes,
             )
         }
     }
@@ -115,6 +124,12 @@ class Corpus(
         workDirectory.deleteRecursively()
     }
 
+    private fun assertCorpusNameValidOrThrow(corpusName: String) {
+        if (!Regex("^.{3,100}$").matches(corpusName.trim())) {
+            throw CorpusNameInvalidException(corpusName)
+        }
+    }
+
     /**
      * Overwrite the [CorpusMetadata] in [metadata] with [newMeta],
      * except for the owner, which should be grabbed from the existing [metadata].
@@ -122,16 +137,17 @@ class Corpus(
      * If a user appears multiple times in the permission hierarchy, only the upper level remains.
      */
     fun updateMetadata(newMeta: MutableCorpusMetadata, user: User): ExpensiveGettable<CorpusMetadata> {
-        if (!mutableCorpusMetadata.isPublic && newMeta.isPublic) {
+        assertCorpusNameValidOrThrow(newMeta.name)
+        if (!mutableCorpusMetadata.isDataset && newMeta.isDataset) {
             // Corpus is being set to public
-            if (!mutableCorpusMetadata.canMakePublic(user)) {
-                throw Exception("Unauthorized")
+            if (!mutableCorpusMetadata.canDefineDataset(user)) {
+                throw CorpusUnauthorizedException("Cannot create a dataset.")
             }
         }
         if (mutableCorpusMetadata.collaborators != newMeta.collaborators || mutableCorpusMetadata.viewers != newMeta.viewers) {
             // Collaborators have changed
             if (!mutableCorpusMetadata.canAddNewUsers(user) && mutableCorpusMetadata.owner != "") {
-                throw Exception("Unauthorized")
+                throw CorpusUnauthorizedException("Cannot change collaborators or viewers.")
             }
         }
         // If mutableCorpusMetadata.owner is "", we are working with the InitValue of FileBackedValue,
@@ -146,9 +162,6 @@ class Corpus(
         newMeta.tagset = newMeta.tagset?.trim()
         newMeta.collaborators = newMeta.collaborators?.map { it.trim() }?.toSet()
         newMeta.viewers = newMeta.viewers?.map { it.trim() }?.toSet()
-
-        // merge isPublic and isDataset
-        newMeta.isPublic = newMeta.isDataset
 
         // Remove owner from list of collaborators & viewers
         newMeta.collaborators = newMeta.collaborators?.filter { it != owner }?.toSet()

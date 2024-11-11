@@ -86,7 +86,7 @@ class DocumentTest {
             // create the layer based on the plaintext parsing
             val plaintext = doc.plaintext
             val layer = LayerBuilder().loadLayerFromTSV("all-formats/input/pie-tdn.tsv", plaintext).build()
-            job.document(name).setResult(layer)
+            job.documentOrThrow(name).setResult(layer)
 
             // Convert to each other format
             for (formatTo in DocumentFormat.entries) {
@@ -98,14 +98,15 @@ class DocumentTest {
                     DocumentFormat.TeiP4Legacy,
                     DocumentFormat.TeiP5Legacy,
                     DocumentFormat.Unknown,
-                    -> assertThrows(Exception::class.java) { doc.generateAs(formatTo, meta) }
+                        -> assertThrows(Exception::class.java) { doc.generateAs(meta) }
                     // Convert to the supported
                     else -> {
                         // Skip the same format
                         if (formatFrom == formatTo) continue
                         println("Converting ${formatFrom.name} to ${formatTo.name}")
-                        val result: File = doc.generateAs(formatTo, meta)
-                        val expected: File = Resource.get("all-formats/output/from-$formatFrom-to-$formatTo.${formatTo.extension}")
+                        val result: File = doc.generateAs(meta)
+                        val expected: File =
+                            Resource.get("all-formats/output/from-$formatFrom-to-$formatTo.${formatTo.extension}")
                         val test = TestResult(expected.readText(), result.readText())
                         test.ignoreDate().ignoreUUID().ignoreTrailingWhiteSpaces().result()
                     }

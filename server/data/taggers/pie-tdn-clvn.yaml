@@ -4,9 +4,9 @@ tagset: "TDN-Core"
 eraFrom: "1500"
 eraTo: "1600"
 produces:
-  - LEM
-  - POS
-  - TOK
+  - lemma
+  - pos
+  - token
 model:
   name: pie-tdn-clvn
   href: https://github.com/INL/galahad-taggers-dockerized/tree/1.0.0/pie/TDN-CLVN

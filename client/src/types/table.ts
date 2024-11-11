@@ -1,12 +1,10 @@
 export enum TableCorporaType {
     Dataset = 'benchmark',
-    Public = 'benchmark',
     User = 'user'
 }
 
 export enum TableDocumentsType {
     Dataset = 'dataset',
-    Public = 'public',
     User = 'user'
 }
 

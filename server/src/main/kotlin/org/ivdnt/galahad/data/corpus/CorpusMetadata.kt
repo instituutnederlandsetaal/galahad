@@ -22,18 +22,17 @@ class CorpusMetadata(
     @JsonProperty("eraFrom") eraFrom: Int = 0,
     @JsonProperty("tagset") tagset: String? = null,
     @JsonProperty("dataset") @JsonInclude(JsonInclude.Include.ALWAYS) dataset: Boolean = false,
-    @JsonProperty("public") @JsonInclude(JsonInclude.Include.ALWAYS) public: Boolean = false,
     @JsonProperty("collaborators") collaborators: Set<String> = setOf(),
     @JsonProperty("viewers") viewers: Set<String> = setOf(),
     @JsonProperty("sourceName") sourceName: String? = null,
     @JsonProperty("sourceURL") sourceURL: URL? = null,
     // Immutable fields
+    @JsonProperty("sourceAnnotationTypes") val sourceAnnotationTypes: Set<String> = setOf(),
     @JsonProperty("uuid") val uuid: UUID = UUID(0, 0),
     @JsonProperty("activeJobs") val activeJobs: Int = 0,
     @JsonProperty("numDocs") val numDocs: Int = 0,
     @JsonProperty("sizeInBytes") val sizeInBytes: Long = 0,
     @JsonProperty("lastModified") val lastModified: Long = 0,
     ) : MutableCorpusMetadata(
-        // Note that we set isPublic the same as isDataset.
-        owner, name, eraFrom, eraTo, tagset, dataset, dataset, collaborators, viewers, sourceName, sourceURL
+        owner, name, eraFrom, eraTo, tagset, dataset, collaborators, viewers, sourceName, sourceURL
 ), JSONable

@@ -25,7 +25,7 @@
             v-for="cell in ['cell-accuracy', 'cell-precision', 'cell-recall', 'cell-f1', 'cell-macroPrecision', 'cell-microPrecision', 'cell-macroRecall', 'cell-microRecall', 'cell-macroF1', 'cell-microF1', 'cell-microAccuracy']"
             #[cell]="data">
             <div :key="cell">
-                {{ `${data.value ? parseFloat(data.value).toFixed(2) : 0}` }}
+                {{ `${data.value ? parseFloat(data.value).toString().slice(0, 4) : 0}` }}
             </div>
         </template>
 
@@ -81,7 +81,7 @@ const modalData = ref({})
  */
 function openModal(data) {
     modalData.value = data
-    samples.value = { title: `${data.field.label} ${data.item.name} samples`, samples: data.value.samples }
+    samples.value = { title: `${data.field.label} ${data.item.name} samples`, samples: data.value.samples, annotationType: data.item.column.toLowerCase() }
     showModal.value = true
 }
 </script>

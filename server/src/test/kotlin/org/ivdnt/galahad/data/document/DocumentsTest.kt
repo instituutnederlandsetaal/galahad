@@ -1,8 +1,6 @@
 package org.ivdnt.galahad.data.document
 
-import org.ivdnt.galahad.data.DocumentWriteType
 import org.ivdnt.galahad.data.corpus.Corpus
-import org.ivdnt.galahad.data.DocumentsController
 import org.ivdnt.galahad.port.Resource
 import org.ivdnt.galahad.port.createCorpus
 import org.junit.jupiter.api.Test

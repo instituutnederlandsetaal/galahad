@@ -3,6 +3,7 @@ package org.ivdnt.galahad.evaluation.confusion
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.ivdnt.galahad.data.corpus.Corpus
 import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
+import org.ivdnt.galahad.data.layer.AnnotationType
 import org.ivdnt.galahad.evaluation.comparison.LayerFilter
 
 /**
@@ -13,16 +14,19 @@ class CorpusConfusion(
     corpus: Corpus,
     val hypothesis: String,
     val reference: String = SOURCE_LAYER_NAME,
+    annotation: AnnotationType = AnnotationType.POS,
     layerFilter: LayerFilter? = null,
-) : Confusion(truncate = layerFilter == null) {
+) : Confusion(truncate = layerFilter == null, annotation) {
 
-    private val hypothesisJob = corpus.jobs.readOrNull(hypothesis) ?: throw Exception("Hypothesis layer does not exist")
-    private val referenceJob = corpus.jobs.readOrNull(reference) ?: throw Exception("Reference layer does not exist")
+    private val hypothesisJob = corpus.jobs.readOrThrow(hypothesis)
+    private val referenceJob = corpus.jobs.readOrThrow(reference)
 
     @JsonProperty
     val hypothesisLastModified = hypothesisJob.lastModified
+
     @JsonProperty
     val referenceLastModified = referenceJob.lastModified
+
     @JsonProperty
     val generated = System.currentTimeMillis()
 
@@ -31,9 +35,10 @@ class CorpusConfusion(
             val name = it.metadata.expensiveGet().name
             add(
                 DocumentConfusion(
-                    hypothesisJob.document(name).result,
-                    referenceJob.document(name).result,
-                    layerFilter
+                    hypothesisJob.documentOrThrow(name).result,
+                    referenceJob.documentOrThrow(name).result,
+                    layerFilter,
+                    annotation
                 )
             )
         }

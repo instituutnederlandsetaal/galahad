@@ -1,17 +1,26 @@
-package org.ivdnt.galahad.evaluation.assays
+package org.ivdnt.galahad.web.controller
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.media.ArraySchema
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
 import jakarta.servlet.http.HttpServletRequest
-import jakarta.servlet.http.HttpServletResponse
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.FileBackedCache
-import org.ivdnt.galahad.app.ASSAYS_URL
-import org.ivdnt.galahad.app.ASSAY_URL
-import org.ivdnt.galahad.data.CorporaController
+import org.ivdnt.galahad.app.BENCHMARKS_URL
+import org.ivdnt.galahad.app.BENCHMARK_URL
 import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.evaluation.metrics.FlatMetricType
 import org.ivdnt.galahad.evaluation.metrics.FlatMetricTypeAssay
+import org.ivdnt.galahad.exceptions.ErrorResponse
+import org.ivdnt.galahad.web.service.CorporaService
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.CrossOrigin
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RestController
 import java.util.*
 
 /**
@@ -28,31 +37,28 @@ import java.util.*
  *     "dataset-2": { ... },
  * }
  */
-typealias AssaysMatrix = Map<String, Map<String, FlatMetricTypeAssay>>
+typealias BenchmarksMatrix = Map<String, Map<String, FlatMetricTypeAssay>>
 typealias MutableAssaysMatrix = MutableMap<String, MutableMap<String, MutableMap<String, FlatMetricType>>>
 
 @RestController
-class AssaysController(
-    val corpora: CorporaController,
+class BenchmarksController(
+    val corpora: CorporaService,
 ) : Logging {
 
     @Autowired
     private val request: HttpServletRequest? = null
 
-    @Autowired
-    private val response: HttpServletResponse? = null
-
     /**
      * A matrix of 'tagger' -> 'dataset' -> 'FlatMetric' -> 'scores per category',
      * for all datasets corpora that have been tagged with at least one tagger, excluding the sourceLayer.
      */
-    val assaysMatrix = object : FileBackedCache<AssaysMatrix>(corpora.assaysFile, HashMap()) {
+    val benchmarksMatrix = object : FileBackedCache<BenchmarksMatrix>(corpora.assaysFile, HashMap()) {
         override fun isValid(lastModified: Long): Boolean {
             return corpora.datasets.firstOrNull { it.lastModified > lastModified } == null
             TODO("Maybe just check the validity of the other assays?")
         }
 
-        override fun set(): AssaysMatrix {
+        override fun set(): BenchmarksMatrix {
             // tagger -> dataset -> assay
             val assaysMatrix: MutableAssaysMatrix = HashMap()
             // For all datasets
@@ -80,26 +86,40 @@ class AssaysController(
     }
 
     /**
-     * Get the assay for a single job in a specific corpus. Also used to construct [assaysMatrix].
+     * Get the assay for a single job in a specific corpus. Also used to construct [benchmarksMatrix].
      */
-    @GetMapping(ASSAY_URL)
+    @Operation(
+        summary = "Get single benchmark result",
+        description = "Get benchmark results for a single job on a single corpus.",
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "Benchmark result.",
+    )
+    @ApiResponse(
+        responseCode = "400", description = "Corpus not a dataset."
+    )
+    @ApiResponse(
+        responseCode = "404",
+        description = "Corpus or job not found.",
+        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+    )
     @CrossOrigin
+    @GetMapping(BENCHMARK_URL)
     fun getAssay(
-        @PathVariable corpus: UUID,
-        @PathVariable job: String,
+        @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
+        @PathVariable @Parameter(description = "Tagger name") job: String,
     ): FlatMetricTypeAssay? {
-        // The assay is some simple, preferably plain numerical, value that indicates preformance
-        // Since the exact requirements for the definition of an assays might still change
-        // we don't provide a solid definition, but instead it is defined ad hoc here
         return corpora.getReadAccessOrThrow(corpus, request).jobs.readOrNull(job)?.assay?.get<FlatMetricTypeAssay>()
     }
 
-    /**
-     * Return [assaysMatrix].
-     */
-    @RequestMapping(value = [ASSAYS_URL], method = [RequestMethod.GET], produces = ["application/json"])
+    @Operation(
+        summary = "Get all benchmark results",
+        description = "Get benchmark results for all corpora and jobs.",
+    )
     @CrossOrigin
-    fun getAssays(): AssaysMatrix {
-        return assaysMatrix.get<AssaysMatrix>()
+    @GetMapping(BENCHMARKS_URL)
+    fun getAssays(): BenchmarksMatrix {
+        return benchmarksMatrix.get<BenchmarksMatrix>()
     }
 }

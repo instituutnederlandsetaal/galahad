@@ -19,8 +19,7 @@ const useCorpora = defineStore('corpora', () => {
     const activeUUID = ref(null as unknown as UUID) // has to be null for <select> to show its default value
     const allCorpora = ref([] as CorpusMetadata[])
     const datasetCorpora = computed((): CorpusMetadata[] => allCorpora.value.filter(i => i.dataset))
-    const publicCorpora = computed((): CorpusMetadata[] => allCorpora.value.filter(i => i.public))
-    const sharedCorpora = computed((): CorpusMetadata[] => allCorpora.value.filter(i => !i.public && i.owner != userStore.user.id))
+    const sharedCorpora = computed((): CorpusMetadata[] => allCorpora.value.filter(i => !i.dataset && i.owner != userStore.user.id))
     const activeCorpus = computed((): CorpusMetadata | null => {
         const candidates = allCorpora.value.filter(x => x.uuid == activeUUID.value)
         return (candidates.length === 1 ? candidates[0] : null)
@@ -98,7 +97,7 @@ const useCorpora = defineStore('corpora', () => {
     // Exports
     return {
         // Fields
-        allCorpora, loading, datasetCorpora, publicCorpora, sharedCorpora, activeCorpus, hasDocs, activeUUID, userIsCollaborator,
+        allCorpora, loading, datasetCorpora, sharedCorpora, activeCorpus, hasDocs, activeUUID, userIsCollaborator,
         // Methods
         createCorpus, deleteCorpus, updateCorpus, reload,
     }

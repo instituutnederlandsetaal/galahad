@@ -50,7 +50,7 @@
                             <GInput type="select" :options="datasetOptions" v-model="selectedDatasetUuid" />
                         </div>
                     </div>
-                    <MetricsFilter ref="metricsFilter" v-if="selectedDatasetUuid" />
+                    <MetricsFilter ref="metricsFilter" v-if="selectedDatasetUuid" :annotations="selectedAssay" />
                 </template>
 
             </GTable>
@@ -111,6 +111,9 @@ const columns = [
  * ]
  * Filtered by the selected dataset and metric type.
  */
+const selectedAssay = computed(() => {
+    return assaysStore.assays[selectedDatasetName.value]
+})
 const items = computed(() => {
     const metricName = metricsFilter.value?.metricName
     return Object.entries(assaysStore.assays[selectedDatasetName.value]?.[metricName] ?? {}).map((taggerAndMetric) => {
