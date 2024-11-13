@@ -3,7 +3,6 @@ package org.ivdnt.galahad.port.conllu
 import org.ivdnt.galahad.data.layer.Layer
 import org.ivdnt.galahad.port.Resource
 import org.ivdnt.galahad.port.assertPlaintextAndSourcelayer
-import org.ivdnt.galahad.port.tsv.TSVEntry
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.io.File

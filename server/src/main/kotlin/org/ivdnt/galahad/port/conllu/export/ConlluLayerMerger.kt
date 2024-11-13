@@ -1,6 +1,8 @@
 package org.ivdnt.galahad.port.conllu.export
 
+import org.ivdnt.galahad.data.layer.AnnotationType
 import org.ivdnt.galahad.data.layer.Layer
+import org.ivdnt.galahad.data.layer.Term
 import org.ivdnt.galahad.port.DocumentTransformMetadata
 import org.ivdnt.galahad.port.conllu.ConlluFile
 import org.ivdnt.galahad.port.tsv.export.TSVLayerMerger
@@ -21,9 +23,33 @@ internal class ConlluLayerMerger(
         return ConlluFile(outFile)
     }
 
-    override fun replaceColumns(columns: MutableList<String>, layer: Layer, termIndex: Int) {
-        for (sourceColumn in sourceFile.columnIndices) {
-            columns[sourceColumn.value] = layer.terms[termIndex].annotations[sourceColumn.key] ?: "_"
+    override fun mergeSingleColumn(
+        columns: MutableList<String>,
+        layer: Layer,
+        termIndex: Int,
+        annotationType: AnnotationType,
+        columnIndex: Int
+    ) {
+        when (annotationType) {
+            AnnotationType.MISC -> {
+                // construct MISC by combining NER and MISC
+                val term: Term = layer.terms[termIndex]
+                var ner: String? = term.annotations[AnnotationType.NER]?.let { "NamedEntity=$it" }
+                val misc: String? = term.annotations[AnnotationType.MISC]
+                val miscField: String = listOf(ner, misc).filterNotNull().joinToString("|")
+                columns[columnIndex] = miscField.ifEmpty { "_" }
+            }
+            AnnotationType.NER -> return // NER is already in MISC
+            AnnotationType.UPOS -> {
+                // Split UPOS into head and features
+                val term: Term = layer.terms[termIndex]
+                val head: String = term.annotationHead(AnnotationType.UPOS) ?: "_"
+                val features: String = Term.features(term.annotations[AnnotationType.UPOS]) ?: "_"
+                columns[sourceFile.uposIndex] = head
+                columns[sourceFile.featsIndex] = features
+            }
+            AnnotationType.ID -> return // Don't overwrite
+            else -> super.mergeSingleColumn(columns, layer, termIndex, annotationType, columnIndex)
         }
     }
 }

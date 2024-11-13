@@ -37,7 +37,7 @@ class LayerToConlluConverter(
 
             val row = listOf(
                 i, // index
-                term.annotations[AnnotationType.TOKEN], // form
+                term.literals, // form
                 term.annotations[AnnotationType.LEMMA] ?: "_",
                 upos, // upos
                 term.annotations[AnnotationType.POS] ?: "_", // xpos

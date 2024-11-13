@@ -35,7 +35,7 @@ class ConlluExportTest {
     @Test
     fun `Merge dummy layer with Conllu`() {
         val layer: Layer = LayerBuilder().loadDummies(20).build()
-        DocTest.builder( corpus )
+        DocTest.builder(corpus)
             .expectingFile("conllu/comments/merged-output.conllu")
             .mergeConllu("conllu/comments/input.conllu", layer)
             .ignoreTrailingWhiteSpaces()
