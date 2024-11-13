@@ -29,12 +29,8 @@
             </template>
 
             <template #header>
-                <UploadDocuments v-if="userStore.hasWriteAccess && type != TableDocumentsType.Dataset" />
-            </template>
-
-            <!-- valid cell -->
-            <template #cell-valid="data">
-                {{ data.value ? '👍' : '🔥' }}
+                <UploadDocuments v-if="userStore.hasWriteAccess && type != TableDocumentsType.Dataset"
+                    style="margin-bottom:1em" />
             </template>
 
             <!-- name cell -->
