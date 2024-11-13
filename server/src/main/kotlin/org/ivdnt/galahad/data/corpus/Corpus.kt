@@ -75,7 +75,7 @@ class Corpus(
                 sourceName = mutableCorpusMetadata.sourceName,
                 sourceURL = mutableCorpusMetadata.sourceURL,
                 // Immutable/calculated fields
-                sourceAnnotationTypes = jobs.readOrThrow(SOURCE_LAYER_NAME).annotationTypes,
+                sourceAnnotationTypes = jobs.readOrNull(SOURCE_LAYER_NAME)?.annotationTypes ?: emptySet(),
                 uuid = UUID.fromString(workDirectory.name),
                 activeJobs = jobs.readAll().filter { it.isActive }.size,
                 numDocs = documents.readAll().size,

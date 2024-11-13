@@ -3,8 +3,8 @@ package org.ivdnt.galahad.port.tsv
 import org.ivdnt.galahad.data.document.DocumentFormat
 import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.data.layer.AnnotationType
-import org.ivdnt.galahad.data.layer.Layer
 import org.ivdnt.galahad.data.layer.Annotations
+import org.ivdnt.galahad.data.layer.Layer
 import org.ivdnt.galahad.data.layer.token
 import org.ivdnt.galahad.port.DocumentTransformMetadata
 import org.ivdnt.galahad.port.InternalFile
@@ -73,26 +73,30 @@ open class TSVFile(
      */
     private fun parseHeader(line: String) {
         val headers = line.split("\t")
-        val errors: MutableList<String> = mutableListOf()
 
-        getColumnIndices(headers, errors)
+        getColumnIndices(headers)
 
-        if (errors.isNotEmpty()) {
-            // Combine the errors for some pretty printing.
-            val missingColumns = errors.joinToString(" and ", transform = { error -> "a $error column" })
-            throw Exception("Could not find $missingColumns in the TSV header.")
+        // Check for the presence of a token
+        if (columnIndices[AnnotationType.TOKEN] == null) {
+            throw IllegalArgumentException("No token column found in TSV file.")
         }
     }
 
     // Derived classes may want to look for other names or indices.
+    /**
+     * Set up columnIndices to reflect the header.
+     * For each header column, check if it is the name of any of the AnnotationTypes.
+     */
     protected open fun getColumnIndices(
         headers: List<String>,
-        errors: MutableList<String>,
     ) {
-        for (annotationType in AnnotationType.entries) {
-            val columnName: List<String> = columnNames[annotationType] ?: listOf(annotationType.name)
-            val index = indexOfHeaderNamedAnyOf(headers, columnName, mutableListOf()) // TODO for now ignore errors
-            if (index != null) {
+        headers.forEachIndexed { index, header ->
+            columnNames.entries
+            // from the columnNames, find the first AnnotationType that has a name that matches the header.
+            .firstOrNull { (_, names) ->
+                names.any { name -> header.equals(name, ignoreCase = true) }
+            // if it exists, register the index
+            }?.let { (annotationType, _) ->
                 columnIndices[annotationType] = index
             }
         }
@@ -134,8 +138,7 @@ open class TSVFile(
         // Retrieve values
         val mutAnnot: MutableMap<AnnotationType, String?> = mutableMapOf()
         for (column in columnIndices.entries) {
-            val annotation = getColumn(column.value, values)
-            mutAnnot[column.key] = annotation
+            getColumn(column.value, values)?.let { mutAnnot[column.key] = it }
         }
 
         // Skip newlines by checking for non-empty literals.

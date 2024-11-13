@@ -1,7 +1,12 @@
 package org.ivdnt.galahad.port.tsv
 
+import org.ivdnt.galahad.data.layer.AnnotationType
+import org.ivdnt.galahad.data.layer.lemma
+import org.ivdnt.galahad.data.layer.pos
+import org.ivdnt.galahad.data.layer.token
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.io.File
 
 internal class TSVHeaderTest {
@@ -12,13 +17,13 @@ internal class TSVHeaderTest {
             val tsvFile = TSVFile(file)
             tsvFile.parse()
             // The column positions are fixed
-            assertEquals(tsvFile.literalIndex, 0)
-            assertEquals(tsvFile.lemmaIndex, 1)
-            assertEquals(tsvFile.posIndex, 2)
+            assertEquals(tsvFile.columnIndices[AnnotationType.TOKEN], 0)
+            assertEquals(tsvFile.columnIndices[AnnotationType.LEMMA], 1)
+            assertEquals(tsvFile.columnIndices[AnnotationType.POS], 2)
             // Check entries
             assertEquals(tsvFile.entries.size, 1)
             tsvFile.entries.forEach {
-                assertEquals("scholen", it.literal)
+                assertEquals("scholen", it.token)
                 assertEquals("school", it.lemma)
                 assertEquals("NOU", it.pos)
             }
@@ -35,7 +40,7 @@ internal class TSVHeaderTest {
             // Instead, check entries.
             assertEquals(1, tsvFile.entries.size)
             tsvFile.entries.forEach {
-                assertEquals("scholen", it.literal)
+                assertEquals("scholen", it.token)
                 assertEquals("school", it.lemma)
                 assertEquals("NOU", it.pos)
             }
@@ -45,15 +50,7 @@ internal class TSVHeaderTest {
     @Test
     fun `Incorrect headers`() {
         // This folder contains TSV files with incorrect headers.
-        for (file in File("src/test/resources/tsv/incorrect-headers").listFiles()!!) {
-            val tsvFile = TSVFile(file)
-            try {
-                tsvFile.parse() // should throw
-                fail<String>("Should have thrown")
-            } catch (e: Exception) {
-                val type = file.nameWithoutExtension.split("-")[1]
-                assertTrue(e.message!!.contains(type))
-            }
-        }
+        val tsvFile = TSVFile(File("src/test/resources/tsv/incorrect-headers/empty-word.tsv"))
+        assertThrows<Exception> { tsvFile.parse() }
     }
 }

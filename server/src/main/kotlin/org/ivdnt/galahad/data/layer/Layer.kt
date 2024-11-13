@@ -59,10 +59,13 @@ open class Layer(
     }
 
     /** Adds a [WordForm] and a [Term] to this [Layer] based on a [Annotations] */
-    fun addTSVEntryOnOffset(tsvEntry: Annotations, offset: Int) {
-        val wordForm = addWordFormWithAnonymousId(tsvEntry.token, offset, tsvEntry.token.length)
+    fun addTSVEntryOnOffset(annotations: Annotations, offset: Int) {
+        val wordForm = addWordFormWithAnonymousId(annotations.token, offset, annotations.token.length)
+        // Remove token annotation as it already exists in the wordform
+        val filteredAnnotations = annotations.filterKeys { it != AnnotationType.TOKEN }
+        // construct term
         val term = Term(
-            tsvEntry, targets = mutableListOf(wordForm)
+            filteredAnnotations, targets = mutableListOf(wordForm)
         )
         terms.add(term)
     }

@@ -12,8 +12,6 @@ enum class AnnotationType(@JsonValue val value: String) {
         fun fromString(s: String): AnnotationType = values().firstOrNull { it.value == s.lowercase() } ?: throw InvalidAnnotationException(
             "Invalid annotation type $s, valid types are ${values().map { it.value }}"
         )
-
-        fun fromString(s: List<String>): List<AnnotationType> = s.map { fromString(it) }
     }
 }
 
