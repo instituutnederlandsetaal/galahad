@@ -14,9 +14,11 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.http.HttpStatus
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.MvcResult
+import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import java.nio.charset.StandardCharsets
 import java.util.*
@@ -32,7 +34,7 @@ class CorporaControllerTest(
     @Test
     fun `Post unicode name corpora`() {
         val name = "日本語"
-        val meta = MutableCorpusMetadata("", name, 0, 0, null, false, false, null, null, null, null)
+        val meta = MutableCorpusMetadata("", name, 0, 0, null, false, null, null, null, null)
 
         val uuid = postCorpus(meta)
 
@@ -54,7 +56,7 @@ class CorporaControllerTest(
         // Create
         val meta = MutableCorpusMetadata(
             owner = "", // Set by request header
-            "test", 0, 0, null, false, false, collabs, viewers, null, null
+            "test", 0, 0, null, false, collabs, viewers, null, null
         )
         val uuid = postCorpus(meta)
 
@@ -104,9 +106,10 @@ class CorporaControllerTest(
     }
 
     private fun deleteCorpus(uuid: UUID?, username: String = "testUser") {
-        mvc.perform(
+        val result: MvcResult = mvc.perform(
             MockMvcRequestBuilders.delete("/corpora/$uuid").headers(UserHeader.get(username))
-        )
+        ).andReturn()
+        if(result.response.status != HttpStatus.NO_CONTENT.value()) throw Exception()
     }
 
     private fun postCorpus(meta: MutableCorpusMetadata): UUID? {
@@ -125,11 +128,8 @@ class CorporaControllerTest(
                 .characterEncoding("utf-8").contentType("application/json").content(JSON.toStr(meta))
         ).andReturn()
         // Patch doesn't always return a value.
-        return try {
-            JSON.fromStr<CorpusMetadata>(result.response.getContentAsString(StandardCharsets.UTF_8))
-        } catch (e: Exception) {
-            null
-        }
+        if(result.response.status != HttpStatus.OK.value()) throw Exception()
+        return JSON.fromStr<CorpusMetadata>(result.response.getContentAsString(StandardCharsets.UTF_8))
     }
 
 

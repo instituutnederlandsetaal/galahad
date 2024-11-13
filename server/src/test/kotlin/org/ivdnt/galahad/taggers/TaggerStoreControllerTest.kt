@@ -2,9 +2,11 @@ package org.ivdnt.galahad.taggers
 
 import org.ivdnt.galahad.TestConfig
 import org.ivdnt.galahad.app.GalahadApplication
+import org.ivdnt.galahad.exceptions.TaggerNotFoundException
 import org.ivdnt.galahad.web.controller.TaggersController
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.test.context.ContextConfiguration
@@ -30,8 +32,7 @@ class TaggerStoreControllerTest(
 
     @Test
     fun `Get invalid tagger`() {
-        val tagger = ctrl.getTagger("invalid")
-        assertNull(tagger)
+        assertThrows<TaggerNotFoundException> { ctrl.getTagger("invalid") }
     }
 
     @Test

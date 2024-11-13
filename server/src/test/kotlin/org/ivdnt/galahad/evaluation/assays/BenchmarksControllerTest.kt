@@ -8,7 +8,7 @@ import org.ivdnt.galahad.evaluation.EvaluationUtil
 import org.ivdnt.galahad.evaluation.metrics.FlatMetricType
 import org.ivdnt.galahad.port.LayerBuilder
 import org.ivdnt.galahad.port.createCorpus
-import org.ivdnt.galahad.web.BenchmarksMatrix
+import org.ivdnt.galahad.web.controller.BenchmarksMatrix
 import org.ivdnt.galahad.web.controller.BenchmarksController
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
@@ -42,7 +42,7 @@ class BenchmarksControllerTest(
 
         // Neither should individual ones
         val assayRequest: MvcResult = mvc.perform(
-            MockMvcRequestBuilders.get("/corpora/${corpus.metadata.expensiveGet().uuid}/jobs/pie-tdn/evaluation/assay")
+            MockMvcRequestBuilders.get("/benchmarks/${corpus.metadata.expensiveGet().uuid}/pie-tdn")
         ).andReturn()
         assertEquals("", assayRequest.response.contentAsString)
 
@@ -56,7 +56,7 @@ class BenchmarksControllerTest(
 
         // /GET
         val assaysRequest: MvcResult = mvc.perform(
-            MockMvcRequestBuilders.get("/assays")
+            MockMvcRequestBuilders.get("/benchmarks")
         ).andReturn()
         assays = JSON.fromStr<BenchmarksMatrix>(assaysRequest.response.contentAsString)
         assertEquals(1, assays.size)

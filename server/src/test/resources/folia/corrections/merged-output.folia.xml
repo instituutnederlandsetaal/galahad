@@ -13,12 +13,12 @@
       <s xml:id="page1263.text.p.1.s.1">
         <w class="WORD" xml:id="page1263.text.p.1.s.1.w.1">
           <t>word1</t>
-        <lemma class="dummy" processor="dummyLayer" set="dummyLayer"/><pos class="pos" head="pos" processor="dummyLayer" set="dummyLayer"/></w>
+        <lemma class="dummy" processor="sourceLayer" set="sourceLayer"/><pos class="pos" head="pos" processor="sourceLayer" set="sourceLayer"/></w>
         <correction annotator="duchs" annotatortype="manual" class="merge" datetime="2018-01-08T11:34:58" xml:id="page1263.text.p.1.s.1.correction.1">
           <new>
             <w xml:id="corrected.6bbb0a87">
               <t>word2</t>
-            <lemma class="dummy" processor="dummyLayer" set="dummyLayer"/><pos class="pos" head="pos" processor="dummyLayer" set="dummyLayer"/></w>
+            <lemma class="dummy" processor="sourceLayer" set="sourceLayer"/><pos class="pos" head="pos" processor="sourceLayer" set="sourceLayer"/></w>
           </new>
           <original auth="no">
             <w class="WORD" xml:id="page1263.text.p.1.s.1.w.15">
@@ -46,7 +46,7 @@
               <t>error3c</t>
             </original>
           </correction>
-        <lemma class="dummy" processor="dummyLayer" set="dummyLayer"/><pos class="pos" head="pos" processor="dummyLayer" set="dummyLayer"/></w>
+        <lemma class="dummy" processor="sourceLayer" set="sourceLayer"/><pos class="pos" head="pos" processor="sourceLayer" set="sourceLayer"/></w>
         <w xml:id="example.s.1.w.3">
           <t>word4</t>
           <correction class="spelling" confidence="1.0" processor="p1" xml:id="example.correction.2">
@@ -57,17 +57,17 @@
               <pos class="error4"/>
             </original>
           </correction>
-        <lemma class="dummy" processor="dummyLayer" set="dummyLayer"/><pos class="pos" head="pos" processor="dummyLayer" set="dummyLayer"/></w>
+        <lemma class="dummy" processor="sourceLayer" set="sourceLayer"/><pos class="pos" head="pos" processor="sourceLayer" set="sourceLayer"/></w>
       </s>
       <s xml:id="example.p.1.s.1">
         <correction class="splot" xml:id="example.p.1.s.1.c.1">
           <new>
             <w xml:id="example.p.1.s.1.w.1">
               <t>word5</t>
-            <lemma class="dummy" processor="dummyLayer" set="dummyLayer"/><pos class="pos" head="pos" processor="dummyLayer" set="dummyLayer"/></w>
+            <lemma class="dummy" processor="sourceLayer" set="sourceLayer"/><pos class="pos" head="pos" processor="sourceLayer" set="sourceLayer"/></w>
             <w xml:id="example.p.1.s.1.w.2">
               <t>word6</t>
-            <lemma class="dummy" processor="dummyLayer" set="dummyLayer"/><pos class="pos" head="pos" processor="dummyLayer" set="dummyLayer"/></w>
+            <lemma class="dummy" processor="sourceLayer" set="sourceLayer"/><pos class="pos" head="pos" processor="sourceLayer" set="sourceLayer"/></w>
           </new>
           <original>
             <w xml:id="example.p.1.s.1.w.1">
@@ -87,7 +87,7 @@
           <new>
             <w xml:id="example.p.1.s.1.w.2">
               <t>word7</t>
-            <lemma class="dummy" processor="dummyLayer" set="dummyLayer"/><pos class="pos" head="pos" processor="dummyLayer" set="dummyLayer"/></w>
+            <lemma class="dummy" processor="sourceLayer" set="sourceLayer"/><pos class="pos" head="pos" processor="sourceLayer" set="sourceLayer"/></w>
           </new>
           <original/>
         </correction>
@@ -97,7 +97,7 @@
           <current>
             <w xml:id="example.p.1.s.1.w.1">
               <t>word8</t>
-            <lemma class="dummy" processor="dummyLayer" set="dummyLayer"/><pos class="pos" head="pos" processor="dummyLayer" set="dummyLayer"/></w>
+            <lemma class="dummy" processor="sourceLayer" set="sourceLayer"/><pos class="pos" head="pos" processor="sourceLayer" set="sourceLayer"/></w>
           </current>
           <suggestion>
             <w xml:id="example.p.1.s.1.w.1_1">
@@ -121,12 +121,12 @@
                 </correction>
               </original>
           </correction>
-        <lemma class="dummy" processor="dummyLayer" set="dummyLayer"/><pos class="pos" head="pos" processor="dummyLayer" set="dummyLayer"/></w>
+        <lemma class="dummy" processor="sourceLayer" set="sourceLayer"/><pos class="pos" head="pos" processor="sourceLayer" set="sourceLayer"/></w>
         <w class="WORD" xml:id="page1263.text.p.1.s.1.w.1">
           <t>word10</t>
           <pos class="pos10"/>
           <lemma class="lemma10"/>
-        <lemma class="dummy" processor="dummyLayer" set="dummyLayer"/><pos class="pos" head="pos" processor="dummyLayer" set="dummyLayer"/></w>
+        <lemma class="dummy" processor="sourceLayer" set="sourceLayer"/><pos class="pos" head="pos" processor="sourceLayer" set="sourceLayer"/></w>
       </s>
     </p>
   </text>

@@ -31,7 +31,7 @@ open class MutableCorpusMetadata(
      * Note that this is not the same as having write access: use [hasWriteAccess].
      */
     fun isCollaborator(user: User): Boolean {
-        return collaborators?.contains(user.id) ?: false
+        return collaborators?.contains(user.id) == true
     }
 
     /**
@@ -39,7 +39,7 @@ open class MutableCorpusMetadata(
      * Note that this is not the same as having read access: use [hasReadAccess].
      */
     fun isViewer(user: User): Boolean {
-        return viewers?.contains(user.id) ?: false
+        return viewers?.contains(user.id) == true
     }
 
     /** To have write access, you need to be an owner, collaborator or admin. */

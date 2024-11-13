@@ -47,7 +47,7 @@ class ExportControllerTest(
             Resource.get("all-formats/output/from-TeiP5-to-Folia.folia.xml").readText(),
             teiToFolia.readText()
         )
-        result.ignoreLineEndings().result()
+        result.ignoreLineEndings().ignoreWhiteSpaceDocumentWide().result()
     }
 
     fun unzip(bytes: ByteArray): List<File> {

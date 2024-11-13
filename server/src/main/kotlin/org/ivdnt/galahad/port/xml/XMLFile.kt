@@ -5,5 +5,4 @@ import java.io.File
 
 abstract class XMLFile(
     final override val file: File,
-) : InternalFile {
-}
+) : InternalFile
