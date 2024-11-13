@@ -207,7 +207,7 @@ class ApplicationController : ErrorController, Logging {
             jakartaErrorMsg = null
         }
 		val springException = request.getAttribute("org.springframework.web.servlet.DispatcherServlet.EXCEPTION") as Exception?
-		val errorMsg = jakartaErrorMsg ?: jakartaException?.cause?.message ?: springException?.message ?: "No error message available."
+		val errorMsg = jakartaErrorMsg ?: jakartaException?.cause?.message ?: springException?.message ?: jakartaException?.message ?: "No error message available."
 		return ErrorResponse(statusCode, errorMsg)
 	}
 }
