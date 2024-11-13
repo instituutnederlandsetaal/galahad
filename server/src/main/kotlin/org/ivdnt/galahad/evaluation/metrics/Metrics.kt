@@ -2,9 +2,12 @@ package org.ivdnt.galahad.evaluation.metrics
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
+import org.ivdnt.galahad.data.corpus.Corpus
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
 import org.ivdnt.galahad.port.csv.CSVFile
 import org.ivdnt.galahad.port.csv.CSVHeader
+import org.ivdnt.galahad.taggers.Tagger
+import org.ivdnt.galahad.taggers.TaggerStore
 
 const val TRUNCATE = 100
 /**
@@ -12,14 +15,21 @@ const val TRUNCATE = 100
  * The idea is to sum up the distribution as we go through the terms one by one using [add].
  */
 open class Metrics(
+    val corpus: Corpus,
     @JsonIgnore val settings: List<MetricsSettings>,
-    @JsonIgnore val truncate: Boolean = true
+    val hypothesis: String,
+    val reference: String,
+    @JsonIgnore val truncate: Boolean = true,
 ) {
     @JsonProperty("metrics")
     val metricTypes: MutableMap<String, MetricsType> = HashMap()
 
+    val taggerStore: TaggerStore = TaggerStore()
+    val hypoTagger: Tagger = taggerStore.getSummaryOrThrow(hypothesis, corpus.sourceTagger).expensiveGet()
+    val refTagger: Tagger = taggerStore.getSummaryOrThrow(reference, corpus.sourceTagger).expensiveGet()
+
     init {
-        settings.forEach { metricTypes[it.id] = MetricsType(it).also { it.truncate = truncate } }
+        settings.forEach { metricTypes[it.id] = MetricsType(it, hypoTagger, refTagger).also { it.truncate = truncate } }
     }
 
     fun toGlobalCsv(): String {

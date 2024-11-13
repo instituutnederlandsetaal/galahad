@@ -1,14 +1,13 @@
 package org.ivdnt.galahad.evaluation.metrics
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import org.ivdnt.galahad.data.layer.AnnotationType
 import org.ivdnt.galahad.data.layer.Term
 import org.ivdnt.galahad.evaluation.CsvSampleExporter
 import org.ivdnt.galahad.evaluation.EvaluationEntry
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
-import org.ivdnt.galahad.exceptions.InvalidAnnotationException
 import org.ivdnt.galahad.exceptions.InvalidClassificationTypeException
 import org.ivdnt.galahad.port.csv.CSVFile
+import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.util.toFixed
 
 enum class ClassificationType(val value: String) {
@@ -33,7 +32,9 @@ class FlatMetricType(
 
 class MetricsType(
     val setting: MetricsSettings,
-    @JsonIgnore var truncate: Boolean = true
+    val hypothesis: Tagger,
+    val reference: Tagger,
+    @JsonIgnore var truncate: Boolean = true,
 ) : CsvSampleExporter {
     @JsonIgnore
     var map: MutableMap<String, Metric> = HashMap()
@@ -185,8 +186,11 @@ class MetricsType(
     }
 
 
+    fun samplesToCSV(comps: List<TermComparison>?): String {
+        return samplesToCSV(comps, hypothesis, reference)
+    }
+
     override fun samplesToCSV(): String {
-        val cls = listOf(classes.falsePositive, classes.falseNegative, classes.truePositive)
-        return samplesToCSV(cls.flatMap { it.samples })
+        throw NotImplementedError()
     }
 }

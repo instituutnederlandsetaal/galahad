@@ -12,11 +12,11 @@ import org.ivdnt.galahad.evaluation.comparison.LayerFilter
 class CorpusMetrics(
     corpus: Corpus,
     settings: List<MetricsSettings>,
-    val hypothesis: String,
-    val reference: String = SOURCE_LAYER_NAME,
+    hypothesis: String,
+    reference: String = SOURCE_LAYER_NAME,
     layerFilter: LayerFilter? = null,
     truncate: Boolean = true
-) : Metrics(settings, truncate = truncate) {
+) : Metrics(corpus, settings, hypothesis, reference, truncate = truncate) {
 
     private val hypothesisJob = corpus.jobs.readOrNull(hypothesis) ?: throw Exception("Hypothesis layer does not exist")
     private val referenceJob = corpus.jobs.readOrNull(reference) ?: throw Exception("Reference layer does not exist")
@@ -33,6 +33,7 @@ class CorpusMetrics(
             val name = it.metadata.expensiveGet().name
             add(
                 DocumentMetrics(
+                    corpus,
                     hypothesisJob.documentOrThrow(name).result,
                     referenceJob.documentOrThrow(name).result,
                     settings,

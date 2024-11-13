@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import java.io.File
+import kotlin.collections.joinToString
 
 object JSON {
     val mapper = ObjectMapper()
@@ -48,4 +49,8 @@ fun MockMvc.uploadFile(file: File, corpus: Corpus, mediaType: String = MediaType
             .file(mockFile)
             .headers(UserHeader.get())
     ).andReturn()
+}
+
+fun String.addUrlParams(params: Map<String, String>): String {
+    return this + "?" + params.map { (k, v) -> "$k=$v" }.joinToString("&")
 }

@@ -2,6 +2,7 @@ package org.ivdnt.galahad.evaluation.distribution
 
 import org.ivdnt.galahad.data.corpus.Corpus
 import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
+import org.ivdnt.galahad.data.layer.AnnotationType
 import org.ivdnt.galahad.evaluation.EvaluationUtil
 import org.ivdnt.galahad.port.Resource
 import org.ivdnt.galahad.port.createCorpus
@@ -21,7 +22,7 @@ class CorpusDistributionTest {
     fun `Distribution of two docs sum up`() {
         EvaluationUtil.add_two_docs_to_corpus(corpus)
         EvaluationUtil.addDocWithMissingMatches(corpus)
-        val dist = CorpusDistribution(corpus, SOURCE_LAYER_NAME)
+        val dist = CorpusDistribution(corpus, SOURCE_LAYER_NAME, AnnotationType.POS)
         assertEquals(6, dist.distribution.size)
         // chars
         assertEquals(18, dist.totalChars)

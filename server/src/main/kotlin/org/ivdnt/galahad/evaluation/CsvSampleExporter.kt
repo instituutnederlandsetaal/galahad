@@ -3,31 +3,31 @@ package org.ivdnt.galahad.evaluation
 import org.ivdnt.galahad.data.layer.Term
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
 import org.ivdnt.galahad.port.csv.CSVFile
+import org.ivdnt.galahad.taggers.Tagger
 
 interface CsvSampleExporter {
-   fun samplesToCSV(): String
-   fun samplesToCSV(comps: List<TermComparison>?): String {
-      var csv = ""
-      // header
-      val columns: MutableList<String> = mutableListOf("literal")
-      comps?.firstOrNull()?.refTerm?.annotations?.keys?.forEach {
-         columns.add("reference ${it.value}")
-      }
-        comps?.firstOrNull()?.hypoTerm?.annotations?.keys?.forEach {
-             columns.add("hypothesis ${it.value}")
-        }
-      csv += CSVFile.toCSVHeader(columns)
+    fun samplesToCSV(): String
+    fun samplesToCSV(comps: List<TermComparison>?, hypoJob: Tagger, refJob: Tagger): String {
+        var csv = ""
 
-      // body
-      comps?.forEach { termComp ->
-         var literal = termComp.hypoTerm.literals
-         if (literal.isEmpty()) {
-            literal = termComp.refTerm.literals
-         }
-         val refAnnots = termComp.refTerm.annotations.map { (key, value) -> value ?: Term.missingName(key) }
-         val hypoAnnots = termComp.hypoTerm.annotations.map { (key, value) -> value ?: Term.missingName(key) }
-         csv += CSVFile.toCSVRecord(listOf(literal) + refAnnots + hypoAnnots)
-      }
+        // [Tagger].produces is a Set<>, making the order unpredictable
+        // So create an alphabetically sorted list once and reuse it
+        val hypoColumns = hypoJob.annotationTypes.sorted()
+        val refColumns = refJob.annotationTypes.sorted()
+
+        // header
+        val columns: MutableList<String> = mutableListOf("token")
+        columns.addAll(refColumns.map { "${refJob.id} ${it.value}" })
+        columns.addAll(hypoColumns.map { "${hypoJob.id} ${it.value}" })
+        csv += CSVFile.toCSVHeader(columns)
+
+        // body
+        comps?.forEach { termComp ->
+            val literal = termComp.hypoTerm.literals.ifEmpty { termComp.refTerm.literals }
+            val refAnnots = refColumns.map { termComp.refTerm.annotations[it] ?: Term.missingName(it) }
+            val hypoAnnots = hypoColumns.map { termComp.hypoTerm.annotations[it] ?: Term.missingName(it) }
+            csv += CSVFile.toCSVRecord(listOf(literal) + refAnnots + hypoAnnots)
+        }
         return csv
-   }
+    }
 }
