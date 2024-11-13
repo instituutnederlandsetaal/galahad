@@ -13,7 +13,9 @@ object EvaluationUtil {
      * The first doc has equivalent layers, the second has different layers (i.e. with mistakes).
      *
      * First doc: 1 NOU, 2 VRB (in both layers)
-     * Second doc: 3 ADJ, 4 PD (in hypothesis/pie-tdn), 2 ADJ, 1 WRONG lemma, 3 PD, 1 WRONG pos (in reference/source)
+     * Second doc:
+     *  - 3 ADJ, 4 PD (in hypothesis/pie-tdn),
+     *  - 2 ADJ correct, 1 ADJ WRONG lemma, 3 PD correct, 1 PD WRONG pos (in reference/source)
      * */
     fun add_two_docs_to_corpus(corpus: Corpus) {
         // Create the first doc
@@ -71,8 +73,8 @@ object EvaluationUtil {
         source: Layer,
     ) {
         val taggerJob = corpus.jobs.createOrThrow(TestConfig.TAGGER_NAME)
-        taggerJob.documentOrThrow(docName).setResult(tagger)
+        taggerJob.documentOrEmpty(docName).setResult(tagger)
         val sourceJob = corpus.jobs.createOrThrow(SOURCE_LAYER_NAME)
-        sourceJob.documentOrThrow(docName).setResult(source)
+        sourceJob.documentOrEmpty(docName).setResult(source)
     }
 }

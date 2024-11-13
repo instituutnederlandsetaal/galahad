@@ -17,7 +17,6 @@ import org.ivdnt.galahad.evaluation.metrics.*
 import org.ivdnt.galahad.exceptions.DocumentJobNotFoundException
 import org.ivdnt.galahad.exceptions.SourceLayerNotATaggerException
 import org.ivdnt.galahad.jobs.DocumentJob.DocumentProcessingStatus
-import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.taggers.TaggerStore
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.*
@@ -236,9 +235,9 @@ class Job(
     }
 
     // Note that this creates the folder if it doesn't exist
+    /** Open an existing [DocumentJob] or create an empty one if it does not exist. */
     fun documentOrEmpty(name: String): DocumentJob {
         return DocumentJob(documentsWorkDirectory.resolve(name))
-
     }
 
     fun documentNameForProcessingIDOrNull(id: UUID): String? {

@@ -80,8 +80,8 @@ class ExportControllerTest(
             Resource.get("all-formats/input/input.txt").readText()
         ).build()
         val job = corpus.jobs.createOrThrow(TestConfig.TAGGER_NAME)
-        job.documentOrThrow("input.tei.xml").setResult(layer)
-        mvc.uploadFile(Resource.get("all-formats/input/input.folia.xml"), corpus)
+        job.documentOrEmpty("input.tei.xml").setResult(layer)
+        //mvc.uploadFile(Resource.get("all-formats/input/input.folia.xml"), corpus)
         return corpus
     }
 }

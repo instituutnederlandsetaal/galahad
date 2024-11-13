@@ -197,7 +197,7 @@ class DocTestBuilder(
         file.createNewFile()
         val docName = corpus.documents.create(file)
         val job = corpus.jobs.createOrThrow(TestConfig.TAGGER_NAME)
-        job.documentOrThrow(docName).setResult(layer)
+        job.documentOrEmpty(docName).setResult(layer)
         return DocumentTransformMetadata(
             corpus, job, corpus.documents.readOrThrow(docName), User("testUser"), format
         )
@@ -274,7 +274,7 @@ class DocTestBuilder(
     fun convertToTEI(file: File, layer: Layer): TestResult {
         val docName = corpus.documents.create(file)
         val job = corpus.jobs.createOrThrow(TestConfig.TAGGER_NAME)
-        job.documentOrThrow(docName).setResult(layer)
+        job.documentOrEmpty(docName).setResult(layer)
         val exporter = LayerToTEIConverter(
             getDummyTransformMetadata(layer, DocumentFormat.TeiP5, file)
         )

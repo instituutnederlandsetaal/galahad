@@ -42,7 +42,7 @@ class JobTest {
         val job: Job = corpus.jobs.createOrThrow(TestConfig.TAGGER_NAME)
         // fake a tagger result
         val layer = LayerBuilder().loadDummies(100).build()
-        job.documentOrThrow(name).setResult(layer)
+        job.documentOrEmpty(name).setResult(layer)
         // verify
         assertEquals(100, job.documentOrThrow(name).result.terms.size)
         assertEquals(1, job.progress.finished)

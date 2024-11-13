@@ -187,7 +187,7 @@ internal class TEIExportTest {
             .loadDummies(testsize * 1000)
             .setTagset(tagset)
             .build()
-        corpus.jobs.readOrCreateOrNull(jobName)?.documentOrThrow(docName)?.setResult(layer)
+        corpus.jobs.readOrCreateOrNull(jobName)?.documentOrEmpty(docName)?.setResult(layer)
             ?: throw Exception("Could not set layer result")
 
         println("Created layer. Layer size: ${layer.wordForms.size} wordforms")
@@ -212,7 +212,7 @@ internal class TEIExportTest {
         println("Created teiFile. teiFile size: ${teiConvertedFile.length()} bytes")
 
         val teiUploadedFileName = corpus.documents.create(teiConvertedFile)
-        corpus.jobs.readOrCreateOrNull(jobName)?.documentOrThrow(teiUploadedFileName)?.setResult(layer)
+        corpus.jobs.readOrCreateOrNull(jobName)?.documentOrEmpty(teiUploadedFileName)?.setResult(layer)
             ?: throw Exception("Could not set layer result")
 
         // merge the layer with the TEI-file
