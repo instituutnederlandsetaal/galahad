@@ -1,7 +1,7 @@
 # nginx reverse proxy to combine frontend and backend
 #============================
 
-FROM nginx:alpine
+FROM nginx:1.27.2-alpine3.20
 
 # FIX CVE-2023-52425
 RUN apk --no-cache add --upgrade expat

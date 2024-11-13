@@ -20,10 +20,13 @@ repositories {
 
 dependencies {
 	// Spring
+	// Versions controlled by Spring Boot plygin
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-devtools")
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
 
 	// kotlin
+	// Versions controlled by Kotlin jvm plugin
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 
@@ -34,13 +37,10 @@ dependencies {
 	implementation("org.apache.logging.log4j:log4j-api-kotlin:1.5.0")
 
 	// yaml
-	implementation("org.yaml:snakeyaml")
+	implementation("org.yaml:snakeyaml:2.3")
 
 	// json
 	implementation("com.beust:klaxon:5.6")
-
-	// Tests
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
 tasks.withType<Test> {

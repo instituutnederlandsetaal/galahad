@@ -151,10 +151,6 @@
             ]
         },
         {
-            "@type": "ServerApplication",
-            "name": "GaLAHaD proxy"
-        },
-        {
             "@type": "SoftwareImage",
             "name": "GaLAHaD client Docker image"
         },
@@ -170,219 +166,183 @@
     "softwareRequirements": [
         {
             "@type": "SoftwareApplication",
-            "identifier": "@rollup/plugin-yaml",
-            "name": "@rollup/plugin-yaml",
-            "version": "^4.0.1"
-        },
-        {
-            "@type": "SoftwareApplication",
-            "identifier": "@types/jest",
-            "name": "@types/jest",
-            "version": "^28.1.6"
-        },
-        {
-            "@type": "SoftwareApplication",
-            "identifier": "@types/js-yaml",
-            "name": "@types/js-yaml",
-            "version": "^4.0.5"
+            "identifier": "@primevue/themes",
+            "name": "@primevue/themes"
         },
         {
             "@type": "SoftwareApplication",
             "identifier": "@types/uuid",
-            "name": "@types/uuid",
-            "version": "^8.3.4"
-        },
-        {
-            "@type": "SoftwareApplication",
-            "identifier": "@typescript-eslint/eslint-plugin",
-            "name": "@typescript-eslint/eslint-plugin",
-            "version": "^5.30.7"
-        },
-        {
-            "@type": "SoftwareApplication",
-            "identifier": "@typescript-eslint/parser",
-            "name": "@typescript-eslint/parser",
-            "version": "^5.30.7"
+            "name": "@types/uuid"
         },
         {
             "@type": "SoftwareApplication",
             "identifier": "@vitejs/plugin-vue",
-            "name": "@vitejs/plugin-vue",
-            "version": "^5.0.4"
-        },
-        {
-            "@type": "SoftwareApplication",
-            "identifier": "@vue/eslint-config-typescript",
-            "name": "@vue/eslint-config-typescript",
-            "version": "^11.0.0"
+            "name": "@vitejs/plugin-vue"
         },
         {
             "@type": "SoftwareApplication",
             "identifier": "axios",
-            "name": "axios",
-            "version": "^1.6.2"
+            "name": "axios"
         },
         {
             "@type": "SoftwareApplication",
             "identifier": "buffer",
-            "name": "buffer",
-            "version": "^6.0.3"
+            "name": "buffer"
         },
         {
             "@type": "SoftwareApplication",
             "identifier": "content-disposition",
-            "name": "content-disposition",
-            "version": "^0.5.4"
-        },
-        {
-            "@type": "SoftwareApplication",
-            "identifier": "eslint",
-            "name": "eslint",
-            "version": "^8.20.0"
-        },
-        {
-            "@type": "SoftwareApplication",
-            "identifier": "eslint-plugin-vue",
-            "name": "eslint-plugin-vue",
-            "version": "^9.2.0"
+            "name": "content-disposition"
         },
         {
             "@type": "SoftwareApplication",
             "identifier": "js-yaml",
-            "name": "js-yaml",
-            "version": "^4.1.0"
+            "name": "js-yaml"
         },
         {
             "@type": "SoftwareApplication",
             "identifier": "json-loader",
-            "name": "json-loader",
-            "version": "^0.5.7"
-        },
-        {
-            "@type": "SoftwareApplication",
-            "identifier": "mutationobserver-shim",
-            "name": "mutationobserver-shim",
-            "version": "^0.3.7"
-        },
-        {
-            "@type": "SoftwareApplication",
-            "identifier": "node-sass",
-            "name": "node-sass",
-            "version": "^9.0.0"
+            "name": "json-loader"
         },
         {
             "@type": "SoftwareApplication",
             "identifier": "pinia",
-            "name": "pinia",
-            "version": "^2.0.16"
+            "name": "pinia"
+        },
+        {
+            "@type": "SoftwareApplication",
+            "identifier": "primevue",
+            "name": "primevue"
         },
         {
             "@type": "SoftwareApplication",
             "identifier": "safe-buffer",
-            "name": "safe-buffer",
-            "version": "^5.2.1"
-        },
-        {
-            "@type": "SoftwareApplication",
-            "identifier": "sass",
-            "name": "sass",
-            "version": "^1.53.0"
-        },
-        {
-            "@type": "SoftwareApplication",
-            "identifier": "typescript",
-            "name": "typescript",
-            "version": "^4.7.4"
+            "name": "safe-buffer"
         },
         {
             "@type": "SoftwareApplication",
             "identifier": "uuid",
-            "name": "uuid",
-            "version": "^8.3.2"
-        },
-        {
-            "@type": "SoftwareApplication",
-            "identifier": "vite",
-            "name": "vite",
-            "version": "^5.1.7"
+            "name": "uuid"
         },
         {
             "@type": "SoftwareApplication",
             "identifier": "vue",
-            "name": "vue",
-            "version": "^3.2.37"
+            "name": "vue"
         },
         {
             "@type": "SoftwareApplication",
             "identifier": "vue-router",
-            "name": "vue-router",
-            "version": "^4.1.2"
+            "name": "vue-router"
         },
         {
             "@type": "SoftwareApplication",
             "identifier": "vue-slider-component",
-            "name": "vue-slider-component",
-            "version": "^4.1.0-beta.1"
+            "name": "vue-slider-component"
         },
         {
             "@type": "SoftwareApplication",
-            "identifier": "com.beust.klaxon",
-            "name": "klaxon",
-            "version": "5.6"
+            "identifier": "@rollup/plugin-yaml",
+            "name": "@rollup/plugin-yaml"
         },
         {
             "@type": "SoftwareApplication",
-            "identifier": "org.jetbrains.kotlin.kotlin-reflect",
-            "name": "kotlin-reflect",
-            "version": "1.9.22"
+            "identifier": "@types/jest",
+            "name": "@types/jest"
         },
         {
             "@type": "SoftwareApplication",
-            "identifier": "org.jetbrains.kotlin.kotlin-stdlib",
-            "name": "kotlin-stdlib",
-            "version": "1.9.22"
+            "identifier": "@types/js-yaml",
+            "name": "@types/js-yaml"
         },
         {
             "@type": "SoftwareApplication",
-            "identifier": "org.jetbrains.kotlinx.kotlinx-coroutines-core-jvm",
-            "name": "kotlinx-coroutines-core-jvm",
-            "version": "1.7.3"
+            "identifier": "@typescript-eslint/eslint-plugin",
+            "name": "@typescript-eslint/eslint-plugin"
         },
         {
             "@type": "SoftwareApplication",
-            "identifier": "org.jetbrains.kotlinx.kotlinx-serialization-json-jvm",
-            "name": "kotlinx-serialization-json-jvm",
-            "version": "1.6.3"
+            "identifier": "@typescript-eslint/parser",
+            "name": "@typescript-eslint/parser"
         },
         {
             "@type": "SoftwareApplication",
-            "identifier": "org.apache.logging.log4j.log4j-api-kotlin",
-            "name": "log4j-api-kotlin",
-            "version": "1.2.0"
+            "identifier": "@vue/eslint-config-typescript",
+            "name": "@vue/eslint-config-typescript"
         },
         {
             "@type": "SoftwareApplication",
-            "identifier": "org.yaml.snakeyaml",
-            "name": "snakeyaml",
-            "version": "2.2"
+            "identifier": "eslint",
+            "name": "eslint"
         },
         {
             "@type": "SoftwareApplication",
-            "identifier": "org.springframework.boot.spring-boot-devtools",
-            "name": "spring-boot-devtools",
-            "version": "3.2.3"
+            "identifier": "eslint-plugin-vue",
+            "name": "eslint-plugin-vue"
+        },
+        {
+            "@type": "SoftwareApplication",
+            "identifier": "mutationobserver-shim",
+            "name": "mutationobserver-shim"
+        },
+        {
+            "@type": "SoftwareApplication",
+            "identifier": "sass",
+            "name": "sass"
+        },
+        {
+            "@type": "SoftwareApplication",
+            "identifier": "typescript",
+            "name": "typescript"
+        },
+        {
+            "@type": "SoftwareApplication",
+            "identifier": "vite",
+            "name": "vite"
         },
         {
             "@type": "SoftwareApplication",
             "identifier": "org.springframework.boot.spring-boot-starter-web",
-            "name": "spring-boot-starter-web",
-            "version": "3.2.4"
+            "name": "spring-boot-starter-web"
+        },
+        {
+            "@type": "SoftwareApplication",
+            "identifier": "org.springframework.boot.spring-boot-devtools",
+            "name": "spring-boot-devtools"
+        },
+        {
+            "@type": "SoftwareApplication",
+            "identifier": "org.springframework.boot.spring-boot-starter-test",
+            "name": "spring-boot-starter-test"
+        },
+        {
+            "@type": "SoftwareApplication",
+            "identifier": "org.jetbrains.kotlin.kotlin-reflect",
+            "name": "kotlin-reflect"
+        },
+        {
+            "@type": "SoftwareApplication",
+            "identifier": "org.jetbrains.kotlinx.kotlinx-coroutines-core-jvm",
+            "name": "kotlinx-coroutines-core-jvm"
         },
         {
             "@type": "SoftwareApplication",
             "identifier": "org.springdoc.springdoc-openapi-starter-webmvc-ui",
-            "name": "springdoc-openapi-starter-webmvc-ui",
-            "version": "2.5.0"
+            "name": "springdoc-openapi-starter-webmvc-ui"
+        },
+        {
+            "@type": "SoftwareApplication",
+            "identifier": "org.apache.logging.log4j.log4j-api-kotlin",
+            "name": "log4j-api-kotlin"
+        },
+        {
+            "@type": "SoftwareApplication",
+            "identifier": "org.yaml.snakeyaml",
+            "name": "snakeyaml"
+        },
+        {
+            "@type": "SoftwareApplication",
+            "identifier": "com.beust.klaxon",
+            "name": "klaxon"
         }
     ]
 }
