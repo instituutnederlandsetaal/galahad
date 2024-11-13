@@ -29,7 +29,7 @@ class Tagger (
     var devport: Int? = 0
     @get:JsonIgnore
     val annotationTypes: List<AnnotationType>
-        get() = produces.map { AnnotationType.valueOf(it) }
+        get() = produces.map { AnnotationType.fromString(it) }
 
     class LinkItem (
         @JsonProperty("name") var name: String = "",

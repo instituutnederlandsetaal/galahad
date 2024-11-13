@@ -24,7 +24,7 @@ open class Metrics(
     @JsonProperty("metrics")
     val metricTypes: MutableMap<String, MetricsType> = HashMap()
 
-    val taggerStore: TaggerStore = TaggerStore()
+    private val taggerStore: TaggerStore = TaggerStore()
     val hypoTagger: Tagger = taggerStore.getSummaryOrThrow(hypothesis, corpus.sourceTagger).expensiveGet()
     val refTagger: Tagger = taggerStore.getSummaryOrThrow(reference, corpus.sourceTagger).expensiveGet()
 
