@@ -118,6 +118,7 @@ $galahad-theme: #62b6ff;
     --p-primary-color: #{$galahad-theme};
     --p-checkbox-icon-checked-color: black;
     --p-checkbox-border-radius: 0;
+    --p-highlight-background: var(--int-theme-lighter);
 }
 
 #app .p-multiselect {

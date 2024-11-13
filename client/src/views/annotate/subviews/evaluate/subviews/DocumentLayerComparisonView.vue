@@ -1,8 +1,27 @@
 <template>
-    <div>
+    <GCard title="Document Layer Comparison">
+
+        <template #help>
+            The document layer comparison show the differences between the reference and hypothesis layer on a single
+            document. Red words indicate a difference between the layers for the selected annotation. Hover over a word
+            to see all annotations.
+        </template>
+
         <p v-if="loading">Loading...</p>
-        <GInput type="select" :options="docNames" v-model="selectedDoc" />
-        <GInput type="select" :options="annotationOptions" v-model="selectedAnnotation" />
+
+        <div class="table-controls">
+            <div class="table-control">
+                Document:
+                <GInput type="select" :options="docNames" v-model="selectedDoc" />
+
+            </div>
+            <div class="table-control">
+                Annotation:
+                <GInput type="select" :options="annotationOptions" v-model="selectedAnnotation" />
+            </div>
+        </div>
+
+
         <div v-if="selectedDoc && selectedAnnotation" class="document">
 
             <template v-for="tc in termcomps.slice(firstRecord, firstRecord + rowsToDisplay)"
@@ -19,7 +38,8 @@
             </template>
             <Paginator v-model:first="firstRecord" :rows="rowsToDisplay" :totalRecords="termcomps.length"></Paginator>
         </div>
-    </div>
+        <p v-else>Select a document and an annotation.</p>
+    </GCard>
 </template>
 
 <script setup lang="ts">
@@ -30,7 +50,7 @@ import * as API from '@/api/evaluation'
 import { TermComparison } from '@/types/evaluation'
 import stores, { CorporaStore, JobsStore, ExportStore, DocumentsStore, JobSelectionStore } from "@/stores"
 // Components
-import { GInput } from "@/components"
+import { GInput, GCard } from "@/components"
 import SingleTermComparisonTable from '@/components/tables/SingleTermComparisonTable.vue'
 import Paginator from 'primevue/paginator';
 
@@ -113,5 +133,11 @@ function cleanAnnotation(term) {
 
 .wordComparison:hover .tooltip {
     visibility: visible;
+}
+
+.table-controls {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
 }
 </style>
