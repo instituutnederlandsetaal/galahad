@@ -16,25 +16,23 @@ class TermTest {
 
     private val multiPos = Term("", "PD(type=art)+NOU-C(num=sg)", mutableListOf())
     private val singlePos = Term("", "NOU-C(num=sg)", mutableListOf())
+    private val headOnlyPos = Term("", "NOU-C", mutableListOf())
 
 
 
     @Test
-    fun `Single PoS Head`() {
-        assertEquals("NOU-C", singlePos.posHead)
-        assertEquals("NOU-C", singlePos.posHeadGroup)
+    fun `PoS head and features`() {
+        // single pos
+        assertEquals("NOU-C", singlePos.annotationHead(AnnotationType.POS))
+        assertEquals("num=sg", Term.features(singlePos.pos))
 
-    }
+        // multi pos
+        assertEquals("PD+NOU-C", multiPos.annotationHead(AnnotationType.POS))
+        // no features for now...
 
-    @Test
-    fun `Single PoS Features`() {
-        assertEquals("num=sg", singlePos.posFeatures)
-    }
-
-    @Test
-    fun `Multi PoS Head`() {
-        assertEquals("PD", multiPos.posHead)
-        assertEquals("PD+NOU-C", multiPos.posHeadGroup)
+        // head only pos
+        assertEquals("NOU-C", headOnlyPos.annotationHead(AnnotationType.POS))
+        assertEquals(null, Term.features(headOnlyPos.pos))
     }
 
     @Test

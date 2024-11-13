@@ -28,7 +28,7 @@ class DocumentConfusion (
 
         layerComparison.hypothesisTermsWithoutMatches.forEach {
             add(
-                hypoPos = it.annotationToGroupHeadOrDefault(annotation),
+                hypoPos = it.annotationHeadOrMissing(annotation),
                 refPos = TermComparison.MISSING_MATCH,
                 sample = TermComparison(hypoTerm = it, refTerm = Term.EMPTY)
             )
@@ -37,7 +37,7 @@ class DocumentConfusion (
         layerComparison.referenceTermsWithoutMatches.forEach {
             add(
                 hypoPos = TermComparison.MISSING_MATCH,
-                refPos = it.annotationToGroupHeadOrDefault(annotation),
+                refPos = it.annotationHeadOrMissing(annotation),
                 sample = TermComparison(hypoTerm = Term.EMPTY, refTerm = it)
             )
         }

@@ -1,5 +1,6 @@
 package org.ivdnt.galahad.evaluation
 
+import org.ivdnt.galahad.data.layer.AnnotationType
 import org.ivdnt.galahad.data.layer.Term
 import org.ivdnt.galahad.data.layer.WordForm
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
@@ -48,9 +49,8 @@ class TermComparisonTest {
             val hypoTerm = Term(hypoLemma, hypoPos, mutableListOf())
             val refTerm = Term(refLemma, refPos, mutableListOf())
             TermComparison(hypoTerm, refTerm).apply {
-                assertEquals(lemmaEqual, equalLemma)
-                assertEquals(posEqual, equalPOS)
-                assertEquals(lemmaEqual && posEqual, equalPosLemma)
+                assertEquals(lemmaEqual, equalAnnotation(AnnotationType.LEMMA))
+                assertEquals(posEqual, equalAnnotation(AnnotationType.POS))
             }
         }
 

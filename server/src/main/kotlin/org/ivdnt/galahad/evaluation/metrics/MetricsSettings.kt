@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.ivdnt.galahad.data.layer.AnnotationType
 import org.ivdnt.galahad.data.layer.Term
-import org.ivdnt.galahad.data.layer.upos
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
 
 interface MetricsSettings {
@@ -49,7 +48,7 @@ open class PosByPosMetricsSettings : MetricsSettings {
     }
 
     override fun groupBy(term: Term): String {
-        return term.posHeadGroup ?: nullTerm
+        return term.annotationHeadOrMissing(AnnotationType.POS)
     }
 }
 
@@ -124,7 +123,7 @@ class MultiLemmaByLemmaMetricsSettings : LemmaByLemmaMetricsSettings() {
     override val id: String = "multiLemmaByLemma"
     override val annotation: String = "Lemma (multiple)"
     override fun filterBy(term: TermComparison): Boolean {
-        return term.refTerm.lemma?.contains("+") ?: false
+        return term.refTerm.lemma?.contains("+") == true
     }
 }
 
@@ -132,7 +131,7 @@ class SingleLemmaByLemmaMetricsSettings : LemmaByLemmaMetricsSettings() {
     override val id: String = "singleLemmaByLemma"
     override val annotation: String = "Lemma (single)"
     override fun filterBy(term: TermComparison): Boolean {
-        val isMulti = term.refTerm.lemma?.contains("+")  ?: false
+        val isMulti = term.refTerm.lemma?.contains("+") == true
         return !isMulti
     }
 }
@@ -200,7 +199,7 @@ class UposByUposMetricsSettings : MetricsSettings {
     }
 
     override fun groupBy(term: Term): String {
-        return Term.annotationToHead(term.annotations.upos) ?: nullTerm
+        return term.annotationHeadOrMissing(AnnotationType.UPOS)
     }
 }
 
@@ -217,7 +216,7 @@ class NerByNerMetricsSettings : MetricsSettings {
     }
 
     override fun groupBy(term: Term): String {
-        return Term.annotationToHead(term.annotations[AnnotationType.NER]) ?: nullTerm
+        return  term.annotationHeadOrMissing(AnnotationType.NER)
     }
 }
 

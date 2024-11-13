@@ -12,8 +12,8 @@ import org.ivdnt.galahad.data.layer.AnnotationType
 class CorpusDistribution(
     corpus: Corpus,
     hypothesis: String = SOURCE_LAYER_NAME,
-    annotation: AnnotationType
-) : Distribution(annotation) {
+    groupingAnnotation: AnnotationType
+) : Distribution(groupingAnnotation) {
 
     private val hypothesisJob = corpus.jobs.readOrNull(hypothesis) ?: throw Exception("Hypothesis layer does not exist")
 
@@ -28,7 +28,7 @@ class CorpusDistribution(
             val meta = it.metadata.expensiveGet()
             val documentJob = hypothesisJob.documentOrThrow(meta.name)
             // Add to ourselves
-            this.add(DocumentDistribution(documentJob.result, meta, annotation))
+            this.add(DocumentDistribution(documentJob.result, meta, groupingAnnotation))
         }
     }
 }

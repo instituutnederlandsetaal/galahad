@@ -1,6 +1,7 @@
 package org.ivdnt.galahad.port.folia.export
 
 import org.ivdnt.galahad.data.document.DocumentFormat
+import org.ivdnt.galahad.data.layer.AnnotationType
 import org.ivdnt.galahad.data.layer.Term
 import org.ivdnt.galahad.port.DocumentTransformMetadata
 import org.ivdnt.galahad.port.LayerConverter
@@ -74,8 +75,9 @@ class LayerToFoliaConverter (
         writer.openTag("<w xml:id=\"$id.p1.w${index + 1}\">")
         writer.writeLine("<t>${term.targets[0].literal.escapeXML()}</t>")
         writer.writeLine("<lemma class=\"${term.lemmaOrEmpty.escapeXML()}\" processor=\"$taggerName\" set=\"$taggerName\"/>")
+        val posHead = term.annotationHead(AnnotationType.POS) ?: ""
         writer.writeLine(
-            "<pos class=\"${term.posOrEmpty.escapeXML()}\" head=\"${term.posHeadGroupOrEmpty.escapeXML()}\" processor=\"$taggerName\" set=\"$taggerName\"/>"
+            "<pos class=\"${term.posOrEmpty.escapeXML()}\" head=\"${posHead.escapeXML()}\" processor=\"$taggerName\" set=\"$taggerName\"/>"
         )
         writer.closeTag("</w>")
     }

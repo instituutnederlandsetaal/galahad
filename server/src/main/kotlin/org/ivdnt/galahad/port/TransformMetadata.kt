@@ -5,6 +5,7 @@ import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.data.corpus.Corpus
 import org.ivdnt.galahad.data.document.Document
 import org.ivdnt.galahad.data.document.DocumentFormat
+import org.ivdnt.galahad.data.layer.AnnotationType
 import org.ivdnt.galahad.data.layer.Layer
 import org.ivdnt.galahad.data.layer.Term
 import org.ivdnt.galahad.jobs.Job
@@ -47,7 +48,7 @@ class DocumentTransformMetadata(
         for (i in layer.terms.indices) {
             val t = layer.terms[i]
             layer.terms[i] = Term(
-                lemma = t.lemma, pos = t.posHeadGroup, targets = t.targets
+                lemma = t.lemma, pos = t.annotationHead(AnnotationType.POS), targets = t.targets
             )
         }
     }

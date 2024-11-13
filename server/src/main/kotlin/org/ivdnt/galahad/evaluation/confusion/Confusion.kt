@@ -84,8 +84,8 @@ open class Confusion(private val truncate: Boolean = true, val annotation: Annot
 
     fun add(termComp: TermComparison) {
         add(
-            termComp.hypoTerm.annotationToGroupHeadOrDefault(annotation),
-            termComp.refTerm.annotationToGroupHeadOrDefault(annotation),
+            termComp.hypoTerm.annotationHeadOrMissing(annotation),
+            termComp.refTerm.annotationHeadOrMissing(annotation),
             termComp
         )
     }

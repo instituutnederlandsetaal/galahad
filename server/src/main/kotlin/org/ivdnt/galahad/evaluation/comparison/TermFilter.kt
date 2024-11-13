@@ -30,8 +30,8 @@ class BasicTermFilter(private val annotationType: AnnotationType, private val va
 class HeadGroupTermFilter(private val annotationType: AnnotationType, private val value: String): TermFilter {
     // Filter methods
     private val multiFilter = { t: Term -> t.isMulti(annotationType) }
-    private val otherFilter = { t: Term -> t.annotations[annotationType]?.contains(Regex(OTHER_POS_REGEX)) ?: false }
-    private val singleFilter = { t: Term -> t.annotationToGroupHeadOrDefault(annotationType) == value }
+    private val otherFilter = { t: Term -> t.annotations[annotationType]?.contains(Regex(OTHER_POS_REGEX)) == true }
+    private val singleFilter = { t: Term -> t.annotationHeadOrMissing(annotationType) == value }
 
     // Decide which filter to use on class initialization
     private val filterFunc: (Term) -> Boolean = when {
