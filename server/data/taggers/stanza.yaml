@@ -1,10 +1,9 @@
 id: stanza
 description: "stanza"
 tagset: "Universal Dependencies"
-eraFrom: "1400"
-eraTo: "1900"
+eraFrom: "2000"
+eraTo: "2020"
 produces:
-  - token
   - lemma
   - pos
   - upos
@@ -14,15 +13,15 @@ produces:
   - id
   - named-entity
 model:
-  name: ud-parser
-  href: https://github.com/INL/
+  name: dutch alpino
+  href: https://stanfordnlp.github.io/stanza/performance.html#system-performance-on-ud-treebanks
 software:
-  name: ud-parser
-  href: https://github.com/INL/
+  name: stanza
+  href: https://stanfordnlp.github.io/stanza/
 dataset:
-  name: ud-parser
-  href: https://github.com/INL/
-trainedBy: "INT"
-date: "2024-07-01"
+  name: Universal Dependencies v2.12
+  href: https://lindat.mff.cuni.cz/repository/xmlui/handle/11234/1-5150
+trainedBy: "Stanford NLP Group"
+date: "2024-11-12"
 devport: 8121
-version: "1.0.0"
+version: "1.9.2"

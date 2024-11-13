@@ -6,7 +6,6 @@ eraTo: "1800"
 produces:
   - lemma
   - pos
-  - token
 model:
   name: pie-tdn-bab
   href: https://github.com/INL/galahad-taggers-dockerized/tree/1.0.0/pie/TDN-BAB

@@ -6,7 +6,6 @@ eraTo: "1900"
 produces:
   - lemma
   - pos
-  - token
 model:
   name: pie-tdn-dbnldq
   href: https://github.com/INL/galahad-taggers-dockerized/tree/1.0.2/pie/TDN-DBNLDQ

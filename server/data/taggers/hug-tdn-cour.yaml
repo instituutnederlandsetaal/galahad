@@ -6,10 +6,9 @@ eraTo: "1700"
 produces:
   - lemma
   - pos
-  - token
 model:
   name: hug-tdn-cour
-  href: https://github.com/INL/galahad-huggingface-models/tree/1.0.0/models/galahad/tagger/pos_model_tdn_COUR
+  href: https://github.com/INL/galahad-huggingface-models/tree/master/models/galahad/tagger/pos_model_tdn_COUR
 software:
   name: int-huggingface
   href: https://github.com/INL/int-huggingface-tagger/tree/1.0.0

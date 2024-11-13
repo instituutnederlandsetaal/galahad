@@ -1,10 +1,9 @@
 id: spacy
 description: "spacy"
 tagset: "Universal Dependencies"
-eraFrom: "1400"
-eraTo: "1900"
+eraFrom: "2000"
+eraTo: "2020"
 produces:
-  - token
   - lemma
   - pos
   - upos
@@ -14,15 +13,15 @@ produces:
   - id
   - named-entity
 model:
-  name: ud-parser
-  href: https://github.com/INL/
+  name: nl_core_news_lg
+  href: https://github.com/explosion/spacy-models/releases/tag/nl_core_news_lg-3.8.0
 software:
-  name: ud-parser
-  href: https://github.com/INL/
+  name: spacy
+  href: https://spacy.io
 dataset:
-  name: ud-parser
-  href: https://github.com/INL/
-trainedBy: "INT"
-date: "2024-07-01"
+  name: nl_core_news_lg
+  href: https://github.com/explosion/spacy-models/releases/tag/nl_core_news_lg-3.8.0
+trainedBy: "spacy"
+date: "2024-11-12"
 devport: 8120
-version: "1.0.0"
+version: "3.8.2"
