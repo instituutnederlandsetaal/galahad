@@ -14,7 +14,7 @@ import { onMounted, watch, computed, ref, Ref } from 'vue'
 import stores, { JobSelectionStore } from '@/stores'
 // Types & API
 import { Term } from '@/types/evaluation'
-import { Field, Cell } from '@/types/table'
+import { Field } from '@/types/table'
 // Components
 import { GTable } from '@/components'
 
@@ -50,11 +50,12 @@ const columns: Ref<Field[]> = computed(() => {
         return acc
     }, [] as string[]).filter(i => !ignorableAnnotations.includes(i)).map(key => ({ key, label: key }))
 })
+
 // Methods
 function itemEqual(data: Cell): bool {
-    if (data.item.layer == "sourceLayer" || data.field.key == "layer") return true // always true for source layer
+    if (data.item.layer == jobSelection.referenceJobId || data.field.key == "layer") return true // always true for source layer
 
-    const sourceItem = items.value.find(i => i.layer == "sourceLayer")
+    const sourceItem = items.value.find(i => i.layer == jobSelection.referenceJobId)
     return annotationsEqual(data.value, sourceItem[data.field.key])
 }
 
@@ -65,8 +66,6 @@ function annotationsEqual(refAnnot: string, hypoAnnot: string) {
 function cleanAnnotation(term) {
     return term?.toLowerCase().replace("_", "")
 }
-// Watches & mounts
-
 
 </script>
 

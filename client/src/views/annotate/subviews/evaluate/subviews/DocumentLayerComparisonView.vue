@@ -1,8 +1,8 @@
 <template>
-    <GCard title="Document Layer Comparison">
+    <GCard title="Document View">
 
         <template #help>
-            The document layer comparison show the differences between the reference and hypothesis layer on a single
+            The document view show the differences between the reference and hypothesis layer in a single
             document. Red words indicate a difference between the layers for the selected annotation. Hover over a word
             to see all annotations.
         </template>
@@ -34,20 +34,22 @@
 
                 <!-- add newline after . -->
                 <br v-if="tc.refTerm.targets[0].literal == '.'" />
-
             </template>
-            <Paginator v-model:first="firstRecord" :rows="rowsToDisplay" :totalRecords="termcomps.length"></Paginator>
+
+            <Paginator v-if="termcomps.length > rowsToDisplay" v-model:first="firstRecord" :rows="rowsToDisplay"
+                :totalRecords="termcomps.length"></Paginator>
         </div>
         <p v-else>Select a document and an annotation.</p>
+
     </GCard>
 </template>
 
 <script setup lang="ts">
 // Library & API
-import { onMounted, watch, computed, ref } from 'vue'
+import { onMounted, watch, computed, ref, Ref } from 'vue'
 import * as API from '@/api/evaluation'
 // Types & Stores
-import { TermComparison } from '@/types/evaluation'
+import { TermComparison, Term } from '@/types/evaluation'
 import stores, { CorporaStore, JobsStore, ExportStore, DocumentsStore, JobSelectionStore } from "@/stores"
 // Components
 import { GInput, GCard } from "@/components"
@@ -62,7 +64,7 @@ const jobSelection = stores.useJobSelection() as JobSelectionStore
 // Fields
 const docNames = computed(() => documentsStore.available.map(doc => ({ value: doc.name, text: doc.name })))
 const selectedDoc = ref(null)
-const selectedAnnotation = ref(null)
+const selectedAnnotation: Ref<string> = ref(null as any as string)
 const annotationOptions = ref(null)
 const termcomps = ref<TermComparison[]>(null)
 const loading = ref(false)
@@ -95,7 +97,7 @@ function annotationsEqual(tc: TermComparison) {
     return refAnnot == hypoAnnot
 }
 
-function cleanAnnotation(term) {
+function cleanAnnotation(term: Term) {
     return term.annotations[selectedAnnotation.value]?.toLowerCase().replace("_", "")
 }
 
