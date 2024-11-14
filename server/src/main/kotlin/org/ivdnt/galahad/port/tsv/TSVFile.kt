@@ -32,6 +32,10 @@ open class TSVFile(
         AnnotationType.TOKEN to listOf("word", "token", "literal", "term", "form"),
         AnnotationType.LEMMA to listOf("lemma"),
         AnnotationType.POS to listOf("pos", "xpos"),
+        AnnotationType.UPOS to listOf("upos"),
+        AnnotationType.DEPREL to listOf("deprel"),
+        AnnotationType.HEAD to listOf("head"),
+        AnnotationType.ID to listOf("id"),
         AnnotationType.NER to listOf("entity", "ner", "named-entity", "NamedEntity"),
     )
 
@@ -99,35 +103,6 @@ open class TSVFile(
             }?.let { (annotationType, _) ->
                 columnIndices[annotationType] = index
             }
-        }
-    }
-
-    /**
-     * Get index of the tsvHeader with one of a list of possible name. Priority given to the first match.
-     *
-     * @param tsvHeaders Available headers in the TSV file.
-     * @param searchNames Possible names to search for in order of priority.
-     * @param errors A list to put the names of columns in that were not found. The first name is reported in case of an error.
-     * @return Index of the named header.
-     */
-    private fun indexOfHeaderNamedAnyOf(
-        tsvHeaders: List<String>, searchNames: List<String>, errors: MutableList<String>,
-    ): Int? {
-        // asSequence prioritizes the first matching searchName.
-        val tsvHeader: String? = searchNames.asSequence().map { searchName ->
-            tsvHeaders.firstOrNull {
-                it.contains(
-                    searchName, ignoreCase = true
-                )
-            }
-        }.firstOrNull { it != null }
-
-        return if (tsvHeader == null) {
-            // No results were found
-            errors.add(searchNames.first())
-            null
-        } else {
-            tsvHeaders.indexOf(tsvHeader)
         }
     }
 
