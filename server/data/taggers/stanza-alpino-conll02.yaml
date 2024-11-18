@@ -1,0 +1,27 @@
+id: stanza-alpino-conll02
+description: "stanza trained on conll02 for NER and alpino for the rest"
+tagset: "Universal Dependencies"
+eraFrom: "2000"
+eraTo: "2020"
+produces:
+  - lemma
+  - pos
+  - upos
+  - head
+  - deprel
+  - misc
+  - id
+  - named-entity
+model:
+  name: dutch alpino
+  href: https://stanfordnlp.github.io/stanza/performance.html#system-performance-on-ud-treebanks
+software:
+  name: stanza
+  href: https://stanfordnlp.github.io/stanza/
+dataset:
+  name: Universal Dependencies v2.12
+  href: https://lindat.mff.cuni.cz/repository/xmlui/handle/11234/1-5150
+trainedBy: "Stanford NLP Group"
+date: "2024-11-12"
+devport: 8121
+version: "1.9.2"

@@ -1,5 +1,5 @@
-id: stanza
-description: "stanza"
+id: stanza-lassysmall-wikiner
+description: "stanza trained on wikiner for NER and lassysmall for the rest"
 tagset: "Universal Dependencies"
 eraFrom: "2000"
 eraTo: "2020"
@@ -13,7 +13,7 @@ produces:
   - id
   - named-entity
 model:
-  name: dutch alpino
+  name: dutch lassysmall
   href: https://stanfordnlp.github.io/stanza/performance.html#system-performance-on-ud-treebanks
 software:
   name: stanza
@@ -23,5 +23,5 @@ dataset:
   href: https://lindat.mff.cuni.cz/repository/xmlui/handle/11234/1-5150
 trainedBy: "Stanford NLP Group"
 date: "2024-11-12"
-devport: 8121
+devport: 8122
 version: "1.9.2"
