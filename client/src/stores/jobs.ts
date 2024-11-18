@@ -158,7 +158,9 @@ const jobs = defineStore('jobs', () => {
         getDocsAtTaggers()
         .then((response) => {
             numActiveDocs.value = response.data
-        }).catch((error) => app.handleServerError("get number of active jobs", error))
+        }).catch((error) => {
+            // Ignore
+        })
     }
 
     // Exports
