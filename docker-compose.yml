@@ -23,9 +23,6 @@ services:
         volumes:
             - user-corpora-volume:/data/corpora/custom
             - preset-corpora-volume:/data/corpora/presets
-            - formats-volume:/data/formats
-            - taggers-volume:/data/taggers
-            - tagsets-volume:/data/tagsets
             - admins-volume:/data/admins
         networks:
             - proxy_network
