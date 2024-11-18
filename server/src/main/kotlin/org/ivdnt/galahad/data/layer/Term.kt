@@ -85,8 +85,8 @@ data class Term(
                 return annotation.split('-')[1]
             }
         }
-        // for POS
-        else if (annotationType == AnnotationType.POS) {
+        // for POS & UPOS
+        else if (listOf(AnnotationType.POS, AnnotationType.UPOS).contains(annotationType)) {
             return if (isMulti(annotationType)) {
                 // Split on + and transform each part
                 annotation.split("+").map { singlePosToHead(it) }.joinToString("+")

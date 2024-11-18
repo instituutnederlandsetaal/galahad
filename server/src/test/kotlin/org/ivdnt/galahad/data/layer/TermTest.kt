@@ -14,17 +14,52 @@ class TermTest {
         )
     )
 
-    private val multiPos = Term("", "PD(type=art)+NOU-C(num=sg)", mutableListOf())
-    private val singlePos = Term("", "NOU-C(num=sg)", mutableListOf())
-    private val headOnlyPos = Term("", "NOU-C", mutableListOf())
+    // upos
+    private val singleUPos = Term(
+        mapOf(
+            AnnotationType.UPOS to "NOU-C(num=sg)"
+        ), mutableListOf()
+    )
 
+    // ner
+    private val singleNer = Term(
+        mapOf(
+            AnnotationType.NER to "B-LOC"
+        ), mutableListOf()
+    )
+
+    // pos
+    private val singlePos = Term(
+        mapOf(
+            AnnotationType.POS to "NOU-C(num=sg)"
+        ), mutableListOf()
+    )
+
+    private val multiPos = Term(
+        mapOf(
+            AnnotationType.POS to "PD(type=art)+NOU-C(num=sg)"
+        ), mutableListOf()
+    )
+
+    private val headOnlyPos = Term(
+        mapOf(
+            AnnotationType.POS to "NOU-C"
+        ), mutableListOf()
+    )
 
 
     @Test
     fun `PoS head and features`() {
         // single pos
         assertEquals("NOU-C", singlePos.annotationHead(AnnotationType.POS))
-        assertEquals("num=sg", Term.features(singlePos.pos))
+        assertEquals("num=sg", Term.features(singlePos.annotations.pos))
+
+        // upos
+        assertEquals("NOU-C", singleUPos.annotationHead(AnnotationType.UPOS))
+        assertEquals("num=sg", Term.features(singleUPos.annotations.upos))
+
+        // ner
+        assertEquals("LOC", singleNer.annotationHead(AnnotationType.NER))
 
         // multi pos
         assertEquals("PD+NOU-C", multiPos.annotationHead(AnnotationType.POS))
@@ -32,7 +67,7 @@ class TermTest {
 
         // head only pos
         assertEquals("NOU-C", headOnlyPos.annotationHead(AnnotationType.POS))
-        assertEquals(null, Term.features(headOnlyPos.pos))
+        assertEquals(null, Term.features(headOnlyPos.annotations.pos))
     }
 
     @Test
