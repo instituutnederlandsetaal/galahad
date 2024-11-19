@@ -41,6 +41,9 @@ dependencies {
 
 	// json
 	implementation("com.beust:klaxon:5.6")
+
+	// cache
+	implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
 }
 
 tasks.withType<Test> {

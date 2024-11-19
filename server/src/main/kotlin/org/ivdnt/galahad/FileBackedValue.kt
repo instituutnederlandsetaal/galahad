@@ -2,10 +2,15 @@ package org.ivdnt.galahad
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.github.benmanes.caffeine.cache.Cache
+import com.github.benmanes.caffeine.cache.Caffeine
+import com.github.benmanes.caffeine.cache.Weigher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.apache.logging.log4j.kotlin.Logging
+import org.ivdnt.galahad.data.layer.Layer
 import java.io.File
+import kotlin.io.path.Path
 
 
 val mapper: ObjectMapper by lazy { ObjectMapper() }
@@ -41,6 +46,16 @@ open class FileBackedValue<T>(
     val initValue: T, // required to avoid null
 ) : Logging {
 
+    companion object {
+        /** Special cache for [Layer] objects because of their large size */
+        val cache: Cache<String, Layer> = Caffeine.newBuilder()
+            .recordStats()
+            .maximumWeight(100_000_000) // 100MB
+            // Weigher is used once at put() time
+            .weigher<String, Layer>(Weigher { key, value -> File(key).length().toInt() })
+            .build()
+    }
+
     init {
         file.parentFile.mkdirs()
         //file.createNewFile()//
@@ -52,12 +67,24 @@ open class FileBackedValue<T>(
         get() = file.lastModified()
 
     inline fun <reified S : T>read(): T {
+        // It was not set yet
         if( !file.exists() || file.length() == 0L ) {
-            // It was not set yet
             return initValue
         }
-        val bytes: ByteArray = runBlocking(Dispatchers.IO) { file.inputStream().use { it.readBytes() }}
-        return mapper.readValue(bytes, object : TypeReference<S>() {})
+
+        // For [Layer]s, try getting from cache
+        if (S::class == Layer::class) {
+            cache.getIfPresent(file.absolutePath)?.let { return it as T }
+        }
+
+        // else read from disk
+        val bytes: ByteArray = file.readBytes()
+        val result = mapper.readValue(bytes, object : TypeReference<S>() {})
+        // For [Layer]s, put in cache
+        if (S::class == Layer::class) {
+            cache.put(file.absolutePath, result as Layer)
+        }
+        return result
     }
 
     /**
@@ -68,13 +95,17 @@ open class FileBackedValue<T>(
      * modify<Int> { oldValue++ }
      */
     inline fun <reified S : T>modify( modification: (T) -> T ) {
-        if( !file.exists() ) {
+        if(!file.exists()) {
             file.createNewFile()
         }
         // Would love to do this atomically, but for now we won't
         val oldValue = read<S>()
         val newValue = modification(oldValue)
         val newValBytes = mapper.writeValueAsBytes(newValue)
-        runBlocking(Dispatchers.IO) { file.writeBytes(newValBytes)}
+        runBlocking(Dispatchers.IO) { file.writeBytes(newValBytes) }
+        // For [Layer]s, put in cache
+        if (S::class == Layer::class) {
+            cache.put(file.absolutePath, newValue as Layer)
+        }
     }
 }

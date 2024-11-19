@@ -22,6 +22,7 @@ import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -96,6 +97,7 @@ fun String.runCommand(workingDir: File, timeout: Long = 60): String? {
 
 @Configuration
 @ConfigurationProperties(prefix = "")
+@EnableScheduling
 class Config {
 
     lateinit var workDir: String
