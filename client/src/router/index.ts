@@ -32,7 +32,7 @@ import ContributeDatasetsView from '@/views/contribute/subviews/ContributeDatase
 import HelpView from '@/views/help/HelpView.vue'
 import GeneralView from '@/views/help/subviews/GeneralView.vue'
 import DocumentFormatsView from '@/views/help/subviews/formats/DocumentFormatsView.vue'
-import GlossaryView from '@/views/help/subviews/GlossaryView.vue'
+import EvaluationView from '@/views/help/subviews/EvaluationView.vue'
 
 import UserView from '@/views/UserView.vue'
 import PageNotFound from '@/views/PageNotFound.vue'
@@ -139,8 +139,8 @@ const routes = [
         component: DocumentFormatsView
       },
       {
-        path: 'glossary',
-        component: GlossaryView
+        path: 'evaluation',
+        component: EvaluationView
       },
     ]
   }, {

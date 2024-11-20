@@ -268,6 +268,12 @@
         <!-- H3: Evaluation terminology -->
         <h3 id="evaluation-terminology">Evaluation terminology</h3>
 
+        <p>
+          The following is a short overview of the evaluation terminology used in GaLAHaD.
+          For a more detailed explanation, see the
+          <GNav :route="{ path: '/help/evaluation' }">detailed evaluation help</GNav>.
+        </p>
+
         <h4>F1</h4>
         <p>
           A combined score of precision and recall, using micro-averaging.
@@ -575,6 +581,7 @@
 
 <script setup>
 import { GCard } from '@/components'
+import GNav from '@/components/links/GNav.vue';
 </script>
 
 <style scoped>
