@@ -50,13 +50,9 @@ docker compose up
 ```
 This requires an external taggers network to exists. You can use the `docker-compose.yml` from `https://github.com/INL/galahad-taggers-dockerized` to start a taggers network.
 
-To run Galahad locally. The webclient is available on port 8080.
+The webclient is then available at `http://localhost/galahad/home`.
 
 # Setup for development
-
-Clone the code.
-
-`git clone https://github.com/INL/Galahad.git`
 
 ## The client
 
