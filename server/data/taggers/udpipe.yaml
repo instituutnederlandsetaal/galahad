@@ -1,0 +1,26 @@
+id: udpipe
+description: "udpipe"
+tagset: "Universal Dependencies"
+eraFrom: "2000"
+eraTo: "2020"
+produces:
+  - lemma
+  - pos
+  - upos
+  - head
+  - deprel
+  - misc
+  - id
+model:
+  name: UDPipe 2 Models
+  href: https://ufal.mff.cuni.cz/udpipe/2/models#universal_dependencies_215_models
+software:
+  name: UDPipe 2
+  href: https://github.com/ufal/udpipe
+dataset:
+  name: Universal Dependencies v2.12
+  href: https://lindat.mff.cuni.cz/repository/xmlui/handle/11234/1-5150
+trainedBy: "udpipe"
+date: "2024-11-12"
+devport: 8124
+version: "0.14.0"
