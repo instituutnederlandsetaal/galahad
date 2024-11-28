@@ -99,10 +99,11 @@
         </p>
         <p>
           We have addressed this problem in the CLARIAH+ task <i>Infrastructure for historical Dutch</i>, by 1.
-          defining a <a href="https://ivdnt.org/wp-content/uploads/2021/05/TDN_INT_WP_1.pdf">tagset</a> applicable to
+          defining a <a href="https://ivdnt.org/wp-content/uploads/2024/11/TDNV2_combi.pdf">tagset</a> applicable to
           all phases of historical Dutch (TDN), with mappings to the
-          tagsets used in existing historical and modern corpora, 2. by harmonising and extending <a
-            href="https://github.com/INL/galahad-corpus-data/">training and evaluation
+          tagsets used in existing historical and modern corpora, and principles for <a
+            href="https://ivdnt.org/wp-content/uploads/2024/11/lemmatiseerprincipesV2_combi.pdf">lemmatisation</a>, 2.
+          by harmonising and extending <a href="https://github.com/INL/galahad-corpus-data/">training and evaluation
             material</a>, and 3. by developing an online infrastructure for historical corpus building and deployment,
           consisting of the <a href="https://autosearch.ivdnt.org/">Autosearch</a> corpus exploration environment, the
           <a href="https://portal.clarin.ivdnt.org/lancelot/">LAnCeLoT</a> tool for manual correction of linguistic
