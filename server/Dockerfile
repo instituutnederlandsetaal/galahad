@@ -1,4 +1,4 @@
-FROM gradle:8.11.0-jdk21-alpine AS build
+FROM gradle:8.12.0-jdk21-alpine AS build
 # Note: the gradle version must match the version in build.gradle.kts
 COPY --chown=gradle:gradle . /home/gradle/src
 WORKDIR /home/gradle/src
