@@ -53,6 +53,8 @@ const jobs = defineStore('jobs', () => {
                 stopPolling(job)
                 // Displaying the layer preview requires a reload.
                 reload()
+                // also reload corpora to display the correct number of active and finished jobs
+                corporaStore.reload()
             }
         } else {
             // fizzle

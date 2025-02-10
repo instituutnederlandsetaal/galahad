@@ -71,6 +71,12 @@
             <span v-else-if="data.item.sourceName">{{ data.item.sourceName }}</span>
             <i v-else>Not declared</i>
         </template>
+
+        <!-- jobs cell -->
+        <template #cell-activeJobs="data: TableData<CorpusMetadata>">
+            <span>{{ data.item.numResults }}</span>
+            <GSpinner small v-if="data.item.activeJobs > 0" style="vertical-align: sub; margin-left: 0.2rem;" />
+        </template>
     </GTable>
 </template>
 
@@ -80,7 +86,7 @@ import { PropType, ref, watch, computed } from 'vue'
 import stores from '@/stores'
 // API & types
 import { CorpusMetadata } from '@/types/corpora'
-import { TableCorporaType, Field } from '@/types/table'
+import { TableCorporaType, Field, TableData } from '@/types/table'
 import * as Utils from '@/api/utils'
 // Components
 import { ExternalLink, GButton, GTable, HelpLink } from '@/components'
@@ -101,7 +107,7 @@ const selectedCorpus = ref(corporaStore.activeCorpus)
 const editable = props.type != TableCorporaType.Dataset
 const displayCorpora = computed(() => {
     if (props.type === TableCorporaType.User) {
-            return props.corpora.filter(i => i.owner === userStore.user.id)
+        return props.corpora.filter(i => i.owner === userStore.user.id)
     } else if (props.type === TableCorporaType.Shared) {
         return props.corpora.filter(i => i.collaborators.includes(userStore.user.id) || i.viewers.includes(userStore.user.id))
     } else {

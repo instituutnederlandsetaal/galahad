@@ -99,7 +99,7 @@
 
         <!-- delete job modal -->
         <DeleteModal :show="!!deleteJobId" :item="deleteJobId" :displayname="`the results of job ${deleteJobId}`"
-            @delete="jobsStore.deleteJob(deleteJobId); healthLoading = true" @hide="deleteJobId = null as any" />
+            @delete="jobsStore.deleteJob(deleteJobId); healthLoading = true" @hide="deleteJobId = (null as any)" />
     </GModal>
 </template>
 
@@ -135,9 +135,9 @@ const taggerIsAvailable = computed<boolean | null>(() => {
     return health.value?.status === "HEALTHY"
 })
 /** Opens DeleteModal when not null. */
-const deleteJobId = ref((null as any) as string)
+const deleteJobId = ref<string | null>(null)
 /** Expected job duration based on queue size at tagger and % of documents tagged in the corpus. */
-const jobIndication = computed(() => {
+const jobIndication = computed<number | null>(() => {
     if (jobsStore.posting || jobsStore.numActiveDocs == null) {
         return null
     } else {
@@ -145,7 +145,7 @@ const jobIndication = computed(() => {
     }
 })
 /** Updated on an interval to keep track of the queue size. */
-const health = ref(null as TaggerHealth | null)
+const health = ref<TaggerHealth | null>(null)
 /** When true, display job duration as still calculating. */
 const healthLoading = ref(true)
 /** Keep track of the interval id, we stop polling on modal close. */

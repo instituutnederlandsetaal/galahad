@@ -2,6 +2,7 @@ export type UUID = string
 
 export type CorpusMetadata = MutableCorpusMetadata & {
     "activeJobs": number
+    "numResults": number
     "dataset": boolean
     "lastModified": number
     "numDocs": number
