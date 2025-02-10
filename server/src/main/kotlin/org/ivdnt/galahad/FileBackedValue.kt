@@ -28,7 +28,7 @@ abstract class FileBackedCache<T>(
             read<S>()
         } else {
             // log
-            println("Cache of type ${S::class.simpleName} is not valid. Will set new value.")
+            logger.debug("Cache of type ${S::class.simpleName} is not valid. Will set new value.")
             // if not valid:
             val newValue = set()
             modify<S> { newValue }

@@ -27,7 +27,8 @@ class Performance : Filter, Logging {
             if (url != "/user") {
                 val finish = Instant.now()
                 val time: Long = Duration.between(start, finish).toMillis()
-                logger.info("in $time ms: $url")
+                val method = req.method
+                logger.info("in $time ms: $method $url")
             }
         }
     }

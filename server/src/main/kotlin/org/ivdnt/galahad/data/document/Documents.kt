@@ -5,6 +5,7 @@ import org.ivdnt.galahad.app.CRUDSet
 import org.ivdnt.galahad.exceptions.DocumentNotFoundException
 import java.io.File
 import java.io.InputStream
+import org.apache.logging.log4j.kotlin.logger
 
 /**
  * Used as a collection for all documents in a corpus and to create and delete new documents.
@@ -32,7 +33,7 @@ class Documents(
     /** Delete a single document */
     override fun delete(key: String): Document? {
         val fullyDeleted: Boolean = workDirectory.resolve(key).deleteRecursively()
-        if (!fullyDeleted) println("Partial deletion of $key")
+        if (!fullyDeleted) logger.warn("Partial deletion of $key")
         return readOrNull(key)
     }
 

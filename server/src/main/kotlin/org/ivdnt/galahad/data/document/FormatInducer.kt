@@ -1,5 +1,6 @@
 package org.ivdnt.galahad.data.document
 
+import org.apache.logging.log4j.kotlin.logger
 import org.ivdnt.galahad.util.getXmlBuilder
 import java.io.File
 import javax.xml.xpath.XPath
@@ -20,7 +21,7 @@ object FormatInducer {
             "naf" -> DocumentFormat.Naf
             else -> DocumentFormat.Unknown
         }
-        println("Induced format $format for file ${file.name}")
+        logger.debug { "Induced format $format for file ${file.name}" }
         return format
     }
 
