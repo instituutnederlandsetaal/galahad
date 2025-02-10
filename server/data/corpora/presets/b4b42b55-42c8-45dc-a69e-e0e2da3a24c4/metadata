@@ -1,10 +1,1 @@
-{
-    "owner": "admin",
-    "name": "dbnl-excerpts-17",
-    "eraFrom": "1600",
-    "eraTo": "1700",
-    "tagset": "TDN-Core",
-    "dataset": true,
-    "sourceName": "dbnl-excerpts-17",
-    "sourceURL": "https://dbnl.org"
-}
+{"owner": "admin", "name": "dbnl-excerpts-17", "eraFrom": "1600", "eraTo": "1700", "tagset": "TDN-Core", "dataset": true, "sourceName": "dbnl-excerpts-17", "sourceURL": "https://dbnl.org", "language": ""}

@@ -1,10 +1,1 @@
-{
-    "owner": "admin",
-    "name": "tdn-1400-1600",
-    "eraFrom": 1400,
-    "eraTo": 1600,
-    "tagset": "TDN-Core",
-    "dataset": true,
-    "sourceName": "galahad-corpus-data",
-    "sourceURL": "https://github.com/INL/galahad-corpus-data"
-}
+{"owner": "admin", "name": "tdn-1400-1600", "eraFrom": 1400, "eraTo": 1600, "tagset": "TDN-Core", "dataset": true, "sourceName": "galahad-corpus-data", "sourceURL": "https://github.com/INL/galahad-corpus-data", "language": ""}
