@@ -62,6 +62,7 @@ class Corpus(
         }
 
         override fun set(): CorpusMetadata {
+            val allJobs = jobs.readAll()
             return CorpusMetadata(
                 // Mutable fields
                 owner = mutableCorpusMetadata.owner,
@@ -78,7 +79,8 @@ class Corpus(
                 // Immutable/calculated fields
                 sourceAnnotationTypes = jobs.readOrNull(SOURCE_LAYER_NAME)?.annotationTypes ?: emptySet(),
                 uuid = UUID.fromString(workDirectory.name),
-                activeJobs = jobs.readAll().filter { it.isActive }.size,
+                activeJobs = allJobs.count { it.isActive },
+                numResults = allJobs.count { it.hasResult },
                 numDocs = documents.readAll().size,
                 sizeInBytes = workDirectory.walkTopDown().filter { it.isFile }.map { it.length() }.sum(), // expensive
                 lastModified = System.currentTimeMillis(),

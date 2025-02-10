@@ -83,6 +83,9 @@ class Job(
             _isActive.modify<Boolean> { value }; corpus.invalidateCache()
         }
 
+    val hasResult: Boolean
+        get() = name != SOURCE_LAYER_NAME && documents.any { it.status == DocumentProcessingStatus.FINISHED }
+
     /**
      * The sum of the global [Metrics] score of all the documents of the job (as opposed to per PoS).
      * Cached in a file, as it is expensive.
