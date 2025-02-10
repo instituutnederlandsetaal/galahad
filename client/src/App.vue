@@ -58,10 +58,6 @@ onMounted(() => { user.fetchUser() })
 // actually the jobSelection is now done on EvaluationView mount
 const tabs = ref(null)
 
-// poll for connection with the server by checking the user every 5 seconds
-// if an error occurs the Userstore will reload the page
-setInterval(() => { user.fetchUser() }, 5000)
-
 </script>
 
 <style lang="scss">
@@ -136,14 +132,6 @@ $galahad-theme: #62b6ff;
 .p-multiselect-header::after {
     content: "select all";
 }
-
-
-/* CSS HEX */
-// --yellow-orange: #f5b143ff;
-// --periwinkle-crayola: #c4d7faff;
-// --cobalt-blue: #014ba6ff;
-// --nickel: #6b6e6cff;
-// --rosso-corsa: #d8070bff;
 
 h1,
 h2,
