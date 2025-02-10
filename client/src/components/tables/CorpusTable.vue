@@ -26,13 +26,13 @@
 
         <template #prepend>
             <div style="display: flex; align-items: center; justify-content: center; margin-bottom:1em"
-                v-if="type == TableCorporaType.User || (userStore.user.admin && type == TableCorporaType.Public)">
-                <GButton green @click="$emit('create')" v-if="type == TableCorporaType.User && !sharedWithYou">
+                v-if="userStore.user.admin || type != TableCorporaType.Dataset">
+                <GButton green @click="$emit('create')" v-if="type == TableCorporaType.User">
                     New
                 </GButton>
                 <GButton orange :disabled="!activeCorpusInTable" @click="$emit('update', selectedCorpus)">Edit
                 </GButton>
-                <GButton v-if="!sharedWithYou || userStore.user.admin"
+                <GButton v-if="type == TableCorporaType.User"
                     :disabled="!userStore.canDelete(selectedCorpus) || !activeCorpusInTable" red
                     @click="$emit('delete', selectedCorpus)">Delete</GButton>
             </div>
@@ -93,19 +93,17 @@ const corporaStore = stores.useCorpora()
 // Props
 const props = defineProps({
     corpora: Array<CorpusMetadata>, type: String as PropType<TableCorporaType>,
-    selectable: Boolean, sharedWithYou: Boolean
+    selectable: Boolean
 })
 
 // Fields
 const selectedCorpus = ref(corporaStore.activeCorpus)
-const editable = props.type === TableCorporaType.User
+const editable = props.type != TableCorporaType.Dataset
 const displayCorpora = computed(() => {
     if (props.type === TableCorporaType.User) {
-        if (props.sharedWithYou) {
-            return props.corpora.filter(i => i.collaborators.includes(userStore.user.id) || i.viewers.includes(userStore.user.id))
-        } else {
             return props.corpora.filter(i => i.owner === userStore.user.id)
-        }
+    } else if (props.type === TableCorporaType.Shared) {
+        return props.corpora.filter(i => i.collaborators.includes(userStore.user.id) || i.viewers.includes(userStore.user.id))
     } else {
         return props.corpora
     }

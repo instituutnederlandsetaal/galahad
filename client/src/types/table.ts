@@ -1,6 +1,7 @@
 export enum TableCorporaType {
     Dataset = 'benchmark',
-    User = 'user'
+    User = 'user',
+    Shared = 'shared'
 }
 
 export enum TableDocumentsType {

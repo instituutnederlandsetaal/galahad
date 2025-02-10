@@ -8,9 +8,9 @@
         </CorpusTable>
 
         <!-- Shared corpus table -->
-        <CorpusTable :type="TableCorporaType.User" :corpora="corporaStore.sharedCorpora"
+        <CorpusTable :type="TableCorporaType.Shared" :corpora="corporaStore.sharedCorpora"
             @delete="corpus => deleteCorpusData = corpus" @update="corpus => editMode(corpus)" selectable
-            @create="showNewCorpusModal = true" sharedWithYou>
+            @create="showNewCorpusModal = true">
             <template #title>Shared with you</template>
             <template #help>
                 Here you can see the corpora that have been shared with you. <br>
