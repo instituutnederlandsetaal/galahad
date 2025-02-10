@@ -1,8 +1,8 @@
 plugins {
-	kotlin("jvm") version "2.0.21"
-	kotlin("plugin.spring") version "2.0.21"
-	id("org.springframework.boot") version "3.3.5"
-	id("io.spring.dependency-management") version "1.1.6"
+	kotlin("jvm") version "2.1.10"
+	kotlin("plugin.spring") version "2.1.10"
+	id("org.springframework.boot") version "3.4.2"
+	id("io.spring.dependency-management") version "1.1.7"
 }
 
 group = "org.ivdnt"
@@ -31,7 +31,7 @@ dependencies {
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 
 	// swagger
-	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.4")
 
 	// logging
 	implementation("org.apache.logging.log4j:log4j-api-kotlin:1.5.0")
@@ -43,7 +43,7 @@ dependencies {
 	implementation("com.beust:klaxon:5.6")
 
 	// cache
-	implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
+	implementation("com.github.ben-manes.caffeine:caffeine:3.2.0")
 }
 
 tasks.withType<Test> {
