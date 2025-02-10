@@ -12,6 +12,9 @@
         <template #help>
             <slot name="help">
                 <component :is="help.corpora"></component>
+                <div style="text-align: center; margin-top: 1em">
+                    <HelpLink subject="corpora" />
+                </div>
             </slot>
         </template>
 
@@ -80,7 +83,7 @@ import { CorpusMetadata } from '@/types/corpora'
 import { TableCorporaType, Field } from '@/types/table'
 import * as Utils from '@/api/utils'
 // Components
-import { ExternalLink, GButton, GTable } from '@/components'
+import { ExternalLink, GButton, GTable, HelpLink } from '@/components'
 import help from '@/components/help'
 
 // Stores

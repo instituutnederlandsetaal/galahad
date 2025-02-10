@@ -25,7 +25,7 @@
               <a href="#annotate-evaluate">Annotate & Evaluate</a>
               <ul>
                 <!-- H3 -->
-                <li><a href="#own-corpus">Your own corpus</a></li>
+                <li><a href="#corpora">Your own corpus</a></li>
                 <!-- H3 -->
                 <li><a href="#explore-benchmark">Benchmark corpora</a></li>
               </ul>
@@ -159,7 +159,7 @@
         </p>
 
         <!-- H3: Scenario 1 -->
-        <h3 id="own-corpus">Scenario 1: Annotate and evaluate your own corpus</h3>
+        <h3 id="corpora">Scenario 1: Annotate and evaluate your own corpus</h3>
         <p>
           You can create a corpus within the platform that you would like to annotate. Corpora you have uploaded will be
           listed in <code>Corpora</code> under "your corpora". When you have uploaded a corpus, you can always
