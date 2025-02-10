@@ -17,6 +17,7 @@ open class MutableCorpusMetadata(
     @JsonProperty("name") var name: String,
     @JsonProperty("eraFrom") val eraFrom: Int,
     @JsonProperty("eraTo") val eraTo: Int,
+    @JsonProperty("language") var language: String?,
     @JsonProperty("tagset") var tagset: String?,
     @JsonProperty("dataset") @JsonInclude(JsonInclude.Include.ALWAYS) val isDataset: Boolean,
     @JsonProperty("collaborators") @Nullable
@@ -90,6 +91,7 @@ open class MutableCorpusMetadata(
                 name = "",
                 eraFrom = 0,
                 eraTo = 0,
+                language = null,
                 tagset = null,
                 isDataset = false,
                 collaborators = null,

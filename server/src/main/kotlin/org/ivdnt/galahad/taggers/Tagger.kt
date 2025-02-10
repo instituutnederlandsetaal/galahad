@@ -22,6 +22,7 @@ class Tagger (
     @JsonProperty("dataset") var dataset: LinkItem = LinkItem(),
     @JsonProperty("trainedBy") var trainedBy: String = "",
     @JsonProperty("date") var date: String = "",
+    @JsonProperty("language") var language: String? = "",
 ) : JSONable {
     @JsonIgnore
     var version: String = ""

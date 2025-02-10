@@ -34,7 +34,7 @@ class CorporaControllerTest(
     @Test
     fun `Post unicode name corpora`() {
         val name = "日本語"
-        val meta = MutableCorpusMetadata("", name, 0, 0, null, false, null, null, null, null)
+        val meta = MutableCorpusMetadata("", name, 0, 0, "", null, false, null, null, null, null)
 
         val uuid = postCorpus(meta)
 
@@ -56,7 +56,7 @@ class CorporaControllerTest(
         // Create
         val meta = MutableCorpusMetadata(
             owner = "", // Set by request header
-            "test", 0, 0, null, false, collabs, viewers, null, null
+            "test", 0, 0, "", null, false, collabs, viewers, null, null
         )
         val uuid = postCorpus(meta)
 

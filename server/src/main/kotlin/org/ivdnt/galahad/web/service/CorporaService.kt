@@ -58,6 +58,7 @@ class CorporaService(
             name = value.name,
             eraFrom = value.eraFrom,
             eraTo = value.eraTo,
+            language = value.language,
             tagset = value.tagset,
             isDataset = value.isDataset,
             collaborators = value.collaborators,

@@ -68,6 +68,7 @@ class Corpus(
                 name = mutableCorpusMetadata.name,
                 eraTo = mutableCorpusMetadata.eraTo,
                 eraFrom = mutableCorpusMetadata.eraFrom,
+                language = mutableCorpusMetadata.language,
                 tagset = mutableCorpusMetadata.tagset,
                 dataset = mutableCorpusMetadata.isDataset,
                 collaborators = mutableCorpusMetadata.collaborators ?: setOf(),
@@ -112,6 +113,7 @@ class Corpus(
                 tagset = metadata.tagset,
                 eraFrom = metadata.eraFrom,
                 eraTo = metadata.eraTo,
+                language = metadata.language,
                 produces = metadata.sourceAnnotationTypes,
             )
         }
@@ -156,10 +158,11 @@ class Corpus(
         // Overwrite the owner with the original, so collaborators can't change it.
         newMeta.owner = owner
 
-        // Trim textual intputs
+        // Trim textual inputs
         newMeta.name = newMeta.name.trim()
         newMeta.sourceName = newMeta.sourceName?.trim()
         newMeta.tagset = newMeta.tagset?.trim()
+        newMeta.language = newMeta.language?.trim()
         newMeta.collaborators = newMeta.collaborators?.map { it.trim() }?.toSet()
         newMeta.viewers = newMeta.viewers?.map { it.trim() }?.toSet()
 

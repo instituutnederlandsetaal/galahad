@@ -60,6 +60,7 @@ fun createCorpus(workdir: File? = null, isDataset: Boolean = false, isAdmin: Boo
             "testCorpus",
             0,
             0,
+            "",
             "tagset",
             isDataset,
             setOf("collaborator1", "collaborator2"),
