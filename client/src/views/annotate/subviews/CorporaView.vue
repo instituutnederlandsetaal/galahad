@@ -9,8 +9,7 @@
 
         <!-- Shared corpus table -->
         <CorpusTable :type="TableCorporaType.Shared" :corpora="corporaStore.sharedCorpora"
-            @delete="corpus => deleteCorpusData = corpus" @update="corpus => editMode(corpus)" selectable
-            @create="showNewCorpusModal = true">
+            @delete="corpus => deleteCorpusData = corpus" @update="corpus => editMode(corpus)" selectable>
             <template #title>Shared with you</template>
             <template #help>
                 Here you can see the corpora that have been shared with you. <br>
@@ -23,8 +22,7 @@
 
         <!-- Benchmark corpus table -->
         <CorpusTable :type="TableCorporaType.Dataset" :corpora="corporaStore.datasetCorpora"
-            @delete="corpus => deleteCorpusData = corpus" @update="corpus => editMode(corpus)" selectable
-            @create="showNewCorpusModal = true">
+            @update="corpus => editMode(corpus)" selectable>
             <template #help>
                 <BenchmarkSetsHelp /><br />
                 You can inspect them in further detail on the
