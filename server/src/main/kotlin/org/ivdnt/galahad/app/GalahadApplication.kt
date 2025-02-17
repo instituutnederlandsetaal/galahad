@@ -210,7 +210,13 @@ class ApplicationController : ErrorController, Logging {
         }
 		val springException = request.getAttribute("org.springframework.web.servlet.DispatcherServlet.EXCEPTION") as Exception?
 		val errorMsg = jakartaErrorMsg ?: jakartaException?.cause?.message ?: springException?.message ?: jakartaException?.message ?: "No error message available."
-		return ErrorResponse(statusCode, errorMsg)
+
+        // If this response normally responds with application/zip, change the content
+		response?.contentType = "application/json"
+        // and remove content disposition
+        response?.setHeader("Content-Disposition", "")
+
+        return ErrorResponse(statusCode, errorMsg)
 	}
 }
 
