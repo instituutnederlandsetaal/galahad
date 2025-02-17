@@ -82,6 +82,7 @@ class CmdiMetadata(transformMetadata: DocumentTransformMetadata) : LayerTransfor
             listOf("sourceCollectionURI") to corpusMetadata.sourceURL.toNonEmptyString("!No source URL defined!"),
             listOf("Source_GaLAHaD//yearFrom") to corpusMetadata.eraFrom.toString(),
             listOf("Source_GaLAHaD//yearTo") to corpusMetadata.eraTo.toString(),
+            listOf("languageName") to corpusMetadata.language.toNonEmptyString("Dutch"),
             listOf("annotationSet") to tagsets.getOrNull(tagger.tagset)?.longName.toNonEmptyString("!No tagset defined!"),
             listOf("annotationFormat") to format,
             listOf("Annotation//toolName") to tagger.id,

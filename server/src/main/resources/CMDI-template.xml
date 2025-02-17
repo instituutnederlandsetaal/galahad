@@ -54,7 +54,7 @@
                 </cmdp:DateInformation_GaLAHaD>
             </cmdp:Source_GaLAHaD>
             <cmdp:Language_GaLAHaD>
-                <cmdp:languageName>Dutch</cmdp:languageName>
+                <cmdp:languageName>LANGUAGE</cmdp:languageName>
                 <cmdp:dominantLanguage>true</cmdp:dominantLanguage>
             </cmdp:Language_GaLAHaD>
             <cmdp:Annotation>
@@ -64,7 +64,7 @@
                 <cmdp:Provenance>
                     <cmdp:annotationFormat>FORMAT</cmdp:annotationFormat>
                     <cmdp:description>The file was automatically annotated by means of the platform GaLAHaD, which is a central hub for enriching historical Dutch.</cmdp:description>
-                    <cmdp:annotationProcess>
+                    <cmdp:AnnotationProcess>
                         <cmdp:annotationMode>automatically annotated</cmdp:annotationMode>
                         <cmdp:ProcessorsAnnotators>
                             <cmdp:Tool>
@@ -81,7 +81,7 @@
                             <cmdp:dayFrom>---DAY</cmdp:dayFrom>
                             <cmdp:dayTo>---DAY</cmdp:dayTo>
                         </cmdp:Date_Period>
-                    </cmdp:annotationProcess>
+                    </cmdp:AnnotationProcess>
                 </cmdp:Provenance>
             </cmdp:Annotation>
         </cmdp:TextProfileINT_GaLAHaD>
