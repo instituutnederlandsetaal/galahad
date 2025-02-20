@@ -5,6 +5,7 @@ import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.data.layer.Layer
 import org.ivdnt.galahad.data.layer.Term
 import org.ivdnt.galahad.data.layer.WordForm
+import org.ivdnt.galahad.exceptions.InvalidDocumentFormatException
 import org.ivdnt.galahad.port.BLFXML
 import org.ivdnt.galahad.util.getXmlBuilder
 import org.w3c.dom.Document
@@ -137,7 +138,7 @@ class BLFXMLParser (
                     ?: node.attributes.getNamedItem("type")?.textContent
                 }
             }
-            else -> throw Exception("This format is not supported")
+            else -> throw InvalidDocumentFormatException("Format $format not supported by BLFXMLParser")
         }
 
         val nodeList = documentPathExpression.evaluate(xmlDocument, XPathConstants.NODESET) as NodeList
@@ -191,7 +192,7 @@ class BLFXMLParser (
                     format,
                     nodeHandler
                 )
-                else -> throw Exception("Unsupported format $format in BLFXMLReader")
+                else -> throw InvalidDocumentFormatException("Unsupported format $format in BLFXMLReader")
             }
         }
 

@@ -15,7 +15,7 @@ class CorpusDistribution(
     groupingAnnotation: AnnotationType
 ) : Distribution(groupingAnnotation) {
 
-    private val hypothesisJob = corpus.jobs.readOrNull(hypothesis) ?: throw Exception("Hypothesis layer does not exist")
+    private val hypothesisJob = corpus.jobs.readOrThrow(hypothesis)
 
     @JsonProperty
     val lastModified = hypothesisJob.lastModified

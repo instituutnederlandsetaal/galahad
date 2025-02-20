@@ -8,6 +8,7 @@ import org.ivdnt.galahad.app.INTERNAL_JOBS_RESULT_URL
 import org.ivdnt.galahad.data.document.Document
 import org.ivdnt.galahad.data.document.FormatInducer
 import org.ivdnt.galahad.data.layer.Layer
+import org.ivdnt.galahad.exceptions.InvalidDocumentFormatException
 import org.ivdnt.galahad.port.InternalFile
 import org.ivdnt.galahad.port.SourceLayerableFile
 import org.ivdnt.galahad.port.conllu.ConlluFile
@@ -114,9 +115,8 @@ class InternalJobController(
                         )
                     )
                 }
-
                 else -> {
-                    throw Exception("File types is not supported")
+                    throw InvalidDocumentFormatException("File type not supported")
                 }
             }
             // If this was the last file, set active false

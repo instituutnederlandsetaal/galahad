@@ -18,8 +18,8 @@ class CorpusMetrics(
     truncate: Boolean = true
 ) : Metrics(corpus, settings, hypothesis, reference, truncate = truncate) {
 
-    private val hypothesisJob = corpus.jobs.readOrNull(hypothesis) ?: throw Exception("Hypothesis layer does not exist")
-    private val referenceJob = corpus.jobs.readOrNull(reference) ?: throw Exception("Reference layer does not exist")
+    private val hypothesisJob = corpus.jobs.readOrThrow(hypothesis)
+    private val referenceJob = corpus.jobs.readOrThrow(reference)
 
     @JsonProperty
     val hypothesisLastModified = hypothesisJob.lastModified

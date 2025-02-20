@@ -15,7 +15,9 @@ import org.ivdnt.galahad.data.layer.LayerSummary
 import org.ivdnt.galahad.data.layer.plus
 import org.ivdnt.galahad.evaluation.metrics.*
 import org.ivdnt.galahad.exceptions.DocumentJobNotFoundException
+import org.ivdnt.galahad.exceptions.JobNotFoundException
 import org.ivdnt.galahad.exceptions.SourceLayerNotATaggerException
+import org.ivdnt.galahad.exceptions.TaggerNotFoundException
 import org.ivdnt.galahad.jobs.DocumentJob.DocumentProcessingStatus
 import org.ivdnt.galahad.taggers.TaggerStore
 import org.springframework.core.io.FileSystemResource
@@ -63,7 +65,7 @@ class Job(
             // so we only delete it if the job is empty
             // Otherwise it deserves at least manual inspection
             if (documentNames.isEmpty()) workDirectory.deleteRecursively()
-            throw Exception("Tagger $name unknown.")
+            throw JobNotFoundException(name)
         }
     }
 
