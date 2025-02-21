@@ -13,6 +13,7 @@ import org.ivdnt.galahad.data.layer.AnnotationType
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
 import org.ivdnt.galahad.evaluation.confusion.Confusion
 import org.ivdnt.galahad.evaluation.distribution.CorpusDistribution
+import org.ivdnt.galahad.evaluation.frequency.TokenFrequency
 import org.ivdnt.galahad.evaluation.metrics.CorpusMetrics
 import org.ivdnt.galahad.exceptions.ErrorResponse
 import org.ivdnt.galahad.web.service.EvaluationService
@@ -196,5 +197,14 @@ class EvaluationController(
         @RequestParam(defaultValue = SOURCE_LAYER_NAME) @Parameter(description = "Tagger name or sourceLayer") reference: String? = SOURCE_LAYER_NAME,
     ): ByteArray {
         return evaluationService.getEvaluation(corpus, job, reference)
+    }
+
+    @CrossOrigin
+    @GetMapping(TOKEN_FREQUENCY_URL)
+    fun getTokenFrequency(
+        @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
+        @PathVariable @Parameter(description = "Tagger name or sourceLayer") job: String,
+    ): Map<String, Int> {
+        return evaluationService.getTokenFrequency(corpus, job)
     }
 }

@@ -9,6 +9,7 @@ import org.ivdnt.galahad.evaluation.comparison.*
 import org.ivdnt.galahad.evaluation.confusion.CONFUSION_TYPES
 import org.ivdnt.galahad.evaluation.confusion.CorpusConfusion
 import org.ivdnt.galahad.evaluation.distribution.CorpusDistribution
+import org.ivdnt.galahad.evaluation.frequency.TokenFrequency
 import org.ivdnt.galahad.evaluation.metrics.ClassificationType
 import org.ivdnt.galahad.evaluation.metrics.CorpusMetrics
 import org.ivdnt.galahad.evaluation.metrics.METRIC_TYPES
@@ -263,5 +264,12 @@ class EvaluationService(val corpora: CorporaService) {
         response.setContentDisposition(metadata.name + "-evaluation.zip")
         // zip the directory
         return zipFile.readBytes()
+    }
+
+    fun getTokenFrequency(corpus: UUID, job: String): Map<String, Int> {
+        return TokenFrequency(
+            corpora.getReadAccessOrThrow(corpus, request),
+            job
+        ).tokenFrequency
     }
 }

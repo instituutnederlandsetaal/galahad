@@ -67,6 +67,7 @@ const val JOB_DOCUMENT_URL = "$JOB_URL/documents/{document}"
 
 const val EVALUATION_URL = "$JOB_URL/evaluation"
 const val DISTRIBUTION_URL = "$EVALUATION_URL/distribution"
+const val TOKEN_FREQUENCY_URL = "$EVALUATION_URL/frequency"
 const val METRICS_URL = "$EVALUATION_URL/metrics"
 const val METRICS_SAMPLES_URL = "$METRICS_URL/download"
 const val CONFUSION_URL = "$EVALUATION_URL/confusion"
