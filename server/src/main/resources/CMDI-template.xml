@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<cmd:CMD xmlns:dcr="http://www.isocat.org/ns/dcr"
- xmlns:cmd="http://www.clarin.eu/cmd/1"
- xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning"
+<cmd:CMD xmlns:cmd="http://www.clarin.eu/cmd/1"
  xmlns:cue="http://www.clarin.eu/cmd/cues/1"
  xmlns:cue_old="http://www.clarin.eu/cmdi/cues/1"
- xmlns:cmdp="http://www.clarin.eu/cmd/1/profiles/clarin.eu:cr1:p_1712653174443"
+ xmlns:cmdp="http://www.clarin.eu/cmd/1/profiles/clarin.eu:cr1:p_1733830015142"
+ xmlns:dcr="http://www.isocat.org/ns/dcr"
+ xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://www.clarin.eu/cmd/1 http://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/profiles/clarin.eu:cr1:p_1712653174443/xsd" CMDVersion="1.2">
+ xsi:schemaLocation="http://www.clarin.eu/cmd/1 http://catalog.clarin.eu/ds/ComponentRegistry/rest/registry/profiles/clarin.eu:cr1:p_1733830015142/xsd" CMDVersion="1.2">
     <cmd:Header>
         <cmd:MdCreator>Dutch Language Institute</cmd:MdCreator>
         <cmd:MdCreationDate>DATE</cmd:MdCreationDate>
@@ -21,12 +21,12 @@
                 <cmd:ResourceRef>https://resolver.ivdnt.org/PID_tei</cmd:ResourceRef>
             </cmd:ResourceProxy>
         </cmd:ResourceProxyList>
-        <cmd:JournalFileProxyList/>
-        <cmd:ResourceRelationList/>
-     </cmd:Resources>
+        <cmd:JournalFileProxyList/>    
+        <cmd:ResourceRelationList/>  
+    </cmd:Resources>
     <cmd:IsPartOfList/>
     <cmd:Components>
-        <cmdp:TextProfileINT_GaLAHaD>
+        <cmdp:TextProfileINT_GaLAHaD_v4>
             <cmdp:corpusName>CORPUS_NAME</cmdp:corpusName>
             <cmdp:TextFile_GaLAHaD>
                 <cmdp:GaLAHaDPersistentIdentifier>PID_tei</cmdp:GaLAHaDPersistentIdentifier>
@@ -35,10 +35,11 @@
                     <cmdp:Tool>
                         <cmdp:toolName>GaLAHaD</cmdp:toolName>
                         <cmdp:toolVersion>GALAHAD_VERSION</cmdp:toolVersion>
-                        <cmdp:toolURI>https://portal.clarin.ivdnt.org/galahad/home</cmdp:toolURI>                      
+                        <cmdp:toolURL>https://portal.clarin.ivdnt.org/galahad/home</cmdp:toolURL>
                     </cmdp:Tool>
                     <cmdp:Organisation>
                         <cmdp:organisationName>Dutch Language Institute</cmdp:organisationName>
+                        <cmdp:organisationURL>https://ivdnt.org</cmdp:organisationURL>
                     </cmdp:Organisation>
                 </cmdp:Conversion_GaLAHaD>
             </cmdp:TextFile_GaLAHaD>
@@ -46,31 +47,29 @@
                 <cmdp:sourceID>TITLE</cmdp:sourceID>
                 <cmdp:sourceCollection>SOURCE_NAME</cmdp:sourceCollection>
                 <cmdp:sourceCollectionURI>SOURCE_URL</cmdp:sourceCollectionURI>
-                <cmdp:DateInformation_GaLAHaD>
-                    <cmdp:Date_Period>
+                <cmdp:Date_Period>
                         <cmdp:yearFrom>ERA_FROM</cmdp:yearFrom>
                         <cmdp:yearTo>ERA_TO</cmdp:yearTo>
-                     </cmdp:Date_Period>
-                </cmdp:DateInformation_GaLAHaD>
+                </cmdp:Date_Period> 
             </cmdp:Source_GaLAHaD>
             <cmdp:Language_GaLAHaD>
                 <cmdp:languageName>LANGUAGE</cmdp:languageName>
                 <cmdp:dominantLanguage>true</cmdp:dominantLanguage>
             </cmdp:Language_GaLAHaD>
-            <cmdp:Annotation>
-                <cmdp:annotationType>POS-tagging and lemmatisation</cmdp:annotationType>
+            <cmdp:Annotation_GaLAHaD>
+                <cmdp:annotationType>Lemmatisation and POS-tagging</cmdp:annotationType>
                 <cmdp:annotationStyle>inline</cmdp:annotationStyle>
                 <cmdp:annotationSet>TAGSET</cmdp:annotationSet>
                 <cmdp:Provenance>
                     <cmdp:annotationFormat>FORMAT</cmdp:annotationFormat>
-                    <cmdp:description>The file was automatically annotated by means of the platform GaLAHaD, which is a central hub for enriching historical Dutch.</cmdp:description>
+                    <cmdp:annotationDescription>The file was automatically annotated by means of the platform GaLAHaD, which is a central hub for enriching historical Dutch.</cmdp:annotationDescription>
                     <cmdp:AnnotationProcess>
                         <cmdp:annotationMode>automatically annotated</cmdp:annotationMode>
                         <cmdp:ProcessorsAnnotators>
-                            <cmdp:Tool>
+                             <cmdp:Tool>
                                 <cmdp:toolName>TAGGER_NAME</cmdp:toolName>
                                 <cmdp:toolVersion>TAGGER_VERSION</cmdp:toolVersion>
-                                <cmdp:toolURI>TAGGER_URL</cmdp:toolURI>
+                                <cmdp:toolURL>TAGGER_URL</cmdp:toolURL>
                             </cmdp:Tool>
                         </cmdp:ProcessorsAnnotators>
                         <cmdp:Date_Period>
@@ -83,7 +82,7 @@
                         </cmdp:Date_Period>
                     </cmdp:AnnotationProcess>
                 </cmdp:Provenance>
-            </cmdp:Annotation>
-        </cmdp:TextProfileINT_GaLAHaD>
+            </cmdp:Annotation_GaLAHaD>
+        </cmdp:TextProfileINT_GaLAHaD_v4>
     </cmd:Components>
 </cmd:CMD>

@@ -70,9 +70,9 @@ class CmdiMetadata(transformMetadata: DocumentTransformMetadata) : LayerTransfor
         return mapOf(
             listOf("MdCollectionDisplayName", "corpusName") to corpusMetadata.name,
             listOf("MdCreationDate") to date,
-            listOf("Annotation//yearFrom", "Annotation//yearTo") to year,
-            listOf("Annotation//monthFrom", "Annotation//monthTo") to "--$month",
-            listOf("Annotation//dayFrom", "Annotation//dayTo") to "---$day",
+            listOf("Annotation_GaLAHaD//yearFrom", "Annotation_GaLAHaD//yearTo") to year,
+            listOf("Annotation_GaLAHaD//monthFrom", "Annotation_GaLAHaD//monthTo") to "--$month",
+            listOf("Annotation_GaLAHaD//dayFrom", "Annotation_GaLAHaD//dayTo") to "---$day",
             listOf("ResourceRef") to "https://resolver.ivdnt.org/${document.uuid}",
             listOf("GaLAHaDPersistentIdentifier") to "${document.uuid}_tei",
             listOf("conversionDescription") to "exported to $format by GaLAHaD",
@@ -85,9 +85,9 @@ class CmdiMetadata(transformMetadata: DocumentTransformMetadata) : LayerTransfor
             listOf("languageName") to corpusMetadata.language.toNonEmptyString("Dutch"),
             listOf("annotationSet") to tagsets.getOrNull(tagger.tagset)?.longName.toNonEmptyString("!No tagset defined!"),
             listOf("annotationFormat") to format,
-            listOf("Annotation//toolName") to tagger.id,
-            listOf("Annotation//toolVersion") to tagger.version,
-            listOf("Annotation//toolURI") to tagger.model.href,
+            listOf("Annotation_GaLAHaD//toolName") to tagger.id,
+            listOf("Annotation_GaLAHaD//toolVersion") to tagger.version,
+            listOf("Annotation_GaLAHaD//toolURL") to tagger.model.href,
         )
     }
 }
