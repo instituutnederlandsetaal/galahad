@@ -1,6 +1,5 @@
 package org.ivdnt.galahad.formats.tei
 
-import org.ivdnt.galahad.app.executeAndLogTime
 import org.ivdnt.galahad.data.document.DocumentFormat
 import org.ivdnt.galahad.data.document.FormatInducer
 import org.ivdnt.galahad.data.layer.Layer
@@ -41,8 +40,6 @@ class TEIFile(
     }
 
     override fun merge(transformMetadata: DocumentTransformMetadata): TEIFile {
-        return executeAndLogTime("Twining TEI file ${file.name}") {
-            TEILayerMerger(this, transformMetadata).merge()
-        }
+        return TEILayerMerger(this, transformMetadata).merge()
     }
 }

@@ -2,7 +2,6 @@ package org.ivdnt.galahad.formats.tei
 
 import org.ivdnt.galahad.TestConfig
 import org.ivdnt.galahad.app.User
-import org.ivdnt.galahad.app.executeAndLogTime
 import org.ivdnt.galahad.data.corpus.Corpus
 import org.ivdnt.galahad.data.document.DocumentFormat
 import org.ivdnt.galahad.formats.*
@@ -26,17 +25,10 @@ internal class TEIExportTest {
         assertPlainText("tei/twine", file)
 
         val plaintext: String = Resource.get("tei/twine/plaintext.txt").readText()
-        val layer = LayerBuilder()
-            .loadLayerFromTSV("tei/twine/pie-tdn.tsv", plaintext)
-            .build()
-        DocTest.builder(corpus)
-            .expectingFile("tei/twine/merged-output.xml")
-            .mergeTEI(Resource.get("tei/twine/twine.input.xml"), layer)
-            .ignoreTrailingWhiteSpaces()
-            .ignoreDate()
-            .ignoreUUID()
-            .ignoreWhiteSpaceDocumentWide()
-            .result()
+        val layer = LayerBuilder().loadLayerFromTSV("tei/twine/pie-tdn.tsv", plaintext).build()
+        DocTest.builder(corpus).expectingFile("tei/twine/merged-output.xml")
+            .mergeTEI(Resource.get("tei/twine/twine.input.xml"), layer).ignoreTrailingWhiteSpaces().ignoreDate()
+            .ignoreUUID().ignoreWhiteSpaceDocumentWide().result()
     }
 
     @Test
@@ -47,17 +39,10 @@ internal class TEIExportTest {
 
             val plaintext: String = Resource.get("$folder/plaintext.txt").readText()
             val tagset = TagsetStore().getOrNull("TDN-Core")!!
-            val layer = LayerBuilder()
-                .loadLayerFromTSV("$folder/pie-tdn.tsv", plaintext)
-                .setTagset(tagset)
-                .build()
+            val layer = LayerBuilder().loadLayerFromTSV("$folder/pie-tdn.tsv", plaintext).setTagset(tagset).build()
 
-            DocTest.builder(corpus)
-                .expectingFile("$folder/merged-output.xml")
-                .mergeTEI(Resource.get("$folder/input.tei.xml"), layer)
-                .ignoreDate()
-                .ignoreUUID()
-                .result()
+            DocTest.builder(corpus).expectingFile("$folder/merged-output.xml")
+                .mergeTEI(Resource.get("$folder/input.tei.xml"), layer).ignoreDate().ignoreUUID().result()
         }
         asserAlphaNumericPC("tei/alphanumericpc/with-w-tags")
         asserAlphaNumericPC("tei/alphanumericpc/without-w-tags")
@@ -68,16 +53,9 @@ internal class TEIExportTest {
         val folder = "tei/alphanumericpc/with-w-tags"
         val plaintext: String = Resource.get("$folder/plaintext.txt").readText()
         val tagset = TagsetStore().getOrNull("TDN-Core")!!
-        val layer = LayerBuilder()
-            .loadLayerFromTSV("$folder/pie-tdn.tsv", plaintext)
-            .setTagset(tagset)
-            .build()
-        DocTest.builder(corpus)
-            .expectingFile("$folder/converted-output.xml")
-            .convertToTEI(Resource.get("$folder/input.tei.xml"), layer)
-            .ignoreDate()
-            .ignoreUUID()
-            .result()
+        val layer = LayerBuilder().loadLayerFromTSV("$folder/pie-tdn.tsv", plaintext).setTagset(tagset).build()
+        DocTest.builder(corpus).expectingFile("$folder/converted-output.xml")
+            .convertToTEI(Resource.get("$folder/input.tei.xml"), layer).ignoreDate().ignoreUUID().result()
     }
 
     @Test
@@ -86,44 +64,29 @@ internal class TEIExportTest {
         assertPlainText("tei/brieven", file)
 
         val plaintext: String = Resource.get("tei/brieven/plaintext.txt").readText()
-        val layer = LayerBuilder()
-            .loadLayerFromTSV("tei/brieven/pie.tsv", plaintext)
-            .build()
-        DocTest.builder(corpus)
-            .expectingFile("tei/brieven/merged-output.tei.xml")
-            .mergeTEI(Resource.get("tei/brieven/input.tei.xml"), layer)
-            .ignoreDate()
-            .ignoreUUID()
-            .ignoreWhiteSpaceDocumentWide()
-            .result()
+        val layer = LayerBuilder().loadLayerFromTSV("tei/brieven/pie.tsv", plaintext).build()
+        DocTest.builder(corpus).expectingFile("tei/brieven/merged-output.tei.xml")
+            .mergeTEI(Resource.get("tei/brieven/input.tei.xml"), layer).ignoreDate().ignoreUUID()
+            .ignoreWhiteSpaceDocumentWide().result()
     }
 
     @Test
     fun punctuationExportTest() {
 
         val teiFile = TEIFile(Resource.get("tei/oneparagraph/mocktei.xml"))
-        DocTest.builder(corpus)
-            .expecting("Dit is wat oefentekst.")
-            .got(teiFile.plainTextReader().readText())
-            .ignoreTrailingWhiteSpaces()
-            .result()
+        DocTest.builder(corpus).expecting("Dit is wat oefentekst.").got(teiFile.plainTextReader().readText())
+            .ignoreTrailingWhiteSpaces().result()
 
         val tagset = TagsetStore().getOrNull("TDN-Core")!!
 
-        val layer = LayerBuilder()
-            .loadLayerFromTSV("tei/export/mock-TDN-with-punctuation.tsv", teiFile.plainTextReader().readText())
-            .assertWordFromsAndTermsSize(5, 5)
-            .setTagset(tagset)
-            .build()
+        val layer = LayerBuilder().loadLayerFromTSV(
+            "tei/export/mock-TDN-with-punctuation.tsv", teiFile.plainTextReader().readText()
+        ).assertWordFromsAndTermsSize(5, 5).setTagset(tagset).build()
 
-        DocTest.builder(corpus)
-            .expectingFile("tei/export/mock-TDN-with-punctuation-result.xml")
-            .convertToTEI(teiFile.file, layer)
-            .ignoreDate()
-            .ignoreUUID()
+        DocTest.builder(corpus).expectingFile("tei/export/mock-TDN-with-punctuation-result.xml")
+            .convertToTEI(teiFile.file, layer).ignoreDate().ignoreUUID()
             // When using just .ignoreWhiteSpace() the test fails, even though comparison tools shows no difference
-            .ignoreWhiteSpaceDocumentWide()
-            .result()
+            .ignoreWhiteSpaceDocumentWide().result()
     }
 
     @Test
@@ -131,17 +94,11 @@ internal class TEIExportTest {
 
         val tagset = TagsetStore().getOrNull("TDN-Core")!!
         val plaintext = TEIFile(Resource.get("tei/dummies/punctutation-mixed-tags.xml")).plainTextReader().readText()
-        val layer = LayerBuilder()
-            .loadLayerFromTSV("tei/dummies/punctuation-mixed-tags-sample-layer.tsv", plaintext)
-            .setTagset(tagset)
-            .build()
+        val layer = LayerBuilder().loadLayerFromTSV("tei/dummies/punctuation-mixed-tags-sample-layer.tsv", plaintext)
+            .setTagset(tagset).build()
 
-        DocTest.builder(corpus)
-            .expectingFile("tei/export/punctuation-mixed-tags-merge-export-result.xml")
-            .mergeTEI("tei/dummies/punctutation-mixed-tags.xml", layer)
-            .ignoreDate()
-            .ignoreUUID()
-            .result()
+        DocTest.builder(corpus).expectingFile("tei/export/punctuation-mixed-tags-merge-export-result.xml")
+            .mergeTEI("tei/dummies/punctutation-mixed-tags.xml", layer).ignoreDate().ignoreUUID().result()
     }
 
     fun displayMemory() {
@@ -183,10 +140,7 @@ internal class TEIExportTest {
         println("Created temp file. Temp file size: ${tempFile.length()} bytes")
 
         // build a layer that is a valid annotation of the temp file
-        val layer = LayerBuilder()
-            .loadDummies(testsize * 1000)
-            .setTagset(tagset)
-            .build()
+        val layer = LayerBuilder().loadDummies(testsize * 1000).setTagset(tagset).build()
         corpus.jobs.readOrCreateOrNull(jobName)?.documentOrEmpty(docName)?.setResult(layer)
             ?: throw Exception("Could not set layer result")
 
@@ -196,17 +150,15 @@ internal class TEIExportTest {
 
         // convert the layer to TEI to test conversion
         // remember the output to reuse as TEI-file in the merge test
-        val teiConvertedFile = executeAndLogTime("convert large TEI file") {
-            corpus.documents.readOrThrow(docName).generateAs(
-                DocumentTransformMetadata(
-                    corpus = corpus,
-                    job = corpus.jobs.readOrThrow(jobName),
-                    document = corpus.documents.readOrThrow(docName),
-                    user = User("test-user"),
-                    targetFormat = DocumentFormat.TeiP5
-                )
+        val teiConvertedFile = corpus.documents.readOrThrow(docName).generateAs(
+            DocumentTransformMetadata(
+                corpus = corpus,
+                job = corpus.jobs.readOrThrow(jobName),
+                document = corpus.documents.readOrThrow(docName),
+                user = User("test-user"),
+                targetFormat = DocumentFormat.TeiP5
             )
-        }
+        )
 
         displayMemory()
         println("Created teiFile. teiFile size: ${teiConvertedFile.length()} bytes")
@@ -216,17 +168,15 @@ internal class TEIExportTest {
             ?: throw Exception("Could not set layer result")
 
         // merge the layer with the TEI-file
-        val teiMergedFile = executeAndLogTime("merge large TEI file") {
-            corpus.documents.readOrThrow(teiUploadedFileName).merge(
-                DocumentTransformMetadata(
-                    corpus = corpus,
-                    job = corpus.jobs.readOrThrow(jobName),
-                    document = corpus.documents.readOrThrow(teiUploadedFileName),
-                    user = User("test-user"),
-                    targetFormat = DocumentFormat.TeiP5
-                )
+        val teiMergedFile = corpus.documents.readOrThrow(teiUploadedFileName).merge(
+            DocumentTransformMetadata(
+                corpus = corpus,
+                job = corpus.jobs.readOrThrow(jobName),
+                document = corpus.documents.readOrThrow(teiUploadedFileName),
+                user = User("test-user"),
+                targetFormat = DocumentFormat.TeiP5
             )
-        }
+        )
 
         println("Created teiMergedFile. teiMergedFile size: ${teiMergedFile.file.length()} bytes")
         displayMemory()

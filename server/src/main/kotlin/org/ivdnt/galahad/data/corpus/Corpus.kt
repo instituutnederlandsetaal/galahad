@@ -5,7 +5,6 @@ import org.ivdnt.galahad.FileBackedCache
 import org.ivdnt.galahad.FileBackedValue
 import org.ivdnt.galahad.app.ExpensiveGettable
 import org.ivdnt.galahad.app.User
-import org.ivdnt.galahad.app.executeAndLogTime
 import org.ivdnt.galahad.data.document.Document
 import org.ivdnt.galahad.data.document.DocumentFormat
 import org.ivdnt.galahad.data.document.Documents
@@ -207,18 +206,13 @@ class Corpus(
         filter: (Document) -> Boolean,
         outputStream: OutputStream? = null,
     ): File {
-        val name = metadata.expensiveGet().name
-        var zipFile: File? = null
         val documents = documents.readAll().filter(filter)
-        executeAndLogTime("Generating $name zip") {
-            val convertedDocs = documents.asSequence().map(formatMapper)
-            val docsToCmdi = documents.asSequence().map { CmdiMetadata(ctm.documentMetadata(it.name)).file }
-            val cmdiZip = createZipFile(docsToCmdi, includeCMDI = true)
-            // rename the cmdiZip to "metadata"
-            val dest = File(createTempDirectory("metadata").toFile(), "metadata.zip")
-            Files.move(cmdiZip.toPath(), dest.toPath())
-            zipFile = createZipFile(convertedDocs + dest, outputStream)
-        }
-        return zipFile!!
+        val convertedDocs = documents.asSequence().map(formatMapper)
+        val docsToCmdi = documents.asSequence().map { CmdiMetadata(ctm.documentMetadata(it.name)).file }
+        val cmdiZip = createZipFile(docsToCmdi, includeCMDI = true)
+        // rename the cmdiZip to "metadata"
+        val dest = File(createTempDirectory("metadata").toFile(), "metadata.zip")
+        Files.move(cmdiZip.toPath(), dest.toPath())
+        return createZipFile(convertedDocs + dest, outputStream)
     }
 }

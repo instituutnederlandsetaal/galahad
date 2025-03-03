@@ -11,7 +11,7 @@ import java.time.Instant
 
 @Component
 @WebFilter("/*")
-class Performance : Filter, Logging {
+class Log : Filter, Logging {
     @Throws(ServletException::class)
     override fun init(filterConfig: FilterConfig?) {
         // empty
