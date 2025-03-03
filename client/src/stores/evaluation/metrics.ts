@@ -9,7 +9,7 @@ import * as API from '@/api/evaluation'
 import * as Utils from '@/stores/evaluation/utils'
 
 export const metricsPerPosColumns = [
-    { key: 'name', label: 'group', sortOn: (x: MetricsRow) => x.name },
+    { key: 'name', label: 'group', sortOn: (x: MetricsRow) => isNaN(parseInt(x.name)) ? x.name : parseInt(x.name) },
     // { key: 'accuracy', sortOn: (x: MetricsRow) => x.accuracy },
     { key: 'precision', sortOn: (x: MetricsRow) => x.precision },
     { key: 'recall', sortOn: (x: MetricsRow) => x.recall },
