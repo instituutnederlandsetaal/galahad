@@ -73,22 +73,18 @@ fun createCorpus(workdir: File? = null, isDataset: Boolean = false, isAdmin: Boo
 
 fun assertPlainText(folder: String, file: InternalFile) {
     // Plain text
-    if (file is PlainTextableFile) {
-        val plaintext = Resource.get("$folder/plaintext.txt").readText()
-        assertEquals(plaintext, file.plainTextReader().readText())
-    } else throw Exception("File does not support plain text")
+    val plaintext = Resource.get("$folder/plaintext.txt").readText()
+    assertEquals(plaintext, file.plainTextReader().readText())
 }
 
 fun assertPlaintextAndSourcelayer(folder: String, file: InternalFile) {
     // Plain text
     assertPlainText(folder, file)
     // Source layer
-    if (file is SourceLayerableFile) {
-        val jsonExpected = Resource.get("$folder/sourcelayer.json").readText()
-        val mapper = getJsonMapper()
-        val json = mapper.writeValueAsString(file.sourceLayer())
-        assertEquals(jsonExpected, json)
-    } else throw Exception("File does not support source layer")
+    val jsonExpected = Resource.get("$folder/sourcelayer.json").readText()
+    val mapper = getJsonMapper()
+    val json = mapper.writeValueAsString(file.sourceLayer())
+    assertEquals(jsonExpected, json)
 }
 
 class LayerBuilder {

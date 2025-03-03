@@ -7,8 +7,6 @@ import org.ivdnt.galahad.data.layer.Term
 import org.ivdnt.galahad.data.layer.WordForm
 import org.ivdnt.galahad.exceptions.MergeNotImplementedException
 import org.ivdnt.galahad.formats.DocumentTransformMetadata
-import org.ivdnt.galahad.formats.PlainTextableFile
-import org.ivdnt.galahad.formats.SourceLayerableFile
 import org.ivdnt.galahad.formats.xml.XMLFile
 import org.ivdnt.galahad.util.getXmlBuilder
 import org.w3c.dom.Document
@@ -19,9 +17,9 @@ import java.io.StringReader
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
 
-class NAFFile (
-        file: File
-) : XMLFile( file ), PlainTextableFile, SourceLayerableFile {
+class NAFFile(
+    file: File,
+) : XMLFile(file) {
 
     override val format: DocumentFormat = DocumentFormat.Naf
 
@@ -34,45 +32,43 @@ class NAFFile (
     private val termExpr = xpath.compile("/NAF/terms/term")
 
     override fun plainTextReader(): StringReader {
-            return (expr.evaluate(xmlDoc, XPathConstants.NODE ) as Node).textContent.reader()
+        return (expr.evaluate(xmlDoc, XPathConstants.NODE) as Node).textContent.reader()
     }
 
     override fun sourceLayer(): Layer {
-            val sourceLayer = Layer( SOURCE_LAYER_NAME )
-            val xwfs = wfExpr.evaluate( xmlDoc, XPathConstants.NODESET ) as NodeList
-            for ( i in 0 until xwfs.length) {
-                val xwf = xwfs.item( i ) as org.w3c.dom.Element
-                sourceLayer.wordForms.add(
-                    WordForm(
-                        literal = xwf.textContent,
-                        id = xwf.getAttribute("id"),
-                        offset = xwf.getAttribute("offset").toInt(),
-                        length = xwf.getAttribute("length").toInt()
-                    )
+        val sourceLayer = Layer(SOURCE_LAYER_NAME)
+        val xwfs = wfExpr.evaluate(xmlDoc, XPathConstants.NODESET) as NodeList
+        for (i in 0 until xwfs.length) {
+            val xwf = xwfs.item(i) as org.w3c.dom.Element
+            sourceLayer.wordForms.add(
+                WordForm(
+                    literal = xwf.textContent,
+                    id = xwf.getAttribute("id"),
+                    offset = xwf.getAttribute("offset").toInt(),
+                    length = xwf.getAttribute("length").toInt()
                 )
-            }
-            val xterms = termExpr.evaluate( xmlDoc, XPathConstants.NODESET ) as NodeList
-            for ( i in 0 until xterms.length) {
-                val xterm = xterms.item( i ) as org.w3c.dom.Element
-                val targets = ArrayList<WordForm>()
-                val xtargets = xterm.getElementsByTagName("span").item(0).childNodes // we assume there is exactly one span
-                for ( j in 0 until xtargets.length ) {
-                    val xtarget = xtargets.item( j )
-                    if( xtarget.nodeType == Node.ELEMENT_NODE ) {
-                        // TODO: other implementation
-                        targets.add( sourceLayer.getWordFormByID( (xtarget as org.w3c.dom.Element).getAttribute("id") ) )
-                    }
-                }
-                sourceLayer.terms.add(
-                        Term(
-                                lemma = xterm.getAttribute("lemma"),
-                                pos = xterm.getAttribute("pos"),
-                                targets = targets
-                        )
-                )
-            }
-            return sourceLayer
+            )
         }
+        val xterms = termExpr.evaluate(xmlDoc, XPathConstants.NODESET) as NodeList
+        for (i in 0 until xterms.length) {
+            val xterm = xterms.item(i) as org.w3c.dom.Element
+            val targets = ArrayList<WordForm>()
+            val xtargets = xterm.getElementsByTagName("span").item(0).childNodes // we assume there is exactly one span
+            for (j in 0 until xtargets.length) {
+                val xtarget = xtargets.item(j)
+                if (xtarget.nodeType == Node.ELEMENT_NODE) {
+                    // TODO: other implementation
+                    targets.add(sourceLayer.getWordFormByID((xtarget as org.w3c.dom.Element).getAttribute("id")))
+                }
+            }
+            sourceLayer.terms.add(
+                Term(
+                    lemma = xterm.getAttribute("lemma"), pos = xterm.getAttribute("pos"), targets = targets
+                )
+            )
+        }
+        return sourceLayer
+    }
 
     override fun merge(transformMetadata: DocumentTransformMetadata): NAFFile {
         throw MergeNotImplementedException(format.identifier)

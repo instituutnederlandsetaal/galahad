@@ -11,7 +11,7 @@ import org.ivdnt.galahad.tagset.Tagset
 @JsonIgnoreProperties(ignoreUnknown = true)
 open class Layer(
     /** The name of the tagger that tagged this layer, unless it's the source layer, in which case [SOURCE_LAYER_NAME]. */
-    @JsonProperty("name") val name: String = "",
+    @JsonProperty("name") var name: String = "",
     /** The [Tagset] used by the Tagger that tagged this layer. */
     @JsonProperty("tagset") val tagset: Tagset = Tagset.UNKNOWN,
     @JsonProperty("wordForms") val wordForms: MutableList<WordForm> = mutableListOf(),

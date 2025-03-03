@@ -7,8 +7,6 @@ import org.ivdnt.galahad.app.ExpensiveGettable
 import org.ivdnt.galahad.data.layer.Layer
 import org.ivdnt.galahad.formats.DocumentTransformMetadata
 import org.ivdnt.galahad.formats.InternalFile
-import org.ivdnt.galahad.formats.PlainTextableFile
-import org.ivdnt.galahad.formats.SourceLayerableFile
 import org.ivdnt.galahad.formats.conllu.export.LayerToConlluConverter
 import org.ivdnt.galahad.formats.folia.export.LayerToFoliaConverter
 import org.ivdnt.galahad.formats.naf.export.LayerToNAFConverter
@@ -133,12 +131,8 @@ class Document(
     fun parse() {
         // Store some one-time (sometimes expensive) calculations
         val uf: InternalFile = getUploadedFile().expensiveGet()
-        if (uf is PlainTextableFile) {
-            plaintext = (uf as PlainTextableFile).plainTextReader().readText()
-        }
-        if (uf is SourceLayerableFile) {
-            sourceLayer.modify<Layer> { (uf as SourceLayerableFile).sourceLayer() }
-        }
+        plaintext = uf.plainTextReader().readText()
+        sourceLayer.modify<Layer> { uf.sourceLayer() }
     }
 
     /** Convert document to desired format. */

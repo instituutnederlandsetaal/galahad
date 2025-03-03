@@ -8,8 +8,6 @@ import org.ivdnt.galahad.data.layer.Layer
 import org.ivdnt.galahad.data.layer.token
 import org.ivdnt.galahad.formats.DocumentTransformMetadata
 import org.ivdnt.galahad.formats.InternalFile
-import org.ivdnt.galahad.formats.PlainTextableFile
-import org.ivdnt.galahad.formats.SourceLayerableFile
 import org.ivdnt.galahad.formats.conllu.ConlluFile
 import org.ivdnt.galahad.formats.tsv.export.TSVLayerMerger
 import java.io.File
@@ -18,7 +16,7 @@ import java.io.Reader
 
 open class TSVFile(
     override val file: File,
-) : InternalFile, SourceLayerableFile, PlainTextableFile {
+) : InternalFile {
 
     private val plainTextFile = File.createTempFile("galahad-${file.name}-plaintext", ".txt")
     override val format: DocumentFormat = DocumentFormat.Tsv

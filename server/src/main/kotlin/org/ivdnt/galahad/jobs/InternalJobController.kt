@@ -10,7 +10,6 @@ import org.ivdnt.galahad.data.document.FormatInducer
 import org.ivdnt.galahad.data.layer.Layer
 import org.ivdnt.galahad.exceptions.InvalidDocumentFormatException
 import org.ivdnt.galahad.formats.InternalFile
-import org.ivdnt.galahad.formats.SourceLayerableFile
 import org.ivdnt.galahad.formats.conllu.ConlluFile
 import org.ivdnt.galahad.formats.tsv.TSVFile
 import org.ivdnt.galahad.taggers.Tagger
@@ -100,18 +99,6 @@ class InternalJobController(
                             tagset = tagset ?: Tagset.UNKNOWN,
                             wordForms = alignedLayer.wordForms,
                             terms = alignedLayer.terms
-                        )
-                    )
-                }
-                // To my knowledge, not a single tagger outputs non-tsv, so this is unused for now.
-                is SourceLayerableFile -> {
-                    val sourceLayer = uploadedFile.sourceLayer()
-                    job.documentOrThrow(documentName).setResult(
-                        Layer(
-                            name = jobName,
-                            tagset = tagset ?: Tagset.UNKNOWN,
-                            wordForms = sourceLayer.wordForms,
-                            terms = sourceLayer.terms
                         )
                     )
                 }
