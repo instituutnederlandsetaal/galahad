@@ -8,9 +8,9 @@ import org.ivdnt.galahad.data.document.Document
 import org.ivdnt.galahad.data.document.DocumentFormat
 import org.ivdnt.galahad.data.layer.Layer
 import org.ivdnt.galahad.exceptions.MergeNotImplementedException
-import org.ivdnt.galahad.port.CorpusTransformMetadata
-import org.ivdnt.galahad.port.DocumentTransformMetadata
-import org.ivdnt.galahad.port.InternalFile
+import org.ivdnt.galahad.formats.CorpusTransformMetadata
+import org.ivdnt.galahad.formats.DocumentTransformMetadata
+import org.ivdnt.galahad.formats.InternalFile
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.io.File

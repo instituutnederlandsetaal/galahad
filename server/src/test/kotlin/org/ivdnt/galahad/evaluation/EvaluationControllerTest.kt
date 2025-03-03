@@ -7,8 +7,8 @@ import org.ivdnt.galahad.addUrlParams
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.GalahadApplication
 import org.ivdnt.galahad.data.corpus.Corpus
-import org.ivdnt.galahad.port.Resource
-import org.ivdnt.galahad.port.createCorpus
+import org.ivdnt.galahad.formats.Resource
+import org.ivdnt.galahad.formats.createCorpus
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail

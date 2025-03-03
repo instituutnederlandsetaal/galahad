@@ -4,7 +4,7 @@ import org.ivdnt.galahad.TestConfig
 import org.ivdnt.galahad.data.corpus.Corpus
 import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.data.layer.Layer
-import org.ivdnt.galahad.port.LayerBuilder
+import org.ivdnt.galahad.formats.LayerBuilder
 import java.io.File
 
 object EvaluationUtil {

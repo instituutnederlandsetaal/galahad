@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import org.ivdnt.galahad.data.layer.AnnotationType
 import org.ivdnt.galahad.evaluation.EvaluationEntry
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
-import org.ivdnt.galahad.port.csv.CSVFile
+import org.ivdnt.galahad.formats.csv.CSVFile
 
 const val MULTIPLE_POS = "MULTIPLE"
 const val OTHER_POS = "OTHER"

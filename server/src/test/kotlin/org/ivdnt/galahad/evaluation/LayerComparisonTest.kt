@@ -2,7 +2,7 @@ package org.ivdnt.galahad.evaluation
 
 import org.ivdnt.galahad.data.layer.AnnotationType
 import org.ivdnt.galahad.evaluation.comparison.*
-import org.ivdnt.galahad.port.LayerBuilder
+import org.ivdnt.galahad.formats.LayerBuilder
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*

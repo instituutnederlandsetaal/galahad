@@ -1,10 +1,5 @@
 package org.ivdnt.galahad.evaluation.metrics
 
-import org.ivdnt.galahad.evaluation.EvaluationEntry
-import org.ivdnt.galahad.port.Resource
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Test
-
 class MetricsTest {
     // @Test
     // fun `Global test`() {

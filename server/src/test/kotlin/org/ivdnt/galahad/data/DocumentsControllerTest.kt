@@ -5,7 +5,7 @@ import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.GalahadApplication
 import org.ivdnt.galahad.data.corpus.Corpus
 import org.ivdnt.galahad.data.document.DocumentMetadata
-import org.ivdnt.galahad.port.Resource
+import org.ivdnt.galahad.formats.Resource
 import org.ivdnt.galahad.util.createZipFile
 import org.ivdnt.galahad.web.controller.DocumentsController
 import org.junit.jupiter.api.Test

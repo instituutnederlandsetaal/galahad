@@ -7,9 +7,9 @@ import org.ivdnt.galahad.app.GalahadApplication
 import org.ivdnt.galahad.createCorpus
 import org.ivdnt.galahad.data.corpus.Corpus
 import org.ivdnt.galahad.data.layer.Layer
-import org.ivdnt.galahad.port.LayerBuilder
-import org.ivdnt.galahad.port.Resource
-import org.ivdnt.galahad.port.TestResult
+import org.ivdnt.galahad.formats.LayerBuilder
+import org.ivdnt.galahad.formats.Resource
+import org.ivdnt.galahad.formats.TestResult
 import org.ivdnt.galahad.uploadFile
 import org.ivdnt.galahad.web.controller.ExportController
 import org.junit.jupiter.api.Test

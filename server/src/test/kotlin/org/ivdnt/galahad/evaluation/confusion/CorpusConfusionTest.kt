@@ -7,8 +7,8 @@ import org.ivdnt.galahad.evaluation.EvaluationUtil
 import org.ivdnt.galahad.evaluation.comparison.ConfusionLayerFilter
 import org.ivdnt.galahad.evaluation.comparison.HeadGroupTermFilter
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
-import org.ivdnt.galahad.port.Resource
-import org.ivdnt.galahad.port.createCorpus
+import org.ivdnt.galahad.formats.Resource
+import org.ivdnt.galahad.formats.createCorpus
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

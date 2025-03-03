@@ -3,8 +3,8 @@ package org.ivdnt.galahad.jobs
 import org.ivdnt.galahad.TestConfig
 import org.ivdnt.galahad.data.corpus.Corpus
 import org.ivdnt.galahad.data.layer.Layer
-import org.ivdnt.galahad.port.LayerBuilder
-import org.ivdnt.galahad.port.createCorpus
+import org.ivdnt.galahad.formats.LayerBuilder
+import org.ivdnt.galahad.formats.createCorpus
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

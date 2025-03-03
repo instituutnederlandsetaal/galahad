@@ -1,13 +1,12 @@
 package org.ivdnt.galahad.evaluation.metrics
 
-import jakarta.servlet.GenericFilter
 import org.ivdnt.galahad.TestConfig
 import org.ivdnt.galahad.data.corpus.Corpus
 import org.ivdnt.galahad.data.layer.AnnotationType
 import org.ivdnt.galahad.evaluation.EvaluationUtil
 import org.ivdnt.galahad.evaluation.comparison.HeadGroupTermFilter
 import org.ivdnt.galahad.evaluation.comparison.MetricsLayerFilter
-import org.ivdnt.galahad.port.createCorpus
+import org.ivdnt.galahad.formats.createCorpus
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

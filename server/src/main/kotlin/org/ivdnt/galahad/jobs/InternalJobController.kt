@@ -9,10 +9,10 @@ import org.ivdnt.galahad.data.document.Document
 import org.ivdnt.galahad.data.document.FormatInducer
 import org.ivdnt.galahad.data.layer.Layer
 import org.ivdnt.galahad.exceptions.InvalidDocumentFormatException
-import org.ivdnt.galahad.port.InternalFile
-import org.ivdnt.galahad.port.SourceLayerableFile
-import org.ivdnt.galahad.port.conllu.ConlluFile
-import org.ivdnt.galahad.port.tsv.TSVFile
+import org.ivdnt.galahad.formats.InternalFile
+import org.ivdnt.galahad.formats.SourceLayerableFile
+import org.ivdnt.galahad.formats.conllu.ConlluFile
+import org.ivdnt.galahad.formats.tsv.TSVFile
 import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.tagset.Tagset
 import org.ivdnt.galahad.tagset.TagsetStore

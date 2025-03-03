@@ -13,8 +13,8 @@ import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.exceptions.CorpusNameInvalidException
 import org.ivdnt.galahad.exceptions.CorpusUnauthorizedException
 import org.ivdnt.galahad.jobs.Jobs
-import org.ivdnt.galahad.port.CmdiMetadata
-import org.ivdnt.galahad.port.CorpusTransformMetadata
+import org.ivdnt.galahad.formats.CmdiMetadata
+import org.ivdnt.galahad.formats.CorpusTransformMetadata
 import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.util.createZipFile
 import java.io.File

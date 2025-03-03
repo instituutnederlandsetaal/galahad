@@ -17,7 +17,7 @@ import org.ivdnt.galahad.evaluation.metrics.LemmaByLemmaMetricsSettings
 import org.ivdnt.galahad.evaluation.metrics.METRIC_TYPES
 import org.ivdnt.galahad.exceptions.AnnotationNotSupported
 import org.ivdnt.galahad.exceptions.InvalidMetricsTypeException
-import org.ivdnt.galahad.port.csv.CSVFile
+import org.ivdnt.galahad.formats.csv.CSVFile
 import org.ivdnt.galahad.taggers.TaggerStore
 import org.ivdnt.galahad.util.createZipFile
 import org.ivdnt.galahad.util.setContentDisposition

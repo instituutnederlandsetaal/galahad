@@ -1,12 +1,8 @@
 package org.ivdnt.galahad.evaluation.metrics
 
 import org.ivdnt.galahad.data.corpus.Corpus
-import org.ivdnt.galahad.data.layer.Term
-import org.ivdnt.galahad.port.LayerBuilder
-import org.ivdnt.galahad.port.createCorpus
-import org.junit.jupiter.api.Assertions.*
+import org.ivdnt.galahad.formats.createCorpus
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
 
 class DocumentMetricsTest {
     lateinit var corpus: Corpus

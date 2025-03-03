@@ -4,7 +4,7 @@ import org.ivdnt.galahad.TestConfig
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.GalahadApplication
 import org.ivdnt.galahad.createCorpus
-import org.ivdnt.galahad.port.Resource
+import org.ivdnt.galahad.formats.Resource
 import org.ivdnt.galahad.web.controller.JobsController
 import org.ivdnt.galahad.web.controller.TaggersController
 import org.junit.jupiter.api.Assertions.*

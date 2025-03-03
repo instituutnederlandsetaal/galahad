@@ -3,7 +3,7 @@ package org.ivdnt.galahad.data.document
 import org.ivdnt.galahad.TestConfig
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.data.corpus.Corpus
-import org.ivdnt.galahad.port.*
+import org.ivdnt.galahad.formats.*
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested

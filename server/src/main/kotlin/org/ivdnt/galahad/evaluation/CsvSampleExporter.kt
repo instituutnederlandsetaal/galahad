@@ -2,7 +2,7 @@ package org.ivdnt.galahad.evaluation
 
 import org.ivdnt.galahad.data.layer.Term
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
-import org.ivdnt.galahad.port.csv.CSVFile
+import org.ivdnt.galahad.formats.csv.CSVFile
 import org.ivdnt.galahad.taggers.Tagger
 
 interface CsvSampleExporter {

@@ -1,6 +1,6 @@
 package org.ivdnt.galahad.data.document
 
-import org.ivdnt.galahad.port.Resource
+import org.ivdnt.galahad.formats.Resource
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 

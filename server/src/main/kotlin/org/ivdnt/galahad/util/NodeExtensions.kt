@@ -1,6 +1,6 @@
 package org.ivdnt.galahad.util
 
-import org.ivdnt.galahad.port.xml.tagName
+import org.ivdnt.galahad.formats.xml.tagName
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 

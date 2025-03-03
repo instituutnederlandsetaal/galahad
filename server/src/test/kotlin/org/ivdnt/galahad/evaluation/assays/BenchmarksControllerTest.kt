@@ -6,8 +6,8 @@ import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.GalahadApplication
 import org.ivdnt.galahad.evaluation.EvaluationUtil
 import org.ivdnt.galahad.evaluation.metrics.FlatMetricType
-import org.ivdnt.galahad.port.LayerBuilder
-import org.ivdnt.galahad.port.createCorpus
+import org.ivdnt.galahad.formats.LayerBuilder
+import org.ivdnt.galahad.formats.createCorpus
 import org.ivdnt.galahad.web.controller.BenchmarksMatrix
 import org.ivdnt.galahad.web.controller.BenchmarksController
 import org.junit.jupiter.api.Assertions.*
