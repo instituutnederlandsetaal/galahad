@@ -136,23 +136,28 @@ open class LayerComparison(
             .sortedBy { it.firstOffset }.listIterator()
     }
 
-    private fun symmetricTruncatedPcMatch(comp: TermComparison): Boolean {
-        val aStr: String = comp.hypoTerm.literals
-        val bStr: String = comp.refTerm.literals
-        return truncatedPcMatch(aStr, bStr) || truncatedPcMatch(bStr, aStr)
-    }
+
 
     companion object {
+        fun symmetricTruncatedPcMatch(comp: TermComparison): Boolean {
+            val aStr: String = comp.hypoTerm.literals
+            val bStr: String = comp.refTerm.literals
+            return truncatedPcMatch(aStr, bStr) || truncatedPcMatch(bStr, aStr)
+        }
+
         fun truncatedPcMatch(aStr: String, bStr: String): Boolean {
             if (aStr.isEmpty() || bStr.isEmpty()) {
                 return false
             }
-            if (PUNCTUATION.contains(aStr.last().toString())) {
-                if (aStr.slice(0 until aStr.lastIndex) == bStr) {
-                    return true
-                }
+            return  truncatePC(aStr) == bStr
+        }
+
+        fun truncatePC(str: String): String {
+            return if (str.isNotEmpty() && PUNCTUATION.contains(str.last().toString())) {
+                str.slice(0 until str.lastIndex)
+            } else {
+                str
             }
-            return false
         }
     }
 }

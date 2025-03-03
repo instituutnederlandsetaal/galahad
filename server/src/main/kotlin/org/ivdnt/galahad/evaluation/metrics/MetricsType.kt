@@ -114,6 +114,7 @@ class MetricsType(
             return
         }
 
+        // no match
         if (comp.hypoTerm == Term.EMPTY) {
             add (
                 Metric(
@@ -124,6 +125,7 @@ class MetricsType(
                     )
                 )
             )
+            return // don't show no matches in false positives / true negatives.
         }
 
         // One of these two will be empty, we don't know which.
@@ -138,7 +140,7 @@ class MetricsType(
                 cls = cls
             )
         )
-        if (falses.count != 0) {
+        if (falses.count != 0 && setting.hasFalsePositive) {
             // This term is also be someone else's false positive, so switch around.
             val cls2 = ClassificationClasses(
                 falsePositive = EvaluationEntry(count = falses.samples.size, falses.samples.toMutableList()),

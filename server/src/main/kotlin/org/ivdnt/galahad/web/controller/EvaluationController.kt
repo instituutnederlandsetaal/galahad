@@ -204,7 +204,8 @@ class EvaluationController(
     fun getTokenFrequency(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name or sourceLayer") job: String,
-    ): Map<String, Int> {
-        return evaluationService.getTokenFrequency(corpus, job)
+        @RequestParam(defaultValue = SOURCE_LAYER_NAME) @Parameter(description = "Tagger name or sourceLayer") reference: String? = SOURCE_LAYER_NAME,
+    ): CorpusMetrics {
+        return evaluationService.getTokenFrequency(corpus, job, reference)
     }
 }

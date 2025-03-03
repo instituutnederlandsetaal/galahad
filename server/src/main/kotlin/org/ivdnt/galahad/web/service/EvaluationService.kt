@@ -12,6 +12,8 @@ import org.ivdnt.galahad.evaluation.distribution.CorpusDistribution
 import org.ivdnt.galahad.evaluation.frequency.TokenFrequency
 import org.ivdnt.galahad.evaluation.metrics.ClassificationType
 import org.ivdnt.galahad.evaluation.metrics.CorpusMetrics
+import org.ivdnt.galahad.evaluation.metrics.FrequencyMetricsSettings
+import org.ivdnt.galahad.evaluation.metrics.LemmaByLemmaMetricsSettings
 import org.ivdnt.galahad.evaluation.metrics.METRIC_TYPES
 import org.ivdnt.galahad.exceptions.AnnotationNotSupported
 import org.ivdnt.galahad.exceptions.InvalidMetricsTypeException
@@ -112,7 +114,10 @@ class EvaluationService(val corpora: CorporaService) {
     ): CorpusMetrics {
         val corpusObj = corpora.getReadAccessOrThrow(corpus, request)
         val allAnnots = annotationTypesForTagger(job, corpus)
-        val settings = METRIC_TYPES.filter { it.requiredAnnotations.all { allAnnots.contains(it) } }
+        val settings = METRIC_TYPES.filter { it.requiredAnnotations.all { allAnnots.contains(it) } }.toMutableList()
+        val freq = TokenFrequency(corpusObj, job)
+        val freqSettings = settings.map { FrequencyMetricsSettings(freq, it) }
+        settings.addAll(freqSettings)
         val cm = CorpusMetrics(
             corpusObj,
             settings = settings,
@@ -266,10 +271,16 @@ class EvaluationService(val corpora: CorporaService) {
         return zipFile.readBytes()
     }
 
-    fun getTokenFrequency(corpus: UUID, job: String): Map<String, Int> {
-        return TokenFrequency(
-            corpora.getReadAccessOrThrow(corpus, request),
-            job
-        ).tokenFrequency
+    fun getTokenFrequency(corpus: UUID, job: String, reference: String?): CorpusMetrics {
+        val corpusObj = corpora.getReadAccessOrThrow(corpus, request)
+        val setting = FrequencyMetricsSettings(TokenFrequency(corpusObj,job), LemmaByLemmaMetricsSettings())
+        val settings = listOf(setting)
+        val cm = CorpusMetrics(
+            corpusObj,
+            settings = settings,
+            hypothesis = job,
+            reference = if (reference.isNullOrBlank()) SOURCE_LAYER_NAME else reference
+        )
+        return cm
     }
 }

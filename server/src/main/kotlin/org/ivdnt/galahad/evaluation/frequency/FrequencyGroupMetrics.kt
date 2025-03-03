@@ -3,15 +3,14 @@ package org.ivdnt.galahad.evaluation.frequency
 import org.ivdnt.galahad.data.corpus.Corpus
 
 class TokenFrequency(
-    val corpus: Corpus,
-    val jobName: String
+    corpus: Corpus,
+    jobName: String
 ) {
-    private val job = corpus.jobs.readOrThrow(jobName)
-
-    val tokenFrequency: Map<String, Int>
+    private val tokenFrequency: Map<String, Int>
 
     init {
         val map = mutableMapOf<String, Int>()
+        val job = corpus.jobs.readOrThrow(jobName)
 
         corpus.documents.readAll().forEach {
             val meta = it.metadata.expensiveGet()
@@ -23,5 +22,9 @@ class TokenFrequency(
         }
 
         tokenFrequency = map.toMap()
+    }
+
+    fun getFrequency(token: String): Int {
+        return tokenFrequency.getOrDefault(token, 0)
     }
 }

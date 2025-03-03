@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.ivdnt.galahad.data.layer.AnnotationType
 import org.ivdnt.galahad.data.layer.Term
+import org.ivdnt.galahad.evaluation.comparison.LayerComparison.Companion.truncatePC
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
+import org.ivdnt.galahad.evaluation.frequency.TokenFrequency
 
 interface MetricsSettings {
     /** When are terms equal? */
@@ -15,6 +17,10 @@ interface MetricsSettings {
 
     /** What terms to keep in the metrics. Keep = return true */
     fun filterBy(term: TermComparison): Boolean = true
+
+    @get:JsonIgnore
+    val hasFalsePositive: Boolean
+        get() = true
 
     @get:JsonIgnore
     val nullTerm: String
@@ -217,6 +223,34 @@ class NerByNerMetricsSettings : MetricsSettings {
 
     override fun groupBy(term: Term): String {
         return  term.annotationHeadOrMissing(AnnotationType.NER)
+    }
+}
+
+class FrequencyMetricsSettings(
+    private val tokenFrequency: TokenFrequency,
+    private val metric: MetricsSettings
+) : MetricsSettings {
+    override val id: String = "${metric.annotation}ByFrequency"
+    override val annotation: String = metric.annotation
+    override val group: String = "frequency"
+    override val groupAnnotation = metric.groupAnnotation
+    override val nullTerm: String = metric.nullTerm
+    override val requiredAnnotations = metric.requiredAnnotations
+    override val hasFalsePositive: Boolean
+        get() = false
+
+    override fun termsEqual(comp: TermComparison): Boolean {
+        return metric.termsEqual(comp)
+    }
+
+    override fun groupBy(term: Term): String {
+        val freq = tokenFrequency.getFrequency(term.literals.lowercase())
+        val truncatedFreq = tokenFrequency.getFrequency(truncatePC(term.literals.lowercase()))
+        return if (freq == 0) {
+             truncatedFreq.toString()
+        } else {
+            return freq.toString()
+        }
     }
 }
 
