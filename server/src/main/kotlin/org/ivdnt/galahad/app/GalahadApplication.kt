@@ -206,11 +206,15 @@ class ApplicationController : ErrorController, Logging {
 
         // Error message
         var jakartaErrorMsg = request.getAttribute("jakarta.servlet.error.message") as String?
-        if (jakartaErrorMsg?.isBlank() == true) {
+        if (jakartaErrorMsg.isNullOrBlank()) {
             jakartaErrorMsg = null
         }
 		val springException = request.getAttribute("org.springframework.web.servlet.DispatcherServlet.EXCEPTION") as Exception?
 		val errorMsg = jakartaErrorMsg ?: jakartaException?.cause?.message ?: springException?.message ?: jakartaException?.message ?: "No error message available."
+
+        // log stack trace
+        val stackTrace = jakartaException?.stackTraceToString() ?: springException?.stackTraceToString()
+        stackTrace?.let(logger::error)
 
         // If this response normally responds with application/zip, change the content
 		response?.contentType = "application/json"
