@@ -15,8 +15,9 @@ object FormatInducer {
     fun determineFormat(file: File): DocumentFormat {
         val format = when (file.extension) {
             "tsv" -> DocumentFormat.Tsv
+            "folia" -> DocumentFormat.Folia
             "conllu" -> DocumentFormat.Conllu
-            "xml" -> determineXmlFormat(file)
+            "xml", "tei" -> determineXmlFormat(file) // TEI can be either P4 or P5, so still check.
             "txt" -> DocumentFormat.Txt
             "naf" -> DocumentFormat.Naf
             else -> DocumentFormat.Unknown
