@@ -15,6 +15,8 @@ import java.io.InputStream
 import java.nio.file.Paths
 import java.util.*
 import java.util.zip.ZipFile
+import kotlin.io.path.createTempDirectory
+
 
 
 val ZIP_TYPES = listOf("application/zip", "application/x-zip-compressed", "application/octet-stream")
@@ -103,7 +105,8 @@ class DocumentsService(val corpora: CorporaService) : Logging {
 
     private fun createDocumentWithSourceLayer(corpus: UUID, fileName: String, input: InputStream) {
         // tmp file for processing
-        val file = File.createTempFile("uploaded", fileName)
+        val tmpDir: File = createTempDirectory("upload").toFile()
+        val file = tmpDir.resolve(fileName)
         file.outputStream().use { input.copyTo(it) }
         // create the document
         val document: Document
