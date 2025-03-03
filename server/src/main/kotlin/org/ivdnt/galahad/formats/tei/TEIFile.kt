@@ -5,19 +5,17 @@ import org.ivdnt.galahad.data.document.DocumentFormat
 import org.ivdnt.galahad.data.document.FormatInducer
 import org.ivdnt.galahad.data.layer.Layer
 import org.ivdnt.galahad.formats.DocumentTransformMetadata
+import org.ivdnt.galahad.formats.InternalFile
 import org.ivdnt.galahad.formats.tei.export.TEILayerMerger
-import org.ivdnt.galahad.formats.xml.AnnotatedFile
 import org.ivdnt.galahad.formats.xml.BLFXMLParser
 import org.ivdnt.galahad.util.getXmlBuilder
 import java.io.File
 import java.io.Reader
 
 class TEIFile(
-    file: File,
+    override val file: File,
     override val format: DocumentFormat,
-) : AnnotatedFile(
-    file
-) {
+) : InternalFile {
 
     private var _sourceLayer: Layer = Layer.EMPTY
     private var isParsed = false

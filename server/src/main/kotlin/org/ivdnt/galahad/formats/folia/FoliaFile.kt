@@ -3,16 +3,14 @@ package org.ivdnt.galahad.formats.folia
 import org.ivdnt.galahad.data.document.DocumentFormat
 import org.ivdnt.galahad.data.layer.Layer
 import org.ivdnt.galahad.formats.DocumentTransformMetadata
+import org.ivdnt.galahad.formats.InternalFile
 import org.ivdnt.galahad.formats.folia.export.FoliaLayerMerger
-import org.ivdnt.galahad.formats.xml.AnnotatedFile
 import java.io.File
 import java.io.Reader
 
 class FoliaFile(
-    file: File,
-) : AnnotatedFile(
-    file
-) {
+    override val file: File,
+) : InternalFile {
     override val format: DocumentFormat = DocumentFormat.Folia
     private var isParsed: Boolean = false
     private var reader: FoliaReader? = null

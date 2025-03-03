@@ -7,7 +7,7 @@ import org.ivdnt.galahad.data.layer.Term
 import org.ivdnt.galahad.data.layer.WordForm
 import org.ivdnt.galahad.exceptions.MergeNotImplementedException
 import org.ivdnt.galahad.formats.DocumentTransformMetadata
-import org.ivdnt.galahad.formats.xml.XMLFile
+import org.ivdnt.galahad.formats.InternalFile
 import org.ivdnt.galahad.util.getXmlBuilder
 import org.w3c.dom.Document
 import org.w3c.dom.Node
@@ -18,8 +18,8 @@ import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
 
 class NAFFile(
-    file: File,
-) : XMLFile(file) {
+    override val file: File,
+) : InternalFile {
 
     override val format: DocumentFormat = DocumentFormat.Naf
 
