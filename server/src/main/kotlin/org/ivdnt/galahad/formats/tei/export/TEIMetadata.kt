@@ -38,7 +38,7 @@ class TEIMetadata(
                 ?.childOrNull("titleStmt")
                 ?.childOrNull("title")?.textContent
                 ?: // if null, use filename without extension
-                layer.transformMetadata.document.getUploadedRawFile().nameWithoutExtension
+                layer.transformMetadata.document.uploadedFile.nameWithoutExtension
         }
 
     private val corpusMetadata: CorpusMetadata = layer.transformMetadata.corpus.metadata.expensiveGet()
@@ -320,7 +320,9 @@ class TEIMetadata(
         // Only add if not already present (when merging).
         if (profileDesc.childOrNull("langUsage") == null) {
             val langUsage = profileDesc.createChild("langUsage")
-            val language = langUsage.createChild("language", "ident" to "nl", "Dutch")
+            val languageName = corpusMetadata.language ?: "Dutch"
+            // TODO: note the absence of @ident. We can't determine the language code from the language name.
+            val language = langUsage.createChild("language", languageName)
             addInterGrpTo(language, "dominantLanguage", "true")
         }
     }

@@ -13,7 +13,6 @@ import org.w3c.dom.Document
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import java.io.File
-import java.io.StringReader
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
 
@@ -31,8 +30,8 @@ class NAFFile(
     private val wfExpr = xpath.compile("/NAF/text/wf")
     private val termExpr = xpath.compile("/NAF/terms/term")
 
-    override fun plainTextReader(): StringReader {
-        return (expr.evaluate(xmlDoc, XPathConstants.NODE) as Node).textContent.reader()
+    override fun plainText(): String {
+        return (expr.evaluate(xmlDoc, XPathConstants.NODE) as Node).textContent
     }
 
     override fun sourceLayer(): Layer {

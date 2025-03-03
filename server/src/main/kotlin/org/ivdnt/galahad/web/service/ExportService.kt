@@ -47,7 +47,7 @@ class ExportService(val corpora: CorporaService) : Logging {
         if (posHeadOnly) {
             dtm.convertLayerToPosHead()
         }
-        return dtm.document.generateAs(dtm)
+        return dtm.document.convert(dtm)
     }
 
     /**

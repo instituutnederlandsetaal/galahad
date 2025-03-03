@@ -13,21 +13,14 @@ interface ExpensiveGettable<T> {
  */
 interface JSONable
 
-interface RUDSet<Key, ReadType, WriteType, UpdateType> {
+interface CRDSet<Key, ReadType, CreateType> {
+    // Create
+    fun createOrNull(value: CreateType): ReadType?
+    fun createOrThrow(value: CreateType): ReadType = createOrNull(value) ?: throw Exception("Failed to create $value")
+    // Read
     fun readAll(): Set<ReadType>
-    fun readOrNull( key: Key ): ReadType?
-//    fun read( key: Key ): ReadType
-    fun readOrThrow( key: Key ) = (readOrNull( key ) ?: throw Exception("Failed to read $key")) // Somehow readOrThrow fails to assert non-nullability
-    fun update( key: Key, value: WriteType ): UpdateType?
-    fun delete( key: Key ): ReadType? // return the new read
+    fun readOrNull(key: Key): ReadType? // TODO: see if we can remove this method in favour of readOrThrow
+    fun readOrThrow(key: Key) = readOrNull(key) ?: throw Exception("Failed to read $key")
+    // Delete
+    fun delete(key: Key)
 }
-
-interface CRUDSet<Key, ReadType, WriteType, UpdateType> : RUDSet<Key, ReadType, WriteType, UpdateType> {
-    fun create( value: WriteType ): Key // TODO: think about create or Null instead
-}
-
-interface NamedCRUDSet<Key, ReadType, WriteType> : RUDSet<Key, ReadType, WriteType, ReadType> {
-    fun createOrNull( key: Key ): ReadType?
-    fun createOrThrow( key: Key ) = createOrNull( key ) ?: throw Exception("Failed to create $key")
-    fun readOrCreateOrNull( key: Key ) = readOrNull( key ) ?: createOrNull( key )
-    fun readOrCreateOrThrow( key: Key ) = readOrNull( key ) ?: createOrThrow( key ) }

@@ -29,7 +29,7 @@ class CmdiMetadata(transformMetadata: DocumentTransformMetadata) : LayerTransfor
     private val tagsets = TagsetStore()
 
     // Some vals for repeated access.
-    private val docTitle = document.getUploadedRawFile().nameWithoutExtension
+    private val docTitle = document.uploadedFile.nameWithoutExtension
     private val corpusMetadata: CorpusMetadata = transformMetadata.corpus.metadata.expensiveGet()
     private val format = transformMetadata.targetFormat.identifier
 

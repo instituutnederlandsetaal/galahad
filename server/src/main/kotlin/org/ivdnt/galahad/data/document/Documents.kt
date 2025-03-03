@@ -1,10 +1,9 @@
 package org.ivdnt.galahad.data.document
 
 import org.ivdnt.galahad.BaseFileSystemStore
-import org.ivdnt.galahad.app.CRUDSet
+import org.ivdnt.galahad.app.CRDSet
 import org.ivdnt.galahad.exceptions.DocumentNotFoundException
 import java.io.File
-import java.io.InputStream
 import org.apache.logging.log4j.kotlin.logger
 
 /**
@@ -14,7 +13,7 @@ import org.apache.logging.log4j.kotlin.logger
  */
 class Documents(
     workDirectory: File,
-) : BaseFileSystemStore(workDirectory), CRUDSet<String, Document, DocumentWriteType, Document> {
+) : BaseFileSystemStore(workDirectory), CRDSet<String, Document, File> {
 
     val allNames: List<String>
         get() = workDirectory.list()?.toList() ?: throw Exception("Could not read document names")
@@ -31,31 +30,16 @@ class Documents(
     override fun readAll(): Set<Document> = workDirectory.listFiles()?.map { Document(it) }?.toSet() ?: setOf()
 
     /** Delete a single document */
-    override fun delete(key: String): Document? {
+    override fun delete(key: String) {
         val fullyDeleted: Boolean = workDirectory.resolve(key).deleteRecursively()
         if (!fullyDeleted) logger.warn("Partial deletion of $key")
-        return readOrNull(key)
     }
-
-    override fun update(key: String, value: DocumentWriteType): Document? {
-        throw Exception("Use create instead. New files overwrite existing ones.")
-    }
-
-    fun create(file: File) = create(DocumentWriteType(file.name, file.inputStream()))
 
     /**
      * Create a new document, which includes creating a directory,
      * storing the uploaded file, metadata, format, parsing it to plaintext and extracting source annotations.
      */
-    override fun create(value: DocumentWriteType): String {
-        val document = Document(workDirectory.resolve(value.filename))
-        value.inputStream.copyTo(document.getUploadedFileStorage(value.filename).outputStream())
-        document.parse()
-        return value.filename
+    override fun createOrNull(file: File): Document? {
+        return Document.create(workDirectory.resolve(file.name), file)
     }
 }
-
-class DocumentWriteType(
-    val filename: String,
-    val inputStream: InputStream,
-)

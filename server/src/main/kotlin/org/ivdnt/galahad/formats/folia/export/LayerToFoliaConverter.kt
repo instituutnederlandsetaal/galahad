@@ -19,7 +19,7 @@ class LayerToFoliaConverter (
         get() = DocumentFormat.Folia
 
     val id: String
-        get() = document.getUploadedRawFile().nameWithoutExtension.toValidXmlId()
+        get() = document.uploadedFile.nameWithoutExtension.toValidXmlId()
 
     override fun convert(outputStream: OutputStream) {
         val taggerName = tagger.id

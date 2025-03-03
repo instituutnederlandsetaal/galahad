@@ -58,9 +58,6 @@ open class FileBackedValue<T>(
 
     init {
         file.parentFile.mkdirs()
-        //file.createNewFile()//
-        // Would like to write/modify here to set the default value,
-        // but we don't have access to the reified type here.
     }
 
     val lastModified: Long

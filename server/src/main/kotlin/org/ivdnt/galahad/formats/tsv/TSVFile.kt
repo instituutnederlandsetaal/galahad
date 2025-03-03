@@ -12,7 +12,6 @@ import org.ivdnt.galahad.formats.conllu.ConlluFile
 import org.ivdnt.galahad.formats.tsv.export.TSVLayerMerger
 import java.io.File
 import java.io.FileOutputStream
-import java.io.Reader
 
 open class TSVFile(
     override val file: File,
@@ -37,9 +36,9 @@ open class TSVFile(
         AnnotationType.NER to listOf("entity", "ner", "named-entity", "NamedEntity"),
     )
 
-    override fun plainTextReader(): Reader {
+    override fun plainText(): String {
         if (!isParsed) parse()
-        return plainTextFile.reader()
+        return plainTextFile.readText()
     }
 
     override fun sourceLayer(): Layer {

@@ -8,9 +8,6 @@ class DocumentMetadata(
     @JsonProperty("name") val name: String,
     /** Format of the uploaded file as induced by FormatInducer. */
     @JsonProperty("format") val format: String,
-    /** Whether the document's plaintext exist and its format has been identified.
-     * Invalid documents should have been auto-deleted. */
-    @JsonProperty("valid") val valid: Boolean,
     /** Number of chars in the parsed plaintext. */
     @JsonProperty("numChars") val numChars: Int,
     /** Number of alphabetic chars in the parsed plaintext. */
@@ -24,7 +21,7 @@ class DocumentMetadata(
     companion object {
         // Used as an initialization value for document metadata cache.
         val EMPTY = DocumentMetadata(
-            "", "", false, 0, 0, "", LayerSummary(), 0
+            "", "", 0, 0, "", LayerSummary(), 0
         )
     }
 }

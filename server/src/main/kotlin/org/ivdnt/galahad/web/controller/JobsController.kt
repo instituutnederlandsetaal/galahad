@@ -100,7 +100,9 @@ class JobsController(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,
     ): Progress? {
-        corpus.writeJobs().readOrCreateOrThrow(job).start()
+        val jobs = corpus.writeJobs()
+        val jobObj = jobs.readOrNull(job) ?: jobs.createOrThrow(job)
+        jobObj.start()
         response?.status = HttpServletResponse.SC_ACCEPTED
         return progress(corpus, job)
     }

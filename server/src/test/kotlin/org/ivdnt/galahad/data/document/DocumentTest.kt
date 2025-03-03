@@ -98,13 +98,13 @@ class DocumentTest {
                     DocumentFormat.TeiP4Legacy,
                     DocumentFormat.TeiP5Legacy,
                     DocumentFormat.Unknown,
-                        -> assertThrows(Exception::class.java) { doc.generateAs(meta) }
+                        -> assertThrows(Exception::class.java) { doc.convert(meta) }
                     // Convert to the supported
                     else -> {
                         // Skip the same format
                         if (formatFrom == formatTo) continue
                         println("Converting ${formatFrom.name} to ${formatTo.name}")
-                        val result: File = doc.generateAs(meta)
+                        val result: File = doc.convert(meta)
                         val expected: File =
                             Resource.get("all-formats/output/from-$formatFrom-to-$formatTo.${formatTo.extension}")
                         val test = TestResult(expected.readText(), result.readText())

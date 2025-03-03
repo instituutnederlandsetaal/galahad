@@ -70,7 +70,7 @@ class InternalJobController(
             val taggerTagger: Tagger? = job.taggerStore.getSummaryOrNull(job.name, null).expensiveGet()
             val tagset: Tagset? = tagsets.getOrNull(taggerTagger?.tagset)
             val format = FormatInducer.determineFormat(tempFile)
-            when (val uploadedFile = InternalFile.from(tempFile, format).expensiveGet()) {
+            when (val uploadedFile = InternalFile.create(tempFile, format).expensiveGet()) {
                 // Treat TSVFiles separately form SourceLayerableFiles, because calling sourceLayer() on a TSV
                 // Would default its alignment to offset=0. Instead, we force it to align with the original plaintext.
                 is ConlluFile -> {

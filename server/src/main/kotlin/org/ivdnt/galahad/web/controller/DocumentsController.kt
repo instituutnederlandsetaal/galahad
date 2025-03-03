@@ -69,7 +69,7 @@ class DocumentsController(
     fun getDocument(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Document name") document: String,
-    ): DocumentMetadata? = documentsService.read(corpus, document).metadata.expensiveGet()
+    ): DocumentMetadata? = documentsService.read(corpus, document).metadata
 
     @Operation(
         summary = "Upload document or zip file",
@@ -129,7 +129,7 @@ class DocumentsController(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Document name") document: String,
     ): ByteArray {
-        val rawFile = documentsService.read(corpus, document).getUploadedRawFile()
+        val rawFile = documentsService.read(corpus, document).uploadedFile
         response?.contentType = "text/plain" // Default for text files. Even if it really means "unknown text file"
         response?.setContentDisposition(rawFile.name)
         return rawFile.readBytes()

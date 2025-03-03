@@ -13,7 +13,7 @@ class TokenFrequency(
         val job = corpus.jobs.readOrThrow(jobName)
 
         corpus.documents.readAll().forEach {
-            val meta = it.metadata.expensiveGet()
+            val meta = it.metadata
             val documentJob = job.documentOrThrow(meta.name)
             documentJob.result.terms.forEach { t ->
                 val token = t.literals.lowercase()

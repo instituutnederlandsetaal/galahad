@@ -23,7 +23,7 @@ internal class PlainFileTest {
     @Test
     fun `Import plain text`() {
         val file = PlainFile(Resource.get("txt/input.txt"))
-        assertEquals("placeholder", file.plainTextReader().readText())
+        assertEquals("placeholder", file.plainText().readText())
     }
 
     @Test

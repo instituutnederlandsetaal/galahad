@@ -6,7 +6,6 @@ import org.ivdnt.galahad.formats.DocumentTransformMetadata
 import org.ivdnt.galahad.formats.InternalFile
 import org.ivdnt.galahad.formats.folia.export.FoliaLayerMerger
 import java.io.File
-import java.io.Reader
 
 class FoliaFile(
     override val file: File,
@@ -25,10 +24,10 @@ class FoliaFile(
         isParsed = true
     }
 
-    override fun plainTextReader(): Reader {
+    override fun plainText(): String {
         if (!isParsed) parse()
         // TODO: make this an efficient implementation
-        return reader!!.plainTextBuilder.toString().reader()
+        return reader!!.plainTextBuilder.toString()
     }
 
     override fun sourceLayer(): Layer {

@@ -17,14 +17,6 @@ class DocumentsTest {
         corpus = createCorpus()
     }
 
-    // Not implemented for now. Creating twice does the same job.
-    @Test
-    fun `Update not implemented`() {
-        val file = Resource.get("all-formats/input/input.folia.xml")
-        val docWriteType = DocumentWriteType(file.name, file.inputStream())
-        assertThrows(Exception::class.java) { corpus.documents.update("input.folia.xml", docWriteType) }
-    }
-
     @Test
     fun `Create and delete files`() {
         // Add two files

@@ -74,7 +74,7 @@ fun createCorpus(workdir: File? = null, isDataset: Boolean = false, isAdmin: Boo
 fun assertPlainText(folder: String, file: InternalFile) {
     // Plain text
     val plaintext = Resource.get("$folder/plaintext.txt").readText()
-    assertEquals(plaintext, file.plainTextReader().readText())
+    assertEquals(plaintext, file.plainText().readText())
 }
 
 fun assertPlaintextAndSourcelayer(folder: String, file: InternalFile) {

@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.jobs
 
 import org.ivdnt.galahad.BaseFileSystemStore
-import org.ivdnt.galahad.app.NamedCRUDSet
+import org.ivdnt.galahad.app.CRDSet
 import org.ivdnt.galahad.data.corpus.Corpus
 import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.data.layer.LayerPreview
@@ -13,7 +13,7 @@ import java.io.File
 class Jobs(
     workDirectory: File,
     private val corpus: Corpus,
-) : BaseFileSystemStore(workDirectory), NamedCRUDSet<String, Job, String> {
+) : BaseFileSystemStore(workDirectory), CRDSet<String, Job, String> {
 
     private val taggerStore = TaggerStore()
 
@@ -65,12 +65,7 @@ class Jobs(
         return readOrNull(key) ?: throw JobNotFoundException(key)
     }
 
-    override fun update(key: String, value: String): Job? {
-        TODO("Not yet implemented")
-    }
-
-    override fun delete(key: String): Job? {
+    override fun delete(key: String) {
         workDirectory.resolve(key).deleteRecursively()
-        return readOrNull(key)
     }
 }

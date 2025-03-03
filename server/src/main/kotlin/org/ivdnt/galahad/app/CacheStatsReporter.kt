@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit
 
 @Component
 class CacheStatsReporter : Logging {
-    @Scheduled(fixedDelay = 10, timeUnit = TimeUnit.MINUTES)
+    @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.HOURS)
     fun reportStats() {
         val stats = FileBackedValue.cache.stats()
         logger.info("Cache hit rate: ${stats.hitRate().toFixed()} [hit: ${stats.hitCount()} miss: ${stats.missCount()} evictions: ${stats.evictionCount()}]")

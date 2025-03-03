@@ -9,7 +9,6 @@ import org.ivdnt.galahad.formats.tei.export.TEILayerMerger
 import org.ivdnt.galahad.formats.xml.BLFXMLParser
 import org.ivdnt.galahad.util.getXmlBuilder
 import java.io.File
-import java.io.Reader
 
 class TEIFile(
     override val file: File,
@@ -29,9 +28,9 @@ class TEIFile(
         isParsed = true
     }
 
-    override fun plainTextReader(): Reader {
+    override fun plainText(): String {
         if (!isParsed) parse()
-        return plainTextFile.reader()
+        return plainTextFile.readText()
     }
 
     override fun sourceLayer(): Layer {

@@ -13,11 +13,13 @@ import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.data.layer.LayerPreview
 import org.ivdnt.galahad.data.layer.LayerSummary
 import org.ivdnt.galahad.data.layer.plus
-import org.ivdnt.galahad.evaluation.metrics.*
+import org.ivdnt.galahad.evaluation.metrics.CorpusMetrics
+import org.ivdnt.galahad.evaluation.metrics.FlatMetricType
+import org.ivdnt.galahad.evaluation.metrics.METRIC_TYPES
+import org.ivdnt.galahad.evaluation.metrics.Metrics
 import org.ivdnt.galahad.exceptions.DocumentJobNotFoundException
 import org.ivdnt.galahad.exceptions.JobNotFoundException
 import org.ivdnt.galahad.exceptions.SourceLayerNotATaggerException
-import org.ivdnt.galahad.exceptions.TaggerNotFoundException
 import org.ivdnt.galahad.jobs.DocumentJob.DocumentProcessingStatus
 import org.ivdnt.galahad.taggers.TaggerStore
 import org.springframework.core.io.FileSystemResource
@@ -92,19 +94,16 @@ class Job(
      * The sum of the global [Metrics] score of all the documents of the job (as opposed to per PoS).
      * Cached in a file, as it is expensive.
      */
-    val assay = object : FileBackedCache<Map<String,FlatMetricType>>(
+    val assay = object : FileBackedCache<Map<String, FlatMetricType>>(
         file = workDirectory.resolve("assay.cache"), initValue = mapOf()
     ) {
         override fun isValid(lastModified: Long): Boolean {
             return lastModified >= this@Job.lastModified
         }
 
-        override fun set(): Map<String,FlatMetricType> {
+        override fun set(): Map<String, FlatMetricType> {
             return CorpusMetrics(
-                corpus = corpus,
-                settings = METRIC_TYPES,
-                hypothesis = name,
-                reference = SOURCE_LAYER_NAME
+                corpus = corpus, settings = METRIC_TYPES, hypothesis = name, reference = SOURCE_LAYER_NAME
             ).metricTypes.mapValues { it.value.toFlat() }
         }
     }
@@ -114,10 +113,11 @@ class Job(
      */
     val progress: Progress
         get() {
-            //if (name == SOURCE_LAYER_NAME) throw SourceLayerNotATaggerException() // TODO this is probably needed for things like evaluation
+            // if (name == SOURCE_LAYER_NAME) throw SourceLayerNotATaggerException() // TODO this is probably needed for things like evaluation
             val statuses = corpus.documents.allNames.map { documentOrEmpty(it).status }
             val errors =
-                documentNames.mapNotNull { name -> documentOrEmpty(name).getError?.let { error -> name to error } }.toMap()
+                documentNames.mapNotNull { name -> documentOrEmpty(name).getError?.let { error -> name to error } }
+                    .toMap()
             return Progress(
                 pending = statuses.count { it == DocumentProcessingStatus.PENDING },
                 processing = statuses.count { it == DocumentProcessingStatus.PROCESSING },
@@ -219,10 +219,8 @@ class Job(
         corpus.documents.readOrThrow(name)
         // Retrieve the documentJob then.
         val file = documentsWorkDirectory.resolve(name)
-        if (file.exists())
-            return DocumentJob(file)
-        else
-            throw DocumentJobNotFoundException(name)
+        if (file.exists()) return DocumentJob(file)
+        else throw DocumentJobNotFoundException(name)
     }
 
     // We can't unduplicate this from documentOrThrow, because of throwing specific exceptions.
@@ -233,10 +231,8 @@ class Job(
         }
         // Retrieve the documentJob then.
         val file = documentsWorkDirectory.resolve(name)
-        return if (file.exists())
-            DocumentJob(file)
-        else
-            null
+        return if (file.exists()) DocumentJob(file)
+        else null
     }
 
     // Note that this creates the folder if it doesn't exist
@@ -282,13 +278,12 @@ class Job(
 
         // Upload the documents to the tagger
         corpus.documents.readAll().filter {
-            val metadata = it.metadata.expensiveGet()
-            val docJob = documentOrEmpty(metadata.name)
-            metadata.valid && docJob.status == DocumentProcessingStatus.PENDING || docJob.status == DocumentProcessingStatus.ERROR
+            val docJob = documentOrEmpty(it.metadata.name)
+            docJob.status == DocumentProcessingStatus.PENDING || docJob.status == DocumentProcessingStatus.ERROR
         }.take(numberToUpload).forEach {
             val processingID = postInputToTagger(it.plainTextFile)
             // Store the processingID, so we can match it with the incoming file later
-            documentOrThrow(it.metadata.expensiveGet().name).setProcessingID(processingID)
+            documentOrThrow(it.metadata.name).setProcessingID(processingID)
         }
     }
 

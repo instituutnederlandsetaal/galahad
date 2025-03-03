@@ -4,16 +4,14 @@ import jakarta.servlet.http.HttpServletRequest
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.data.document.Document
 import org.ivdnt.galahad.data.document.DocumentMetadata
-import org.ivdnt.galahad.data.document.DocumentWriteType
 import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
-import org.ivdnt.galahad.data.layer.Layer
 import org.ivdnt.galahad.exceptions.DocumentInvalidException
 import org.ivdnt.galahad.exceptions.FileUploadException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
-import org.xml.sax.SAXParseException
 import java.io.File
+import java.io.InputStream
 import java.nio.file.Paths
 import java.util.*
 import java.util.zip.ZipFile
@@ -40,7 +38,7 @@ class DocumentsService(val corpora: CorporaService) : Logging {
         return corpus.readDocs().readAll().mapNotNull {
             // Potentially, the uploaded file might no longer exist, so try.
             try {
-                it.metadata.expensiveGet()
+                it.metadata
             } catch (e: Exception) {
                 // Consider the document a lost cause.
                 delete(corpus, it.name)
@@ -54,7 +52,7 @@ class DocumentsService(val corpora: CorporaService) : Logging {
             uploadZipFile(file, corpus)
         } else {
             createDocumentWithSourceLayer(
-                corpus, DocumentWriteType(file.originalFilename.toString(), file.inputStream)
+                corpus, file.originalFilename, file.inputStream
             )
         }
     }
@@ -81,7 +79,7 @@ class DocumentsService(val corpora: CorporaService) : Logging {
                             logger.info("Unzipped ${entry.name} from ${file.originalFilename}. Will convert it to document.")
                             // The entry might be in a subfolder, so extract the true file name.
                             val fileName = Paths.get(entry.name).fileName.toString()
-                            createDocumentWithSourceLayer(corpus, DocumentWriteType(fileName, input))
+                            createDocumentWithSourceLayer(corpus, fileName, input)
                         }
                     } catch (e: Exception) {
                         // Some things might go wrong when processing a file, for example the file can be invalid
@@ -103,29 +101,27 @@ class DocumentsService(val corpora: CorporaService) : Logging {
         }
     }
 
-    private fun createDocumentWithSourceLayer(corpus: UUID, value: DocumentWriteType): String {
+    private fun createDocumentWithSourceLayer(corpus: UUID, fileName: String, input: InputStream) {
+        // tmp file for processing
+        val file = File.createTempFile("uploaded", fileName)
+        file.outputStream().use { input.copyTo(it) }
         // create the document
-        val documentName: String
+        val document: Document
         try {
-            documentName = corpus.writeDocs().create(value)
-        } catch (e: SAXParseException) {
-            throw DocumentInvalidException(value.filename, e.message)
+            document = corpus.writeDocs().createOrThrow(file)
         } catch (e: Exception) {
             // Document is somehow invalid.
             // Show error to user, but don't save the file
-            corpus.writeDocs().delete(value.filename)
-            throw e
+            corpus.writeDocs().delete(file.name)
+            throw DocumentInvalidException(file.name, e.message)
         }
-        val document: Document = corpus.readDocs().readOrThrow(documentName)
         // Invalidate job caches.
         invalidateJobCaches(corpus)
         // Invalidate corpus cache
         corpora.readOrNull(corpus)?.invalidateCache()
         // Set the sourceLayer as job.
         val sourceLayerJob = corpus.writeJobs().createOrThrow(SOURCE_LAYER_NAME)
-        sourceLayerJob.documentOrEmpty(documentName).setResult(document.sourceLayer.read<Layer>())
-
-        return documentName
+        sourceLayerJob.documentOrEmpty(document.name).setResult(document.sourceLayer)
     }
 
     private fun invalidateJobCaches(corpus: UUID) {

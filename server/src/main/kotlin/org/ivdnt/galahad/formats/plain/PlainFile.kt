@@ -7,15 +7,14 @@ import org.ivdnt.galahad.exceptions.MergeNotImplementedException
 import org.ivdnt.galahad.formats.DocumentTransformMetadata
 import org.ivdnt.galahad.formats.InternalFile
 import java.io.File
-import java.io.Reader
 
 class PlainFile(
     override val file: File,
 ) : InternalFile {
     override val format: DocumentFormat = DocumentFormat.Txt
 
-    override fun plainTextReader(): Reader {
-        return file.reader()
+    override fun plainText(): String {
+        return file.readText()
     }
 
     override fun merge(transformMetadata: DocumentTransformMetadata): PlainFile {

@@ -2,7 +2,7 @@ package org.ivdnt.galahad.web.service
 
 import jakarta.servlet.http.HttpServletRequest
 import org.ivdnt.galahad.BaseFileSystemStore
-import org.ivdnt.galahad.app.CRUDSet
+import org.ivdnt.galahad.app.CRDSet
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.data.corpus.Corpus
@@ -23,7 +23,7 @@ private fun File.corpus(): Corpus {
 class CorporaService(
     config: Config,
 ) : BaseFileSystemStore(config.getWorkingDirectory().resolve("corpora")),
-    CRUDSet<UUID, Corpus, MutableCorpusMetadata, CorpusMetadata> {
+    CRDSet<UUID, Corpus, MutableCorpusMetadata> {
 
     @Autowired
     private val request: HttpServletRequest? = null
@@ -48,7 +48,7 @@ class CorporaService(
      * Create a new corpus with the provided metadata. Will override the user with the request user.
      * Checks for valid corpus name and if the user is allowed to create a dataset (if isDataset is true).
      */
-    override fun create(value: MutableCorpusMetadata): UUID {
+    override fun createOrNull(value: MutableCorpusMetadata): Corpus {
         val uuid = UUID.randomUUID()
         val corpusDir = customDir.resolve(uuid.toString())
         val corpusStore = corpusDir.corpus()
@@ -69,10 +69,10 @@ class CorporaService(
         // Updating will check if the user is allowed to create a dataset.
         corpusStore.updateMetadata(newVal, user)
 
-        return corpusStore.metadata.expensiveGet().uuid
+        return corpusStore
     }
 
-    override fun update(key: UUID, value: MutableCorpusMetadata): CorpusMetadata {
+    fun update(key: UUID, value: MutableCorpusMetadata): CorpusMetadata {
         val user = User.getUserFromRequestOrThrow(request)
 
         // Viewers are allowed to remove themselves, but no more than that.
@@ -108,7 +108,7 @@ class CorporaService(
         return newMetadata
     }
 
-    override fun delete(key: UUID): Corpus? {
+    override fun delete(key: UUID) {
         val corpus = getReadAccessOrThrow(key, request)
         // security like a pro
         val metadata: CorpusMetadata = corpus.metadata.expensiveGet()
@@ -119,7 +119,6 @@ class CorporaService(
         getWriteAccessOrThrow(key, request).delete()
         // Invalidate assays.cache
         assaysFile.delete()
-        return null
     }
 
     /** Get all corpora the user can see. */

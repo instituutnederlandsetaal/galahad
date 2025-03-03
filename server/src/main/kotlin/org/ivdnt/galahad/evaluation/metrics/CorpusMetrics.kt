@@ -30,7 +30,7 @@ class CorpusMetrics(
 
     init {
         corpus.documents.readAll().forEach {
-            val name = it.metadata.expensiveGet().name
+            val name = it.metadata.name
             add(
                 DocumentMetrics(
                     corpus,

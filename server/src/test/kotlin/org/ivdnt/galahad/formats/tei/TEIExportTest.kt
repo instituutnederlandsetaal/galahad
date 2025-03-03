@@ -74,13 +74,13 @@ internal class TEIExportTest {
     fun punctuationExportTest() {
 
         val teiFile = TEIFile(Resource.get("tei/oneparagraph/mocktei.xml"))
-        DocTest.builder(corpus).expecting("Dit is wat oefentekst.").got(teiFile.plainTextReader().readText())
+        DocTest.builder(corpus).expecting("Dit is wat oefentekst.").got(teiFile.plainText().readText())
             .ignoreTrailingWhiteSpaces().result()
 
         val tagset = TagsetStore().getOrNull("TDN-Core")!!
 
         val layer = LayerBuilder().loadLayerFromTSV(
-            "tei/export/mock-TDN-with-punctuation.tsv", teiFile.plainTextReader().readText()
+            "tei/export/mock-TDN-with-punctuation.tsv", teiFile.plainText().readText()
         ).assertWordFromsAndTermsSize(5, 5).setTagset(tagset).build()
 
         DocTest.builder(corpus).expectingFile("tei/export/mock-TDN-with-punctuation-result.xml")
@@ -93,7 +93,7 @@ internal class TEIExportTest {
     fun mergePuncutationTest() {
 
         val tagset = TagsetStore().getOrNull("TDN-Core")!!
-        val plaintext = TEIFile(Resource.get("tei/dummies/punctutation-mixed-tags.xml")).plainTextReader().readText()
+        val plaintext = TEIFile(Resource.get("tei/dummies/punctutation-mixed-tags.xml")).plainText().readText()
         val layer = LayerBuilder().loadLayerFromTSV("tei/dummies/punctuation-mixed-tags-sample-layer.tsv", plaintext)
             .setTagset(tagset).build()
 
@@ -150,7 +150,7 @@ internal class TEIExportTest {
 
         // convert the layer to TEI to test conversion
         // remember the output to reuse as TEI-file in the merge test
-        val teiConvertedFile = corpus.documents.readOrThrow(docName).generateAs(
+        val teiConvertedFile = corpus.documents.readOrThrow(docName).convert(
             DocumentTransformMetadata(
                 corpus = corpus,
                 job = corpus.jobs.readOrThrow(jobName),
