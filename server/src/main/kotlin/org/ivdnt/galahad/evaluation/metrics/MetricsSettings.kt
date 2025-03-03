@@ -123,7 +123,7 @@ class MultiLemmaByLemmaMetricsSettings : LemmaByLemmaMetricsSettings() {
     override val id: String = "multiLemmaByLemma"
     override val annotation: String = "Lemma (multiple)"
     override fun filterBy(term: TermComparison): Boolean {
-        return term.refTerm.lemma?.contains("+") == true
+        return term.refTerm.isMulti(AnnotationType.LEMMA)
     }
 }
 
@@ -131,7 +131,7 @@ class SingleLemmaByLemmaMetricsSettings : LemmaByLemmaMetricsSettings() {
     override val id: String = "singleLemmaByLemma"
     override val annotation: String = "Lemma (single)"
     override fun filterBy(term: TermComparison): Boolean {
-        val isMulti = term.refTerm.lemma?.contains("+") == true
+        val isMulti = term.refTerm.isMulti(AnnotationType.LEMMA)
         return !isMulti
     }
 }

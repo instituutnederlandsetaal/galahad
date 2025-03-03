@@ -9,8 +9,7 @@ scripts/benchmarking/*
 !scripts/benchmarking/1doc_10kchar
 
 server/benchmarks.yml
-server/data/corpora/assays
-server/data/corpora/custom
+server/data/corpora/
 
 .scannerwork/
 **/target
