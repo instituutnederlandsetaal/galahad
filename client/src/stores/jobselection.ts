@@ -79,8 +79,10 @@ const useJobSelection = defineStore('jobSelection', () => {
         let finished = job.progress.finished
         if (job.tagger.id == SOURCE_LAYER) {
             finished = documentsStore.numSourceAnnotations
+            return `source annotations [${finished}/${job.progress.total} docs]`
+        } else {
+            return `${job.tagger.id} (${job.tagger.description}) [${finished}/${job.progress.total} docs]`
         }
-        return `${job.tagger.id} (${job.tagger.description}) [${finished}/${job.progress.total} documents]`
     }
     function setHypothesisJobId(id: string) {
         if (Object.keys(jobsStore.jobs)?.includes(id)) hypothesisJobId.value = id

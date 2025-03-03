@@ -47,11 +47,13 @@ const props = defineProps({
 const title = computed(() => props.customTitle ?? (props.isReference ? 'Reference' : 'Hypothesis'))
 const private_value = ref(null)
 // Whether there are documents that have not been tagged yet.
+// Not relevant for source layer.
 const untaggedDocsExist = computed(() => {
     if (!private_value.value) return false
     if (!jobsStore.jobs) return false
     const job = jobsStore.jobs[private_value.value]
     if (!job) return false
+    if (job.tagger.id == SOURCE_LAYER) return false
     return job.progress.finished < job.progress.total
 })
 // Whether the selected layer is sourceLayer and has missing annotations.
