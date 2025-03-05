@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.filter.CommonsRequestLoggingFilter
 import java.io.File
 import java.io.IOException
 import java.math.BigDecimal
@@ -191,10 +190,12 @@ class ApplicationController : ErrorController, Logging {
     @CrossOrigin
     @GetMapping("/user")
     fun getUser(): User {
-        return User.getUserFromRequestOrThrow(request)
+        return User.fromRequest(request)
     }
 
 
+    // TODO separate file inherit ErrorController
+    // Perhaps even in galahad.web
     @RequestMapping("/error")
 	@Hidden
 	@CrossOrigin
@@ -210,10 +211,13 @@ class ApplicationController : ErrorController, Logging {
             jakartaErrorMsg = null
         }
 		val springException = request.getAttribute("org.springframework.web.servlet.DispatcherServlet.EXCEPTION") as Exception?
-		val errorMsg = jakartaErrorMsg ?: jakartaException?.cause?.message ?: springException?.message ?: jakartaException?.message ?: "No error message available."
+		var errorMsg = jakartaErrorMsg ?: jakartaException?.cause?.message ?: springException?.message ?: jakartaException?.message ?: "No error message available."
 
-        // log stack trace if it's our fault
+        // Is it our fault?
         if (statusCode.value() >= 500) {
+            // Don't reveal the exception to the user
+            errorMsg = "Internal server error"
+            // Log the stack trace
             val stackTrace = jakartaException?.stackTraceToString() ?: springException?.stackTraceToString()
             stackTrace?.let(logger::error)
         }

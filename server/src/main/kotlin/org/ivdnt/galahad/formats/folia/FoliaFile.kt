@@ -11,6 +11,9 @@ class FoliaFile(
     override val file: File,
 ) : InternalFile {
     override val format: DocumentFormat = DocumentFormat.Folia
+    override val plaintext: String by lazy { parse(); reader!!.plainTextBuilder.toString() }
+    override val sourceLayer: Layer by lazy { parse(); reader!!.sourceLayer }
+
     private var isParsed: Boolean = false
     private var reader: FoliaReader? = null
 
@@ -19,19 +22,10 @@ class FoliaFile(
     }
 
     private fun parse() {
+        if (isParsed) return // Don't double parse
+        isParsed = true
+
         reader = FoliaReader(file) { _, _, _ -> }
         reader?.read()
-        isParsed = true
-    }
-
-    override fun plainText(): String {
-        if (!isParsed) parse()
-        // TODO: make this an efficient implementation
-        return reader!!.plainTextBuilder.toString()
-    }
-
-    override fun sourceLayer(): Layer {
-        if (!isParsed) parse()
-        return reader!!.sourceLayer
     }
 }

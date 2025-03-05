@@ -12,15 +12,11 @@ class PlainFile(
     override val file: File,
 ) : InternalFile {
     override val format: DocumentFormat = DocumentFormat.Txt
-
-    override fun plainText(): String {
-        return file.readText()
-    }
+    override val plaintext: String by lazy { file.readText() }
+    override val sourceLayer: Layer = Layer.EMPTY.apply { name = SOURCE_LAYER_NAME }
 
     override fun merge(transformMetadata: DocumentTransformMetadata): PlainFile {
         // merging does not make sense for PlainFile
         throw MergeNotImplementedException(format.identifier)
     }
-
-    override fun sourceLayer(): Layer = Layer.EMPTY.apply { name = SOURCE_LAYER_NAME }
 }

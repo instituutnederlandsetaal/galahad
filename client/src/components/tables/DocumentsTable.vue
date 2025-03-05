@@ -64,21 +64,9 @@
                 <div style="min-width: 200px; max-height: 3em; overflow: hidden;">{{ data.value }}</div>
             </template>
 
-            <!-- size in bytes cell -->
-            <!-- <template #cell-sizeInBytes="data">
-                <span v-if="data.value > 1023">{{Utils.formatBytes(data.value)}}</span>
-                <span v-else>~ 0</span>
-            </template> -->
-
             <!-- last modified cell -->
             <template #cell-lastModified="data">
-                <span style="white-space:nowrap">{{ new Date(data.value).toLocaleString("nl", {
-                    year: "2-digit",
-                    month: "2-digit",
-                    day: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                }) }}</span>
+                <span style="white-space:nowrap">{{ formatDate(data.value) }}</span>
             </template>
 
             <!-- actions cell -->
@@ -99,7 +87,7 @@
         <GModal :show="previewDocument !== null" @hide="preview = null; previewDocument = null"
             :title="`Preview of document ${previewDocument ? previewDocument.name : ''}`" style="text-align: center">
             <template #title>Source layer preview of document {{ previewDocument ? previewDocument.name : ""
-                }}</template>
+            }}</template>
             <template #help>
                 Here you can inspect a small part of the source layer of the document.
             </template>
@@ -153,16 +141,13 @@ const preview = ref(null as null | LayerPreview)
 const showDeleteModal = ref(false)
 const loading = ref(false)
 
-const columns: Field[] = computed(() => {
+const columns = computed<Field[]>(() => {
     const publicFields = [
-        // { key: "valid", sortOn: (x: Document) => x.valid },
         { key: "name", sortOn: (x: DocumentMetadata) => x.name, textAlign: "left" },
         { key: "format", sortOn: (x: DocumentMetadata) => x.format },
         { key: "preview", textAlign: "left" },
-        // { key: "sizeInBytes", label: "size", sortOn: (x: Document) => x.sizeInBytes },
-        // { key: "numChars", label: "size (chars)", sortOn: (x: DocumentMetadata) => x.numChars },
         { key: "layerSummary" },
-        { key: "lastModified", label: "last modified", sortOn: (x: DocumentMetadata) => x.lastModified }
+        { key: "lastModified", label: "date modified", sortOn: (x: DocumentMetadata) => x.lastModified }
     ] as Field[];
     if (userStore.hasWriteAccess && props.type == TableDocumentsType.User) {
         return publicFields.concat(
@@ -196,6 +181,15 @@ function loadSourceLayer() {
         .catch(error => {
             app.handleServerError("get job document result", error)
         })
+}
+function formatDate(unixtime: number) {
+    const d = new Date(unixtime);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    const hours = String(d.getHours()).padStart(2, '0');
+    const minutes = String(d.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
 }
 
 // Watches & mounts

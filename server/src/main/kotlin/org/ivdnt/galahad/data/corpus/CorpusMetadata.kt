@@ -1,8 +1,8 @@
 package org.ivdnt.galahad.data.corpus
 
-import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.ivdnt.galahad.app.JSONable
+import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
 import java.net.URL
 import java.util.*
 
@@ -22,7 +22,7 @@ class CorpusMetadata(
     @JsonProperty("eraFrom") eraFrom: Int = 0,
     @JsonProperty("language") language: String? = null,
     @JsonProperty("tagset") tagset: String? = null,
-    @JsonProperty("dataset") @JsonInclude(JsonInclude.Include.ALWAYS) dataset: Boolean = false,
+    @JsonProperty("dataset") dataset: Boolean = false,
     @JsonProperty("collaborators") collaborators: Set<String> = setOf(),
     @JsonProperty("viewers") viewers: Set<String> = setOf(),
     @JsonProperty("sourceName") sourceName: String? = null,
@@ -42,9 +42,44 @@ class CorpusMetadata(
     eraTo = eraTo,
     language = language,
     tagset = tagset,
-    isDataset = dataset,
-    collaborators = collaborators,
-    viewers = viewers,
+    dataset = dataset,
+    collaborators = collaborators.toMutableSet(),
+    viewers = viewers.toMutableSet(),
     sourceName = sourceName,
     sourceURL = sourceURL
-), JSONable
+), JSONable {
+    companion object {
+        fun create(corpus: Corpus): CorpusMetadata {
+            val allJobs = corpus.jobs.readAll()
+            val allDocs = corpus.documents.readAll()
+            // TODO: no need to recalculate this every time, when the reason we're recalculating the metadata is because a job has changed
+            val uniqueAnnotations = allDocs.flatMap { it.metadata.annotationTypes }.toSet()
+
+            val meta = CorpusMetadata(
+                // Immutable/calculated fields
+                sourceAnnotationTypes = uniqueAnnotations,
+                uuid = UUID.fromString(corpus.name),
+                activeJobs = allJobs.count { it.isActive == true },
+                numResults = allJobs.count { it.hasResult },
+                numDocs = allDocs.size,
+                sizeInBytes = corpus.sizeInBytes, // expensive
+                lastModified = System.currentTimeMillis(),
+            )
+            // add mutable fields
+            with (corpus.mutableMetadata) {
+                meta.owner = owner
+                meta.name = name
+                meta.eraFrom = eraFrom
+                meta.eraTo = eraTo
+                meta.language = language
+                meta.tagset = tagset
+                meta.dataset = dataset
+                meta.collaborators = collaborators
+                meta.viewers = viewers
+                meta.sourceName = sourceName
+                meta.sourceURL = sourceURL
+            }
+            return meta
+        }
+    }
+}

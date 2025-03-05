@@ -1,26 +1,30 @@
 package org.ivdnt.galahad.data.corpus
 
-import org.ivdnt.galahad.BaseFileSystemStore
-import org.ivdnt.galahad.FileBackedCache
-import org.ivdnt.galahad.FileBackedValue
+import org.ivdnt.galahad.filesystem.GalahadFile
+import org.ivdnt.galahad.filesystem.FileBackedCache
+import org.ivdnt.galahad.filesystem.FileBackedValue
 import org.ivdnt.galahad.app.ExpensiveGettable
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.data.document.Document
 import org.ivdnt.galahad.data.document.DocumentFormat
 import org.ivdnt.galahad.data.document.Documents
 import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
-import org.ivdnt.galahad.exceptions.CorpusNameInvalidException
-import org.ivdnt.galahad.exceptions.CorpusUnauthorizedException
-import org.ivdnt.galahad.jobs.Jobs
 import org.ivdnt.galahad.formats.CmdiMetadata
 import org.ivdnt.galahad.formats.CorpusTransformMetadata
+import org.ivdnt.galahad.jobs.Jobs
 import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.util.createZipFile
 import java.io.File
 import java.io.OutputStream
 import java.nio.file.Files
-import java.util.*
+import java.util.UUID
 import kotlin.io.path.createTempDirectory
+
+private const val MUTABLE_METADATA_FILE = "mutableMetadata.json"
+private const val IMMUTABLE_METADATA_FILE = "immutableMetadata.json"
+
+private const val JOBS_FOLDER = "jobs"
+private const val DOCS_FOLDER = "documents"
 
 /**
  * A corpus is a collection of documents, metadata and jobs, saved to a folder. The folder contents are:
@@ -31,83 +35,44 @@ import kotlin.io.path.createTempDirectory
  * - metadata.cache: a cache file storing [CorpusMetadata] about the corpus.
  *
  * A Corpus has an owner, who can add collaborators and viewers.
- * Collaborators have read and write access (and can add viewers and collaborators).
+ * Collaborators have read and write access.
  * Viewers have read access.
  * Admins have access to all corpora with read and write access.
  */
 class Corpus(
-    workDirectory: File,
-) : BaseFileSystemStore(workDirectory) {
+    dir: File,
+) : GalahadFile(dir) {
 
-    val documents = Documents(workDirectory.resolve("documents"))
+    val documents = Documents(dir.resolve(DOCS_FOLDER))
+    val jobs = Jobs(dir.resolve(JOBS_FOLDER), this)
 
-    // Make sure this is initialized before accessing metadata
-    private val fileBackedMetadata: FileBackedValue<MutableCorpusMetadata>
-        get() = FileBackedValue(workDirectory.resolve("metadata"), MutableCorpusMetadata.initValue())
+    // Files in the corpus folder.
+    private val mutableMetadataFile = dir.resolve(MUTABLE_METADATA_FILE)
+    private val immutableMetadataFile = dir.resolve(IMMUTABLE_METADATA_FILE)
+
+    val uuid: UUID = UUID.fromString(dir.name)
 
     /**
      * Convenient access to [MutableCorpusMetadata] without the need to get the expensive [CorpusMetadata]
      * When uploading docs, for example, all we need to know is if the user has permission.
      */
-    var mutableCorpusMetadata: MutableCorpusMetadata
-        get() = fileBackedMetadata.read<MutableCorpusMetadata>()
-        private set(value) = fileBackedMetadata.modify<MutableCorpusMetadata> { value }
-
-    private val metadataCache = object : FileBackedCache<CorpusMetadata>(
-        file = getMetadataFile(), initValue = CorpusMetadata()
-    ) {
-        override fun isValid(lastModified: Long): Boolean {
-            return lastModified >= fileBackedMetadata.lastModified
+    var mutableMetadata: MutableCorpusMetadata
+        get() = FileBackedValue<MutableCorpusMetadata>(mutableMetadataFile).readOrThrow()
+        set(value) {
+            FileBackedValue<MutableCorpusMetadata>(mutableMetadataFile).write(value)
         }
 
-        override fun set(): CorpusMetadata {
-            val allJobs = jobs.readAll()
-            return CorpusMetadata(
-                // Mutable fields
-                owner = mutableCorpusMetadata.owner,
-                name = mutableCorpusMetadata.name,
-                eraTo = mutableCorpusMetadata.eraTo,
-                eraFrom = mutableCorpusMetadata.eraFrom,
-                language = mutableCorpusMetadata.language,
-                tagset = mutableCorpusMetadata.tagset,
-                dataset = mutableCorpusMetadata.isDataset,
-                collaborators = mutableCorpusMetadata.collaborators ?: setOf(),
-                viewers = mutableCorpusMetadata.viewers ?: setOf(),
-                sourceName = mutableCorpusMetadata.sourceName,
-                sourceURL = mutableCorpusMetadata.sourceURL,
-                // Immutable/calculated fields
-                sourceAnnotationTypes = jobs.readOrNull(SOURCE_LAYER_NAME)?.annotationTypes ?: emptySet(),
-                uuid = UUID.fromString(workDirectory.name),
-                activeJobs = allJobs.count { it.isActive },
-                numResults = allJobs.count { it.hasResult },
-                numDocs = documents.readAll().size,
-                sizeInBytes = workDirectory.walkTopDown().filter { it.isFile }.map { it.length() }.sum(), // expensive
-                lastModified = System.currentTimeMillis(),
-            )
-        }
-    }
+    val immutableMetadata: CorpusMetadata
+        get() = immutableMetadataCache.read()
 
-    private fun getMetadataFile() = workDirectory.resolve("metadata.cache")
-
-    /** Invalidate cache when new documents are uploaded or job activity changes */
-    fun invalidateCache() {
-        getMetadataFile().delete()
-    }
-
-    val metadata: ExpensiveGettable<CorpusMetadata> = object : ExpensiveGettable<CorpusMetadata> {
-        override fun expensiveGet(): CorpusMetadata {
-            try {
-                return metadataCache.get<CorpusMetadata>()
-            } catch (e: Exception) {
-                invalidateCache()
-                return metadataCache.get<CorpusMetadata>()
-            }
-        }
+    private val immutableMetadataCache = object : FileBackedCache<CorpusMetadata>(immutableMetadataFile) {
+        override fun isValid(lastModified: Long) = lastModified >= this@Corpus.lastModified
+        override fun set() = CorpusMetadata.create(this@Corpus)
     }
 
     val sourceTagger: ExpensiveGettable<Tagger> = object : ExpensiveGettable<Tagger> {
         override fun expensiveGet(): Tagger {
-            val metadata = metadata.expensiveGet()
+            val metadata = immutableMetadata
             return Tagger(
                 id = SOURCE_LAYER_NAME,
                 description = "uploaded annotations",
@@ -120,87 +85,10 @@ class Corpus(
         }
     }
 
-    // Note: this is somewhat inefficient, since have to get the sourceTagger, even though we might not use it.
-    val jobs get() = Jobs(workDirectory.resolve("jobs"), this)
-
-    fun delete() {
-        workDirectory.deleteRecursively()
-    }
-
-    private fun assertCorpusNameValidOrThrow(corpusName: String) {
-        if (!Regex("^.{3,100}$").matches(corpusName.trim())) {
-            throw CorpusNameInvalidException(corpusName)
-        }
-    }
-
-    /**
-     * Overwrite the [CorpusMetadata] in [metadata] with [newMeta],
-     * except for the owner, which should be grabbed from the existing [metadata].
-     *
-     * If a user appears multiple times in the permission hierarchy, only the upper level remains.
-     */
-    fun updateMetadata(newMeta: MutableCorpusMetadata, user: User): ExpensiveGettable<CorpusMetadata> {
-        assertCorpusNameValidOrThrow(newMeta.name)
-        if (!mutableCorpusMetadata.isDataset && newMeta.isDataset) {
-            // Corpus is being set to public
-            if (!mutableCorpusMetadata.canDefineDataset(user)) {
-                throw CorpusUnauthorizedException("Cannot create a dataset.")
-            }
-        }
-        if (mutableCorpusMetadata.collaborators != newMeta.collaborators || mutableCorpusMetadata.viewers != newMeta.viewers) {
-            // Collaborators have changed
-            if (!mutableCorpusMetadata.canAddNewUsers(user) && mutableCorpusMetadata.owner != "") {
-                throw CorpusUnauthorizedException("Cannot change collaborators or viewers.")
-            }
-        }
-        // If mutableCorpusMetadata.owner is "", we are working with the InitValue of FileBackedValue,
-        // so the updateMetadata call is initializing the corpus.
-        val owner = if (mutableCorpusMetadata.owner == "") user.id else mutableCorpusMetadata.owner
-        // Overwrite the owner with the original, so collaborators can't change it.
-        newMeta.owner = owner
-
-        // Trim textual inputs
-        newMeta.name = newMeta.name.trim()
-        newMeta.sourceName = newMeta.sourceName?.trim()
-        newMeta.tagset = newMeta.tagset?.trim()
-        newMeta.language = newMeta.language?.trim()
-        newMeta.collaborators = newMeta.collaborators?.map { it.trim() }?.toSet()
-        newMeta.viewers = newMeta.viewers?.map { it.trim() }?.toSet()
-
-        // Remove owner from list of collaborators & viewers
-        newMeta.collaborators = newMeta.collaborators?.filter { it != owner }?.toSet()
-        newMeta.viewers = newMeta.viewers?.filter { it != owner }?.toSet()
-        // Remove collaborators from list of viewers
-        if (newMeta.collaborators != null) newMeta.viewers = newMeta.viewers?.filter {
-            !newMeta.collaborators!!.contains(it)
-        }?.toSet()
-
-        mutableCorpusMetadata = newMeta
-        return metadata
-    }
-
-    fun removeAsViewer(user: User) {
-        fileBackedMetadata.modify<MutableCorpusMetadata> {
-            val viewers = it.viewers?.toMutableSet()
-            viewers?.removeIf { i -> i == user.id }
-            it.viewers = viewers
-            it
-        }
-    }
-
-    fun removeAsCollaborator(user: User) {
-        fileBackedMetadata.modify<MutableCorpusMetadata> {
-            val collaborators = it.collaborators?.toMutableSet()
-            collaborators?.removeIf { i -> i == user.id }
-            it.collaborators = collaborators
-            it
-        }
-    }
-
     /**
      * Maps all [Document] found in [Documents] to the desired [DocumentFormat] and zips them. [formatMapper] should perform the mapping.
      */
-    fun getZipped(
+    fun export(
         ctm: CorpusTransformMetadata,
         formatMapper: (Document) -> File,
         filter: (Document) -> Boolean,
@@ -214,5 +102,18 @@ class Corpus(
         val dest = File(createTempDirectory("metadata").toFile(), "metadata.zip")
         Files.move(cmdiZip.toPath(), dest.toPath())
         return createZipFile(convertedDocs + dest, outputStream)
+    }
+
+    companion object {
+        fun create(user: User, dir: File, metadata: MutableCorpusMetadata): Corpus {
+            // dummy corpus to access the paths
+            val corpus = Corpus(dir)
+            // clean, trim, validate, and set owner
+            val cleanMetadata = MutableCorpusMetadata.clean(user, metadata)
+            // write metadata to disk
+            FileBackedValue<MutableCorpusMetadata>(corpus.mutableMetadataFile).write(cleanMetadata)
+            // TODO immutable metadata
+            return corpus
+        }
     }
 }

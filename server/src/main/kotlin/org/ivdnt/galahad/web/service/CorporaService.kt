@@ -1,196 +1,79 @@
 package org.ivdnt.galahad.web.service
 
-import jakarta.servlet.http.HttpServletRequest
-import org.ivdnt.galahad.BaseFileSystemStore
-import org.ivdnt.galahad.app.CRDSet
+import org.ivdnt.galahad.filesystem.GalahadFile
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.User
+import org.ivdnt.galahad.data.corpus.Corpora
 import org.ivdnt.galahad.data.corpus.Corpus
 import org.ivdnt.galahad.data.corpus.CorpusMetadata
 import org.ivdnt.galahad.data.corpus.MutableCorpusMetadata
 import org.ivdnt.galahad.exceptions.CorpusNotFoundException
 import org.ivdnt.galahad.exceptions.CorpusUnauthorizedException
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.io.File
-import java.util.*
-
-private fun File.corpus(): Corpus {
-    return Corpus(this)
-}
+import java.util.UUID
 
 @Service
 class CorporaService(
-    config: Config,
-) : BaseFileSystemStore(config.getWorkingDirectory().resolve("corpora")),
-    CRDSet<UUID, Corpus, MutableCorpusMetadata> {
+    config: Config
+) : GalahadFile(config.getWorkingDirectory().resolve("corpora")) {
 
-    @Autowired
-    private val request: HttpServletRequest? = null
+    val custom = Corpora(dir.resolve("custom"))
+    val presets = Corpora(dir.resolve("presets"))
 
-    // The two folders in which corpora reside
-    private val customDir: File = workDirectory.resolve("custom")
-    private val presetsDir: File = workDirectory.resolve("presets")
+    val all: List<Corpus> get() = custom.readAll().toList() + presets.readAll().toList()
+    val datasets get() = all.filter { it.mutableMetadata.dataset }
+    val assaysFile get() = dir.resolve("benchmarks.json")
 
-    // The corpora in these folders
-    val custom: List<Corpus> get() = customDir.listFiles()?.map { it.corpus() } ?: listOf()
-    val presets: List<Corpus> get() = presetsDir.listFiles()?.map { it.corpus() } ?: listOf()
-
-    // Combined sets
-    val all: List<Corpus> get() = custom + presets
-
-    // You can't just look at presets. Some datasets may reside in the customDir.
-    val datasets get() = all.filter { it.metadata.expensiveGet().isDataset }
-
-    val assaysFile get() = workDirectory.resolve("assays.cache")
-
-    /**
-     * Create a new corpus with the provided metadata. Will override the user with the request user.
-     * Checks for valid corpus name and if the user is allowed to create a dataset (if isDataset is true).
-     */
-    override fun createOrNull(value: MutableCorpusMetadata): Corpus {
-        val uuid = UUID.randomUUID()
-        val corpusDir = customDir.resolve(uuid.toString())
-        val corpusStore = corpusDir.corpus()
-        val user = User.getUserFromRequestOrThrow(request)
-        val newVal = MutableCorpusMetadata(
-            owner = user.id, // The creator of the request is the owner.
-            name = value.name,
-            eraFrom = value.eraFrom,
-            eraTo = value.eraTo,
-            language = value.language,
-            tagset = value.tagset,
-            isDataset = value.isDataset,
-            collaborators = value.collaborators,
-            viewers = value.viewers,
-            sourceName = value.sourceName,
-            sourceURL = value.sourceURL,
-        )
-        // Updating will check if the user is allowed to create a dataset.
-        corpusStore.updateMetadata(newVal, user)
-
-        return corpusStore
+    fun readAll(user: User): Set<CorpusMetadata> {
+        return all.map { it.immutableMetadata }.filter { it.hasReadAccess(user, excludeAdmin = true)}.toSet()
     }
 
-    fun update(key: UUID, value: MutableCorpusMetadata): CorpusMetadata {
-        val user = User.getUserFromRequestOrThrow(request)
-
-        // Viewers are allowed to remove themselves, but no more than that.
-        val original = readOrThrow(key)
-        val orgMeta = original.metadata.expensiveGet()
-        if (!value.isViewer(user) && orgMeta.isViewer(user)) {
-            original.removeAsViewer(user)
-            // A new get is needed to get the updated metadata.
-            return original.metadata.expensiveGet()
-        }
-
-        // Same for collaborators
-        if (!value.isCollaborator(user) && orgMeta.isCollaborator(user)) {
-            original.removeAsCollaborator(user)
-            // Although collaborators could change other metadata,
-            // if you have chosen to remove yourself as a collaborator,
-            // you probably don't want to change anything else.
-            return original.metadata.expensiveGet()
-        }
-
-        val corpus = getWriteAccessOrThrow(key, request)
-        val newMetadata = corpus.updateMetadata(value, user).expensiveGet()
-
-        // Note how this is down after the updateMetadata call, because the latter performs security checks.
-        // Otherwise, a viewer would be able to trigger cache invalidation.
-        if (orgMeta.isDataset) {
-            if (!value.isDataset) {
-                // This corpus is no longer a dataset.
-                // Invalidate assays.cache
-                assaysFile.delete()
-            }
-        }
-        return newMetadata
+    fun readAllDatasets(): Set<CorpusMetadata> {
+        return datasets.map { it.immutableMetadata }.toSet()
     }
 
-    override fun delete(key: UUID) {
-        val corpus = getReadAccessOrThrow(key, request)
-        // security like a pro
-        val metadata: CorpusMetadata = corpus.metadata.expensiveGet()
-        val user = User.getUserFromRequestOrThrow(request)
-        if (!metadata.canDelete(user)) {
-            throw CorpusUnauthorizedException("Cannot delete corpus $key.")
-        }
-        getWriteAccessOrThrow(key, request).delete()
-        // Invalidate assays.cache
-        assaysFile.delete()
+    fun readAsReaderOrThrow(key: UUID, user: User): Corpus {
+        val (corpus, _) = findOrThrow(key)
+        return corpus.also { if (!it.mutableMetadata.hasReadAccess(user)) throw CorpusUnauthorizedException("No read access to corpus.") }
     }
 
-    /** Get all corpora the user can see. */
-    private fun getCorporaForUser(user: User): Set<Corpus> {
-        // We don't want to pollute the admin's corpora list.
-        return all.filter { corpus ->
-            corpus.metadata.expensiveGet().hasReadAccess(user, excludeAdmin = true)
-        }.toSet()
+    fun readAsWriterOrThrow(key: UUID, user: User): Corpus {
+        val (corpus, _) = findOrThrow(key)
+        return corpus.also { if (!it.mutableMetadata.hasWriteAccess(user)) throw CorpusUnauthorizedException("No write access to corpus.") }
     }
 
-    override fun readAll(): Set<Corpus> {
-        val user = User.getUserFromRequestOrThrow(request)
-        return getCorporaForUser(user)
-    }
+    fun delete(key: UUID, user: User) {
+        val (corpus, corpora) = findOrThrow(key)
 
-    /**
-     * Gives unauthorized access to the corpus given a UUID,
-     * therefore it should not be directly used for external access.
-     */
-    fun getUncheckedCorpusAccess(corpus: UUID): Corpus {
-        return getUncheckedCorpusAccessOrNull(corpus) ?: throw throw CorpusNotFoundException(corpus)
-    }
-
-    // TODO beide private maken
-    fun getUncheckedCorpusAccessOrNull(corpus: UUID): Corpus? {
-        val presetCorpus = presetsDir.resolve(corpus.toString())
-        val customCorpus = customDir.resolve(corpus.toString())
-
-        return if (presetCorpus.exists()) {
-            presetCorpus.corpus()
-        } else if (customCorpus.exists()) {
-            customCorpus.corpus()
+        if (corpus.mutableMetadata.canDelete(user)) {
+            corpora.delete(key)
         } else {
-            null
+            throw CorpusUnauthorizedException("No delete access to corpus.")
         }
     }
 
-    // We should have the return type of this method be an object or interface of only read-methods
-    // Since this is currently not the case, the 'Read' or 'Write' is just a marker of intended actions
-    // but nothing is enforced, could be worth the refactor
-    fun getReadAccessOrNull(corpus: UUID, request: HttpServletRequest?): Corpus? {
-        if (request == null) return null
-        val cs = getUncheckedCorpusAccessOrNull(corpus)
-        if (cs == null) return null
-        // security check
-        val metadata: MutableCorpusMetadata = cs.mutableCorpusMetadata
-        val user: User = User.getUserFromRequestOrThrow(request)
-        if (metadata.hasReadAccess(user)) return cs
-        return null
+    private fun findOrThrow(key: UUID): Pair<Corpus, Corpora> {
+        // We don't want to access CorporaManager.all here, because it is expensive.
+        val customCorpus = custom.readOrNull(key)
+        val presetCorpus = presets.readOrNull(key)
+
+        val corpus = customCorpus ?: presetCorpus ?: throw CorpusNotFoundException(key)
+        val corpora =
+            customCorpus?.let { custom } ?: presetCorpus?.let { presets } ?: throw CorpusNotFoundException(key)
+        return Pair(corpus, corpora)
     }
 
-    fun getWriteAccessOrNull(corpus: UUID, request: HttpServletRequest?): Corpus? {
-        if (request == null) return null
-        val cs = getReadAccessOrNull(corpus, request)
-        // security like a pro
-        val metadata: MutableCorpusMetadata? = cs?.mutableCorpusMetadata
-        val user: User = User.getUserFromRequestOrThrow(request)
-        if (metadata?.hasWriteAccess(user) == true) return cs
-        return null
+    internal fun readCorpusUnsafe(key: UUID): Corpus {
+        return findOrThrow(key).first
     }
 
-    fun getReadAccessOrThrow(corpus: UUID, request: HttpServletRequest?): Corpus {
-        return getReadAccessOrNull(corpus, request) ?: throw CorpusNotFoundException(corpus)
+    fun createOrThrow(value: MutableCorpusMetadata, user: User): CorpusMetadata {
+        // new corpora are always custom
+        return custom.createOrThrow(user, value).immutableMetadata
     }
 
-    fun getWriteAccessOrThrow(corpus: UUID, request: HttpServletRequest?): Corpus {
-        // Try read access first. If that fails it throws a 404.
-        getReadAccessOrThrow(corpus, request)
-        return getWriteAccessOrNull(corpus, request) ?: throw CorpusUnauthorizedException("No write access to corpus.")
+    fun update(key: UUID, value: MutableCorpusMetadata, user: User): CorpusMetadata {
+        val (_, corpora) = findOrThrow(key)
+        return corpora.update(key, value, user)
     }
-
-    override fun readOrNull(key: UUID) = getReadAccessOrNull(key, request)
-
-    override fun readOrThrow(key: UUID) = getReadAccessOrThrow(key, request)
 }

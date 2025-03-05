@@ -5,21 +5,18 @@ import com.beust.klaxon.Parser
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.apache.logging.log4j.kotlin.Logging
-import org.ivdnt.galahad.BaseFileSystemStore
-import org.ivdnt.galahad.FileBackedCache
-import org.ivdnt.galahad.FileBackedValue
 import org.ivdnt.galahad.data.corpus.Corpus
+import org.ivdnt.galahad.data.document.Document
 import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
-import org.ivdnt.galahad.data.layer.LayerPreview
-import org.ivdnt.galahad.data.layer.LayerSummary
-import org.ivdnt.galahad.data.layer.plus
+import org.ivdnt.galahad.data.layer.Layer
 import org.ivdnt.galahad.evaluation.metrics.CorpusMetrics
 import org.ivdnt.galahad.evaluation.metrics.FlatMetricType
 import org.ivdnt.galahad.evaluation.metrics.METRIC_TYPES
 import org.ivdnt.galahad.evaluation.metrics.Metrics
 import org.ivdnt.galahad.exceptions.DocumentJobNotFoundException
-import org.ivdnt.galahad.exceptions.JobNotFoundException
 import org.ivdnt.galahad.exceptions.SourceLayerNotATaggerException
+import org.ivdnt.galahad.filesystem.GalahadFile
+import org.ivdnt.galahad.filesystem.FileBackedCache
 import org.ivdnt.galahad.jobs.DocumentJob.DocumentProcessingStatus
 import org.ivdnt.galahad.taggers.TaggerStore
 import org.springframework.core.io.FileSystemResource
@@ -31,71 +28,86 @@ import java.io.File
 import java.net.URL
 import java.util.*
 
+private const val DOCUMENT_JOBS_FOLDER = "documents"
+
+/** Number of documents at the tagger per job */
+private const val DOC_PARALLELIZATION_SIZE = 3
+private const val IS_ACTIVE_FILE = "active.txt"
+private const val METADATA_FILE = "metadata.json"
+
 /**
  * A job is saved to disk as a folder under jobs/ (managed by [Jobs]), with the following files:
  *
- * - documents/: a folder containing all documents in the job. A single document is represented by [DocumentJob]. These can be retrieved with [documentOrThrow].
+ * - documents/: a folder containing all documents in the job. A single document is represented by [DocumentJob]. These can be retrieved with [readOrThrow].
  * - _isActive: a file that stores whether the job is currently being processed by the tagger.
  * - assay.cache: a cache file storing the global [Metrics] of the job.
- * - state.cache: a cache file storing the [JobState] of the job.
+ * - state.cache: a cache file storing the [JobMetadata] of the job.
  */
 class Job(
-    workDirectory: File, // the name of this directory is the name of the job/tagger
-    private val corpus: Corpus,
-) : BaseFileSystemStore(workDirectory), Logging {
+    dir: File, // the name of this directory is the name of the job/tagger
+    val corpus: Corpus,
+) : GalahadFile(dir), Logging {
 
     val taggerStore = TaggerStore()
-    val name: String = workDirectory.name
+    val documentJobs = DocumentJobs(dir.resolve(DOCUMENT_JOBS_FOLDER))
 
-    private val documentsWorkDirectory = workDirectory.resolve("documents")
-    private val documentNames
-        get() = documentsWorkDirectory.list()?.toSet() ?: throw Exception("Error accessing job documents")
+    // Files
+    val isActiveFile = dir.resolve(IS_ACTIVE_FILE)
+    val metadataFile = dir.resolve(METADATA_FILE)
+
+    // Values
+    val hasResult: Boolean
+        get() = name != SOURCE_LAYER_NAME && documentJobs.readAll()
+            .any { it.status == DocumentProcessingStatus.FINISHED }
 
     /**
-     * Note: this init block has to be above [documents].
-     * Because this.documents requires the documents dir to exist.
+     * Progress of the job based on the status of the [DocumentJob]s of this job.
      */
-    init {
-        // TODO cleaner solution
-        if (workDirectory.name == "null" || workDirectory.name == "undefined") {
-            workDirectory.deleteRecursively()
-            throw Exception("Job name not allowed")
+    val progress: Progress
+        get() {
+            val djs = documentJobs.readAll()
+            val statuses = djs.map { it.status }
+            val errors = djs.mapNotNull { it.error?.let { error -> name to error } }.toMap()
+            return Progress(
+                pending = statuses.count { it == DocumentProcessingStatus.PENDING },
+                processing = statuses.count { it == DocumentProcessingStatus.PROCESSING },
+                failed = statuses.count { it == DocumentProcessingStatus.ERROR },
+                finished = statuses.count { it == DocumentProcessingStatus.FINISHED },
+                errors = errors
+            )
         }
-        documentsWorkDirectory.mkdirs()
-        if (!taggerStore.ids.contains(name) && name != SOURCE_LAYER_NAME) {
-            // A job without a tagger is probably invalid, but we want to be careful,
-            // so we only delete it if the job is empty
-            // Otherwise it deserves at least manual inspection
-            if (documentNames.isEmpty()) workDirectory.deleteRecursively()
-            throw JobNotFoundException(name)
-        }
-    }
-
-    private val documents: List<DocumentJob> = documentNames.map { documentOrEmpty(it) }
-
-    /** Number of documents at the tagger per job */
-    val DOC_PARALLELIZATION_SIZE = 3
 
     /**
      * Whether the job is currently being processed (i.e. has sent files to the tagger to become tagged at some point).
      */
-    var _isActive: FileBackedValue<Boolean> = FileBackedValue(workDirectory.resolve("_isActive"), false)
-
-    var isActive: Boolean
-        get() = _isActive.read<Boolean>()
+    var isActive: Boolean?
+        get() = if (isActiveFile.exists()) isActiveFile.readText().toBoolean() else null
         set(value) {
-            _isActive.modify<Boolean> { value }; corpus.invalidateCache()
+            if (value == null) throw IllegalArgumentException("IsActive cannot be set to null")
+            isActiveFile.writeText(value.toString())
         }
 
-    val hasResult: Boolean
-        get() = name != SOURCE_LAYER_NAME && documents.any { it.status == DocumentProcessingStatus.FINISHED }
+    val metadata: JobMetadata
+        get() {
+            deleteInactiveProcesses()
+            return metadataCache.read()
+        }
+
+    /**
+     * The state of the job, which is cached in a file.
+     * This is a very expensive operation, so we want to cache it.
+     */
+    private val metadataCache = object : FileBackedCache<JobMetadata>(metadataFile) {
+        override fun isValid(lastModified: Long) = lastModified >= this@Job.lastModified
+        override fun set() = JobMetadata.create(this@Job)
+    }
 
     /**
      * The sum of the global [Metrics] score of all the documents of the job (as opposed to per PoS).
      * Cached in a file, as it is expensive.
      */
     val assay = object : FileBackedCache<Map<String, FlatMetricType>>(
-        file = workDirectory.resolve("assay.cache"), initValue = mapOf()
+        file = dir.resolve("assay.cache")
     ) {
         override fun isValid(lastModified: Long): Boolean {
             return lastModified >= this@Job.lastModified
@@ -108,141 +120,34 @@ class Job(
         }
     }
 
-    /**
-     * Progress of the job based on the status of the [DocumentJob]s of this job.
-     */
-    val progress: Progress
-        get() {
-            // if (name == SOURCE_LAYER_NAME) throw SourceLayerNotATaggerException() // TODO this is probably needed for things like evaluation
-            val statuses = corpus.documents.allNames.map { documentOrEmpty(it).status }
-            val errors =
-                documentNames.mapNotNull { name -> documentOrEmpty(name).getError?.let { error -> name to error } }
-                    .toMap()
-            return Progress(
-                pending = statuses.count { it == DocumentProcessingStatus.PENDING },
-                processing = statuses.count { it == DocumentProcessingStatus.PROCESSING },
-                failed = statuses.count { it == DocumentProcessingStatus.ERROR },
-                finished = statuses.count { it == DocumentProcessingStatus.FINISHED },
-                errors = errors
-            )
-        }
-
     private fun deleteInactiveProcesses() {
-        documents.filter { it.isProcessing }.forEach { documentJob ->
+        val djs = documentJobs.readAll()
+        djs.filter { it.isProcessing }.forEach { documentJob ->
             // For each document that claims to be processing, verify if its pid is present at the tagger
             // If not, delete pid.
             try {
                 val jsonStr: String? =
-                    taggerRequest(this, "status/${documentJob.getProcessingID}", HttpMethod.GET, String::class.java)
+                    taggerRequest(this, "status/${documentJob.processingID!!}", HttpMethod.GET, String::class.java)
                 val parser: Parser = Parser.default()
                 val json: JsonObject = parser.parse(StringBuilder(jsonStr!!)) as JsonObject
                 if (json.boolean("busy") == false && json.boolean("pending") == false) {
                     // The doc is either finished, has an error, or does not exist.
                     documentJob.cancel()
-                    stateFile.delete()
+                    metadataFile.delete()
                 }
             } catch (e: Exception) {
                 // The tagger can't be reached, so no way to tell if the document is still processing.
                 // If the tagger restarts, it does reprocess documents. Maybe including this one, so we keep it.
             }
         }
-        if (documents.count { it.isProcessing } == 0 && isActive) {
+        if (djs.count { it.isProcessing } == 0 && isActive == true) {
             // Writing invalidates cache, so only write if isActive would change.
             isActive = false
         }
     }
 
-    /**
-     * Preview of the resulting terms of this job.
-     * Show the first preview of the first document that isn't LayerPreview.EMPTY.
-     */
-    val preview: LayerPreview
-        get() = documents.map { it.result.preview }.firstNotNullOfOrNull { it: LayerPreview ->
-            if (it == LayerPreview.EMPTY) null else it
-        } ?: LayerPreview.EMPTY
-    val stateFile: File = workDirectory.resolve("state.cache")
-
-    /**
-     * The state of the job, which is cached in a file.
-     * This is a very expensive operation, so we want to cache it.
-     */
-    private val stateCache = object : FileBackedCache<JobState>(
-        file = stateFile, initValue = JobState()
-    ) {
-        override fun isValid(lastModified: Long): Boolean {
-            return lastModified >= this@Job.lastModified
-        }
-
-        override fun set(): JobState {
-            // sum up the number of tokens/lemmas/etc of all documents
-            // This is very expensive
-            val resultSummary: LayerSummary =
-                documents.map { it.result.summary }.reduceOrNull { a, b -> a + b } ?: LayerSummary()
-
-            return JobState(
-                taggerStore.getSummaryOrThrow(name, corpus.sourceTagger).expensiveGet(),
-                progress,
-                preview,
-                resultSummary,
-                lastModified = this@Job.lastModified
-            )
-        }
-    }
-
-    val annotationTypes: Set<String>
-        get() {
-            // loop through each document's sourceLayer and keep track of the used annotations
-            // VERY EXPENSIVE
-            val produces = mutableSetOf<String>()
-            documents.forEach { documentJob ->
-                val layer = documentJob.result
-                // You might think that only checking the first term is enough
-                // But throughout the document, different annotations might be present.
-                // E.G. a TEI document like:
-                // <p> <pc pos="PC">.</w> <w pos="NOU" lemma="word">word</w> </p>
-                layer.terms.forEach { term ->
-                    term.annotations.keys.forEach { produces.add(it.value) }
-                }
-            }
-            return produces
-        }
-
-    val state: JobState
-        get() {
-            deleteInactiveProcesses()
-            return stateCache.get<JobState>()
-        }
-
-    fun documentOrThrow(name: String): DocumentJob {
-        // Does the document exist?
-        // Throws DocumentNotFoundException which we don't want to obscure by throwing DocumentJobNotFoundException
-        corpus.documents.readOrThrow(name)
-        // Retrieve the documentJob then.
-        val file = documentsWorkDirectory.resolve(name)
-        if (file.exists()) return DocumentJob(file)
-        else throw DocumentJobNotFoundException(name)
-    }
-
-    // We can't unduplicate this from documentOrThrow, because of throwing specific exceptions.
-    fun documentOrNull(name: String): DocumentJob? {
-        // Does the document exist?
-        if (corpus.documents.readOrNull(name) == null) {
-            return null
-        }
-        // Retrieve the documentJob then.
-        val file = documentsWorkDirectory.resolve(name)
-        return if (file.exists()) DocumentJob(file)
-        else null
-    }
-
-    // Note that this creates the folder if it doesn't exist
-    /** Open an existing [DocumentJob] or create an empty one if it does not exist. */
-    fun documentOrEmpty(name: String): DocumentJob {
-        return DocumentJob(documentsWorkDirectory.resolve(name))
-    }
-
     fun documentNameForProcessingIDOrNull(id: UUID): String? {
-        return documents.filter { it.getProcessingID == id }.map { it.name }.firstOrNull()
+        return documentJobs.readAll().filter { it.processingID == id }.map { it.name }.firstOrNull()
     }
 
     fun start() {
@@ -253,7 +158,7 @@ class Job(
 
     fun next() {
         if (name == SOURCE_LAYER_NAME) throw SourceLayerNotATaggerException()
-        if (!isActive) return
+        if (isActive == false) return
         // Launch a coroutine so we can quickly return
         runBlocking {
             launch {
@@ -269,7 +174,7 @@ class Job(
      */
     private fun uploadDocs() {
         // Quickly count the documents currently being processed
-        val numCurrentlyBeingProcessed = documents.count { it.status == DocumentProcessingStatus.PROCESSING }
+        val numCurrentlyBeingProcessed = documentJobs.readAll().count { it.status == DocumentProcessingStatus.PROCESSING }
 
         // Upload the first documents to the tagger
         // Because the tag function might be activated multiple times,
@@ -278,12 +183,12 @@ class Job(
 
         // Upload the documents to the tagger
         corpus.documents.readAll().filter {
-            val docJob = documentOrEmpty(it.metadata.name)
+            val docJob = documentJobs.readOrNull(it.name) ?: documentJobs.createOrThrow(it.name)
             docJob.status == DocumentProcessingStatus.PENDING || docJob.status == DocumentProcessingStatus.ERROR
         }.take(numberToUpload).forEach {
             val processingID = postInputToTagger(it.plainTextFile)
             // Store the processingID, so we can match it with the incoming file later
-            documentOrThrow(it.metadata.name).setProcessingID(processingID)
+            documentJobs.readOrThrow(it.name).processingID = processingID
         }
     }
 
@@ -291,10 +196,10 @@ class Job(
     fun cancel() {
         if (name == SOURCE_LAYER_NAME) throw SourceLayerNotATaggerException()
         isActive = false
-        documents.forEach { documentJob ->
+        documentJobs.readAll().forEach { documentJob ->
             try {
                 if (documentJob.isProcessing) {
-                    deleteInputAtTagger(documentJob.getProcessingID!!)
+                    deleteInputAtTagger(documentJob.processingID!!)
                 }
             } catch (e: Exception) {
                 // Ignore, so we cancel other documents even if one fails.
@@ -306,7 +211,7 @@ class Job(
 
     fun delete() {
         cancel()
-        workDirectory.deleteRecursively()
+        dir.deleteRecursively()
     }
 
     /** Upload a single file to the tagger */

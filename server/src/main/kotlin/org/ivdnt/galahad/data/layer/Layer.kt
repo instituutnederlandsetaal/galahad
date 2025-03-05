@@ -18,9 +18,9 @@ open class Layer(
     @JsonProperty("terms") val terms: MutableList<Term> = mutableListOf(),
 ) {
     /** Numerical summary of the [terms] and [wordForms] in this [Layer] and their containing number of [Term.lemma] and [Term.pos]. */
+    // TODO: do we still use this, and if so, report on every annotation type.
     val summary
-        get() = LayerSummary(numWordForms = wordForms.size, numTerms = terms.size,
-            numLemma = terms.count { it.hasLemma }, numPOS = terms.count { it.hasPOS })
+        get() = LayerSummary(numWordForms = wordForms.size)
 
     /** A preview of the [terms] and [wordForms] in this [Layer] up to the first [Term] whose [Term.firstOffset] exceeds [LAYER_PREVIEW_LENGTH].
      * Note that this [Term.firstOffset] corresponds to a [WordForm.offset]. */
@@ -84,3 +84,28 @@ open class Layer(
         val EMPTY = Layer("EMPTY")
     }
 }
+
+/**
+ * A single uploaded file may contain multiple documents. (E.g. connlu "newdoc id", tei "<text>")
+ * Those may be split into paragraphs, sentences, etc.
+ */
+
+class AnnotationLayer(
+    val documents: List<DocumentLayer>
+)
+
+class DocumentLayer(
+    val id: String,
+    val paragraphs: List<ParagraphLayer>,
+)
+
+class ParagraphLayer(
+    val id: String,
+    val sentences: List<SentenceLayer>
+)
+
+class SentenceLayer(
+    val id: String,
+    val wordforms: List<WordForm>,
+    val terms: List<Term>,
+)

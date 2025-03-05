@@ -22,13 +22,13 @@ class DocumentJobTest {
     @Test
     fun `Create DocumentJob`() {
         // add a doc
-        val name = corpus.documents.create(File.createTempFile("tmp", ".txt"))
+        val doc = corpus.documents.createOrThrow(File.createTempFile("tmp", ".txt"))
         // create a job
         val job: Job = corpus.jobs.createOrThrow(TestConfig.TAGGER_NAME)
 
-        val dj: DocumentJob = job.documentOrEmpty(name)
+        val dj: DocumentJob = job.createOrThrow(doc.name, Layer.EMPTY)
         // verify
-        assertEquals(name, dj.name)
+        assertEquals(doc.name, dj.name)
         assertNull(dj.getError)
         assertNull(dj.getProcessingID)
         assertFalse(dj.isProcessing)

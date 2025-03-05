@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.taggers
 
 import org.apache.logging.log4j.kotlin.Logging
-import org.ivdnt.galahad.BaseFileSystemStore
+import org.ivdnt.galahad.filesystem.GalahadFile
 import org.ivdnt.galahad.app.ExpensiveGettable
 import org.ivdnt.galahad.app.application_profile
 import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
@@ -14,12 +14,12 @@ import java.net.URL
 
 const val TAGGERS_DIR = "data/taggers"
 
-class TaggerStore : BaseFileSystemStore(
+class TaggerStore : GalahadFile(
     File(TAGGERS_DIR)
 ), Logging {
 
     val ids: List<String>
-        get() = workDirectory.listFiles()
+        get() = dir.listFiles()
             ?.map { it.nameWithoutExtension }
             ?: throw Exception("Failed to get tagger ids")
 
@@ -47,7 +47,7 @@ class TaggerStore : BaseFileSystemStore(
         object : ExpensiveGettable<Tagger?> {
             override fun expensiveGet(): Tagger? {
                 if (tagger == SOURCE_LAYER_NAME) return sourceLayerTagger?.expensiveGet() // throw Exception("Don't use this for sourceLayer")
-                val file = workDirectory.resolve("$tagger.yaml")
+                val file = dir.resolve("$tagger.yaml")
                 return try {
                     Yaml(Constructor(Tagger::class.java, LoaderOptions())).load<Tagger>(file.inputStream())
                 } catch (e: Exception) {

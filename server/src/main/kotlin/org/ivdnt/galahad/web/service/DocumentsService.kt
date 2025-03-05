@@ -2,6 +2,7 @@ package org.ivdnt.galahad.web.service
 
 import jakarta.servlet.http.HttpServletRequest
 import org.apache.logging.log4j.kotlin.Logging
+import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.data.document.Document
 import org.ivdnt.galahad.data.document.DocumentMetadata
 import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
@@ -18,7 +19,6 @@ import java.util.zip.ZipFile
 import kotlin.io.path.createTempDirectory
 
 
-
 val ZIP_TYPES = listOf("application/zip", "application/x-zip-compressed", "application/octet-stream")
 
 @Service
@@ -27,26 +27,33 @@ class DocumentsService(val corpora: CorporaService) : Logging {
     @Autowired
     private val request: HttpServletRequest? = null
 
-    fun UUID.writeJobs() = corpora.getWriteAccessOrThrow(this, request).jobs
-    fun UUID.readDocs() = corpora.getReadAccessOrThrow(this, request).documents
-    fun UUID.writeDocs() = corpora.getWriteAccessOrThrow(this, request).documents
-    fun UUID.readJobs() = corpora.getReadAccessOrThrow(this, request).jobs
+    private val user get() = User.fromRequest(request)
+
+    fun UUID.writeJobs() = corpora.readAsWriterOrThrow(this, user).jobs
+    fun UUID.readDocs() = corpora.readAsReaderOrThrow(this, user).documents
+    fun UUID.writeDocs() = corpora.readAsWriterOrThrow(this, user).documents
+    fun UUID.readJobs() = corpora.readAsReaderOrThrow(this, user).jobs
+
 
     fun read(corpus: UUID, document: String): Document {
         return corpus.readDocs().readOrThrow(document)
     }
 
     fun readAll(corpus: UUID): Set<DocumentMetadata> {
-        return corpus.readDocs().readAll().mapNotNull {
-            // Potentially, the uploaded file might no longer exist, so try.
-            try {
-                it.metadata
-            } catch (e: Exception) {
-                // Consider the document a lost cause.
-                delete(corpus, it.name)
-                null
-            }
-        }.toSet()
+        return corpus.readDocs().readAll().map { it.metadata }.toSet()
+
+        // TODO: check if we still need to delete lost causes
+
+        // return corpus.readDocs().readAll().mapNotNull {
+        //     // Potentially, the uploaded file might no longer exist, so try.
+        //     try {
+        //         it.metadata
+        //     } catch (e: Exception) {
+        //         // Consider the document a lost cause.
+        //         delete(corpus, it.name)
+        //         null
+        //     }
+        // }.toSet()
     }
 
     fun create(file: MultipartFile, corpus: UUID) {
@@ -61,11 +68,9 @@ class DocumentsService(val corpora: CorporaService) : Logging {
 
     fun delete(corpus: UUID, document: String) {
         // Delete all jobs and results of this document.
-        corpus.writeJobs().readAll().forEach { it.documentOrNull(document)?.delete() } // Doesn't matter if null.
-        // Invalidate corpus cache
-        corpora.readOrNull(corpus)?.invalidateCache()
+        corpus.writeJobs().readAll().forEach { it.documentJobs.deleteOrNull(document) } // Doesn't matter if null.
         // Now delete it
-        corpus.writeDocs().delete(document)
+        corpus.writeDocs().deleteOrThrow(document)
     }
 
     private fun uploadZipFile(file: MultipartFile, corpus: UUID) {
@@ -108,27 +113,34 @@ class DocumentsService(val corpora: CorporaService) : Logging {
         val tmpDir: File = createTempDirectory("upload").toFile()
         val file = tmpDir.resolve(fileName)
         file.outputStream().use { input.copyTo(it) }
+        // access the corpus
+        val docs = corpus.writeDocs()
         // create the document
         val document: Document
         try {
-            document = corpus.writeDocs().createOrThrow(file)
+            document = docs.createOrThrow(file)
         } catch (e: Exception) {
             // Document is somehow invalid.
             // Show error to user, but don't save the file
-            corpus.writeDocs().delete(file.name)
+            docs.deleteOrNull(file.name)
             throw DocumentInvalidException(file.name, e.message)
         }
         // Invalidate job caches.
         invalidateJobCaches(corpus)
+
+        // TODO: check if we indeed don't need to invalidate the corpus cache
         // Invalidate corpus cache
-        corpora.readOrNull(corpus)?.invalidateCache()
+        //corpora.readOrNull(corpus)?.invalidateCache()
+
+
+        // TODO: you could perhaps argue that this just happen in Document(s).create
         // Set the sourceLayer as job.
         val sourceLayerJob = corpus.writeJobs().createOrThrow(SOURCE_LAYER_NAME)
-        sourceLayerJob.documentOrEmpty(document.name).setResult(document.sourceLayer)
+        sourceLayerJob.createOrThrow(document.name, document.sourceLayer)
     }
 
+    // TODO: better way of cache invalidation
     private fun invalidateJobCaches(corpus: UUID) {
-        val jobs = corpus.writeJobs()
-        jobs.readAll().map { it.stateFile.delete() }
+        corpus.writeJobs().readAll().forEach { it.metadataFile.delete() }
     }
 }

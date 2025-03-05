@@ -74,13 +74,13 @@ internal class TEIExportTest {
     fun punctuationExportTest() {
 
         val teiFile = TEIFile(Resource.get("tei/oneparagraph/mocktei.xml"))
-        DocTest.builder(corpus).expecting("Dit is wat oefentekst.").got(teiFile.plainText().readText())
+        DocTest.builder(corpus).expecting("Dit is wat oefentekst.").got(teiFile.plaintext)
             .ignoreTrailingWhiteSpaces().result()
 
         val tagset = TagsetStore().getOrNull("TDN-Core")!!
 
         val layer = LayerBuilder().loadLayerFromTSV(
-            "tei/export/mock-TDN-with-punctuation.tsv", teiFile.plainText().readText()
+            "tei/export/mock-TDN-with-punctuation.tsv", teiFile.plaintext
         ).assertWordFromsAndTermsSize(5, 5).setTagset(tagset).build()
 
         DocTest.builder(corpus).expectingFile("tei/export/mock-TDN-with-punctuation-result.xml")
@@ -93,7 +93,7 @@ internal class TEIExportTest {
     fun mergePuncutationTest() {
 
         val tagset = TagsetStore().getOrNull("TDN-Core")!!
-        val plaintext = TEIFile(Resource.get("tei/dummies/punctutation-mixed-tags.xml")).plainText().readText()
+        val plaintext = TEIFile(Resource.get("tei/dummies/punctutation-mixed-tags.xml")).plaintext
         val layer = LayerBuilder().loadLayerFromTSV("tei/dummies/punctuation-mixed-tags-sample-layer.tsv", plaintext)
             .setTagset(tagset).build()
 
@@ -135,14 +135,14 @@ internal class TEIExportTest {
         for (i in 1..testsize) {
             tempFile.appendText(oneKDummies)
         }
-        val docName = corpus.documents.create(tempFile)
+        val doc = corpus.documents.createOrThrow(tempFile)
 
         println("Created temp file. Temp file size: ${tempFile.length()} bytes")
 
         // build a layer that is a valid annotation of the temp file
         val layer = LayerBuilder().loadDummies(testsize * 1000).setTagset(tagset).build()
-        corpus.jobs.readOrCreateOrNull(jobName)?.documentOrEmpty(docName)?.setResult(layer)
-            ?: throw Exception("Could not set layer result")
+        val job = corpus.jobs.createOrThrow(jobName)
+        job.createOrThrow(doc.name,layer)
 
         println("Created layer. Layer size: ${layer.wordForms.size} wordforms")
 
@@ -150,11 +150,11 @@ internal class TEIExportTest {
 
         // convert the layer to TEI to test conversion
         // remember the output to reuse as TEI-file in the merge test
-        val teiConvertedFile = corpus.documents.readOrThrow(docName).convert(
+        val teiConvertedFile = doc.convert(
             DocumentTransformMetadata(
                 corpus = corpus,
-                job = corpus.jobs.readOrThrow(jobName),
-                document = corpus.documents.readOrThrow(docName),
+                job = job,
+                document = doc,
                 user = User("test-user"),
                 targetFormat = DocumentFormat.TeiP5
             )
@@ -163,16 +163,15 @@ internal class TEIExportTest {
         displayMemory()
         println("Created teiFile. teiFile size: ${teiConvertedFile.length()} bytes")
 
-        val teiUploadedFileName = corpus.documents.create(teiConvertedFile)
-        corpus.jobs.readOrCreateOrNull(jobName)?.documentOrEmpty(teiUploadedFileName)?.setResult(layer)
-            ?: throw Exception("Could not set layer result")
+        val teiUploadedDoc = corpus.documents.createOrThrow(teiConvertedFile)
+        job.createOrThrow(teiUploadedDoc.name,layer)
 
         // merge the layer with the TEI-file
-        val teiMergedFile = corpus.documents.readOrThrow(teiUploadedFileName).merge(
+        val teiMergedFile = corpus.documents.readOrThrow(teiUploadedDoc.name).merge(
             DocumentTransformMetadata(
                 corpus = corpus,
                 job = corpus.jobs.readOrThrow(jobName),
-                document = corpus.documents.readOrThrow(teiUploadedFileName),
+                document = corpus.documents.readOrThrow(teiUploadedDoc.name),
                 user = User("test-user"),
                 targetFormat = DocumentFormat.TeiP5
             )

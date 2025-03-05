@@ -6,7 +6,6 @@ import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.INTERNAL_JOBS_ERROR_URL
 import org.ivdnt.galahad.app.INTERNAL_JOBS_RESULT_URL
 import org.ivdnt.galahad.data.document.Document
-import org.ivdnt.galahad.data.document.FormatInducer
 import org.ivdnt.galahad.data.layer.Layer
 import org.ivdnt.galahad.exceptions.InvalidDocumentFormatException
 import org.ivdnt.galahad.formats.InternalFile
@@ -43,7 +42,7 @@ class InternalJobController(
         corpora.all.forEach { corpus ->
             corpus.jobs.readAll().forEach { job ->
                 val candidate = job.documentNameForProcessingIDOrNull(processingID)
-                if (candidate != null) return Triple(corpus.metadata.expensiveGet().uuid, job.name, candidate)
+                if (candidate != null) return Triple(corpus.uuid, job.name, candidate)
             }
         }
         return null
@@ -65,43 +64,39 @@ class InternalJobController(
             file.transferTo(tempFile)
             val (corpusID, jobName, documentName) = dataForProcessingID(fileId)
                 ?: throw Exception("Processing ID not found, was this file uploaded by me?")
-            val original: Document = corpora.getUncheckedCorpusAccess(corpusID).documents.readOrThrow(documentName)
-            val job: Job = corpora.getUncheckedCorpusAccess(corpusID).jobs.readOrThrow(jobName)
+            val original: Document = corpora.readCorpusUnsafe(corpusID).documents.readOrThrow(documentName)
+            val job: Job = corpora.readCorpusUnsafe(corpusID).jobs.readOrThrow(jobName)
             val taggerTagger: Tagger? = job.taggerStore.getSummaryOrNull(job.name, null).expensiveGet()
             val tagset: Tagset? = tagsets.getOrNull(taggerTagger?.tagset)
-            val format = FormatInducer.determineFormat(tempFile)
-            when (val uploadedFile = InternalFile.create(tempFile, format).expensiveGet()) {
+            when (val uploadedFile = InternalFile.create(tempFile)) {
                 // Treat TSVFiles separately form SourceLayerableFiles, because calling sourceLayer() on a TSV
                 // Would default its alignment to offset=0. Instead, we force it to align with the original plaintext.
                 is ConlluFile -> {
                     val alignedLayer = uploadedFile.mapOnPlainText(
-                        plaintext = original.plaintext,
-                        layerName = jobName
+                        plaintext = original.plaintext, layerName = jobName
                     )
-                    job.documentOrThrow(documentName).setResult(
-                        Layer(
-                            name = jobName,
-                            tagset = tagset ?: Tagset.UNKNOWN,
-                            wordForms = alignedLayer.wordForms,
-                            terms = alignedLayer.terms
-                        )
+                    job.documentJobs.readOrThrow(documentName).layer = Layer(
+                        name = jobName,
+                        tagset = tagset ?: Tagset.UNKNOWN,
+                        wordForms = alignedLayer.wordForms,
+                        terms = alignedLayer.terms
                     )
+
                 }
 
                 is TSVFile -> {
                     val alignedLayer = uploadedFile.mapOnPlainText(
-                        plaintext = original.plaintext,
-                        layerName = jobName
+                        plaintext = original.plaintext, layerName = jobName
                     )
-                    job.documentOrThrow(documentName).setResult(
-                        Layer(
-                            name = jobName,
-                            tagset = tagset ?: Tagset.UNKNOWN,
-                            wordForms = alignedLayer.wordForms,
-                            terms = alignedLayer.terms
-                        )
+                    job.documentJobs.readOrThrow(documentName).layer = Layer(
+                        name = jobName,
+                        tagset = tagset ?: Tagset.UNKNOWN,
+                        wordForms = alignedLayer.wordForms,
+                        terms = alignedLayer.terms
                     )
+
                 }
+
                 else -> {
                     throw InvalidDocumentFormatException("File type not supported")
                 }
@@ -132,8 +127,8 @@ class InternalJobController(
         logger.info("Received error with processing id $fileId: $message")
         val (corpusID, jobName, documentName) = dataForProcessingID(fileId)
             ?: throw Exception("Processing ID not found, was this file uploaded by me?")
-        corpora.getUncheckedCorpusAccess(corpusID).jobs.readOrThrow(jobName).documentOrThrow(documentName)
-            .setError(message)
+        corpora.readCorpusUnsafe(corpusID).jobs.readOrThrow(jobName).documentJobs.readOrThrow(documentName).error =
+            message
 
         // TODO Even thought we had an error, we can consider job.next() here
         return "KEEP" // or "DELETE"

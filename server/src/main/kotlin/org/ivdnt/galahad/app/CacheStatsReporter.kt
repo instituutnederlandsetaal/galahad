@@ -2,7 +2,7 @@ package org.ivdnt.galahad.app
 
 import org.springframework.scheduling.annotation.Scheduled
 import org.apache.logging.log4j.kotlin.Logging
-import org.ivdnt.galahad.FileBackedValue
+import org.ivdnt.galahad.filesystem.FileBackedValue
 import org.ivdnt.galahad.util.toFixed
 import org.springframework.stereotype.Component
 import java.util.concurrent.TimeUnit

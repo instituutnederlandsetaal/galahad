@@ -27,13 +27,13 @@ class TEILayerMerger (
     override fun merge(): TEIFile {
         val result = createTempDirectory("teimerge").toFile().resolve( document.name )
         result.writeText( parser.xmlToString( false ) )
-        return TEIFile(result, document.format)
+        return TEIFile(result, document.metadata.format)
     }
 
     init {
-        parser = BLFXMLParser.forFileWithFormat(transformMetadata.document.format, teiFile.file, OutputStream.nullOutputStream()) {
+        parser = BLFXMLParser.forFileWithFormat(transformMetadata.document.metadata.format, teiFile.file, OutputStream.nullOutputStream()) {
             node: Node, offset: Int, document: Document ->
-            val merger = TEITextMerger(node, offset, document, wordFormIter, deleteList, result, transformMetadata.document.format)
+            val merger = TEITextMerger(node, offset, document, wordFormIter, deleteList, result, transformMetadata.document.metadata.format)
             merger.merge()
         }
         xmlDoc = parser.xmlDocument

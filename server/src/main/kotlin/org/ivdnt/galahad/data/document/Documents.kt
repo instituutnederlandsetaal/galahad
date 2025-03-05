@@ -1,6 +1,6 @@
 package org.ivdnt.galahad.data.document
 
-import org.ivdnt.galahad.BaseFileSystemStore
+import org.ivdnt.galahad.filesystem.GalahadFile
 import org.ivdnt.galahad.app.CRDSet
 import org.ivdnt.galahad.exceptions.DocumentNotFoundException
 import java.io.File
@@ -12,34 +12,30 @@ import org.apache.logging.log4j.kotlin.logger
  * This class represents their common parent directory "documents/".
  */
 class Documents(
-    workDirectory: File,
-) : BaseFileSystemStore(workDirectory), CRDSet<String, Document, File> {
-
-    val allNames: List<String>
-        get() = workDirectory.list()?.toList() ?: throw Exception("Could not read document names")
-
-    override fun readOrThrow(key: String): Document {
-        return readOrNull(key) ?: throw DocumentNotFoundException(key)
-    }
-
-    /** Retrieve a single document */
-    override fun readOrNull(key: String) =
-        if (workDirectory.resolve(key).exists()) Document(workDirectory.resolve(key)) else null
-
-    // Note: this is a relatively expensive operation, you might want to use a different method
-    override fun readAll(): Set<Document> = workDirectory.listFiles()?.map { Document(it) }?.toSet() ?: setOf()
-
-    /** Delete a single document */
-    override fun delete(key: String) {
-        val fullyDeleted: Boolean = workDirectory.resolve(key).deleteRecursively()
-        if (!fullyDeleted) logger.warn("Partial deletion of $key")
-    }
-
+    dir: File,
+) : GalahadFile(dir), CRDSet<String, Document, File> {
     /**
      * Create a new document, which includes creating a directory,
      * storing the uploaded file, metadata, format, parsing it to plaintext and extracting source annotations.
      */
-    override fun createOrNull(file: File): Document? {
-        return Document.create(workDirectory.resolve(file.name), file)
+    override fun createOrThrow(file: File): Document {
+        return Document.create(dir.resolve(file.name), file)
+    }
+
+    // Note: this is a relatively expensive operation, you might want to use a different method
+    override fun readAll(): Set<Document> = dir.list()?.map { readOrThrow(it) }?.toSet() ?: setOf()
+
+    /** Retrieve a single document */
+    override fun readOrNull(key: String) =
+        if (dir.resolve(key).exists()) Document(dir.resolve(key)) else null
+
+    override fun readOrThrow(key: String) = readOrNull(key) ?: throw DocumentNotFoundException(key)
+
+    /** Delete a single document */
+    override fun deleteOrThrow(key: String) {
+        readOrThrow(key) // does it exist?
+        if (!dir.resolve(key).deleteRecursively()) {
+            logger.warn("Partial deletion of $key")
+        }
     }
 }

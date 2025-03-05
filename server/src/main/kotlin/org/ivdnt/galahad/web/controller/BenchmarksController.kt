@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import jakarta.servlet.http.HttpServletRequest
 import org.apache.logging.log4j.kotlin.Logging
-import org.ivdnt.galahad.FileBackedCache
+import org.ivdnt.galahad.filesystem.FileBackedCache
 import org.ivdnt.galahad.app.BENCHMARKS_URL
 import org.ivdnt.galahad.app.BENCHMARK_URL
 import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
@@ -120,6 +120,6 @@ class BenchmarksController(
     @CrossOrigin
     @GetMapping(BENCHMARKS_URL)
     fun getAssays(): BenchmarksMatrix {
-        return benchmarksMatrix.get<BenchmarksMatrix>()
+        return benchmarksMatrix.read<BenchmarksMatrix>()
     }
 }

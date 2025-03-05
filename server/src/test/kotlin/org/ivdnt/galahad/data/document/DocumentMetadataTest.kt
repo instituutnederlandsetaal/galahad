@@ -22,7 +22,7 @@ class DocumentMetadataTest {
         val file = Resource.get(path)
         val plaintext = file.readText()
         val doc = Resource.getDoc(path)
-        val meta = doc.metadata.expensiveGet()
+        val meta = doc.metadata
         assertEquals("input.txt", meta.name)
         assertEquals(DocumentFormat.Txt.identifier, meta.format)
         assertEquals(plaintext.count { it.isLetter() }, meta.numAlphabeticChars)
@@ -31,7 +31,6 @@ class DocumentMetadataTest {
         val layer = meta.layerSummary
         val total = layer.numLemma + layer.numPOS + layer.numTerms + layer.numWordForms
         assertEquals(0, total)
-        assert(meta.valid)
     }
 
     @Test
@@ -40,7 +39,7 @@ class DocumentMetadataTest {
         val file = Resource.get(path)
         val doc = Resource.getDoc(path)
         val plaintext = doc.plaintext
-        val meta = doc.metadata.expensiveGet()
+        val meta = doc.metadata
         assertEquals("input.tei.xml", meta.name)
         assertEquals(DocumentFormat.TeiP5.identifier, meta.format)
         assertEquals(plaintext.count { it.isLetter() }, meta.numAlphabeticChars)
@@ -51,6 +50,5 @@ class DocumentMetadataTest {
         assertEquals(13, layer.numPOS)
         assertEquals(21, layer.numTerms)
         assertEquals(21, layer.numWordForms)
-        assert(meta.valid)
     }
 }

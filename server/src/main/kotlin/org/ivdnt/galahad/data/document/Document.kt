@@ -1,9 +1,9 @@
 package org.ivdnt.galahad.data.document
 
 import org.apache.logging.log4j.kotlin.Logging
-import org.ivdnt.galahad.BaseFileSystemStore
-import org.ivdnt.galahad.FileBackedValue
 import org.ivdnt.galahad.data.layer.Layer
+import org.ivdnt.galahad.filesystem.GalahadFile
+import org.ivdnt.galahad.filesystem.FileBackedValue
 import org.ivdnt.galahad.formats.DocumentTransformMetadata
 import org.ivdnt.galahad.formats.InternalFile
 import org.ivdnt.galahad.formats.conllu.export.LayerToConlluConverter
@@ -15,81 +15,79 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
-import java.util.*
 import kotlin.io.path.createTempDirectory
 
 const val SOURCE_LAYER_NAME = "sourceLayer"
-const val PREVIEW_LENGTH: Int = 100
+const val SOURCE_LAYER_FILE = "$SOURCE_LAYER_NAME.json"
+const val METADATA_FILE = "metadata.json"
+const val PLAINTEXT_FILE = "plaintext.txt"
 
 /**
  * Documents are saved as folders with their file name as folder name, including extension.
- * Initializing a document object resolves a path, but does not yet [Document.parse] the document.
- * Parsing is done on demand, as it is an expensive operation.
+ * Initializing a document object resolves a path, but does not fill the folder with data.
+ * Use [Document.create] instead.
  *
- * A folder can have the following files, that store the document's data:
- * - format: the [DocumentFormat] of the document.
- * - plaintext: the document's text content
- * - uuid: a unique identifier for the document. Used as a metadata pid when converting a layer to TEI.
- * - sourceLayer: the document's source annotations as a [Layer]
- * - metadata.cache: a cache file storing [DocumentMetadata] about the document
+ * A folder has the following files, that store the document's data:
+ * - plaintext.txt: the document's text content
+ * - sourceLayer.json: the document's source annotations as a [Layer]
+ * - metadata.json: a cache file storing [DocumentMetadata] about the document
  * - uploaded/[name]: the uploaded raw file
  */
 class Document(
     dir: File,
-) : BaseFileSystemStore(
-    dir
-), Logging {
-    /** File name including extension */
-    val name: String = dir.name
-
+) : GalahadFile(dir), Logging {
     // Files in the document folder.
-    private val formatFile = dir.resolve("format")
-    val plainTextFile = dir.resolve("plaintext")
-    private val uuidFile = dir.resolve("uuid")
-    private val metadataFile = dir.resolve("metadata")
-    private val sourceLayerFile = dir.resolve(SOURCE_LAYER_NAME)
+    val plainTextFile = dir.resolve(PLAINTEXT_FILE)
+    private val metadataFile = dir.resolve(METADATA_FILE)
+    private val sourceLayerFile = dir.resolve(SOURCE_LAYER_FILE)
     val uploadedFile = dir.resolve("uploaded").resolve(name)
 
     // Values in those files.
 
-    val format: DocumentFormat
-        get() = DocumentFormat.fromString(formatFile.readText())
-
-    val plaintext: String
-        get() = plainTextFile.readText()
+    /** The plaintext content of the document. */
+    val plaintext: String by lazy {
+        try {
+            plainTextFile.readText()
+        } catch (e: Exception) {
+            logger.error("Error reading plaintext file, creating new plaintext", e)
+            val internalFile = InternalFile.create(uploadedFile)
+            val text = internalFile.plaintext
+            plainTextFile.writeText(text)
+            text
+        }
+    }
 
     /**
      * The UUID is only used as a metadata pid when converting a layer to TEI (for now).
      * When merging TEI, it is only used if the document itself defines no pid.
      */
-    val uuid: UUID
-        get() = UUID.fromString(uuidFile.readText())
-
-    /**
-     * For the sake of backwards compatibility with GaLAHaD 1.x.x,
-     * we will create the metadata if is not present.
-     */
-    val metadata: DocumentMetadata
-        get() {
-            if (!metadataFile.exists()) {
-                logger.debug("Document Metadata file not found, creating new metadata")
-                val metadata = createDocMeta(name, format, plaintext, sourceLayer)
-                FileBackedValue(metadataFile, DocumentMetadata.EMPTY).modify<DocumentMetadata> { metadata }
-                return metadata
-            }
-            return FileBackedValue(metadataFile, DocumentMetadata.EMPTY).read<DocumentMetadata>()
+    val metadata: DocumentMetadata by lazy {
+        // For the sake of backwards compatibility with GaLAHaD 1.x.x, we create metadata if not present.
+        try {
+            FileBackedValue<DocumentMetadata>(metadataFile).readOrThrow()
+        } catch (e: Exception) {
+            logger.error("Error reading metadata file, creating new metadata", e)
+            val metadata = DocumentMetadata.create(internalFile)
+            FileBackedValue<DocumentMetadata>(metadataFile).write(metadata)
         }
+    }
 
     /** Source annotations, if present. Saved to disk. */
-    val sourceLayer: Layer
-        get() = FileBackedValue(sourceLayerFile, Layer.EMPTY).read<Layer>()
+    val sourceLayer: Layer by lazy {
+        try {
+            FileBackedValue<Layer>(sourceLayerFile).readOrThrow()
+        } catch (e: Exception) {
+            logger.error("Error reading source layer file, creating new layer", e)
+            FileBackedValue<Layer>(sourceLayerFile).write(internalFile.sourceLayer)
+        }
+    }
 
-    val internalFile: InternalFile
-        get() = InternalFile.create(uploadedFile, format).expensiveGet()
+    /** [DocumentFormat]-parsed file. */
+    val internalFile: InternalFile by lazy { InternalFile.create(uploadedFile) }
 
     /** Convert document to desired format. */
     fun convert(transformMetadata: DocumentTransformMetadata): File {
-        val docName = workDirectory.resolve(transformMetadata.document.name).nameWithoutExtension
+        val docName = uploadedFile.nameWithoutExtension
         return when (transformMetadata.targetFormat) {
             // The file is what we are interested in, and it is expensive to initialize the documents, so we just pass the file
             DocumentFormat.Folia -> LayerToFoliaConverter(transformMetadata).convertToFileNamed(docName)
@@ -110,8 +108,7 @@ class Document(
     }
 
     /** Merge an annotation layer with the original uploaded file, retaining the document structure. */
-    fun merge(transformMetadata: DocumentTransformMetadata) =
-        internalFile.merge(transformMetadata)
+    fun merge(transformMetadata: DocumentTransformMetadata) = internalFile.merge(transformMetadata)
 
     internal companion object {
         /**
@@ -124,49 +121,20 @@ class Document(
             // uploaded file
             file.copyTo(doc.uploadedFile)
 
-            // format
-            val format = FormatInducer.determineFormat(file)
-            doc.formatFile.writeText(format.identifier)
-
-            // uuid
-            val randomUuid = UUID.randomUUID()
-            doc.uuidFile.writeText(randomUuid.toString())
-
             // plaintext & sourceLayer
-            val internalFile = InternalFile.create(file, format).expensiveGet()
-            val plainText = internalFile.plainText()
-            val sourceLayer = internalFile.sourceLayer()
+            val internalFile = InternalFile.create(file)
+            val plainText = internalFile.plaintext
+            val sourceLayer = internalFile.sourceLayer
             // plaintext
             doc.plainTextFile.writeText(plainText)
-            // sourceLayer
-            // needs to be serialized, so writeText is not sufficient.
-            FileBackedValue(doc.sourceLayerFile, Layer.EMPTY).modify<Layer> { sourceLayer }
+            // sourceLayer; needs to be serialized, so writeText is not sufficient.
+            FileBackedValue<Layer>(doc.sourceLayerFile).write(sourceLayer)
 
-            // metadata
-            val metadata = createDocMeta(file.name, format, plainText, sourceLayer)
-            // needs to be serialized as well
-            FileBackedValue(doc.metadataFile, DocumentMetadata.EMPTY).modify<DocumentMetadata> { metadata }
+            // metadata; needs to be serialized as well
+            FileBackedValue<DocumentMetadata>(doc.metadataFile).write(DocumentMetadata.create(internalFile))
 
             // The same document object is now valid: it's folder data has been filled.
             return doc
-        }
-
-        private fun createDocMeta(
-            fileName: String,
-            format: DocumentFormat,
-            plainText: String,
-            sourceLayer: Layer,
-        ): DocumentMetadata {
-            val metadata = DocumentMetadata(
-                name = fileName,
-                format = format.identifier,
-                numChars = plainText.length,
-                numAlphabeticChars = plainText.filter { it.isLetter() }.length,
-                preview = plainText.take(PREVIEW_LENGTH) + if (plainText.length > PREVIEW_LENGTH) "..." else "",
-                layerSummary = sourceLayer.summary,
-                lastModified = System.currentTimeMillis()
-            )
-            return metadata
         }
     }
 }

@@ -19,22 +19,11 @@ import javax.xml.xpath.XPathFactory
 class NAFFile(
     override val file: File,
 ) : InternalFile {
-
     override val format: DocumentFormat = DocumentFormat.Naf
-
-    val xmlDoc: Document = getXmlBuilder().parse(file)
-
-    private val xPathfactory = XPathFactory.newInstance()
-    private val xpath = xPathfactory.newXPath()
-    private val expr = xpath.compile("/NAF/raw")
-    private val wfExpr = xpath.compile("/NAF/text/wf")
-    private val termExpr = xpath.compile("/NAF/terms/term")
-
-    override fun plainText(): String {
-        return (expr.evaluate(xmlDoc, XPathConstants.NODE) as Node).textContent
+    override val plaintext: String by lazy {
+        (expr.evaluate(xmlDoc, XPathConstants.NODE) as Node).textContent
     }
-
-    override fun sourceLayer(): Layer {
+    override val sourceLayer: Layer by lazy {
         val sourceLayer = Layer(SOURCE_LAYER_NAME)
         val xwfs = wfExpr.evaluate(xmlDoc, XPathConstants.NODESET) as NodeList
         for (i in 0 until xwfs.length) {
@@ -66,8 +55,17 @@ class NAFFile(
                 )
             )
         }
-        return sourceLayer
+        sourceLayer
     }
+
+    val xmlDoc: Document = getXmlBuilder().parse(file)
+    private val xPathfactory = XPathFactory.newInstance()
+    private val xpath = xPathfactory.newXPath()
+    private val expr = xpath.compile("/NAF/raw")
+
+    private val wfExpr = xpath.compile("/NAF/text/wf")
+
+    private val termExpr = xpath.compile("/NAF/terms/term")
 
     override fun merge(transformMetadata: DocumentTransformMetadata): NAFFile {
         throw MergeNotImplementedException(format.identifier)

@@ -25,7 +25,7 @@ class TEIMetadata(
 ) : XMLMetadata(xmlDoc, root, layer) {
 
     /** GaLAHaD-generated UUID */
-    private val internalPid: String = layer.transformMetadata.document.uuid.toString()
+    private val internalPid: String = layer.transformMetadata.document.metadata.uuid.toString()
 
     /**
      * Return the title of the document as described in titleStmt,
@@ -320,9 +320,9 @@ class TEIMetadata(
         // Only add if not already present (when merging).
         if (profileDesc.childOrNull("langUsage") == null) {
             val langUsage = profileDesc.createChild("langUsage")
-            val languageName = corpusMetadata.language ?: "Dutch"
-            // TODO: note the absence of @ident. We can't determine the language code from the language name.
-            val language = langUsage.createChild("language", languageName)
+            val languageName = corpusMetadata.language.toNonEmptyString("Dutch")
+            // TODO: note that for @ident we default to dutch
+            val language = langUsage.createChild("language", "ident" to "nl", languageName)
             addInterGrpTo(language, "dominantLanguage", "true")
         }
     }

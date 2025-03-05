@@ -30,12 +30,11 @@ class CorpusMetrics(
 
     init {
         corpus.documents.readAll().forEach {
-            val name = it.metadata.name
             add(
                 DocumentMetrics(
                     corpus,
-                    hypothesisJob.documentOrThrow(name).result,
-                    referenceJob.documentOrThrow(name).result,
+                    hypothesisJob.readOrThrow(it).result,
+                    referenceJob.readOrThrow(it).result,
                     settings,
                     layerFilter,
                     truncate

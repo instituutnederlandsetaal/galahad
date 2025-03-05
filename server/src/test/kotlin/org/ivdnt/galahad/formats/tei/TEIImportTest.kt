@@ -13,19 +13,19 @@ internal class TEIImportTest {
         @Test
         fun `Multiple text elements`() {
             val teiFile = TEIFile(Resource.get("tei/dummies/multipletextelements.xml"))
-            assertEquals("text1\ntext2 text3", teiFile.plainText().readText().trim())
+            assertEquals("text1\ntext2 text3", teiFile.plaintext.trim())
         }
 
         @Test
         fun `Simple word tags in one paragraph`() {
             val teiFile = TEIFile(Resource.get("tei/dummies/withwtags.xml"))
-            assertEquals("word1 word2", teiFile.plainText().readText().trim())
+            assertEquals("word1 word2", teiFile.plaintext.trim())
         }
 
         @Test
         fun `Simple word tags in two paragraph`() {
             val teiFile = TEIFile(Resource.get("tei/dummies/wandp.xml"))
-            assertEquals("word1 word2\n\nword3 word4", teiFile.plainText().readText().trim())
+            assertEquals("word1 word2\n\nword3 word4", teiFile.plaintext.trim())
         }
 
         @Test
@@ -44,7 +44,7 @@ internal class TEIImportTest {
         @Test
         fun `Import TEI with w-tags without spaces in between`() {
             val file = TEIFile(Resource.get("tei/nospaces/input.tei.xml"))
-            assertEquals("a a a", file.plainText().readText().trim())
+            assertEquals("a a a", file.plaintext.trim())
 
         }
     }

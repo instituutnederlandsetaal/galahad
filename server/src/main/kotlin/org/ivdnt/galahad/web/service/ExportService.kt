@@ -62,15 +62,15 @@ class ExportService(val corpora: CorporaService) : Logging {
     ) {
         val format = DocumentFormat.fromString(formatName)
         val ctm = getCorpusTransformMetadata(corpus, job, format)
-        ctm.corpus.getZipped(ctm, formatMapper = {
+        ctm.corpus.export(ctm, formatMapper = {
             try {
                 // Document conversions.
                 val dtm = ctm.documentMetadata(it.name)
-                return@getZipped if (shouldMerge && mergeFormatMatches(it, format)) {
-                    logger.info("Merging ${it.name} of format ${it.format}")
+                return@export if (shouldMerge && mergeFormatMatches(it, format)) {
+                    logger.info("Merging ${it.name} of format ${it.metadata.format}")
                     mergeDoc(dtm, posHeadOnly).file
                 } else {
-                    logger.info("Converting ${it.name} of format ${it.format} to $format")
+                    logger.info("Converting ${it.name} of format ${it.metadata.format} to $format")
                     convertDoc(dtm, posHeadOnly)
                 }
             } catch (e: MergeNotImplementedException) {
@@ -94,7 +94,7 @@ class ExportService(val corpora: CorporaService) : Logging {
         val corpus = corpora.getWriteAccessOrThrow(corpusID, request)
         val job = corpus.jobs.readOrThrow(jobName)
         return CorpusTransformMetadata(
-            corpus, job, User.getUserFromRequestOrThrow(request), formatName
+            corpus, job, User.fromRequest(request), formatName
         )
     }
 
@@ -110,7 +110,7 @@ class ExportService(val corpora: CorporaService) : Logging {
     private fun mergeFormatMatches(
         it: Document, format: DocumentFormat,
     ): Boolean {
-        var otherFormat = it.format
+        var otherFormat = it.metadata.format
         // Overwrite the format for legacy formats that can in fact be merged.
         if (otherFormat == DocumentFormat.TeiP5Legacy) {
             otherFormat = DocumentFormat.TeiP5
@@ -121,6 +121,4 @@ class ExportService(val corpora: CorporaService) : Logging {
     fun getCorpusName(corpus: UUID): String {
         return corpora.getWriteAccessOrThrow(corpus, request).metadata.expensiveGet().name
     }
-
-
 }

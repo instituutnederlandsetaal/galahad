@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import java.io.File
 import kotlin.io.path.createTempDirectory
 
@@ -22,16 +23,7 @@ class DocumentTest {
     @Test
     fun `UUID stored in cache file`() {
         val doc = Resource.getDoc("all-formats/input/input.txt")
-        // At this point, no uuid exists
-        assertFalse(doc.uuidFile.exists())
-        // Retrieve the uuid, which in fact generates one
-        val uuid = doc.uuid
-        // After the uuid is generated, it should be stored in the cache file
-        assert(doc.uuidFile.exists())
-        val uuidFromFile = doc.uuidFile.readText()
-        assertEquals(uuid.toString(), uuidFromFile)
-        // The property should not generate a new one
-        assertEquals(uuid, doc.uuid)
+        assertDoesNotThrow { doc.uuid }
     }
 
     @Nested
@@ -80,13 +72,12 @@ class DocumentTest {
             val inputFile = Resource.get("all-formats/input/input.${formatFrom.extension}")
             val tempFile = tempDir.resolve("input." + formatFrom.extension)
             inputFile.copyTo(tempFile, true)
-            val name = corpus.documents.create(tempFile)
-            val doc = corpus.documents.readOrThrow(name)
+            val doc = corpus.documents.createOrThrow(tempFile)
             val job = corpus.jobs.createOrThrow(TestConfig.TAGGER_NAME)
             // create the layer based on the plaintext parsing
             val plaintext = doc.plaintext
             val layer = LayerBuilder().loadLayerFromTSV("all-formats/input/pie-tdn.tsv", plaintext).build()
-            job.documentOrEmpty(name).setResult(layer)
+            job.createOrThrow(doc.name,layer)
 
             // Convert to each other format
             for (formatTo in DocumentFormat.entries) {

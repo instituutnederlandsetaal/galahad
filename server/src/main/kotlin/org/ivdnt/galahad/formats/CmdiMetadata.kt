@@ -2,6 +2,7 @@ package org.ivdnt.galahad.formats
 
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.data.corpus.CorpusMetadata
+import org.ivdnt.galahad.data.corpus.MutableCorpusMetadata
 import org.ivdnt.galahad.tagset.TagsetStore
 import org.ivdnt.galahad.util.escapeXML
 import org.ivdnt.galahad.util.getXmlBuilder
@@ -30,7 +31,7 @@ class CmdiMetadata(transformMetadata: DocumentTransformMetadata) : LayerTransfor
 
     // Some vals for repeated access.
     private val docTitle = document.uploadedFile.nameWithoutExtension
-    private val corpusMetadata: CorpusMetadata = transformMetadata.corpus.metadata.expensiveGet()
+    private val corpusMetadata: MutableCorpusMetadata = transformMetadata.corpus.mutableMetadata
     private val format = transformMetadata.targetFormat.identifier
 
     /** After initialization this file will contain the CMDI */
@@ -65,6 +66,7 @@ class CmdiMetadata(transformMetadata: DocumentTransformMetadata) : LayerTransfor
         val day = SimpleDateFormat("dd").format(now)
         val date = "$year-$month-$day"
         val galahadVersion = Config.galahadVersion()
+        val uuid = document.metadata.uuid
 
         // Define replacements
         return mapOf(
@@ -73,8 +75,8 @@ class CmdiMetadata(transformMetadata: DocumentTransformMetadata) : LayerTransfor
             listOf("Annotation_GaLAHaD//yearFrom", "Annotation_GaLAHaD//yearTo") to year,
             listOf("Annotation_GaLAHaD//monthFrom", "Annotation_GaLAHaD//monthTo") to "--$month",
             listOf("Annotation_GaLAHaD//dayFrom", "Annotation_GaLAHaD//dayTo") to "---$day",
-            listOf("ResourceRef") to "https://resolver.ivdnt.org/${document.uuid}",
-            listOf("GaLAHaDPersistentIdentifier") to "${document.uuid}_tei",
+            listOf("ResourceRef") to "https://resolver.ivdnt.org/$uuid",
+            listOf("GaLAHaDPersistentIdentifier") to "${uuid}_tei",
             listOf("conversionDescription") to "exported to $format by GaLAHaD",
             listOf("Conversion_GaLAHaD//toolVersion") to galahadVersion,
             listOf("sourceID") to docTitle,

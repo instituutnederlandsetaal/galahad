@@ -26,7 +26,7 @@ class JobsTest {
         assertNull(corpus.jobs.readOrNull(name))
         assertThrows(Exception::class.java) { corpus.jobs.readOrThrow(name) }
         // Create
-        val job = corpus.jobs.createOrNull(name)
+        val job = corpus.jobs.createOrThrow(name)
         // Check if created
         assertNotNull(job)
         assertEquals(1, corpus.jobs.readAll().size)
@@ -34,7 +34,7 @@ class JobsTest {
         assertNotNull(corpus.jobs.readOrNull(name))
         assertNotNull(corpus.jobs.readOrThrow(name))
         // delete
-        corpus.jobs.delete(name)
+        corpus.jobs.deleteOrThrow(name)
         // Check if deleted
         assertEquals(0, corpus.jobs.readAll().size)
         assertNull(corpus.jobs.readOrNull(name))

@@ -37,7 +37,7 @@ class JobsControllerTest(
     @Test
     fun postJob() {
         val corpus = createCorpus(config)
-        val docName = corpus.documents.create(Resource.get("all-formats/input/input.tei.xml"))
+        val doc = corpus.documents.createOrThrow(Resource.get("all-formats/input/input.tei.xml"))
         val uuid = corpus.metadata.expensiveGet().uuid
 
         assertEquals(taggers.getTaggers().size + 1, getJobs(uuid).size) // +1 for the sourceLayer
@@ -54,7 +54,7 @@ class JobsControllerTest(
         assertEquals(1, progress.finished)
 
         // check result
-        val resultPreview = getDocumentJobResult(uuid, TestConfig.TAGGER_NAME, docName)
+        val resultPreview = getDocumentJobResult(uuid, TestConfig.TAGGER_NAME, doc.name)
         assertEquals(TestConfig.TAGGER_NAME, resultPreview.name)
         assertTrue(resultPreview.summary.numWordForms > 0)
         assertTrue(resultPreview.summary.numTerms > 0)
@@ -70,11 +70,11 @@ class JobsControllerTest(
         ).body!!
     }
 
-    private fun getJobs(uuid: UUID): Set<JobState> {
+    private fun getJobs(uuid: UUID): Set<JobMetadata> {
         return rest.exchange("/corpora/$uuid/jobs?includePotentialJobs=true",
             HttpMethod.GET,
             getHeaders(),
-            object : ParameterizedTypeReference<Set<JobState>>() {}).body!!
+            object : ParameterizedTypeReference<Set<JobMetadata>>() {}).body!!
     }
 
     private fun getDocumentJobResult(uuid: UUID, job: String, document: String): DocumentJobResult {

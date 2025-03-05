@@ -14,7 +14,7 @@ internal class TSVPlaintextTest {
         assertEquals(1812, tsvFile.entries.size)
         // Assert plaintext.
         val plainText = File("src/test/resources/tsv/plaintext/peerle.txt").readText()
-        assertEquals(plainText, tsvFile.plainText().readText())
+        assertEquals(plainText, tsvFile.plaintext)
         // Create annotation layer.
         val mappedLayer: Layer = tsvFile.mapOnPlainText(plainText, "mappedLayer")
         assertEquals(1812, mappedLayer.wordForms.size)

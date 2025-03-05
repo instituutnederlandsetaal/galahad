@@ -46,10 +46,7 @@ class DocumentsTest {
         assertFalse(corpus.documents.allNames.contains(file.name))
         assertFalse(corpus.documents.readAll().map { it.name }.contains(file.name))
         // The file is created
-        val name = corpus.documents.create(file)
-        // It should exist
-        assertEquals(file.name, name)
-        val doc = corpus.documents.readOrThrow(name)
+        val doc = corpus.documents.createOrThrow(file)
         assertEquals(file.name, doc.name)
         assert(corpus.documents.allNames.contains(file.name))
         assert(corpus.documents.readAll().map { it.name }.contains(file.name))
@@ -66,7 +63,7 @@ class DocumentsTest {
 
     private fun deleteFile(name: String) {
         System.gc() // Apparently, currently out of scope File() instances lock the file.
-        corpus.documents.delete(name)
+        corpus.documents.deleteOrThrow(name)
     }
 
     private fun assertFileDeleted(name: String) {

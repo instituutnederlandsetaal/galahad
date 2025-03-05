@@ -10,9 +10,10 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.ivdnt.galahad.app.JOBS_URL
 import org.ivdnt.galahad.app.JOB_URL
+import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.exceptions.ErrorResponse
 import org.ivdnt.galahad.jobs.DocumentJobResult
-import org.ivdnt.galahad.jobs.JobState
+import org.ivdnt.galahad.jobs.JobMetadata
 import org.ivdnt.galahad.jobs.Jobs
 import org.ivdnt.galahad.jobs.Progress
 import org.ivdnt.galahad.web.service.CorporaService
@@ -32,8 +33,10 @@ class JobsController(
     @Autowired
     private val response: HttpServletResponse? = null
 
-    fun UUID.readJobs(): Jobs = corpora.getReadAccessOrThrow(this, request).jobs
-    fun UUID.writeJobs(): Jobs = corpora.getWriteAccessOrThrow(this, request).jobs
+    private val user get() = User.fromRequest(request)
+
+    fun UUID.readJobs(): Jobs = corpora.readAsReaderOrThrow(this, user).jobs
+    fun UUID.writeJobs(): Jobs = corpora.readAsWriterOrThrow(this, user).jobs
 
     // TODO could this be replaced by /taggers?
     @Operation(
@@ -45,7 +48,7 @@ class JobsController(
     fun getJobs(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @RequestParam(defaultValue = "true") @Parameter(description = "Only show jobs that have a result. Otherwise also shows potential jobs.") hasResult: Boolean = true,
-    ): Set<JobState> {
+    ): Set<JobMetadata> {
         return if (hasResult) {
             corpus.readJobs().readAllExistingJobs()
         } else {
@@ -70,7 +73,7 @@ class JobsController(
     fun getJob(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,
-    ): JobState? = corpus.readJobs().readOrThrow(job).state
+    ): JobMetadata? = corpus.readJobs().readOrThrow(job).metadata
 
     @Operation(
         summary = "Start job",
@@ -165,7 +168,7 @@ class JobsController(
         @PathVariable @Parameter(description = "Tagger name") job: String,
         @PathVariable @Parameter(description = "Document name") document: String,
     ): DocumentJobResult? {
-        val result = corpus.readJobs().readOrThrow(job).documentOrThrow(document).result
+        val result = corpus.readJobs().readOrThrow(job).readOrThrow(document).layer!!
         return DocumentJobResult(
             preview = result.preview,
             name = result.name,

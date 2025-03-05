@@ -1,6 +1,7 @@
 package org.ivdnt.galahad.jobs
 
-import org.ivdnt.galahad.BaseFileSystemStore
+import org.apache.logging.log4j.kotlin.logger
+import org.ivdnt.galahad.filesystem.GalahadFile
 import org.ivdnt.galahad.app.CRDSet
 import org.ivdnt.galahad.data.corpus.Corpus
 import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
@@ -11,29 +12,29 @@ import org.ivdnt.galahad.taggers.TaggerStore
 import java.io.File
 
 class Jobs(
-    workDirectory: File,
+    dir: File,
     private val corpus: Corpus,
-) : BaseFileSystemStore(workDirectory), CRDSet<String, Job, String> {
+) : GalahadFile(dir), CRDSet<String, Job, String> {
 
     private val taggerStore = TaggerStore()
 
-    fun readAllExistingJobs(): Set<JobState> = readAll().map { it.state }.toSet()
+    fun readAllExistingJobs(): Set<JobMetadata> = readAll().map { it.metadata }.toSet()
 
     // better be verbose than sorry
-    fun readAllJobStatesIncludingPotentialJobs(): Set<JobState> {
-        val existingJobs = readAll().map { it.state }
+    fun readAllJobStatesIncludingPotentialJobs(): Set<JobMetadata> {
+        val existingJobs = readAll().map { it.metadata }
         val potentialJobs = taggerStore.taggers.map { it.expensiveGet() }.map {
-            JobState(
+            JobMetadata(
                 it, Progress(pending = corpus.documents.readAll().size), LayerPreview.EMPTY, LayerSummary(), 0
             )
         }
         val sourceJobs = setOf(
-            JobState(
+            JobMetadata(
                 tagger = corpus.sourceTagger.expensiveGet()
             )
         )
         // the latter overrides the former’s value
-        val jobMap = HashMap<String, JobState>()
+        val jobMap = HashMap<String, JobMetadata>()
         potentialJobs.forEach { jobMap[it.tagger.id] = it }
         sourceJobs.forEach { jobMap[it.tagger.id] = it }
         // Existing jobs take precedence above all, so they are put last.
@@ -42,30 +43,29 @@ class Jobs(
     }
 
     override fun readAll(): Set<Job> =
-        workDirectory.list()?.map { readOrThrow(it) }?.toSet() ?: throw Exception("Could not list jobs")
+        dir.list()?.map { readOrThrow(it) }?.toSet() ?: setOf()
 
-    override fun createOrNull(key: String): Job? {
+    override fun createOrThrow(key: String): Job {
         // accessing the job once creates it and it's directories
-        Job(workDirectory.resolve(key), corpus)
-        return readOrNull(key)
+        // TODO replace this with job companion object create()
+        Job(dir.resolve(key), corpus)
+        return readOrThrow(key)
     }
 
     override fun readOrNull(key: String): Job? {
-        if (key.isBlank()) throw Exception("Blank job name not allowed") // An empty job name can not be resolved
-        return if (workDirectory.resolve(key).exists()) Job(workDirectory.resolve(key), corpus) else null
-    }
-
-    override fun readOrThrow(key: String): Job {
-        // A job name corresponds with a tagger name.
-        // For sake of clarity, i.e. being able to throw a more specific exception
-        // We first check if the tagger exists
-        if (key != SOURCE_LAYER_NAME) {
-            taggerStore.getSummaryOrThrow(key).expensiveGet() // throws TaggerNotFoundException
+        // job name is not a tagger name or the source layer
+        if (!taggerStore.ids.contains(name) && key != SOURCE_LAYER_NAME) {
+            return null
         }
-        return readOrNull(key) ?: throw JobNotFoundException(key)
+        return if (dir.resolve(key).exists()) Job(dir.resolve(key), corpus) else null
     }
 
-    override fun delete(key: String) {
-        workDirectory.resolve(key).deleteRecursively()
+    override fun readOrThrow(key: String): Job = readOrNull(key) ?: throw JobNotFoundException(key)
+
+    override fun deleteOrThrow(key: String) {
+        readOrThrow(key) // does it exist?
+        if (!dir.resolve(key).deleteRecursively()) {
+            logger.warn("Partial deletion of $key")
+        }
     }
 }

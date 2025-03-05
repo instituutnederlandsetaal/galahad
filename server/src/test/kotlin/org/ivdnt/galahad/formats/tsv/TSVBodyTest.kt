@@ -32,7 +32,7 @@ internal class TSVBodyTest {
         val tsvFile = TSVFile(File("src/test/resources/tsv/body/extra-columns.tsv"))
         assertTSVFile(tsvFile)
         val expected = "scholen loop " // Note the space.
-        assertEquals(expected, tsvFile.plainText().readText())
+        assertEquals(expected, tsvFile.plaintext)
     }
 
     @Test
@@ -58,7 +58,7 @@ internal class TSVBodyTest {
     private fun assertTSVFile(tsvFile: TSVFile) {
         tsvFile.parse()
         assertEntries(tsvFile.entries)
-        assertSourceLayer(tsvFile.sourceLayer())
+        assertSourceLayer(tsvFile.sourceLayer)
     }
 
     private fun assertEntries(entries: ArrayList<Annotations>) {

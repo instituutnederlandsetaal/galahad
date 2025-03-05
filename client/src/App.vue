@@ -33,11 +33,9 @@
     </GTabs>
 
     <GModal :show="app.errors.length > 0" title="Ocharme!" small noHelp @hide="app.resetErrors">
-        Something went wrong. If the connection to the server failed, the app will reload automatically.
+        Please try again or contact
+        <MailAddress /> for support.
         <GInfo error v-for="error, index in app.errors" :key="index">{{ error }}</GInfo>
-        <p>Please try again or contact
-            <MailAddress /> for support
-        </p>
     </GModal>
 </template>
 

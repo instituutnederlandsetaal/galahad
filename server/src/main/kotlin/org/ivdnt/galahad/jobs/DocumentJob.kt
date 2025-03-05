@@ -2,15 +2,18 @@ package org.ivdnt.galahad.jobs
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.apache.logging.log4j.kotlin.Logging
-import org.ivdnt.galahad.BaseFileSystemStore
-import org.ivdnt.galahad.FileBackedValue
 import org.ivdnt.galahad.data.layer.Layer
 import org.ivdnt.galahad.data.layer.LayerPreview
 import org.ivdnt.galahad.data.layer.LayerSummary
-import org.ivdnt.galahad.jobs.DocumentJob.DocumentProcessingStatus
+import org.ivdnt.galahad.filesystem.GalahadFile
+import org.ivdnt.galahad.filesystem.FileBackedValue
 import org.ivdnt.galahad.tagset.Tagset
 import java.io.File
 import java.util.*
+
+private const val PROCESSING_ID_File = "pid.txt"
+private const val ERROR_FILE = "error.txt"
+private const val LAYER_FILE = "layer.json"
 
 /**
  * Represents a job that processes a single document in a corpus.
@@ -20,68 +23,62 @@ import java.util.*
  * - error: a plaintext error message: when present, [DocumentProcessingStatus.ERROR]
  */
 class DocumentJob(
-    workDirectory: File,
-) : BaseFileSystemStore(workDirectory), Logging {
+    dir: File,
+) : GalahadFile(dir), Logging {
+    // Files in the document job folder.
+    private val processingIDFile = dir.resolve(PROCESSING_ID_File)
+    private val errorFile = dir.resolve(ERROR_FILE)
+    private val layerFile = dir.resolve(LAYER_FILE)
 
-    private val processingID = workDirectory.resolve("processingID")
+    // Values in those files.
 
-    private val error = workDirectory.resolve("error")
+    var layer: Layer?
+        get() = FileBackedValue<Layer?>(layerFile).readOrNull()
+        set(value) {
+            if (value == null) throw IllegalArgumentException("Layer cannot be set to null")
+            FileBackedValue<Layer>(layerFile).write(value)
+            processingIDFile.delete()
+        }
 
-    private val resultStore: FileBackedValue<Layer>
-        get() = FileBackedValue(workDirectory.resolve("result"), Layer.EMPTY)
+    val isProcessing: Boolean get() = processingIDFile.exists() // TODO check if resolving the file does not create it
 
-    val name: String = workDirectory.name
+    var processingID: UUID?
+        get() {
+            return if (processingIDFile.exists()) UUID.fromString(processingIDFile.readText()) else null
+        }
+        set(value) {
+            if (value == null) throw IllegalArgumentException("Processing ID cannot be set to null")
+            processingIDFile.writeText(value.toString())
+            // If you are processing, we will reset any previous errors
+            errorFile.delete()
+        }
 
-    val getError get() = if (error.absoluteFile.exists()) error.readText() else null
+    var error: String?
+        get() {
+            return if (errorFile.exists()) errorFile.readText() else null
+        }
+        set(value) {
+            if (value == null) throw IllegalArgumentException("Error cannot be set to null")
+            errorFile.writeText(value)
+            processingIDFile.delete()
+        }
 
-    val getProcessingID: UUID? get() = if (processingID.exists()) UUID.fromString(processingID.readText()) else null
-
-    val isProcessing: Boolean get() = processingID.exists()
-
-    val result get() = resultStore.read<Layer>() // Note that it can be empty
-
-    /** Determines the status based on the presence of the processing ID, error file, or result file. */
+    // /** Determines the status based on the presence of the processing ID, error file, or result file. */
     val status: DocumentProcessingStatus
         get() {
-            if (error.exists()) return DocumentProcessingStatus.ERROR
-            if (processingID.exists()) return DocumentProcessingStatus.PROCESSING
-            if (resultStore.read<Layer>() != Layer.EMPTY) return DocumentProcessingStatus.FINISHED
+            if (errorFile.exists()) return DocumentProcessingStatus.ERROR
+            if (processingIDFile.exists()) return DocumentProcessingStatus.PROCESSING
+            if (layer != null) return DocumentProcessingStatus.FINISHED
             return DocumentProcessingStatus.PENDING
         }
 
     /** Cancels a job by deleting the processing ID. The [status] is updated accordingly. */
-    fun cancel() {
-        processingID.delete()
-    }
-
-    fun delete() {
-        // iffy implementation
-        workDirectory.deleteRecursively()
-    }
-
-    private fun resetError() = error.delete()
-
-    fun setProcessingID(id: UUID) {
-        // Well if you are processing, we will reset any previous errors
-        resetError()
-        processingID.writeText(id.toString())
-    }
-
-    fun setResult(representation: Layer) {
-        resultStore.modify<Layer> { representation }
-        processingID.delete()
-    }
-
-    fun setError(message: String) {
-        error.writeText(message)
-        processingID.delete()
+    fun cancel() { // TODO should be in DocumentJobs, i.e. Job
+        processingIDFile.delete()
     }
 
     enum class DocumentProcessingStatus {
-        PENDING,
-        ERROR,
-        PROCESSING,
-        FINISHED
+        PENDING, ERROR, PROCESSING, FINISHED
     }
 }
 

@@ -1,3 +1,5 @@
+import { LayerPreview } from "./jobs"
+
 export enum Format {
     Tei_p4_legacy = "tei-p4-legacy",
     Tei_p5_legacy = "tei-p5-legacy",
@@ -19,11 +21,8 @@ export type LayerSummary = {
 export type DocumentMetadata = {
     name: string
     format: Format
-    valid: boolean
-    sizeInBytes: number
-    numChars: number
-    numAlphabeticChars: number
     preview: string
+    layerPreview: LayerPreview
     layerSummary: LayerSummary
     lastModified: number
 }

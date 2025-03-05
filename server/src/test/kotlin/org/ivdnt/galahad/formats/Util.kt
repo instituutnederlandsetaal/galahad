@@ -40,8 +40,8 @@ object Resource {
 
     fun getDoc(path: String): Document {
         val file = get(path)
-        val name = corpus.documents.create(file)
-        return corpus.documents.readOrThrow(name)
+        // Might already exist due to another unit test, so try to read it first.
+        return corpus.documents.readOrNull(file.name) ?: corpus.documents.createOrThrow(file)
     }
 }
 
@@ -74,7 +74,7 @@ fun createCorpus(workdir: File? = null, isDataset: Boolean = false, isAdmin: Boo
 fun assertPlainText(folder: String, file: InternalFile) {
     // Plain text
     val plaintext = Resource.get("$folder/plaintext.txt").readText()
-    assertEquals(plaintext, file.plainText().readText())
+    assertEquals(plaintext, file.plaintext)
 }
 
 fun assertPlaintextAndSourcelayer(folder: String, file: InternalFile) {
@@ -83,7 +83,7 @@ fun assertPlaintextAndSourcelayer(folder: String, file: InternalFile) {
     // Source layer
     val jsonExpected = Resource.get("$folder/sourcelayer.json").readText()
     val mapper = getJsonMapper()
-    val json = mapper.writeValueAsString(file.sourceLayer())
+    val json = mapper.writeValueAsString(file.sourceLayer)
     assertEquals(jsonExpected, json)
 }
 
@@ -190,11 +190,11 @@ class DocTestBuilder(
     ): DocumentTransformMetadata {
         val file = file ?: createTempDirectory().toFile().resolve("dummy.${format.extension}")
         file.createNewFile()
-        val docName = corpus.documents.create(file)
+        val doc = corpus.documents.readOrNull(file.name) ?: corpus.documents.createOrThrow(file)
         val job = corpus.jobs.createOrThrow(TestConfig.TAGGER_NAME)
-        job.documentOrEmpty(docName).setResult(layer)
+        job.createOrThrow(doc.name,layer)
         return DocumentTransformMetadata(
-            corpus, job, corpus.documents.readOrThrow(docName), User("testUser"), format
+            corpus, job, doc, User("testUser"), format
         )
     }
 
@@ -267,9 +267,9 @@ class DocTestBuilder(
     // TEI
 
     fun convertToTEI(file: File, layer: Layer): TestResult {
-        val docName = corpus.documents.create(file)
+        val doc = corpus.documents.createOrThrow(file)
         val job = corpus.jobs.createOrThrow(TestConfig.TAGGER_NAME)
-        job.documentOrEmpty(docName).setResult(layer)
+        job.createOrThrow(doc.name,layer)
         val exporter = LayerToTEIConverter(
             getDummyTransformMetadata(layer, DocumentFormat.TeiP5, file)
         )

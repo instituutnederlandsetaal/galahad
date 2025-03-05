@@ -6,11 +6,13 @@ import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.app.CORPORA_URL
 import org.ivdnt.galahad.app.CORPUS_URL
 import org.ivdnt.galahad.app.DATASETS_CORPORA_URL
+import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.data.corpus.CorpusMetadata
 import org.ivdnt.galahad.data.corpus.MutableCorpusMetadata
 import org.ivdnt.galahad.exceptions.ErrorResponse
@@ -29,13 +31,20 @@ class CorporaController(
     @Autowired
     private val response: HttpServletResponse? = null
 
+    @Autowired
+    private val request: HttpServletRequest? = null
+
+    private val user get() = User.fromRequest(request)
+
     @Operation(
         summary = "List all corpora metadata",
         description = "List the metadata of all corpora the current user has access to, either as owner or shared by others."
     )
     @CrossOrigin
     @GetMapping(CORPORA_URL)
-    fun getUserCorpora(): Set<CorpusMetadata> = corporaService.readAll().map { it.metadata.expensiveGet() }.toSet()
+    fun getUserCorpora(): Set<CorpusMetadata> {
+        return corporaService.readAll(user)
+    }
 
     @Operation(
         summary = "List benchmark datasets",
@@ -43,7 +52,7 @@ class CorporaController(
     )
     @CrossOrigin
     @GetMapping(DATASETS_CORPORA_URL)
-    fun getDatasetsCorpora(): Set<CorpusMetadata> = corporaService.datasets.map { it.metadata.expensiveGet() }.toSet()
+    fun getDatasetsCorpora(): Set<CorpusMetadata> = corporaService.readAllDatasets()
 
 
     @Operation(
@@ -62,7 +71,7 @@ class CorporaController(
     @CrossOrigin
     @GetMapping(CORPUS_URL)
     fun getCorpus(@PathVariable @Parameter(description = "Corpus UUID") corpus: UUID): CorpusMetadata {
-        return corporaService.readOrThrow(corpus).metadata.expensiveGet()
+        return corporaService.readAsReaderOrThrow(corpus, user).immutableMetadata
     }
 
     @Operation(
@@ -85,9 +94,9 @@ class CorporaController(
     )
     @CrossOrigin
     @PostMapping(value = [CORPORA_URL], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    fun postCorpus(@RequestBody @SwaggerRequestBody(description = "Corpus metadata.") value: MutableCorpusMetadata): UUID {
+    fun postCorpus(@RequestBody @SwaggerRequestBody(description = "Corpus metadata.") value: MutableCorpusMetadata): CorpusMetadata {
         response?.status = HttpServletResponse.SC_CREATED
-        return corporaService.createOrThrow(value).metadata.expensiveGet().uuid
+        return corporaService.createOrThrow(value, user)
     }
 
     @Operation(
@@ -120,7 +129,7 @@ class CorporaController(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @RequestBody @SwaggerRequestBody(description = "Corpus metadata.") value: MutableCorpusMetadata,
     ): CorpusMetadata? {
-        return corporaService.update(corpus, value)
+        return corporaService.update(corpus, value, user)
     }
 
     @Operation(
@@ -144,7 +153,7 @@ class CorporaController(
     @CrossOrigin
     @DeleteMapping(CORPUS_URL)
     fun deleteCorpus(@PathVariable @Parameter(description = "Corpus UUID") corpus: UUID): ResponseEntity<String> {
-        corporaService.delete(corpus)
+        corporaService.delete(corpus, user)
         return ResponseEntity.noContent().build()
     }
 }

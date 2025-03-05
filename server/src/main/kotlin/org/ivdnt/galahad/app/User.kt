@@ -16,7 +16,7 @@ class User(
 
     companion object {
 
-        fun getUserFromRequestOrThrow(request: HttpServletRequest?): User {
+        fun fromRequest(request: HttpServletRequest?): User {
             if (request == null) throw Exception("Request object is null")
 
             if (application_profile.contains("dev")) {

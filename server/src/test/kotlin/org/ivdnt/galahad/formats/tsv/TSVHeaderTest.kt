@@ -34,7 +34,7 @@ internal class TSVHeaderTest {
     fun `Parse a tsv file with all annotation type columns`() {
         val tsvFile = TSVFile(File("src/test/resources/tsv/header-all-annotation-types/input.tsv"))
         tsvFile.parse()
-        var layer = tsvFile.sourceLayer()
+        var layer = tsvFile.sourceLayer
         assertEquals(2, layer.terms.size)
         assertEquals(6, layer.terms[0].annotations.size)
         assertEquals(6, layer.terms[1].annotations.size)

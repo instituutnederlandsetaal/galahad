@@ -174,8 +174,8 @@ class EvaluationService(val corpora: CorporaService) {
     ): List<TermComparison> {
         val reference: String = reference ?: SOURCE_LAYER_NAME
         return DocumentLayerComparison(
-            hypothesisLayer = corpora.getReadAccessOrThrow(corpus, request).jobs.readOrThrow(job).documentOrThrow(document).result,
-            referenceLayer = corpora.getReadAccessOrThrow(corpus, request).jobs.readOrThrow(reference).documentOrThrow(document).result,
+            hypothesisLayer = corpora.getReadAccessOrThrow(corpus, request).jobs.readOrThrow(job).readOrThrow(document).result,
+            referenceLayer = corpora.getReadAccessOrThrow(corpus, request).jobs.readOrThrow(reference).readOrThrow(document).result,
             layerFilter = null
         ).matches
     }

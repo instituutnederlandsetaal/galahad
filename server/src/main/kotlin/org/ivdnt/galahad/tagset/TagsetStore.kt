@@ -1,8 +1,8 @@
 package org.ivdnt.galahad.tagset
 
 import org.apache.logging.log4j.kotlin.Logging
-import org.ivdnt.galahad.BaseFileSystemStore
 import org.ivdnt.galahad.exceptions.TagsetNotFoundException
+import org.ivdnt.galahad.filesystem.GalahadFile
 import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.Constructor
@@ -10,12 +10,12 @@ import java.io.File
 
 const val TAGGERS_DIR = "data/tagsets"
 
-class TagsetStore : BaseFileSystemStore(
+class TagsetStore : GalahadFile(
     File(TAGGERS_DIR)
 ), Logging {
 
     val tagsets: Set<Tagset>
-        get() = workDirectory.listFiles()
+        get() = dir.listFiles()
             ?.map { getTagsetFromFile(it) }
             ?.toSet()
             ?: setOf()
@@ -31,7 +31,7 @@ class TagsetStore : BaseFileSystemStore(
     }
 
     fun getOrNull(identifier: String?): Tagset? {
-        val tagsetFile = workDirectory.resolve("$identifier.yaml")
+        val tagsetFile = dir.resolve("$identifier.yaml")
         return if (tagsetFile.exists()) {
             getTagsetFromFile(tagsetFile)
         } else {

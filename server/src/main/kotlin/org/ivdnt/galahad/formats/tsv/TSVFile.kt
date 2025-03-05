@@ -16,11 +16,15 @@ import java.io.FileOutputStream
 open class TSVFile(
     override val file: File,
 ) : InternalFile {
+    override val format: DocumentFormat = DocumentFormat.Tsv
+    override val plaintext: String by lazy { parse();  plainTextFile.readText() }
+    override val sourceLayer: Layer by lazy { parse(); _sourceLayer }
 
     private val plainTextFile = File.createTempFile("galahad-${file.name}-plaintext", ".txt")
-    override val format: DocumentFormat = DocumentFormat.Tsv
     val entries = ArrayList<Annotations>()
-    private var sourceLayer: Layer = Layer.EMPTY
+
+    private var _sourceLayer: Layer = Layer.EMPTY
+
     private var isParsed: Boolean = false
 
     open val columnIndices: MutableMap<AnnotationType, Int> = mutableMapOf()
@@ -35,16 +39,6 @@ open class TSVFile(
         AnnotationType.ID to listOf("id"),
         AnnotationType.NER to listOf("entity", "ner", "named-entity", "NamedEntity"),
     )
-
-    override fun plainText(): String {
-        if (!isParsed) parse()
-        return plainTextFile.readText()
-    }
-
-    override fun sourceLayer(): Layer {
-        if (!isParsed) parse()
-        return sourceLayer
-    }
 
     /**
      * Generate plaintext, sourcelayer and retrieve indices for literal, lemma and PoS.
@@ -64,7 +58,7 @@ open class TSVFile(
         }
         stream.close()
         // Generate sourcelayer
-        sourceLayer = mapOnPlainText(plainTextFile.readText(), SOURCE_LAYER_NAME)
+        _sourceLayer = mapOnPlainText(plainTextFile.readText(), SOURCE_LAYER_NAME)
     }
 
     /**

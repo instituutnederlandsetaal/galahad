@@ -36,11 +36,10 @@ class CorpusConfusion(
 
     init {
         corpus.documents.readAll().forEach {
-            val name = it.metadata.name
             add(
                 DocumentConfusion(
-                    hypothesisJob.documentOrThrow(name).result,
-                    referenceJob.documentOrThrow(name).result,
+                    hypothesisJob.readOrThrow(it).result,
+                    referenceJob.readOrThrow(it).result,
                     layerFilter,
                     annotation,
                 )
