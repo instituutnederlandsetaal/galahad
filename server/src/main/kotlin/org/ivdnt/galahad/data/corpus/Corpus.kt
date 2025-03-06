@@ -97,7 +97,6 @@ class Corpus(
             val cleanMetadata = MutableCorpusMetadata.clean(user, metadata)
             // write metadata to disk
             FileBackedValue<MutableCorpusMetadata>(corpus.mutableMetadataFile).write(cleanMetadata)
-            // TODO immutable metadata
             return corpus
         }
     }

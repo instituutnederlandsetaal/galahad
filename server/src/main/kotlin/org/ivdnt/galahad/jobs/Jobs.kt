@@ -8,6 +8,7 @@ import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.data.layer.LayerPreview
 import org.ivdnt.galahad.data.layer.LayerSummary
 import org.ivdnt.galahad.exceptions.JobNotFoundException
+import org.ivdnt.galahad.exceptions.TaggerNotFoundException
 import org.ivdnt.galahad.taggers.Tagger
 
 import java.io.File
@@ -37,8 +38,9 @@ class Jobs(
     override fun readAll(): Set<Job> = dir.list()?.map { readOrThrow(it) }?.toSet() ?: setOf()
 
     override fun createOrThrow(key: String): Job {
-        // accessing the job once creates it and it's directories
-        // TODO replace this with job companion object create()
+        // Throw if the key is not a tagger name (treat source layer as tagger)
+        if (key !in Tagger.taggers && key != SOURCE_LAYER_NAME) throw TaggerNotFoundException(key)
+        // Safe to create it now
         Job(dir.resolve(key), corpus)
         return readOrThrow(key)
     }

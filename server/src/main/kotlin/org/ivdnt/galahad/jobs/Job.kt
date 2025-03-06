@@ -13,8 +13,8 @@ import org.ivdnt.galahad.evaluation.metrics.CorpusMetrics
 import org.ivdnt.galahad.evaluation.metrics.FlatMetricType
 import org.ivdnt.galahad.evaluation.metrics.METRIC_TYPES
 import org.ivdnt.galahad.evaluation.metrics.Metrics
-import org.ivdnt.galahad.exceptions.DocumentJobNotFoundException
 import org.ivdnt.galahad.exceptions.SourceLayerNotATaggerException
+import org.ivdnt.galahad.exceptions.TaggerNoConnectionException
 import org.ivdnt.galahad.filesystem.GalahadFile
 import org.ivdnt.galahad.filesystem.FileBackedCache
 import org.ivdnt.galahad.jobs.DocumentJob.DocumentProcessingStatus
@@ -23,11 +23,11 @@ import org.ivdnt.galahad.taggers.Tagger
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.*
 import org.springframework.util.LinkedMultiValueMap
+import org.springframework.web.client.ResourceAccessException
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.util.UriComponentsBuilder
 import java.io.File
 import java.net.URI
-import java.net.URL
 import java.util.*
 
 private const val DOCUMENT_JOBS_FOLDER = "documents"
@@ -267,8 +267,8 @@ class Job(
                     builder.build().encode().toUri(), method, requestEntity, // Allowed to be null
                     type
                 )
-            } catch (e: Exception) {
-                throw Exception("Failed to connect to tagger ${job.name} with exception ${e}.")
+            } catch (_: ResourceAccessException) {
+                throw TaggerNoConnectionException(job.name)
             }
             // Handle result.
             if (responseEntity.statusCode != HttpStatus.OK) {
