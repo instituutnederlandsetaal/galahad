@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import org.ivdnt.galahad.data.corpus.Corpus
 import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.data.layer.AnnotationType
+import org.ivdnt.galahad.data.layer.Layer
 import org.ivdnt.galahad.evaluation.CsvSampleExporter
 import org.ivdnt.galahad.evaluation.comparison.LayerFilter
 import org.ivdnt.galahad.taggers.TaggerStore
@@ -38,8 +39,8 @@ class CorpusConfusion(
         corpus.documents.readAll().forEach {
             add(
                 DocumentConfusion(
-                    hypothesisJob.readOrThrow(it).result,
-                    referenceJob.readOrThrow(it).result,
+                    hypothesisJob.layer(it),
+                    referenceJob.layer(it),
                     layerFilter,
                     annotation,
                 )

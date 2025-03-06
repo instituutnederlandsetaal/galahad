@@ -23,11 +23,13 @@ class ExportService(val corpora: CorporaService) : Logging {
 
     @Autowired
     private val response: HttpServletResponse? = null
+    
+    private val user get() = User.fromRequest(request)
 
 
     fun mergeDoc(corpus: UUID, job: String, document: String, posHeadOnly: Boolean): InternalFile {
-        val doc = corpora.getWriteAccessOrThrow(corpus, request).documents.readOrThrow(document)
-        val dtm = getDocumentTransformMetadata(corpus, job, document, doc.format)
+        val doc = corpora.readAsWriterOrThrow(corpus, user).documents.readOrThrow(document)
+        val dtm = getDocumentTransformMetadata(corpus, job, document, doc.metadata.format)
         return mergeDoc(dtm, posHeadOnly)
     }
 
@@ -91,7 +93,7 @@ class ExportService(val corpora: CorporaService) : Logging {
         formatName: DocumentFormat,
     ): CorpusTransformMetadata {
         // Exporting documents requires you to have write access.
-        val corpus = corpora.getWriteAccessOrThrow(corpusID, request)
+        val corpus = corpora.readAsWriterOrThrow(corpusID, user)
         val job = corpus.jobs.readOrThrow(jobName)
         return CorpusTransformMetadata(
             corpus, job, User.fromRequest(request), formatName
@@ -119,6 +121,6 @@ class ExportService(val corpora: CorporaService) : Logging {
     }
 
     fun getCorpusName(corpus: UUID): String {
-        return corpora.getWriteAccessOrThrow(corpus, request).metadata.expensiveGet().name
+        return corpora.readAsWriterOrThrow(corpus, user).mutableMetadata.name
     }
 }

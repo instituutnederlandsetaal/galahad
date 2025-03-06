@@ -102,6 +102,13 @@ class Job(
         override fun set() = JobMetadata.create(this@Job)
     }
 
+    fun layer(doc: Document): Layer = layer(doc.name)
+    fun layer(key: String): Layer = documentJobs.readOrThrow(key).layer ?: Layer.EMPTY
+
+    //////////////////////////////////////////////////////
+    // TODO: check everything below
+    /////////////////////////////////////////////////////
+
     /**
      * The sum of the global [Metrics] score of all the documents of the job (as opposed to per PoS).
      * Cached in a file, as it is expensive.

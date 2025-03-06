@@ -11,6 +11,7 @@ import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.filesystem.FileBackedCache
 import org.ivdnt.galahad.app.BENCHMARKS_URL
 import org.ivdnt.galahad.app.BENCHMARK_URL
+import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.evaluation.metrics.FlatMetricType
 import org.ivdnt.galahad.evaluation.metrics.FlatMetricTypeAssay
@@ -48,11 +49,13 @@ class BenchmarksController(
     @Autowired
     private val request: HttpServletRequest? = null
 
+    private val user get() = User.fromRequest(request)
+
     /**
      * A matrix of 'tagger' -> 'dataset' -> 'FlatMetric' -> 'scores per category',
      * for all datasets corpora that have been tagged with at least one tagger, excluding the sourceLayer.
      */
-    val benchmarksMatrix = object : FileBackedCache<BenchmarksMatrix>(corpora.assaysFile, HashMap()) {
+    val benchmarksMatrix = object : FileBackedCache<BenchmarksMatrix>(corpora.assaysFile) {
         override fun isValid(lastModified: Long): Boolean {
             return corpora.datasets.firstOrNull { it.lastModified > lastModified } == null
             TODO("Maybe just check the validity of the other assays?")
@@ -69,7 +72,7 @@ class BenchmarksController(
                     .filter { it.name != SOURCE_LAYER_NAME }
                     // Add the assay to the matrix
                     .forEach { job ->
-                        val meta = dataset.metadata.expensiveGet()
+                        val meta = dataset.immutableMetadata
                         // Initialize the dataset row if needed
                         if (assaysMatrix[meta.name] == null) {
                             assaysMatrix[meta.name] = HashMap()
@@ -110,7 +113,7 @@ class BenchmarksController(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,
     ): FlatMetricTypeAssay? {
-        return corpora.getReadAccessOrThrow(corpus, request).jobs.readOrNull(job)?.assay?.get<FlatMetricTypeAssay>()
+        return corpora.readAsReaderOrThrow(corpus, user).jobs.readOrNull(job)?.assay?.read<FlatMetricTypeAssay>()
     }
 
     @Operation(

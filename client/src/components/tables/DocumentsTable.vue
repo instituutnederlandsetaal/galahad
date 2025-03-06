@@ -51,10 +51,11 @@
             <template #cell-layerSummary="data">
                 <RightFloatCell>
                     <template #left>
-                        {{ data.value.numWordForms }}
+                        {{ data.value.numTokens }}
                     </template>
                     <template #right>
-                        <InspectButton v-if="data.value.numWordForms > 0" @click="previewDocument = data.item" />
+                        <InspectButton v-if="data.value.numTokens > 0"
+                            @click="preview = data.value.layerPreview; previewDocument = data.item" />
                     </template>
                 </RightFloatCell>
             </template>
@@ -84,18 +85,13 @@
         </GTable>
 
         <!-- preview modal -->
-        <GModal :show="previewDocument !== null" @hide="preview = null; previewDocument = null"
-            :title="`Preview of document ${previewDocument ? previewDocument.name : ''}`" style="text-align: center">
-            <template #title>Source layer preview of document {{ previewDocument ? previewDocument.name : ""
-            }}</template>
+        <GModal :show="previewDocument != null" @hide="previewDocument = null"
+            :title="`Preview of document ${previewDocument?.name}`" style="text-align: center">
+            <template #title>Source layer preview of document {{ previewDocument?.name }}</template>
             <template #help>
                 Here you can inspect a small part of the source layer of the document.
             </template>
-            <template v-if="loading">
-                <p>Loading...</p>
-                <GSpinner medium />
-            </template>
-            <LayerViewer v-else :layer="preview" />
+            <LayerViewer :layer="previewDocument?.layerPreview" />
 
         </GModal>
 
@@ -117,6 +113,8 @@ import { TableDocumentsType, Field } from '@/types/table'
 import { DocumentMetadata } from '@/types/documents'
 import { CorpusMetadata } from '@/types/corpora'
 import { LayerPreview, SOURCE_LAYER } from '@/types/jobs'
+// Utils
+import { formatDate } from '@/types/date'
 // Components
 import { GButton, GModal, GTable, DownloadButton, DeleteModal, RightFloatCell, InspectButton } from '@/components'
 import LayerViewer from '@/components/tables/LayerViewer.vue'
@@ -147,7 +145,7 @@ const columns = computed<Field[]>(() => {
         { key: "format", sortOn: (x: DocumentMetadata) => x.format },
         { key: "preview", textAlign: "left" },
         { key: "layerSummary" },
-        { key: "lastModified", label: "date modified", sortOn: (x: DocumentMetadata) => x.lastModified }
+        { key: "lastModified", label: "last modified", sortOn: (x: DocumentMetadata) => x.lastModified }
     ] as Field[];
     if (userStore.hasWriteAccess && props.type == TableDocumentsType.User) {
         return publicFields.concat(
@@ -167,37 +165,29 @@ function deleteDocument(document: DocumentMetadata) {
 function download(document: DocumentMetadata) {
     return documentsStore.downloadRaw(document.name)
 }
-function loadSourceLayer() {
-    loading.value = true
-    API.getJobDocumentResult(props.corpus?.uuid, SOURCE_LAYER, previewDocument.value.name)
-        .then(response => {
-            const encodedDocName = encodeURI(previewDocument.value.name)
-            // Only load the preview if the response is for the current document
-            if (response.request.responseURL.includes(encodedDocName)) {
-                preview.value = response.data.preview
-                loading.value = false
-            }
-        })
-        .catch(error => {
-            app.handleServerError("get job document result", error)
-        })
-}
-function formatDate(unixtime: number) {
-    const d = new Date(unixtime);
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    const hours = String(d.getHours()).padStart(2, '0');
-    const minutes = String(d.getMinutes()).padStart(2, '0');
-    return `${year}-${month}-${day} ${hours}:${minutes}`;
-}
+// function loadSourceLayer() {
+//     loading.value = true
+
+//     API.getJobDocumentResult(props.corpus?.uuid, SOURCE_LAYER, previewDocument.value.name)
+//         .then(response => {
+//             const encodedDocName = encodeURI(previewDocument.value.name)
+//             // Only load the preview if the response is for the current document
+//             if (response.request.responseURL.includes(encodedDocName)) {
+//                 preview.value = response.data.preview
+//                 loading.value = false
+//             }
+//         })
+//         .catch(error => {
+//             app.handleServerError("get job document result", error)
+//         })
+// }
 
 // Watches & mounts
 // When previewDocument is not null, the GModal already opens. So also autoload the source layer.
-watch(() => previewDocument.value, () => {
-    if (previewDocument.value !== null)
-        loadSourceLayer()
-})
+// watch(() => previewDocument.value, () => {
+//     if (previewDocument.value !== null)
+//         loadSourceLayer()
+// })
 // Reload docs on uuid change (and onMounted). But don't show user docs on dataset tab.
 watch(() => props.corpus?.uuid, () => {
     if (props.type == TableDocumentsType.Dataset && !props.corpus?.dataset)

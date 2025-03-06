@@ -82,10 +82,3 @@ class DocumentJob(
     }
 }
 
-/** A small preview of a [Layer] and some metadata. */
-data class DocumentJobResult(
-    @JsonProperty("preview") val preview: LayerPreview,
-    @JsonProperty("name") val name: String,
-    @JsonProperty("tagset") val tagset: Tagset,
-    @JsonProperty("summary") val summary: LayerSummary,
-)

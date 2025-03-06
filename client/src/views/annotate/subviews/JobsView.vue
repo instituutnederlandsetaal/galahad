@@ -44,17 +44,17 @@
             <!-- era cell -->
             <template #cell-era="d">
                 <div style="white-space: nowrap"><b v-if="eraRange[0] <= d.item.tagger.eraFrom">{{ d.item.tagger.eraFrom
-                        }}</b><span v-else>{{ d.item.tagger.eraFrom }}</span>
+                }}</b><span v-else>{{ d.item.tagger.eraFrom }}</span>
                     &ndash;
                     <b v-if="eraRange[1] >= d.item.tagger.eraTo">{{ d.item.tagger.eraTo }}</b><span v-else>{{
                         d.item.tagger.eraTo
-                    }}</span>
+                        }}</span>
                 </div>
             </template>
 
             <!-- last modified cell -->
             <template #cell-lastModified="d">
-                <span style="white-space:nowrap">{{ unixToString(d.item.lastModified) }}</span>
+                <span style="white-space:nowrap">{{ formatDate(d.item.lastModified) }}</span>
             </template>
 
             <!-- progress cell -->
@@ -142,6 +142,7 @@ import { sort_tagger_produces } from "@/stores/taggers"
 import { GButton, GNav, GTable, GInput, GSpinner, AnnotateTab, JobModal } from '@/components'
 import help from '@/components/help'
 import MultiSelect from 'primevue/multiselect';
+import { formatDate } from '@/types/date'
 
 
 // Stores
@@ -230,20 +231,6 @@ function enableAllTagsets() {
 // Format progress with Math.floor, because e.g. toFixed(0) rounds up 99.9% to 100%, which is confusing.
 function formatProgress(progress: Progress) {
     return `${Math.floor(100 * progress.finished / progress.total)}%`
-}
-
-function unixToString(time: number) {
-    if (time <= 0) {
-        return "Never"
-    } else {
-        return new Date(time).toLocaleString("nl", {
-            year: "2-digit",
-            month: "2-digit",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-        })
-    }
 }
 
 </script>

@@ -53,10 +53,6 @@ class Jobs(
     }
 
     override fun readOrNull(key: String): Job? {
-        // job name is not a tagger name or the source layer
-        if (!taggerStore.ids.contains(name) && key != SOURCE_LAYER_NAME) {
-            return null
-        }
         return if (dir.resolve(key).exists()) Job(dir.resolve(key), corpus) else null
     }
 

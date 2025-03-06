@@ -4,6 +4,7 @@ import org.ivdnt.galahad.TestConfig
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.GalahadApplication
 import org.ivdnt.galahad.createCorpus
+import org.ivdnt.galahad.data.layer.LayerMetadata
 import org.ivdnt.galahad.formats.Resource
 import org.ivdnt.galahad.web.controller.JobsController
 import org.ivdnt.galahad.web.controller.TaggersController
@@ -77,12 +78,12 @@ class JobsControllerTest(
             object : ParameterizedTypeReference<Set<JobMetadata>>() {}).body!!
     }
 
-    private fun getDocumentJobResult(uuid: UUID, job: String, document: String): DocumentJobResult {
+    private fun getDocumentJobResult(uuid: UUID, job: String, document: String): LayerMetadata {
         return rest.exchange(
             "/corpora/$uuid/jobs/$job/documents/$document/result",
             HttpMethod.GET,
             getHeaders(),
-            DocumentJobResult::class.java
+            LayerMetadata::class.java
         ).body!!
     }
 

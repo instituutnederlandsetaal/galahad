@@ -119,6 +119,7 @@ class DocumentsService(val corpora: CorporaService) : Logging {
         val document: Document
         try {
             document = docs.createOrThrow(file)
+            corpus.writeJobs().createOrThrow(SOURCE_LAYER_NAME).documentJobs.createOrThrow(document.name).layer = document.sourceLayer
         } catch (e: Exception) {
             // Document is somehow invalid.
             // Show error to user, but don't save the file
@@ -131,12 +132,6 @@ class DocumentsService(val corpora: CorporaService) : Logging {
         // TODO: check if we indeed don't need to invalidate the corpus cache
         // Invalidate corpus cache
         //corpora.readOrNull(corpus)?.invalidateCache()
-
-
-        // TODO: you could perhaps argue that this just happen in Document(s).create
-        // Set the sourceLayer as job.
-        val sourceLayerJob = corpus.writeJobs().createOrThrow(SOURCE_LAYER_NAME)
-        sourceLayerJob.createOrThrow(document.name, document.sourceLayer)
     }
 
     // TODO: better way of cache invalidation

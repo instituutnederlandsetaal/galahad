@@ -33,8 +33,8 @@ class CorpusMetrics(
             add(
                 DocumentMetrics(
                     corpus,
-                    hypothesisJob.readOrThrow(it).result,
-                    referenceJob.readOrThrow(it).result,
+                    hypothesisJob.layer(it),
+                    referenceJob.layer(it),
                     settings,
                     layerFilter,
                     truncate

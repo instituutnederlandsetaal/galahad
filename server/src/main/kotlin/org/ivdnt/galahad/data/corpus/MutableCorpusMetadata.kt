@@ -141,7 +141,7 @@ open class MutableCorpusMetadata(
 
             // Overwrite the owner with the original, so collaborators can't change it,
             // unless it's empty, in which case it's a new corpus.
-            newMeta.owner = oldMeta?.owner ?: newMeta.owner
+            newMeta.owner = oldMeta?.owner ?: user.id
 
             // Trim textual inputs
             newMeta.apply {

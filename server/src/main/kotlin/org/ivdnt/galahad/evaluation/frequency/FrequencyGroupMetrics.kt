@@ -13,7 +13,7 @@ class TokenFrequency(
         val job = corpus.jobs.readOrThrow(jobName)
 
         corpus.documents.readAll().forEach {
-            job.readOrThrow(it).result.terms.forEach { t ->
+            job.layer(it).terms.forEach { t ->
                 val token = t.literals.lowercase()
                 map[token] = map.getOrDefault(token, 0) + 1
             }

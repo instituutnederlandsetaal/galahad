@@ -1,6 +1,7 @@
 package org.ivdnt.galahad.formats.tei.export
 
 import org.ivdnt.galahad.data.corpus.CorpusMetadata
+import org.ivdnt.galahad.data.corpus.MutableCorpusMetadata
 import org.ivdnt.galahad.data.document.DocumentFormat
 import org.ivdnt.galahad.formats.LayerTransformer
 import org.ivdnt.galahad.formats.xml.XMLMetadata
@@ -41,7 +42,7 @@ class TEIMetadata(
                 layer.transformMetadata.document.uploadedFile.nameWithoutExtension
         }
 
-    private val corpusMetadata: CorpusMetadata = layer.transformMetadata.corpus.metadata.expensiveGet()
+    private val corpusMetadata: MutableCorpusMetadata = layer.transformMetadata.corpus.mutableMetadata
 
     init {
         write()

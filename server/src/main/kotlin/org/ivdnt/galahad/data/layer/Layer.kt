@@ -3,6 +3,7 @@ package org.ivdnt.galahad.data.layer
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
+import org.ivdnt.galahad.data.layer.LayerMetadata
 import org.ivdnt.galahad.tagset.Tagset
 
 /**
@@ -24,9 +25,21 @@ open class Layer(
 
     /** A preview of the [terms] and [wordForms] in this [Layer] up to the first [Term] whose [Term.firstOffset] exceeds [LAYER_PREVIEW_LENGTH].
      * Note that this [Term.firstOffset] corresponds to a [WordForm.offset]. */
-    val preview
-        get() = LayerPreview(wordForms.filter { it.offset < LAYER_PREVIEW_LENGTH },
-            terms.filter { it.firstOffset < LAYER_PREVIEW_LENGTH })
+    val preview: LayerPreview by lazy {
+        LayerPreview(
+            wordForms.filter { it.offset < LAYER_PREVIEW_LENGTH },
+            terms.filter { it.firstOffset < LAYER_PREVIEW_LENGTH },
+        )
+    }
+
+    val metadata: LayerMetadata by lazy {
+        LayerMetadata(
+            preview = preview,
+            name = name,
+            tagset = tagset,
+            summary = summary,
+        )
+    }
 
     /** Whether the [terms] of this [Layer] have been indexed in [lookup]. */
     private var isIndexed: Boolean = false
@@ -91,7 +104,7 @@ open class Layer(
  */
 
 class AnnotationLayer(
-    val documents: List<DocumentLayer>
+    val documents: List<DocumentLayer>,
 )
 
 class DocumentLayer(
@@ -101,7 +114,7 @@ class DocumentLayer(
 
 class ParagraphLayer(
     val id: String,
-    val sentences: List<SentenceLayer>
+    val sentences: List<SentenceLayer>,
 )
 
 class SentenceLayer(

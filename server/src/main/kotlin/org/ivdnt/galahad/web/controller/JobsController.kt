@@ -12,7 +12,7 @@ import org.ivdnt.galahad.app.JOBS_URL
 import org.ivdnt.galahad.app.JOB_URL
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.exceptions.ErrorResponse
-import org.ivdnt.galahad.jobs.DocumentJobResult
+import org.ivdnt.galahad.data.layer.LayerMetadata
 import org.ivdnt.galahad.jobs.JobMetadata
 import org.ivdnt.galahad.jobs.Jobs
 import org.ivdnt.galahad.jobs.Progress
@@ -167,14 +167,8 @@ class JobsController(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,
         @PathVariable @Parameter(description = "Document name") document: String,
-    ): DocumentJobResult? {
-        val result = corpus.readJobs().readOrThrow(job).readOrThrow(document).layer!!
-        return DocumentJobResult(
-            preview = result.preview,
-            name = result.name,
-            tagset = result.tagset,
-            summary = result.summary,
-        )
+    ): LayerMetadata? {
+        return corpus.readJobs().readOrThrow(job).layer(document).metadata
     }
 
     @Operation(
