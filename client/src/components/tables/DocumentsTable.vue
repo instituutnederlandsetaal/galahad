@@ -45,7 +45,7 @@
             </template>
 
             <template #head-layerSummary>
-                tokens
+                annotation
             </template>
             <!-- layerSummary cell -->
             <template #cell-layerSummary="data">

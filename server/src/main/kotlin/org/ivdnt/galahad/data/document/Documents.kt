@@ -5,6 +5,7 @@ import org.ivdnt.galahad.app.CRDSet
 import org.ivdnt.galahad.exceptions.DocumentNotFoundException
 import java.io.File
 import org.apache.logging.log4j.kotlin.logger
+import org.ivdnt.galahad.data.corpus.Corpus
 
 /**
  * Used as a collection for all documents in a corpus and to create and delete new documents.
@@ -13,13 +14,14 @@ import org.apache.logging.log4j.kotlin.logger
  */
 class Documents(
     dir: File,
+    val corpus: Corpus,
 ) : GalahadFile(dir), CRDSet<String, Document, File> {
     /**
      * Create a new document, which includes creating a directory,
      * storing the uploaded file, metadata, format, parsing it to plaintext and extracting source annotations.
      */
     override fun createOrThrow(file: File): Document {
-        return Document.create(dir.resolve(file.name), file)
+        return Document.create(dir.resolve(file.name), file, corpus)
     }
 
     // Note: this is a relatively expensive operation, you might want to use a different method

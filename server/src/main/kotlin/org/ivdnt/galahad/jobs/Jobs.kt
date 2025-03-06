@@ -8,7 +8,8 @@ import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.data.layer.LayerPreview
 import org.ivdnt.galahad.data.layer.LayerSummary
 import org.ivdnt.galahad.exceptions.JobNotFoundException
-import org.ivdnt.galahad.taggers.TaggerStore
+import org.ivdnt.galahad.taggers.Tagger
+
 import java.io.File
 
 class Jobs(
@@ -16,40 +17,34 @@ class Jobs(
     private val corpus: Corpus,
 ) : GalahadFile(dir), CRDSet<String, Job, String> {
 
-    private val taggerStore = TaggerStore()
-
-    fun readAllExistingJobs(): Set<JobMetadata> = readAll().map { it.metadata }.toSet()
 
     // better be verbose than sorry
     fun readAllJobStatesIncludingPotentialJobs(): Set<JobMetadata> {
         val existingJobs = readAll().map { it.metadata }
-        val potentialJobs = taggerStore.taggers.map { it.expensiveGet() }.map {
+        val numDocs = corpus.documents.readAll().size
+        val potentialJobs = Tagger.taggers.values.map {
             JobMetadata(
-                it, Progress(pending = corpus.documents.readAll().size), LayerPreview.EMPTY, LayerSummary(), 0
+                it, Progress(pending = numDocs), LayerPreview.EMPTY, LayerSummary(), 0
             )
         }
-        val sourceJobs = setOf(
-            JobMetadata(
-                tagger = corpus.sourceTagger.expensiveGet()
-            )
-        )
-        // the latter overrides the former’s value
         val jobMap = HashMap<String, JobMetadata>()
         potentialJobs.forEach { jobMap[it.tagger.id] = it }
-        sourceJobs.forEach { jobMap[it.tagger.id] = it }
         // Existing jobs take precedence above all, so they are put last.
         existingJobs.forEach { jobMap[it.tagger.id] = it }
         return jobMap.values.toSet()
     }
 
-    override fun readAll(): Set<Job> =
-        dir.list()?.map { readOrThrow(it) }?.toSet() ?: setOf()
+    override fun readAll(): Set<Job> = dir.list()?.map { readOrThrow(it) }?.toSet() ?: setOf()
 
     override fun createOrThrow(key: String): Job {
         // accessing the job once creates it and it's directories
         // TODO replace this with job companion object create()
         Job(dir.resolve(key), corpus)
         return readOrThrow(key)
+    }
+
+    fun readOrCreateOrThrow(key: String): Job {
+        return readOrNull(key) ?: createOrThrow(key)
     }
 
     override fun readOrNull(key: String): Job? {

@@ -1,4 +1,4 @@
-import { LayerPreview } from "./jobs"
+import { LayerPreview, LayerSummary } from "./jobs"
 
 export enum Format {
     Tei_p4_legacy = "tei-p4-legacy",
@@ -9,13 +9,6 @@ export enum Format {
     Tsv = "tsv",
     Txt = "txt",
     Conllu = "conllu",
-}
-
-export type LayerSummary = {
-    numLemma: number
-    numPOS: number
-    numTerms: number
-    numWordForms: number
 }
 
 export type DocumentMetadata = {

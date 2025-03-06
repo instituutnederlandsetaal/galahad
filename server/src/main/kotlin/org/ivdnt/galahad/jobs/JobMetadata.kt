@@ -29,7 +29,7 @@ class JobMetadata(
             val preview = job.documentJobs.readAll().firstNotNullOfOrNull { it.layer?.preview } ?: LayerPreview.EMPTY
 
             return JobMetadata(
-                tagger = job.taggerStore.getSummaryOrThrow(job.name, job.corpus.sourceTagger).expensiveGet(),
+                tagger = Tagger.readOrThrow(job.name, job.corpus),
                 progress = job.progress,
                 preview = preview,
                 resultSummary = resultSummary,

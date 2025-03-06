@@ -2,10 +2,23 @@ package org.ivdnt.galahad.taggers
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.introspect.TypeResolutionContext
 import org.ivdnt.galahad.app.JSONable
+import org.ivdnt.galahad.app.application_profile
+import org.ivdnt.galahad.data.corpus.Corpus
+import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.data.layer.AnnotationType
+import org.ivdnt.galahad.exceptions.TaggerNotFoundException
+import org.yaml.snakeyaml.LoaderOptions
+import org.yaml.snakeyaml.Yaml
+import org.yaml.snakeyaml.constructor.Constructor
+import java.io.File
+import java.net.URI
+import java.net.URL
 
-class Tagger (
+const val TAGGERS_DIR = "data/taggers"
+
+class Tagger(
     // The id should be equal to the filename
     // i.e. mytagger.yaml should have id 'mytagger'
     // This ought te be set when loading from file
@@ -26,14 +39,41 @@ class Tagger (
 ) : JSONable {
     @JsonIgnore
     var version: String = ""
+
     @JsonIgnore
     var devport: Int? = 0
+
+    // Has to be a getter, because taggers are first initialized with an empty constructor,
+    // and then filled from yaml, meaning that devport is 0 at the time of initialization
+    @get:JsonIgnore
+    val url: URL
+        get() = if (application_profile.contains("dev")) {
+            URI("http://localhost:$devport").toURL()
+        } else {
+            URI("http://$id:8080").toURL()
+        }
+
+    // Also has to be a getter
     @get:JsonIgnore
     val annotationTypes: List<AnnotationType>
         get() = produces.map { AnnotationType.fromString(it) }
 
-    class LinkItem (
+    class LinkItem(
         @JsonProperty("name") var name: String = "",
-        @JsonProperty("href") var href: String = ""
+        @JsonProperty("href") var href: String = "",
     )
+
+    companion object {
+        val EMPTY: Tagger = Tagger("EMPTY")
+
+        val dir = File(TAGGERS_DIR)
+        val taggers: Map<String, Tagger> by lazy {
+            dir.listFiles().map { Yaml(Constructor(Tagger::class.java, LoaderOptions())).load<Tagger>(it.inputStream()) }.associateBy { it.id }
+        }
+        fun readOrThrow(id: String, corpus: Corpus? = null): Tagger = when (id) {
+            SOURCE_LAYER_NAME -> corpus?.sourceTagger?.expensiveGet() ?: throw TaggerNotFoundException(id)
+            EMPTY.id -> EMPTY
+            else -> taggers[id] ?: throw TaggerNotFoundException(id)
+        }
+    }
 }

@@ -43,7 +43,7 @@ class Corpus(
     dir: File,
 ) : GalahadFile(dir) {
 
-    val documents = Documents(dir.resolve(DOCS_FOLDER))
+    val documents = Documents(dir.resolve(DOCS_FOLDER), this)
     val jobs = Jobs(dir.resolve(JOBS_FOLDER), this)
 
     // Files in the corpus folder.

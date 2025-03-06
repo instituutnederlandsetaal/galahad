@@ -18,13 +18,15 @@ import org.ivdnt.galahad.exceptions.SourceLayerNotATaggerException
 import org.ivdnt.galahad.filesystem.GalahadFile
 import org.ivdnt.galahad.filesystem.FileBackedCache
 import org.ivdnt.galahad.jobs.DocumentJob.DocumentProcessingStatus
-import org.ivdnt.galahad.taggers.TaggerStore
+import org.ivdnt.galahad.taggers.Tagger
+
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.*
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.util.UriComponentsBuilder
 import java.io.File
+import java.net.URI
 import java.net.URL
 import java.util.*
 
@@ -32,7 +34,7 @@ private const val DOCUMENT_JOBS_FOLDER = "documents"
 
 /** Number of documents at the tagger per job */
 private const val DOC_PARALLELIZATION_SIZE = 3
-private const val IS_ACTIVE_FILE = "active.txt"
+private const val IS_ACTIVE_FILE = "active"
 private const val METADATA_FILE = "metadata.json"
 
 /**
@@ -48,7 +50,6 @@ class Job(
     val corpus: Corpus,
 ) : GalahadFile(dir), Logging {
 
-    val taggerStore = TaggerStore()
     val documentJobs = DocumentJobs(dir.resolve(DOCUMENT_JOBS_FOLDER))
 
     // Files
@@ -65,9 +66,14 @@ class Job(
      */
     val progress: Progress
         get() {
-            val djs = documentJobs.readAll()
-            val statuses = djs.map { it.status }
-            val errors = djs.mapNotNull { it.error?.let { error -> name to error } }.toMap()
+            // NOTE: The number of documents is not the same as the number of document jobs.
+            // Example: after running a job, a user has added more documents to the corpus.
+            // So for calculating progress, we need to look at the number of corpus documents.
+            val docs = corpus.documents.readAll()
+            // If a document is not in the list of documentJobs, it is pending by default.
+            val statuses = docs.map { documentJobs.readOrNull(it.name)?.status ?: DocumentProcessingStatus.PENDING }
+            // For errors however, we can just look at the documentJobs.
+            val errors = documentJobs.readAll().mapNotNull { it.error?.let { error -> name to error } }.toMap()
             return Progress(
                 pending = statuses.count { it == DocumentProcessingStatus.PENDING },
                 processing = statuses.count { it == DocumentProcessingStatus.PROCESSING },
@@ -80,11 +86,14 @@ class Job(
     /**
      * Whether the job is currently being processed (i.e. has sent files to the tagger to become tagged at some point).
      */
-    var isActive: Boolean?
-        get() = if (isActiveFile.exists()) isActiveFile.readText().toBoolean() else null
+    var isActive: Boolean
+        get() = isActiveFile.exists()
         set(value) {
-            if (value == null) throw IllegalArgumentException("IsActive cannot be set to null")
-            isActiveFile.writeText(value.toString())
+            if (value) {
+                isActiveFile.createNewFile()
+            } else {
+                isActiveFile.delete()
+            }
         }
 
     val metadata: JobMetadata
@@ -98,12 +107,13 @@ class Job(
      * This is a very expensive operation, so we want to cache it.
      */
     private val metadataCache = object : FileBackedCache<JobMetadata>(metadataFile) {
-        override fun isValid(lastModified: Long) = lastModified >= this@Job.lastModified
+        // NOTE: we also check against the last modified of the documents folder: adding new docs should invalidate the cache.
+        override fun isValid(lastModified: Long) = lastModified >= this@Job.lastModified && lastModified >= corpus.documents.lastModified
         override fun set() = JobMetadata.create(this@Job)
     }
 
     fun layer(doc: Document): Layer = layer(doc.name)
-    fun layer(key: String): Layer = documentJobs.readOrThrow(key).layer ?: Layer.EMPTY
+    fun layer(key: String): Layer = documentJobs.readOrNull(key)?.layer ?: Layer.EMPTY
 
     //////////////////////////////////////////////////////
     // TODO: check everything below
@@ -147,7 +157,7 @@ class Job(
                 // If the tagger restarts, it does reprocess documents. Maybe including this one, so we keep it.
             }
         }
-        if (djs.count { it.isProcessing } == 0 && isActive == true) {
+        if (djs.count { it.isProcessing } == 0 && isActive) {
             // Writing invalidates cache, so only write if isActive would change.
             isActive = false
         }
@@ -165,7 +175,7 @@ class Job(
 
     fun next() {
         if (name == SOURCE_LAYER_NAME) throw SourceLayerNotATaggerException()
-        if (isActive == false) return
+        if (!isActive) return
         // Launch a coroutine so we can quickly return
         runBlocking {
             launch {
@@ -249,8 +259,8 @@ class Job(
         ): T? {
             // Setup request.
             val restTemplate = RestTemplate()
-            val endpoint = URL("${job.taggerStore.getURL(job.name)}/$route")
-            val builder = UriComponentsBuilder.fromUri(endpoint.toURI())
+            val endpoint = URI("${Tagger.readOrThrow(job.name, job.corpus).url}/$route")
+            val builder = UriComponentsBuilder.fromUri(endpoint)
             // Send request.
             val responseEntity = try {
                 restTemplate.exchange(

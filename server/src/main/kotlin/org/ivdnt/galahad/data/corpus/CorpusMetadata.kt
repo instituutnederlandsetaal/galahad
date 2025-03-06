@@ -59,10 +59,10 @@ class CorpusMetadata(
                 // Immutable/calculated fields
                 sourceAnnotationTypes = uniqueAnnotations,
                 uuid = UUID.fromString(corpus.name),
-                activeJobs = allJobs.count { it.isActive == true },
+                activeJobs = allJobs.count { it.isActive },
                 numResults = allJobs.count { it.hasResult },
                 numDocs = allDocs.size,
-                sizeInBytes = corpus.sizeInBytes, // expensive
+                sizeInBytes = corpus.sizeInBytes,
                 lastModified = System.currentTimeMillis(),
             )
             // add mutable fields

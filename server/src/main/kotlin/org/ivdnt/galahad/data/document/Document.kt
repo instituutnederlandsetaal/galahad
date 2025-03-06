@@ -1,6 +1,7 @@
 package org.ivdnt.galahad.data.document
 
 import org.apache.logging.log4j.kotlin.Logging
+import org.ivdnt.galahad.data.corpus.Corpus
 import org.ivdnt.galahad.data.layer.Layer
 import org.ivdnt.galahad.filesystem.GalahadFile
 import org.ivdnt.galahad.filesystem.FileBackedValue
@@ -114,7 +115,7 @@ class Document(
         /**
          * Create a new document folder from an uploaded file and fill it with the necessary data.
          */
-        fun create(dir: File, file: File): Document {
+        fun create(dir: File, file: File, corpus: Corpus): Document {
             // Create a document to access the paths
             val doc = Document(dir)
 
@@ -123,12 +124,10 @@ class Document(
 
             // plaintext & sourceLayer
             val internalFile = InternalFile.create(file)
-            val plainText = internalFile.plaintext
-            val sourceLayer = internalFile.sourceLayer
+            // sourceLayer as job
+            corpus.jobs.readOrCreateOrThrow(SOURCE_LAYER_NAME).documentJobs.createOrThrow(doc.name).layer = internalFile.sourceLayer
             // plaintext
-            doc.plainTextFile.writeText(plainText)
-            // sourceLayer; needs to be serialized, so writeText is not sufficient.
-            FileBackedValue<Layer>(doc.sourceLayerFile).write(sourceLayer)
+            doc.plainTextFile.writeText(internalFile.plaintext)
 
             // metadata; needs to be serialized as well
             FileBackedValue<DocumentMetadata>(doc.metadataFile).write(DocumentMetadata.create(internalFile))

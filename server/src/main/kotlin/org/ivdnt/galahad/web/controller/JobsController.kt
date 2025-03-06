@@ -50,7 +50,7 @@ class JobsController(
         @RequestParam(defaultValue = "true") @Parameter(description = "Only show jobs that have a result. Otherwise also shows potential jobs.") hasResult: Boolean = true,
     ): Set<JobMetadata> {
         return if (hasResult) {
-            corpus.readJobs().readAllExistingJobs()
+            corpus.readJobs().readAll().map { it.metadata }.toSet()
         } else {
             corpus.readJobs().readAllJobStatesIncludingPotentialJobs()
         }
@@ -103,9 +103,7 @@ class JobsController(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,
     ): Progress? {
-        val jobs = corpus.writeJobs()
-        val jobObj = jobs.readOrNull(job) ?: jobs.createOrThrow(job)
-        jobObj.start()
+        corpus.writeJobs().readOrCreateOrThrow(job).start()
         response?.status = HttpServletResponse.SC_ACCEPTED
         return progress(corpus, job)
     }

@@ -36,12 +36,5 @@ export type LayerPreview = {
 }
 
 export type LayerSummary = {
-    tagger: string
-    numDocuments: number
-    preview: LayerPreview
-    numWordForms: number
-    numTerms: number
-    numLemma: number
-    numPOS: number
-    lastModified: number
+    numTokens: number
 }

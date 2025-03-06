@@ -1,7 +1,8 @@
 package org.ivdnt.galahad.formats
 
 import org.ivdnt.galahad.data.document.DocumentFormat
-import org.ivdnt.galahad.taggers.TaggerStore
+import org.ivdnt.galahad.taggers.Tagger
+
 import org.ivdnt.galahad.tagset.TagsetStore
 import java.io.File
 import java.io.OutputStream
@@ -14,8 +15,7 @@ open class LayerTransformer (
     ) {
 
     private val tagsets = TagsetStore()
-    private val taggerStore = TaggerStore()
-    val tagger = taggerStore.getSummaryOrThrow(transformMetadata.job.name, transformMetadata.corpus.sourceTagger ).expensiveGet()
+    val tagger = Tagger.readOrThrow(transformMetadata.job.name, transformMetadata.corpus)
     protected val result = transformMetadata.layer
     protected val document = transformMetadata.document
 

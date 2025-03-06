@@ -39,7 +39,7 @@ class DocumentTransformMetadata(
 
     val layer: Layer = job.layer(document)
 
-    val tagger: ExpensiveGettable<Tagger> = job.taggerStore.getSummaryOrThrow(job.name)
+    val tagger: Tagger = Tagger.readOrThrow(job.name, corpus)
 
     val plainText: String
         get() = document.plaintext

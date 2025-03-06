@@ -94,9 +94,9 @@ class CorporaController(
     )
     @CrossOrigin
     @PostMapping(value = [CORPORA_URL], consumes = [MediaType.APPLICATION_JSON_VALUE])
-    fun postCorpus(@RequestBody @SwaggerRequestBody(description = "Corpus metadata.") value: MutableCorpusMetadata): CorpusMetadata {
+    fun postCorpus(@RequestBody @SwaggerRequestBody(description = "Corpus metadata.") value: MutableCorpusMetadata): UUID {
         response?.status = HttpServletResponse.SC_CREATED
-        return corporaService.createOrThrow(value, user)
+        return corporaService.createOrThrow(value, user).uuid
     }
 
     @Operation(

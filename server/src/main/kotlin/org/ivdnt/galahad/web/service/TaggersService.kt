@@ -7,7 +7,7 @@ import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.taggers.TaggerHealth
 import org.ivdnt.galahad.taggers.TaggerHealthStatus
-import org.ivdnt.galahad.taggers.TaggerStore
+
 import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
@@ -20,16 +20,16 @@ import java.net.http.HttpResponse
 
 @Service
 class TaggersService : Logging {
-    private val taggerStore = TaggerStore()
 
-    fun readAll(): Set<Tagger> = taggerStore.taggers.map { it.expensiveGet() }.toSet()
-    fun read(tagger: String): Tagger? = taggerStore.getSummaryOrThrow(tagger, null).expensiveGet()
+    fun readAll(): Set<Tagger> = Tagger.taggers.values.toSet()
+    fun read(tagger: String): Tagger? = Tagger.readOrThrow(tagger)
     fun taggerHealth(tagger: String): TaggerHealth {
         // If there are multiple replicas for the same service, we only get health check response from one replica.
         // However, we still think it is representative/informative
         val client = HttpClient.newBuilder().build()
+        val tagger = Tagger.readOrThrow(tagger)
         val request = HttpRequest.newBuilder()
-            .uri(URI.create("${taggerStore.getURL(tagger)}/health"))
+            .uri(URI.create("${tagger.url}/health"))
             .build()
 
         return try {
@@ -48,7 +48,7 @@ class TaggersService : Logging {
                 message = "Can connect to tagger. Taggers health response: ${response.body()}"
             )
         } catch (e: Exception) {
-            logger.error("Failed to connect to tagger $tagger on url ${taggerStore.getURL(tagger)}. Error: $e")
+            logger.error("Failed to connect to tagger ${tagger.id} on url ${request.uri()}. Error: $e")
             // If we cannot connect, there is no use in tagging, so just return
             return TaggerHealth(status = TaggerHealthStatus.ERROR, message = "Cannot connect to tagger")
         }
@@ -60,11 +60,11 @@ class TaggersService : Logging {
      */
     fun numActiveDocuments(): Int {
         var count = 0
-        for (tagger in taggerStore.taggers) {
-            val name = tagger.expensiveGet().id
+        for (tagger in Tagger.taggers.values) {
+            val name = tagger.id
 
             val restTemplate = RestTemplate()
-            val endpoint = URL("${taggerStore.getURL(name)}/status")
+            val endpoint = URL("${tagger.url}/status")
             val builder = UriComponentsBuilder.fromUri(endpoint.toURI())
             try {
                 val res = restTemplate.exchange(

@@ -19,7 +19,7 @@ class LayerToConlluConverter(
         get() = DocumentFormat.Conllu
 
     override fun convert(outputStream: OutputStream) {
-        val annotationTypes: List<AnnotationType> = transformMetadata.tagger.expensiveGet().annotationTypes
+        val annotationTypes: List<AnnotationType> = transformMetadata.tagger.annotationTypes
 
         val indexer: (Int, Term) -> String
         if (annotationTypes.contains(AnnotationType.ID)) {

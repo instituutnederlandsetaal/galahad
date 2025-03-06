@@ -7,7 +7,7 @@ import org.ivdnt.galahad.evaluation.comparison.TermComparison
 import org.ivdnt.galahad.formats.csv.CSVFile
 import org.ivdnt.galahad.formats.csv.CSVHeader
 import org.ivdnt.galahad.taggers.Tagger
-import org.ivdnt.galahad.taggers.TaggerStore
+
 
 const val TRUNCATE = 100
 /**
@@ -15,7 +15,7 @@ const val TRUNCATE = 100
  * The idea is to sum up the distribution as we go through the terms one by one using [add].
  */
 open class Metrics(
-    val corpus: Corpus,
+    corpus: Corpus,
     @JsonIgnore val settings: List<MetricsSettings>,
     val hypothesis: String,
     val reference: String,
@@ -24,9 +24,8 @@ open class Metrics(
     @JsonProperty("metrics")
     val metricTypes: MutableMap<String, MetricsType> = HashMap()
 
-    private val taggerStore: TaggerStore = TaggerStore()
-    val hypoTagger: Tagger = taggerStore.getSummaryOrThrow(hypothesis, corpus.sourceTagger).expensiveGet()
-    val refTagger: Tagger = taggerStore.getSummaryOrThrow(reference, corpus.sourceTagger).expensiveGet()
+    val hypoTagger: Tagger = Tagger.readOrThrow(hypothesis, corpus)
+    val refTagger: Tagger = Tagger.readOrThrow(reference, corpus)
 
     init {
         settings.forEach { metricTypes[it.id] = MetricsType(it, hypoTagger, refTagger).also { it.truncate = truncate } }

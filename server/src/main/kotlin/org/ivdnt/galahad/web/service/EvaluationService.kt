@@ -19,7 +19,8 @@ import org.ivdnt.galahad.evaluation.metrics.METRIC_TYPES
 import org.ivdnt.galahad.exceptions.AnnotationNotSupported
 import org.ivdnt.galahad.exceptions.InvalidMetricsTypeException
 import org.ivdnt.galahad.formats.csv.CSVFile
-import org.ivdnt.galahad.taggers.TaggerStore
+import org.ivdnt.galahad.taggers.Tagger
+
 import org.ivdnt.galahad.util.createZipFile
 import org.ivdnt.galahad.util.setContentDisposition
 import org.ivdnt.galahad.util.toValidFileName
@@ -41,8 +42,6 @@ class EvaluationService(val corpora: CorporaService) {
     private val response: HttpServletResponse? = null
     
     private val user: User get() = User.fromRequest(request)
-
-    private val taggerStore = TaggerStore()
 
     fun getDistribution(
         corpus: UUID,
@@ -248,8 +247,8 @@ class EvaluationService(val corpora: CorporaService) {
     }
 
     private fun annotationTypesForTagger(job: String, corpus: UUID): List<AnnotationType> {
-        val sourceTagger = corpora.readAsReaderOrThrow(corpus, user).sourceTagger
-        return taggerStore.getSummaryOrThrow(job, sourceTagger).expensiveGet().annotationTypes
+        val corpusObj = corpora.readAsReaderOrThrow(corpus, user)
+        return Tagger.readOrThrow(job, corpusObj).annotationTypes
     }
 
     fun samplesToZip(
