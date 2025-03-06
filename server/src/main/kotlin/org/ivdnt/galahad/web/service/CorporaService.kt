@@ -46,7 +46,7 @@ class CorporaService(
         val (corpus, corpora) = findOrThrow(key)
 
         if (corpus.mutableMetadata.canDelete(user)) {
-            corpora.delete(key)
+            corpora.deleteOrThrow(key)
         } else {
             throw CorpusUnauthorizedException("No delete access to corpus.")
         }

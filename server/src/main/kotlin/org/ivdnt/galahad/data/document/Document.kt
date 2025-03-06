@@ -19,7 +19,6 @@ import java.nio.file.StandardCopyOption
 import kotlin.io.path.createTempDirectory
 
 const val SOURCE_LAYER_NAME = "sourceLayer"
-const val SOURCE_LAYER_FILE = "$SOURCE_LAYER_NAME.json"
 const val METADATA_FILE = "metadata.json"
 const val PLAINTEXT_FILE = "plaintext.txt"
 
@@ -114,7 +113,7 @@ class Document(
             // plaintext & sourceLayer
             val internalFile = InternalFile.create(file)
             // sourceLayer as job
-            corpus.jobs.readOrCreateOrThrow(SOURCE_LAYER_NAME).documentJobs.createOrThrow(doc.name).layer = internalFile.sourceLayer
+            corpus.jobs.createOrThrow(SOURCE_LAYER_NAME).documentJobs.createOrThrow(doc.name).layer = internalFile.sourceLayer
             // plaintext
             doc.plainTextFile.writeText(internalFile.plaintext)
 

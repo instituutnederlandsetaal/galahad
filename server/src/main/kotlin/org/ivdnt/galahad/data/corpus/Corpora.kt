@@ -25,12 +25,14 @@ class Corpora(
 
     fun readOrThrow(key: UUID) = readOrNull(key) ?: throw CorpusNotFoundException(key)
 
-    fun delete(key: UUID) {
+    fun deleteOrThrow(key: UUID) {
         readOrThrow(key) // does it exist?
         if (!dir.resolve(key.toString()).deleteRecursively()) {
             logger.warn("Partial deletion of $key")
         }
     }
+
+    //////////////////////////////
 
     fun update(key: UUID, newMeta: MutableCorpusMetadata, user: User): CorpusMetadata {
         val corpus = readOrThrow(key)

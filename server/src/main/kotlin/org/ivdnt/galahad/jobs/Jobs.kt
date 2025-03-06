@@ -9,6 +9,7 @@ import org.ivdnt.galahad.data.layer.LayerPreview
 import org.ivdnt.galahad.data.layer.LayerSummary
 import org.ivdnt.galahad.exceptions.JobNotFoundException
 import org.ivdnt.galahad.exceptions.TaggerNotFoundException
+import org.ivdnt.galahad.filesystem.GalahadFileManager
 import org.ivdnt.galahad.taggers.Tagger
 
 import java.io.File
@@ -16,10 +17,16 @@ import java.io.File
 class Jobs(
     dir: File,
     private val corpus: Corpus,
-) : GalahadFile(dir), CRDSet<String, Job, String> {
+) : GalahadFileManager<Job, String>(dir) {
+    override fun createOrThrow(key: String): Job {
+        // Throw if the key is not a tagger name (treat source layer as tagger)
+        if (key !in Tagger.taggers && key != SOURCE_LAYER_NAME) throw TaggerNotFoundException(key)
+        // Safe to create it now
+        return ctor(key)
+    }
+    override fun ctor(key: String) = Job(dir.resolve(key), corpus)
+    override fun throwNotFound(key: String) = throw JobNotFoundException(key)
 
-
-    // better be verbose than sorry
     fun readAllJobStatesIncludingPotentialJobs(): Set<JobMetadata> {
         val existingJobs = readAll().map { it.metadata }
         val numDocs = corpus.documents.readAll().size
@@ -33,32 +40,5 @@ class Jobs(
         // Existing jobs take precedence above all, so they are put last.
         existingJobs.forEach { jobMap[it.tagger.id] = it }
         return jobMap.values.toSet()
-    }
-
-    override fun readAll(): Set<Job> = dir.list()?.map { readOrThrow(it) }?.toSet() ?: setOf()
-
-    override fun createOrThrow(key: String): Job {
-        // Throw if the key is not a tagger name (treat source layer as tagger)
-        if (key !in Tagger.taggers && key != SOURCE_LAYER_NAME) throw TaggerNotFoundException(key)
-        // Safe to create it now
-        Job(dir.resolve(key), corpus)
-        return readOrThrow(key)
-    }
-
-    fun readOrCreateOrThrow(key: String): Job {
-        return readOrNull(key) ?: createOrThrow(key)
-    }
-
-    override fun readOrNull(key: String): Job? {
-        return if (dir.resolve(key).exists()) Job(dir.resolve(key), corpus) else null
-    }
-
-    override fun readOrThrow(key: String): Job = readOrNull(key) ?: throw JobNotFoundException(key)
-
-    override fun deleteOrThrow(key: String) {
-        readOrThrow(key) // does it exist?
-        if (!dir.resolve(key).deleteRecursively()) {
-            logger.warn("Partial deletion of $key")
-        }
     }
 }
