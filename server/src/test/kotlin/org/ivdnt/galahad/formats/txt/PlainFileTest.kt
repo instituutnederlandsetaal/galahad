@@ -1,4 +1,4 @@
-package org.ivdnt.galahad.formats.plain
+package org.ivdnt.galahad.formats.txt
 
 import org.ivdnt.galahad.data.corpus.Corpus
 import org.ivdnt.galahad.data.document.DocumentFormat
@@ -22,14 +22,14 @@ internal class PlainFileTest {
 
     @Test
     fun `Import plain text`() {
-        val file = PlainFile(Resource.get("txt/input.txt"))
+        val file = TxtFile(Resource.get("txt/input.txt"))
         assertEquals("placeholder", file.plaintext)
     }
 
     @Test
     fun `Merging should throw`() {
         val builder = DocTestBuilder(corpus)
-        val file = PlainFile(Resource.get("txt/input.txt"))
+        val file = TxtFile(Resource.get("txt/input.txt"))
         assertThrows(Exception::class.java) {
             file.merge(builder.getDummyTransformMetadata(Layer.EMPTY, DocumentFormat.Txt))
         }

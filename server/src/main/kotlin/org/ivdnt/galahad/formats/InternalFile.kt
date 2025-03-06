@@ -7,7 +7,7 @@ import org.ivdnt.galahad.exceptions.DocumentInvalidException
 import org.ivdnt.galahad.formats.conllu.ConlluFile
 import org.ivdnt.galahad.formats.folia.FoliaFile
 import org.ivdnt.galahad.formats.naf.NAFFile
-import org.ivdnt.galahad.formats.plain.PlainFile
+import org.ivdnt.galahad.formats.txt.TxtFile
 import org.ivdnt.galahad.formats.tei.TEIFile
 import org.ivdnt.galahad.formats.tsv.TSVFile
 import java.io.File
@@ -30,7 +30,7 @@ interface InternalFile {
                 DocumentFormat.Tsv -> TSVFile(file)
                 DocumentFormat.Folia -> FoliaFile(file)
                 DocumentFormat.Naf -> NAFFile(file)
-                DocumentFormat.Txt -> PlainFile(file)
+                DocumentFormat.Txt -> TxtFile(file)
                 DocumentFormat.Conllu -> ConlluFile(file)
                 // Multiple TEI formats
                 DocumentFormat.TeiP4Legacy,
