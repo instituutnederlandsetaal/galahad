@@ -71,9 +71,22 @@ class Tagger(
             dir.listFiles().map { Yaml(Constructor(Tagger::class.java, LoaderOptions())).load<Tagger>(it.inputStream()) }.associateBy { it.id }
         }
         fun readOrThrow(id: String, corpus: Corpus? = null): Tagger = when (id) {
-            SOURCE_LAYER_NAME -> corpus?.sourceTagger?.expensiveGet() ?: throw TaggerNotFoundException(id)
+            SOURCE_LAYER_NAME -> corpus?.jobs?.readOrThrow(SOURCE_LAYER_NAME)?.metadata?.tagger ?: throw TaggerNotFoundException(id)
             EMPTY.id -> EMPTY
             else -> taggers[id] ?: throw TaggerNotFoundException(id)
+        }
+        fun createSourceTagger(corpus: Corpus): Tagger {
+            val metadata = corpus.immutableMetadata
+            val produces = corpus.documents.readAll().flatMap { it.metadata.annotationTypes }.toSet()
+            return Tagger(
+                id = SOURCE_LAYER_NAME,
+                description = "uploaded annotations",
+                tagset = metadata.tagset,
+                eraFrom = metadata.eraFrom,
+                eraTo = metadata.eraTo,
+                language = metadata.language,
+                produces = produces,
+            )
         }
     }
 }

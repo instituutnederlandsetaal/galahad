@@ -34,8 +34,8 @@ const jobs = defineStore('jobs', () => {
      * Fetch the progress for the given job. To be used within a poller.
      * @param job Tagger job name.
      */
-    function getProgress(job: string) {
-        API.getJobProgress(corporaStore.activeUUID, job)
+    function getProgress(job: string, corpus: string) {
+        API.getJobProgress(corpus, job)
             .then(response => setProgress(job, response))
             .catch(error => app.handleServerError("fetch job progress", error))
     }
@@ -65,9 +65,9 @@ const jobs = defineStore('jobs', () => {
      * Start a continuous progress poller for the given job
      * @param job Tagger job name.
      */
-    function startPolling(job: string) {
+    function startPolling(job: string, corpus: string) {
         if (!(job in pollers)) {
-            pollers[job] = setInterval((job: string) => { getProgress(job) }, POLL_INTERVAL, job)
+            pollers[job] = setInterval((job: string) => { getProgress(job, corpus) }, POLL_INTERVAL, job)
         }
     }
 
@@ -98,14 +98,14 @@ const jobs = defineStore('jobs', () => {
         Object.keys(pollers).forEach(x => stopPolling(x))
         loading.value = true
         // Reload jobs
-        API.getJobs(corporaStore.activeUUID, true)
+        API.getJobs(corporaStore.activeUUID, true) // TODO: This only works for the active corpus. We should probably fetch all jobs for all corpora.
             .then(response => {
                 jobs.value = {} // reset the jobs value
                 response.data.forEach(job => {
                     jobs.value[job.tagger.id] = job
                     if (job.progress.busy) {
                         // Restart polling any running job
-                        startPolling(job.tagger.id)
+                        startPolling(job.tagger.id, corporaStore.activeUUID)
                     }
                 })
             })
@@ -123,7 +123,7 @@ const jobs = defineStore('jobs', () => {
                 // A future poll will probably set it to true.
                 response.data.busy = true
                 setProgress(job, response)
-                startPolling(job) // TODO: this is a problem, because if the state doesn't change, the polling isn't stopped.
+                startPolling(job, corporaStore.activeUUID) // TODO: this is a problem, because if the state doesn't change, the polling isn't stopped.
                 getDocsAtTagger()
             })
             .catch(error => app.handleServerError("post job", error))

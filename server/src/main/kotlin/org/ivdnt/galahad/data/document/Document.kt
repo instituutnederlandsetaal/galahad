@@ -73,16 +73,6 @@ class Document(
         }
     }
 
-    /** Source annotations, if present. Saved to disk. */
-    val sourceLayer: Layer by lazy {
-        try {
-            FileBackedValue<Layer>(sourceLayerFile).readOrThrow()
-        } catch (e: Exception) {
-            logger.error("Error reading source layer file, creating new layer", e)
-            FileBackedValue<Layer>(sourceLayerFile).write(internalFile.sourceLayer)
-        }
-    }
-
     /** [DocumentFormat]-parsed file. */
     val internalFile: InternalFile by lazy { InternalFile.create(uploadedFile) }
 

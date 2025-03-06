@@ -70,21 +70,6 @@ class Corpus(
         override fun set() = CorpusMetadata.create(this@Corpus)
     }
 
-    val sourceTagger: ExpensiveGettable<Tagger> = object : ExpensiveGettable<Tagger> {
-        override fun expensiveGet(): Tagger {
-            val metadata = immutableMetadata
-            return Tagger(
-                id = SOURCE_LAYER_NAME,
-                description = "uploaded annotations",
-                tagset = metadata.tagset,
-                eraFrom = metadata.eraFrom,
-                eraTo = metadata.eraTo,
-                language = metadata.language,
-                produces = metadata.sourceAnnotationTypes,
-            )
-        }
-    }
-
     /**
      * Maps all [Document] found in [Documents] to the desired [DocumentFormat] and zips them. [formatMapper] should perform the mapping.
      */

@@ -28,7 +28,6 @@ class CorpusMetadata(
     @JsonProperty("sourceName") sourceName: String? = null,
     @JsonProperty("sourceURL") sourceURL: URL? = null,
     // Immutable fields
-    @JsonProperty("sourceAnnotationTypes") val sourceAnnotationTypes: Set<String> = setOf(),
     @JsonProperty("uuid") val uuid: UUID = UUID(0, 0),
     @JsonProperty("activeJobs") val activeJobs: Int = 0,
     @JsonProperty("numResults") val numResults: Int = 0,
@@ -52,12 +51,9 @@ class CorpusMetadata(
         fun create(corpus: Corpus): CorpusMetadata {
             val allJobs = corpus.jobs.readAll()
             val allDocs = corpus.documents.readAll()
-            // TODO: no need to recalculate this every time, when the reason we're recalculating the metadata is because a job has changed
-            val uniqueAnnotations = allDocs.flatMap { it.metadata.annotationTypes }.toSet()
-
             val meta = CorpusMetadata(
                 // Immutable/calculated fields
-                sourceAnnotationTypes = uniqueAnnotations,
+                // sourceAnnotationTypes = uniqueAnnotations,
                 uuid = UUID.fromString(corpus.name),
                 activeJobs = allJobs.count { it.isActive },
                 numResults = allJobs.count { it.hasResult },
