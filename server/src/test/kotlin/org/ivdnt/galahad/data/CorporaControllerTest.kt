@@ -34,7 +34,7 @@ class CorporaControllerTest(
     @Test
     fun `Post unicode name corpora`() {
         val name = "日本語"
-        val meta = MutableCorpusMetadata("", name, 0, 0, "", null, false, null, null, null, null)
+        val meta = MutableCorpusMetadata("", name, 0, 0, "", null, false, mutableSetOf(), mutableSetOf(), null, null)
 
         val uuid = postCorpus(meta)
 
@@ -50,8 +50,8 @@ class CorporaControllerTest(
     @Test
     fun `Test owner, collaborators and viewers`() {
         val owner = "testUser"
-        val collabs = setOf("collab1", owner)
-        val viewers = setOf("viewer1", "collab1", owner)
+        val collabs = mutableSetOf("collab1", owner)
+        val viewers = mutableSetOf("viewer1", "collab1", owner)
 
         // Create
         val meta = MutableCorpusMetadata(
@@ -72,8 +72,8 @@ class CorporaControllerTest(
 
         // Update with new collaborators
         val moreSharers = meta.also {
-            it.collaborators = setOf("collab1", "collab2")
-            it.viewers = setOf("viewer1", "viewer2")
+            it.collaborators = mutableSetOf("collab1", "collab2")
+            it.viewers = mutableSetOf("viewer1", "viewer2")
         }
 
         // Try to update as viewer
@@ -87,8 +87,8 @@ class CorporaControllerTest(
 
         // Let viewer2 remove themselves
         val viewer2gone = meta.also {
-            it.collaborators = setOf("collab1", "collab2")
-            it.viewers = setOf("viewer1")
+            it.collaborators = mutableSetOf("collab1", "collab2")
+            it.viewers = mutableSetOf("viewer1")
         }
         assertDoesNotThrow { updateCorpus(uuid, viewer2gone, "viewer2") }
 

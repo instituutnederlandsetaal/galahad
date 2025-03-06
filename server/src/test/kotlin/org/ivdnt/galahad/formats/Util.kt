@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import org.ivdnt.galahad.TestConfig
 import org.ivdnt.galahad.app.User
+import org.ivdnt.galahad.data.corpus.Corpora
 import org.ivdnt.galahad.data.corpus.Corpus
 import org.ivdnt.galahad.data.corpus.MutableCorpusMetadata
 import org.ivdnt.galahad.data.document.Document
@@ -26,7 +27,6 @@ import org.ivdnt.galahad.tagset.Tagset
 import org.junit.jupiter.api.Assertions.assertEquals
 import java.io.File
 import java.net.URL
-import java.util.*
 import kotlin.io.path.createTempDirectory
 
 object Resource {
@@ -52,23 +52,21 @@ fun getJsonMapper(): ObjectMapper {
 
 fun createCorpus(workdir: File? = null, isDataset: Boolean = false, isAdmin: Boolean = false): Corpus {
     val parent = workdir ?: createTempDirectory().toFile()
-    val corpus = Corpus(parent.resolve(UUID.randomUUID().toString()))
-    corpus.updateMetadata(
-        MutableCorpusMetadata(
-            "you",
-            "testCorpus",
-            0,
-            0,
-            "",
-            "tagset",
-            isDataset,
-            setOf("collaborator1", "collaborator2"),
-            setOf(),
-            "source name",
-            URL("http://source.url")
-        ), User("testUser", isAdmin)
+    val corpora = Corpora(parent)
+    val meta = MutableCorpusMetadata(
+        "you",
+        "testCorpus",
+        0,
+        0,
+        "",
+        "tagset",
+        isDataset,
+        mutableSetOf("collaborator1", "collaborator2"),
+        mutableSetOf(),
+        "source name",
+        URL("http://source.url")
     )
-    return corpus
+    return corpora.createOrThrow(User("testUser", isAdmin), meta)
 }
 
 fun assertPlainText(folder: String, file: InternalFile) {
@@ -192,7 +190,7 @@ class DocTestBuilder(
         file.createNewFile()
         val doc = corpus.documents.readOrNull(file.name) ?: corpus.documents.createOrThrow(file)
         val job = corpus.jobs.createOrThrow(TestConfig.TAGGER_NAME)
-        job.createOrThrow(doc.name,layer)
+        job.setLayerForKey(doc.name, layer)
         return DocumentTransformMetadata(
             corpus, job, doc, User("testUser"), format
         )
@@ -269,7 +267,7 @@ class DocTestBuilder(
     fun convertToTEI(file: File, layer: Layer): TestResult {
         val doc = corpus.documents.createOrThrow(file)
         val job = corpus.jobs.createOrThrow(TestConfig.TAGGER_NAME)
-        job.createOrThrow(doc.name,layer)
+        job.setLayerForKey(doc.name, layer)
         val exporter = LayerToTEIConverter(
             getDummyTransformMetadata(layer, DocumentFormat.TeiP5, file)
         )

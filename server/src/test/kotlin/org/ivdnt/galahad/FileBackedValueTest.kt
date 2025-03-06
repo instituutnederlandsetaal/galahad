@@ -10,9 +10,8 @@ internal class FileBackedValueTest {
     @Test
     fun getFile() {
         val file = File.createTempFile("temp", null)
-        val fbv = org.ivdnt.galahad.filesystem.FileBackedValue<String>(file, "a string")
-        assertEquals("a string", fbv.readOrThrow<String>())
-        fbv.write<String> { "some characters" }
+        val fbv = org.ivdnt.galahad.filesystem.FileBackedValue<String>(file)
+        fbv.write<String>("some characters")
         assertEquals("some characters", fbv.readOrThrow<String>())
     }
 }

@@ -39,7 +39,7 @@ class JobsControllerTest(
     fun postJob() {
         val corpus = createCorpus(config)
         val doc = corpus.documents.createOrThrow(Resource.get("all-formats/input/input.tei.xml"))
-        val uuid = corpus.metadata.expensiveGet().uuid
+        val uuid = corpus.immutableMetadata.uuid
 
         assertEquals(taggers.getTaggers().size + 1, getJobs(uuid).size) // +1 for the sourceLayer
         var progress: Progress =
@@ -58,9 +58,6 @@ class JobsControllerTest(
         val resultPreview = getDocumentJobResult(uuid, TestConfig.TAGGER_NAME, doc.name)
         assertEquals(TestConfig.TAGGER_NAME, resultPreview.name)
         assertTrue(resultPreview.summary.numWordForms > 0)
-        assertTrue(resultPreview.summary.numTerms > 0)
-        assertTrue(resultPreview.summary.numLemma > 0)
-        assertTrue(resultPreview.summary.numPOS > 0)
         assertTrue(resultPreview.preview.terms.isNotEmpty())
         assertTrue(resultPreview.preview.wordforms.isNotEmpty())
     }

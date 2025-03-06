@@ -106,6 +106,9 @@ open class MutableCorpusMetadata(
          * If a user appears multiple times in the permission hierarchy, only the upper level remains.
          */
         fun clean(user: User, newMeta: MutableCorpusMetadata, oldMeta: MutableCorpusMetadata? = null): MutableCorpusMetadata {
+            // Overwrite the owner with the original, so collaborators can't change it,
+            // unless it's empty, in which case it's a new corpus.
+            newMeta.owner = oldMeta?.owner ?: user.id
 
             // Viewers are allowed to remove themselves, but no more than that.
             if (!newMeta.isViewer(user) && oldMeta?.isViewer(user) == true) {
@@ -138,10 +141,6 @@ open class MutableCorpusMetadata(
                     throw CorpusUnauthorizedException("Cannot change collaborators or viewers.")
                 }
             }
-
-            // Overwrite the owner with the original, so collaborators can't change it,
-            // unless it's empty, in which case it's a new corpus.
-            newMeta.owner = oldMeta?.owner ?: user.id
 
             // Trim textual inputs
             newMeta.apply {

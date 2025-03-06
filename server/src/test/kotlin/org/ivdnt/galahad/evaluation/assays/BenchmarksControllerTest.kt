@@ -42,7 +42,7 @@ class BenchmarksControllerTest(
 
         // Neither should individual ones
         val assayRequest: MvcResult = mvc.perform(
-            MockMvcRequestBuilders.get("/benchmarks/${corpus.metadata.expensiveGet().uuid}/pie-tdn")
+            MockMvcRequestBuilders.get("/benchmarks/${corpus.immutableMetadata.uuid}/pie-tdn")
         ).andReturn()
         assertEquals("", assayRequest.response.contentAsString)
 

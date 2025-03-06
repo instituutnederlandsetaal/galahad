@@ -28,11 +28,10 @@ class JobTest {
         assertFalse(job.isActive)
         assertEquals(0, job.assay.readOrThrow<Map<String, FlatMetricType>>().size)
         assertEquals(0, job.progress.total)
-        assertEquals(LayerPreview.EMPTY, job.preview)
         // verify from state cache
         assertEquals(LayerPreview.EMPTY, job.metadata.preview)
         assertEquals(0, job.metadata.progress.total)
-        assertEquals(0, job.metadata.resultSummary.numTerms)
+        assertEquals(0, job.metadata.resultSummary.numWordForms)
     }
 
     @Test
@@ -43,9 +42,9 @@ class JobTest {
         val job: Job = corpus.jobs.createOrThrow(TestConfig.TAGGER_NAME)
         // fake a tagger result
         val layer = LayerBuilder().loadDummies(100).build()
-        job.createOrThrow(doc.name, layer)
+        job.setLayerForKey(doc.name, layer)
         // verify
-        assertEquals(100, job.readOrThrow(doc).result.terms.size)
+        assertEquals(100, job.layer(doc).terms.size)
         assertEquals(1, job.progress.finished)
     }
 }

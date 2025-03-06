@@ -142,7 +142,7 @@ internal class TEIExportTest {
         // build a layer that is a valid annotation of the temp file
         val layer = LayerBuilder().loadDummies(testsize * 1000).setTagset(tagset).build()
         val job = corpus.jobs.createOrThrow(jobName)
-        job.createOrThrow(doc.name,layer)
+        job.setLayerForKey(doc.name,layer)
 
         println("Created layer. Layer size: ${layer.wordForms.size} wordforms")
 
@@ -164,7 +164,7 @@ internal class TEIExportTest {
         println("Created teiFile. teiFile size: ${teiConvertedFile.length()} bytes")
 
         val teiUploadedDoc = corpus.documents.createOrThrow(teiConvertedFile)
-        job.createOrThrow(teiUploadedDoc.name,layer)
+        job.setLayerForKey(teiUploadedDoc.name,layer)
 
         // merge the layer with the TEI-file
         val teiMergedFile = corpus.documents.readOrThrow(teiUploadedDoc.name).merge(

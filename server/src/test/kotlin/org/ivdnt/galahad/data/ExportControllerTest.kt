@@ -34,7 +34,7 @@ class ExportControllerTest(
     fun convertAndExportJob() {
         val corpus = createAndPopulateCorpus()
 
-        val uuid = corpus.metadata.expensiveGet().uuid
+        val uuid = corpus.immutableMetadata.uuid
         val bytes = mvc.perform(
             MockMvcRequestBuilders.get("/corpora/$uuid/jobs/${TestConfig.TAGGER_NAME}/export/convert")
                 .param("format", "folia").headers(
@@ -80,7 +80,7 @@ class ExportControllerTest(
             Resource.get("all-formats/input/input.txt").readText()
         ).build()
         val job = corpus.jobs.createOrThrow(TestConfig.TAGGER_NAME)
-        job.createOrThrow("input.tei.xml",layer)
+        job.setLayerForKey("input.tei.xml",layer)
         //mvc.uploadFile(Resource.get("all-formats/input/input.folia.xml"), corpus)
         return corpus
     }

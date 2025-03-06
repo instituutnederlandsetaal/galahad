@@ -43,7 +43,7 @@ fun MockMvc.uploadFile(file: File, corpus: Corpus, mediaType: String = MediaType
         file.readBytes()
     )
     // Perform request
-    val uuid = corpus.metadata.expensiveGet().uuid
+    val uuid = corpus.immutableMetadata.uuid
     return this.perform(
         MockMvcRequestBuilders.multipart("/corpora/$uuid/documents")
             .file(mockFile)

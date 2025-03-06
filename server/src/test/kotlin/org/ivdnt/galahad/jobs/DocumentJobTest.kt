@@ -25,40 +25,42 @@ class DocumentJobTest {
         val doc = corpus.documents.createOrThrow(File.createTempFile("tmp", ".txt"))
         // create a job
         val job: Job = corpus.jobs.createOrThrow(TestConfig.TAGGER_NAME)
-
-        val dj: DocumentJob = job.createOrThrow(doc.name, Layer.EMPTY)
+        // create a document job
+        val dj: DocumentJob = job.documentJobs.createOrThrow(doc.name)
+        // set layer
+        dj.layer = Layer.EMPTY
         // verify
         assertEquals(doc.name, dj.name)
-        assertNull(dj.getError)
-        assertNull(dj.getProcessingID)
+        assertNull(dj.error)
+        assertNull(dj.processingID)
         assertFalse(dj.isProcessing)
-        assertEquals(Layer.EMPTY, dj.result)
+        assertEquals(Layer.EMPTY, dj.layer)
         assertEquals(DocumentJob.DocumentProcessingStatus.PENDING, dj.status)
 
         // set error
-        dj.setError("error")
-        assertEquals("error", dj.getError)
+        dj.error = "error"
+        assertEquals("error", dj.error)
         assertEquals(DocumentJob.DocumentProcessingStatus.ERROR, dj.status)
 
         // setting pid should delete error
         val id = UUID.randomUUID()
-        dj.setProcessingID(id)
-        assertNull(dj.getError)
-        assertEquals(id, dj.getProcessingID)
+        dj.processingID = id
+        assertNull(dj.error)
+        assertEquals(id, dj.processingID)
         assertEquals(DocumentJob.DocumentProcessingStatus.PROCESSING, dj.status)
 
         // Cancel should delete pid
         dj.cancel()
-        assertNull(dj.getProcessingID)
-        assertNull(dj.getError)
+        assertNull(dj.processingID)
+        assertNull(dj.error)
         assertEquals(DocumentJob.DocumentProcessingStatus.PENDING, dj.status)
 
         // set result should finish
         val layer = LayerBuilder().loadDummies(100).build()
-        dj.setResult(layer)
-        assertEquals(100, dj.result.terms.size)
-        assertNull(dj.getProcessingID)
-        assertNull(dj.getError)
+        dj.layer = layer
+        assertEquals(100, dj.layer!!.terms.size)
+        assertNull(dj.processingID)
+        assertNull(dj.error)
         assertEquals(DocumentJob.DocumentProcessingStatus.FINISHED, dj.status)
 
     }

@@ -32,7 +32,7 @@ class EvaluationControllerTest(
         EvaluationUtil.addDocWithMatchingMultiPosLemma(corpus)
 
         // url
-        val uuid = corpus.metadata.expensiveGet().uuid
+        val uuid = corpus.immutableMetadata.uuid
         val url = "/corpora/$uuid/jobs/${TestConfig.TAGGER_NAME}/evaluation/download?reference=sourceLayer"
         // /GET
         val bytes = mvc.perform(
@@ -46,7 +46,7 @@ class EvaluationControllerTest(
     fun `Download confusion samples`() {
         val corpus = corpus()
         // url
-        val uuid = corpus.metadata.expensiveGet().uuid
+        val uuid = corpus.immutableMetadata.uuid
         val params = mapOf(
             "reference" to "sourceLayer",
             "annotation" to "pos",
@@ -65,7 +65,7 @@ class EvaluationControllerTest(
     fun `Download metrics samples`() {
         val corpus = corpus()
         // url
-        val uuid = corpus.metadata.expensiveGet().uuid
+        val uuid = corpus.immutableMetadata.uuid
         val params = mapOf(
             "reference" to "sourceLayer",
             "metricsType" to "posByPos",

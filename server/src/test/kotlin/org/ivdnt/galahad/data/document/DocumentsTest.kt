@@ -43,12 +43,10 @@ class DocumentsTest {
         // The file does not exist
         assertThrows(Exception::class.java) { corpus.documents.readOrThrow(file.name) }
         assertNull(corpus.documents.readOrNull(file.name))
-        assertFalse(corpus.documents.allNames.contains(file.name))
         assertFalse(corpus.documents.readAll().map { it.name }.contains(file.name))
         // The file is created
         val doc = corpus.documents.createOrThrow(file)
         assertEquals(file.name, doc.name)
-        assert(corpus.documents.allNames.contains(file.name))
         assert(corpus.documents.readAll().map { it.name }.contains(file.name))
     }
 
@@ -57,7 +55,7 @@ class DocumentsTest {
      * @param docs Docs as a set, because the order of documents is not guaranteed
      */
     private fun assertDocsinDocuments(docs: Set<String>) {
-        assertEquals(docs, corpus.documents.allNames.toSet())
+        assertEquals(docs, corpus.documents.readAll().map { it.name }.toSet())
         assertEquals(docs.size, corpus.documents.readAll().size)
     }
 
@@ -68,7 +66,6 @@ class DocumentsTest {
 
     private fun assertFileDeleted(name: String) {
         assertNull(corpus.documents.readOrNull(name))
-        assertFalse(corpus.documents.allNames.contains(name))
         assertFalse(corpus.documents.readAll().map { it.name }.contains(name))
         assertThrows(Exception::class.java) { corpus.documents.readOrThrow(name) }
     }

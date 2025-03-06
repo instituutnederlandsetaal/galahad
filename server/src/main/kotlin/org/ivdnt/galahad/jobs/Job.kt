@@ -114,6 +114,9 @@ class Job(
 
     fun layer(doc: Document): Layer = layer(doc.name)
     fun layer(key: String): Layer = documentJobs.readOrNull(key)?.layer ?: Layer.EMPTY
+    fun setLayerForKey(key: String, layer: Layer) {
+        documentJobs.createOrThrow(key).layer = layer
+    }
 
     //////////////////////////////////////////////////////
     // TODO: check everything below

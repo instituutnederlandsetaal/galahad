@@ -44,7 +44,7 @@ class DocumentsControllerTest(
         assertEquals(6, getDocs(corpus).size)
         // Get raw file
         val doc = getDocs(corpus)[0]
-        val uuid = corpus.metadata.expensiveGet().uuid
+        val uuid = corpus.immutableMetadata.uuid
         val result: MvcResult = mvc.perform(
             MockMvcRequestBuilders.get("/corpora/$uuid/documents/${doc.name}/raw").headers(UserHeader.get())
         ).andReturn()
@@ -74,7 +74,7 @@ class DocumentsControllerTest(
 
     private fun getDocs(corpus: Corpus): List<DocumentMetadata> {
         // Request doc metadata
-        val uuid = corpus.metadata.expensiveGet().uuid
+        val uuid = corpus.immutableMetadata.uuid
         val result: MvcResult = mvc.perform(
             MockMvcRequestBuilders.get("/corpora/$uuid/documents").headers(UserHeader.get())
         ).andReturn()

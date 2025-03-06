@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import java.io.File
+import java.util.UUID
 import kotlin.io.path.createTempDirectory
 
 class DocumentTest {
@@ -23,7 +24,7 @@ class DocumentTest {
     @Test
     fun `UUID stored in cache file`() {
         val doc = Resource.getDoc("all-formats/input/input.txt")
-        assertDoesNotThrow { doc.uuid }
+        assertDoesNotThrow { UUID.fromString(doc.metadata.uuid.toString()) }
     }
 
     @Nested
@@ -77,7 +78,7 @@ class DocumentTest {
             // create the layer based on the plaintext parsing
             val plaintext = doc.plaintext
             val layer = LayerBuilder().loadLayerFromTSV("all-formats/input/pie-tdn.tsv", plaintext).build()
-            job.createOrThrow(doc.name,layer)
+            job.setLayerForKey(doc.name,layer)
 
             // Convert to each other format
             for (formatTo in DocumentFormat.entries) {
