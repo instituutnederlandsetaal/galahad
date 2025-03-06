@@ -40,7 +40,6 @@ class Document(
     // Files in the document folder.
     val plainTextFile = dir.resolve(PLAINTEXT_FILE)
     private val metadataFile = dir.resolve(METADATA_FILE)
-    private val sourceLayerFile = dir.resolve(SOURCE_LAYER_FILE)
     val uploadedFile = dir.resolve("uploaded").resolve(name)
 
     // Values in those files.

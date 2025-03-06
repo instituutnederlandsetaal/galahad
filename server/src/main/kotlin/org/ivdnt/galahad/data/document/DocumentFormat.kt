@@ -1,6 +1,7 @@
 package org.ivdnt.galahad.data.document
 
 import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonValue
 import org.ivdnt.galahad.exceptions.InvalidDocumentFormatException
 
 /**
@@ -17,6 +18,9 @@ enum class DocumentFormat(val identifier: String, val extension: String) {
     Folia("folia", "folia.xml"),
     Txt("txt", "txt"),
     Unknown("unknown", "unknown");
+
+    @JsonValue
+    override fun toString(): String = identifier
 
     companion object {
         /**

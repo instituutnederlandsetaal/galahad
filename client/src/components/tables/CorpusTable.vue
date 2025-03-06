@@ -49,13 +49,7 @@
 
         <!-- last modified cell -->
         <template #cell-lastModified="data">
-            <span style="white-space:nowrap">{{ new Date(data.value).toLocaleString("nl", {
-                year: "2-digit",
-                month: "2-digit",
-                day: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-            }) }}</span>
+            <span style="white-space:nowrap">{{ formatDate(data.value) }}</span>
         </template>
 
         <!-- collaborators cell -->
@@ -91,6 +85,7 @@ import * as Utils from '@/api/utils'
 // Components
 import { ExternalLink, GButton, GTable, HelpLink } from '@/components'
 import help from '@/components/help'
+import { formatDate } from '@/types/date'
 
 // Stores
 const userStore = stores.useUser()
