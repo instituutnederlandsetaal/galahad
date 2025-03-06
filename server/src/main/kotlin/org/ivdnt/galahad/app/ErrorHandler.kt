@@ -24,7 +24,7 @@ class ErrorHandler : ErrorController, Logging {
     @CrossOrigin
     fun handleError(request: HttpServletRequest): ErrorResponse {
         // Get the default status code (probably 500), or override it with the actual status code if it is a RESTException.
-        var statusCode = HttpStatus.valueOf( request.getAttribute("jakarta.servlet.error.status_code") as Int? ?: 500 )
+        var statusCode = HttpStatus.valueOf(request.getAttribute("jakarta.servlet.error.status_code") as Int? ?: 500)
         val jakartaException = request.getAttribute("jakarta.servlet.error.exception") as Exception?
         response?.status = statusCode.value()
 
@@ -33,8 +33,11 @@ class ErrorHandler : ErrorController, Logging {
         if (jakartaErrorMsg.isNullOrBlank()) {
             jakartaErrorMsg = null
         }
-        val springException = request.getAttribute("org.springframework.web.servlet.DispatcherServlet.EXCEPTION") as Exception?
-        var errorMsg = jakartaErrorMsg ?: jakartaException?.cause?.message ?: springException?.message ?: jakartaException?.message ?: "No error message available."
+        val springException =
+            request.getAttribute("org.springframework.web.servlet.DispatcherServlet.EXCEPTION") as Exception?
+        var errorMsg =
+            jakartaErrorMsg ?: jakartaException?.cause?.message ?: springException?.message ?: jakartaException?.message
+            ?: "No error message available."
 
         // Is it our fault?
         if (statusCode.value() >= 500) {

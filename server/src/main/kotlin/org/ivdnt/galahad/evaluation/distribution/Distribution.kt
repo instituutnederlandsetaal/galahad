@@ -27,13 +27,13 @@ open class Distribution(val groupingAnnotation: AnnotationType) {
      */
     val distribution: Set<DistributionRow>
         get() = distributionMap.entries.map {
-                DistributionRow(
-                    it.key.first,
-                    it.key.second,
-                    it.value.first,
-                    it.value.second
-                )
-            }.toSet()
+            DistributionRow(
+                it.key.first,
+                it.key.second,
+                it.value.first,
+                it.value.second
+            )
+        }.toSet()
 
     fun add(term: Term) {
         val literal: String = term.literals

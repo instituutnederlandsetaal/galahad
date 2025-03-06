@@ -5,9 +5,7 @@ import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.data.layer.LayerPreview
 import org.ivdnt.galahad.data.layer.LayerSummary
 import org.ivdnt.galahad.data.layer.plus
-import org.ivdnt.galahad.jobs.Job
 import org.ivdnt.galahad.taggers.Tagger
-import org.ivdnt.galahad.tagset.Tagset
 
 /**
  * Cache-able job metadata.
@@ -23,7 +21,8 @@ class JobMetadata(
         fun create(job: Job): JobMetadata {
             val djs = job.documentJobs.readAll()
             // sum up the number of tokens/lemmas/etc of all documents
-            val resultSummary: LayerSummary = djs.mapNotNull { it.layer?.summary }.reduceOrNull { a, b -> a + b } ?: LayerSummary()
+            val resultSummary: LayerSummary =
+                djs.mapNotNull { it.layer?.summary }.reduceOrNull { a, b -> a + b } ?: LayerSummary()
             // Preview of the resulting terms of this job.
             // Show the first preview of the first document that isn't LayerPreview.EMPTY.
             val preview = djs.firstNotNullOfOrNull { it.layer?.preview } ?: LayerPreview.EMPTY

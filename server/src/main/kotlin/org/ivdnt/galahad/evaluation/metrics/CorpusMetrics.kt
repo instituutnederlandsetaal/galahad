@@ -15,7 +15,7 @@ class CorpusMetrics(
     hypothesis: String,
     reference: String = SOURCE_LAYER_NAME,
     layerFilter: LayerFilter? = null,
-    truncate: Boolean = true
+    truncate: Boolean = true,
 ) : Metrics(corpus, settings, hypothesis, reference, truncate = truncate) {
 
     private val hypothesisJob = corpus.jobs.readOrThrow(hypothesis)
@@ -23,8 +23,10 @@ class CorpusMetrics(
 
     @JsonProperty
     val hypothesisLastModified = hypothesisJob.lastModified
+
     @JsonProperty
     val referenceLastModified = referenceJob.lastModified
+
     @JsonProperty
     val generated = System.currentTimeMillis()
 

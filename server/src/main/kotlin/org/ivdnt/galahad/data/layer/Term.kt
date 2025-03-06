@@ -15,10 +15,13 @@ data class Term(
 ) {
     constructor(lemma: String?, pos: String?, targets: MutableList<WordForm>) : this(
         mapOf(AnnotationType.LEMMA to lemma, AnnotationType.POS to pos).filterValues { it != null },
-        targets)
+        targets
+    )
 
-    @get:JsonIgnore val lemma: String? = annotations[AnnotationType.LEMMA]
-    @get:JsonIgnore val pos: String? = annotations[AnnotationType.POS]
+    @get:JsonIgnore
+    val lemma: String? = annotations[AnnotationType.LEMMA]
+    @get:JsonIgnore
+    val pos: String? = annotations[AnnotationType.POS]
 
     /** Whether the lemma is not null. */
     @get:JsonIgnore

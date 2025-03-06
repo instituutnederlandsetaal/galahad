@@ -12,7 +12,7 @@ import org.ivdnt.galahad.data.layer.AnnotationType
 class CorpusDistribution(
     corpus: Corpus,
     hypothesis: String = SOURCE_LAYER_NAME,
-    groupingAnnotation: AnnotationType
+    groupingAnnotation: AnnotationType,
 ) : Distribution(groupingAnnotation) {
 
     private val hypothesisJob = corpus.jobs.readOrThrow(hypothesis)

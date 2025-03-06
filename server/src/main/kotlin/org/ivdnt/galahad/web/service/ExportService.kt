@@ -23,7 +23,7 @@ class ExportService(val corpora: CorporaService) : Logging {
 
     @Autowired
     private val response: HttpServletResponse? = null
-    
+
     private val user get() = User.fromRequest(request)
 
 

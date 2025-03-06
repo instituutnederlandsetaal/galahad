@@ -10,6 +10,7 @@ import org.ivdnt.galahad.taggers.Tagger
 
 
 const val TRUNCATE = 100
+
 /**
  * Generic class for benchmark [Metric]s of a corpus or document.
  * The idea is to sum up the distribution as we go through the terms one by one using [add].
@@ -38,7 +39,7 @@ open class Metrics(
     }
 
     protected fun add(other: Metrics) {
-        other.metricTypes.values.toSet().forEach{ metricTypes[it.setting.id]?.add(it) }
+        other.metricTypes.values.toSet().forEach { metricTypes[it.setting.id]?.add(it) }
     }
 
     fun add(comp: TermComparison) {
@@ -47,17 +48,19 @@ open class Metrics(
 
     companion object {
         fun getCsvHeader(): CSVHeader {
-            return CSVFile.toCSVHeader(listOf(
-                "annotation",
-                "grouped by",
-                "macro precision",
-                "macro recall",
-                "macro f1",
-                "micro accuracy",
-                "count",
-                "true positive count",
-                "false negative count",
-                "no match count")
+            return CSVFile.toCSVHeader(
+                listOf(
+                    "annotation",
+                    "grouped by",
+                    "macro precision",
+                    "macro recall",
+                    "macro f1",
+                    "micro accuracy",
+                    "count",
+                    "true positive count",
+                    "false negative count",
+                    "no match count"
+                )
             )
         }
     }

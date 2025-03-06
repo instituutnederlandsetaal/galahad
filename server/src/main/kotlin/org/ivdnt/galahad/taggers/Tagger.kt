@@ -2,7 +2,6 @@ package org.ivdnt.galahad.taggers
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.databind.introspect.TypeResolutionContext
 import org.ivdnt.galahad.app.JSONable
 import org.ivdnt.galahad.app.application_profile
 import org.ivdnt.galahad.data.corpus.Corpus
@@ -68,13 +67,19 @@ class Tagger(
 
         val dir = File(TAGGERS_DIR)
         val taggers: Map<String, Tagger> by lazy {
-            dir.listFiles().map { Yaml(Constructor(Tagger::class.java, LoaderOptions())).load<Tagger>(it.inputStream()) }.associateBy { it.id }
+            dir.listFiles()
+                .map { Yaml(Constructor(Tagger::class.java, LoaderOptions())).load<Tagger>(it.inputStream()) }
+                .associateBy { it.id }
         }
+
         fun readOrThrow(id: String, corpus: Corpus? = null): Tagger = when (id) {
-            SOURCE_LAYER_NAME -> corpus?.jobs?.readOrThrow(SOURCE_LAYER_NAME)?.metadata?.tagger ?: throw TaggerNotFoundException(id)
+            SOURCE_LAYER_NAME -> corpus?.jobs?.readOrThrow(SOURCE_LAYER_NAME)?.metadata?.tagger
+                ?: throw TaggerNotFoundException(id)
+
             EMPTY.id -> EMPTY
             else -> taggers[id] ?: throw TaggerNotFoundException(id)
         }
+
         fun createSourceTagger(corpus: Corpus): Tagger {
             val metadata = corpus.immutableMetadata
             val produces = corpus.documents.readAll().flatMap { it.metadata.annotationTypes }.toSet()

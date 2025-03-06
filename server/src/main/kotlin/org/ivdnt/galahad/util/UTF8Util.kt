@@ -16,7 +16,7 @@ fun String.toValidFileName(): String {
 
 /** UTF8 compatible content disposition header. */
 fun HttpServletResponse.setContentDisposition(filename: String) {
-    this.setHeader("Content-Disposition", "attachment; filename*=UTF-8''" + filename.toValidFileName() )
+    this.setHeader("Content-Disposition", "attachment; filename*=UTF-8''" + filename.toValidFileName())
     this.setHeader("Access-Control-Expose-Headers", "Content-Disposition")
 }
 
@@ -35,7 +35,7 @@ fun String.escapeXML(): String {
             when {
                 defaultReplacements.containsKey(char) -> append(defaultReplacements[char])
                 char.code == 0xA0 -> append(" ") // nbsp
-                char.code == 0x0D -> { } // ignore CR
+                char.code == 0x0D -> {} // ignore CR
                 char.isLetterOrDigit() || char.isWhitespace() || (char.code in 0x20..0x7E) -> append(char)
                 else -> append("&#${char.code};")
             }

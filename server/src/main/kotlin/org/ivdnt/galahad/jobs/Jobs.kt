@@ -1,8 +1,5 @@
 package org.ivdnt.galahad.jobs
 
-import org.apache.logging.log4j.kotlin.logger
-import org.ivdnt.galahad.filesystem.GalahadFile
-import org.ivdnt.galahad.app.CRDSet
 import org.ivdnt.galahad.data.corpus.Corpus
 import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.data.layer.LayerPreview
@@ -11,7 +8,6 @@ import org.ivdnt.galahad.exceptions.JobNotFoundException
 import org.ivdnt.galahad.exceptions.TaggerNotFoundException
 import org.ivdnt.galahad.filesystem.GalahadFileManager
 import org.ivdnt.galahad.taggers.Tagger
-
 import java.io.File
 
 class Jobs(
@@ -24,6 +20,7 @@ class Jobs(
         // Safe to create it now
         return ctor(key)
     }
+
     override fun ctor(key: String) = Job(dir.resolve(key), corpus)
     override fun throwNotFound(key: String) = throw JobNotFoundException(key)
 

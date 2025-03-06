@@ -9,9 +9,10 @@ enum class AnnotationType(@JsonValue val value: String) {
     MISC("misc"), ID("id"), NER("named-entity");
 
     companion object {
-        fun fromString(s: String): AnnotationType = AnnotationType.entries.firstOrNull { it.value == s.lowercase() } ?: throw InvalidAnnotationException(
-            "Invalid annotation type $s, valid types are ${AnnotationType.entries.map { it.value }}"
-        )
+        fun fromString(s: String): AnnotationType =
+            AnnotationType.entries.firstOrNull { it.value == s.lowercase() } ?: throw InvalidAnnotationException(
+                "Invalid annotation type $s, valid types are ${AnnotationType.entries.map { it.value }}"
+            )
     }
 }
 

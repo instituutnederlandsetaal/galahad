@@ -33,8 +33,9 @@ data class TermComparison(
     /** Full overlap dependent on the word forms. Overlap of position, not lemma/pos. */
     @get:JsonIgnore
     val fullOverlap: Boolean
-        get() = symmetricDifference(hypoTerm.targets.toSet(), refTerm.targets.toSet(),
-                                    equals = { wf1: WordForm, wf2: WordForm ->
+        get() = symmetricDifference(
+            hypoTerm.targets.toSet(), refTerm.targets.toSet(),
+            equals = { wf1: WordForm, wf2: WordForm ->
                 WordFormComparison(wf1, wf2).fullOverlap
             }).isEmpty()
 

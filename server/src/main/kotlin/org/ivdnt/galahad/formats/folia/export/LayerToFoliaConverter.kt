@@ -11,9 +11,9 @@ import org.ivdnt.galahad.util.escapeXML
 import org.ivdnt.galahad.util.toValidXmlId
 import java.io.OutputStream
 
-class LayerToFoliaConverter (
+class LayerToFoliaConverter(
     transformMetadata: DocumentTransformMetadata,
-) : LayerConverter, LayerTransformer( transformMetadata ) {
+) : LayerConverter, LayerTransformer(transformMetadata) {
 
     override val format: DocumentFormat
         get() = DocumentFormat.Folia

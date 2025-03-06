@@ -25,7 +25,7 @@ class User(
                     val remoteUser = request.getHeader("remote_user")
                     User(id = remoteUser, isAdmin = isAdmin(remoteUser))
                 } catch (e: Exception) {
-                     User(id = "you", isAdmin = isAdmin("you"))
+                    User(id = "you", isAdmin = isAdmin("you"))
                 }
             }
 

@@ -11,16 +11,11 @@ import org.ivdnt.galahad.evaluation.confusion.CONFUSION_TYPES
 import org.ivdnt.galahad.evaluation.confusion.CorpusConfusion
 import org.ivdnt.galahad.evaluation.distribution.CorpusDistribution
 import org.ivdnt.galahad.evaluation.frequency.TokenFrequency
-import org.ivdnt.galahad.evaluation.metrics.ClassificationType
-import org.ivdnt.galahad.evaluation.metrics.CorpusMetrics
-import org.ivdnt.galahad.evaluation.metrics.FrequencyMetricsSettings
-import org.ivdnt.galahad.evaluation.metrics.LemmaByLemmaMetricsSettings
-import org.ivdnt.galahad.evaluation.metrics.METRIC_TYPES
+import org.ivdnt.galahad.evaluation.metrics.*
 import org.ivdnt.galahad.exceptions.AnnotationNotSupported
 import org.ivdnt.galahad.exceptions.InvalidMetricsTypeException
 import org.ivdnt.galahad.formats.csv.CSVFile
 import org.ivdnt.galahad.taggers.Tagger
-
 import org.ivdnt.galahad.util.createZipFile
 import org.ivdnt.galahad.util.setContentDisposition
 import org.ivdnt.galahad.util.toValidFileName
@@ -40,7 +35,7 @@ class EvaluationService(val corpora: CorporaService) {
 
     @Autowired
     private val response: HttpServletResponse? = null
-    
+
     private val user: User get() = User.fromRequest(request)
 
     fun getDistribution(
@@ -172,7 +167,7 @@ class EvaluationService(val corpora: CorporaService) {
     }
 
     fun getDocumentLevelLayerVisualisation(
-        corpus: UUID, document: String, job: String, reference: String?
+        corpus: UUID, document: String, job: String, reference: String?,
     ): List<TermComparison> {
         val reference: String = reference ?: SOURCE_LAYER_NAME
         return DocumentLayerComparison(
@@ -275,7 +270,7 @@ class EvaluationService(val corpora: CorporaService) {
 
     fun getTokenFrequency(corpus: UUID, job: String, reference: String?): CorpusMetrics {
         val corpusObj = corpora.readAsReaderOrThrow(corpus, user)
-        val setting = FrequencyMetricsSettings(TokenFrequency(corpusObj,job), LemmaByLemmaMetricsSettings())
+        val setting = FrequencyMetricsSettings(TokenFrequency(corpusObj, job), LemmaByLemmaMetricsSettings())
         val settings = listOf(setting)
         val cm = CorpusMetrics(
             corpusObj,

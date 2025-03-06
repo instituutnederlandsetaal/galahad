@@ -1,6 +1,5 @@
 package org.ivdnt.galahad.formats.tei.export
 
-import org.ivdnt.galahad.data.corpus.CorpusMetadata
 import org.ivdnt.galahad.data.corpus.MutableCorpusMetadata
 import org.ivdnt.galahad.data.document.DocumentFormat
 import org.ivdnt.galahad.formats.LayerTransformer
@@ -19,10 +18,10 @@ import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 
 class TEIMetadata(
-        xmlDoc: Document,
-        root: Node,
-        layer: LayerTransformer,
-        val merging: Boolean,
+    xmlDoc: Document,
+    root: Node,
+    layer: LayerTransformer,
+    val merging: Boolean,
 ) : XMLMetadata(xmlDoc, root, layer) {
 
     /** GaLAHaD-generated UUID */
@@ -63,7 +62,7 @@ class TEIMetadata(
     // The caller specifies which one.
     private fun write() {
         // Add namespace to root for LAnCeLoT compatibility
-        (root as Element).setAttribute("xmlns","http://www.tei-c.org/ns/1.0")
+        (root as Element).setAttribute("xmlns", "http://www.tei-c.org/ns/1.0")
 
         val teiHeader = root.getOrCreateChild("teiHeader", true)
         // remove namespace for Cobalt compatibility
@@ -116,7 +115,10 @@ class TEIMetadata(
         if (merging) {
             addRespStmt(titleStmt, "TEI merged by GaLAHaD (https://portal.clarin.ivdnt.org/galahad)")
         } else {
-            addRespStmt(titleStmt, "exported as ${DocumentFormat.TeiP5.identifier} by GaLAHaD (https://portal.clarin.ivdnt.org/galahad)")
+            addRespStmt(
+                titleStmt,
+                "exported as ${DocumentFormat.TeiP5.identifier} by GaLAHaD (https://portal.clarin.ivdnt.org/galahad)"
+            )
         }
     }
 
@@ -170,10 +172,12 @@ class TEIMetadata(
     }
 
     private fun addNote(notesStmt: Element, attrVal: String, textContent: String) {
-        notesStmt.createChild("note", mapOf(
-            "type" to attrVal,
-            "resp" to "GaLAHaD",
-        ), textContent)
+        notesStmt.createChild(
+            "note", mapOf(
+                "type" to attrVal,
+                "resp" to "GaLAHaD",
+            ), textContent
+        )
     }
 
     /**
@@ -199,10 +203,12 @@ class TEIMetadata(
             // <ab type="date">
             val abDate = sourceDesc.createChild("ab", "", "date")
             // <date>
-            abDate.createChild("date", mapOf(
-                "from" to corpusMetadata.eraFrom.toString(),
-                "to" to corpusMetadata.eraTo.toString(),
-            ))
+            abDate.createChild(
+                "date", mapOf(
+                    "from" to corpusMetadata.eraFrom.toString(),
+                    "to" to corpusMetadata.eraTo.toString(),
+                )
+            )
         }
     }
 
@@ -235,11 +241,13 @@ class TEIMetadata(
         // <appInfo>
         val appInfo = encodingDesc.createChild("appInfo", "resp" to "GaLAHaD")
         // <application>
-        val application = appInfo.createChild("application", mapOf(
-            "version" to  layer.tagger.version,
-            "ident" to  layer.tagger.id,
-            "xml:id" to  layer.tagger.id,
-        ))
+        val application = appInfo.createChild(
+            "application", mapOf(
+                "version" to layer.tagger.version,
+                "ident" to layer.tagger.id,
+                "xml:id" to layer.tagger.id,
+            )
+        )
         // <label>
         application.createChild("label", "POS-tagger and lemmatiser")
         // <ptr>
@@ -259,17 +267,21 @@ class TEIMetadata(
         val editorialDecl = encodingDesc.createChild("editorialDecl", "resp" to "GaLAHaD")
         val interpretation = editorialDecl.createChild("interpretation", "xml:id" to "A0001")
         // Regular <ab>
-        val ab = interpretation.createChild("ab", mapOf(
-            "type" to "linguisticAnnotation",
-            "subtype" to "POS-tagging_lemmatisation",
-        ))
-        addInterGrpTo(ab, mapOf(
-            "annotationStyle" to "inline",
-            "Documentation" to "",
-            "annotationSet" to (layer.tagger.tagset ?: ""),
-            "annotationDescription" to "The file was automatically annotated within the platform GaLAHaD, which is a central hub for enriching historical Dutch.",
-            "annotationFormat" to "TEI xml",
-        ))
+        val ab = interpretation.createChild(
+            "ab", mapOf(
+                "type" to "linguisticAnnotation",
+                "subtype" to "POS-tagging_lemmatisation",
+            )
+        )
+        addInterGrpTo(
+            ab, mapOf(
+                "annotationStyle" to "inline",
+                "Documentation" to "",
+                "annotationSet" to (layer.tagger.tagset ?: ""),
+                "annotationDescription" to "The file was automatically annotated within the platform GaLAHaD, which is a central hub for enriching historical Dutch.",
+                "annotationFormat" to "TEI xml",
+            )
+        )
         // Provenance <ab>
         addProvenanceAb(interpretation)
     }
@@ -287,20 +299,24 @@ class TEIMetadata(
      * </ab>
      */
     private fun addProvenanceAb(interpretation: Element) {
-        val ab = interpretation.createChild("ab", mapOf(
-            "type" to "linguisticAnnotation",
-            "subtype" to "POS-tagging_lemmatisationProvenance1",
-        ))
+        val ab = interpretation.createChild(
+            "ab", mapOf(
+                "type" to "linguisticAnnotation",
+                "subtype" to "POS-tagging_lemmatisationProvenance1",
+            )
+        )
         addInterGrpTo(ab, "annotationMode", "automatically annotated")
         // processor interp is special, using @sameAs
         val processor = ab.createChild("interpGrp", "type" to "processor")
         processor.createChild("interp", "sameAs" to "#${layer.tagger.id}")
         // Provenance also has a <date>
         val now = layer.dateFormat.format(Date())
-        ab.createChild("date", mapOf(
-            "from" to now,
-            "to" to now,
-        ))
+        ab.createChild(
+            "date", mapOf(
+                "from" to now,
+                "to" to now,
+            )
+        )
     }
 
     /**

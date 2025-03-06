@@ -1,13 +1,9 @@
 package org.ivdnt.galahad.jobs
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.data.layer.Layer
-import org.ivdnt.galahad.data.layer.LayerPreview
-import org.ivdnt.galahad.data.layer.LayerSummary
-import org.ivdnt.galahad.filesystem.GalahadFile
 import org.ivdnt.galahad.filesystem.FileBackedValue
-import org.ivdnt.galahad.tagset.Tagset
+import org.ivdnt.galahad.filesystem.GalahadFile
 import java.io.File
 import java.util.*
 

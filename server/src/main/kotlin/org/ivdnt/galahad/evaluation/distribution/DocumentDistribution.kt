@@ -10,7 +10,7 @@ import org.ivdnt.galahad.data.layer.Layer
 class DocumentDistribution(
     hypothesis: Layer,
     meta: DocumentMetadata,
-    annotation: AnnotationType
+    annotation: AnnotationType,
 ) : Distribution(annotation) {
     init {
         totalChars = meta.numChars

@@ -17,7 +17,7 @@ open class TSVFile(
     override val file: File,
 ) : InternalFile {
     override val format: DocumentFormat = DocumentFormat.Tsv
-    override val plaintext: String by lazy { parse();  plainTextFile.readText() }
+    override val plaintext: String by lazy { parse(); plainTextFile.readText() }
     override val sourceLayer: Layer by lazy { parse(); _sourceLayer }
 
     private val plainTextFile = File.createTempFile("galahad-${file.name}-plaintext", ".txt")
@@ -87,13 +87,13 @@ open class TSVFile(
     ) {
         headers.forEachIndexed { index, header ->
             columnNames.entries
-            // from the columnNames, find the first AnnotationType that has a name that matches the header.
-            .firstOrNull { (_, names) ->
-                names.any { name -> header.equals(name, ignoreCase = true) }
-            // if it exists, register the index
-            }?.let { (annotationType, _) ->
-                columnIndices[annotationType] = index
-            }
+                // from the columnNames, find the first AnnotationType that has a name that matches the header.
+                .firstOrNull { (_, names) ->
+                    names.any { name -> header.equals(name, ignoreCase = true) }
+                    // if it exists, register the index
+                }?.let { (annotationType, _) ->
+                    columnIndices[annotationType] = index
+                }
         }
     }
 
@@ -132,7 +132,7 @@ open class TSVFile(
     }
 
     // Derived classes may have to construct a PoS differently.
-    //protected open fun getPos(values: List<String>): String? = getColumn(posIndex!!, values)
+    // protected open fun getPos(values: List<String>): String? = getColumn(posIndex!!, values)
 
     /**
      * Assumes the TSV file is mappable onto the provided plaintext

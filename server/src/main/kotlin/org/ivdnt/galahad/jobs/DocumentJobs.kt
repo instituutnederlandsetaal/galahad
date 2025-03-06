@@ -1,9 +1,6 @@
 package org.ivdnt.galahad.jobs
 
-import org.apache.logging.log4j.kotlin.logger
-import org.ivdnt.galahad.app.CRDSet
 import org.ivdnt.galahad.exceptions.DocumentJobNotFoundException
-import org.ivdnt.galahad.filesystem.GalahadFile
 import org.ivdnt.galahad.filesystem.GalahadFileManager
 import java.io.File
 

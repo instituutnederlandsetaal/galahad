@@ -5,7 +5,6 @@ import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.data.document.Document
 import org.ivdnt.galahad.data.document.DocumentMetadata
-import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.exceptions.DocumentInvalidException
 import org.ivdnt.galahad.exceptions.FileUploadException
 import org.springframework.beans.factory.annotation.Autowired

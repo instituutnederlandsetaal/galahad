@@ -3,7 +3,7 @@ package org.ivdnt.galahad.filesystem
 import org.apache.logging.log4j.kotlin.logger
 import java.io.File
 
-abstract class GalahadFileManager<ReadType : GalahadFile, CreateType: Any>(
+abstract class GalahadFileManager<ReadType : GalahadFile, CreateType : Any>(
     dir: File,
 ) : GalahadFile(dir) {
 

@@ -25,7 +25,7 @@ fun NodeList.deepcopy(): ArrayList<Node> {
 
 class FoliaTextMerger(
     node: Node, offset: Int, document: Document, wordFormIter: ListIterator<WordForm>,
-    deleteList: ArrayList<Node>, layer: Layer
+    deleteList: ArrayList<Node>, layer: Layer,
 ) : TEITextMerger(node, offset, document, wordFormIter, deleteList, layer, DocumentFormat.Folia) {
 
     override fun merge() {
@@ -58,7 +58,7 @@ class FoliaTextMerger(
                     offset += text.length
             }
             // Remove parent and transfer children.
-            if(markForDeletion(parent)) {
+            if (markForDeletion(parent)) {
                 var last = parent
                 for (i in parent.childNodes.length - 1 downTo 0) {
                     val c = parent.childNodes.item(i)
@@ -87,18 +87,18 @@ class FoliaTextMerger(
             else tTag.parentNode.parentNode // First iteration looks at grandparent, because t-style copied itself.
         while (tTag.tagName() != "t") {
             val clone = parent.cloneNode(false)
-            tTag.parentNode.replaceChild(clone,tTag)
+            tTag.parentNode.replaceChild(clone, tTag)
             clone.insertFirst(tTag)
             // Ready for next iter.
             parent = parent.parentNode
             tTag = clone
         }
         // Create the <w> which will contain the <t>
-        val wTag =  document.createElement("w")
+        val wTag = document.createElement("w")
         val term = layer.termForWordForm(wf)
         wTag.addTerm(term)
         // Contain it.
-        tTag.parentNode.replaceChild(wTag,tTag)
+        tTag.parentNode.replaceChild(wTag, tTag)
         wTag.insertFirst(tTag)
     }
 

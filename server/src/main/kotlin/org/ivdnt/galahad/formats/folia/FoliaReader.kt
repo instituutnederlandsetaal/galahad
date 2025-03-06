@@ -87,6 +87,7 @@ class FoliaReader(
                     nonFloatingNL()
                     previousWasW = false
                 }
+
                 "p" -> {
                     nonFloatingDoubleNL()
                     recurse()

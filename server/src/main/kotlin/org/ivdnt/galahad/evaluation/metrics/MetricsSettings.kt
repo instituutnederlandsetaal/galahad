@@ -222,13 +222,13 @@ class NerByNerMetricsSettings : MetricsSettings {
     }
 
     override fun groupBy(term: Term): String {
-        return  term.annotationHeadOrMissing(AnnotationType.NER)
+        return term.annotationHeadOrMissing(AnnotationType.NER)
     }
 }
 
 class FrequencyMetricsSettings(
     private val tokenFrequency: TokenFrequency,
-    private val metric: MetricsSettings
+    private val metric: MetricsSettings,
 ) : MetricsSettings {
     override val id: String = "${metric.annotation}ByFrequency"
     override val annotation: String = metric.annotation
@@ -247,7 +247,7 @@ class FrequencyMetricsSettings(
         val freq = tokenFrequency.getFrequency(term.literals.lowercase())
         val truncatedFreq = tokenFrequency.getFrequency(truncatePC(term.literals.lowercase()))
         return if (freq == 0) {
-             truncatedFreq.toString()
+            truncatedFreq.toString()
         } else {
             return freq.toString()
         }

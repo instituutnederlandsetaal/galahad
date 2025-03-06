@@ -9,14 +9,11 @@ import io.swagger.v3.oas.models.info.Contact
 import io.swagger.v3.oas.models.info.License
 import io.swagger.v3.oas.models.servers.Server
 import jakarta.servlet.http.HttpServletRequest
-import jakarta.servlet.http.HttpServletResponse
 import org.apache.logging.log4j.kotlin.Logging
-import org.ivdnt.galahad.exceptions.ErrorResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.runApplication
-import org.springframework.boot.web.servlet.error.ErrorController
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
@@ -25,7 +22,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.io.File
 import java.io.IOException

@@ -13,7 +13,6 @@ import org.ivdnt.galahad.data.layer.AnnotationType
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
 import org.ivdnt.galahad.evaluation.confusion.Confusion
 import org.ivdnt.galahad.evaluation.distribution.CorpusDistribution
-import org.ivdnt.galahad.evaluation.frequency.TokenFrequency
 import org.ivdnt.galahad.evaluation.metrics.CorpusMetrics
 import org.ivdnt.galahad.exceptions.ErrorResponse
 import org.ivdnt.galahad.web.service.EvaluationService

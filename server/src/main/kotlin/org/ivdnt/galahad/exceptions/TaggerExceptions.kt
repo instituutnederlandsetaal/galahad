@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.ResponseStatus
 class TaggerNotFoundException(tagger: String) : Exception("Tagger $tagger not found")
 
 @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-class AnnotationNotSupported(tagger: String, annotation: AnnotationType) : Exception("Tagger $tagger does not have annotation type $annotation.")
+class AnnotationNotSupported(tagger: String, annotation: AnnotationType) :
+    Exception("Tagger $tagger does not have annotation type $annotation.")
 
 @ResponseStatus(value = HttpStatus.SERVICE_UNAVAILABLE)
 class TaggerNoConnectionException(tagger: String) : Exception("Could not connect to $tagger. Try again later.")

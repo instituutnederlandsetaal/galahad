@@ -28,7 +28,7 @@ internal class ConlluLayerMerger(
         layer: Layer,
         termIndex: Int,
         annotationType: AnnotationType,
-        columnIndex: Int
+        columnIndex: Int,
     ) {
         when (annotationType) {
             AnnotationType.MISC -> {
@@ -39,6 +39,7 @@ internal class ConlluLayerMerger(
                 val miscField: String = listOf(ner, misc).filterNotNull().joinToString("|")
                 columns[columnIndex] = miscField.ifEmpty { "_" }
             }
+
             AnnotationType.NER -> return // NER is already in MISC
             AnnotationType.UPOS -> {
                 // Split UPOS into head and features
@@ -48,6 +49,7 @@ internal class ConlluLayerMerger(
                 columns[sourceFile.uposIndex] = head
                 columns[sourceFile.featsIndex] = features
             }
+
             AnnotationType.ID -> return // Don't overwrite
             else -> super.mergeSingleColumn(columns, layer, termIndex, annotationType, columnIndex)
         }

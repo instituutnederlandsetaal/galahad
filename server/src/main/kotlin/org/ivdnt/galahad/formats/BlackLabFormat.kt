@@ -12,18 +12,20 @@ open class BLF
 /**
  * The BLF file can contain many configurations, however we only need a few.
  */
-class BLFXML: BLF() {
+class BLFXML : BLF() {
     class AnnotatedFields {
         class Contents {
             class Annotation {
                 var name: String? = null
                 var valuePath: String? = null
             }
+
             var containerPath: String? = null
             var wordPath: String? = null
             var punctPath: String? = null
             var annotations: List<Annotation>? = null
         }
+
         var contents: Contents? = null
     }
 

@@ -71,7 +71,7 @@ internal open class TSVLayerMerger(
         layer: Layer,
         termIndex: Int,
         annotationType: AnnotationType,
-        columnIndex: Int
+        columnIndex: Int,
     ) {
         val term = layer.terms[termIndex]
         columns[columnIndex] = term.annotations[annotationType] ?: ""

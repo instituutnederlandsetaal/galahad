@@ -12,10 +12,10 @@ import java.io.OutputStream
 import kotlin.io.path.createTempDirectory
 
 
-class TEILayerMerger (
+class TEILayerMerger(
     teiFile: TEIFile,
-    transformMetadata: DocumentTransformMetadata
-) : LayerMerger<TEIFile>, LayerTransformer( transformMetadata ) {
+    transformMetadata: DocumentTransformMetadata,
+) : LayerMerger<TEIFile>, LayerTransformer(transformMetadata) {
 
     private var xmlDoc = getXmlBuilder().newDocument()
     private val sortedWordForms = result.wordForms.sortedBy { it.offset }
@@ -25,22 +25,33 @@ class TEILayerMerger (
     private var parser: BLFXMLParser
 
     override fun merge(): TEIFile {
-        val result = createTempDirectory("teimerge").toFile().resolve( document.name )
-        result.writeText( parser.xmlToString( false ) )
+        val result = createTempDirectory("teimerge").toFile().resolve(document.name)
+        result.writeText(parser.xmlToString(false))
         return TEIFile(result, document.metadata.format)
     }
 
     init {
-        parser = BLFXMLParser.forFileWithFormat(transformMetadata.document.metadata.format, teiFile.file, OutputStream.nullOutputStream()) {
-            node: Node, offset: Int, document: Document ->
-            val merger = TEITextMerger(node, offset, document, wordFormIter, deleteList, result, transformMetadata.document.metadata.format)
+        parser = BLFXMLParser.forFileWithFormat(
+            transformMetadata.document.metadata.format,
+            teiFile.file,
+            OutputStream.nullOutputStream()
+        ) { node: Node, offset: Int, document: Document ->
+            val merger = TEITextMerger(
+                node,
+                offset,
+                document,
+                wordFormIter,
+                deleteList,
+                result,
+                transformMetadata.document.metadata.format
+            )
             merger.merge()
         }
         xmlDoc = parser.xmlDocument
 
         // add headers
         // typically we expect just 1 root node.
-        for( i in 0 until parser.rootNodes.length ) {
+        for (i in 0 until parser.rootNodes.length) {
             TEIMetadata(xmlDoc, parser.rootNodes.item(i), this, merging = true)
         }
 

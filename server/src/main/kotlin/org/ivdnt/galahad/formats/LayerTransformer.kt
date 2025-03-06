@@ -10,16 +10,16 @@ import java.text.SimpleDateFormat
 import kotlin.io.path.createFile
 import kotlin.io.path.createTempDirectory
 
-open class LayerTransformer (
-    val transformMetadata: DocumentTransformMetadata
-    ) {
+open class LayerTransformer(
+    val transformMetadata: DocumentTransformMetadata,
+) {
 
     private val tagsets = TagsetStore()
     val tagger = Tagger.readOrThrow(transformMetadata.job.name, transformMetadata.corpus)
     protected val result = transformMetadata.layer
     protected val document = transformMetadata.document
 
-    val punctuationTags = tagsets.getOrNull( tagger.tagset )?.punctuationTags ?: setOf()
+    val punctuationTags = tagsets.getOrNull(tagger.tagset)?.punctuationTags ?: setOf()
 
     val dateTimeFormat: SimpleDateFormat
         get() = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
@@ -35,17 +35,19 @@ interface LayerConverter {
      *
      * @param outputStream The stream to which to output the file of the respective file type.
      */
-    fun convert( outputStream: OutputStream )
-    fun convertToFileNamed( name: String ): File {
-        val tempFile = createTempDirectory("galahad-layer-converter").resolve( "$name.${format.extension}" ).createFile().toFile()
-        convert( tempFile.outputStream() )
+    fun convert(outputStream: OutputStream)
+    fun convertToFileNamed(name: String): File {
+        val tempFile =
+            createTempDirectory("galahad-layer-converter").resolve("$name.${format.extension}").createFile().toFile()
+        convert(tempFile.outputStream())
         return tempFile
     }
+
     val format: DocumentFormat
 
 }
 
-interface LayerMerger<T: InternalFile> {
+interface LayerMerger<T : InternalFile> {
 
     fun merge(): T
 

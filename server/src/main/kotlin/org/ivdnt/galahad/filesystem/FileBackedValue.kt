@@ -74,7 +74,8 @@ open class FileBackedValue<T>(
         return result
     }
 
-    inline fun <reified T> readOrThrow(): T = readOrNull() ?: throw IllegalStateException("File ${file.absolutePath} does not exist or is empty.")
+    inline fun <reified T> readOrThrow(): T =
+        readOrNull() ?: throw IllegalStateException("File ${file.absolutePath} does not exist or is empty.")
 
     inline fun <reified T> write(value: T): T {
         if (!file.exists()) {

@@ -3,7 +3,6 @@ package org.ivdnt.galahad.data.layer
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
-import org.ivdnt.galahad.data.layer.LayerMetadata
 import org.ivdnt.galahad.tagset.Tagset
 
 /**

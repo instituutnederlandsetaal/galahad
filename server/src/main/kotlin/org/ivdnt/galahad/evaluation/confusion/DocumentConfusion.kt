@@ -10,11 +10,11 @@ import org.ivdnt.galahad.evaluation.comparison.TermComparison
 /**
  * Part of speech confusion of a document for two different tagger layers.
  */
-class DocumentConfusion (
+class DocumentConfusion(
     hypothesis: Layer,
     reference: Layer,
     layerFilter: LayerFilter? = null,
-    annotation: AnnotationType = AnnotationType.POS
+    annotation: AnnotationType = AnnotationType.POS,
 ) : Confusion(truncate = layerFilter == null, annotation) {
 
     init {

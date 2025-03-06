@@ -16,7 +16,7 @@ class DocumentMetrics(
     reference: Layer,
     settings: List<MetricsSettings>,
     layerFilter: LayerFilter? = null,
-    truncate: Boolean = true
+    truncate: Boolean = true,
 ) : Metrics(corpus, settings, hypothesis.name, reference.name, truncate = truncate) {
 
     init {

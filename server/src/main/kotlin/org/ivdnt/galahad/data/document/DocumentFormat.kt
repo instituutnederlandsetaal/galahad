@@ -27,8 +27,9 @@ enum class DocumentFormat(val identifier: String, val extension: String) {
          * BlackLab uses formats that contain -, which is not allowed in an enum, so we need this mapping
          */
         @JsonCreator
-        fun fromString(s: String): DocumentFormat = entries.firstOrNull { it.identifier == s } ?: throw InvalidDocumentFormatException(
-            "Invalid format $s, valid formats are ${entries.map { it.identifier }}"
-        )
+        fun fromString(s: String): DocumentFormat =
+            entries.firstOrNull { it.identifier == s } ?: throw InvalidDocumentFormatException(
+                "Invalid format $s, valid formats are ${entries.map { it.identifier }}"
+            )
     }
 }

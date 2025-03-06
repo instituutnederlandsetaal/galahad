@@ -1,6 +1,5 @@
 package org.ivdnt.galahad.web.service
 
-import org.ivdnt.galahad.filesystem.GalahadFile
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.data.corpus.Corpora
@@ -9,12 +8,13 @@ import org.ivdnt.galahad.data.corpus.CorpusMetadata
 import org.ivdnt.galahad.data.corpus.MutableCorpusMetadata
 import org.ivdnt.galahad.exceptions.CorpusNotFoundException
 import org.ivdnt.galahad.exceptions.CorpusUnauthorizedException
+import org.ivdnt.galahad.filesystem.GalahadFile
 import org.springframework.stereotype.Service
-import java.util.UUID
+import java.util.*
 
 @Service
 class CorporaService(
-    config: Config
+    config: Config,
 ) : GalahadFile(config.getWorkingDirectory().resolve("corpora")) {
 
     val custom = Corpora(dir.resolve("custom"))
@@ -25,7 +25,7 @@ class CorporaService(
     val assaysFile get() = dir.resolve("benchmarks.json")
 
     fun readAll(user: User): Set<CorpusMetadata> {
-        return all.map { it.immutableMetadata }.filter { it.hasReadAccess(user, excludeAdmin = true)}.toSet()
+        return all.map { it.immutableMetadata }.filter { it.hasReadAccess(user, excludeAdmin = true) }.toSet()
     }
 
     fun readAllDatasets(): Set<CorpusMetadata> {

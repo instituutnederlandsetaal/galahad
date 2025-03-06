@@ -3,8 +3,8 @@ package org.ivdnt.galahad.data.document
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.data.corpus.Corpus
 import org.ivdnt.galahad.data.layer.Layer
-import org.ivdnt.galahad.filesystem.GalahadFile
 import org.ivdnt.galahad.filesystem.FileBackedValue
+import org.ivdnt.galahad.filesystem.GalahadFile
 import org.ivdnt.galahad.formats.DocumentTransformMetadata
 import org.ivdnt.galahad.formats.InternalFile
 import org.ivdnt.galahad.formats.conllu.export.LayerToConlluConverter
@@ -113,7 +113,8 @@ class Document(
             // plaintext & sourceLayer
             val internalFile = InternalFile.create(file)
             // sourceLayer as job
-            corpus.jobs.createOrThrow(SOURCE_LAYER_NAME).documentJobs.createOrThrow(doc.name).layer = internalFile.sourceLayer
+            corpus.jobs.createOrThrow(SOURCE_LAYER_NAME).documentJobs.createOrThrow(doc.name).layer =
+                internalFile.sourceLayer
             // plaintext
             doc.plainTextFile.writeText(internalFile.plaintext)
 

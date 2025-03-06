@@ -1,7 +1,6 @@
 package org.ivdnt.galahad.data.corpus
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import org.ivdnt.galahad.filesystem.FileBackedValue
 import org.ivdnt.galahad.app.JSONable
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.exceptions.CorpusNameInvalidException
@@ -105,7 +104,11 @@ open class MutableCorpusMetadata(
          *
          * If a user appears multiple times in the permission hierarchy, only the upper level remains.
          */
-        fun clean(user: User, newMeta: MutableCorpusMetadata, oldMeta: MutableCorpusMetadata? = null): MutableCorpusMetadata {
+        fun clean(
+            user: User,
+            newMeta: MutableCorpusMetadata,
+            oldMeta: MutableCorpusMetadata? = null,
+        ): MutableCorpusMetadata {
             // Overwrite the owner with the original, so collaborators can't change it,
             // unless it's empty, in which case it's a new corpus.
             newMeta.owner = oldMeta?.owner ?: user.id

@@ -6,7 +6,7 @@ typealias CSVHeader = String
 typealias CSVRecord = String
 
 class CSVFile(
-    path: File
+    path: File,
 ) : File(path.toURI()) {
 
     init {
@@ -19,7 +19,7 @@ class CSVFile(
     }
 
     companion object {
-        private fun toCSVSafeString( s: String ): String {
+        private fun toCSVSafeString(s: String): String {
             // Alternatively we could check for forbidden characters first, and the wrap/replace only when necessary.
             // However, this works and gives a consistent result
             return "\"${s.replace("\"", "\"\"")}\""
@@ -43,7 +43,7 @@ class CSVFile(
 
         fun toCSVHeader(headers: List<String>): CSVHeader {
             // This is just an alias
-            return toCSVRecord( headers )
+            return toCSVRecord(headers)
         }
 
         fun toCSVRecord(values: List<Any>): CSVRecord {

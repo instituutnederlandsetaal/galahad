@@ -11,13 +11,14 @@ import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 
-class LayerToNAFConverter (
-    transformMetadata: DocumentTransformMetadata
+class LayerToNAFConverter(
+    transformMetadata: DocumentTransformMetadata,
 ) : LayerConverter, LayerTransformer(transformMetadata) {
 
     override val format: DocumentFormat
         get() = DocumentFormat.Naf
-    override fun convert( outputStream: OutputStream) {
+
+    override fun convert(outputStream: OutputStream) {
 
         val plainText = transformMetadata.plainText
         val layer = result
@@ -38,7 +39,7 @@ class LayerToNAFConverter (
         layer
             .wordForms
             .forEachIndexed { _, wordForm ->
-                //wordForm.id = "w$index"
+                // wordForm.id = "w$index"
 
                 val wf = xmlDoc.createElement("wf")
                 text.appendChild(wf)
@@ -61,12 +62,12 @@ class LayerToNAFConverter (
                 xterm.setAttribute("pos", term.posOrEmpty)
 
                 val xspan = xmlDoc.createElement("span")
-                xterm.appendChild( xspan )
+                xterm.appendChild(xspan)
 
-                term.targets.forEach {target ->
+                term.targets.forEach { target ->
                     val xtarget = xmlDoc.createElement("target")
-                    xtarget.setAttribute("id", target.id )
-                    xspan.appendChild( xtarget )
+                    xtarget.setAttribute("id", target.id)
+                    xspan.appendChild(xtarget)
                 }
             }
 
@@ -80,6 +81,6 @@ class LayerToNAFConverter (
         transformer.transform(DOMSource(xmlDoc), StreamResult(writer))
         val xmlString = writer.buffer.toString()
 
-        return outputStream.write( xmlString.toByteArray() ) // TODO more efficient implementation instead of bulk
+        return outputStream.write(xmlString.toByteArray()) // TODO more efficient implementation instead of bulk
     }
 }

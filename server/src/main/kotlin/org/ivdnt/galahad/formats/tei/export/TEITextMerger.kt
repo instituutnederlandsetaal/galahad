@@ -144,14 +144,14 @@ open class TEITextMerger(
         do {
             // Go up in the tree until we have a nextSibling.
             while (wTag.nextSibling == null) {
-                //wTag.wrapChildrenIn(wTag.parentNode)
+                // wTag.wrapChildrenIn(wTag.parentNode)
                 wTag = moveWTagUp(wTag)
             }
             // Text contents.
             val sibText = wTag.nextSibling.getPlainTextContent()
             val plainText = wTag.getPlainTextContent()
             var wText = ""
-            for (i in plainText.length-1 downTo 0) {
+            for (i in plainText.length - 1 downTo 0) {
                 val tmp = plainText.substring(i)
                 if (!wf.literal.contains(tmp)) break
                 wText = tmp
@@ -164,8 +164,7 @@ open class TEITextMerger(
             if (sibText.length == matchingIndex) {
                 // The whole sibling text matches: e.g. van<ex>den</ex>
                 wTag.appendChild(wTag.nextSibling)
-            }
-            else { // The sibling text matches partially: e.g. van<ex>den graal</ex>
+            } else { // The sibling text matches partially: e.g. van<ex>den graal</ex>
                 val sibClone = wTag.nextSibling.cloneNode(true)
                 val clean = wTag.nextSibling.cloneNode(false)
                 if (clean.nodeType == Node.TEXT_NODE) {
@@ -223,7 +222,7 @@ open class TEITextMerger(
         wTag.appendChild(clonedParent)
         wTag.parentNode.parentNode.insertAfter(wTag, wTag.parentNode)
 
-        if (refToParent.childOrNull("w", recurse=true) == null) {
+        if (refToParent.childOrNull("w", recurse = true) == null) {
             deleteList.add(refToParent)
         }
         return wTag
@@ -231,21 +230,22 @@ open class TEITextMerger(
 
     protected open fun createWTag(wf: WordForm): Element {
         val termToAdd = layer.termForWordForm(wf)
-        
-        val wTag = if (layer.tagset.punctuationTags.contains(termToAdd.pos) && !termToAdd.literals.contains(alphaNumeric)) {
-            val element = document.createElement("pc")
-            element
-        } else {
-            val element = document.createElement("w")
-            element.setAttribute("lemma", termToAdd.lemmaOrEmpty)
-            // Empty pos if it is a PC and it contains alphanumeric characters (so it can't be PC anyway).
-            if (layer.tagset.punctuationTags.contains(termToAdd.pos) && termToAdd.literals.contains(alphaNumeric)) {
-                element.setAttribute(posType(), "") // empty
+
+        val wTag =
+            if (layer.tagset.punctuationTags.contains(termToAdd.pos) && !termToAdd.literals.contains(alphaNumeric)) {
+                val element = document.createElement("pc")
+                element
             } else {
-                element.setAttribute(posType(), termToAdd.posOrEmpty)
+                val element = document.createElement("w")
+                element.setAttribute("lemma", termToAdd.lemmaOrEmpty)
+                // Empty pos if it is a PC and it contains alphanumeric characters (so it can't be PC anyway).
+                if (layer.tagset.punctuationTags.contains(termToAdd.pos) && termToAdd.literals.contains(alphaNumeric)) {
+                    element.setAttribute(posType(), "") // empty
+                } else {
+                    element.setAttribute(posType(), termToAdd.posOrEmpty)
+                }
+                element
             }
-            element
-        }
 
         wTag.setAttribute("xml:id", termToAdd.targets.first().id)
         return wTag
@@ -258,7 +258,7 @@ open class TEITextMerger(
     }
 
     protected fun getWordFormForOffsetOrNull(): WordForm? {
-        while(wordFormIter.hasNext()) {
+        while (wordFormIter.hasNext()) {
             val wf = wordFormIter.next()
             if (wf.offset == offset) {
                 return wf
@@ -279,7 +279,10 @@ open class TEITextMerger(
                 // remove all whitespace within a <w>-tag (although this rarely occurs anyway).
                 val sourceLiteral = node.getPlainTextContent().replace(Regex("""\s"""), "")
                 if (wordFormToAdd.literal == sourceLiteral // This is a simple case since the tokenization matches
-                    || truncatedPcMatch(sourceLiteral, wordFormToAdd.literal) // Also match with single punctuation (e.g. word. -> word)
+                    || truncatedPcMatch(
+                        sourceLiteral,
+                        wordFormToAdd.literal
+                    ) // Also match with single punctuation (e.g. word. -> word)
                 ) {
                     mergeWTag(wordFormToAdd, element)
                 } else {

@@ -25,6 +25,7 @@ enum class ClassificationType(val value: String) {
 }
 
 typealias FlatMetricTypeAssay = Map<String, FlatMetricType>
+
 class FlatMetricType(
     val micro: ClassificationMetrics = ClassificationMetrics(),
     val macro: ClassificationMetrics = ClassificationMetrics(),
@@ -45,15 +46,16 @@ class MetricsType(
             return if (map.size > TRUNCATE) {
                 // sort mt.value.map on mt.value.map["someKey"].cls.classCount, take the first TRUNCATE elements, and then map
                 map.entries.asSequence()
-                        .sortedByDescending { it.value.cls.classCount }.take(TRUNCATE)
-                        .associateBy({ it.key }, { it.value }).values.toSet()
+                    .sortedByDescending { it.value.cls.classCount }.take(TRUNCATE)
+                    .associateBy({ it.key }, { it.value }).values.toSet()
             } else {
                 map.values.toSet()
             }
         }
 
     val classes: ClassificationClasses
-        get() = map.values.map { it.cls }.toMutableList().apply{ this.add(0, ClassificationClasses(count=0)) }.reduce { a, b -> a.add(b, truncate) }.apply { falsePositive = EvaluationEntry() }
+        get() = map.values.map { it.cls }.toMutableList().apply { this.add(0, ClassificationClasses(count = 0)) }
+            .reduce { a, b -> a.add(b, truncate) }.apply { falsePositive = EvaluationEntry() }
 
     val macro: ClassificationMetrics
         get() {
@@ -68,7 +70,10 @@ class MetricsType(
             if (map.isEmpty()) {
                 return ClassificationMetrics()
             }
-            return ClassificationMetrics.calculate(map.values.map { it.cls.flat }.reduce { a, b -> a + b }, micro = true)
+            return ClassificationMetrics.calculate(
+                map.values.map { it.cls.flat }.reduce { a, b -> a + b },
+                micro = true
+            )
         }
 
     fun toGlobalCsv(): String {
@@ -76,18 +81,20 @@ class MetricsType(
         val microMetrics = micro
         val macroMetrics = macro
 
-        return CSVFile.toCSVRecord(listOf(
-            setting.annotation,
-            setting.group,
-            macroMetrics.precision.toFixed(),
-            macroMetrics.recall.toFixed(),
-            macroMetrics.f1.toFixed(),
-            microMetrics.accuracy.toFixed(),
-            classes.classCount,
-            classes.truePositive.count,
-            classes.falseNegative.count,
-            classes.noMatch.count,
-        ))
+        return CSVFile.toCSVRecord(
+            listOf(
+                setting.annotation,
+                setting.group,
+                macroMetrics.precision.toFixed(),
+                macroMetrics.recall.toFixed(),
+                macroMetrics.f1.toFixed(),
+                microMetrics.accuracy.toFixed(),
+                classes.classCount,
+                classes.truePositive.count,
+                classes.falseNegative.count,
+                classes.noMatch.count,
+            )
+        )
     }
 
     fun toFlat(): FlatMetricType {
@@ -96,7 +103,7 @@ class MetricsType(
 
     fun toGroupedCsv(): String {
         var csv = Metric.getCsvHeader()
-        grouped.sortedBy { it.name }.forEach{ csv += it.toCSVRecord() }
+        grouped.sortedBy { it.name }.forEach { csv += it.toCSVRecord() }
         return csv
     }
 
@@ -116,7 +123,7 @@ class MetricsType(
 
         // no match
         if (comp.hypoTerm == Term.EMPTY) {
-            add (
+            add(
                 Metric(
                     name = setting.groupBy(comp.refTerm),
                     cls = ClassificationClasses(
@@ -155,7 +162,10 @@ class MetricsType(
         }
     }
 
-    private fun truesFalses(comp: TermComparison, cond: (TermComparison) -> Boolean): Pair<EvaluationEntry, EvaluationEntry> {
+    private fun truesFalses(
+        comp: TermComparison,
+        cond: (TermComparison) -> Boolean,
+    ): Pair<EvaluationEntry, EvaluationEntry> {
         val trues = if (cond(comp)) {
             EvaluationEntry(1, mutableListOf(comp))
         } else {

@@ -7,9 +7,9 @@ import org.ivdnt.galahad.exceptions.DocumentInvalidException
 import org.ivdnt.galahad.formats.conllu.ConlluFile
 import org.ivdnt.galahad.formats.folia.FoliaFile
 import org.ivdnt.galahad.formats.naf.NAFFile
-import org.ivdnt.galahad.formats.txt.TxtFile
 import org.ivdnt.galahad.formats.tei.TEIFile
 import org.ivdnt.galahad.formats.tsv.TSVFile
+import org.ivdnt.galahad.formats.txt.TxtFile
 import java.io.File
 
 /** A document parsed as a file of a certain file type, e.g. TEI, TSV, Folia. */

@@ -9,9 +9,9 @@ import org.w3c.dom.Node
 open class XMLMetadata(
     val xmlDoc: Document,
     val root: Node,
-    val layer: LayerTransformer
+    val layer: LayerTransformer,
 ) {
-    protected fun Node.getOrCreateChild(childTag: String, prepend: Boolean = false ): Element {
+    protected fun Node.getOrCreateChild(childTag: String, prepend: Boolean = false): Element {
         val child: Node? = this.childOrNull(childTag)
         if (child != null) return child as Element
         // No node found
@@ -36,14 +36,14 @@ open class XMLMetadata(
         name: String,
         textContent: String,
         attrValue: String,
-    ) : Element {
+    ): Element {
         return this.createChild(name, mapOf("type" to attrValue), textContent)
     }
 
     protected fun Node.createChild(
         name: String,
         textContent: String,
-    ) : Element {
+    ): Element {
         return this.createChild(name, mapOf(), textContent)
     }
 
@@ -51,7 +51,7 @@ open class XMLMetadata(
         name: String,
         attr: Pair<String, String>,
         textContent: String = "",
-    ) : Element {
+    ): Element {
         return this.createChild(name, mapOf(attr), textContent)
     }
 
@@ -59,7 +59,7 @@ open class XMLMetadata(
         name: String,
         attrs: Map<String, String>,
         textContent: String = "",
-    ) : Element {
+    ): Element {
         // Create empty tag
         return xmlDoc.createElement(name)
             // Add to parent
@@ -67,6 +67,6 @@ open class XMLMetadata(
             // Set attributes
             .apply { attrs.forEach { (key, value) -> this.setAttribute(key, value) } }
             // Set text content
-            .apply { this.textContent = textContent}
+            .apply { this.textContent = textContent }
     }
 }

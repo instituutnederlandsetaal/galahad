@@ -1,12 +1,9 @@
 package org.ivdnt.galahad.data.document
 
-import org.ivdnt.galahad.filesystem.GalahadFile
-import org.ivdnt.galahad.app.CRDSet
-import org.ivdnt.galahad.exceptions.DocumentNotFoundException
-import java.io.File
-import org.apache.logging.log4j.kotlin.logger
 import org.ivdnt.galahad.data.corpus.Corpus
+import org.ivdnt.galahad.exceptions.DocumentNotFoundException
 import org.ivdnt.galahad.filesystem.GalahadFileManager
+import java.io.File
 
 /**
  * Used as a collection for all documents in a corpus and to create and delete new documents.

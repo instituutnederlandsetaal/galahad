@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import org.ivdnt.galahad.data.layer.LayerPreview
 import org.ivdnt.galahad.data.layer.LayerSummary
 import org.ivdnt.galahad.formats.InternalFile
-import java.util.UUID
+import java.util.*
 
 class DocumentMetadata private constructor(
     /** Name of the uploaded file including extension. Used as a working directory name. */
@@ -33,7 +33,8 @@ class DocumentMetadata private constructor(
 
         fun create(internalFile: InternalFile): DocumentMetadata {
             // expensive
-            val annotationTypes = internalFile.sourceLayer.terms.flatMap { it.annotations.keys }.map { it.value }.toMutableSet()
+            val annotationTypes =
+                internalFile.sourceLayer.terms.flatMap { it.annotations.keys }.map { it.value }.toMutableSet()
 
             val text = internalFile.plaintext
             return DocumentMetadata(

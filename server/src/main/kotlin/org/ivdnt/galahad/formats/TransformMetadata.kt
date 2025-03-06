@@ -1,6 +1,5 @@
 package org.ivdnt.galahad.formats
 
-import org.ivdnt.galahad.app.ExpensiveGettable
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.data.corpus.Corpus
 import org.ivdnt.galahad.data.document.Document

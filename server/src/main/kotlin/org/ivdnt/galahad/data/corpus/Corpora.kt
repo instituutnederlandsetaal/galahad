@@ -1,9 +1,9 @@
 package org.ivdnt.galahad.data.corpus
 
 import org.apache.logging.log4j.kotlin.logger
-import org.ivdnt.galahad.filesystem.GalahadFile
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.exceptions.CorpusNotFoundException
+import org.ivdnt.galahad.filesystem.GalahadFile
 import java.io.File
 import java.util.*
 
@@ -18,6 +18,7 @@ class Corpora(
         val uuid = UUID.randomUUID()
         return Corpus.create(user, dir.resolve(uuid.toString()), value)
     }
+
     fun readAll(): Set<Corpus> = dir.listFiles()?.map { Corpus(it) }?.toSet() ?: setOf()
 
     fun readOrNull(key: UUID): Corpus? =

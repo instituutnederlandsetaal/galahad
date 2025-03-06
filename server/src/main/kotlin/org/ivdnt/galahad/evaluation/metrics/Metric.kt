@@ -51,7 +51,7 @@ data class ClassificationMetrics(
             val fp = cls.falsePositive.toFloat()
             val fn = cls.falseNegative.toFloat()
             // When calculating micro-accuracy, tp and fp are the same, so don't double count.
-            val total = if(micro) tp + fp else cls.count.toFloat()
+            val total = if (micro) tp + fp else cls.count.toFloat()
             return calculate(tp, fp, fn, total)
         }
 
@@ -135,31 +135,35 @@ data class Metric(
     }
 
     fun toCSVRecord(): CSVRecord {
-        return CSVFile.toCSVRecord(listOf(
-            name,
-            clsMetrics.precision.toFixed(),
-            clsMetrics.recall.toFixed(),
-            clsMetrics.f1.toFixed(),
-            cls.classCount,
-            cls.truePositive.count,
-            cls.falsePositive.count,
-            cls.falseNegative.count,
-            cls.noMatch.count,
-        ))
+        return CSVFile.toCSVRecord(
+            listOf(
+                name,
+                clsMetrics.precision.toFixed(),
+                clsMetrics.recall.toFixed(),
+                clsMetrics.f1.toFixed(),
+                cls.classCount,
+                cls.truePositive.count,
+                cls.falsePositive.count,
+                cls.falseNegative.count,
+                cls.noMatch.count,
+            )
+        )
     }
 
     companion object {
         fun getCsvHeader(): CSVHeader {
-            return CSVFile.toCSVHeader(listOf(
-                "grouped by",
-                "precision",
-                "recall",
-                "f1",
-                "count",
-                "true positive count",
-                "false positive count",
-                "false negative count",
-                "no match count")
+            return CSVFile.toCSVHeader(
+                listOf(
+                    "grouped by",
+                    "precision",
+                    "recall",
+                    "f1",
+                    "count",
+                    "true positive count",
+                    "false positive count",
+                    "false negative count",
+                    "no match count"
+                )
             )
         }
     }

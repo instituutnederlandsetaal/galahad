@@ -26,17 +26,22 @@ open class LayerComparison(
 ) {
     @JsonIgnore
     val matches: MutableList<TermComparison> = ArrayList()
+
     @JsonIgnore
     val referenceTermsWithoutMatches: MutableList<Term> = ArrayList()
+
     @JsonIgnore
     val hypothesisTermsWithoutMatches: MutableList<Term> = ArrayList()
 
     @JsonIgnore
     private val hypoIter: ListIterator<Term> = iterForTermsInLayer(hypothesisLayer)
+
     @JsonIgnore
     private val refIter: ListIterator<Term> = iterForTermsInLayer(referenceLayer)
+
     @JsonIgnore
     private var currentHypoTerm: Term? = Term.EMPTY
+
     @JsonIgnore
     private var currentRefTerm: Term? = Term.EMPTY
 
@@ -137,7 +142,6 @@ open class LayerComparison(
     }
 
 
-
     companion object {
         fun symmetricTruncatedPcMatch(comp: TermComparison): Boolean {
             val aStr: String = comp.hypoTerm.literals
@@ -149,7 +153,7 @@ open class LayerComparison(
             if (aStr.isEmpty() || bStr.isEmpty()) {
                 return false
             }
-            return  truncatePC(aStr) == bStr
+            return truncatePC(aStr) == bStr
         }
 
         fun truncatePC(str: String): String {

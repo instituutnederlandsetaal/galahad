@@ -2,7 +2,6 @@ package org.ivdnt.galahad.data.corpus
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.ivdnt.galahad.app.JSONable
-import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
 import java.net.URL
 import java.util.*
 
@@ -62,7 +61,7 @@ class CorpusMetadata(
                 lastModified = System.currentTimeMillis(),
             )
             // add mutable fields
-            with (corpus.mutableMetadata) {
+            with(corpus.mutableMetadata) {
                 meta.owner = owner
                 meta.name = name
                 meta.eraFrom = eraFrom

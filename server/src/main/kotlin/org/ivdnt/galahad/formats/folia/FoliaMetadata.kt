@@ -30,7 +30,7 @@ class FoliaMetadata(xmlDoc: Document, root: Node, layer: LayerTransformer) : XML
             provenance = nextNonTextSibling
         } else {
             provenance = xmlDoc.createElement("provenance")
-            annotations.parentNode.insertAfter(provenance,annotations)
+            annotations.parentNode.insertAfter(provenance, annotations)
         }
 
         val processor = xmlDoc.createElement("processor")

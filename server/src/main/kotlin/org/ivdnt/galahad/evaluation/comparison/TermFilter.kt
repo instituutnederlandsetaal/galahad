@@ -11,12 +11,12 @@ interface TermFilter {
 }
 
 class CombinedTermFilter(
-    val filters: List<TermFilter>
+    val filters: List<TermFilter>,
 ) : TermFilter {
     override fun filter(term: Term): Boolean = filters.all { it.filter(term) }
 }
 
-class BasicTermFilter(private val annotationType: AnnotationType, private val value: String): TermFilter {
+class BasicTermFilter(private val annotationType: AnnotationType, private val value: String) : TermFilter {
     override fun filter(term: Term): Boolean = term.annotationOrMissing(annotationType) == value
 }
 
@@ -27,7 +27,7 @@ class BasicTermFilter(private val annotationType: AnnotationType, private val va
  * When equal to [OTHER_POS], will look for the [OTHER_POS_REGEX] to filter on annotations that don't start with a-z
  * (e.g. Gysseling pos, which is just a number).
  */
-class HeadGroupTermFilter(private val annotationType: AnnotationType, private val value: String): TermFilter {
+class HeadGroupTermFilter(private val annotationType: AnnotationType, private val value: String) : TermFilter {
     // Filter methods
     private val multiFilter = { t: Term -> t.isMulti(annotationType) }
     private val otherFilter = { t: Term -> t.annotations[annotationType]?.contains(Regex(OTHER_POS_REGEX)) == true }

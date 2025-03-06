@@ -4,7 +4,7 @@ import org.ivdnt.galahad.data.corpus.Corpus
 
 class TokenFrequency(
     corpus: Corpus,
-    jobName: String
+    jobName: String,
 ) {
     private val tokenFrequency: Map<String, Int>
 

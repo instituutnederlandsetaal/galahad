@@ -28,6 +28,7 @@ class ConlluFile(file: File) : TSVFile(file) {
         AnnotationType.MISC to 9,
         AnnotationType.NER to 10,
     )
+
     /** Supported names for the ner attribute in the MISC column. */
     private val nerAttrNames: List<String> = listOf("NamedEntity", "ner")
 
@@ -54,7 +55,8 @@ class ConlluFile(file: File) : TSVFile(file) {
         val misc = getGenericColumn(miscIndex, values) ?: return null
 
         // nerKeyValue is for example "NamedEntity=S-LOC"
-        val nerKeyValue: String = misc.split("|").firstOrNull { nerAttrNames.contains(it.split("=").first()) } ?: return null
+        val nerKeyValue: String =
+            misc.split("|").firstOrNull { nerAttrNames.contains(it.split("=").first()) } ?: return null
         val nerValue: String = nerKeyValue.substringAfter('=')
 
         // convert to IOB

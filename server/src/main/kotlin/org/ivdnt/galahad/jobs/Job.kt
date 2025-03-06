@@ -15,11 +15,10 @@ import org.ivdnt.galahad.evaluation.metrics.METRIC_TYPES
 import org.ivdnt.galahad.evaluation.metrics.Metrics
 import org.ivdnt.galahad.exceptions.SourceLayerNotATaggerException
 import org.ivdnt.galahad.exceptions.TaggerNoConnectionException
-import org.ivdnt.galahad.filesystem.GalahadFile
 import org.ivdnt.galahad.filesystem.FileBackedCache
+import org.ivdnt.galahad.filesystem.GalahadFile
 import org.ivdnt.galahad.jobs.DocumentJob.DocumentProcessingStatus
 import org.ivdnt.galahad.taggers.Tagger
-
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.*
 import org.springframework.util.LinkedMultiValueMap
@@ -108,7 +107,9 @@ class Job(
      */
     private val metadataCache = object : FileBackedCache<JobMetadata>(metadataFile) {
         // NOTE: we also check against the last modified of the documents folder: adding new docs should invalidate the cache.
-        override fun isValid(lastModified: Long) = lastModified >= this@Job.lastModified && lastModified >= corpus.documents.lastModified
+        override fun isValid(lastModified: Long) =
+            lastModified >= this@Job.lastModified && lastModified >= corpus.documents.lastModified
+
         override fun set() = JobMetadata.create(this@Job)
     }
 
@@ -194,7 +195,8 @@ class Job(
      */
     private fun uploadDocs() {
         // Quickly count the documents currently being processed
-        val numCurrentlyBeingProcessed = documentJobs.readAll().count { it.status == DocumentProcessingStatus.PROCESSING }
+        val numCurrentlyBeingProcessed =
+            documentJobs.readAll().count { it.status == DocumentProcessingStatus.PROCESSING }
 
         // Upload the first documents to the tagger
         // Because the tag function might be activated multiple times,

@@ -1,23 +1,20 @@
 package org.ivdnt.galahad.data.corpus
 
-import org.ivdnt.galahad.filesystem.GalahadFile
-import org.ivdnt.galahad.filesystem.FileBackedCache
-import org.ivdnt.galahad.filesystem.FileBackedValue
-import org.ivdnt.galahad.app.ExpensiveGettable
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.data.document.Document
 import org.ivdnt.galahad.data.document.DocumentFormat
 import org.ivdnt.galahad.data.document.Documents
-import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
+import org.ivdnt.galahad.filesystem.FileBackedCache
+import org.ivdnt.galahad.filesystem.FileBackedValue
+import org.ivdnt.galahad.filesystem.GalahadFile
 import org.ivdnt.galahad.formats.CmdiMetadata
 import org.ivdnt.galahad.formats.CorpusTransformMetadata
 import org.ivdnt.galahad.jobs.Jobs
-import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.util.createZipFile
 import java.io.File
 import java.io.OutputStream
 import java.nio.file.Files
-import java.util.UUID
+import java.util.*
 import kotlin.io.path.createTempDirectory
 
 private const val MUTABLE_METADATA_FILE = "mutableMetadata.json"
