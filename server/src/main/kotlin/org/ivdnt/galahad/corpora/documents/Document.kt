@@ -105,7 +105,7 @@ class Document(
             val doc = Document(dir)
 
             // uploaded file
-            file.copyTo(doc.uploadedFile)
+            file.copyTo(doc.uploadedFile, overwrite = true)
 
             // plaintext & sourceLayer
             val internalFile = InternalFile.create(file)
