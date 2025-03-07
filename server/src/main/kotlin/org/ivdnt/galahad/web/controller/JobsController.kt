@@ -165,9 +165,7 @@ class JobsController(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,
         @PathVariable @Parameter(description = "Document name") document: String,
-    ): LayerMetadata? {
-        return corpus.readJobs().readOrThrow(job).layer(document).metadata
-    }
+    ): LayerMetadata? = corpus.readJobs().readOrThrow(job).layer(document).metadata
 
     @Operation(
         summary = "Get job progress",

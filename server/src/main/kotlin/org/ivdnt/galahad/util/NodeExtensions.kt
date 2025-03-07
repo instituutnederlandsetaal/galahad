@@ -54,6 +54,4 @@ fun Node.childOrNull(childTag: String, recurse: Boolean = false): Node? {
 }
 
 /** Looks for the first child node, 1 deep, or null. */
-fun Element.childOrNull(childTag: String): Element? {
-    return (this as Node).childOrNull(childTag) as Element?
-}
+fun Element.childOrNull(childTag: String): Element? = (this as Node).childOrNull(childTag) as Element?

@@ -24,13 +24,10 @@ class CorporaService(
     val datasets get() = all.filter { it.mutableMetadata.dataset }
     val assaysFile get() = dir.resolve("benchmarks.json")
 
-    fun readAll(user: User): Set<CorpusMetadata> {
-        return all.map { it.immutableMetadata }.filter { it.hasReadAccess(user, excludeAdmin = true) }.toSet()
-    }
+    fun readAll(user: User): Set<CorpusMetadata> =
+        all.map { it.immutableMetadata }.filter { it.hasReadAccess(user, excludeAdmin = true) }.toSet()
 
-    fun readAllDatasets(): Set<CorpusMetadata> {
-        return datasets.map { it.immutableMetadata }.toSet()
-    }
+    fun readAllDatasets(): Set<CorpusMetadata> = datasets.map { it.immutableMetadata }.toSet()
 
     fun readAsReaderOrThrow(key: UUID, user: User): Corpus {
         val (corpus, _) = findOrThrow(key)
@@ -64,9 +61,7 @@ class CorporaService(
         return Pair(corpus, corpora)
     }
 
-    internal fun readCorpusUnsafe(key: UUID): Corpus {
-        return findOrThrow(key).first
-    }
+    internal fun readCorpusUnsafe(key: UUID): Corpus = findOrThrow(key).first
 
     fun createOrThrow(value: MutableCorpusMetadata, user: User): CorpusMetadata {
         // new corpora are always custom

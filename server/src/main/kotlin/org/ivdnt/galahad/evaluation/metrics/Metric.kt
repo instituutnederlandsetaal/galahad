@@ -42,9 +42,7 @@ data class ClassificationMetrics(
     )
 
     companion object {
-        fun calculate(cls: ClassificationClasses): ClassificationMetrics {
-            return calculate(cls.flat)
-        }
+        fun calculate(cls: ClassificationClasses): ClassificationMetrics = calculate(cls.flat)
 
         fun calculate(cls: FlatClassificationClasses, micro: Boolean = false): ClassificationMetrics {
             val tp = cls.truePositive.toFloat()

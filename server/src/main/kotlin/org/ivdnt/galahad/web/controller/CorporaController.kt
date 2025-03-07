@@ -42,9 +42,7 @@ class CorporaController(
     )
     @CrossOrigin
     @GetMapping(CORPORA_URL)
-    fun getUserCorpora(): Set<CorpusMetadata> {
-        return corporaService.readAll(user)
-    }
+    fun getUserCorpora(): Set<CorpusMetadata> = corporaService.readAll(user)
 
     @Operation(
         summary = "List benchmark datasets",
@@ -70,9 +68,8 @@ class CorporaController(
     )
     @CrossOrigin
     @GetMapping(CORPUS_URL)
-    fun getCorpus(@PathVariable @Parameter(description = "Corpus UUID") corpus: UUID): CorpusMetadata {
-        return corporaService.readAsReaderOrThrow(corpus, user).immutableMetadata
-    }
+    fun getCorpus(@PathVariable @Parameter(description = "Corpus UUID") corpus: UUID): CorpusMetadata =
+        corporaService.readAsReaderOrThrow(corpus, user).immutableMetadata
 
     @Operation(
         summary = "Create a new corpus",
@@ -128,9 +125,7 @@ class CorporaController(
     fun updateCorpus(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @RequestBody @SwaggerRequestBody(description = "Corpus metadata.") value: MutableCorpusMetadata,
-    ): CorpusMetadata? {
-        return corporaService.update(corpus, value, user)
-    }
+    ): CorpusMetadata? = corporaService.update(corpus, value, user)
 
     @Operation(
         summary = "Delete single corpus",

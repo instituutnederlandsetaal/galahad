@@ -27,9 +27,7 @@ class TagsetsController : Logging {
     )
     @CrossOrigin
     @GetMapping(TAGSETS_URL)
-    fun getTagsets(): Set<Tagset> {
-        return tagsets.tagsets
-    }
+    fun getTagsets(): Set<Tagset> = tagsets.tagsets
 
     @Operation(
         summary = "Get single tagset",
@@ -48,8 +46,6 @@ class TagsetsController : Logging {
     @GetMapping("$TAGSETS_URL/{tagset}")
     fun getTagset(
         @PathVariable("tagset") @Parameter(description = "Tagset identifier") identifier: String,
-    ): Tagset {
-        return tagsets.getOrThrow(identifier)
-    }
+    ): Tagset = tagsets.getOrThrow(identifier)
 
 }

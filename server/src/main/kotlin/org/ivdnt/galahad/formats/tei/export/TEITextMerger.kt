@@ -13,9 +13,7 @@ import org.w3c.dom.Element
 import org.w3c.dom.Node
 import kotlin.collections.contains
 
-fun HashSet<String>.contains(s: String?, ignoreCase: Boolean = false): Boolean {
-    return any { it.equals(s, ignoreCase) }
-}
+fun HashSet<String>.contains(s: String?, ignoreCase: Boolean = false): Boolean = any { it.equals(s, ignoreCase) }
 
 private val alphaNumeric = Regex("""[a-zA-Z0-9]""")
 
@@ -251,11 +249,10 @@ open class TEITextMerger(
         return wTag
     }
 
-    private fun posType(): String {
-        // For now always write pos to the @pos attribute.
+    private fun posType(): String =
+    // For now always write pos to the @pos attribute.
         // Even for legacy formats, because we want to update to TEIp5.
-        return "pos"
-    }
+        "pos"
 
     protected fun getWordFormForOffsetOrNull(): WordForm? {
         while (wordFormIter.hasNext()) {
@@ -360,7 +357,6 @@ open class TEITextMerger(
         return result
     }
 
-    private fun endOfTermWithinText(it: WordForm, textEndOffset: Int): Boolean {
-        return (it.endOffset > offset) && (it.endOffset <= textEndOffset)
-    }
+    private fun endOfTermWithinText(it: WordForm, textEndOffset: Int): Boolean =
+        (it.endOffset > offset) && (it.endOffset <= textEndOffset)
 }

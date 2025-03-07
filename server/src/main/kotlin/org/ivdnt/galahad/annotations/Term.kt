@@ -44,9 +44,7 @@ data class Term(
     @get:JsonIgnore
     val isMultiTarget = targets.size > 1
 
-    fun isMulti(annotation: AnnotationType): Boolean {
-        return annotations[annotation]?.contains("+") == true
-    }
+    fun isMulti(annotation: AnnotationType): Boolean = annotations[annotation]?.contains("+") == true
 
     /** Offset of the first [WordForm] in [targets].*/
     @get:JsonIgnore
@@ -61,17 +59,14 @@ data class Term(
      * Returns the annotation head or NO_[annotation] if it is missing.
      * E.g. NOU-C for NOU-c(num=sg); or NO_POS.
      */
-    fun annotationHeadOrMissing(annotation: AnnotationType): String {
-        return annotationHead(annotation) ?: missingName(annotation)
-    }
+    fun annotationHeadOrMissing(annotation: AnnotationType): String =
+        annotationHead(annotation) ?: missingName(annotation)
 
     /**
      * Returns the annotation or NO_[annotation] if it is missing.
      * E.g. NOU-C(num=sg); or NO_POS.
      */
-    fun annotationOrMissing(annotation: AnnotationType): String {
-        return annotations[annotation] ?: missingName(annotation)
-    }
+    fun annotationOrMissing(annotation: AnnotationType): String = annotations[annotation] ?: missingName(annotation)
 
     /**
      * The head of [annotation]. E.g. "PD+NOU" for "PD(type=art)+NOU(num=sg)"
@@ -105,10 +100,9 @@ data class Term(
     companion object {
         val EMPTY = Term(mapOf(), mutableListOf())
 
-        fun missingName(annotationType: AnnotationType): String {
+        fun missingName(annotationType: AnnotationType): String =
             // simply uppercase and prepend "NO_"
-            return "NO_${annotationType.value.uppercase()}"
-        }
+            "NO_${annotationType.value.uppercase()}"
 
         /** The features of [pos]. E.g. "num=sg" for "NOU(num=sg)". Does not support multi-pos. */
         fun features(pos: String?): String? {

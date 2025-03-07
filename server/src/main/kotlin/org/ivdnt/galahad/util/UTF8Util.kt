@@ -46,6 +46,4 @@ fun String.escapeXML(): String {
 // Normally, periods (.) are allowed too, but they have a hierarchical significance, so add any periods yourself.
 // Based on https://stackoverflow.com/a/1077111
 // TODO utf8/unicode support
-fun String.toValidXmlId(): String {
-    return "id_" + this.replace(Regex("""[^a-zA-Z0-9_-]"""), "_")
-}
+fun String.toValidXmlId(): String = "id_" + this.replace(Regex("""[^a-zA-Z0-9_-]"""), "_")

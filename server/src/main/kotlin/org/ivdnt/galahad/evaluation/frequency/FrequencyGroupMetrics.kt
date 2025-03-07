@@ -22,7 +22,5 @@ class TokenFrequency(
         tokenFrequency = map.toMap()
     }
 
-    fun getFrequency(token: String): Int {
-        return tokenFrequency.getOrDefault(token, 0)
-    }
+    fun getFrequency(token: String): Int = tokenFrequency.getOrDefault(token, 0)
 }

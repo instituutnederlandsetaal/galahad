@@ -20,12 +20,10 @@ class LayerToConlluConverter(
 
     override fun convert(outputStream: OutputStream) {
         val annotationTypes: List<AnnotationType> = transformMetadata.tagger.annotationTypes
-
-        val indexer: (Int, Term) -> String
-        if (annotationTypes.contains(AnnotationType.ID)) {
-            indexer = { _, term -> term.annotations[AnnotationType.ID] ?: "_" }
+        val indexer: (Int, Term) -> String = if (annotationTypes.contains(AnnotationType.ID)) {
+            { _, term -> term.annotations[AnnotationType.ID] ?: "_" }
         } else {
-            indexer = { index, _ -> (index + 1).toString() }
+            { index, _ -> (index + 1).toString() }
         }
 
         result.terms.forEachIndexed { index, term ->

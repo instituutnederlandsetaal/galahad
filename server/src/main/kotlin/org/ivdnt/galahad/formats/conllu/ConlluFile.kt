@@ -62,8 +62,8 @@ class ConlluFile(file: File) : TSVFile(file) {
         // convert to IOB
         // Replace /^S\-/ with B- and /^E\-/ with I-.
         // E.g.: S-LOC -> B-LOC, E-LOC -> I-LOC
-        val replaceS: Regex = Regex("^S-")
-        val replaceE: Regex = Regex("^E-")
+        val replaceS = Regex("^S-")
+        val replaceE = Regex("^E-")
         val nerIOB = nerValue.replace(replaceS, "B-").replace(replaceE, "I-")
 
         return nerIOB
@@ -78,9 +78,8 @@ class ConlluFile(file: File) : TSVFile(file) {
     /**
      * Get conllu columns and treat "_" as null.
      */
-    private fun getGenericColumn(index: Int?, values: List<String>): String? {
-        return super.getColumn(index, values).takeIf { it != "_" }
-    }
+    private fun getGenericColumn(index: Int?, values: List<String>): String? =
+        super.getColumn(index, values).takeIf { it != "_" }
 
     override fun merge(transformMetadata: DocumentTransformMetadata): ConlluFile {
         // Sets header indices needed to merge.

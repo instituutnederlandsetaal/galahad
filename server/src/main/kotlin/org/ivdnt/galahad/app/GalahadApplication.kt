@@ -69,14 +69,10 @@ class Config {
     lateinit var workDir: String
 
     @Bean
-    fun getWorkingDirectory(): File {
-        return File(workDir)
-    }
+    fun getWorkingDirectory(): File = File(workDir)
 
     companion object {
-        fun galahadVersion(): String {
-            return galahadVersionYaml().getProperty("GITHUB_REF_NAME")
-        }
+        fun galahadVersion(): String = galahadVersionYaml().getProperty("GITHUB_REF_NAME")
 
         fun galahadVersionYaml(): Properties {
             val versionStream = this::class.java.classLoader.getResource("version.yml")!!.openStream()
@@ -121,9 +117,7 @@ class MultipartConfig {
     lateinit var maxRequestSize: String
 
     val maxFilesSizeAsBytes: Long
-        get() {
-            return toBytes(maxFileSize)
-        }
+        get() = toBytes(maxFileSize)
 
     companion object {
         fun toBytes(filesize: String?): Long {

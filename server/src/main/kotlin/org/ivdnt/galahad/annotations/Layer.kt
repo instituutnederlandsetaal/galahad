@@ -85,14 +85,10 @@ open class Layer(
     }
 
     /** The [Term] belonging to this [WordForm] according to the [Layer], or [Term.EMPTY] if not found. */
-    fun termForWordForm(wordForm: WordForm): Term {
-        return lookup[wordForm.id] ?: Term.EMPTY
-    }
+    fun termForWordForm(wordForm: WordForm): Term = lookup[wordForm.id] ?: Term.EMPTY
 
     /** Returns the first matching [WordForm]*/
-    fun getWordFormByID(id: String): WordForm {
-        return wordForms.first { it.id == id }
-    }
+    fun getWordFormByID(id: String): WordForm = wordForms.first { it.id == id }
 
     companion object {
         val EMPTY = Layer("EMPTY")

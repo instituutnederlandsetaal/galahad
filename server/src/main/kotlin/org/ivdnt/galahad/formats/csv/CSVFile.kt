@@ -19,11 +19,10 @@ class CSVFile(
     }
 
     companion object {
-        private fun toCSVSafeString(s: String): String {
-            // Alternatively we could check for forbidden characters first, and the wrap/replace only when necessary.
+        private fun toCSVSafeString(s: String): String =
+        // Alternatively we could check for forbidden characters first, and the wrap/replace only when necessary.
             // However, this works and gives a consistent result
-            return "\"${s.replace("\"", "\"\"")}\""
-        }
+            "\"${s.replace("\"", "\"\"")}\""
 
         // Okay, basically CSV and Excel are not a good match.
         // The default separator is defined by Windows and will be ',' in the US but ';' in EU
@@ -41,13 +40,11 @@ class CSVFile(
                 return "${bom}sep=,\n"
             }
 
-        fun toCSVHeader(headers: List<String>): CSVHeader {
+        fun toCSVHeader(headers: List<String>): CSVHeader =
             // This is just an alias
-            return toCSVRecord(headers)
-        }
+            toCSVRecord(headers)
 
-        fun toCSVRecord(values: List<Any>): CSVRecord {
-            return values.joinToString(",") { toCSVSafeString(it.toString()) }.plus("\n")
-        }
+        fun toCSVRecord(values: List<Any>): CSVRecord =
+            values.joinToString(",") { toCSVSafeString(it.toString()) }.plus("\n")
     }
 }

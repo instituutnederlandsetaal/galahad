@@ -36,24 +36,18 @@ open class XMLMetadata(
         name: String,
         textContent: String,
         attrValue: String,
-    ): Element {
-        return this.createChild(name, mapOf("type" to attrValue), textContent)
-    }
+    ): Element = this.createChild(name, mapOf("type" to attrValue), textContent)
 
     protected fun Node.createChild(
         name: String,
         textContent: String,
-    ): Element {
-        return this.createChild(name, mapOf(), textContent)
-    }
+    ): Element = this.createChild(name, mapOf(), textContent)
 
     protected fun Node.createChild(
         name: String,
         attr: Pair<String, String>,
         textContent: String = "",
-    ): Element {
-        return this.createChild(name, mapOf(attr), textContent)
-    }
+    ): Element = this.createChild(name, mapOf(attr), textContent)
 
     protected fun Node.createChild(
         name: String,

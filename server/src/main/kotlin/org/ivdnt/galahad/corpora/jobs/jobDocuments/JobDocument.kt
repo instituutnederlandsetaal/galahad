@@ -39,9 +39,7 @@ class JobDocument(
     val isProcessing: Boolean get() = processingIDFile.exists() // TODO check if resolving the file does not create it
 
     var processingID: UUID?
-        get() {
-            return if (processingIDFile.exists()) UUID.fromString(processingIDFile.readText()) else null
-        }
+        get() = if (processingIDFile.exists()) UUID.fromString(processingIDFile.readText()) else null
         set(value) {
             if (value == null) throw IllegalArgumentException("Processing ID cannot be set to null")
             processingIDFile.writeText(value.toString())
@@ -50,9 +48,7 @@ class JobDocument(
         }
 
     var error: String?
-        get() {
-            return if (errorFile.exists()) errorFile.readText() else null
-        }
+        get() = if (errorFile.exists()) errorFile.readText() else null
         set(value) {
             if (value == null) throw IllegalArgumentException("Error cannot be set to null")
             errorFile.writeText(value)

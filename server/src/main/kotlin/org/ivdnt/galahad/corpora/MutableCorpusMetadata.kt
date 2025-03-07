@@ -39,17 +39,13 @@ open class MutableCorpusMetadata(
      * Whether the user is in the list of collaborators of this corpus.
      * Note that this is not the same as having write access: use [hasWriteAccess].
      */
-    fun isCollaborator(user: User): Boolean {
-        return collaborators.contains(user.id) == true
-    }
+    fun isCollaborator(user: User): Boolean = collaborators.contains(user.id) == true
 
     /**
      * Whether the user is in the list of viewers of this corpus.
      * Note that this is not the same as having read access: use [hasReadAccess].
      */
-    fun isViewer(user: User): Boolean {
-        return viewers.contains(user.id) == true
-    }
+    fun isViewer(user: User): Boolean = viewers.contains(user.id) == true
 
     /** To have write access, you need to be an owner, collaborator or admin. */
     fun hasWriteAccess(user: User): Boolean {
@@ -71,9 +67,7 @@ open class MutableCorpusMetadata(
     }
 
     /** Only admins can make corpora into benchmark datasets. */
-    fun canDefineDataset(user: User): Boolean {
-        return user.isAdmin
-    }
+    fun canDefineDataset(user: User): Boolean = user.isAdmin
 
     fun removeAsViewer(user: User) {
         viewers.removeIf { i -> i == user.id }
@@ -108,10 +102,13 @@ open class MutableCorpusMetadata(
         }
 
         /**
-         * Overwrite the [CorpusMetadata] in [metadata] with [newMeta],
-         * except for the owner, which should be grabbed from the existing [metadata].
-         *
-         * If a user appears multiple times in the permission hierarchy, only the upper level remains.
+         * Clean up certain values in [newMeta], checking against [oldMeta], namely:
+         *  - overwrite [newMeta].owner with the original owner, unless it's a new corpus.
+         *  - ignore metadata changes if a user is no longer a viewer or collaborator.
+         *  - validate corpus name.
+         *  - trim textual inputs.
+         *  - validate permissions for changing collaborators, viewers, and dataset.
+         *  - If a user appears multiple times in the permission hierarchy, only the upper level remains.
          */
         fun clean(
             newMeta: MutableCorpusMetadata,

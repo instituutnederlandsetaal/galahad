@@ -33,7 +33,6 @@ class TEIFile(
         _sourceLayer = xmlParser.sourceLayer
     }
 
-    override fun merge(transformMetadata: DocumentTransformMetadata): TEIFile {
-        return TEILayerMerger(this, transformMetadata).merge()
-    }
+    override fun merge(transformMetadata: DocumentTransformMetadata): TEIFile =
+        TEILayerMerger(this, transformMetadata).merge()
 }

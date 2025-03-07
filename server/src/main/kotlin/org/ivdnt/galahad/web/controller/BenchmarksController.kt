@@ -125,7 +125,5 @@ class BenchmarksController(
     )
     @CrossOrigin
     @GetMapping(BENCHMARKS_URL)
-    fun getAssays(): BenchmarksMatrix {
-        return benchmarksMatrix.readOrCreate<BenchmarksMatrix>()
-    }
+    fun getAssays(): BenchmarksMatrix = benchmarksMatrix.readOrCreate<BenchmarksMatrix>()
 }

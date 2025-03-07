@@ -17,9 +17,8 @@ class FoliaFile(
     private var isParsed: Boolean = false
     private var reader: FoliaReader? = null
 
-    override fun merge(transformMetadata: DocumentTransformMetadata): FoliaFile {
-        return FoliaLayerMerger(this, transformMetadata).merge()
-    }
+    override fun merge(transformMetadata: DocumentTransformMetadata): FoliaFile =
+        FoliaLayerMerger(this, transformMetadata).merge()
 
     private fun parse() {
         if (isParsed) return // Don't double parse

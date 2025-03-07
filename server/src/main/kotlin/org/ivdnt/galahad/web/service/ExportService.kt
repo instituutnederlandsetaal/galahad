@@ -105,9 +105,7 @@ class ExportService(val corpora: CorporaService) : Logging {
         job: String,
         document: String,
         format: DocumentFormat,
-    ): DocumentTransformMetadata {
-        return getCorpusTransformMetadata(corpus, job, format).documentMetadata(document)
-    }
+    ): DocumentTransformMetadata = getCorpusTransformMetadata(corpus, job, format).documentMetadata(document)
 
     private fun mergeFormatMatches(
         it: Document, format: DocumentFormat,
@@ -120,7 +118,5 @@ class ExportService(val corpora: CorporaService) : Logging {
         return otherFormat == format
     }
 
-    fun getCorpusName(corpus: UUID): String {
-        return corpora.readAsWriterOrThrow(corpus, user).mutableMetadata.name
-    }
+    fun getCorpusName(corpus: UUID): String = corpora.readAsWriterOrThrow(corpus, user).mutableMetadata.name
 }

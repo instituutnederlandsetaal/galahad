@@ -23,13 +23,9 @@ class DistributionRow(
     val count: Int,
     val literals: LiteralsEntry,
 ) {
-    fun toCSVRecord(): String {
-        return CSVFile.toCSVRecord(listOf(lemma, pos, count.toString(), literals.literals.toString()))
-    }
+    fun toCSVRecord(): String = CSVFile.toCSVRecord(listOf(lemma, pos, count.toString(), literals.literals.toString()))
 
     companion object {
-        fun getCsvHeader(): String {
-            return CSVFile.toCSVHeader(listOf("lemma", "pos", "count", "literals"))
-        }
+        fun getCsvHeader(): String = CSVFile.toCSVHeader(listOf("lemma", "pos", "count", "literals"))
     }
 }

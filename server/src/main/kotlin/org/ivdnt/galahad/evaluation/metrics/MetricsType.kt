@@ -18,8 +18,8 @@ enum class ClassificationType(val value: String) {
 
     companion object {
         fun fromString(s: String): ClassificationType =
-            ClassificationType.values().firstOrNull { it.value == s } ?: throw InvalidClassificationTypeException(
-                "Invalid value $s, valid values are ${values().map { it.value }}"
+            entries.firstOrNull { it.value == s } ?: throw InvalidClassificationTypeException(
+                "Invalid value $s, valid values are ${entries.map { it.value }}"
             )
     }
 }
@@ -97,9 +97,7 @@ class MetricsType(
         )
     }
 
-    fun toFlat(): FlatMetricType {
-        return FlatMetricType(micro, macro)
-    }
+    fun toFlat(): FlatMetricType = FlatMetricType(micro, macro)
 
     fun toGroupedCsv(): String {
         var csv = Metric.getCsvHeader()
@@ -198,9 +196,7 @@ class MetricsType(
     }
 
 
-    fun samplesToCSV(comps: List<TermComparison>?): String {
-        return samplesToCSV(comps, hypothesis, reference)
-    }
+    fun samplesToCSV(comps: List<TermComparison>?): String = samplesToCSV(comps, hypothesis, reference)
 
     override fun samplesToCSV(): String {
         throw NotImplementedError()

@@ -49,9 +49,7 @@ class CorpusConfusion(
     }
 
     /**
-     * CSV representation of all samples where the hypothesis pos and reference pos are [hypoPos] and [refPos].
+     * CSV representation of all samples where the hypothesis pos and reference pos are [hypoTagger] and [refTagger].
      */
-    override fun samplesToCSV(): String {
-        return samplesToCSV(matrix.values.firstOrNull()?.samples, hypoTagger, refTagger)
-    }
+    override fun samplesToCSV(): String = samplesToCSV(matrix.values.firstOrNull()?.samples, hypoTagger, refTagger)
 }

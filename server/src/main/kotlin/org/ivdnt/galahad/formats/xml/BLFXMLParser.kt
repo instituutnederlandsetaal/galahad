@@ -25,13 +25,9 @@ import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathExpression
 import javax.xml.xpath.XPathFactory
 
-fun reparseText(text: String): String {
-    return text.replace(Regex("\n"), " ").replace(Regex("\\s+"), " ")
-}
+fun reparseText(text: String): String = text.replace(Regex("\n"), " ").replace(Regex("\\s+"), " ")
 
-fun Node.tagName(): String? {
-    return if (this.nodeType == Node.ELEMENT_NODE) (this as Element).tagName else null
-}
+fun Node.tagName(): String? = if (this.nodeType == Node.ELEMENT_NODE) (this as Element).tagName else null
 
 /**
  * Should the text inside this node be interpreted as source text?
@@ -254,9 +250,7 @@ class BLFXMLParser(
         addPlaintext(text)
     }
 
-    fun xmlToString(pretty: Boolean): String {
-        return xmlToString(pretty, xmlDocument)
-    }
+    fun xmlToString(pretty: Boolean): String = xmlToString(pretty, xmlDocument)
 
     companion object {
 

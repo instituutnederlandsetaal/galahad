@@ -36,7 +36,7 @@ internal class ConlluLayerMerger(
                 val term: Term = layer.terms[termIndex]
                 var ner: String? = term.annotations[AnnotationType.NER]?.let { "NamedEntity=$it" }
                 val misc: String? = term.annotations[AnnotationType.MISC]
-                val miscField: String = listOf(ner, misc).filterNotNull().joinToString("|")
+                val miscField: String = listOfNotNull(ner, misc).joinToString("|")
                 columns[columnIndex] = miscField.ifEmpty { "_" }
             }
 

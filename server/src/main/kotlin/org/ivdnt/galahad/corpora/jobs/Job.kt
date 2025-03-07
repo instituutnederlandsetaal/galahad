@@ -131,13 +131,11 @@ class Job(
     val assay = object : ValidatedDiskValue<Map<String, FlatMetricType>>(
         file = dir.resolve("assay.cache")
     ) {
-        override fun isValid(lastModified: Long): Boolean {
-            return lastModified >= this@Job.lastModified
-        }
+        override fun isValid(lastModified: Long): Boolean = lastModified >= this@Job.lastModified
 
         override fun set(): Map<String, FlatMetricType> {
             return CorpusMetrics(
-                corpus = corpus, settings = METRIC_TYPES, hypothesis = name, reference = SOURCE_LAYER_NAME
+                corpus = corpus, settings = METRIC_TYPES, hypothesis = name
             ).metricTypes.mapValues { it.value.toFlat() }
         }
     }
@@ -168,9 +166,8 @@ class Job(
         }
     }
 
-    fun documentNameForProcessingIDOrNull(id: UUID): String? {
-        return jobDocuments.readAll().filter { it.processingID == id }.map { it.name }.firstOrNull()
-    }
+    fun documentNameForProcessingIDOrNull(id: UUID): String? =
+        jobDocuments.readAll().filter { it.processingID == id }.map { it.name }.firstOrNull()
 
     fun start() {
         if (name == SOURCE_LAYER_NAME) throw SourceLayerNotATaggerException()

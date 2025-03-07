@@ -34,26 +34,22 @@ class DocumentsService(val corpora: CorporaService) : Logging {
     fun UUID.readJobs() = corpora.readAsReaderOrThrow(this, user).jobs
 
 
-    fun read(corpus: UUID, document: String): Document {
-        return corpus.readDocs().readOrThrow(document)
-    }
+    fun read(corpus: UUID, document: String): Document = corpus.readDocs().readOrThrow(document)
 
-    fun readAll(corpus: UUID): Set<DocumentMetadata> {
-        return corpus.readDocs().readAll().map { it.metadata }.toSet()
+    fun readAll(corpus: UUID): Set<DocumentMetadata> = corpus.readDocs().readAll().map { it.metadata }.toSet()
 
-        // TODO: check if we still need to delete lost causes
+    // TODO: check if we still need to delete lost causes
 
-        // return corpus.readDocs().readAll().mapNotNull {
-        //     // Potentially, the uploaded file might no longer exist, so try.
-        //     try {
-        //         it.metadata
-        //     } catch (e: Exception) {
-        //         // Consider the document a lost cause.
-        //         delete(corpus, it.name)
-        //         null
-        //     }
-        // }.toSet()
-    }
+    // return corpus.readDocs().readAll().mapNotNull {
+    //     // Potentially, the uploaded file might no longer exist, so try.
+    //     try {
+    //         it.metadata
+    //     } catch (e: Exception) {
+    //         // Consider the document a lost cause.
+    //         delete(corpus, it.name)
+    //         null
+    //     }
+    // }.toSet()
 
     fun create(file: MultipartFile, corpus: UUID) {
         if (file.contentType in ZIP_TYPES) {

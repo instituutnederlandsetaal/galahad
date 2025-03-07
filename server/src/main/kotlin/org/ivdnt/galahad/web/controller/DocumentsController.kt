@@ -48,9 +48,8 @@ class DocumentsController(
     )
     @CrossOrigin
     @GetMapping(DOCUMENTS_URL)
-    fun getAllDocuments(@PathVariable @Parameter(description = "Corpus UUID") corpus: UUID): Set<DocumentMetadata> {
-        return documentsService.readAll(corpus)
-    }
+    fun getAllDocuments(@PathVariable @Parameter(description = "Corpus UUID") corpus: UUID): Set<DocumentMetadata> =
+        documentsService.readAll(corpus)
 
     @Operation(
         summary = "Get single document metadata",

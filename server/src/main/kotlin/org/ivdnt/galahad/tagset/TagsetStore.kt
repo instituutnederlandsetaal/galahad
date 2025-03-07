@@ -26,9 +26,7 @@ class TagsetStore : GalahadFolder(
         return tagset
     }
 
-    fun getOrThrow(identifier: String): Tagset {
-        return getOrNull(identifier) ?: throw TagsetNotFoundException(identifier)
-    }
+    fun getOrThrow(identifier: String): Tagset = getOrNull(identifier) ?: throw TagsetNotFoundException(identifier)
 
     fun getOrNull(identifier: String?): Tagset? {
         val tagsetFile = dir.resolve("$identifier.yaml")

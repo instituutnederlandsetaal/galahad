@@ -45,9 +45,7 @@ class EvaluationController(
     fun getDistribution(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name or sourceLayer") job: String,
-    ): Map<AnnotationType, CorpusDistribution> {
-        return evaluationService.getDistribution(corpus, job)
-    }
+    ): Map<AnnotationType, CorpusDistribution> = evaluationService.getDistribution(corpus, job)
 
     @Operation(
         summary = "Get document layer comparison",
@@ -60,9 +58,7 @@ class EvaluationController(
         @PathVariable @Parameter(description = "Document name") document: String,
         @PathVariable @Parameter(description = "Tagger name or sourceLayer") job: String,
         @RequestParam(defaultValue = SOURCE_LAYER_NAME) @Parameter(description = "Tagger name or sourceLayer") reference: String? = SOURCE_LAYER_NAME,
-    ): List<TermComparison> {
-        return evaluationService.getDocumentLevelLayerVisualisation(corpus, document, job, reference)
-    }
+    ): List<TermComparison> = evaluationService.getDocumentLevelLayerVisualisation(corpus, document, job, reference)
 
     @Operation(
         summary = "Get confusion",
@@ -83,9 +79,7 @@ class EvaluationController(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name or sourceLayer") job: String,
         @RequestParam(defaultValue = SOURCE_LAYER_NAME) @Parameter(description = "Tagger name or sourceLayer") reference: String? = SOURCE_LAYER_NAME,
-    ): Map<AnnotationType, Confusion> {
-        return evaluationService.getConfusion(corpus, job, reference)
-    }
+    ): Map<AnnotationType, Confusion> = evaluationService.getConfusion(corpus, job, reference)
 
     @Operation(
         summary = "Get confusion samples",
@@ -115,9 +109,7 @@ class EvaluationController(
         @RequestParam @Parameter(description = "Annotation type for which to generate the confusion") annotation: String,
         @RequestParam @Parameter(description = "Annotation head to filter on") hypoFilter: String,
         @RequestParam @Parameter(description = "Annotation head to filter on") refFilter: String,
-    ): ByteArray {
-        return evaluationService.getConfusionSamples(hypoFilter, refFilter, annotation, corpus, job, reference)
-    }
+    ): ByteArray = evaluationService.getConfusionSamples(hypoFilter, refFilter, annotation, corpus, job, reference)
 
     @Operation(
         summary = "Get metrics",
@@ -138,9 +130,7 @@ class EvaluationController(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name or sourceLayer") job: String,
         @RequestParam(defaultValue = SOURCE_LAYER_NAME) @Parameter(description = "Tagger name or sourceLayer") reference: String? = SOURCE_LAYER_NAME,
-    ): CorpusMetrics {
-        return evaluationService.getMetrics(corpus, job, reference)
-    }
+    ): CorpusMetrics = evaluationService.getMetrics(corpus, job, reference)
 
     @Operation(
         summary = "Get metrics samples",
@@ -170,9 +160,7 @@ class EvaluationController(
         @RequestParam @Parameter(description = "Metrics type (e.g. posByPos, lemmaByLemma)") metricsType: String,
         @RequestParam("class") @Parameter(description = "Classification type(e.g. true positive)") classType: String,
         @RequestParam @Parameter(description = "Annotation head (e.g. NOU-C)") group: String? = null,
-    ): ByteArray {
-        return evaluationService.getMetricsSamples(metricsType, group, corpus, job, reference, classType)
-    }
+    ): ByteArray = evaluationService.getMetricsSamples(metricsType, group, corpus, job, reference, classType)
 
     @Operation(
         summary = "Download evaluation",
@@ -194,9 +182,7 @@ class EvaluationController(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name or sourceLayer") job: String,
         @RequestParam(defaultValue = SOURCE_LAYER_NAME) @Parameter(description = "Tagger name or sourceLayer") reference: String? = SOURCE_LAYER_NAME,
-    ): ByteArray {
-        return evaluationService.getEvaluation(corpus, job, reference)
-    }
+    ): ByteArray = evaluationService.getEvaluation(corpus, job, reference)
 
     @CrossOrigin
     @GetMapping(TOKEN_FREQUENCY_URL)
@@ -204,7 +190,5 @@ class EvaluationController(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name or sourceLayer") job: String,
         @RequestParam(defaultValue = SOURCE_LAYER_NAME) @Parameter(description = "Tagger name or sourceLayer") reference: String? = SOURCE_LAYER_NAME,
-    ): CorpusMetrics {
-        return evaluationService.getTokenFrequency(corpus, job, reference)
-    }
+    ): CorpusMetrics = evaluationService.getTokenFrequency(corpus, job, reference)
 }
