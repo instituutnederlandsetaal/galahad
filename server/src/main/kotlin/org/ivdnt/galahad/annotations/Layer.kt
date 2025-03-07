@@ -2,7 +2,7 @@ package org.ivdnt.galahad.annotations
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
-import org.ivdnt.galahad.tagset.Tagset
+import org.ivdnt.galahad.taggers.Tagset
 
 const val SOURCE_LAYER_NAME = "sourceLayer"
 

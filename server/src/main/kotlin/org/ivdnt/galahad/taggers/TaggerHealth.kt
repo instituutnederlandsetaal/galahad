@@ -8,3 +8,10 @@ class TaggerHealth(
     @JsonProperty val processingSpeed: Int = 0, // 'chars/s'
     @JsonProperty val message: String = "",
 )
+
+enum class TaggerHealthStatus {
+    ERROR,
+    HEALTHY,
+    NOT_HEALTHY,
+    UNKNOWN
+}

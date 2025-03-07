@@ -13,8 +13,7 @@ import org.ivdnt.galahad.formats.InternalFile
 import org.ivdnt.galahad.formats.conllu.ConlluFile
 import org.ivdnt.galahad.formats.tsv.TSVFile
 import org.ivdnt.galahad.taggers.Tagger
-import org.ivdnt.galahad.tagset.Tagset
-import org.ivdnt.galahad.tagset.TagsetStore
+import org.ivdnt.galahad.taggers.Tagset
 import org.ivdnt.galahad.web.service.CorporaService
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -35,8 +34,6 @@ class InternalJobController(
     val corpora: CorporaService,
     val config: Config,
 ) : Logging {
-
-    val tagsets = TagsetStore()
 
     // This is not an efficient implementation. TODO: efficient implementation
     private fun dataForProcessingID(processingID: UUID): Triple<CorpusID, JobName, DocumentName>? {
@@ -68,7 +65,7 @@ class InternalJobController(
             val original: Document = corpora.readCorpusUnsafe(corpusID).documents.readOrThrow(documentName)
             val job: Job = corpora.readCorpusUnsafe(corpusID).jobs.readOrThrow(jobName)
             val tagger = Tagger.Companion.readOrThrow(job.name)
-            val tagset: Tagset? = tagsets.getOrNull(tagger.tagset)
+            val tagset: Tagset? = Tagset.readOrNull(tagger)
             when (val uploadedFile = InternalFile.Companion.create(tempFile)) {
                 // Treat TSVFiles separately form SourceLayerableFiles, because calling sourceLayer() on a TSV
                 // Would default its alignment to offset=0. Instead, we force it to align with the original plaintext.

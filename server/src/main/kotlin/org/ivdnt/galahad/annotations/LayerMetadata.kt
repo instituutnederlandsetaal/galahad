@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.annotations
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import org.ivdnt.galahad.tagset.Tagset
+import org.ivdnt.galahad.taggers.Tagset
 
 /** A small preview of a [Layer] and some metadata. */
 data class LayerMetadata(

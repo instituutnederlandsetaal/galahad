@@ -125,6 +125,28 @@ class LayerToTEIConverter(
         }
     }
 
+    private fun addWordFromForMulti(wordForm: WordForm, previous: WordForm?, next: WordForm?) {
+        // TODO: implement
+        //        val xwf = xmlDoc.createElement("w")
+//        textRoot.appendChild( xwf )
+//        xwf.setAttribute("xml:id", wordForm.id )
+//        if (previous != null) xwf.setAttribute("previous", previous.id)
+//        if (next != null) xwf.setAttribute("next", next.id)
+//
+//        xwf.textContent = wordForm.literal
+    }
+
+    private fun addJoin(term: Term) {
+        // TODO: implement
+//        val xjoin = xmlDoc.createElement("join")
+//        textRoot.appendChild(xjoin)
+//        xjoin.setAttribute("result", "w")
+//        xjoin.setAttribute("scope", "root")
+//        xjoin.setAttribute("lemma", term.lemma)
+//        xjoin.setAttribute("pos", term.pos)
+//        xjoin.setAttribute("target", term.targets.map { it.id }.joinToString(" "))
+    }
+
     private class OpenMultiTerm(
         val wordForms: List<WordForm>,
     ) {

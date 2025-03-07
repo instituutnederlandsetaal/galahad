@@ -15,7 +15,6 @@ import java.io.File
 import java.net.URI
 import java.net.URL
 
-const val TAGGERS_DIR = "data/taggers"
 
 class Tagger(
     // The id should be equal to the filename
@@ -64,8 +63,9 @@ class Tagger(
 
     companion object {
         val EMPTY: Tagger = Tagger("EMPTY")
+        const val TAGGERS_DIR: String = "data/taggers"
+        private val dir: File = File(TAGGERS_DIR)
 
-        val dir = File(TAGGERS_DIR)
         val taggers: Map<String, Tagger> by lazy {
             dir.listFiles()
                 .map { Yaml(Constructor(Tagger::class.java, LoaderOptions())).load<Tagger>(it.inputStream()) }

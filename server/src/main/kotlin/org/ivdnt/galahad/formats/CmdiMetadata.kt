@@ -2,7 +2,7 @@ package org.ivdnt.galahad.formats
 
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.corpora.MutableCorpusMetadata
-import org.ivdnt.galahad.tagset.TagsetStore
+import org.ivdnt.galahad.taggers.Tagset
 import org.ivdnt.galahad.util.escapeXML
 import org.ivdnt.galahad.util.getXmlBuilder
 import org.ivdnt.galahad.util.toNonEmptyString
@@ -24,9 +24,6 @@ class CmdiMetadata(transformMetadata: DocumentTransformMetadata) : LayerTransfor
     companion object {
         private val tmp_dir: File = createTempDirectory("cmdi").toFile()
     }
-
-    /** We need tagsets to go from tagger.tagset to tagset.fullName */
-    private val tagsets = TagsetStore()
 
     // Some vals for repeated access.
     private val docTitle = document.uploadedFile.nameWithoutExtension
@@ -84,7 +81,7 @@ class CmdiMetadata(transformMetadata: DocumentTransformMetadata) : LayerTransfor
             listOf("Source_GaLAHaD//yearFrom") to corpusMetadata.eraFrom.toString(),
             listOf("Source_GaLAHaD//yearTo") to corpusMetadata.eraTo.toString(),
             listOf("languageName") to corpusMetadata.language.toNonEmptyString("Dutch"),
-            listOf("annotationSet") to tagsets.getOrNull(tagger.tagset)?.longName.toNonEmptyString("!No tagset defined!"),
+            listOf("annotationSet") to Tagset.readOrNull(tagger)?.longName.toNonEmptyString("!No tagset defined!"),
             listOf("annotationFormat") to format,
             listOf("Annotation_GaLAHaD//toolName") to tagger.id,
             listOf("Annotation_GaLAHaD//toolVersion") to tagger.version,
