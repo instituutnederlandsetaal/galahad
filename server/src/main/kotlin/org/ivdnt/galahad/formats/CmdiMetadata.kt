@@ -19,7 +19,7 @@ import javax.xml.xpath.XPathFactory
 import kotlin.io.path.createTempDirectory
 
 /** Constructs a CMDI file for exported documents. */
-class CmdiMetadata(transformMetadata: DocumentTransformMetadata) : LayerTransformer(transformMetadata) {
+class CmdiMetadata(transformMetadata: DocumentExport) : LayerTransformer(transformMetadata) {
 
     companion object {
         private val tmp_dir: File = createTempDirectory("cmdi").toFile()

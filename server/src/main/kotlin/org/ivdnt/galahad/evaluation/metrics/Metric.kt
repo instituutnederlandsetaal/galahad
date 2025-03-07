@@ -78,7 +78,7 @@ open class FlatClassificationClasses(
     var noMatch: Int = 0,
     var count: Int = 0,
 ) {
-    operator fun plus(other: FlatClassificationClasses) = FlatClassificationClasses(
+    operator fun plus(other: FlatClassificationClasses): FlatClassificationClasses = FlatClassificationClasses(
         truePositive + other.truePositive,
         falsePositive + other.falsePositive,
         falseNegative + other.falseNegative,
@@ -124,7 +124,7 @@ data class Metric(
     @JsonProperty("classes") var cls: ClassificationClasses = ClassificationClasses(),
 ) {
     @get:JsonProperty("metrics")
-    val clsMetrics
+    val clsMetrics: ClassificationMetrics
         get() = ClassificationMetrics.calculate(cls)
 
     fun add(other: Metric, truncate: Boolean): Metric {

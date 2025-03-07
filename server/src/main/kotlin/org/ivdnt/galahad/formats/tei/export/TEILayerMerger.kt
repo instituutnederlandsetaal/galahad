@@ -1,6 +1,6 @@
 package org.ivdnt.galahad.formats.tei.export
 
-import org.ivdnt.galahad.formats.DocumentTransformMetadata
+import org.ivdnt.galahad.formats.DocumentExport
 import org.ivdnt.galahad.formats.LayerMerger
 import org.ivdnt.galahad.formats.LayerTransformer
 import org.ivdnt.galahad.formats.tei.TEIFile
@@ -14,7 +14,7 @@ import kotlin.io.path.createTempDirectory
 
 class TEILayerMerger(
     teiFile: TEIFile,
-    transformMetadata: DocumentTransformMetadata,
+    transformMetadata: DocumentExport,
 ) : LayerMerger<TEIFile>, LayerTransformer(transformMetadata) {
 
     private var xmlDoc = getXmlBuilder().newDocument()

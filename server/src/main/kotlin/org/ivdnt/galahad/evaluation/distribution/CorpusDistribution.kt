@@ -18,10 +18,10 @@ class CorpusDistribution(
     private val hypothesisJob = corpus.jobs.readOrThrow(hypothesis)
 
     @JsonProperty
-    val lastModified = hypothesisJob.lastModified
+    val lastModified: Long = hypothesisJob.lastModified
 
     @JsonProperty
-    val generated = System.currentTimeMillis()
+    val generated: Long = System.currentTimeMillis()
 
     init {
         corpus.documents.readAll().forEach {

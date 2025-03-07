@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
 import kotlin.random.Random
 
-const val MAX_SAMPLE_LENGTH = 10
+const val MAX_SAMPLE_LENGTH: Int = 10
 
 data class EvaluationEntry(
     val count: Int = 0,

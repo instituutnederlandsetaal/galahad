@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.ivdnt.galahad.taggers.Tagset
 
-const val SOURCE_LAYER_NAME = "sourceLayer"
+const val SOURCE_LAYER_NAME: String = "sourceLayer"
 
 /**
  * A layer represents the tokenization, lemma and pos tags produced by a tagger. One layer per tagger
@@ -21,7 +21,7 @@ open class Layer(
 
     /** Numerical summary of the [terms] and [wordForms] in this [Layer] and their containing number of [Term.lemma] and [Term.pos]. */
     // TODO: do we still use this, and if so, report on every annotation type.
-    val summary
+    val summary: LayerSummary
         get() = LayerSummary(numWordForms = wordForms.size)
 
     /** A preview of the [terms] and [wordForms] in this [Layer] up to the first [Term] whose [Term.firstOffset] exceeds [LAYER_PREVIEW_LENGTH].
@@ -91,7 +91,7 @@ open class Layer(
     fun getWordFormByID(id: String): WordForm = wordForms.first { it.id == id }
 
     companion object {
-        val EMPTY = Layer("EMPTY")
+        val EMPTY: Layer = Layer("EMPTY")
     }
 }
 

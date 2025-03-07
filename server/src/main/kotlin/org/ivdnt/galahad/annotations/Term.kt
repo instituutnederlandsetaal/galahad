@@ -33,22 +33,22 @@ data class Term(
     val hasPOS: Boolean = pos != null
 
     @get:JsonIgnore
-    val lemmaOrEmpty
+    val lemmaOrEmpty: String
         get() = lemma ?: ""
 
     @get:JsonIgnore
-    val posOrEmpty
+    val posOrEmpty: String
         get() = pos ?: ""
 
     /** Whether this term refers to multiple [WordForm]. */
     @get:JsonIgnore
-    val isMultiTarget = targets.size > 1
+    val isMultiTarget: Boolean = targets.size > 1
 
     fun isMulti(annotation: AnnotationType): Boolean = annotations[annotation]?.contains("+") == true
 
     /** Offset of the first [WordForm] in [targets].*/
     @get:JsonIgnore
-    val firstOffset get() = targets.minOfOrNull { it.offset } ?: -1
+    val firstOffset: Int get() = targets.minOfOrNull { it.offset } ?: -1
 
     /** String constructed from all the [WordForm] in [targets]. */
     @get:JsonIgnore
@@ -98,7 +98,7 @@ data class Term(
     }
 
     companion object {
-        val EMPTY = Term(mapOf(), mutableListOf())
+        val EMPTY: Term = Term(mapOf(), mutableListOf())
 
         fun missingName(annotationType: AnnotationType): String =
             // simply uppercase and prepend "NO_"

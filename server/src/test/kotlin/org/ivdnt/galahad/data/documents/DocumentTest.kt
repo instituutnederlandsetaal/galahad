@@ -83,7 +83,7 @@ class DocumentTest {
 
             // Convert to each other format
             for (formatTo in DocumentFormat.entries) {
-                val meta = DocumentTransformMetadata(
+                val meta = DocumentExport(
                     corpus, job, doc, User("testUser"), formatTo
                 )
                 when (formatTo) {

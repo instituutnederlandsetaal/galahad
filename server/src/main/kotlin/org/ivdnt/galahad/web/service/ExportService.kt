@@ -8,8 +8,8 @@ import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.corpora.documents.Document
 import org.ivdnt.galahad.corpora.documents.DocumentFormat
 import org.ivdnt.galahad.exceptions.MergeNotImplementedException
-import org.ivdnt.galahad.formats.CorpusTransformMetadata
-import org.ivdnt.galahad.formats.DocumentTransformMetadata
+import org.ivdnt.galahad.formats.CorpusExport
+import org.ivdnt.galahad.formats.DocumentExport
 import org.ivdnt.galahad.formats.InternalFile
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -33,7 +33,7 @@ class ExportService(val corpora: CorporaService) : Logging {
         return mergeDoc(dtm, posHeadOnly)
     }
 
-    fun mergeDoc(dtm: DocumentTransformMetadata, posHeadOnly: Boolean): InternalFile {
+    fun mergeDoc(dtm: DocumentExport, posHeadOnly: Boolean): InternalFile {
         if (posHeadOnly) {
             dtm.convertLayerToPosHead()
         }
@@ -45,7 +45,7 @@ class ExportService(val corpora: CorporaService) : Logging {
         return convertDoc(dtm, posHeadOnly)
     }
 
-    fun convertDoc(dtm: DocumentTransformMetadata, posHeadOnly: Boolean): File {
+    fun convertDoc(dtm: DocumentExport, posHeadOnly: Boolean): File {
         if (posHeadOnly) {
             dtm.convertLayerToPosHead()
         }
@@ -67,7 +67,7 @@ class ExportService(val corpora: CorporaService) : Logging {
         ctm.corpus.export(ctm, formatMapper = {
             try {
                 // Document conversions.
-                val dtm = ctm.documentMetadata(it.name)
+                val dtm = ctm.docExport(it.name)
                 return@export if (shouldMerge && mergeFormatMatches(it, format)) {
                     logger.info("Merging ${it.name} of format ${it.metadata.format}")
                     mergeDoc(dtm, posHeadOnly).file
@@ -83,7 +83,7 @@ class ExportService(val corpora: CorporaService) : Logging {
         }, filter = {
             // Filter out untagged documents.
                 document ->
-            ctm.documentMetadata(document.name).layer != Layer.EMPTY
+            ctm.docExport(document.name).layer != Layer.EMPTY
         }, outputStream = response?.outputStream)
     }
 
@@ -91,11 +91,11 @@ class ExportService(val corpora: CorporaService) : Logging {
         corpusID: UUID,
         jobName: String,
         formatName: DocumentFormat,
-    ): CorpusTransformMetadata {
+    ): CorpusExport {
         // Exporting documents requires you to have write access.
         val corpus = corpora.readAsWriterOrThrow(corpusID, user)
         val job = corpus.jobs.readOrThrow(jobName)
-        return CorpusTransformMetadata(
+        return CorpusExport(
             corpus, job, User.fromRequest(request), formatName
         )
     }
@@ -105,7 +105,7 @@ class ExportService(val corpora: CorporaService) : Logging {
         job: String,
         document: String,
         format: DocumentFormat,
-    ): DocumentTransformMetadata = getCorpusTransformMetadata(corpus, job, format).documentMetadata(document)
+    ): DocumentExport = getCorpusTransformMetadata(corpus, job, format).docExport(document)
 
     private fun mergeFormatMatches(
         it: Document, format: DocumentFormat,

@@ -2,7 +2,7 @@ package org.ivdnt.galahad.formats.tsv
 
 import org.ivdnt.galahad.annotations.*
 import org.ivdnt.galahad.corpora.documents.DocumentFormat
-import org.ivdnt.galahad.formats.DocumentTransformMetadata
+import org.ivdnt.galahad.formats.DocumentExport
 import org.ivdnt.galahad.formats.InternalFile
 import org.ivdnt.galahad.formats.conllu.ConlluFile
 import org.ivdnt.galahad.formats.tsv.export.TSVLayerMerger
@@ -17,7 +17,7 @@ open class TSVFile(
     override val sourceLayer: Layer by lazy { parse(); _sourceLayer }
 
     private val plainTextFile = File.createTempFile("galahad-${file.name}-plaintext", ".txt")
-    val entries = ArrayList<Annotations>()
+    val entries: ArrayList<Annotations> = ArrayList<Annotations>()
 
     private var _sourceLayer: Layer = Layer.EMPTY
 
@@ -160,9 +160,9 @@ open class TSVFile(
         return newLayer
     }
 
-    override fun merge(transformMetadata: DocumentTransformMetadata): TSVFile {
+    override fun merge(export: DocumentExport): TSVFile {
         // Sets header indices needed to merge.
         parse()
-        return TSVLayerMerger(this, transformMetadata).merge()
+        return TSVLayerMerger(this, export).merge()
     }
 }

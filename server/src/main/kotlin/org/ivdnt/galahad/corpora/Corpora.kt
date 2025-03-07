@@ -30,9 +30,9 @@ import java.io.File
 class Corpora(
     dir: File,
 ) : GalahadFolderManager<Corpus, MutableCorpusMetadata>(dir) {
-    override fun createOrThrow(key: MutableCorpusMetadata) = Corpus.create(dir.resolve(key.id.toString()), key)
-    override fun ctor(key: String) = Corpus(dir.resolve(key))
-    override fun throwNotFound(key: String) = throw CorpusNotFoundException(key)
+    override fun createOrThrow(key: MutableCorpusMetadata): Corpus = Corpus.create(dir.resolve(key.id.toString()), key)
+    override fun ctor(key: String): Corpus = Corpus(dir.resolve(key))
+    override fun throwNotFound(key: String): Nothing = throw CorpusNotFoundException(key)
 
     fun updateOrThrow(newMeta: MutableCorpusMetadata): Corpus {
         val corpus = readOrThrow(newMeta.id.toString())

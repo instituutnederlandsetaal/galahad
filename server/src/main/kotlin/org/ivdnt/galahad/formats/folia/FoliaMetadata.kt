@@ -39,7 +39,7 @@ class FoliaMetadata(xmlDoc: Document, root: Node, layer: LayerTransformer) : XML
         processor.setAttribute("type", "auto")
         processor.setAttribute("src", "https://github.com/INL/galahad-taggers-dockerized")
         processor.setAttribute("host", "galahad.ivdnt.org")
-        processor.setAttribute("user", layer.transformMetadata.user.id)
+        processor.setAttribute("user", layer.export.user.id)
 
         provenance.appendChild(processor)
     }

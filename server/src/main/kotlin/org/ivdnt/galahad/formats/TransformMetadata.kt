@@ -10,15 +10,15 @@ import org.ivdnt.galahad.corpora.documents.DocumentFormat
 import org.ivdnt.galahad.corpora.jobs.Job
 import org.ivdnt.galahad.taggers.Tagger
 
-open class CorpusTransformMetadata(
+open class CorpusExport(
     val corpus: Corpus,
     val job: Job,
     val user: User,
     val targetFormat: DocumentFormat,
 ) {
 
-    fun documentMetadata(document: String): DocumentTransformMetadata {
-        return DocumentTransformMetadata(
+    fun docExport(document: String): DocumentExport {
+        return DocumentExport(
             corpus = corpus,
             job = job,
             document = corpus.documents.readOrThrow(document),
@@ -28,7 +28,7 @@ open class CorpusTransformMetadata(
     }
 }
 
-class DocumentTransformMetadata(
+class DocumentExport(
     val corpus: Corpus,
     val job: Job,
     val document: Document,

@@ -85,6 +85,6 @@ data class TermComparison(
     }
 
     companion object {
-        const val MISSING_MATCH = "Missing match"
+        const val MISSING_MATCH: String = "Missing match"
     }
 }

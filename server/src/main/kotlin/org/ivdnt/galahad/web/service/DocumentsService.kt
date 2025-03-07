@@ -5,6 +5,8 @@ import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.corpora.documents.Document
 import org.ivdnt.galahad.corpora.documents.DocumentMetadata
+import org.ivdnt.galahad.corpora.documents.Documents
+import org.ivdnt.galahad.corpora.jobs.Jobs
 import org.ivdnt.galahad.exceptions.DocumentInvalidException
 import org.ivdnt.galahad.exceptions.FileUploadException
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,7 +20,7 @@ import java.util.zip.ZipFile
 import kotlin.io.path.createTempDirectory
 
 
-val ZIP_TYPES = listOf("application/zip", "application/x-zip-compressed", "application/octet-stream")
+val ZIP_TYPES: List<String> = listOf("application/zip", "application/x-zip-compressed", "application/octet-stream")
 
 @Service
 class DocumentsService(val corpora: CorporaService) : Logging {
@@ -28,10 +30,10 @@ class DocumentsService(val corpora: CorporaService) : Logging {
 
     private val user get() = User.fromRequest(request)
 
-    fun UUID.writeJobs() = corpora.readAsWriterOrThrow(this, user).jobs
-    fun UUID.readDocs() = corpora.readAsReaderOrThrow(this, user).documents
-    fun UUID.writeDocs() = corpora.readAsWriterOrThrow(this, user).documents
-    fun UUID.readJobs() = corpora.readAsReaderOrThrow(this, user).jobs
+    fun UUID.writeJobs(): Jobs = corpora.readAsWriterOrThrow(this, user).jobs
+    fun UUID.readDocs(): Documents = corpora.readAsReaderOrThrow(this, user).documents
+    fun UUID.writeDocs(): Documents = corpora.readAsWriterOrThrow(this, user).documents
+    fun UUID.readJobs(): Jobs = corpora.readAsReaderOrThrow(this, user).jobs
 
 
     fun read(corpus: UUID, document: String): Document = corpus.readDocs().readOrThrow(document)

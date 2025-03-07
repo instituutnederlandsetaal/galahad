@@ -21,44 +21,44 @@ import java.util.regex.Pattern
 // This is a possibly incomplete list of all the endpoints
 // For a complete overview better go to
 // SWAGGER_API_URL
-const val BASE_URL = "/"
-const val SWAGGER_API_URL = "/swagger-ui/index.html"
+const val BASE_URL: String = "/"
+const val SWAGGER_API_URL: String = "/swagger-ui/index.html"
 
-const val TAGSETS_URL = "/tagsets"
-const val VERSION_URL = "/version"
+const val TAGSETS_URL: String = "/tagsets"
+const val VERSION_URL: String = "/version"
 
-const val TAGGERS_URL = "/taggers"
-const val TAGGER_URL = "$TAGGERS_URL/{tagger}"
-const val TAGGER_HEALTH_URL = "$TAGGER_URL/health"
+const val TAGGERS_URL: String = "/taggers"
+const val TAGGER_URL: String = "$TAGGERS_URL/{tagger}"
+const val TAGGER_HEALTH_URL: String = "$TAGGER_URL/health"
 
-const val BENCHMARKS_URL = "/benchmarks"
-const val BENCHMARK_URL = "$BENCHMARKS_URL/{corpus}/{job}"
+const val BENCHMARKS_URL: String = "/benchmarks"
+const val BENCHMARK_URL: String = "$BENCHMARKS_URL/{corpus}/{job}"
 
-const val INTERNAL_JOBS_URL = "/internal/jobs"
-const val INTERNAL_JOBS_RESULT_URL = "$INTERNAL_JOBS_URL/result"
-const val INTERNAL_JOBS_ERROR_URL = "$INTERNAL_JOBS_URL/error"
+const val INTERNAL_JOBS_URL: String = "/internal/jobs"
+const val INTERNAL_JOBS_RESULT_URL: String = "$INTERNAL_JOBS_URL/result"
+const val INTERNAL_JOBS_ERROR_URL: String = "$INTERNAL_JOBS_URL/error"
 
-const val CORPORA_URL = "/corpora"
-const val DATASETS_CORPORA_URL = "/datasets_corpora"
-const val CORPUS_URL = "$CORPORA_URL/{corpus}"
+const val CORPORA_URL: String = "/corpora"
+const val DATASETS_CORPORA_URL: String = "/datasets_corpora"
+const val CORPUS_URL: String = "$CORPORA_URL/{corpus}"
 
-const val JOBS_URL = "$CORPUS_URL/jobs"
-const val JOB_URL = "$JOBS_URL/{job}"
-const val JOB_DOCUMENT_URL = "$JOB_URL/documents/{document}"
+const val JOBS_URL: String = "$CORPUS_URL/jobs"
+const val JOB_URL: String = "$JOBS_URL/{job}"
+const val JOB_DOCUMENT_URL: String = "$JOB_URL/documents/{document}"
 
-const val EVALUATION_URL = "$JOB_URL/evaluation"
-const val DISTRIBUTION_URL = "$EVALUATION_URL/distribution"
-const val TOKEN_FREQUENCY_URL = "$EVALUATION_URL/frequency"
-const val METRICS_URL = "$EVALUATION_URL/metrics"
-const val METRICS_SAMPLES_URL = "$METRICS_URL/download"
-const val CONFUSION_URL = "$EVALUATION_URL/confusion"
-const val CONFUSION_SAMPLES_URL = "$CONFUSION_URL/download"
-const val EVALUATION_CSV_URL = "$EVALUATION_URL/download"
-const val DOCUMENT_EVALUATION_URL = "$JOB_DOCUMENT_URL/evaluation"
+const val EVALUATION_URL: String = "$JOB_URL/evaluation"
+const val DISTRIBUTION_URL: String = "$EVALUATION_URL/distribution"
+const val TOKEN_FREQUENCY_URL: String = "$EVALUATION_URL/frequency"
+const val METRICS_URL: String = "$EVALUATION_URL/metrics"
+const val METRICS_SAMPLES_URL: String = "$METRICS_URL/download"
+const val CONFUSION_URL: String = "$EVALUATION_URL/confusion"
+const val CONFUSION_SAMPLES_URL: String = "$CONFUSION_URL/download"
+const val EVALUATION_CSV_URL: String = "$EVALUATION_URL/download"
+const val DOCUMENT_EVALUATION_URL: String = "$JOB_DOCUMENT_URL/evaluation"
 
-const val DOCUMENTS_URL = "$CORPUS_URL/documents"
-const val DOCUMENT_URL = "$DOCUMENTS_URL/{document}"
-const val DOCUMENT_RAW_FILE_URL = "$DOCUMENT_URL/raw" // returns the blob of the raw document
+const val DOCUMENTS_URL: String = "$CORPUS_URL/documents"
+const val DOCUMENT_URL: String = "$DOCUMENTS_URL/{document}"
+const val DOCUMENT_RAW_FILE_URL: String = "$DOCUMENT_URL/raw" // returns the blob of the raw document
 
 var application_profile: String = System.getenv("spring.profiles.active") ?: "prod"
 

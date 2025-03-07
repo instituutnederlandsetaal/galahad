@@ -20,7 +20,7 @@ class FoliaReader(
 ) {
     val xmlDoc: Document = getXmlBuilder().parse(file)
     val plainTextBuilder: StringBuilder = StringBuilder()
-    val sourceLayer = Layer(SOURCE_LAYER_NAME)
+    val sourceLayer: Layer = Layer(SOURCE_LAYER_NAME)
 
     // Used to add spaces between words, but not between punctuation and words.
     private var previousWasW = false

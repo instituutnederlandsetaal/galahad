@@ -21,7 +21,7 @@ interface InternalFile {
     /**
      * merge the uploaded file with the data from the layer, creating a new file.
      */
-    fun merge(transformMetadata: DocumentTransformMetadata): InternalFile
+    fun merge(export: DocumentExport): InternalFile
 
     companion object {
         fun create(file: File): InternalFile {

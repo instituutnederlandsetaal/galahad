@@ -25,7 +25,7 @@ class TEIMetadata(
 ) : XMLMetadata(xmlDoc, root, layer) {
 
     /** GaLAHaD-generated UUID */
-    private val internalPid: String = layer.transformMetadata.document.metadata.uuid.toString()
+    private val internalPid: String = layer.export.document.metadata.uuid.toString()
 
     /**
      * Return the title of the document as described in titleStmt,
@@ -38,10 +38,10 @@ class TEIMetadata(
                 ?.childOrNull("titleStmt")
                 ?.childOrNull("title")?.textContent
                 ?: // if null, use filename without extension
-                layer.transformMetadata.document.uploadedFile.nameWithoutExtension
+                layer.export.document.uploadedFile.nameWithoutExtension
         }
 
-    private val corpusMetadata: MutableCorpusMetadata = layer.transformMetadata.corpus.mutableMetadata
+    private val corpusMetadata: MutableCorpusMetadata = layer.export.corpus.mutableMetadata
 
     init {
         write()

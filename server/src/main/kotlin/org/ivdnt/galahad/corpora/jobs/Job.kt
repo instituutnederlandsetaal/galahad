@@ -50,11 +50,11 @@ class Job(
     val corpus: Corpus,
 ) : GalahadFolder(dir), Logging {
 
-    val jobDocuments = JobDocuments(dir.resolve(DOCUMENT_JOBS_FOLDER))
+    val jobDocuments: JobDocuments = JobDocuments(dir.resolve(DOCUMENT_JOBS_FOLDER))
 
     // Files
-    val isActiveFile = dir.resolve(IS_ACTIVE_FILE)
-    val metadataFile = dir.resolve(METADATA_FILE)
+    val isActiveFile: File = dir.resolve(IS_ACTIVE_FILE)
+    val metadataFile: File = dir.resolve(METADATA_FILE)
 
     // Values
     val hasResult: Boolean
@@ -128,17 +128,18 @@ class Job(
      * The sum of the global [Metrics] score of all the documents of the job (as opposed to per PoS).
      * Cached in a file, as it is expensive.
      */
-    val assay = object : ValidatedDiskValue<Map<String, FlatMetricType>>(
-        file = dir.resolve("assay.cache")
-    ) {
-        override fun isValid(lastModified: Long): Boolean = lastModified >= this@Job.lastModified
+    val assay: ValidatedDiskValue<Map<String, FlatMetricType>> =
+        object : ValidatedDiskValue<Map<String, FlatMetricType>>(
+            file = dir.resolve("assay.cache")
+        ) {
+            override fun isValid(lastModified: Long): Boolean = lastModified >= this@Job.lastModified
 
-        override fun set(): Map<String, FlatMetricType> {
-            return CorpusMetrics(
-                corpus = corpus, settings = METRIC_TYPES, hypothesis = name
-            ).metricTypes.mapValues { it.value.toFlat() }
+            override fun set(): Map<String, FlatMetricType> {
+                return CorpusMetrics(
+                    corpus = corpus, settings = METRIC_TYPES, hypothesis = name
+                ).metricTypes.mapValues { it.value.toFlat() }
+            }
         }
-    }
 
     private fun deleteInactiveProcesses() {
         val djs = jobDocuments.readAll()

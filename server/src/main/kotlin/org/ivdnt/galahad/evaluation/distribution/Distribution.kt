@@ -16,11 +16,11 @@ open class Distribution(val groupingAnnotation: AnnotationType) {
     @JsonIgnore
     val distributionMap: MutableMap<Pair<String, String>, Pair<Int, LiteralsEntry>> = HashMap()
 
-    var isTrimmed = false
-    var coveredChars = 0
-    var coveredAlphabeticChars = 0
-    var totalChars = 0
-    var totalAlphabeticChars = 0
+    var isTrimmed: Boolean = false
+    var coveredChars: Int = 0
+    var coveredAlphabeticChars: Int = 0
+    var totalChars: Int = 0
+    var totalAlphabeticChars: Int = 0
 
     /**
      * Is serialized and send through API, so it is in fact used.

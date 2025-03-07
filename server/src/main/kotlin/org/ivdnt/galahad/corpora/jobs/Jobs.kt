@@ -40,8 +40,8 @@ class Jobs(
         return ctor(key)
     }
 
-    override fun ctor(key: String) = Job(dir.resolve(key), corpus)
-    override fun throwNotFound(key: String) = throw JobNotFoundException(key)
+    override fun ctor(key: String): Job = Job(dir.resolve(key), corpus)
+    override fun throwNotFound(key: String): Nothing = throw JobNotFoundException(key)
 
     fun readAllJobStatesIncludingPotentialJobs(): Set<JobMetadata> {
         val existingJobs = readAll().map { it.metadata }

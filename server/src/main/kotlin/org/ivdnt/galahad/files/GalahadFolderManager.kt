@@ -34,9 +34,9 @@ abstract class GalahadFolderManager<ReadType : GalahadFolder, CreateType : Any>(
 
     open fun readAll(): Set<ReadType> = dir.list()?.map { readOrThrow(it) }?.toSet() ?: setOf()
 
-    open fun readOrNull(key: String) = if (dir.resolve(key).exists()) ctor(key) else null
+    open fun readOrNull(key: String): ReadType? = if (dir.resolve(key).exists()) ctor(key) else null
 
-    fun readOrThrow(key: String) = readOrNull(key) ?: throwNotFound(key)
+    fun readOrThrow(key: String): ReadType = readOrNull(key) ?: throwNotFound(key)
 
     fun deleteOrThrow(key: String) {
         readOrThrow(key) // does it exist?
@@ -45,5 +45,5 @@ abstract class GalahadFolderManager<ReadType : GalahadFolder, CreateType : Any>(
         }
     }
 
-    fun deleteOrNull(key: String) = readOrNull(key)?.let { deleteOrThrow(key) }
+    fun deleteOrNull(key: String): Unit? = readOrNull(key)?.let { deleteOrThrow(key) }
 }

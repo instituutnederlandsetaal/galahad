@@ -12,26 +12,30 @@
         <DerivedFrom>clarin.eu:cr1:p_1712653174452</DerivedFrom>
     </Header>
     <Component name="TextProfileINT_GaLAHaD_v4" CardinalityMin="1" CardinalityMax="1">
-        <Element xmlns:cue="http://www.clarin.eu/cmd/cues/1" name="corpusName" ValueScheme="string" CardinalityMin="0" CardinalityMax="1"
+        <Element xmlns:cue="http://www.clarin.eu/cmd/cues/1" name="corpusName" ValueScheme="string" CardinalityMin="0"
+                 CardinalityMax="1"
                  cue:DisplayPriority="1"/>
         <Component name="TextFile_GaLAHaD" ComponentRef="clarin.eu:cr1:c_1712653174437" CardinalityMin="1"
                    CardinalityMax="1">
             <Element xmlns:cue="http://www.clarin.eu/cmd/cues/1"
                      name="GaLAHaDPersistentIdentifier"
-                     ConceptLink="http://hdl.handle.net/11459/CCR_C-2573_ae7c2548-8a86-ab6e-7099-e28b7697d1a2" ValueScheme="string" CardinalityMin="1" CardinalityMax="1"
+                     ConceptLink="http://hdl.handle.net/11459/CCR_C-2573_ae7c2548-8a86-ab6e-7099-e28b7697d1a2"
+                     ValueScheme="string" CardinalityMin="1" CardinalityMax="1"
                      cue:DisplayPriority="1">
                 <Documentation>A persistent identifier for a text. The pid is given by the GaLAHaD platform.
                 </Documentation>
             </Element>
             <Component name="Conversion_GaLAHaD" ComponentRef="clarin.eu:cr1:c_1712653174444" CardinalityMin="1"
                        CardinalityMax="1">
-                <Element xmlns:cue="http://www.clarin.eu/cmd/cues/1" name="conversionDescription" ValueScheme="string" CardinalityMin="1"
+                <Element xmlns:cue="http://www.clarin.eu/cmd/cues/1" name="conversionDescription" ValueScheme="string"
+                         CardinalityMin="1"
                          CardinalityMax="1" cue:DisplayPriority="1">
                     <Documentation>Describes the conversion process</Documentation>
                 </Element>
                 <Component name="Tool" ComponentRef="clarin.eu:cr1:c_1708423613597" CardinalityMin="1"
                            CardinalityMax="1">
-                    <Element xmlns:cue="http://www.clarin.eu/cmd/cues/1" name="toolName" ValueScheme="string" CardinalityMin="1"
+                    <Element xmlns:cue="http://www.clarin.eu/cmd/cues/1" name="toolName" ValueScheme="string"
+                             CardinalityMin="1"
                              CardinalityMax="1" cue:DisplayPriority="1">
                         <Documentation>Name of a tool</Documentation>
                     </Element>
@@ -47,7 +51,8 @@
                            CardinalityMax="1">
                     <Element xmlns:cue="http://www.clarin.eu/cmd/cues/1"
                              name="organisationName"
-                             ConceptLink="http://hdl.handle.net/11459/CCR_C-6243_bd27ac08-ec04-0db2-d95c-52f2a6b1e59d" ValueScheme="string" CardinalityMin="1" CardinalityMax="1"
+                             ConceptLink="http://hdl.handle.net/11459/CCR_C-6243_bd27ac08-ec04-0db2-d95c-52f2a6b1e59d"
+                             ValueScheme="string" CardinalityMin="1" CardinalityMax="1"
                              cue:DisplayPriority="1"/>
                     <Element name="organisationURL" ValueScheme="string" CardinalityMin="0" CardinalityMax="1">
                         <Documentation>Locates the website of an organisation by means of a URL</Documentation>
@@ -57,7 +62,8 @@
         </Component>
         <Component name="Source_GaLAHaD" ComponentRef="clarin.eu:cr1:c_1712653174438" CardinalityMin="1"
                    CardinalityMax="1">
-            <Element xmlns:cue="http://www.clarin.eu/cmd/cues/1" name="sourceID" ValueScheme="string" CardinalityMin="0" CardinalityMax="1"
+            <Element xmlns:cue="http://www.clarin.eu/cmd/cues/1" name="sourceID" ValueScheme="string" CardinalityMin="0"
+                     CardinalityMax="1"
                      cue:DisplayPriority="1">
                 <Documentation>The ID of the original text</Documentation>
             </Element>
@@ -69,7 +75,8 @@
             </Element>
             <Component name="Date_Period" ComponentRef="clarin.eu:cr1:c_1527668176057" CardinalityMin="0"
                        CardinalityMax="1">
-                <Element xmlns:cue="http://www.clarin.eu/cmd/cues/1" name="yearFrom" ValueScheme="gYear" CardinalityMin="0"
+                <Element xmlns:cue="http://www.clarin.eu/cmd/cues/1" name="yearFrom" ValueScheme="gYear"
+                         CardinalityMin="0"
                          CardinalityMax="1" cue:DisplayPriority="1">
                     <Documentation>Start year of a range of years</Documentation>
                 </Element>
@@ -92,7 +99,8 @@
         </Component>
         <Component name="Language_GaLAHaD" ComponentRef="clarin.eu:cr1:c_1712653174441" CardinalityMin="1"
                    CardinalityMax="1">
-            <Element xmlns:cue="http://www.clarin.eu/cmd/cues/1" name="languageName" ValueScheme="string" CardinalityMin="1"
+            <Element xmlns:cue="http://www.clarin.eu/cmd/cues/1" name="languageName" ValueScheme="string"
+                     CardinalityMin="1"
                      CardinalityMax="1" cue:DisplayPriority="1"/>
             <Element name="dominantLanguage" ValueScheme="string" CardinalityMin="0" CardinalityMax="1">
                 <Documentation>Indicates whether the language is the dominant one. The possible values for this element
@@ -104,7 +112,8 @@
                    CardinalityMax="1">
             <Element xmlns:cue="http://www.clarin.eu/cmd/cues/1"
                      name="annotationType"
-                     ConceptLink="http://hdl.handle.net/11459/CCR_C-2462_5b266792-7a54-9296-42e2-2318b9861fe1" CardinalityMin="1" CardinalityMax="1"
+                     ConceptLink="http://hdl.handle.net/11459/CCR_C-2462_5b266792-7a54-9296-42e2-2318b9861fe1"
+                     CardinalityMin="1" CardinalityMax="1"
                      cue:DisplayPriority="1">
                 <Documentation>Specifies the type of annotation that was provided</Documentation>
                 <ValueScheme>
@@ -142,7 +151,8 @@
                 <Documentation>Provides information about the creation of an annotation</Documentation>
                 <Element xmlns:cue="http://www.clarin.eu/cmd/cues/1"
                          name="annotationFormat"
-                         ConceptLink="http://hdl.handle.net/11459/CCR_C-2562_872eb94a-47fb-b551-2f64-13ded063259e" ValueScheme="string" CardinalityMin="0" CardinalityMax="1"
+                         ConceptLink="http://hdl.handle.net/11459/CCR_C-2562_872eb94a-47fb-b551-2f64-13ded063259e"
+                         ValueScheme="string" CardinalityMin="0" CardinalityMax="1"
                          cue:DisplayPriority="1">
                     <Documentation>Specifies the annotation format</Documentation>
                 </Element>
@@ -153,7 +163,8 @@
                     <Documentation>Identifies the annotationMode and the person(s), organisation(s) and/or tool(s)
                         involved
                     </Documentation>
-                    <Element xmlns:cue="http://www.clarin.eu/cmd/cues/1" name="annotationMode" CardinalityMin="0" CardinalityMax="1"
+                    <Element xmlns:cue="http://www.clarin.eu/cmd/cues/1" name="annotationMode" CardinalityMin="0"
+                             CardinalityMax="1"
                              cue:DisplayPriority="1">
                         <Documentation>Indicates whether the resource is annotated manually, by automatic processes or
                             by a combination of both
@@ -172,7 +183,8 @@
                         </Documentation>
                         <Component name="Person_GaLAHaD" ComponentRef="clarin.eu:cr1:c_1712653174451" CardinalityMin="0"
                                    CardinalityMax="unbounded">
-                            <Element xmlns:cue="http://www.clarin.eu/cmd/cues/1" name="email" ValueScheme="string" CardinalityMin="0"
+                            <Element xmlns:cue="http://www.clarin.eu/cmd/cues/1" name="email" ValueScheme="string"
+                                     CardinalityMin="0"
                                      CardinalityMax="1" cue:DisplayPriority="1">
                                 <Documentation>Specifies the email address of the user</Documentation>
                             </Element>
@@ -181,7 +193,8 @@
                                    CardinalityMax="unbounded">
                             <Element xmlns:cue="http://www.clarin.eu/cmd/cues/1"
                                      name="organisationName"
-                                     ConceptLink="http://hdl.handle.net/11459/CCR_C-6243_bd27ac08-ec04-0db2-d95c-52f2a6b1e59d" ValueScheme="string" CardinalityMin="1" CardinalityMax="1"
+                                     ConceptLink="http://hdl.handle.net/11459/CCR_C-6243_bd27ac08-ec04-0db2-d95c-52f2a6b1e59d"
+                                     ValueScheme="string" CardinalityMin="1" CardinalityMax="1"
                                      cue:DisplayPriority="1"/>
                             <Element name="organisationURL" ValueScheme="string" CardinalityMin="0" CardinalityMax="1">
                                 <Documentation>Locates the website of an organisation by means of a URL</Documentation>
@@ -189,7 +202,8 @@
                         </Component>
                         <Component name="Tool" ComponentRef="clarin.eu:cr1:c_1708423613597" CardinalityMin="0"
                                    CardinalityMax="unbounded">
-                            <Element xmlns:cue="http://www.clarin.eu/cmd/cues/1" name="toolName" ValueScheme="string" CardinalityMin="1"
+                            <Element xmlns:cue="http://www.clarin.eu/cmd/cues/1" name="toolName" ValueScheme="string"
+                                     CardinalityMin="1"
                                      CardinalityMax="1" cue:DisplayPriority="1">
                                 <Documentation>Name of a tool</Documentation>
                             </Element>
@@ -204,7 +218,8 @@
                     </Component>
                     <Component name="Date_Period" ComponentRef="clarin.eu:cr1:c_1527668176057" CardinalityMin="0"
                                CardinalityMax="1">
-                        <Element xmlns:cue="http://www.clarin.eu/cmd/cues/1" name="yearFrom" ValueScheme="gYear" CardinalityMin="0"
+                        <Element xmlns:cue="http://www.clarin.eu/cmd/cues/1" name="yearFrom" ValueScheme="gYear"
+                                 CardinalityMin="0"
                                  CardinalityMax="1" cue:DisplayPriority="1">
                             <Documentation>Start year of a range of years</Documentation>
                         </Element>

@@ -11,7 +11,6 @@ import org.ivdnt.galahad.util.*
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
-import kotlin.collections.contains
 
 fun HashSet<String>.contains(s: String?, ignoreCase: Boolean = false): Boolean = any { it.equals(s, ignoreCase) }
 

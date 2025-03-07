@@ -8,8 +8,8 @@ class User(
     val isAdmin: Boolean = false,
 ) {
     companion object {
-        const val USERNAME = "user"
-        val ADMIN_FILE = File("data/admins/admins.txt")
+        const val USERNAME: String = "user"
+        val ADMIN_FILE: File = File("data/admins/admins.txt")
         val DEFAULT_USER: User
             get() = User(id = USERNAME, isAdmin = isAdmin(USERNAME))
 

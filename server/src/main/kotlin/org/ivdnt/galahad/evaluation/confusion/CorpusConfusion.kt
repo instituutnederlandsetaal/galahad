@@ -27,13 +27,13 @@ class CorpusConfusion(
     private val hypoTagger = Tagger.readOrThrow(hypothesis, corpus)
 
     @JsonProperty
-    val hypothesisLastModified = hypothesisJob.lastModified
+    val hypothesisLastModified: Long = hypothesisJob.lastModified
 
     @JsonProperty
-    val referenceLastModified = referenceJob.lastModified
+    val referenceLastModified: Long = referenceJob.lastModified
 
     @JsonProperty
-    val generated = System.currentTimeMillis()
+    val generated: Long = System.currentTimeMillis()
 
     init {
         corpus.documents.readAll().forEach {

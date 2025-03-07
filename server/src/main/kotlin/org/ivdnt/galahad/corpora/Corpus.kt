@@ -8,7 +8,7 @@ import org.ivdnt.galahad.files.DiskValue
 import org.ivdnt.galahad.files.GalahadFolder
 import org.ivdnt.galahad.files.ValidatedDiskValue
 import org.ivdnt.galahad.formats.CmdiMetadata
-import org.ivdnt.galahad.formats.CorpusTransformMetadata
+import org.ivdnt.galahad.formats.CorpusExport
 import org.ivdnt.galahad.util.createZipFile
 import java.io.File
 import java.io.OutputStream
@@ -33,8 +33,8 @@ class Corpus(
     dir: File,
 ) : GalahadFolder(dir) {
 
-    val documents = Documents(dir.resolve(DOCS_FOLDER), this)
-    val jobs = Jobs(dir.resolve(JOBS_FOLDER), this)
+    val documents: Documents = Documents(dir.resolve(DOCS_FOLDER), this)
+    val jobs: Jobs = Jobs(dir.resolve(JOBS_FOLDER), this)
 
     // Files in the corpus folder.
     private val mutableMetadataFile = dir.resolve(MUTABLE_METADATA_FILE)
@@ -64,14 +64,14 @@ class Corpus(
      * Maps all [Document] found in [Documents] to the desired [DocumentFormat] and zips them. [formatMapper] should perform the mapping.
      */
     fun export(
-        ctm: CorpusTransformMetadata,
+        ctm: CorpusExport,
         formatMapper: (Document) -> File,
         filter: (Document) -> Boolean,
         outputStream: OutputStream? = null,
     ): File {
         val documents = documents.readAll().filter(filter)
         val convertedDocs = documents.asSequence().map(formatMapper)
-        val docsToCmdi = documents.asSequence().map { CmdiMetadata(ctm.documentMetadata(it.name)).file }
+        val docsToCmdi = documents.asSequence().map { CmdiMetadata(ctm.docExport(it.name)).file }
         val cmdiZip = createZipFile(docsToCmdi, includeCMDI = true)
         // rename the cmdiZip to "metadata"
         val dest = File(createTempDirectory("metadata").toFile(), "metadata.zip")

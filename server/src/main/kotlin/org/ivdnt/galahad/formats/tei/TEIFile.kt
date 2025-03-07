@@ -2,7 +2,7 @@ package org.ivdnt.galahad.formats.tei
 
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.corpora.documents.DocumentFormat
-import org.ivdnt.galahad.formats.DocumentTransformMetadata
+import org.ivdnt.galahad.formats.DocumentExport
 import org.ivdnt.galahad.formats.InternalFile
 import org.ivdnt.galahad.formats.tei.export.TEILayerMerger
 import org.ivdnt.galahad.formats.xml.BLFXMLParser
@@ -33,6 +33,6 @@ class TEIFile(
         _sourceLayer = xmlParser.sourceLayer
     }
 
-    override fun merge(transformMetadata: DocumentTransformMetadata): TEIFile =
-        TEILayerMerger(this, transformMetadata).merge()
+    override fun merge(export: DocumentExport): TEIFile =
+        TEILayerMerger(this, export).merge()
 }

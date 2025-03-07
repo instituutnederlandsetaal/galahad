@@ -3,7 +3,7 @@ package org.ivdnt.galahad.formats.conllu.export
 import org.ivdnt.galahad.annotations.AnnotationType
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.Term
-import org.ivdnt.galahad.formats.DocumentTransformMetadata
+import org.ivdnt.galahad.formats.DocumentExport
 import org.ivdnt.galahad.formats.conllu.ConlluFile
 import org.ivdnt.galahad.formats.tsv.export.TSVLayerMerger
 
@@ -12,7 +12,7 @@ import org.ivdnt.galahad.formats.tsv.export.TSVLayerMerger
  * Do not call directly. Use [ConlluFile.merge] instead.
  */
 internal class ConlluLayerMerger(
-    override val sourceFile: ConlluFile, transformMetadata: DocumentTransformMetadata,
+    override val sourceFile: ConlluFile, transformMetadata: DocumentExport,
 ) : TSVLayerMerger(sourceFile, transformMetadata) {
 
     override val hasHeader: Boolean = false

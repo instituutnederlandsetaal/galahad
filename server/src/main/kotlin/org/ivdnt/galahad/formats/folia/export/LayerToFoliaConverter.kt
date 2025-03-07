@@ -3,7 +3,7 @@ package org.ivdnt.galahad.formats.folia.export
 import org.ivdnt.galahad.annotations.AnnotationType
 import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.corpora.documents.DocumentFormat
-import org.ivdnt.galahad.formats.DocumentTransformMetadata
+import org.ivdnt.galahad.formats.DocumentExport
 import org.ivdnt.galahad.formats.LayerConverter
 import org.ivdnt.galahad.formats.LayerTransformer
 import org.ivdnt.galahad.util.XMLWriter
@@ -12,7 +12,7 @@ import org.ivdnt.galahad.util.toValidXmlId
 import java.io.OutputStream
 
 class LayerToFoliaConverter(
-    transformMetadata: DocumentTransformMetadata,
+    transformMetadata: DocumentExport,
 ) : LayerConverter, LayerTransformer(transformMetadata) {
 
     override val format: DocumentFormat
@@ -50,7 +50,7 @@ class LayerToFoliaConverter(
         // Provenance
         writer.openTag("<provenance>")
         writer.writeLine(
-            "<processor host=\"galahad.ivdnt.org\" name=\"${taggerName}\" src=\"https://github.com/INL/taggers-dockerized\" type=\"auto\" user=\"${transformMetadata.user.id}\" xml:id=\"${taggerName}\"/>"
+            "<processor host=\"galahad.ivdnt.org\" name=\"${taggerName}\" src=\"https://github.com/INL/taggers-dockerized\" type=\"auto\" user=\"${export.user.id}\" xml:id=\"${taggerName}\"/>"
         )
         writer.closeTag("</provenance>")
         writer.closeTag("</metadata>")

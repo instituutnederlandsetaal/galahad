@@ -1,6 +1,6 @@
 package org.ivdnt.galahad.formats.folia.export
 
-import org.ivdnt.galahad.formats.DocumentTransformMetadata
+import org.ivdnt.galahad.formats.DocumentExport
 import org.ivdnt.galahad.formats.LayerMerger
 import org.ivdnt.galahad.formats.LayerTransformer
 import org.ivdnt.galahad.formats.folia.FoliaFile
@@ -13,7 +13,7 @@ import kotlin.io.path.createTempDirectory
 
 class FoliaLayerMerger(
     foliaFile: FoliaFile,
-    transformMetadata: DocumentTransformMetadata,
+    transformMetadata: DocumentExport,
 ) : LayerMerger<FoliaFile>, LayerTransformer(transformMetadata) {
 
     private val sortedWordForms = result.wordForms.sortedBy { it.offset }

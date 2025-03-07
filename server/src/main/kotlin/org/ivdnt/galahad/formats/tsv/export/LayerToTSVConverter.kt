@@ -1,13 +1,13 @@
 package org.ivdnt.galahad.formats.tsv.export
 
 import org.ivdnt.galahad.corpora.documents.DocumentFormat
-import org.ivdnt.galahad.formats.DocumentTransformMetadata
+import org.ivdnt.galahad.formats.DocumentExport
 import org.ivdnt.galahad.formats.LayerConverter
 import org.ivdnt.galahad.formats.LayerTransformer
 import java.io.OutputStream
 
 class LayerToTSVConverter(
-    transformMetadata: DocumentTransformMetadata,
+    transformMetadata: DocumentExport,
 ) : LayerConverter, LayerTransformer(transformMetadata) {
 
     override val format: DocumentFormat

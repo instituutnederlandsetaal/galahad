@@ -151,7 +151,7 @@ internal class TEIExportTest {
         // convert the layer to TEI to test conversion
         // remember the output to reuse as TEI-file in the merge test
         val teiConvertedFile = doc.convert(
-            DocumentTransformMetadata(
+            DocumentExport(
                 corpus = corpus,
                 job = job,
                 document = doc,
@@ -168,7 +168,7 @@ internal class TEIExportTest {
 
         // merge the layer with the TEI-file
         val teiMergedFile = corpus.documents.readOrThrow(teiUploadedDoc.name).merge(
-            DocumentTransformMetadata(
+            DocumentExport(
                 corpus = corpus,
                 job = corpus.jobs.readOrThrow(jobName),
                 document = corpus.documents.readOrThrow(teiUploadedDoc.name),

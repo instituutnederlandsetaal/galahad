@@ -26,7 +26,7 @@ import java.io.File
 class JobDocuments(
     dir: File,
 ) : GalahadFolderManager<JobDocument, String>(dir) {
-    override fun createOrThrow(key: String) = ctor(key)
-    override fun ctor(key: String) = JobDocument(dir.resolve(key))
-    override fun throwNotFound(key: String) = throw DocumentJobNotFoundException(key)
+    override fun createOrThrow(key: String): JobDocument = ctor(key)
+    override fun ctor(key: String): JobDocument = JobDocument(dir.resolve(key))
+    override fun throwNotFound(key: String): Nothing = throw DocumentJobNotFoundException(key)
 }

@@ -2,7 +2,7 @@ package org.ivdnt.galahad.formats.conllu
 
 import org.ivdnt.galahad.annotations.AnnotationType
 import org.ivdnt.galahad.corpora.documents.DocumentFormat
-import org.ivdnt.galahad.formats.DocumentTransformMetadata
+import org.ivdnt.galahad.formats.DocumentExport
 import org.ivdnt.galahad.formats.conllu.export.ConlluLayerMerger
 import org.ivdnt.galahad.formats.tsv.TSVFile
 import java.io.File
@@ -11,12 +11,12 @@ import java.io.File
  * CoNLL-U is basically TSV, so use it as a basis.
  */
 class ConlluFile(file: File) : TSVFile(file) {
-    override val format = DocumentFormat.Conllu
+    override val format: DocumentFormat = DocumentFormat.Conllu
 
-    val featsIndex = 5
-    val uposIndex = 3
-    val miscIndex = 9
-    val nerIndex = 10
+    val featsIndex: Int = 5
+    val uposIndex: Int = 3
+    val miscIndex: Int = 9
+    val nerIndex: Int = 10
     override val columnIndices: MutableMap<AnnotationType, Int> = mutableMapOf(
         AnnotationType.ID to 0,
         AnnotationType.TOKEN to 1,
@@ -81,9 +81,9 @@ class ConlluFile(file: File) : TSVFile(file) {
     private fun getGenericColumn(index: Int?, values: List<String>): String? =
         super.getColumn(index, values).takeIf { it != "_" }
 
-    override fun merge(transformMetadata: DocumentTransformMetadata): ConlluFile {
+    override fun merge(export: DocumentExport): ConlluFile {
         // Sets header indices needed to merge.
         parse()
-        return ConlluLayerMerger(this, transformMetadata).merge()
+        return ConlluLayerMerger(this, export).merge()
     }
 }

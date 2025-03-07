@@ -6,7 +6,7 @@ import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.annotations.WordForm
 import org.ivdnt.galahad.corpora.documents.DocumentFormat
 import org.ivdnt.galahad.exceptions.MergeNotImplementedException
-import org.ivdnt.galahad.formats.DocumentTransformMetadata
+import org.ivdnt.galahad.formats.DocumentExport
 import org.ivdnt.galahad.formats.InternalFile
 import org.ivdnt.galahad.util.getXmlBuilder
 import org.w3c.dom.Document
@@ -67,7 +67,7 @@ class NAFFile(
 
     private val termExpr = xpath.compile("/NAF/terms/term")
 
-    override fun merge(transformMetadata: DocumentTransformMetadata): NAFFile {
+    override fun merge(export: DocumentExport): NAFFile {
         throw MergeNotImplementedException(format.identifier)
     }
 }

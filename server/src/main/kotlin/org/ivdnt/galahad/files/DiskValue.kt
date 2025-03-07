@@ -48,7 +48,7 @@ open class DiskValue<T>(
     }
 
     companion object {
-        val mapper = ObjectMapper()
+        val mapper: ObjectMapper = ObjectMapper()
         // TODO use cache for all DiskValues types
         /** Special cache for [Layer] objects because of their large size */
         val cache: Cache<String, Layer> = Caffeine.newBuilder().recordStats().maximumWeight(100_000_000) // 100MB

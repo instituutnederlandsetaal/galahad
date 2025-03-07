@@ -10,6 +10,7 @@ import org.ivdnt.galahad.exceptions.CorpusNotFoundException
 import org.ivdnt.galahad.exceptions.CorpusUnauthorizedException
 import org.ivdnt.galahad.files.GalahadFolder
 import org.springframework.stereotype.Service
+import java.io.File
 import java.util.*
 
 @Service
@@ -17,12 +18,12 @@ class CorporaService(
     config: Config,
 ) : GalahadFolder(config.getWorkingDirectory().resolve("corpora")) {
 
-    val custom = Corpora(dir.resolve("custom"))
-    val presets = Corpora(dir.resolve("presets"))
+    val custom: Corpora = Corpora(dir.resolve("custom"))
+    val presets: Corpora = Corpora(dir.resolve("presets"))
 
     val all: List<Corpus> get() = custom.readAll().toList() + presets.readAll().toList()
-    val datasets get() = all.filter { it.mutableMetadata.dataset }
-    val assaysFile get() = dir.resolve("benchmarks.json")
+    val datasets: List<Corpus> get() = all.filter { it.mutableMetadata.dataset }
+    val assaysFile: File get() = dir.resolve("benchmarks.json")
 
     fun readAll(user: User): Set<CorpusMetadata> =
         all.map { it.immutableMetadata }.filter { it.hasReadAccess(user, excludeAdmin = true) }.toSet()

@@ -19,7 +19,7 @@ import org.ivdnt.galahad.web.service.EvaluationService
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
-const val DISTRIBUTION_MAX_SIZE = 1000
+const val DISTRIBUTION_MAX_SIZE: Int = 1000
 
 @RestController
 class EvaluationController(

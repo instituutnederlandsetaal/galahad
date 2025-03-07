@@ -5,7 +5,7 @@ import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.annotations.WordForm
 import org.ivdnt.galahad.app.report.Report
 import org.ivdnt.galahad.corpora.documents.DocumentFormat
-import org.ivdnt.galahad.formats.DocumentTransformMetadata
+import org.ivdnt.galahad.formats.DocumentExport
 import org.ivdnt.galahad.formats.LayerConverter
 import org.ivdnt.galahad.formats.LayerTransformer
 import org.ivdnt.galahad.util.XMLWriter
@@ -18,7 +18,7 @@ import java.io.OutputStream
  * Therefore, we now use a simple string-based XML writer.
  */
 class LayerToTEIConverter(
-    transformMetadata: DocumentTransformMetadata,
+    transformMetadata: DocumentExport,
 ) : LayerConverter, LayerTransformer(transformMetadata) {
 
     override val format: DocumentFormat

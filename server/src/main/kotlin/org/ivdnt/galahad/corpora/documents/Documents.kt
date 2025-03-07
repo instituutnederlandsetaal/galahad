@@ -29,7 +29,7 @@ class Documents(
     dir: File,
     val corpus: Corpus,
 ) : GalahadFolderManager<Document, File>(dir) {
-    override fun createOrThrow(key: File) = Document.create(dir.resolve(key.name), key, corpus)
-    override fun ctor(key: String) = Document(dir.resolve(key))
-    override fun throwNotFound(key: String) = throw DocumentNotFoundException(key)
+    override fun createOrThrow(key: File): Document = Document.create(dir.resolve(key.name), key, corpus)
+    override fun ctor(key: String): Document = Document(dir.resolve(key))
+    override fun throwNotFound(key: String): Nothing = throw DocumentNotFoundException(key)
 }

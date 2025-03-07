@@ -2,7 +2,7 @@ package org.ivdnt.galahad.formats.tsv.export
 
 import org.ivdnt.galahad.annotations.AnnotationType
 import org.ivdnt.galahad.annotations.Layer
-import org.ivdnt.galahad.formats.DocumentTransformMetadata
+import org.ivdnt.galahad.formats.DocumentExport
 import org.ivdnt.galahad.formats.LayerMerger
 import org.ivdnt.galahad.formats.LayerTransformer
 import org.ivdnt.galahad.formats.tsv.TSVFile
@@ -14,7 +14,7 @@ import kotlin.io.path.createTempDirectory
  */
 internal open class TSVLayerMerger(
     open val sourceFile: TSVFile,
-    transformMetadata: DocumentTransformMetadata,
+    transformMetadata: DocumentExport,
 ) : LayerMerger<TSVFile>, LayerTransformer(transformMetadata) {
     val layer = transformMetadata.layer
     val outFile: File = createTempDirectory("teimerge").toFile().resolve(transformMetadata.document.name)

@@ -14,5 +14,5 @@ class WordForm(
     @JsonProperty("id") var id: String,
 ) {
     @get:JsonIgnore
-    val endOffset get() = offset + length
+    val endOffset: Int get() = offset + length
 }

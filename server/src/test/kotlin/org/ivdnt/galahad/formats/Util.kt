@@ -185,13 +185,13 @@ class DocTestBuilder(
         layer: Layer,
         format: DocumentFormat,
         file: File? = null,
-    ): DocumentTransformMetadata {
+    ): DocumentExport {
         val file = file ?: createTempDirectory().toFile().resolve("dummy.${format.extension}")
         file.createNewFile()
         val doc = corpus.documents.readOrNull(file.name) ?: corpus.documents.createOrThrow(file)
         val job = corpus.jobs.createOrThrow(TestConfig.TAGGER_NAME)
         job.setLayerForKey(doc.name, layer)
-        return DocumentTransformMetadata(
+        return DocumentExport(
             corpus, job, doc, User("testUser"), format
         )
     }

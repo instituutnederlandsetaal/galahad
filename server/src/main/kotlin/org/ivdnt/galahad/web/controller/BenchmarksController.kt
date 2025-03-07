@@ -55,38 +55,39 @@ class BenchmarksController(
      * A matrix of 'tagger' -> 'dataset' -> 'FlatMetric' -> 'scores per category',
      * for all datasets corpora that have been tagged with at least one tagger, excluding the sourceLayer.
      */
-    val benchmarksMatrix = object : ValidatedDiskValue<BenchmarksMatrix>(corpora.assaysFile) {
-        override fun isValid(lastModified: Long): Boolean {
-            return corpora.datasets.firstOrNull { it.lastModified > lastModified } == null
-            TODO("Maybe just check the validity of the other assays?")
-        }
-
-        override fun set(): BenchmarksMatrix {
-            // tagger -> dataset -> assay
-            val assaysMatrix: MutableAssaysMatrix = HashMap()
-            // For all datasets
-            corpora.datasets.forEach { dataset ->
-                // For all jobs in the dataset
-                dataset.jobs.readAll()
-                    // Skip the source layer
-                    .filter { it.name != SOURCE_LAYER_NAME }
-                    // Add the assay to the matrix
-                    .forEach { job ->
-                        val meta = dataset.immutableMetadata
-                        // Initialize the dataset row if needed
-                        if (assaysMatrix[meta.name] == null) {
-                            assaysMatrix[meta.name] = HashMap()
-                        }
-                        val assay = getAssay(meta.uuid, job.name)
-                        assay?.forEach {
-                            assaysMatrix[meta.name]?.putIfAbsent(it.key, HashMap())
-                            assaysMatrix[meta.name]?.get(it.key)?.put(job.name, it.value)
-                        }
-                    }
+    val benchmarksMatrix: ValidatedDiskValue<BenchmarksMatrix> =
+        object : ValidatedDiskValue<BenchmarksMatrix>(corpora.assaysFile) {
+            override fun isValid(lastModified: Long): Boolean {
+                return corpora.datasets.firstOrNull { it.lastModified > lastModified } == null
+                TODO("Maybe just check the validity of the other assays?")
             }
-            return assaysMatrix
+
+            override fun set(): BenchmarksMatrix {
+                // tagger -> dataset -> assay
+                val assaysMatrix: MutableAssaysMatrix = HashMap()
+                // For all datasets
+                corpora.datasets.forEach { dataset ->
+                    // For all jobs in the dataset
+                    dataset.jobs.readAll()
+                        // Skip the source layer
+                        .filter { it.name != SOURCE_LAYER_NAME }
+                        // Add the assay to the matrix
+                        .forEach { job ->
+                            val meta = dataset.immutableMetadata
+                            // Initialize the dataset row if needed
+                            if (assaysMatrix[meta.name] == null) {
+                                assaysMatrix[meta.name] = HashMap()
+                            }
+                            val assay = getAssay(meta.uuid, job.name)
+                            assay?.forEach {
+                                assaysMatrix[meta.name]?.putIfAbsent(it.key, HashMap())
+                                assaysMatrix[meta.name]?.get(it.key)?.put(job.name, it.value)
+                            }
+                        }
+                }
+                return assaysMatrix
+            }
         }
-    }
 
     /**
      * Get the assay for a single job in a specific corpus. Also used to construct [benchmarksMatrix].

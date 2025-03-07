@@ -5,7 +5,7 @@ import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.files.DiskValue
 import org.ivdnt.galahad.files.GalahadFolder
-import org.ivdnt.galahad.formats.DocumentTransformMetadata
+import org.ivdnt.galahad.formats.DocumentExport
 import org.ivdnt.galahad.formats.InternalFile
 import org.ivdnt.galahad.formats.conllu.export.LayerToConlluConverter
 import org.ivdnt.galahad.formats.folia.export.LayerToFoliaConverter
@@ -32,9 +32,9 @@ class Document(
     dir: File,
 ) : GalahadFolder(dir), Logging {
     // Files in the document folder.
-    val plainTextFile = dir.resolve(PLAINTEXT_FILE)
+    val plainTextFile: File = dir.resolve(PLAINTEXT_FILE)
     private val metadataFile = dir.resolve(METADATA_FILE)
-    val uploadedFile = dir.resolve("uploaded").resolve(name)
+    val uploadedFile: File = dir.resolve("uploaded").resolve(name)
 
     // Values in those files.
 
@@ -70,15 +70,15 @@ class Document(
     val internalFile: InternalFile by lazy { InternalFile.create(uploadedFile) }
 
     /** Convert document to desired format. */
-    fun convert(transformMetadata: DocumentTransformMetadata): File {
+    fun convert(export: DocumentExport): File {
         val docName = uploadedFile.nameWithoutExtension
-        return when (transformMetadata.targetFormat) {
+        return when (export.targetFormat) {
             // The file is what we are interested in, and it is expensive to initialize the documents, so we just pass the file
-            DocumentFormat.Folia -> LayerToFoliaConverter(transformMetadata).convertToFileNamed(docName)
-            DocumentFormat.Naf -> LayerToNAFConverter(transformMetadata).convertToFileNamed(docName)
-            DocumentFormat.TeiP5 -> LayerToTEIConverter(transformMetadata).convertToFileNamed(docName)
-            DocumentFormat.Tsv -> LayerToTSVConverter(transformMetadata).convertToFileNamed(docName)
-            DocumentFormat.Conllu -> LayerToConlluConverter(transformMetadata).convertToFileNamed(docName)
+            DocumentFormat.Folia -> LayerToFoliaConverter(export).convertToFileNamed(docName)
+            DocumentFormat.Naf -> LayerToNAFConverter(export).convertToFileNamed(docName)
+            DocumentFormat.TeiP5 -> LayerToTEIConverter(export).convertToFileNamed(docName)
+            DocumentFormat.Tsv -> LayerToTSVConverter(export).convertToFileNamed(docName)
+            DocumentFormat.Conllu -> LayerToConlluConverter(export).convertToFileNamed(docName)
             DocumentFormat.Txt -> {
                 val tempPath = createTempDirectory("galahad-layer-converter")
                 Files.copy(
@@ -87,12 +87,12 @@ class Document(
                 File(tempPath.toString(), "$docName.txt")
             }
 
-            else -> throw Exception("Conversion to ${transformMetadata.targetFormat} not supported")
+            else -> throw Exception("Conversion to ${export.targetFormat} not supported")
         }
     }
 
     /** Merge an annotation layer with the original uploaded file, retaining the document structure. */
-    fun merge(transformMetadata: DocumentTransformMetadata) = internalFile.merge(transformMetadata)
+    fun merge(export: DocumentExport): InternalFile = internalFile.merge(export)
 
     internal companion object {
         private const val METADATA_FILE = "metadata.json"

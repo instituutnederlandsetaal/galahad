@@ -9,7 +9,7 @@ import org.ivdnt.galahad.formats.csv.CSVHeader
 import org.ivdnt.galahad.taggers.Tagger
 
 
-const val TRUNCATE = 100
+const val TRUNCATE: Int = 100
 
 /**
  * Generic class for benchmark [Metric]s of a corpus or document.

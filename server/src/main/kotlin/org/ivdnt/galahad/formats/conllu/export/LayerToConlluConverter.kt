@@ -3,7 +3,7 @@ package org.ivdnt.galahad.formats.conllu.export
 import org.ivdnt.galahad.annotations.AnnotationType
 import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.corpora.documents.DocumentFormat
-import org.ivdnt.galahad.formats.DocumentTransformMetadata
+import org.ivdnt.galahad.formats.DocumentExport
 import org.ivdnt.galahad.formats.LayerConverter
 import org.ivdnt.galahad.formats.LayerTransformer
 import java.io.OutputStream
@@ -12,14 +12,14 @@ import java.io.OutputStream
  * Export a layer to a CoNLLU file. Uses _ for null values. Splits PoS in head and features.
  */
 class LayerToConlluConverter(
-    transformMetadata: DocumentTransformMetadata,
+    transformMetadata: DocumentExport,
 ) : LayerConverter, LayerTransformer(transformMetadata) {
 
     override val format: DocumentFormat
         get() = DocumentFormat.Conllu
 
     override fun convert(outputStream: OutputStream) {
-        val annotationTypes: List<AnnotationType> = transformMetadata.tagger.annotationTypes
+        val annotationTypes: List<AnnotationType> = export.tagger.annotationTypes
         val indexer: (Int, Term) -> String = if (annotationTypes.contains(AnnotationType.ID)) {
             { _, term -> term.annotations[AnnotationType.ID] ?: "_" }
         } else {

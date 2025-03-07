@@ -6,9 +6,9 @@ import org.ivdnt.galahad.evaluation.EvaluationEntry
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
 import org.ivdnt.galahad.formats.csv.CSVFile
 
-const val MULTIPLE_POS = "MULTIPLE"
-const val OTHER_POS = "OTHER"
-const val OTHER_POS_REGEX = """^[^a-zA-Z]"""
+const val MULTIPLE_POS: String = "MULTIPLE"
+const val OTHER_POS: String = "OTHER"
+const val OTHER_POS_REGEX: String = """^[^a-zA-Z]"""
 
 /**
  * Generic class for the part of speech confusion of a corpus or document.

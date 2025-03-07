@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.formats.naf.export
 
 import org.ivdnt.galahad.corpora.documents.DocumentFormat
-import org.ivdnt.galahad.formats.DocumentTransformMetadata
+import org.ivdnt.galahad.formats.DocumentExport
 import org.ivdnt.galahad.formats.LayerConverter
 import org.ivdnt.galahad.formats.LayerTransformer
 import org.ivdnt.galahad.util.getXmlBuilder
@@ -12,7 +12,7 @@ import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 
 class LayerToNAFConverter(
-    transformMetadata: DocumentTransformMetadata,
+    transformMetadata: DocumentExport,
 ) : LayerConverter, LayerTransformer(transformMetadata) {
 
     override val format: DocumentFormat
@@ -20,7 +20,7 @@ class LayerToNAFConverter(
 
     override fun convert(outputStream: OutputStream) {
 
-        val plainText = transformMetadata.plainText
+        val plainText = export.plainText
         val layer = result
 
         val xmlDoc = getXmlBuilder().newDocument()

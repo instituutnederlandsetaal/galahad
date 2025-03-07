@@ -88,8 +88,8 @@ class BLFXMLParser(
 
 
     private var plaintextTail = "" // ugly
-    val sourceLayer = Layer(SOURCE_LAYER_NAME)
-    var offset = 0
+    val sourceLayer: Layer = Layer(SOURCE_LAYER_NAME)
+    var offset: Int = 0
     val rootNodes: NodeList
     private val documentPathExpression: XPathExpression
         get() = xPath.compile("${blf.documentPath}")

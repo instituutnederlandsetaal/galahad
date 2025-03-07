@@ -11,7 +11,7 @@ fun ListIterator<Term>.nextOrNull(): Term? {
 }
 
 // Some hardcoded punctuation
-val PUNCTUATION = listOf(",", ".", "?", "!", ":", ";", ")", "(", "'", "\"")
+val PUNCTUATION: List<String> = listOf(",", ".", "?", "!", ":", ";", ")", "(", "'", "\"")
 
 /**
  * Match the [Layer.terms] of two layers based on their [WordForm] position (offset and length)

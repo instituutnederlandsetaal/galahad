@@ -1,5 +1,7 @@
 package org.ivdnt.galahad.formats
 
+import org.ivdnt.galahad.annotations.Layer
+import org.ivdnt.galahad.corpora.documents.Document
 import org.ivdnt.galahad.corpora.documents.DocumentFormat
 import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.taggers.Tagset
@@ -11,14 +13,14 @@ import kotlin.io.path.createFile
 import kotlin.io.path.createTempDirectory
 
 open class LayerTransformer(
-    val transformMetadata: DocumentTransformMetadata,
+    val export: DocumentExport,
 ) {
 
-    val tagger = Tagger.readOrThrow(transformMetadata.job.name, transformMetadata.corpus)
-    protected val result = transformMetadata.layer
-    protected val document = transformMetadata.document
+    val tagger: Tagger = Tagger.readOrThrow(export.job.name, export.corpus)
+    protected val result: Layer = export.layer
+    protected val document: Document = export.document
 
-    val punctuationTags = Tagset.readOrNull(tagger)?.punctuationTags ?: setOf()
+    val punctuationTags: Set<String> = Tagset.readOrNull(tagger)?.punctuationTags ?: setOf()
 
     val dateTimeFormat: SimpleDateFormat
         get() = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
