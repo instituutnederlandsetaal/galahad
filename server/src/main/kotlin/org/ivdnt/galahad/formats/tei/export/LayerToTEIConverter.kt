@@ -1,10 +1,10 @@
 package org.ivdnt.galahad.formats.tei.export
 
 import org.ivdnt.galahad.app.report.Report
-import org.ivdnt.galahad.data.document.DocumentFormat
-import org.ivdnt.galahad.data.layer.Layer
-import org.ivdnt.galahad.data.layer.Term
-import org.ivdnt.galahad.data.layer.WordForm
+import org.ivdnt.galahad.corpora.documents.DocumentFormat
+import org.ivdnt.galahad.annotations.Layer
+import org.ivdnt.galahad.annotations.Term
+import org.ivdnt.galahad.annotations.WordForm
 import org.ivdnt.galahad.formats.DocumentTransformMetadata
 import org.ivdnt.galahad.formats.LayerConverter
 import org.ivdnt.galahad.formats.LayerTransformer

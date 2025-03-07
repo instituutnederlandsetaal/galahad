@@ -2,7 +2,7 @@ package org.ivdnt.galahad.tagset
 
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.exceptions.TagsetNotFoundException
-import org.ivdnt.galahad.filesystem.GalahadFolder
+import org.ivdnt.galahad.files.GalahadFolder
 import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.Constructor

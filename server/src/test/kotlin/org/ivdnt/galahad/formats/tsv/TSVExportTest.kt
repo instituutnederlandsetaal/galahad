@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.formats.tsv
 
-import org.ivdnt.galahad.data.corpus.Corpus
-import org.ivdnt.galahad.data.layer.Layer
+import org.ivdnt.galahad.corpora.Corpus
+import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.formats.DocTest
 import org.ivdnt.galahad.formats.LayerBuilder
 import org.ivdnt.galahad.formats.createCorpus

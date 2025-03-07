@@ -1,8 +1,8 @@
 package org.ivdnt.galahad.evaluation.distribution
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import org.ivdnt.galahad.data.layer.AnnotationType
-import org.ivdnt.galahad.data.layer.Term
+import org.ivdnt.galahad.annotations.AnnotationType
+import org.ivdnt.galahad.annotations.Term
 
 /**
  * Generic class for frequency distributions of terms in a corpus or document.

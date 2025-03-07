@@ -4,9 +4,9 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.app.User
-import org.ivdnt.galahad.data.document.Document
-import org.ivdnt.galahad.data.document.DocumentFormat
-import org.ivdnt.galahad.data.layer.Layer
+import org.ivdnt.galahad.corpora.documents.Document
+import org.ivdnt.galahad.corpora.documents.DocumentFormat
+import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.exceptions.MergeNotImplementedException
 import org.ivdnt.galahad.formats.CorpusTransformMetadata
 import org.ivdnt.galahad.formats.DocumentTransformMetadata

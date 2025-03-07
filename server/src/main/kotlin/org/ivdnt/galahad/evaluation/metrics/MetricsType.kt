@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.evaluation.metrics
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import org.ivdnt.galahad.data.layer.Term
+import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.evaluation.CsvSampleExporter
 import org.ivdnt.galahad.evaluation.EvaluationEntry
 import org.ivdnt.galahad.evaluation.comparison.TermComparison

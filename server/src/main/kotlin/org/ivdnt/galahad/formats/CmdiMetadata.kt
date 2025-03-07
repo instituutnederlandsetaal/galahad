@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.formats
 
 import org.ivdnt.galahad.app.Config
-import org.ivdnt.galahad.data.corpus.MutableCorpusMetadata
+import org.ivdnt.galahad.corpora.MutableCorpusMetadata
 import org.ivdnt.galahad.tagset.TagsetStore
 import org.ivdnt.galahad.util.escapeXML
 import org.ivdnt.galahad.util.getXmlBuilder

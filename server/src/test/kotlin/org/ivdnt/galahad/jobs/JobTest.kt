@@ -1,8 +1,9 @@
 package org.ivdnt.galahad.jobs
 
 import org.ivdnt.galahad.TestConfig
-import org.ivdnt.galahad.data.corpus.Corpus
-import org.ivdnt.galahad.data.layer.LayerPreview
+import org.ivdnt.galahad.corpora.Corpus
+import org.ivdnt.galahad.corpora.jobs.Job
+import org.ivdnt.galahad.annotations.LayerPreview
 import org.ivdnt.galahad.evaluation.metrics.FlatMetricType
 import org.ivdnt.galahad.formats.LayerBuilder
 import org.ivdnt.galahad.formats.createCorpus

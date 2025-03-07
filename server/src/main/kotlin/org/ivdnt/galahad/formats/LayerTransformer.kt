@@ -1,6 +1,6 @@
 package org.ivdnt.galahad.formats
 
-import org.ivdnt.galahad.data.document.DocumentFormat
+import org.ivdnt.galahad.corpora.documents.DocumentFormat
 import org.ivdnt.galahad.taggers.Tagger
 
 import org.ivdnt.galahad.tagset.TagsetStore

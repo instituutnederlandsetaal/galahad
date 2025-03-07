@@ -1,9 +1,9 @@
 package org.ivdnt.galahad.formats.folia
 
-import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
-import org.ivdnt.galahad.data.layer.Layer
-import org.ivdnt.galahad.data.layer.Term
-import org.ivdnt.galahad.data.layer.WordForm
+import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
+import org.ivdnt.galahad.annotations.Layer
+import org.ivdnt.galahad.annotations.Term
+import org.ivdnt.galahad.annotations.WordForm
 import org.ivdnt.galahad.formats.folia.export.deepcopy
 import org.ivdnt.galahad.formats.xml.reparseText
 import org.ivdnt.galahad.formats.xml.tagName

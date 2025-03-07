@@ -1,6 +1,6 @@
 package org.ivdnt.galahad.evaluation
 
-import org.ivdnt.galahad.data.layer.AnnotationType
+import org.ivdnt.galahad.annotations.AnnotationType
 import org.ivdnt.galahad.evaluation.comparison.*
 import org.ivdnt.galahad.formats.LayerBuilder
 import org.junit.jupiter.api.Test

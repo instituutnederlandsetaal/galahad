@@ -1,13 +1,13 @@
 package org.ivdnt.galahad.formats.tsv
 
-import org.ivdnt.galahad.data.layer.Layer
-import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
-import org.ivdnt.galahad.data.layer.AnnotationType
-import org.ivdnt.galahad.data.layer.Annotations
-import org.ivdnt.galahad.data.layer.Term
-import org.ivdnt.galahad.data.layer.lemma
-import org.ivdnt.galahad.data.layer.pos
-import org.ivdnt.galahad.data.layer.token
+import org.ivdnt.galahad.annotations.Layer
+import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
+import org.ivdnt.galahad.annotations.AnnotationType
+import org.ivdnt.galahad.annotations.Annotations
+import org.ivdnt.galahad.annotations.Term
+import org.ivdnt.galahad.annotations.lemma
+import org.ivdnt.galahad.annotations.pos
+import org.ivdnt.galahad.annotations.token
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.io.File

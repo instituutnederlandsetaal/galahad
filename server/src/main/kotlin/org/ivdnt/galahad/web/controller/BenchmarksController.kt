@@ -11,11 +11,11 @@ import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.app.BENCHMARKS_URL
 import org.ivdnt.galahad.app.BENCHMARK_URL
 import org.ivdnt.galahad.app.User
-import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
+import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.evaluation.metrics.FlatMetricType
 import org.ivdnt.galahad.evaluation.metrics.FlatMetricTypeAssay
 import org.ivdnt.galahad.exceptions.ErrorResponse
-import org.ivdnt.galahad.filesystem.ValidatedDiskValue
+import org.ivdnt.galahad.files.ValidatedDiskValue
 import org.ivdnt.galahad.web.service.CorporaService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.CrossOrigin

@@ -1,6 +1,6 @@
 package org.ivdnt.galahad.evaluation.comparison
 
-import org.ivdnt.galahad.data.layer.WordForm
+import org.ivdnt.galahad.annotations.WordForm
 
 /**
  * Helper class to compare two word forms.

@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.evaluation.comparison
 
-import org.ivdnt.galahad.data.layer.AnnotationType
-import org.ivdnt.galahad.data.layer.Term
+import org.ivdnt.galahad.annotations.AnnotationType
+import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.evaluation.confusion.MULTIPLE_POS
 import org.ivdnt.galahad.evaluation.confusion.OTHER_POS
 import org.ivdnt.galahad.evaluation.confusion.OTHER_POS_REGEX

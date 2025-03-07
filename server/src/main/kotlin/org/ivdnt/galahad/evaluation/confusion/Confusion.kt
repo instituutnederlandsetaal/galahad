@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.evaluation.confusion
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import org.ivdnt.galahad.data.layer.AnnotationType
+import org.ivdnt.galahad.annotations.AnnotationType
 import org.ivdnt.galahad.evaluation.EvaluationEntry
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
 import org.ivdnt.galahad.formats.csv.CSVFile

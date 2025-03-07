@@ -1,8 +1,8 @@
 package org.ivdnt.galahad.evaluation.confusion
 
 import org.ivdnt.galahad.TestConfig
-import org.ivdnt.galahad.data.corpus.Corpus
-import org.ivdnt.galahad.data.layer.AnnotationType
+import org.ivdnt.galahad.corpora.Corpus
+import org.ivdnt.galahad.annotations.AnnotationType
 import org.ivdnt.galahad.evaluation.EvaluationUtil
 import org.ivdnt.galahad.evaluation.comparison.ConfusionLayerFilter
 import org.ivdnt.galahad.evaluation.comparison.HeadGroupTermFilter

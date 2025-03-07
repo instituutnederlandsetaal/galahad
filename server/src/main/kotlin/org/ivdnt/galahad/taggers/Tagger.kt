@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.ivdnt.galahad.app.JSONable
 import org.ivdnt.galahad.app.application_profile
-import org.ivdnt.galahad.data.corpus.Corpus
-import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
-import org.ivdnt.galahad.data.layer.AnnotationType
+import org.ivdnt.galahad.corpora.Corpus
+import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
+import org.ivdnt.galahad.annotations.AnnotationType
 import org.ivdnt.galahad.exceptions.TaggerNotFoundException
 import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml

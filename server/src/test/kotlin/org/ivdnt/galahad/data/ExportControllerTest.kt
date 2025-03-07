@@ -5,8 +5,8 @@ import org.ivdnt.galahad.UserHeader
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.GalahadApplication
 import org.ivdnt.galahad.createCorpus
-import org.ivdnt.galahad.data.corpus.Corpus
-import org.ivdnt.galahad.data.layer.Layer
+import org.ivdnt.galahad.corpora.Corpus
+import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.formats.LayerBuilder
 import org.ivdnt.galahad.formats.Resource
 import org.ivdnt.galahad.formats.TestResult

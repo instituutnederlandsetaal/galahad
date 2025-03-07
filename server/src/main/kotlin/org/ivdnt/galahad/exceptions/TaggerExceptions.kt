@@ -1,6 +1,6 @@
 package org.ivdnt.galahad.exceptions
 
-import org.ivdnt.galahad.data.layer.AnnotationType
+import org.ivdnt.galahad.annotations.AnnotationType
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ResponseStatus
 

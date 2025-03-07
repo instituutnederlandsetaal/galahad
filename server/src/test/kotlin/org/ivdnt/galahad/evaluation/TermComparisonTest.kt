@@ -1,8 +1,8 @@
 package org.ivdnt.galahad.evaluation
 
-import org.ivdnt.galahad.data.layer.AnnotationType
-import org.ivdnt.galahad.data.layer.Term
-import org.ivdnt.galahad.data.layer.WordForm
+import org.ivdnt.galahad.annotations.AnnotationType
+import org.ivdnt.galahad.annotations.Term
+import org.ivdnt.galahad.annotations.WordForm
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Nested

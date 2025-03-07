@@ -1,6 +1,6 @@
 package org.ivdnt.galahad.formats.xml
 
-import org.ivdnt.galahad.data.document.DocumentFormat
+import org.ivdnt.galahad.corpora.documents.DocumentFormat
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.io.File

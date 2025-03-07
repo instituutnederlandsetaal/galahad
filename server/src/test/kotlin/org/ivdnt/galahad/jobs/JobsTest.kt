@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.jobs
 
 import org.ivdnt.galahad.TestConfig
-import org.ivdnt.galahad.data.corpus.Corpus
+import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.formats.createCorpus
 import org.ivdnt.galahad.taggers.Tagger
 

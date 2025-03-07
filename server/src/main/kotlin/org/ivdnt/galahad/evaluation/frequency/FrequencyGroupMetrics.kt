@@ -1,6 +1,6 @@
 package org.ivdnt.galahad.evaluation.frequency
 
-import org.ivdnt.galahad.data.corpus.Corpus
+import org.ivdnt.galahad.corpora.Corpus
 
 class TokenFrequency(
     corpus: Corpus,

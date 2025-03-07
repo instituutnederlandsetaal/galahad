@@ -1,9 +1,9 @@
 package org.ivdnt.galahad.evaluation.distribution
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import org.ivdnt.galahad.data.corpus.Corpus
-import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
-import org.ivdnt.galahad.data.layer.AnnotationType
+import org.ivdnt.galahad.corpora.Corpus
+import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
+import org.ivdnt.galahad.annotations.AnnotationType
 
 /**
  * The frequency distribution of terms in a corpus for a specific tagger layer.

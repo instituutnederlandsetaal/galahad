@@ -1,8 +1,7 @@
 package org.ivdnt.galahad.formats.tei
 
-import org.ivdnt.galahad.data.document.DocumentFormat
-import org.ivdnt.galahad.data.document.FormatInducer
-import org.ivdnt.galahad.data.layer.Layer
+import org.ivdnt.galahad.corpora.documents.DocumentFormat
+import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.formats.DocumentTransformMetadata
 import org.ivdnt.galahad.formats.InternalFile
 import org.ivdnt.galahad.formats.tei.export.TEILayerMerger
@@ -23,7 +22,7 @@ class TEIFile(
 
     private val plainTextFile = File.createTempFile("galahad-${file.name}-plaintext", ".txt")
 
-    constructor(file: File) : this(file, FormatInducer.determineFormat(file))
+    constructor(file: File) : this(file, DocumentFormat.fromFile(file))
 
     fun parse() {
         if (isParsed) return // Don't double parse

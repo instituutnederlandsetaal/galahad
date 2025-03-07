@@ -1,6 +1,6 @@
 package org.ivdnt.galahad.evaluation
 
-import org.ivdnt.galahad.data.layer.WordForm
+import org.ivdnt.galahad.annotations.WordForm
 import org.ivdnt.galahad.evaluation.comparison.WordFormComparison
 import org.junit.jupiter.api.Test
 

@@ -2,13 +2,13 @@ package org.ivdnt.galahad.web.service
 
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.User
-import org.ivdnt.galahad.data.corpus.Corpora
-import org.ivdnt.galahad.data.corpus.Corpus
-import org.ivdnt.galahad.data.corpus.CorpusMetadata
-import org.ivdnt.galahad.data.corpus.MutableCorpusMetadata
+import org.ivdnt.galahad.corpora.Corpora
+import org.ivdnt.galahad.corpora.Corpus
+import org.ivdnt.galahad.corpora.CorpusMetadata
+import org.ivdnt.galahad.corpora.MutableCorpusMetadata
 import org.ivdnt.galahad.exceptions.CorpusNotFoundException
 import org.ivdnt.galahad.exceptions.CorpusUnauthorizedException
-import org.ivdnt.galahad.filesystem.GalahadFolder
+import org.ivdnt.galahad.files.GalahadFolder
 import org.springframework.stereotype.Service
 import java.util.*
 

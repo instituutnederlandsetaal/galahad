@@ -1,9 +1,9 @@
 package org.ivdnt.galahad.evaluation
 
 import org.ivdnt.galahad.TestConfig
-import org.ivdnt.galahad.data.corpus.Corpus
-import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
-import org.ivdnt.galahad.data.layer.Layer
+import org.ivdnt.galahad.corpora.Corpus
+import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
+import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.formats.LayerBuilder
 import java.io.File
 

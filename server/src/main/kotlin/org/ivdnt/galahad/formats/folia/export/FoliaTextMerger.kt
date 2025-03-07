@@ -1,10 +1,10 @@
 package org.ivdnt.galahad.formats.folia.export
 
-import org.ivdnt.galahad.data.document.DocumentFormat
-import org.ivdnt.galahad.data.layer.AnnotationType
-import org.ivdnt.galahad.data.layer.Layer
-import org.ivdnt.galahad.data.layer.Term
-import org.ivdnt.galahad.data.layer.WordForm
+import org.ivdnt.galahad.corpora.documents.DocumentFormat
+import org.ivdnt.galahad.annotations.AnnotationType
+import org.ivdnt.galahad.annotations.Layer
+import org.ivdnt.galahad.annotations.Term
+import org.ivdnt.galahad.annotations.WordForm
 import org.ivdnt.galahad.formats.tei.export.TEITextMerger
 import org.ivdnt.galahad.formats.xml.reparseText
 import org.ivdnt.galahad.formats.xml.tagName

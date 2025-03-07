@@ -2,8 +2,8 @@ package org.ivdnt.galahad.evaluation.metrics
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
-import org.ivdnt.galahad.data.layer.AnnotationType
-import org.ivdnt.galahad.data.layer.Term
+import org.ivdnt.galahad.annotations.AnnotationType
+import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.evaluation.comparison.LayerComparison.Companion.truncatePC
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
 import org.ivdnt.galahad.evaluation.frequency.TokenFrequency

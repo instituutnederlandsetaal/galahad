@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.formats.naf
 
-import org.ivdnt.galahad.data.corpus.Corpus
-import org.ivdnt.galahad.data.document.DocumentFormat
+import org.ivdnt.galahad.corpora.Corpus
+import org.ivdnt.galahad.corpora.documents.DocumentFormat
 import org.ivdnt.galahad.formats.DocTest
 import org.ivdnt.galahad.formats.LayerBuilder
 import org.ivdnt.galahad.formats.Resource

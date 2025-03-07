@@ -1,34 +1,20 @@
 package org.ivdnt.galahad.app
 
-import io.swagger.v3.oas.annotations.Hidden
-import io.swagger.v3.oas.annotations.Operation
-import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Contact
 import io.swagger.v3.oas.models.info.License
 import io.swagger.v3.oas.models.servers.Server
-import jakarta.servlet.http.HttpServletRequest
-import org.apache.logging.log4j.kotlin.Logging
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.scheduling.annotation.EnableScheduling
-import org.springframework.web.bind.annotation.CrossOrigin
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RestController
 import java.io.File
-import java.io.IOException
 import java.math.BigDecimal
-import java.net.URI
 import java.util.*
-import java.util.concurrent.TimeUnit
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -75,27 +61,11 @@ const val DOCUMENT_URL = "$DOCUMENTS_URL/{document}"
 const val DOCUMENT_RAW_FILE_URL = "$DOCUMENT_URL/raw" // returns the blob of the raw document
 
 var application_profile: String = System.getenv("spring.profiles.active") ?: "prod"
-fun String.runCommand(workingDir: File, timeout: Long = 60): String? {
-    try {
-        val parts = this.split("\\s".toRegex())
-        val proc = ProcessBuilder(*parts.toTypedArray())
-            .directory(workingDir)
-            .inheritIO()
-            .start()
-
-        proc.waitFor(timeout, TimeUnit.MINUTES)
-        return proc.inputStream.bufferedReader().readText()
-    } catch (e: IOException) {
-        e.printStackTrace()
-        return null
-    }
-}
 
 @Configuration
 @ConfigurationProperties(prefix = "")
 @EnableScheduling
 class Config {
-
     lateinit var workDir: String
 
     @Bean
@@ -141,51 +111,6 @@ class GalahadApplication {
 
 fun main(args: Array<String>) {
     runApplication<GalahadApplication>(*args)
-}
-
-@RestController
-class ApplicationController : Logging {
-    @Autowired
-    private val request: HttpServletRequest? = null
-
-    @Operation(
-        summary = "Get version information",
-        description = "Get version information and GitHub build information and commit version.",
-        responses = [
-            ApiResponse(
-                description = "Version information."
-            )
-        ]
-    )
-    @CrossOrigin
-    @GetMapping(VERSION_URL)
-    fun getVersion(): Map<String, String> {
-        return Config.galahadVersionYaml().entries.associate { it.key.toString() to it.value.toString() }
-    }
-
-    @Hidden
-    @CrossOrigin
-    @GetMapping(BASE_URL)
-    fun getApplication(): ResponseEntity<Void> {
-        // Since we have nothing to show at this URL, we redirect to the API UI instead
-        return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(request?.contextPath + SWAGGER_API_URL))
-            .build()
-    }
-
-    @Operation(
-        summary = "Get user information",
-        description = "Get the username and whether the user is an admin.",
-        responses = [
-            ApiResponse(
-                description = "User information."
-            )
-        ]
-    )
-    @CrossOrigin
-    @GetMapping("/user")
-    fun getUser(): User {
-        return User.fromRequest(request)
-    }
 }
 
 @Configuration

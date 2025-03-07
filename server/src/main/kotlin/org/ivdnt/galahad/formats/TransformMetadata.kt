@@ -1,13 +1,13 @@
 package org.ivdnt.galahad.formats
 
 import org.ivdnt.galahad.app.User
-import org.ivdnt.galahad.data.corpus.Corpus
-import org.ivdnt.galahad.data.document.Document
-import org.ivdnt.galahad.data.document.DocumentFormat
-import org.ivdnt.galahad.data.layer.AnnotationType
-import org.ivdnt.galahad.data.layer.Layer
-import org.ivdnt.galahad.data.layer.Term
-import org.ivdnt.galahad.jobs.Job
+import org.ivdnt.galahad.corpora.Corpus
+import org.ivdnt.galahad.corpora.documents.Document
+import org.ivdnt.galahad.corpora.documents.DocumentFormat
+import org.ivdnt.galahad.annotations.AnnotationType
+import org.ivdnt.galahad.annotations.Layer
+import org.ivdnt.galahad.annotations.Term
+import org.ivdnt.galahad.corpora.jobs.Job
 import org.ivdnt.galahad.taggers.Tagger
 
 open class CorpusTransformMetadata(

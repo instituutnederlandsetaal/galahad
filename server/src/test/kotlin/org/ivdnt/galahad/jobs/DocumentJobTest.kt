@@ -1,10 +1,12 @@
 package org.ivdnt.galahad.jobs
 
 import org.ivdnt.galahad.TestConfig
-import org.ivdnt.galahad.data.corpus.Corpus
-import org.ivdnt.galahad.data.layer.Layer
+import org.ivdnt.galahad.corpora.Corpus
+import org.ivdnt.galahad.corpora.jobs.Job
+import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.formats.LayerBuilder
 import org.ivdnt.galahad.formats.createCorpus
+import org.ivdnt.galahad.corpora.jobs.jobDocuments.JobDocument
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -26,7 +28,7 @@ class DocumentJobTest {
         // create a job
         val job: Job = corpus.jobs.createOrThrow(TestConfig.TAGGER_NAME)
         // create a document job
-        val dj: DocumentJob = job.documentJobs.createOrThrow(doc.name)
+        val dj: JobDocument = job.jobDocuments.createOrThrow(doc.name)
         // set layer
         dj.layer = Layer.EMPTY
         // verify
@@ -35,25 +37,25 @@ class DocumentJobTest {
         assertNull(dj.processingID)
         assertFalse(dj.isProcessing)
         assertEquals(Layer.EMPTY, dj.layer)
-        assertEquals(DocumentJob.DocumentProcessingStatus.PENDING, dj.status)
+        assertEquals(JobDocument.DocumentProcessingStatus.PENDING, dj.status)
 
         // set error
         dj.error = "error"
         assertEquals("error", dj.error)
-        assertEquals(DocumentJob.DocumentProcessingStatus.ERROR, dj.status)
+        assertEquals(JobDocument.DocumentProcessingStatus.ERROR, dj.status)
 
         // setting pid should delete error
         val id = UUID.randomUUID()
         dj.processingID = id
         assertNull(dj.error)
         assertEquals(id, dj.processingID)
-        assertEquals(DocumentJob.DocumentProcessingStatus.PROCESSING, dj.status)
+        assertEquals(JobDocument.DocumentProcessingStatus.PROCESSING, dj.status)
 
         // Cancel should delete pid
         dj.cancel()
         assertNull(dj.processingID)
         assertNull(dj.error)
-        assertEquals(DocumentJob.DocumentProcessingStatus.PENDING, dj.status)
+        assertEquals(JobDocument.DocumentProcessingStatus.PENDING, dj.status)
 
         // set result should finish
         val layer = LayerBuilder().loadDummies(100).build()
@@ -61,7 +63,7 @@ class DocumentJobTest {
         assertEquals(100, dj.layer!!.terms.size)
         assertNull(dj.processingID)
         assertNull(dj.error)
-        assertEquals(DocumentJob.DocumentProcessingStatus.FINISHED, dj.status)
+        assertEquals(JobDocument.DocumentProcessingStatus.FINISHED, dj.status)
 
     }
 }

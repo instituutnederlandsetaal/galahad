@@ -1,8 +1,8 @@
 package org.ivdnt.galahad.evaluation.distribution
 
-import org.ivdnt.galahad.data.corpus.Corpus
-import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
-import org.ivdnt.galahad.data.layer.AnnotationType
+import org.ivdnt.galahad.corpora.Corpus
+import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
+import org.ivdnt.galahad.annotations.AnnotationType
 import org.ivdnt.galahad.evaluation.EvaluationUtil
 import org.ivdnt.galahad.formats.Resource
 import org.ivdnt.galahad.formats.createCorpus

@@ -3,7 +3,7 @@ package org.ivdnt.galahad
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.ivdnt.galahad.app.Config
-import org.ivdnt.galahad.data.corpus.Corpus
+import org.ivdnt.galahad.corpora.Corpus
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockMultipartFile

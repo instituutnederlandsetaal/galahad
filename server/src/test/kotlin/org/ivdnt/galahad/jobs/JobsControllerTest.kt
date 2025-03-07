@@ -4,7 +4,9 @@ import org.ivdnt.galahad.TestConfig
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.GalahadApplication
 import org.ivdnt.galahad.createCorpus
-import org.ivdnt.galahad.data.layer.LayerMetadata
+import org.ivdnt.galahad.corpora.jobs.JobMetadata
+import org.ivdnt.galahad.corpora.jobs.Progress
+import org.ivdnt.galahad.annotations.LayerMetadata
 import org.ivdnt.galahad.formats.Resource
 import org.ivdnt.galahad.web.controller.JobsController
 import org.ivdnt.galahad.web.controller.TaggersController

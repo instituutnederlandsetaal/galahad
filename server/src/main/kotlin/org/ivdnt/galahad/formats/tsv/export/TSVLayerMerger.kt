@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.formats.tsv.export
 
-import org.ivdnt.galahad.data.layer.AnnotationType
-import org.ivdnt.galahad.data.layer.Layer
+import org.ivdnt.galahad.annotations.AnnotationType
+import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.formats.DocumentTransformMetadata
 import org.ivdnt.galahad.formats.LayerMerger
 import org.ivdnt.galahad.formats.LayerTransformer

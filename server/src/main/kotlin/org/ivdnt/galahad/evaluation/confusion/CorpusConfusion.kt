@@ -1,9 +1,9 @@
 package org.ivdnt.galahad.evaluation.confusion
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import org.ivdnt.galahad.data.corpus.Corpus
-import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
-import org.ivdnt.galahad.data.layer.AnnotationType
+import org.ivdnt.galahad.corpora.Corpus
+import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
+import org.ivdnt.galahad.annotations.AnnotationType
 import org.ivdnt.galahad.evaluation.CsvSampleExporter
 import org.ivdnt.galahad.evaluation.comparison.LayerFilter
 import org.ivdnt.galahad.taggers.Tagger

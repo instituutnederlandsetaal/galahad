@@ -5,8 +5,8 @@ import org.ivdnt.galahad.TestConfig
 import org.ivdnt.galahad.UserHeader
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.GalahadApplication
-import org.ivdnt.galahad.data.corpus.CorpusMetadata
-import org.ivdnt.galahad.data.corpus.MutableCorpusMetadata
+import org.ivdnt.galahad.corpora.CorpusMetadata
+import org.ivdnt.galahad.corpora.MutableCorpusMetadata
 import org.ivdnt.galahad.web.controller.CorporaController
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -18,7 +18,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.MvcResult
-import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import java.nio.charset.StandardCharsets
 import java.util.*

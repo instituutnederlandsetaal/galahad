@@ -1,8 +1,7 @@
 package org.ivdnt.galahad.formats
 
-import org.ivdnt.galahad.data.document.DocumentFormat
-import org.ivdnt.galahad.data.document.FormatInducer
-import org.ivdnt.galahad.data.layer.Layer
+import org.ivdnt.galahad.corpora.documents.DocumentFormat
+import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.exceptions.DocumentInvalidException
 import org.ivdnt.galahad.formats.conllu.ConlluFile
 import org.ivdnt.galahad.formats.folia.FoliaFile
@@ -26,7 +25,7 @@ interface InternalFile {
 
     companion object {
         fun create(file: File): InternalFile {
-            return when (val format = FormatInducer.determineFormat(file)) {
+            return when (val format = DocumentFormat.fromFile(file)) {
                 DocumentFormat.Tsv -> TSVFile(file)
                 DocumentFormat.Folia -> FoliaFile(file)
                 DocumentFormat.Naf -> NAFFile(file)

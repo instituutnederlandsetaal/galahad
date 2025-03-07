@@ -1,6 +1,6 @@
 package org.ivdnt.galahad.formats.folia
 
-import org.ivdnt.galahad.data.corpus.Corpus
+import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.formats.DocTest
 import org.ivdnt.galahad.formats.LayerBuilder
 import org.ivdnt.galahad.formats.Resource

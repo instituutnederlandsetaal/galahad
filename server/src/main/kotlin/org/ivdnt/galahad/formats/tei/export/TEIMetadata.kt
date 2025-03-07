@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.formats.tei.export
 
-import org.ivdnt.galahad.data.corpus.MutableCorpusMetadata
-import org.ivdnt.galahad.data.document.DocumentFormat
+import org.ivdnt.galahad.corpora.MutableCorpusMetadata
+import org.ivdnt.galahad.corpora.documents.DocumentFormat
 import org.ivdnt.galahad.formats.LayerTransformer
 import org.ivdnt.galahad.formats.xml.XMLMetadata
 import org.ivdnt.galahad.util.childOrNull

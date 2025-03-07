@@ -1,9 +1,9 @@
 package org.ivdnt.galahad.evaluation.comparison
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import org.ivdnt.galahad.data.layer.AnnotationType
-import org.ivdnt.galahad.data.layer.Term
-import org.ivdnt.galahad.data.layer.WordForm
+import org.ivdnt.galahad.annotations.AnnotationType
+import org.ivdnt.galahad.annotations.Term
+import org.ivdnt.galahad.annotations.WordForm
 
 fun <T> symmetricDifference(
     set1: Set<T>,

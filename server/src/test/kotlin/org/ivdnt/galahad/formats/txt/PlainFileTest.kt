@@ -1,8 +1,8 @@
 package org.ivdnt.galahad.formats.txt
 
-import org.ivdnt.galahad.data.corpus.Corpus
-import org.ivdnt.galahad.data.document.DocumentFormat
-import org.ivdnt.galahad.data.layer.Layer
+import org.ivdnt.galahad.corpora.Corpus
+import org.ivdnt.galahad.corpora.documents.DocumentFormat
+import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.formats.DocTestBuilder
 import org.ivdnt.galahad.formats.Resource
 import org.ivdnt.galahad.formats.createCorpus

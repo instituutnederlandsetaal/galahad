@@ -3,8 +3,8 @@ package org.ivdnt.galahad.web.service
 import jakarta.servlet.http.HttpServletRequest
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.app.User
-import org.ivdnt.galahad.data.document.Document
-import org.ivdnt.galahad.data.document.DocumentMetadata
+import org.ivdnt.galahad.corpora.documents.Document
+import org.ivdnt.galahad.corpora.documents.DocumentMetadata
 import org.ivdnt.galahad.exceptions.DocumentInvalidException
 import org.ivdnt.galahad.exceptions.FileUploadException
 import org.springframework.beans.factory.annotation.Autowired
@@ -67,7 +67,7 @@ class DocumentsService(val corpora: CorporaService) : Logging {
 
     fun delete(corpus: UUID, document: String) {
         // Delete all jobs and results of this document.
-        corpus.writeJobs().readAll().forEach { it.documentJobs.deleteOrNull(document) } // Doesn't matter if null.
+        corpus.writeJobs().readAll().forEach { it.jobDocuments.deleteOrNull(document) } // Doesn't matter if null.
         // Now delete it
         corpus.writeDocs().deleteOrThrow(document)
     }

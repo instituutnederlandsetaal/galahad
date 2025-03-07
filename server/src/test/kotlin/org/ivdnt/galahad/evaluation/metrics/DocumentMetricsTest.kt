@@ -1,6 +1,6 @@
 package org.ivdnt.galahad.evaluation.metrics
 
-import org.ivdnt.galahad.data.corpus.Corpus
+import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.formats.createCorpus
 import org.junit.jupiter.api.BeforeEach
 

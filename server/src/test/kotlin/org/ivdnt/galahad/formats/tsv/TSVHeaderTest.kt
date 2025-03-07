@@ -1,9 +1,9 @@
 package org.ivdnt.galahad.formats.tsv
 
-import org.ivdnt.galahad.data.layer.AnnotationType
-import org.ivdnt.galahad.data.layer.lemma
-import org.ivdnt.galahad.data.layer.pos
-import org.ivdnt.galahad.data.layer.token
+import org.ivdnt.galahad.annotations.AnnotationType
+import org.ivdnt.galahad.annotations.lemma
+import org.ivdnt.galahad.annotations.pos
+import org.ivdnt.galahad.annotations.token
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

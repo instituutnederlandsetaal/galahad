@@ -13,8 +13,8 @@ import org.ivdnt.galahad.app.CORPORA_URL
 import org.ivdnt.galahad.app.CORPUS_URL
 import org.ivdnt.galahad.app.DATASETS_CORPORA_URL
 import org.ivdnt.galahad.app.User
-import org.ivdnt.galahad.data.corpus.CorpusMetadata
-import org.ivdnt.galahad.data.corpus.MutableCorpusMetadata
+import org.ivdnt.galahad.corpora.CorpusMetadata
+import org.ivdnt.galahad.corpora.MutableCorpusMetadata
 import org.ivdnt.galahad.exceptions.ErrorResponse
 import org.ivdnt.galahad.web.service.CorporaService
 import org.springframework.beans.factory.annotation.Autowired

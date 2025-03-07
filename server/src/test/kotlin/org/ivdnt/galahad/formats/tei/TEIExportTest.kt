@@ -2,8 +2,8 @@ package org.ivdnt.galahad.formats.tei
 
 import org.ivdnt.galahad.TestConfig
 import org.ivdnt.galahad.app.User
-import org.ivdnt.galahad.data.corpus.Corpus
-import org.ivdnt.galahad.data.document.DocumentFormat
+import org.ivdnt.galahad.corpora.Corpus
+import org.ivdnt.galahad.corpora.documents.DocumentFormat
 import org.ivdnt.galahad.formats.*
 import org.ivdnt.galahad.tagset.TagsetStore
 import org.junit.jupiter.api.BeforeEach

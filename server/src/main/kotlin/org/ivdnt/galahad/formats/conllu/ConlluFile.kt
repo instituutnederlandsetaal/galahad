@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.formats.conllu
 
-import org.ivdnt.galahad.data.document.DocumentFormat
-import org.ivdnt.galahad.data.layer.AnnotationType
+import org.ivdnt.galahad.corpora.documents.DocumentFormat
+import org.ivdnt.galahad.annotations.AnnotationType
 import org.ivdnt.galahad.formats.DocumentTransformMetadata
 import org.ivdnt.galahad.formats.conllu.export.ConlluLayerMerger
 import org.ivdnt.galahad.formats.tsv.TSVFile

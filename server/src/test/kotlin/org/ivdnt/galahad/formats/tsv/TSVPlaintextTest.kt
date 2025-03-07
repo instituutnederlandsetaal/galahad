@@ -1,6 +1,6 @@
 package org.ivdnt.galahad.formats.tsv
 
-import org.ivdnt.galahad.data.layer.Layer
+import org.ivdnt.galahad.annotations.Layer
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.io.File

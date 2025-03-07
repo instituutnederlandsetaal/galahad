@@ -1,8 +1,8 @@
 package org.ivdnt.galahad.evaluation.confusion
 
-import org.ivdnt.galahad.data.layer.AnnotationType
-import org.ivdnt.galahad.data.layer.Layer
-import org.ivdnt.galahad.data.layer.Term
+import org.ivdnt.galahad.annotations.AnnotationType
+import org.ivdnt.galahad.annotations.Layer
+import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.evaluation.comparison.LayerComparison
 import org.ivdnt.galahad.evaluation.comparison.LayerFilter
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
