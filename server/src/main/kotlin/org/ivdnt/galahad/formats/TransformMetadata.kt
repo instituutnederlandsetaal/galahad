@@ -1,12 +1,12 @@
 package org.ivdnt.galahad.formats
 
+import org.ivdnt.galahad.annotations.AnnotationType
+import org.ivdnt.galahad.annotations.Layer
+import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.corpora.documents.Document
 import org.ivdnt.galahad.corpora.documents.DocumentFormat
-import org.ivdnt.galahad.annotations.AnnotationType
-import org.ivdnt.galahad.annotations.Layer
-import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.corpora.jobs.Job
 import org.ivdnt.galahad.taggers.Tagger
 

@@ -1,11 +1,7 @@
 package org.ivdnt.galahad.formats.tsv
 
+import org.ivdnt.galahad.annotations.*
 import org.ivdnt.galahad.corpora.documents.DocumentFormat
-import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
-import org.ivdnt.galahad.annotations.AnnotationType
-import org.ivdnt.galahad.annotations.Annotations
-import org.ivdnt.galahad.annotations.Layer
-import org.ivdnt.galahad.annotations.token
 import org.ivdnt.galahad.formats.DocumentTransformMetadata
 import org.ivdnt.galahad.formats.InternalFile
 import org.ivdnt.galahad.formats.conllu.ConlluFile

@@ -1,8 +1,8 @@
 package org.ivdnt.galahad.corpora.documents
 
 import org.apache.logging.log4j.kotlin.Logging
-import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
+import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.files.DiskValue
 import org.ivdnt.galahad.files.GalahadFolder
 import org.ivdnt.galahad.formats.DocumentTransformMetadata
@@ -97,6 +97,7 @@ class Document(
     internal companion object {
         private const val METADATA_FILE = "metadata.json"
         private const val PLAINTEXT_FILE = "plaintext.txt"
+
         /**
          * Create a new document folder from an uploaded file and fill it with the necessary data.
          */

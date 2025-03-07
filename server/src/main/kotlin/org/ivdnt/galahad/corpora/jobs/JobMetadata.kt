@@ -1,9 +1,9 @@
 package org.ivdnt.galahad.corpora.jobs
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.annotations.LayerPreview
 import org.ivdnt.galahad.annotations.LayerSummary
+import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.annotations.plus
 import org.ivdnt.galahad.taggers.Tagger
 

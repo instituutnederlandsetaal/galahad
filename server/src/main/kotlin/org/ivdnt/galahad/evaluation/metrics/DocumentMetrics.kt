@@ -1,8 +1,8 @@
 package org.ivdnt.galahad.evaluation.metrics
 
-import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.Term
+import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.evaluation.comparison.LayerComparison
 import org.ivdnt.galahad.evaluation.comparison.LayerFilter
 import org.ivdnt.galahad.evaluation.comparison.TermComparison

@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.formats
 
-import org.ivdnt.galahad.corpora.documents.DocumentFormat
 import org.ivdnt.galahad.annotations.Layer
+import org.ivdnt.galahad.corpora.documents.DocumentFormat
 import org.ivdnt.galahad.exceptions.DocumentInvalidException
 import org.ivdnt.galahad.formats.conllu.ConlluFile
 import org.ivdnt.galahad.formats.folia.FoliaFile

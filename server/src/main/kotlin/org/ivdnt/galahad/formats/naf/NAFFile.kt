@@ -1,10 +1,10 @@
 package org.ivdnt.galahad.formats.naf
 
-import org.ivdnt.galahad.corpora.documents.DocumentFormat
-import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.annotations.Layer
+import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.annotations.WordForm
+import org.ivdnt.galahad.corpora.documents.DocumentFormat
 import org.ivdnt.galahad.exceptions.MergeNotImplementedException
 import org.ivdnt.galahad.formats.DocumentTransformMetadata
 import org.ivdnt.galahad.formats.InternalFile

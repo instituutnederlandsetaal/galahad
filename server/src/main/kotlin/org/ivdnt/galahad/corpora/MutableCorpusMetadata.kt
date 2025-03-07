@@ -8,7 +8,7 @@ import org.ivdnt.galahad.exceptions.CorpusNameInvalidException
 import org.ivdnt.galahad.exceptions.CorpusUnauthorizedException
 import org.springframework.lang.Nullable
 import java.net.URL
-import java.util.UUID
+import java.util.*
 
 /**
  * Corpus metadata that can be changed by the user.
@@ -28,8 +28,11 @@ open class MutableCorpusMetadata(
     @JsonProperty("sourceURL") @Nullable var sourceURL: URL?,
 ) : JSONable {
 
-    @JsonIgnore var id: UUID? = null
-    @JsonIgnore var user: User? = null
+    @JsonIgnore
+    var id: UUID? = null
+
+    @JsonIgnore
+    var user: User? = null
 
 
     /**

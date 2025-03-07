@@ -20,6 +20,7 @@ data class Term(
 
     @get:JsonIgnore
     val lemma: String? = annotations[AnnotationType.LEMMA]
+
     @get:JsonIgnore
     val pos: String? = annotations[AnnotationType.POS]
 

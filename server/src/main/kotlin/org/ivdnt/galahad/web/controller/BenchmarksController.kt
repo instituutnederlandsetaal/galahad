@@ -8,10 +8,10 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import jakarta.servlet.http.HttpServletRequest
 import org.apache.logging.log4j.kotlin.Logging
+import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.app.BENCHMARKS_URL
 import org.ivdnt.galahad.app.BENCHMARK_URL
 import org.ivdnt.galahad.app.User
-import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.evaluation.metrics.FlatMetricType
 import org.ivdnt.galahad.evaluation.metrics.FlatMetricTypeAssay
 import org.ivdnt.galahad.exceptions.ErrorResponse
@@ -113,7 +113,10 @@ class BenchmarksController(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,
     ): FlatMetricTypeAssay? {
-        return corpora.readAsReaderOrThrow(corpus, user).jobs.readOrNull(job)?.assay?.readOrCreate<FlatMetricTypeAssay>()
+        return corpora.readAsReaderOrThrow(
+            corpus,
+            user
+        ).jobs.readOrNull(job)?.assay?.readOrCreate<FlatMetricTypeAssay>()
     }
 
     @Operation(

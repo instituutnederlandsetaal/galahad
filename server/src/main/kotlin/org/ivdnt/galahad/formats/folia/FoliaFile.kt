@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.formats.folia
 
-import org.ivdnt.galahad.corpora.documents.DocumentFormat
 import org.ivdnt.galahad.annotations.Layer
+import org.ivdnt.galahad.corpora.documents.DocumentFormat
 import org.ivdnt.galahad.formats.DocumentTransformMetadata
 import org.ivdnt.galahad.formats.InternalFile
 import org.ivdnt.galahad.formats.folia.export.FoliaLayerMerger

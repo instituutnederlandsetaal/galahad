@@ -5,11 +5,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import jakarta.servlet.http.HttpServletRequest
 import org.apache.logging.log4j.kotlin.Logging
-import org.ivdnt.galahad.app.BASE_URL
-import org.ivdnt.galahad.app.Config
-import org.ivdnt.galahad.app.SWAGGER_API_URL
-import org.ivdnt.galahad.app.User
-import org.ivdnt.galahad.app.VERSION_URL
+import org.ivdnt.galahad.app.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

@@ -3,12 +3,12 @@ package org.ivdnt.galahad.corpora
 import org.ivdnt.galahad.corpora.documents.Document
 import org.ivdnt.galahad.corpora.documents.DocumentFormat
 import org.ivdnt.galahad.corpora.documents.Documents
-import org.ivdnt.galahad.files.ValidatedDiskValue
+import org.ivdnt.galahad.corpora.jobs.Jobs
 import org.ivdnt.galahad.files.DiskValue
 import org.ivdnt.galahad.files.GalahadFolder
+import org.ivdnt.galahad.files.ValidatedDiskValue
 import org.ivdnt.galahad.formats.CmdiMetadata
 import org.ivdnt.galahad.formats.CorpusTransformMetadata
-import org.ivdnt.galahad.corpora.jobs.Jobs
 import org.ivdnt.galahad.util.createZipFile
 import java.io.File
 import java.io.OutputStream
@@ -29,7 +29,7 @@ import kotlin.io.path.createTempDirectory
  * Viewers have read access.
  * Admins have access to all corpora with read and write access.
  */
-class Corpus (
+class Corpus(
     dir: File,
 ) : GalahadFolder(dir) {
 

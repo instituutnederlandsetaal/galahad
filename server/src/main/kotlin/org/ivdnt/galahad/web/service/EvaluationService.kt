@@ -2,10 +2,10 @@ package org.ivdnt.galahad.web.service
 
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.ivdnt.galahad.annotations.AnnotationType
+import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.corpora.CorpusMetadata
-import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
-import org.ivdnt.galahad.annotations.AnnotationType
 import org.ivdnt.galahad.evaluation.comparison.*
 import org.ivdnt.galahad.evaluation.confusion.CONFUSION_TYPES
 import org.ivdnt.galahad.evaluation.confusion.CorpusConfusion

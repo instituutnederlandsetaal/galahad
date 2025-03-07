@@ -1,9 +1,9 @@
 package org.ivdnt.galahad.corpora.jobs
 
-import org.ivdnt.galahad.corpora.Corpus
-import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.annotations.LayerPreview
 import org.ivdnt.galahad.annotations.LayerSummary
+import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
+import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.exceptions.JobNotFoundException
 import org.ivdnt.galahad.exceptions.TaggerNotFoundException
 import org.ivdnt.galahad.files.GalahadFolderManager
