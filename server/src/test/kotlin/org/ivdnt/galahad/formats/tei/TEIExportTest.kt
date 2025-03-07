@@ -5,7 +5,8 @@ import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.corpora.documents.DocumentFormat
 import org.ivdnt.galahad.formats.*
-import org.ivdnt.galahad.tagset.TagsetStore
+import org.ivdnt.galahad.taggers.Tagger
+import org.ivdnt.galahad.taggers.Tagset
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -38,7 +39,7 @@ internal class TEIExportTest {
             assertPlainText(folder, file)
 
             val plaintext: String = Resource.get("$folder/plaintext.txt").readText()
-            val tagset = TagsetStore().getOrNull("TDN-Core")!!
+            val tagset = Tagset.readOrThrow("TDN-Core")
             val layer = LayerBuilder().loadLayerFromTSV("$folder/pie-tdn.tsv", plaintext).setTagset(tagset).build()
 
             DocTest.builder(corpus).expectingFile("$folder/merged-output.xml")
@@ -52,7 +53,7 @@ internal class TEIExportTest {
     fun `Convert doc with alphanumeric PC`() {
         val folder = "tei/alphanumericpc/with-w-tags"
         val plaintext: String = Resource.get("$folder/plaintext.txt").readText()
-        val tagset = TagsetStore().getOrNull("TDN-Core")!!
+        val tagset = Tagset.readOrThrow("TDN-Core")
         val layer = LayerBuilder().loadLayerFromTSV("$folder/pie-tdn.tsv", plaintext).setTagset(tagset).build()
         DocTest.builder(corpus).expectingFile("$folder/converted-output.xml")
             .convertToTEI(Resource.get("$folder/input.tei.xml"), layer).ignoreDate().ignoreUUID().result()
@@ -77,7 +78,7 @@ internal class TEIExportTest {
         DocTest.builder(corpus).expecting("Dit is wat oefentekst.").got(teiFile.plaintext)
             .ignoreTrailingWhiteSpaces().result()
 
-        val tagset = TagsetStore().getOrNull("TDN-Core")!!
+        val tagset = Tagset.readOrThrow("TDN-Core")
 
         val layer = LayerBuilder().loadLayerFromTSV(
             "tei/export/mock-TDN-with-punctuation.tsv", teiFile.plaintext
@@ -92,7 +93,7 @@ internal class TEIExportTest {
     @Test
     fun mergePuncutationTest() {
 
-        val tagset = TagsetStore().getOrNull("TDN-Core")!!
+        val tagset = Tagset.readOrThrow("TDN-Core")
         val plaintext = TEIFile(Resource.get("tei/dummies/punctutation-mixed-tags.xml")).plaintext
         val layer = LayerBuilder().loadLayerFromTSV("tei/dummies/punctuation-mixed-tags-sample-layer.tsv", plaintext)
             .setTagset(tagset).build()
@@ -119,7 +120,7 @@ internal class TEIExportTest {
      */
     @Test
     fun bigLayerConvertTest() {
-        val tagset = TagsetStore().getOrNull("TDN-Core")!!
+        val tagset = Tagset.readOrThrow("TDN-Core")
         val jobName = TestConfig.TAGGER_NAME
         val testsize = 2 // Kdummies
 

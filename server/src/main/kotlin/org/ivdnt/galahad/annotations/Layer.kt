@@ -102,7 +102,26 @@ open class Layer(
 
 class AnnotationLayer(
     val documents: List<DocumentLayer>,
-)
+) {
+    override fun toString(): String {
+        val builder = StringBuilder()
+        documents.forEach { document ->
+            document.paragraphs.forEach { paragraph ->
+                paragraph.sentences.forEach { sentence ->
+                    sentence.wordforms.forEach { wordform ->
+                        builder.append(wordform.literal)
+                        builder.append(" ")
+                    }
+                    builder.append("\n")
+                }
+                builder.append("\n")
+            }
+        }
+        // remove last newline
+        builder.deleteCharAt(builder.length - 1)
+        return builder.toString()
+    }
+}
 
 class DocumentLayer(
     val id: String,
@@ -117,5 +136,4 @@ class ParagraphLayer(
 class SentenceLayer(
     val id: String,
     val wordforms: List<WordForm>,
-    val terms: List<Term>,
 )

@@ -12,8 +12,9 @@ class TxtFile(
     override val file: File,
 ) : InternalFile {
     override val format: DocumentFormat = DocumentFormat.Txt
-    override val plaintext: String by lazy { file.readText() }
+    override val plaintext: String by lazy { reader.layer.toString() }
     override val sourceLayer: Layer = Layer.EMPTY.apply { name = SOURCE_LAYER_NAME }
+    private val reader: TxtReader by lazy { TxtReader(file) }
 
     override fun merge(export: DocumentExport): TxtFile {
         // merging does not make sense for PlainFile

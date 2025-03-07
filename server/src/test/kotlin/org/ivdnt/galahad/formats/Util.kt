@@ -23,10 +23,11 @@ import org.ivdnt.galahad.formats.tei.TEIFile
 import org.ivdnt.galahad.formats.tei.export.LayerToTEIConverter
 import org.ivdnt.galahad.formats.tsv.TSVFile
 import org.ivdnt.galahad.formats.tsv.export.LayerToTSVConverter
-import org.ivdnt.galahad.tagset.Tagset
+import org.ivdnt.galahad.taggers.Tagset
 import org.junit.jupiter.api.Assertions.assertEquals
 import java.io.File
 import java.net.URL
+import java.util.UUID
 import kotlin.io.path.createTempDirectory
 
 object Resource {
@@ -66,7 +67,9 @@ fun createCorpus(workdir: File? = null, isDataset: Boolean = false, isAdmin: Boo
         "source name",
         URL("http://source.url")
     )
-    return corpora.createOrThrow(User("testUser", isAdmin), meta)
+    meta.user = User("testUser", isAdmin)
+    meta.id = UUID.randomUUID()
+    return corpora.createOrThrow(meta)
 }
 
 fun assertPlainText(folder: String, file: InternalFile) {
