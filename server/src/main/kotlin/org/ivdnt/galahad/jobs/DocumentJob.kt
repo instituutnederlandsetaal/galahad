@@ -2,8 +2,8 @@ package org.ivdnt.galahad.jobs
 
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.data.layer.Layer
-import org.ivdnt.galahad.filesystem.FileBackedValue
-import org.ivdnt.galahad.filesystem.GalahadFile
+import org.ivdnt.galahad.filesystem.DiskValue
+import org.ivdnt.galahad.filesystem.GalahadFolder
 import java.io.File
 import java.util.*
 
@@ -20,7 +20,7 @@ private const val LAYER_FILE = "layer.json"
  */
 class DocumentJob(
     dir: File,
-) : GalahadFile(dir), Logging {
+) : GalahadFolder(dir), Logging {
     // Files in the document job folder.
     private val processingIDFile = dir.resolve(PROCESSING_ID_File)
     private val errorFile = dir.resolve(ERROR_FILE)
@@ -29,10 +29,10 @@ class DocumentJob(
     // Values in those files.
 
     var layer: Layer?
-        get() = FileBackedValue<Layer?>(layerFile).readOrNull()
+        get() = DiskValue<Layer?>(layerFile).readOrNull()
         set(value) {
             if (value == null) throw IllegalArgumentException("Layer cannot be set to null")
-            FileBackedValue<Layer>(layerFile).write(value)
+            DiskValue<Layer>(layerFile).write(value)
             processingIDFile.delete()
         }
 

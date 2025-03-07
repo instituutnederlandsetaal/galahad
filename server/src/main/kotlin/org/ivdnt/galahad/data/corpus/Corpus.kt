@@ -1,12 +1,11 @@
 package org.ivdnt.galahad.data.corpus
 
-import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.data.document.Document
 import org.ivdnt.galahad.data.document.DocumentFormat
 import org.ivdnt.galahad.data.document.Documents
-import org.ivdnt.galahad.filesystem.FileBackedCache
-import org.ivdnt.galahad.filesystem.FileBackedValue
-import org.ivdnt.galahad.filesystem.GalahadFile
+import org.ivdnt.galahad.filesystem.ValidatedDiskValue
+import org.ivdnt.galahad.filesystem.DiskValue
+import org.ivdnt.galahad.filesystem.GalahadFolder
 import org.ivdnt.galahad.formats.CmdiMetadata
 import org.ivdnt.galahad.formats.CorpusTransformMetadata
 import org.ivdnt.galahad.jobs.Jobs
@@ -36,9 +35,9 @@ private const val DOCS_FOLDER = "documents"
  * Viewers have read access.
  * Admins have access to all corpora with read and write access.
  */
-class Corpus(
+class Corpus (
     dir: File,
-) : GalahadFile(dir) {
+) : GalahadFolder(dir) {
 
     val documents = Documents(dir.resolve(DOCS_FOLDER), this)
     val jobs = Jobs(dir.resolve(JOBS_FOLDER), this)
@@ -54,15 +53,15 @@ class Corpus(
      * When uploading docs, for example, all we need to know is if the user has permission.
      */
     var mutableMetadata: MutableCorpusMetadata
-        get() = FileBackedValue<MutableCorpusMetadata>(mutableMetadataFile).readOrThrow()
+        get() = DiskValue<MutableCorpusMetadata>(mutableMetadataFile).readOrThrow()
         set(value) {
-            FileBackedValue<MutableCorpusMetadata>(mutableMetadataFile).write(value)
+            DiskValue<MutableCorpusMetadata>(mutableMetadataFile).write(value)
         }
 
     val immutableMetadata: CorpusMetadata
-        get() = immutableMetadataCache.read()
+        get() = immutableMetadataCache.readOrCreate()
 
-    private val immutableMetadataCache = object : FileBackedCache<CorpusMetadata>(immutableMetadataFile) {
+    private val immutableMetadataCache = object : ValidatedDiskValue<CorpusMetadata>(immutableMetadataFile) {
         override fun isValid(lastModified: Long) = lastModified >= this@Corpus.lastModified
         override fun set() = CorpusMetadata.create(this@Corpus)
     }
@@ -87,13 +86,13 @@ class Corpus(
     }
 
     companion object {
-        fun create(user: User, dir: File, metadata: MutableCorpusMetadata): Corpus {
+        fun create(dir: File, metadata: MutableCorpusMetadata): Corpus {
             // dummy corpus to access the paths
             val corpus = Corpus(dir)
             // clean, trim, validate, and set owner
-            val cleanMetadata = MutableCorpusMetadata.clean(user, metadata)
+            val cleanMetadata = MutableCorpusMetadata.clean(metadata)
             // write metadata to disk
-            FileBackedValue<MutableCorpusMetadata>(corpus.mutableMetadataFile).write(cleanMetadata)
+            DiskValue<MutableCorpusMetadata>(corpus.mutableMetadataFile).write(cleanMetadata)
             return corpus
         }
     }

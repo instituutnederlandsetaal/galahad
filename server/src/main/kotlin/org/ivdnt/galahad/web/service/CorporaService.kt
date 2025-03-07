@@ -8,14 +8,14 @@ import org.ivdnt.galahad.data.corpus.CorpusMetadata
 import org.ivdnt.galahad.data.corpus.MutableCorpusMetadata
 import org.ivdnt.galahad.exceptions.CorpusNotFoundException
 import org.ivdnt.galahad.exceptions.CorpusUnauthorizedException
-import org.ivdnt.galahad.filesystem.GalahadFile
+import org.ivdnt.galahad.filesystem.GalahadFolder
 import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
 class CorporaService(
     config: Config,
-) : GalahadFile(config.getWorkingDirectory().resolve("corpora")) {
+) : GalahadFolder(config.getWorkingDirectory().resolve("corpora")) {
 
     val custom = Corpora(dir.resolve("custom"))
     val presets = Corpora(dir.resolve("presets"))
@@ -46,13 +46,14 @@ class CorporaService(
         val (corpus, corpora) = findOrThrow(key)
 
         if (corpus.mutableMetadata.canDelete(user)) {
-            corpora.deleteOrThrow(key)
+            corpora.deleteOrThrow(key.toString())
         } else {
             throw CorpusUnauthorizedException("No delete access to corpus.")
         }
     }
 
-    private fun findOrThrow(key: UUID): Pair<Corpus, Corpora> {
+    private fun findOrThrow(uuid: UUID): Pair<Corpus, Corpora> {
+        val key = uuid.toString()
         // We don't want to access CorporaManager.all here, because it is expensive.
         val customCorpus = custom.readOrNull(key)
         val presetCorpus = presets.readOrNull(key)
@@ -69,11 +70,15 @@ class CorporaService(
 
     fun createOrThrow(value: MutableCorpusMetadata, user: User): CorpusMetadata {
         // new corpora are always custom
-        return custom.createOrThrow(user, value).immutableMetadata
+        value.user = user
+        value.id = UUID.randomUUID()
+        return custom.createOrThrow(value).immutableMetadata
     }
 
     fun update(key: UUID, value: MutableCorpusMetadata, user: User): CorpusMetadata {
         val (_, corpora) = findOrThrow(key)
-        return corpora.update(key, value, user)
+        value.user = user
+        value.id = key
+        return corpora.updateOrThrow(value).immutableMetadata
     }
 }

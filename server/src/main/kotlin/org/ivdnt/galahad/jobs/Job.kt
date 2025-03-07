@@ -15,8 +15,8 @@ import org.ivdnt.galahad.evaluation.metrics.METRIC_TYPES
 import org.ivdnt.galahad.evaluation.metrics.Metrics
 import org.ivdnt.galahad.exceptions.SourceLayerNotATaggerException
 import org.ivdnt.galahad.exceptions.TaggerNoConnectionException
-import org.ivdnt.galahad.filesystem.FileBackedCache
-import org.ivdnt.galahad.filesystem.GalahadFile
+import org.ivdnt.galahad.filesystem.ValidatedDiskValue
+import org.ivdnt.galahad.filesystem.GalahadFolder
 import org.ivdnt.galahad.jobs.DocumentJob.DocumentProcessingStatus
 import org.ivdnt.galahad.taggers.Tagger
 import org.springframework.core.io.FileSystemResource
@@ -47,7 +47,7 @@ private const val METADATA_FILE = "metadata.json"
 class Job(
     dir: File, // the name of this directory is the name of the job/tagger
     val corpus: Corpus,
-) : GalahadFile(dir), Logging {
+) : GalahadFolder(dir), Logging {
 
     val documentJobs = DocumentJobs(dir.resolve(DOCUMENT_JOBS_FOLDER))
 
@@ -98,14 +98,14 @@ class Job(
     val metadata: JobMetadata
         get() {
             deleteInactiveProcesses()
-            return metadataCache.read()
+            return metadataCache.readOrCreate()
         }
 
     /**
      * The state of the job, which is cached in a file.
      * This is a very expensive operation, so we want to cache it.
      */
-    private val metadataCache = object : FileBackedCache<JobMetadata>(metadataFile) {
+    private val metadataCache = object : ValidatedDiskValue<JobMetadata>(metadataFile) {
         // NOTE: we also check against the last modified of the documents folder: adding new docs should invalidate the cache.
         override fun isValid(lastModified: Long) =
             lastModified >= this@Job.lastModified && lastModified >= corpus.documents.lastModified
@@ -127,7 +127,7 @@ class Job(
      * The sum of the global [Metrics] score of all the documents of the job (as opposed to per PoS).
      * Cached in a file, as it is expensive.
      */
-    val assay = object : FileBackedCache<Map<String, FlatMetricType>>(
+    val assay = object : ValidatedDiskValue<Map<String, FlatMetricType>>(
         file = dir.resolve("assay.cache")
     ) {
         override fun isValid(lastModified: Long): Boolean {

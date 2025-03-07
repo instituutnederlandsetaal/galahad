@@ -15,7 +15,7 @@ import org.ivdnt.galahad.data.document.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.evaluation.metrics.FlatMetricType
 import org.ivdnt.galahad.evaluation.metrics.FlatMetricTypeAssay
 import org.ivdnt.galahad.exceptions.ErrorResponse
-import org.ivdnt.galahad.filesystem.FileBackedCache
+import org.ivdnt.galahad.filesystem.ValidatedDiskValue
 import org.ivdnt.galahad.web.service.CorporaService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.CrossOrigin
@@ -55,7 +55,7 @@ class BenchmarksController(
      * A matrix of 'tagger' -> 'dataset' -> 'FlatMetric' -> 'scores per category',
      * for all datasets corpora that have been tagged with at least one tagger, excluding the sourceLayer.
      */
-    val benchmarksMatrix = object : FileBackedCache<BenchmarksMatrix>(corpora.assaysFile) {
+    val benchmarksMatrix = object : ValidatedDiskValue<BenchmarksMatrix>(corpora.assaysFile) {
         override fun isValid(lastModified: Long): Boolean {
             return corpora.datasets.firstOrNull { it.lastModified > lastModified } == null
             TODO("Maybe just check the validity of the other assays?")
@@ -113,7 +113,7 @@ class BenchmarksController(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,
     ): FlatMetricTypeAssay? {
-        return corpora.readAsReaderOrThrow(corpus, user).jobs.readOrNull(job)?.assay?.read<FlatMetricTypeAssay>()
+        return corpora.readAsReaderOrThrow(corpus, user).jobs.readOrNull(job)?.assay?.readOrCreate<FlatMetricTypeAssay>()
     }
 
     @Operation(
@@ -123,6 +123,6 @@ class BenchmarksController(
     @CrossOrigin
     @GetMapping(BENCHMARKS_URL)
     fun getAssays(): BenchmarksMatrix {
-        return benchmarksMatrix.read<BenchmarksMatrix>()
+        return benchmarksMatrix.readOrCreate<BenchmarksMatrix>()
     }
 }

@@ -3,8 +3,8 @@ package org.ivdnt.galahad.data.document
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.data.corpus.Corpus
 import org.ivdnt.galahad.data.layer.Layer
-import org.ivdnt.galahad.filesystem.FileBackedValue
-import org.ivdnt.galahad.filesystem.GalahadFile
+import org.ivdnt.galahad.filesystem.DiskValue
+import org.ivdnt.galahad.filesystem.GalahadFolder
 import org.ivdnt.galahad.formats.DocumentTransformMetadata
 import org.ivdnt.galahad.formats.InternalFile
 import org.ivdnt.galahad.formats.conllu.export.LayerToConlluConverter
@@ -35,7 +35,7 @@ const val PLAINTEXT_FILE = "plaintext.txt"
  */
 class Document(
     dir: File,
-) : GalahadFile(dir), Logging {
+) : GalahadFolder(dir), Logging {
     // Files in the document folder.
     val plainTextFile = dir.resolve(PLAINTEXT_FILE)
     private val metadataFile = dir.resolve(METADATA_FILE)
@@ -63,11 +63,11 @@ class Document(
     val metadata: DocumentMetadata by lazy {
         // For the sake of backwards compatibility with GaLAHaD 1.x.x, we create metadata if not present.
         try {
-            FileBackedValue<DocumentMetadata>(metadataFile).readOrThrow()
+            DiskValue<DocumentMetadata>(metadataFile).readOrThrow()
         } catch (e: Exception) {
             logger.error("Error reading metadata file, creating new metadata", e)
             val metadata = DocumentMetadata.create(internalFile)
-            FileBackedValue<DocumentMetadata>(metadataFile).write(metadata)
+            DiskValue<DocumentMetadata>(metadataFile).write(metadata)
         }
     }
 
@@ -119,7 +119,7 @@ class Document(
             doc.plainTextFile.writeText(internalFile.plaintext)
 
             // metadata; needs to be serialized as well
-            FileBackedValue<DocumentMetadata>(doc.metadataFile).write(DocumentMetadata.create(internalFile))
+            DiskValue<DocumentMetadata>(doc.metadataFile).write(DocumentMetadata.create(internalFile))
 
             // The same document object is now valid: it's folder data has been filled.
             return doc

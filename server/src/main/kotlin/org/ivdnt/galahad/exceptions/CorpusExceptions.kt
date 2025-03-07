@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import java.util.*
 
 @ResponseStatus(value = HttpStatus.NOT_FOUND)
-class CorpusNotFoundException(corpusID: UUID) : Exception("Corpus with ID $corpusID not found.")
+class CorpusNotFoundException(corpusID: String) : Exception("Corpus with ID $corpusID not found.")
 
 @ResponseStatus(value = HttpStatus.BAD_REQUEST)
 class CorpusNameInvalidException(corpusName: String) :

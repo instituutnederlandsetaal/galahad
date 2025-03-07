@@ -3,15 +3,34 @@ package org.ivdnt.galahad.filesystem
 import org.apache.logging.log4j.kotlin.logger
 import java.io.File
 
-abstract class GalahadFileManager<ReadType : GalahadFile, CreateType : Any>(
+/**
+ * Generic base class for file system operations.
+ * Create, read and delete GalahadFiles in a folder.
+ * Usage:
+ * ```
+ * val folder = GalahadFolder<ReadType, CreateType>(...)
+ * val data: CreateType = ...
+ * val key: String = ...
+ *
+ * val file = folder.createOrThrow(data)
+ * val files = folder.readAll()
+ *
+ * folder.deleteOrNull(key)
+ * if (folder.deleteOrNull(key) == null) { println("Nothing to delete") } // prints
+ * // folder.deleteOrThrow(key) // throws
+ *
+ * val file2 = folder.readOrNull(key) // returns null
+ * // val file3 = folder.readOrThrow(key) // throws
+ */
+abstract class GalahadFolderManager<ReadType : GalahadFolder, CreateType : Any>(
     dir: File,
-) : GalahadFile(dir) {
-
-    abstract fun createOrThrow(key: CreateType): ReadType
+) : GalahadFolder(dir) {
 
     protected abstract fun ctor(key: String): ReadType
 
     protected abstract fun throwNotFound(key: String): Nothing
+
+    abstract fun createOrThrow(key: CreateType): ReadType
 
     open fun readAll(): Set<ReadType> = dir.list()?.map { readOrThrow(it) }?.toSet() ?: setOf()
 

@@ -1,5 +1,6 @@
 package org.ivdnt.galahad.data.corpus
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.ivdnt.galahad.app.JSONable
 import org.ivdnt.galahad.app.User
@@ -7,6 +8,7 @@ import org.ivdnt.galahad.exceptions.CorpusNameInvalidException
 import org.ivdnt.galahad.exceptions.CorpusUnauthorizedException
 import org.springframework.lang.Nullable
 import java.net.URL
+import java.util.UUID
 
 /**
  * Corpus metadata that can be changed by the user.
@@ -25,6 +27,10 @@ open class MutableCorpusMetadata(
     @JsonProperty("sourceName") @Nullable var sourceName: String?,
     @JsonProperty("sourceURL") @Nullable var sourceURL: URL?,
 ) : JSONable {
+
+    @JsonIgnore var id: UUID? = null
+    @JsonIgnore var user: User? = null
+
 
     /**
      * Whether the user is in the list of collaborators of this corpus.
@@ -105,10 +111,10 @@ open class MutableCorpusMetadata(
          * If a user appears multiple times in the permission hierarchy, only the upper level remains.
          */
         fun clean(
-            user: User,
             newMeta: MutableCorpusMetadata,
             oldMeta: MutableCorpusMetadata? = null,
         ): MutableCorpusMetadata {
+            val user = newMeta.user!!
             // Overwrite the owner with the original, so collaborators can't change it,
             // unless it's empty, in which case it's a new corpus.
             newMeta.owner = oldMeta?.owner ?: user.id

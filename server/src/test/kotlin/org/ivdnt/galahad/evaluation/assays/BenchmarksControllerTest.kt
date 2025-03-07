@@ -30,7 +30,7 @@ class BenchmarksControllerTest(
     @Test
     fun getAssays() {
         // No assays should exist
-        var assays = ctrl.benchmarksMatrix.read<BenchmarksMatrix>()
+        var assays = ctrl.benchmarksMatrix.readOrCreate<BenchmarksMatrix>()
         assertEquals(0, assays.size)
 
         // Need a corpus first
@@ -52,7 +52,7 @@ class BenchmarksControllerTest(
         EvaluationUtil.addLayersAsJobs(corpus, doc.name, layer, layer)
 
         // job assay should exist
-        assertNotNull(corpus.jobs.readOrThrow(TestConfig.TAGGER_NAME).assay.read<Map<String, FlatMetricType>>())
+        assertNotNull(corpus.jobs.readOrThrow(TestConfig.TAGGER_NAME).assay.readOrCreate<Map<String, FlatMetricType>>())
 
         // /GET
         val assaysRequest: MvcResult = mvc.perform(

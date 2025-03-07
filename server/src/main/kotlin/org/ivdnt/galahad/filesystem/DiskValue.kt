@@ -11,53 +11,28 @@ import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.data.layer.Layer
 import java.io.File
 
-
-val mapper: ObjectMapper by lazy { ObjectMapper() }
-
-abstract class FileBackedCache<T>(
+abstract class ValidatedDiskValue<T>(
     file: File,
-) : FileBackedValue<T>(file) {
-
-    abstract fun isValid(lastModified: Long): Boolean // is cache valid?
+) : DiskValue<T>(file) {
+    abstract fun isValid(lastModified: Long): Boolean
     abstract fun set(): T
 
-    // TODO ideally we would override readOrThrow()
-    inline fun <reified T> read(): T {
-        return if (isValid(lastModified)) {
-            readOrThrow<T>()
-        } else {
-            // log
-            logger.debug("Cache of type ${T::class.simpleName} is not valid. Will set new value.")
-            // if not valid:
-            val newValue = set()
-            write<T>(newValue as T)
-        }
+    inline fun <reified T> readOrCreate(): T = if (isValid(lastModified)) {
+        readOrThrow<T>()
+    } else {
+        logger.debug("DiskValue<${T::class.simpleName}> is invalid. Will set new value.")
+        write<T>(set() as T)
     }
-
 }
 
-open class FileBackedValue<T>(
+open class DiskValue<T>(
     val file: File,
 ) : Logging {
-
-    companion object {
-        /** Special cache for [Layer] objects because of their large size */
-        val cache: Cache<String, Layer> = Caffeine.newBuilder().recordStats().maximumWeight(100_000_000) // 100MB
-            // Weigher is used once at put() time
-            .weigher<String, Layer>(Weigher { key, value -> File(key).length().toInt() }).build()
-    }
-
-    init {
-        file.parentFile.mkdirs()
-    }
-
     val lastModified: Long
         get() = file.lastModified()
 
     inline fun <reified T> readOrNull(): T? {
-        if (!file.exists() || file.length() == 0L) {
-            return null
-        }
+        if (file.length() == 0L) return null
 
         // For [Layer]s, try getting from cache
         if (T::class == Layer::class) {
@@ -74,13 +49,9 @@ open class FileBackedValue<T>(
         return result
     }
 
-    inline fun <reified T> readOrThrow(): T =
-        readOrNull() ?: throw IllegalStateException("File ${file.absolutePath} does not exist or is empty.")
+    inline fun <reified T> readOrThrow(): T = readOrNull() ?: throw IllegalStateException("$file is missing or empty.")
 
     inline fun <reified T> write(value: T): T {
-        if (!file.exists()) {
-            file.createNewFile()
-        }
         val bytes = mapper.writeValueAsBytes(value)
         runBlocking(Dispatchers.IO) { file.writeBytes(bytes) }
         // For [Layer]s, put in cache
@@ -88,5 +59,14 @@ open class FileBackedValue<T>(
             cache.put(file.absolutePath, value as Layer)
         }
         return value
+    }
+
+    companion object {
+        val mapper = ObjectMapper()
+        // TODO use cache for all DiskValues types
+        /** Special cache for [Layer] objects because of their large size */
+        val cache: Cache<String, Layer> = Caffeine.newBuilder().recordStats().maximumWeight(100_000_000) // 100MB
+            // Weigher is used once at put() time
+            .weigher<String, Layer>(Weigher { key, value -> File(key).length().toInt() }).build()
     }
 }

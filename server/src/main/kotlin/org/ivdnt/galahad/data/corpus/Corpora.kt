@@ -1,45 +1,44 @@
 package org.ivdnt.galahad.data.corpus
 
-import org.apache.logging.log4j.kotlin.logger
-import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.exceptions.CorpusNotFoundException
-import org.ivdnt.galahad.filesystem.GalahadFile
+import org.ivdnt.galahad.filesystem.GalahadFolderManager
 import java.io.File
-import java.util.*
 
+/**
+ * Create, read and delete corpora.
+ * Represents a corpora collection folder on the file system.
+ * Usage:
+ * ```
+ * val corpora = Corpora(File("corpora/"))
+ * val meta = MutableCorpusMetadata(...)
+ * val key = meta.id.toString()
+ *
+ * val corpus = folder.createOrThrow(meta)
+ * val all = folder.readAll()
+ *
+ * val newMeta = MutableCorpusMetadata(...)
+ * val updatedCorpus = folder.updateOrThrow(newMeta)
+ *
+ * folder.deleteOrNull(key)
+ * if (folder.deleteOrNull(key) == null) { println("Nothing to delete") } // prints
+ * // folder.deleteOrThrow(key) // throws
+ *
+ * val corpus2 = folder.readOrNull(key) // returns null
+ * // val corpus3 = folder.readOrThrow(key) // throws
+ *
+ */
 class Corpora(
     dir: File,
-) : GalahadFile(dir) {
-    /**
-     * Create a new corpus with the provided metadata. Will override the user with the request user.
-     * Checks for valid corpus name and if the user is allowed to create a dataset (if isDataset is true).
-     */
-    fun createOrThrow(user: User, value: MutableCorpusMetadata): Corpus {
-        val uuid = UUID.randomUUID()
-        return Corpus.create(user, dir.resolve(uuid.toString()), value)
-    }
+) : GalahadFolderManager<Corpus, MutableCorpusMetadata>(dir) {
+    override fun createOrThrow(key: MutableCorpusMetadata) = Corpus.create(dir.resolve(key.id.toString()), key)
+    override fun ctor(key: String) = Corpus(dir.resolve(key))
+    override fun throwNotFound(key: String) = throw CorpusNotFoundException(key)
 
-    fun readAll(): Set<Corpus> = dir.listFiles()?.map { Corpus(it) }?.toSet() ?: setOf()
-
-    fun readOrNull(key: UUID): Corpus? =
-        if (dir.resolve(key.toString()).exists()) Corpus(dir.resolve(key.toString())) else null
-
-    fun readOrThrow(key: UUID) = readOrNull(key) ?: throw CorpusNotFoundException(key)
-
-    fun deleteOrThrow(key: UUID) {
-        readOrThrow(key) // does it exist?
-        if (!dir.resolve(key.toString()).deleteRecursively()) {
-            logger.warn("Partial deletion of $key")
-        }
-    }
-
-    //////////////////////////////
-
-    fun update(key: UUID, newMeta: MutableCorpusMetadata, user: User): CorpusMetadata {
-        val corpus = readOrThrow(key)
+    fun updateOrThrow(newMeta: MutableCorpusMetadata): Corpus {
+        val corpus = readOrThrow(newMeta.id.toString())
         val oldMeta = corpus.mutableMetadata
-        val cleanMetadata = MutableCorpusMetadata.clean(user, newMeta, oldMeta)
+        val cleanMetadata = MutableCorpusMetadata.clean(newMeta, oldMeta)
         corpus.mutableMetadata = cleanMetadata
-        return corpus.immutableMetadata
+        return corpus
     }
 }
