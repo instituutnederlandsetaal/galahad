@@ -106,21 +106,9 @@ class AnnotationLayer(
     override fun toString(): String {
         val builder = StringBuilder()
         documents.forEach { document ->
-            document.paragraphs.forEach { paragraph ->
-                paragraph.sentences.forEach { sentence ->
-                    sentence.wordforms.forEach { wordform ->
-                        builder.append(wordform.literal)
-                        // ignore spaceAfter for the last wordform in a sentence
-                        if (wordform.spaceAfter && wordform != sentence.wordforms.last())
-                            builder.append(" ")
-                    }
-                    builder.append("\n")
-                }
-                builder.append("\n")
-            }
+            builder.append(document)
+            builder.append("\n")
         }
-        // remove last newline (double LF due to paragraph and document end)
-        builder.deleteCharAt(builder.length - 1)
         return builder.toString()
     }
 }
@@ -128,14 +116,42 @@ class AnnotationLayer(
 class DocumentLayer(
     val id: String,
     val paragraphs: List<ParagraphLayer>,
-)
+) {
+    override fun toString(): String {
+        val builder = StringBuilder()
+        paragraphs.forEach { paragraph ->
+            builder.append(paragraph)
+            builder.append("\n")
+        }
+        return builder.toString()
+    }
+}
 
 class ParagraphLayer(
     val id: String,
     val sentences: List<SentenceLayer>,
-)
+) {
+    override fun toString(): String {
+        val builder = StringBuilder()
+        sentences.forEach { sentence ->
+            builder.append(sentence)
+            builder.append("\n")
+        }
+        return builder.toString()
+    }
+}
 
 class SentenceLayer(
     val id: String,
     val wordforms: List<WordForm>,
-)
+) {
+    override fun toString(): String {
+        val builder = StringBuilder()
+        wordforms.forEach { wordform ->
+            builder.append(wordform.literal)
+            if (wordform.spaceAfter)
+                builder.append(" ")
+        }
+        return builder.toString()
+    }
+}
