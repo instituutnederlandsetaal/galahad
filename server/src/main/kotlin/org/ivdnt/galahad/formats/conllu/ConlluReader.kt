@@ -8,99 +8,105 @@ class ConlluReader(
 ) {
     val layer: AnnotationLayer by lazy { read() }
 
-    private fun read(): AnnotationLayer {
-        // conllu defines the following document structure:
-        // # newdoc id = <doc_id>
-        // # newpar id = <par_id>
-        // # sent_id = <sent_id>
-        // but all of these are optional (yes, even sent_id)
-        // and even if the newdoc/newpar is preset, the id is optional
+    private val documents = mutableListOf<DocumentLayer>()
+    private val paragraphs = mutableListOf<ParagraphLayer>()
+    private val sentences = mutableListOf<SentenceLayer>()
+    private val wordforms = mutableListOf<WordForm>()
 
-        val documents = mutableListOf<DocumentLayer>()
-        var docIDStr = "d1"
-        val paragraphs = mutableListOf<ParagraphLayer>()
-        var parIDStr = "p1"
-        val sentences = mutableListOf<SentenceLayer>()
-        var sentIDStr = "s1"
-        val wordforms = mutableListOf<WordForm>()
-        var offset = 0
-        file.forEachLine {
-            if (it.startsWith("# newdoc")) {
+    private val ignorableMultiWordIds: MutableSet<String> = mutableSetOf()
 
-                // create new document
-                if (sentences.isNotEmpty()) {
-                    paragraphs.add(ParagraphLayer(parIDStr, sentences.toList()))
-                    sentences.clear()
-                }
-                if (paragraphs.isNotEmpty()) {
-                    documents.add(DocumentLayer(docIDStr, paragraphs.toList()))
-                    paragraphs.clear()
-                }
-                // get the docID last, so we don't overwrite the previous docID
-                val docID: String? = Regex("id = (\\S+)").find(it)?.groupValues?.get(1)
-                docIDStr = docID ?: "d${documents.size + 1}"
+    private var docIDStr = "d1"
+    private var parIDStr = "p1"
+    private var sentIDStr = "s1"
+    private var offset = 0
 
-            } else if (it.startsWith("# newpar")) {
-
-
-                // create new paragraph
-                if (sentences.isNotEmpty()) {
-                    paragraphs.add(ParagraphLayer(parIDStr, sentences.toList()))
-                    sentences.clear()
-                    val parID: String? = Regex("id = (\\S+)").find(it)?.groupValues?.get(1)
-                    parIDStr = parID ?: "p${paragraphs.size + 1}"
-                }
-
-                val parID: String? = Regex("id = (\\S+)").find(it)?.groupValues?.get(1)
-                parIDStr = parID ?: "p${paragraphs.size + 1}"
-
-            } else if (it.startsWith("# sent_id")) {
-
-
-                // create new sentence
-                if (wordforms.isNotEmpty()) {
-                    sentences.add(SentenceLayer(sentIDStr, wordforms.toList()))
-                    wordforms.clear()
-                }
-
-                offset = 0
-                val sentID: String? = Regex("id = (\\S+)").find(it)?.groupValues?.get(1)
-                sentIDStr = sentID ?: "s${sentences.size + 1}"
-
-
-            } else if (it.isBlank()) {
-                // create sentence for the last wordforms
-                if (wordforms.isNotEmpty()) {
-                    sentences.add(SentenceLayer(sentIDStr, wordforms.toList()))
-                    wordforms.clear()
-                }
-
-                offset = 0
-                val sentID: String? = Regex("id = (\\S+)").find(it)?.groupValues?.get(1)
-                sentIDStr = sentID ?: "s${sentences.size + 1}"
-            } else if (!it.startsWith("#")) {
-                // split on whitespace
-                val fields = it.split("\\s+".toRegex())
-                val wordForm = WordForm(
-                    id = fields[0], // id
-                    literal = fields[1], // form
-                    offset = offset,
-                    length = fields[1].length, // length of form
-                )
-                offset += fields[1].length + 1 // +1 for the space
-                wordforms.add(wordForm)
-            }
-        }
-        // create paragraph for the last sentences
-        if (wordforms.isNotEmpty()) {
-            sentences.add(SentenceLayer(sentIDStr, wordforms.toList()))
-        }
-        if (sentences.isNotEmpty()) {
-            paragraphs.add(ParagraphLayer(parIDStr, sentences.toList()))
-        }
+    private fun newDocument() {
+        newParagraph()
         if (paragraphs.isNotEmpty()) {
             documents.add(DocumentLayer(docIDStr, paragraphs.toList()))
+            paragraphs.clear()
         }
+    }
+
+    private fun newParagraph() {
+        newSentence()
+        if (sentences.isNotEmpty()) {
+            paragraphs.add(ParagraphLayer(parIDStr, sentences.toList()))
+            sentences.clear()
+        }
+    }
+
+    private fun newSentence() {
+        if (wordforms.isNotEmpty()) {
+            sentences.add(SentenceLayer(sentIDStr, wordforms.toList()))
+            wordforms.clear()
+        }
+    }
+
+    private fun parseMultiWordToken(string: String) {
+        //val parent = wordforms.last()
+        // we could create multiple analysis tokens like PD+NOU-C here.
+    }
+
+    private fun newWord(string: String) {
+        // split on whitespace
+        val fields = string.split("\\s+".toRegex())
+        val id = fields[0]
+        if (id.contains(".")) return // ignore empty nodes
+        if (id.contains("-")) {
+            // remember the range of multi-word tokens
+            val range = id.split("-")
+            val start = range[0].toInt()
+            val end = range[1].toInt()
+            for (i in start..end) {
+                ignorableMultiWordIds.add(i.toString())
+            }
+        }
+        if (id in ignorableMultiWordIds) return parseMultiWordToken(string) // ignore multi-word tokens
+
+        val spaceAfter = !fields[9].contains("SpaceAfter=No")
+        val wordForm = WordForm(
+            id = fields[0], // id
+            literal = fields[1], // form
+            offset = offset, length = fields[1].length, // length of form
+            spaceAfter = spaceAfter
+        )
+        offset += fields[1].length
+        if (spaceAfter) offset++ // add space after
+        wordforms.add(wordForm)
+    }
+
+    private fun read(): AnnotationLayer {
+        file.forEachLine {
+            when {
+                it.startsWith("# newdoc") -> {
+                    newDocument()
+                    // get ID last, so we don't overwrite it while creating a new unit
+                    docIDStr = Regex("id = (\\S+)").find(it)?.groupValues?.get(1) ?: "d${documents.size + 1}"
+                }
+
+                it.startsWith("# newpar") -> {
+                    newParagraph()
+                    // get ID last, so we don't overwrite it while creating a new unit
+                    parIDStr = Regex("id = (\\S+)").find(it)?.groupValues?.get(1) ?: "p${paragraphs.size + 1}"
+                }
+
+                it.startsWith("# sent_id") -> {
+                    newSentence()
+                    sentIDStr = Regex("id = (\\S+)").find(it)?.groupValues?.get(1) ?: "s${sentences.size + 1}"
+                }
+
+                it.isBlank() -> {
+                    newSentence()
+                }
+
+                !it.startsWith("#") -> {
+                    newWord(it)
+                }
+            }
+        }
+        // create a document for the remaining tokens
+        newDocument()
         return AnnotationLayer(documents)
     }
 }

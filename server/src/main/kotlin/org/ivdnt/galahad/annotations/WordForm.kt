@@ -8,10 +8,11 @@ import com.fasterxml.jackson.annotation.JsonProperty
  */
 class WordForm(
     /** Literal is not part of the NAF spec, but it greatly speeds up internal processing */
-    @JsonProperty("literal") val literal: String,
-    @JsonProperty("offset") val offset: Int,
-    @JsonProperty("length") val length: Int,
-    @JsonProperty("id") var id: String,
+    @JsonProperty val literal: String,
+    @JsonProperty val offset: Int,
+    @JsonProperty val length: Int,
+    @JsonProperty var id: String,
+    @JsonProperty val spaceAfter: Boolean = true,
 ) {
     @get:JsonIgnore
     val endOffset: Int get() = offset + length

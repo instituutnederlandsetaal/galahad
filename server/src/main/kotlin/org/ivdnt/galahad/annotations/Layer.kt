@@ -110,14 +110,16 @@ class AnnotationLayer(
                 paragraph.sentences.forEach { sentence ->
                     sentence.wordforms.forEach { wordform ->
                         builder.append(wordform.literal)
-                        builder.append(" ")
+                        // ignore spaceAfter for the last wordform in a sentence
+                        if (wordform.spaceAfter && wordform != sentence.wordforms.last())
+                            builder.append(" ")
                     }
                     builder.append("\n")
                 }
                 builder.append("\n")
             }
         }
-        // remove last newline
+        // remove last newline (double LF due to paragraph and document end)
         builder.deleteCharAt(builder.length - 1)
         return builder.toString()
     }
