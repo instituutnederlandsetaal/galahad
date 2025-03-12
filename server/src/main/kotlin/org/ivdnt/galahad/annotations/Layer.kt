@@ -119,6 +119,7 @@ class DocumentLayer(
 ) {
     override fun toString(): String {
         val builder = StringBuilder()
+        builder.append("===DOCSTART===\n")
         paragraphs.forEach { paragraph ->
             builder.append(paragraph)
             builder.append("\n")
@@ -148,7 +149,7 @@ class SentenceLayer(
     override fun toString(): String {
         val builder = StringBuilder()
         wordforms.forEach { wordform ->
-            builder.append(wordform.literal)
+            builder.append(wordform)
             if (wordform.spaceAfter)
                 builder.append(" ")
         }

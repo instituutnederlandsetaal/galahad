@@ -21,4 +21,23 @@ class TeiReaderTest {
         assertEquals(2, layer.documents[1].paragraphs[1].sentences.size)
     }
 
+    @Test
+    fun `Kranten17`() {
+        println(TeiReader(Resource.get("tei/Kranten17/export_1651.xml")).layer)
+    }
+
+    @Test
+    fun `twine`() {
+        println(TeiReader(Resource.get("tei/twine/twine.input.xml")).layer)
+    }
+
+    @Test
+    fun `peerle`() {
+        println(TeiReader(Resource.get("tei/GTBPrototype/151_16_anoniem_peerle_key.xml")).layer)
+    }
+
+    @Test
+    fun `missiven`() {
+        println(TeiReader(Resource.get("tei/MissivenDeel6/INT_5fbd7e2a-99da-33d0-98b8-45e7bc088d46.xml")).layer)
+    }
 }

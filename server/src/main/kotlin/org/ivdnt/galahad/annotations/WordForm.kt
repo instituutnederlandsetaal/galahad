@@ -16,4 +16,6 @@ class WordForm(
 ) {
     @get:JsonIgnore
     val endOffset: Int get() = offset + length
+
+    override fun toString(): String = "[$literal]"
 }

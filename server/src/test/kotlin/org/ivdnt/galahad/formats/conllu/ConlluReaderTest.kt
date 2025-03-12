@@ -22,13 +22,13 @@ class ConlluReaderTest {
 
     @Test
     fun `Empty nodes`() {
-        val reader = ConlluReader(Resource.get("conllu/valid/empty-nodes.conllu"))
+        val reader = ConlluReader(Resource.get("conllu/empty-nodes.conllu"))
         val text = "Sue likes coffee and Bill tea\n" // LF because reader.layer produces a valid unix file.
         assertEquals(text, reader.layer.toString())
     }
 
     @Test fun `Multi-word tokens`() {
-        val reader = ConlluReader(Resource.get("conllu/valid/mw.conllu"))
+        val reader = ConlluReader(Resource.get("conllu/mw.conllu"))
         val text = "Gas dalla statua .\n"
         assertEquals(text, reader.layer.toString())
     }

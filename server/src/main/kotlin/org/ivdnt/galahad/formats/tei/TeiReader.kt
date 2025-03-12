@@ -1,73 +1,137 @@
 package org.ivdnt.galahad.formats.tei
 
-import org.ivdnt.galahad.annotations.*
+import org.ivdnt.galahad.annotations.AnnotationLayer
+import org.ivdnt.galahad.annotations.WordForm
+import org.ivdnt.galahad.formats.AnnotationReader
 import org.ivdnt.galahad.util.getXmlBuilder
 import org.w3c.dom.Document
 import org.w3c.dom.Element
+import org.w3c.dom.Node
 import java.io.File
 
 class TeiReader(
-    private val file: File
-) {
-    val layer: AnnotationLayer by lazy { read() }
-    val doc: Document by lazy { getXmlBuilder().parse(file) }
+    file: File
+) : AnnotationReader(file) {
+    private val doc: Document by lazy { getXmlBuilder().parse(file) }
+    private var literal: String = ""
+    private var wID: String = ""
 
-    private val documents = mutableListOf<DocumentLayer>()
-    private val paragraphs = mutableListOf<ParagraphLayer>()
-    private val sentences = mutableListOf<SentenceLayer>()
-    private val wordforms = mutableListOf<WordForm>()
-
-    fun read(): AnnotationLayer {
-        // we will parse documents, paragraphs, sentences, and wordforms
-        // example document
-        // <TEI> <!-- root, may contain multiple docs -->
-        //   <text xml:id="d1"> <!-- document, contains multiple paragraphs -->
-        //     <body>
-        //       <p xml:id="d1.p1"> <!-- paragraph, contains multiple sentences -->
-        //         <s>
-        //           <w xml:id="d1.p1.w1">word1</w>
-        //           <w>word2</w>
-        //         </s>
-        //       </p>
-        //     </body>
-        //   </text>
-        // </TEI>
-
-        val root = doc.documentElement
-        val docs = root.getElementsByTagName("text")
-        for (i in 0 until docs.length) {
-            var offset = 0
-            val doc = docs.item(i) as Element
-            val docId = doc.getAttribute("xml:id")
-            val parElems = doc.getElementsByTagName("p")
-            for (j in 0 until parElems.length) {
-                val paragraph = parElems.item(j) as Element
-                val paragraphId = paragraph.getAttribute("xml:id")
-                val sentElems = paragraph.getElementsByTagName("s")
-                for (k in 0 until sentElems.length) {
-                    val sentence = sentElems.item(k) as Element
-                    val words = sentence.getElementsByTagName("w")
-                    for (l in 0 until words.length) {
-                        val word = words.item(l) as Element
-                        val wordId = word.getAttribute("xml:id")
-                        val text = word.textContent
-                        wordforms.add(
-                            WordForm(
-                                id = wordId, literal = text, length = text.length, offset = offset
-                            )
-                        )
-                        offset += text.length + 1
-                    }
-                    sentences.add(SentenceLayer(sentence.getAttribute("xml:id"), wordforms.toList()))
-                    wordforms.clear()
-                }
-                paragraphs.add(ParagraphLayer(paragraphId, sentences.toList()))
-                sentences.clear()
-            }
-            documents.add(DocumentLayer(docId, paragraphs.toList()))
-            paragraphs.clear()
-        }
-
+    override fun read(): AnnotationLayer {
+        parseTopLevelTextNodes(doc.documentElement)
         return AnnotationLayer(documents)
+    }
+
+    /**
+     * Recursively enter each node and if it is top level <text> node,
+     * i.e. a <text> node that is not contained in another <text> node, parse it.
+     */
+    private fun parseTopLevelTextNodes(node: Node) {
+        val children = node.childNodes
+        for (i in 0 until children.length) {
+            val child = children.item(i)
+            if (child.nodeType == Node.ELEMENT_NODE && (child as Element).tagName == "text") {
+                // parse document
+                parseNodesIntoDocument(child)
+                docID = child.getAttribute("xml:id")
+                newDocument()
+            } else {
+                // recurse
+                parseTopLevelTextNodes(child)
+            }
+        }
+    }
+
+    /**
+     * Parse a <text> node and its children into an AnnotationLayer.
+     */
+    private fun parseNodesIntoDocument(node: Node) {
+        val children = node.childNodes
+        for (i in 0 until children.length) {
+            val child = children.item(i)
+            if (child.nodeType == Node.ELEMENT_NODE) {
+                val tag = (child as Element).tagName
+                if (IGNORABLE_TAGS.contains(tag)) {
+                    continue
+                }
+                parseNodesIntoDocument(child)
+                val id = child.getAttribute("xml:id")
+                if (PARAGRAPH_TAGS.contains(tag)) {
+                    // New paragraph
+                    parID = id
+                    newParagraph()
+                } else if (SENTENCE_TAGS.contains(tag)) {
+                    // New sentence
+                    sentID = id
+                    newSentence()
+                } else if (tag == "w" || tag == "pc") {
+                    // New wordform
+                    wID = id
+                    newWordform(child.nextSibling?.nodeName != "pc")
+                }
+            } else if (child.nodeType == Node.TEXT_NODE) {
+                val text = child.textContent
+                val words = text.split("\\s+".toRegex())
+                for ((j, word) in words.withIndex()) {
+                    if (j > 0) {
+                        newWordform()
+                    }
+                    literal += word
+                }
+            }
+        }
+    }
+
+    override fun newSentence() {
+        newWordform()
+        super.newSentence()
+    }
+
+    private fun newWordform(spaceAfter: Boolean = true) {
+        if (literal.isBlank()) return
+        wordforms.add(WordForm(literal, offset, literal.length, wID, spaceAfter))
+        offset += literal.length
+        literal = ""
+    }
+
+    companion object {
+        // TODO, which id to use? The deepest or the first?
+        private val PARAGRAPH_TAGS = listOf(
+            "text",
+            "body",
+            "front",
+            "back",
+            "head",
+            "opener",
+            "signed",
+            "closer",
+            "postscript",
+            "signed",
+            "trailer",
+            "argument",
+            "byline",
+            "dateline",
+            "docAuthor",
+            "docDate",
+            "epigraph",
+            "meeting",
+            "salute",
+            "div",
+            "div1",
+            "div2",
+            "div3",
+            "div4",
+            "div5",
+            "div6",
+            "div7",
+            "lg",
+            "ab",
+            "p",
+            "cit",
+            "quote",
+            "floatingText",
+            "said"
+        )
+        private val SENTENCE_TAGS = listOf("s", "l", "u")
+        private val IGNORABLE_TAGS = listOf("note")
     }
 }

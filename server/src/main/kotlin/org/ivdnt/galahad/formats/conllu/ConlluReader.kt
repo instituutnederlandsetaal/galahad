@@ -1,46 +1,47 @@
 package org.ivdnt.galahad.formats.conllu
 
 import org.ivdnt.galahad.annotations.*
+import org.ivdnt.galahad.formats.AnnotationReader
 import java.io.File
 
 class ConlluReader(
-    private val file: File
-) {
-    val layer: AnnotationLayer by lazy { read() }
-
-    private val documents = mutableListOf<DocumentLayer>()
-    private val paragraphs = mutableListOf<ParagraphLayer>()
-    private val sentences = mutableListOf<SentenceLayer>()
-    private val wordforms = mutableListOf<WordForm>()
+    file: File
+) : AnnotationReader(file) {
 
     private val ignorableMultiWordIds: MutableSet<String> = mutableSetOf()
 
-    private var docIDStr = "d1"
-    private var parIDStr = "p1"
-    private var sentIDStr = "s1"
-    private var offset = 0
+    override fun read(): AnnotationLayer {
+        file.forEachLine {
+            when {
+                it.startsWith("# newdoc") -> {
+                    newDocument()
+                    // get ID last, so we don't overwrite it while creating a new unit
+                    docID = Regex("id = (\\S+)").find(it)?.groupValues?.get(1) ?: "d${documents.size + 1}"
+                }
 
-    private fun newDocument() {
-        newParagraph()
-        if (paragraphs.isNotEmpty()) {
-            documents.add(DocumentLayer(docIDStr, paragraphs.toList()))
-            paragraphs.clear()
-        }
-    }
+                it.startsWith("# newpar") -> {
+                    newParagraph()
+                    // get ID last, so we don't overwrite it while creating a new unit
+                    parID = Regex("id = (\\S+)").find(it)?.groupValues?.get(1) ?: "p${paragraphs.size + 1}"
+                }
 
-    private fun newParagraph() {
-        newSentence()
-        if (sentences.isNotEmpty()) {
-            paragraphs.add(ParagraphLayer(parIDStr, sentences.toList()))
-            sentences.clear()
-        }
-    }
+                it.startsWith("# sent_id") -> {
+                    newSentence()
+                    sentID = Regex("id = (\\S+)").find(it)?.groupValues?.get(1) ?: "s${sentences.size + 1}"
+                }
 
-    private fun newSentence() {
-        if (wordforms.isNotEmpty()) {
-            sentences.add(SentenceLayer(sentIDStr, wordforms.toList()))
-            wordforms.clear()
+                it.isBlank() -> {
+                    newSentence()
+                }
+
+                !it.startsWith("#") -> {
+                    newWord(it)
+                }
+            }
         }
+        // create a document for the remaining tokens
+        newDocument()
+        return AnnotationLayer(documents)
     }
 
     private fun parseMultiWordToken(string: String) {
@@ -74,39 +75,5 @@ class ConlluReader(
         offset += fields[1].length
         if (spaceAfter) offset++ // add space after
         wordforms.add(wordForm)
-    }
-
-    private fun read(): AnnotationLayer {
-        file.forEachLine {
-            when {
-                it.startsWith("# newdoc") -> {
-                    newDocument()
-                    // get ID last, so we don't overwrite it while creating a new unit
-                    docIDStr = Regex("id = (\\S+)").find(it)?.groupValues?.get(1) ?: "d${documents.size + 1}"
-                }
-
-                it.startsWith("# newpar") -> {
-                    newParagraph()
-                    // get ID last, so we don't overwrite it while creating a new unit
-                    parIDStr = Regex("id = (\\S+)").find(it)?.groupValues?.get(1) ?: "p${paragraphs.size + 1}"
-                }
-
-                it.startsWith("# sent_id") -> {
-                    newSentence()
-                    sentIDStr = Regex("id = (\\S+)").find(it)?.groupValues?.get(1) ?: "s${sentences.size + 1}"
-                }
-
-                it.isBlank() -> {
-                    newSentence()
-                }
-
-                !it.startsWith("#") -> {
-                    newWord(it)
-                }
-            }
-        }
-        // create a document for the remaining tokens
-        newDocument()
-        return AnnotationLayer(documents)
     }
 }
