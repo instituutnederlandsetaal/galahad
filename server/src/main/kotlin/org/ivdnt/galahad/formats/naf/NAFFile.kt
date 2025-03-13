@@ -32,8 +32,7 @@ class NAFFile(
                 WordForm(
                     literal = xwf.textContent,
                     id = xwf.getAttribute("id"),
-                    offset = xwf.getAttribute("offset").toInt(),
-                    length = xwf.getAttribute("length").toInt()
+                    offset = xwf.getAttribute("offset").toInt()
                 )
             )
         }

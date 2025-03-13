@@ -1,6 +1,8 @@
 package org.ivdnt.galahad.formats.tei
 
 import org.ivdnt.galahad.annotations.AnnotationLayer
+import org.ivdnt.galahad.annotations.AnnotationType
+import org.ivdnt.galahad.annotations.Term2
 import org.ivdnt.galahad.annotations.WordForm
 import org.ivdnt.galahad.formats.AnnotationReader
 import org.ivdnt.galahad.util.getXmlBuilder
@@ -67,6 +69,7 @@ class TeiReader(
                     // New wordform
                     wID = id
                     newWordform(child.nextSibling?.nodeName != "pc")
+                    newTerm(child)
                 }
             } else if (child.nodeType == Node.TEXT_NODE) {
                 val text = child.textContent
@@ -81,6 +84,15 @@ class TeiReader(
         }
     }
 
+    private fun newTerm(el: Element) {
+        val wordform = wordforms.last()
+        // extract lemma
+        el.getAttribute("lemma").ifBlank { null }?.let { terms.add(AnnotationType.LEMMA, Term2(it, listOf(wordform))) }
+        // extract pos
+        el.getAttribute("pos").ifBlank { el.getAttribute("type").ifBlank { null } }
+            ?.let { terms.add(AnnotationType.POS, Term2(it, listOf(wordform))) }
+    }
+
     override fun newSentence() {
         newWordform()
         super.newSentence()
@@ -88,15 +100,14 @@ class TeiReader(
 
     private fun newWordform(spaceAfter: Boolean = true) {
         if (literal.isBlank()) return
-        wordforms.add(WordForm(literal, offset, literal.length, wID, spaceAfter))
+        wordforms.add(WordForm(literal, offset, wID, spaceAfter))
         offset += literal.length
         literal = ""
     }
 
     companion object {
-        // TODO, which id to use? The deepest or the first?
         private val PARAGRAPH_TAGS = listOf(
-            "text",
+            "text", // top most <text> defines a document, any other <text> is treated as a paragraph
             "body",
             "front",
             "back",

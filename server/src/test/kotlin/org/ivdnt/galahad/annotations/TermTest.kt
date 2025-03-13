@@ -6,11 +6,11 @@ import org.junit.jupiter.api.Test
 class TermTest {
     // Only the relevant parameters are initialized.
     private val singleTarget = Term(
-        "", "", mutableListOf(WordForm("schooltje", 0, 0, "0"))
+        "", "", mutableListOf(WordForm("schooltje", 0,  "0"))
     )
     private val multiTarget = Term(
         "", "", mutableListOf(
-            WordForm("hoogbouw", 0, 0, "0"), WordForm("en", 0, 0, "0"), WordForm("laagbouw", 0, 0, "0")
+            WordForm("hoogbouw", 0,  "0"), WordForm("en", 0,  "0"), WordForm("laagbouw", 0,  "0")
         )
     )
 

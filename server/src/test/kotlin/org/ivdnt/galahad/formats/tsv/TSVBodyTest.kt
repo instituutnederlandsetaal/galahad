@@ -91,7 +91,6 @@ internal class TSVBodyTest {
         val wf = layer.wordForms[i]
         assertEquals(literal, wf.literal)
         assertEquals("w$i", wf.id)
-        assertEquals(literal.length, wf.length)
         // term
         val term = layer.terms[i]
         assertEquals(lemma, term.lemma)

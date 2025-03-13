@@ -285,13 +285,13 @@ open class TEITextMerger(
                     // Tokenization mismatch, report it
                     Report.spottedIncompatibleTokenization(
                         wordFormToAdd, WordForm(
-                            node.textContent, offset, node.textContent.length,
+                            node.textContent, offset,
                             node.attributes?.getNamedItem("xml:id")?.textContent ?: ""
                         )
                     )
 
                     // Best effort to fix it
-                    if (wordFormToAdd.length > node.getPlainTextContent().length) {
+                    if (wordFormToAdd.literal.length > node.getPlainTextContent().length) {
                         // Add the term to this node,
                         // The excess length is ignored, which might result in the following token missing it's match
                         mergeWTag(wordFormToAdd, element)

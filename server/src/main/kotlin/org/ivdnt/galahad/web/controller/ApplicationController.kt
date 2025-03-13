@@ -31,7 +31,7 @@ class ApplicationController : Logging {
     @CrossOrigin
     @GetMapping(VERSION_URL)
     fun getVersion(): Map<String, String> =
-        Config.Companion.galahadVersionYaml().entries.associate { it.key.toString() to it.value.toString() }
+        Config.galahadVersionYaml().entries.associate { it.key.toString() to it.value.toString() }
 
     @Hidden
     @CrossOrigin
@@ -53,5 +53,5 @@ class ApplicationController : Logging {
     )
     @CrossOrigin
     @GetMapping("/user")
-    fun getUser(): User = User.Companion.fromRequest(request)
+    fun getUser(): User = User.fromRequest(request)
 }

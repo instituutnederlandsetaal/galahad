@@ -82,7 +82,7 @@ class LayerToTEIConverter(
             for (omt in openMultiTerms) {
                 if (omt.current!!.offset == offset) {
                     addWordFromForMulti(omt.current!!, omt.previous, omt.next)
-                    offset += omt.current!!.length
+                    offset += omt.current!!.literal.length
                     omt.skip()
                     continue@characterLoop // we added a wordform, assuming no overlapping, we can go to the next character
                 }

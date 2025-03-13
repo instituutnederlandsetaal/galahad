@@ -11,10 +11,10 @@ class WordFormComparisonTest {
     val short: String = "short"
 
     // A is generated
-    private fun wfAt(offset: Int) = WordForm(short, offset, short.length, "")
+    private fun wfAt(offset: Int) = WordForm(short, offset,  "")
 
     // B is constant
-    val b: WordForm = WordForm(long, 0, long.length, "")
+    val b: WordForm = WordForm(long, 0,  "")
 
     private fun assertSymmetricPartialOverlapOnly(a: WordForm, b: WordForm) {
         WordFormComparison(a, b).apply {
@@ -69,7 +69,7 @@ class WordFormComparisonTest {
 
     @Test
     fun `A is B`() {
-        val a = WordForm(long, 0, long.length, "")
+        val a = WordForm(long, 0, "")
         WordFormComparison(a, b).apply {
             assertTrue(fullOverlap)
             assertFalse(partialOverlap)

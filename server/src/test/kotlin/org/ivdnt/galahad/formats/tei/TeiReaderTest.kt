@@ -40,4 +40,9 @@ class TeiReaderTest {
     fun `missiven`() {
         println(TeiReader(Resource.get("tei/MissivenDeel6/INT_5fbd7e2a-99da-33d0-98b8-45e7bc088d46.xml")).layer)
     }
+
+    @Test
+    fun `Rijmbijbel`() {
+        println(TeiReader(Resource.get("tei/4000.tei.xml")).layer)
+    }
 }

@@ -128,3 +128,8 @@ data class Term(
         }
     }
 }
+
+data class Term2(
+    val value: String,
+    val targets: List<WordForm>,
+)

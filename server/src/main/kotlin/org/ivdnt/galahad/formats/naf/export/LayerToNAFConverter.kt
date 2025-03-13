@@ -44,7 +44,7 @@ class LayerToNAFConverter(
                 val wf = xmlDoc.createElement("wf")
                 text.appendChild(wf)
                 wf.setAttribute("offset", wordForm.offset.toString())
-                wf.setAttribute("length", wordForm.length.toString())
+                wf.setAttribute("length", wordForm.literal.length.toString())
                 wf.setAttribute("id", wordForm.id)
                 wf.textContent = wordForm.literal
             }

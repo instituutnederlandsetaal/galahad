@@ -3,6 +3,9 @@ package org.ivdnt.galahad.util
 import java.io.OutputStream
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
+import javax.xml.transform.OutputKeys
+import javax.xml.transform.Transformer
+import javax.xml.transform.TransformerFactory
 
 /**
  * Helper class for writing xml to a stream and keeping track of the indents between tags.
@@ -58,4 +61,11 @@ fun getXmlBuilder(): DocumentBuilder {
     val dbf = DocumentBuilderFactory.newInstance()
     dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
     return dbf.newDocumentBuilder()
+}
+
+fun getXmlTransformer(): Transformer = TransformerFactory.newInstance().newTransformer().apply {
+    // Pretty print
+    setOutputProperty(OutputKeys.INDENT, "yes")
+    // For some reason needed to print the root on a new line instead of on the same line as the doctype.
+    setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "yes")
 }

@@ -64,9 +64,9 @@ class InternalJobController(
                 ?: throw Exception("Processing ID not found, was this file uploaded by me?")
             val original: Document = corpora.readCorpusUnsafe(corpusID).documents.readOrThrow(documentName)
             val job: Job = corpora.readCorpusUnsafe(corpusID).jobs.readOrThrow(jobName)
-            val tagger = Tagger.Companion.readOrThrow(job.name)
+            val tagger = Tagger.readOrThrow(job.name)
             val tagset: Tagset? = Tagset.readOrNull(tagger)
-            when (val uploadedFile = InternalFile.Companion.create(tempFile)) {
+            when (val uploadedFile = InternalFile.create(tempFile)) {
                 // Treat TSVFiles separately form SourceLayerableFiles, because calling sourceLayer() on a TSV
                 // Would default its alignment to offset=0. Instead, we force it to align with the original plaintext.
                 is ConlluFile -> {
@@ -75,7 +75,7 @@ class InternalJobController(
                     )
                     job.jobDocuments.readOrThrow(documentName).layer = Layer(
                         name = jobName,
-                        tagset = tagset ?: Tagset.Companion.UNKNOWN,
+                        tagset = tagset ?: Tagset.UNKNOWN,
                         wordForms = alignedLayer.wordForms,
                         terms = alignedLayer.terms
                     )
@@ -88,11 +88,10 @@ class InternalJobController(
                     )
                     job.jobDocuments.readOrThrow(documentName).layer = Layer(
                         name = jobName,
-                        tagset = tagset ?: Tagset.Companion.UNKNOWN,
+                        tagset = tagset ?: Tagset.UNKNOWN,
                         wordForms = alignedLayer.wordForms,
                         terms = alignedLayer.terms
                     )
-
                 }
 
                 else -> {

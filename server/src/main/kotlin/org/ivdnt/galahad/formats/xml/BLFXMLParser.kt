@@ -237,7 +237,7 @@ class BLFXMLParser(
         if (pos.isNullOrBlank()) pos = null
 
         // Add the word to the source layer
-        val wordForm = WordForm(literal, trueWordOffset, literal.length, id ?: "no-id")
+        val wordForm = WordForm(literal, trueWordOffset, id ?: "no-id")
         val term = Term(lem, pos, mutableListOf(wordForm))
         sourceLayer.wordForms.add(wordForm)
         sourceLayer.terms.add(term)

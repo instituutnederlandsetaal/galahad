@@ -15,8 +15,8 @@ class TermComparisonTest {
     inner class OverlapTest {
         @Test
         fun `Full overlap`() {
-            val target1 = WordForm("word", 0, 4, "")
-            val target2 = WordForm("word", 0, 4, "")
+            val target1 = WordForm("word", 0,  "")
+            val target2 = WordForm("word", 0,  "")
             val term1 = Term("", "", mutableListOf(target1))
             val term2 = Term("", "", mutableListOf(target2))
             TermComparison(term1, term2).apply {
@@ -27,8 +27,8 @@ class TermComparisonTest {
 
         @Test
         fun `Partial overlap`() {
-            val target1 = WordForm("word", 0, 4, "")
-            val target2 = WordForm("word", 2, 6, "")
+            val target1 = WordForm("word", 0,  "")
+            val target2 = WordForm("word", 2,  "")
             val term1 = Term("", "", mutableListOf(target1))
             val term2 = Term("", "", mutableListOf(target2))
             TermComparison(term1, term2).apply {

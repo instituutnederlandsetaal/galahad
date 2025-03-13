@@ -13,6 +13,6 @@ class FoliaFile(
     override val format: DocumentFormat = DocumentFormat.Folia
     override val plaintext: String by lazy { reader.plainTextBuilder.toString() }
     override val sourceLayer: Layer by lazy { reader.sourceLayer }
-    private val reader: FoliaReader by lazy { FoliaReader(file) { _, _, _ -> }.also { it.read() } }
+    private val reader: FoliaReader by lazy { FoliaReader(file) { _, _, _ -> }.apply { read() } }
     override fun merge(export: DocumentExport): FoliaFile = FoliaLayerMerger(this, export).merge()
 }

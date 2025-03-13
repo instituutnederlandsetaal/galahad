@@ -108,7 +108,6 @@ class LayerBuilder {
                 literal = literal,
                 id = "dummy${i}",
                 offset = baseOffset + i * literal.length, // of course this is only correct if this is the only function we use to set wordforms
-                length = literal.length
             )
             val term = Term(
                 lemma = lemma, pos = pos, targets = mutableListOf(wf)
@@ -130,14 +129,14 @@ class LayerBuilder {
         var offset = layer.terms.lastOrNull()?.targets?.lastOrNull()?.endOffset?.let { it } ?: 0
         for (i in words.indices) {
             val wf = WordForm(
-                literal = words[i], id = "w${i}", offset = offset, length = words[i].length
+                literal = words[i], id = "w${i}", offset = offset
             )
             val term = Term(
                 lemma = words[i], pos = offset.toString(), targets = mutableListOf(wf)
             )
             layer.wordForms.add(wf)
             layer.terms.add(term)
-            offset += wf.length + 1 // + space
+            offset += wf.literal.length + 1 // + space
         }
         return this
     }

@@ -62,19 +62,19 @@ open class Layer(
             return _lookup
         }
 
-    fun addWordFormWithAnonymousId(literal: String, offset: Int, length: Int): WordForm {
+    fun addWordFormWithAnonymousId(literal: String, offset: Int): WordForm {
         // TODO There is an edge case here, if the original document uses the w1 id convention
         // and we add wordforms both anonymously add normally
         // id for some wordforms will be the same, and this will break further processing
         // TODO fix it
-        val wf = WordForm(literal, offset, length, "w${wordForms.size}")
+        val wf = WordForm(literal, offset, "w${wordForms.size}")
         wordForms.add(wf)
         return wf
     }
 
     /** Adds a [WordForm] and a [Term] to this [Layer] based on a [Annotations] */
     fun addTSVEntryOnOffset(annotations: Annotations, offset: Int) {
-        val wordForm = addWordFormWithAnonymousId(annotations.token, offset, annotations.token.length)
+        val wordForm = addWordFormWithAnonymousId(annotations.token, offset)
         // Remove token annotation as it already exists in the wordform
         val filteredAnnotations = annotations.filterKeys { it != AnnotationType.TOKEN }
         // construct term
@@ -145,6 +145,7 @@ class ParagraphLayer(
 class SentenceLayer(
     val id: String,
     val wordforms: List<WordForm>,
+    val terms: Map<AnnotationType, List<Term2>>,
 ) {
     override fun toString(): String {
         val builder = StringBuilder()

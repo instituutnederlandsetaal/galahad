@@ -25,13 +25,9 @@ class ConlluReader(
                     parID = Regex("id = (\\S+)").find(it)?.groupValues?.get(1) ?: "p${paragraphs.size + 1}"
                 }
 
-                it.startsWith("# sent_id") -> {
+                it.startsWith("# sent_id") || it.isBlank() -> {
                     newSentence()
                     sentID = Regex("id = (\\S+)").find(it)?.groupValues?.get(1) ?: "s${sentences.size + 1}"
-                }
-
-                it.isBlank() -> {
-                    newSentence()
                 }
 
                 !it.startsWith("#") -> {
@@ -69,7 +65,7 @@ class ConlluReader(
         val wordForm = WordForm(
             id = fields[0], // id
             literal = fields[1], // form
-            offset = offset, length = fields[1].length, // length of form
+            offset = offset,
             spaceAfter = spaceAfter
         )
         offset += fields[1].length

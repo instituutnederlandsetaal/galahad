@@ -12,6 +12,7 @@ abstract class AnnotationReader(
     protected val paragraphs: MutableList<ParagraphLayer> = mutableListOf()
     protected val sentences: MutableList<SentenceLayer> = mutableListOf()
     protected val wordforms: MutableList<WordForm> = mutableListOf()
+    protected val terms: TermsMap = TermsMap()
 
     protected var offset: Int = 0
     protected var docID: String = "d1"
@@ -38,8 +39,26 @@ abstract class AnnotationReader(
 
     protected open fun newSentence() {
         if (wordforms.isNotEmpty()) {
-            sentences.add(SentenceLayer(sentID, wordforms.toList()))
+            sentences.add(SentenceLayer(sentID, wordforms.toList(), terms.map))
             wordforms.clear()
+            terms.clear()
         }
+    }
+
+    class TermsMap {
+        private val _map: MutableMap<AnnotationType, MutableList<Term2>> = mutableMapOf()
+
+        val map: Map<AnnotationType, List<Term2>>
+            get() = _map.toMap()
+
+        fun add(annotation: AnnotationType, term: Term2) {
+            if (!_map.containsKey(annotation)) {
+                _map[annotation] = mutableListOf()
+            }
+            _map[annotation]!!.add(term)
+        }
+
+        fun clear(): Unit = _map.clear()
+
     }
 }

@@ -21,18 +21,18 @@ class TxtReader(
         var sentenceID = 1
         var paragraphID = 1
         file.forEachLine {
-            if (!it.isBlank()) {
+            if (it.isNotBlank()) {
                 // split on whitespace
                 val wordsInLine = it.split("\\s+".toRegex())
                 var offset = 0
                 val words = mutableListOf<WordForm>()
                 for (word in wordsInLine) {
-                    words.add(WordForm(word, offset, word.length, "w$wordID"))
+                    words.add(WordForm(word, offset,"w$wordID"))
                     offset += word.length + 1 // +1 for the space
                     wordID++
                 }
                 // create sentence
-                sentences.add(SentenceLayer("s$sentenceID", words))
+                sentences.add(SentenceLayer("s$sentenceID", words, emptyMap()))
                 sentenceID++
             } else if (sentences.isNotEmpty()) {
                 // create paragraph

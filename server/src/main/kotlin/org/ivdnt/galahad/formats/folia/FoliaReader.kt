@@ -158,7 +158,7 @@ class FoliaReader(
         // We need the " " for the correct offset to give to nodeHandler.
         nodeHandler(w as Node, plainTextBuilder.length, xmlDoc)
 
-        val wordForm = WordForm(literal, plainTextBuilder.length, literal.length, id)
+        val wordForm = WordForm(literal, plainTextBuilder.length, id)
         sourceLayer.wordForms.add(wordForm)
         val term = Term(lem, pos, mutableListOf(wordForm))
         sourceLayer.terms.add(term)
