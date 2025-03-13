@@ -27,7 +27,8 @@ class ConlluReaderTest {
         assertEquals(text, reader.layer.toString())
     }
 
-    @Test fun `Multi-word tokens`() {
+    @Test
+    fun `Multi-word tokens`() {
         val reader = ConlluReader(Resource.get("conllu/mw.conllu"))
         val text = "Gas dalla statua .\n"
         assertEquals(text, reader.layer.toString())
