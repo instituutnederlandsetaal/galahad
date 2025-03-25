@@ -1,33 +1,31 @@
-package org.ivdnt.galahad.formats.tsv.export
+package org.ivdnt.galahad.formats.tsv
 
-import org.ivdnt.galahad.annotations.AnnotationType
+import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Layer
-import org.ivdnt.galahad.formats.DocumentExport
-import org.ivdnt.galahad.formats.LayerMerger
-import org.ivdnt.galahad.formats.LayerTransformer
-import org.ivdnt.galahad.formats.tsv.TSVFile
+import org.ivdnt.galahad.export.DocumentExport
+import org.ivdnt.galahad.export.LayerMerger
 import java.io.File
+import java.io.OutputStream
 import kotlin.io.path.createTempDirectory
 
 /**
- * Do not call directly. Use [TSVFile.merge] instead.
+ * Do not call directly. Use [TsvFile.merge] instead.
  */
-internal open class TSVLayerMerger(
-    open val sourceFile: TSVFile,
-    transformMetadata: DocumentExport,
-) : LayerMerger<TSVFile>, LayerTransformer(transformMetadata) {
-    val layer = transformMetadata.layer
-    val outFile: File = createTempDirectory("teimerge").toFile().resolve(transformMetadata.document.name)
+class TsvMerger(
+    export: DocumentExport,
+) : LayerMerger(export) {
+    val layer = export.layer
+    val outFile: File = createTempDirectory("teimerge").toFile().resolve(export.document.name)
     protected open val hasHeader: Boolean = true
 
     /**
      * Merge uploaded raw file with tagger layer. Headers indices are already determined by TSVFile.
      * Read in per line, split on tabs, swap out pos & lemma and commit to new file
      */
-    override fun merge(): TSVFile {
+    override fun merge(out: OutputStream): File {
         sourceFile.parse() // parse the sourceFile if needed.
         parseByLine()
-        return TSVFile(outFile)
+        return TsvFile(outFile)
     }
 
     protected fun parseByLine() {
@@ -70,10 +68,10 @@ internal open class TSVLayerMerger(
         columns: MutableList<String>,
         layer: Layer,
         termIndex: Int,
-        annotationType: AnnotationType,
+        annotation: Annotation,
         columnIndex: Int,
     ) {
         val term = layer.terms[termIndex]
-        columns[columnIndex] = term.annotations[annotationType] ?: ""
+        columns[columnIndex] = term.annotations[annotation] ?: ""
     }
 }

@@ -14,8 +14,7 @@ import java.io.File
 open class DiskValue<T>(
     val file: File,
 ) : Logging {
-    val lastModified: Long
-        get() = file.lastModified()
+    val lastModified: Long get() = file.lastModified()
 
     inline fun <reified T> readOrNull(): T? {
         if (file.length() == 0L) return null
@@ -53,6 +52,6 @@ open class DiskValue<T>(
         /** Special cache for [Layer] objects because of their large size */
         val cache: Cache<String, Layer> = Caffeine.newBuilder().recordStats().maximumWeight(100_000_000) // 100MB
             // Weigher is used once at put() time
-            .weigher<String, Layer>(Weigher { key, value -> File(key).length().toInt() }).build()
+            .weigher<String, Layer> { key, _ -> File(key).length().toInt() }.build()
     }
 }

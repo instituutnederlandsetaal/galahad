@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.evaluation.confusion
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import org.ivdnt.galahad.annotations.AnnotationType
+import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.evaluation.CsvSampleExporter
@@ -17,7 +17,7 @@ class CorpusConfusion(
     corpus: Corpus,
     val hypothesis: String,
     val reference: String = SOURCE_LAYER_NAME,
-    annotation: AnnotationType = AnnotationType.POS,
+    annotation: Annotation = Annotation.POS,
     layerFilter: LayerFilter? = null,
 ) : Confusion(truncate = layerFilter == null, annotation), CsvSampleExporter {
 

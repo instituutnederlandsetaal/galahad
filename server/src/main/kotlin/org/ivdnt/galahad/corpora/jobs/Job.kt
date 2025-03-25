@@ -207,7 +207,7 @@ class Job(
             val docJob = jobDocuments.readOrNull(it.name) ?: jobDocuments.createOrThrow(it.name)
             docJob.status == DocumentProcessingStatus.PENDING || docJob.status == DocumentProcessingStatus.ERROR
         }.take(numberToUpload).forEach {
-            val processingID = postInputToTagger(it.plainTextFile)
+            val processingID = postInputToTagger(it.plaintextFile)
             // Store the processingID, so we can match it with the incoming file later
             jobDocuments.readOrThrow(it.name).processingID = processingID
         }

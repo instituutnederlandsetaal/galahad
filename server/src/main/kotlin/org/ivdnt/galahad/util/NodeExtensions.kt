@@ -4,6 +4,30 @@ import org.ivdnt.galahad.formats.xml.tagName
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 
+val Node.children: Sequence<Node>
+    get() = object : Sequence<Node> {
+    override fun iterator(): Iterator<Node> = object : Iterator<Node> {
+        var index = 0
+        override fun hasNext(): Boolean = index < childNodes.length
+        override fun next(): Node = childNodes.item(index++)
+    }
+}
+
+val Node.childElements: Sequence<Element>
+    get() = object : Sequence<Element> {
+    override fun iterator(): Iterator<Element> = object : Iterator<Element> {
+        var index = 0
+        override fun hasNext(): Boolean = index < childNodes.length
+        override fun next(): Element {
+            val node = childNodes.item(index++)
+            if (node.nodeType == Node.ELEMENT_NODE) {
+                return node as Element
+            }
+            return next()
+        }
+    }
+}
+
 /** Whether this node is contained in a node with name [tagName]*/
 fun Node.containedIn(tagName: String): Boolean {
     if (this.parentNode == null)
@@ -29,12 +53,12 @@ fun Node.insertFirst(newChild: Node) {
 }
 
 /** Returns the next sibling of the node that is not text. */
-fun Node.nextNonTextSibling(): Node? {
+fun Node.nextElementSibling(): Element? {
     var next = this.nextSibling
-    while (next != null && next.nodeType == Node.TEXT_NODE) {
+    while (next != null && next.nodeType != Node.ELEMENT_NODE) {
         next = next.nextSibling
     }
-    return next
+    return next as Element?
 }
 
 /** Looks for the first child node, 1 deep, or null. */

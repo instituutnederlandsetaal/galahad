@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.app.JOB_DOCUMENT_URL
 import org.ivdnt.galahad.app.JOB_URL
+import org.ivdnt.galahad.corpora.documents.DocumentFormat
 import org.ivdnt.galahad.exceptions.ErrorResponse
 import org.ivdnt.galahad.util.setContentDisposition
 import org.ivdnt.galahad.web.service.CorporaService
@@ -63,11 +64,11 @@ class ExportController(
     fun convertAndExportJob(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,
-        @RequestParam("format") @Parameter(description = "Export format") formatName: String,
+        @RequestParam("format") @Parameter(description = "Export format") format: DocumentFormat,
         @RequestParam(defaultValue = "false") @Parameter(description = "Only export the head of PoS (e.g. PD in PD(type=art))") posHeadOnly: Boolean = false,
     ) {
         setZipResponseHeader(corpus)
-        return exportService.exportCorpusJobInFormat(corpus, job, formatName, shouldMerge = false, posHeadOnly)
+        return exportService.exportCorpusJobInFormat(corpus, job, format, shouldMerge = false, posHeadOnly)
     }
 
     @Operation(
@@ -100,11 +101,11 @@ class ExportController(
     fun mergeAndExportJob(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,
-        @RequestParam("format") @Parameter(description = "Export format") filterFormat: String,
+        @RequestParam("format") @Parameter(description = "Export format") format: DocumentFormat,
         @RequestParam(defaultValue = "false") @Parameter(description = "Only export the head of PoS (e.g. PD in PD(type=art))") posHeadOnly: Boolean = false,
     ) {
         setZipResponseHeader(corpus)
-        return exportService.exportCorpusJobInFormat(corpus, job, filterFormat, shouldMerge = true, posHeadOnly)
+        return exportService.exportCorpusJobInFormat(corpus, job, format, shouldMerge = true, posHeadOnly)
     }
 
     @Operation(
@@ -137,11 +138,11 @@ class ExportController(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,
         @PathVariable @Parameter(description = "Document name") document: String,
-        @RequestParam("format") @Parameter(description = "Export format") formatName: String,
+        @RequestParam @Parameter(description = "Export format") format: DocumentFormat,
         @RequestParam(defaultValue = "false") @Parameter(description = "Only export the head of PoS (e.g. PD in PD(type=art))") posHeadOnly: Boolean = false,
     ): ByteArray? {
         response?.contentType = "text/plain"
-        return exportService.convertDoc(corpus, job, document, formatName, posHeadOnly).readBytes()
+        return exportService.convertDoc(corpus, job, document, format, posHeadOnly).readBytes()
     }
 
     @Operation(
@@ -177,6 +178,6 @@ class ExportController(
         @RequestParam(defaultValue = "false") @Parameter(description = "Only export the head of PoS (e.g. PD in PD(type=art))") posHeadOnly: Boolean = false,
     ): ByteArray? {
         response?.contentType = "text/plain"
-        return exportService.mergeDoc(corpus, job, document, posHeadOnly).file.readBytes()
+        return exportService.mergeDoc(corpus, job, document, posHeadOnly).readBytes()
     }
 }

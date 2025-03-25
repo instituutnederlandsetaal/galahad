@@ -7,8 +7,9 @@ import org.ivdnt.galahad.corpora.jobs.Jobs
 import org.ivdnt.galahad.files.DiskValue
 import org.ivdnt.galahad.files.GalahadFolder
 import org.ivdnt.galahad.files.ValidatedDiskValue
-import org.ivdnt.galahad.formats.CmdiMetadata
-import org.ivdnt.galahad.formats.CorpusExport
+import org.ivdnt.galahad.export.CmdiMetadata
+import org.ivdnt.galahad.export.CorpusExport
+import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.util.createZipFile
 import java.io.File
 import java.io.OutputStream
@@ -52,8 +53,7 @@ class Corpus(
             DiskValue<MutableCorpusMetadata>(mutableMetadataFile).write(value)
         }
 
-    val immutableMetadata: CorpusMetadata
-        get() = immutableMetadataCache.readOrCreate()
+    val immutableMetadata: CorpusMetadata get() = immutableMetadataCache.readOrCreate()
 
     private val immutableMetadataCache = object : ValidatedDiskValue<CorpusMetadata>(immutableMetadataFile) {
         override fun isValid(lastModified: Long) = lastModified >= this@Corpus.lastModified
@@ -64,17 +64,17 @@ class Corpus(
      * Maps all [Document] found in [Documents] to the desired [DocumentFormat] and zips them. [formatMapper] should perform the mapping.
      */
     fun export(
-        ctm: CorpusExport,
+        export: CorpusExport,
         formatMapper: (Document) -> File,
         filter: (Document) -> Boolean,
         outputStream: OutputStream? = null,
     ): File {
         val documents = documents.readAll().filter(filter)
         val convertedDocs = documents.asSequence().map(formatMapper)
-        val docsToCmdi = documents.asSequence().map { CmdiMetadata(ctm.docExport(it.name)).file }
+        val docsToCmdi = documents.asSequence().map { CmdiMetadata(DocumentExport.create(export, it)).file }
         val cmdiZip = createZipFile(docsToCmdi, includeCMDI = true)
         // rename the cmdiZip to "metadata"
-        val dest = File(createTempDirectory("metadata").toFile(), "metadata.zip")
+        val dest = createTempDirectory("metadata").toFile().resolve("metadata.zip")
         Files.move(cmdiZip.toPath(), dest.toPath())
         return createZipFile(convertedDocs + dest, outputStream)
     }

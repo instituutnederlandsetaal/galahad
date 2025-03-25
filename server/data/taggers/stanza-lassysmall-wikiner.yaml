@@ -3,7 +3,7 @@ description: "stanza trained on wikiner for NER and lassysmall for the rest"
 tagset: "Universal Dependencies"
 eraFrom: "2000"
 eraTo: "2020"
-produces:
+annotations:
   - lemma
   - pos
   - upos

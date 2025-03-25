@@ -59,7 +59,7 @@ class JobsControllerTest(
         // check result
         val resultPreview = getDocumentJobResult(uuid, TestConfig.TAGGER_NAME, doc.name)
         assertEquals(TestConfig.TAGGER_NAME, resultPreview.name)
-        assertTrue(resultPreview.summary.numWordForms > 0)
+        assertTrue(resultPreview.summary.tokens > 0)
         assertTrue(resultPreview.preview.terms.isNotEmpty())
         assertTrue(resultPreview.preview.wordforms.isNotEmpty())
     }

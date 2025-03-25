@@ -2,9 +2,8 @@ package org.ivdnt.galahad.taggers
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
-import org.ivdnt.galahad.annotations.AnnotationType
+import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
-import org.ivdnt.galahad.app.JSONable
 import org.ivdnt.galahad.app.application_profile
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.exceptions.TaggerNotFoundException
@@ -22,19 +21,19 @@ class Tagger(
     // This ought te be set when loading from file
     // This name will be used as hostname
     // So can only contain certain characters
-    @JsonProperty("id") var id: String = "",
-    @JsonProperty("description") var description: String = "",
-    @JsonProperty("tagset") var tagset: String? = null,
-    @JsonProperty("eraFrom") var eraFrom: Int = 0,
-    @JsonProperty("eraTo") var eraTo: Int = 0,
-    @JsonProperty("produces") var produces: Set<String> = setOf(),
-    @JsonProperty("model") var model: LinkItem = LinkItem(),
-    @JsonProperty("software") var software: LinkItem = LinkItem(),
-    @JsonProperty("dataset") var dataset: LinkItem = LinkItem(),
-    @JsonProperty("trainedBy") var trainedBy: String = "",
-    @JsonProperty("date") var date: String = "",
-    @JsonProperty("language") var language: String? = "",
-) : JSONable {
+    var id: String = "",
+    var description: String = "",
+    var tagset: String? = null,
+    var eraFrom: Int = 0,
+    var eraTo: Int = 0,
+    var annotations: Set<Annotation> = setOf(),
+    var model: LinkItem = LinkItem(),
+    var software: LinkItem = LinkItem(),
+    var dataset: LinkItem = LinkItem(),
+    var trainedBy: String = "",
+    var date: String = "",
+    var language: String? = "",
+) {
     @JsonIgnore
     var version: String = ""
 
@@ -50,11 +49,6 @@ class Tagger(
         } else {
             URI("http://$id:8080").toURL()
         }
-
-    // Also has to be a getter
-    @get:JsonIgnore
-    val annotationTypes: List<AnnotationType>
-        get() = produces.map { AnnotationType.fromString(it) }
 
     class LinkItem(
         @JsonProperty("name") var name: String = "",
@@ -82,7 +76,7 @@ class Tagger(
 
         fun createSourceTagger(corpus: Corpus): Tagger {
             val metadata = corpus.immutableMetadata
-            val produces = corpus.documents.readAll().flatMap { it.metadata.annotationTypes }.toSet()
+            val produces = corpus.documents.readAll().flatMap { it.metadata.annotations }.toSet()
             return Tagger(
                 id = SOURCE_LAYER_NAME,
                 description = "uploaded annotations",
@@ -90,7 +84,7 @@ class Tagger(
                 eraFrom = metadata.eraFrom,
                 eraTo = metadata.eraTo,
                 language = metadata.language,
-                produces = produces,
+                annotations = produces,
             )
         }
     }

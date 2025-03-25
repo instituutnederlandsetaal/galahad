@@ -1,6 +1,6 @@
 package org.ivdnt.galahad.evaluation.comparison
 
-import org.ivdnt.galahad.annotations.AnnotationType
+import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.evaluation.confusion.MULTIPLE_POS
 import org.ivdnt.galahad.evaluation.confusion.OTHER_POS
@@ -16,8 +16,8 @@ class CombinedTermFilter(
     override fun filter(term: Term): Boolean = filters.all { it.filter(term) }
 }
 
-class BasicTermFilter(private val annotationType: AnnotationType, private val value: String) : TermFilter {
-    override fun filter(term: Term): Boolean = term.annotationOrMissing(annotationType) == value
+class BasicTermFilter(private val annotation: Annotation, private val value: String) : TermFilter {
+    override fun filter(term: Term): Boolean = term.annotationOrMissing(annotation) == value
 }
 
 /**
@@ -27,11 +27,11 @@ class BasicTermFilter(private val annotationType: AnnotationType, private val va
  * When equal to [OTHER_POS], will look for the [OTHER_POS_REGEX] to filter on annotations that don't start with a-z
  * (e.g. Gysseling pos, which is just a number).
  */
-class HeadGroupTermFilter(private val annotationType: AnnotationType, private val value: String) : TermFilter {
+class HeadGroupTermFilter(private val annotation: Annotation, private val value: String) : TermFilter {
     // Filter methods
-    private val multiFilter = { t: Term -> t.isMulti(annotationType) }
-    private val otherFilter = { t: Term -> t.annotations[annotationType]?.contains(Regex(OTHER_POS_REGEX)) == true }
-    private val singleFilter = { t: Term -> t.annotationHeadOrMissing(annotationType) == value }
+    private val multiFilter = { t: Term -> t.isMulti(annotation) }
+    private val otherFilter = { t: Term -> t.annotations[annotation]?.contains(Regex(OTHER_POS_REGEX)) == true }
+    private val singleFilter = { t: Term -> t.annotationHeadOrMissing(annotation) == value }
 
     // Decide which filter to use on class initialization
     private val filterFunc: (Term) -> Boolean = when {

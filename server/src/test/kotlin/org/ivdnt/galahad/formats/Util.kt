@@ -14,15 +14,16 @@ import org.ivdnt.galahad.corpora.documents.DocumentFormat
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.annotations.WordForm
+import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.formats.conllu.ConlluFile
 import org.ivdnt.galahad.formats.conllu.export.LayerToConlluConverter
 import org.ivdnt.galahad.formats.folia.FoliaFile
-import org.ivdnt.galahad.formats.folia.export.LayerToFoliaConverter
-import org.ivdnt.galahad.formats.naf.export.LayerToNAFConverter
-import org.ivdnt.galahad.formats.tei.TEIFile
+import org.ivdnt.galahad.formats.folia.FoliaConverter
+import org.ivdnt.galahad.formats.naf.NafConverter
+import org.ivdnt.galahad.formats.tei.TeiFile
 import org.ivdnt.galahad.formats.tei.export.LayerToTEIConverter
-import org.ivdnt.galahad.formats.tsv.TSVFile
-import org.ivdnt.galahad.formats.tsv.export.LayerToTSVConverter
+import org.ivdnt.galahad.formats.tsv.TsvFile
+import org.ivdnt.galahad.formats.tsv.LayerToTSVConverter
 import org.ivdnt.galahad.taggers.Tagset
 import org.junit.jupiter.api.Assertions.assertEquals
 import java.io.File
@@ -84,7 +85,7 @@ fun assertPlaintextAndSourcelayer(folder: String, file: InternalFile) {
     // Source layer
     val jsonExpected = Resource.get("$folder/sourcelayer.json").readText()
     val mapper = getJsonMapper()
-    val json = mapper.writeValueAsString(file.sourceLayer)
+    val json = mapper.writeValueAsString(file.layer)
     assertEquals(jsonExpected, json)
 }
 
@@ -119,7 +120,7 @@ class LayerBuilder {
     }
 
     fun loadLayerFromTSV(path: String, plaintext: String): LayerBuilder {
-        val tsv = TSVFile(Resource.get(path))
+        val tsv = TsvFile(Resource.get(path))
         layer = tsv.mapOnPlainText(plaintext, File(path).nameWithoutExtension)
         return this
     }
@@ -214,7 +215,7 @@ class DocTestBuilder(
 
     fun mergeTSV(file: File, layer: Layer): TestResult {
         val transformMetadata = getDummyTransformMetadata(layer, DocumentFormat.Tsv, file)
-        val result: TSVFile = TSVFile(file).merge(transformMetadata)
+        val result: TsvFile = TsvFile(file).merge(transformMetadata)
         return got(result.file.readText())
     }
 
@@ -241,7 +242,7 @@ class DocTestBuilder(
     // NAF
 
     fun convertToNaf(file: File, layer: Layer): TestResult {
-        val exporter = LayerToNAFConverter(
+        val exporter = NafConverter(
             getDummyTransformMetadata(layer, DocumentFormat.Naf, file)
         )
         val result = exporter.convertToFileNamed("test")
@@ -251,7 +252,7 @@ class DocTestBuilder(
     // Folia
 
     fun convertToFolia(file: File, layer: Layer): TestResult {
-        val exporter = LayerToFoliaConverter(
+        val exporter = FoliaConverter(
             getDummyTransformMetadata(layer, DocumentFormat.Folia, file)
         )
         val result = exporter.convertToFileNamed("test")
@@ -284,7 +285,7 @@ class DocTestBuilder(
 
     fun mergeTEI(file: File, layer: Layer): TestResult {
         val transformMetadata = getDummyTransformMetadata(layer, DocumentFormat.TeiP5, file)
-        val result: TEIFile = TEIFile(file).merge(transformMetadata)
+        val result: TeiFile = TeiFile(file).merge(transformMetadata)
         return got(result.file.readText())
     }
 

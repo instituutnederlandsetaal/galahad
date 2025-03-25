@@ -1,8 +1,8 @@
-package org.ivdnt.galahad.formats.tei.export
+package org.ivdnt.galahad.formats.tei
 
 import org.ivdnt.galahad.corpora.MutableCorpusMetadata
 import org.ivdnt.galahad.corpora.documents.DocumentFormat
-import org.ivdnt.galahad.formats.LayerTransformer
+import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.formats.xml.XMLMetadata
 import org.ivdnt.galahad.util.childOrNull
 import org.ivdnt.galahad.util.toNonEmptyString
@@ -10,22 +10,22 @@ import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import java.io.OutputStream
-import java.util.*
+import java.text.SimpleDateFormat
 import javax.xml.transform.OutputKeys
 import javax.xml.transform.Transformer
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 
-class TEIMetadata(
-    xmlDoc: Document,
-    root: Node,
-    layer: LayerTransformer,
+class TeiMetadata(
+    xml: Document,
+    val root: Node,
+    val export: DocumentExport,
     val merging: Boolean,
-) : XMLMetadata(xmlDoc, root, layer) {
+) : XMLMetadata(xml) {
 
     /** GaLAHaD-generated UUID */
-    private val internalPid: String = layer.export.document.metadata.uuid.toString()
+    private val internalPid: String = export.document.metadata.uuid.toString()
 
     /**
      * Return the title of the document as described in titleStmt,
@@ -38,10 +38,10 @@ class TEIMetadata(
                 ?.childOrNull("titleStmt")
                 ?.childOrNull("title")?.textContent
                 ?: // if null, use filename without extension
-                layer.export.document.uploadedFile.nameWithoutExtension
+                export.document.uploadedFile.nameWithoutExtension
         }
 
-    private val corpusMetadata: MutableCorpusMetadata = layer.export.corpus.mutableMetadata
+    private val corpusMetadata: MutableCorpusMetadata = export.corpus.mutableMetadata
 
     init {
         write()
@@ -62,10 +62,12 @@ class TEIMetadata(
     // The caller specifies which one.
     private fun write() {
         // Add namespace to root for LAnCeLoT compatibility
+        // TODO can be removed?
         (root as Element).setAttribute("xmlns", "http://www.tei-c.org/ns/1.0")
 
         val teiHeader = root.getOrCreateChild("teiHeader", true)
         // remove namespace for Cobalt compatibility
+        // TODO if this really needs to be removed, remove it in TeiMerger? although teiHeader could be null
         teiHeader.removeAttribute("xmlns")
         root.childOrNull("text")?.removeAttribute("xmlns")
 
@@ -243,15 +245,15 @@ class TEIMetadata(
         // <application>
         val application = appInfo.createChild(
             "application", mapOf(
-                "version" to layer.tagger.version,
-                "ident" to layer.tagger.id,
-                "xml:id" to layer.tagger.id,
+                "version" to export.tagger.version,
+                "ident" to export.tagger.id,
+                "xml:id" to export.tagger.id,
             )
         )
         // <label>
         application.createChild("label", "POS-tagger and lemmatiser")
         // <ptr>
-        application.createChild("ptr", "target" to layer.tagger.model.href)
+        application.createChild("ptr", "target" to export.tagger.model.href)
     }
 
     /**
@@ -277,7 +279,7 @@ class TEIMetadata(
             ab, mapOf(
                 "annotationStyle" to "inline",
                 "Documentation" to "",
-                "annotationSet" to (layer.tagger.tagset ?: ""),
+                "annotationSet" to (export.tagger.tagset ?: ""),
                 "annotationDescription" to "The file was automatically annotated within the platform GaLAHaD, which is a central hub for enriching historical Dutch.",
                 "annotationFormat" to "TEI xml",
             )
@@ -293,7 +295,7 @@ class TEIMetadata(
      *         <interp>automatically annotated</interp>
      *     </interpGrp>
      *     <interpGrp type="processor">
-     *         <interp sameAs="#[layer.tagger.id]"/>
+     *         <interp sameAs="#[export.tagger.id]"/>
      *     </interpGrp>
      *     <date from="[date]" to="[date]"/>
      * </ab>
@@ -308,9 +310,10 @@ class TEIMetadata(
         addInterGrpTo(ab, "annotationMode", "automatically annotated")
         // processor interp is special, using @sameAs
         val processor = ab.createChild("interpGrp", "type" to "processor")
-        processor.createChild("interp", "sameAs" to "#${layer.tagger.id}")
+        processor.createChild("interp", "sameAs" to "#${export.tagger.id}")
         // Provenance also has a <date>
-        val now = layer.dateFormat.format(Date())
+        val nowL: Long = System.currentTimeMillis()
+        val now = SimpleDateFormat("yyyy-MM-dd").format(nowL)
         ab.createChild(
             "date", mapOf(
                 "from" to now,

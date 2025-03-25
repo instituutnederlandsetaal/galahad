@@ -1,8 +1,8 @@
 package org.ivdnt.galahad.formats.folia.export
 
-import org.ivdnt.galahad.formats.DocumentExport
-import org.ivdnt.galahad.formats.LayerMerger
-import org.ivdnt.galahad.formats.LayerTransformer
+import org.ivdnt.galahad.export.DocumentExport
+import org.ivdnt.galahad.export.LayerMerger
+import org.ivdnt.galahad.export.LayerTransformer
 import org.ivdnt.galahad.formats.folia.FoliaFile
 import org.ivdnt.galahad.formats.folia.FoliaMetadata
 import org.ivdnt.galahad.formats.folia.FoliaReader
@@ -11,7 +11,7 @@ import org.w3c.dom.Document
 import org.w3c.dom.Node
 import kotlin.io.path.createTempDirectory
 
-class FoliaLayerMerger(
+class FoliaMerger(
     foliaFile: FoliaFile,
     transformMetadata: DocumentExport,
 ) : LayerMerger<FoliaFile>, LayerTransformer(transformMetadata) {
@@ -30,7 +30,7 @@ class FoliaLayerMerger(
 
         // add headers
         // typically we expect just 1 root node.
-        FoliaMetadata(reader!!.xmlDoc, reader!!.xmlDoc.documentElement, this).write()
+        FoliaMetadata(reader!!.xml, reader!!.xml.documentElement, this).write()
 
         // Delete the marked notes
         deleteList.forEach { if (it.parentNode != null) it.parentNode.removeChild(it) }
@@ -38,7 +38,7 @@ class FoliaLayerMerger(
 
     override fun merge(): FoliaFile {
         val result = createTempDirectory("foliamerge").toFile().resolve(document.name)
-        result.writeText(BLFXMLParser.xmlToString(false, reader!!.xmlDoc))
+        result.writeText(BLFXMLParser.xmlToString(false, reader!!.xml))
         return FoliaFile(result)
     }
 }

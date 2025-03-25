@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.evaluation.distribution
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import org.ivdnt.galahad.annotations.AnnotationType
+import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.corpora.Corpus
 
@@ -12,7 +12,7 @@ import org.ivdnt.galahad.corpora.Corpus
 class CorpusDistribution(
     corpus: Corpus,
     hypothesis: String = SOURCE_LAYER_NAME,
-    groupingAnnotation: AnnotationType,
+    groupingAnnotation: Annotation,
 ) : Distribution(groupingAnnotation) {
 
     private val hypothesisJob = corpus.jobs.readOrThrow(hypothesis)

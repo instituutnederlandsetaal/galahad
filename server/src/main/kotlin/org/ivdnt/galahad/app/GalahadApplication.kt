@@ -116,8 +116,7 @@ class MultipartConfig {
     lateinit var maxFileSize: String
     lateinit var maxRequestSize: String
 
-    val maxFilesSizeAsBytes: Long
-        get() = toBytes(maxFileSize)
+    val maxFilesSizeAsBytes: Long get() = toBytes(maxFileSize)
 
     companion object {
         fun toBytes(filesize: String?): Long {

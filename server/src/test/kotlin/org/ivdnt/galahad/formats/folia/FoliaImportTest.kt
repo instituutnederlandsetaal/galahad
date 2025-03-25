@@ -2,7 +2,7 @@ package org.ivdnt.galahad.formats.folia
 
 import org.ivdnt.galahad.formats.Resource
 import org.ivdnt.galahad.formats.assertPlaintextAndSourcelayer
-import org.ivdnt.galahad.formats.tsv.TSVFile
+import org.ivdnt.galahad.formats.tsv.TsvFile
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -21,11 +21,11 @@ internal class FoliaImportTest {
 
         assertEquals(expectedPlain, foliaFile.plaintext.trim())
 
-        val sourceLayer = foliaFile.sourceLayer
+        val sourceLayer = foliaFile.layer
         assertEquals(97, sourceLayer.wordForms.size)
         assertEquals(97, sourceLayer.terms.size)
 
-        val tsvFile = TSVFile(Resource.get("folia/hauraki/pie.tsv"))
+        val tsvFile = TsvFile(Resource.get("folia/hauraki/pie.tsv"))
 
         val mergeLayer = tsvFile.mapOnPlainText(foliaFile.plaintext, "mappedLayer")
         assertEquals(89, mergeLayer.wordForms.size)
@@ -38,7 +38,7 @@ internal class FoliaImportTest {
         val plaintext = Resource.get("folia/twine/plaintext.txt").readText()
         assertEquals(plaintext, file.plaintext)
         // Source layer should be empty, there are no source annotations
-        val sourceLayer = file.sourceLayer
+        val sourceLayer = file.layer
         assertEquals(0, sourceLayer.wordForms.size)
         assertEquals(0, sourceLayer.terms.size)
     }

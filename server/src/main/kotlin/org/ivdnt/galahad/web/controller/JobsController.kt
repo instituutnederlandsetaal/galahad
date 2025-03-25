@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.ivdnt.galahad.annotations.LayerMetadata
+import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.app.JOBS_URL
 import org.ivdnt.galahad.app.JOB_URL
 import org.ivdnt.galahad.app.User
@@ -165,7 +165,7 @@ class JobsController(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,
         @PathVariable @Parameter(description = "Document name") document: String,
-    ): LayerMetadata? = corpus.readJobs().readOrThrow(job).layer(document).metadata
+    ): Layer = corpus.readJobs().readOrThrow(job).jobDocuments.readOrThrow(document).layer!!
 
     @Operation(
         summary = "Get job progress",

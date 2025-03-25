@@ -59,6 +59,7 @@ class XMLWriter(private val stream: OutputStream) {
  */
 fun getXmlBuilder(): DocumentBuilder {
     val dbf = DocumentBuilderFactory.newInstance()
+    dbf.isIgnoringComments = true
     dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
     return dbf.newDocumentBuilder()
 }

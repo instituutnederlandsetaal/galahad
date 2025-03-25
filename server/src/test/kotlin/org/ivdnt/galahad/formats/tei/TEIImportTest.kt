@@ -12,38 +12,38 @@ internal class TEIImportTest {
     inner class TEIP5Test {
         @Test
         fun `Multiple text elements`() {
-            val teiFile = TEIFile(Resource.get("tei/dummies/multipletextelements.xml"))
+            val teiFile = TeiFile(Resource.get("tei/dummies/multipletextelements.xml"))
             assertEquals("text1\ntext2 text3", teiFile.plaintext.trim())
         }
 
         @Test
         fun `Simple word tags in one paragraph`() {
-            val teiFile = TEIFile(Resource.get("tei/dummies/withwtags.xml"))
+            val teiFile = TeiFile(Resource.get("tei/dummies/withwtags.xml"))
             assertEquals("word1 word2", teiFile.plaintext.trim())
         }
 
         @Test
         fun `Simple word tags in two paragraph`() {
-            val teiFile = TEIFile(Resource.get("tei/dummies/wandp.xml"))
+            val teiFile = TeiFile(Resource.get("tei/dummies/wandp.xml"))
             assertEquals("word1 word2\n\nword3 word4", teiFile.plaintext.trim())
         }
 
         @Test
         fun `Import highly intertwined tags`() {
-            val file = TEIFile(Resource.get("tei/twine/twine.input.xml"))
+            val file = TeiFile(Resource.get("tei/twine/twine.input.xml"))
             assertPlaintextAndSourcelayer("tei/twine", file)
         }
 
         @Test
         fun `Import huygens brieven TEI`() {
-            val file = TEIFile(Resource.get("tei/brieven/input.tei.xml"))
+            val file = TeiFile(Resource.get("tei/brieven/input.tei.xml"))
             // Has no source layer
             assertPlainText("tei/brieven", file)
         }
 
         @Test
         fun `Import TEI with w-tags without spaces in between`() {
-            val file = TEIFile(Resource.get("tei/nospaces/input.tei.xml"))
+            val file = TeiFile(Resource.get("tei/nospaces/input.tei.xml"))
             assertEquals("a a a", file.plaintext.trim())
 
         }
@@ -53,7 +53,7 @@ internal class TEIImportTest {
     inner class TEIP4Test {
         @Test
         fun `Import TEI P4`() {
-            val file = TEIFile(Resource.get("tei/legacy/teip4/input.tei.xml"))
+            val file = TeiFile(Resource.get("tei/legacy/teip4/input.tei.xml"))
             assertPlaintextAndSourcelayer("tei/legacy/teip4", file)
         }
     }
@@ -62,7 +62,7 @@ internal class TEIImportTest {
     inner class TEIP5LegacyTest {
         @Test
         fun `Import TEI P5`() {
-            val file = TEIFile(Resource.get("tei/legacy/teip5/input.tei.xml"))
+            val file = TeiFile(Resource.get("tei/legacy/teip5/input.tei.xml"))
             assertPlaintextAndSourcelayer("tei/legacy/teip5", file)
         }
     }

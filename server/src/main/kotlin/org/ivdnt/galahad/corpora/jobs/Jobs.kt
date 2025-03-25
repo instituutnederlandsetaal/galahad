@@ -48,7 +48,7 @@ class Jobs(
         val numDocs = corpus.documents.readAll().size
         val potentialJobs = Tagger.taggers.values.map {
             JobMetadata(
-                it, Progress(pending = numDocs), LayerPreview.EMPTY, LayerSummary(), 0
+                it, Progress(pending = numDocs), LayerPreview.EMPTY, LayerSummary(0), 0
             )
         }
         val jobMap = HashMap<String, JobMetadata>()

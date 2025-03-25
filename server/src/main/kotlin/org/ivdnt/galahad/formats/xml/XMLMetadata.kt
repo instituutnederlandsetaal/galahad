@@ -1,15 +1,12 @@
 package org.ivdnt.galahad.formats.xml
 
-import org.ivdnt.galahad.formats.LayerTransformer
 import org.ivdnt.galahad.util.childOrNull
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 
-open class XMLMetadata(
-    val xmlDoc: Document,
-    val root: Node,
-    val layer: LayerTransformer,
+abstract class XMLMetadata(
+    val xml: Document,
 ) {
     protected fun Node.getOrCreateChild(childTag: String, prepend: Boolean = false): Element {
         val child: Node? = this.childOrNull(childTag)
@@ -19,7 +16,7 @@ open class XMLMetadata(
     }
 
     protected fun Node.createChild(name: String, prepend: Boolean = false): Element {
-        val newNode = xmlDoc.createElement(name)
+        val newNode = xml.createElement(name)
         if (prepend && this.childNodes.length > 0) { // TODO checking length might not be necessary
             this.insertBefore(newNode, this.firstChild)
         } else {
@@ -55,7 +52,7 @@ open class XMLMetadata(
         textContent: String = "",
     ): Element {
         // Create empty tag
-        return xmlDoc.createElement(name)
+        return xml.createElement(name)
             // Add to parent
             .also { appendChild(it) }
             // Set attributes

@@ -3,20 +3,11 @@ package org.ivdnt.galahad.corpora.documents
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.corpora.Corpus
+import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.files.DiskValue
 import org.ivdnt.galahad.files.GalahadFolder
-import org.ivdnt.galahad.formats.DocumentExport
 import org.ivdnt.galahad.formats.InternalFile
-import org.ivdnt.galahad.formats.conllu.export.LayerToConlluConverter
-import org.ivdnt.galahad.formats.folia.export.LayerToFoliaConverter
-import org.ivdnt.galahad.formats.naf.export.LayerToNAFConverter
-import org.ivdnt.galahad.formats.tei.export.LayerToTEIConverter
-import org.ivdnt.galahad.formats.tsv.export.LayerToTSVConverter
 import java.io.File
-import java.nio.file.Files
-import java.nio.file.Paths
-import java.nio.file.StandardCopyOption
-import kotlin.io.path.createTempDirectory
 
 /**
  * Documents are saved as folders with their file name as folder name, including extension.
@@ -32,7 +23,7 @@ class Document(
     dir: File,
 ) : GalahadFolder(dir), Logging {
     // Files in the document folder.
-    val plainTextFile: File = dir.resolve(PLAINTEXT_FILE)
+    val plaintextFile: File = dir.resolve(PLAINTEXT_FILE)
     private val metadataFile = dir.resolve(METADATA_FILE)
     val uploadedFile: File = dir.resolve("uploaded").resolve(name)
 
@@ -41,12 +32,12 @@ class Document(
     /** The plaintext content of the document. */
     val plaintext: String by lazy {
         try {
-            plainTextFile.readText()
+            plaintextFile.readText()
         } catch (e: Exception) {
             logger.error("Error reading plaintext file, creating new plaintext", e)
             val internalFile = InternalFile.create(uploadedFile)
             val text = internalFile.plaintext
-            plainTextFile.writeText(text)
+            plaintextFile.writeText(text)
             text
         }
     }
@@ -67,32 +58,7 @@ class Document(
     }
 
     /** [DocumentFormat]-parsed file. */
-    val internalFile: InternalFile by lazy { InternalFile.create(uploadedFile) }
-
-    /** Convert document to desired format. */
-    fun convert(export: DocumentExport): File {
-        val docName = uploadedFile.nameWithoutExtension
-        return when (export.targetFormat) {
-            // The file is what we are interested in, and it is expensive to initialize the documents, so we just pass the file
-            DocumentFormat.Folia -> LayerToFoliaConverter(export).convertToFileNamed(docName)
-            DocumentFormat.Naf -> LayerToNAFConverter(export).convertToFileNamed(docName)
-            DocumentFormat.TeiP5 -> LayerToTEIConverter(export).convertToFileNamed(docName)
-            DocumentFormat.Tsv -> LayerToTSVConverter(export).convertToFileNamed(docName)
-            DocumentFormat.Conllu -> LayerToConlluConverter(export).convertToFileNamed(docName)
-            DocumentFormat.Txt -> {
-                val tempPath = createTempDirectory("galahad-layer-converter")
-                Files.copy(
-                    plainTextFile.toPath(), Paths.get("$tempPath/$docName.txt"), StandardCopyOption.REPLACE_EXISTING
-                )
-                File(tempPath.toString(), "$docName.txt")
-            }
-
-            else -> throw Exception("Conversion to ${export.targetFormat} not supported")
-        }
-    }
-
-    /** Merge an annotation layer with the original uploaded file, retaining the document structure. */
-    fun merge(export: DocumentExport): InternalFile = internalFile.merge(export)
+    private val internalFile: InternalFile by lazy { InternalFile.create(uploadedFile) }
 
     internal companion object {
         private const val METADATA_FILE = "metadata.json"
@@ -112,9 +78,9 @@ class Document(
             val internalFile = InternalFile.create(file)
             // sourceLayer as job
             corpus.jobs.createOrThrow(SOURCE_LAYER_NAME).jobDocuments.createOrThrow(doc.name).layer =
-                internalFile.sourceLayer
+                internalFile.layer
             // plaintext
-            doc.plainTextFile.writeText(internalFile.plaintext)
+            doc.plaintextFile.writeText(internalFile.plaintext)
 
             // metadata; needs to be serialized as well
             DiskValue<DocumentMetadata>(doc.metadataFile).write(DocumentMetadata.create(internalFile))

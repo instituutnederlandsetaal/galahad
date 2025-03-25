@@ -1,9 +1,10 @@
 package org.ivdnt.galahad.formats.tei.export
 
-import org.ivdnt.galahad.formats.DocumentExport
-import org.ivdnt.galahad.formats.LayerMerger
-import org.ivdnt.galahad.formats.LayerTransformer
-import org.ivdnt.galahad.formats.tei.TEIFile
+import org.ivdnt.galahad.export.DocumentExport
+import org.ivdnt.galahad.export.LayerMerger
+import org.ivdnt.galahad.export.LayerTransformer
+import org.ivdnt.galahad.formats.tei.TeiFile
+import org.ivdnt.galahad.formats.tei.TeiMetadata
 import org.ivdnt.galahad.formats.xml.BLFXMLParser
 import org.ivdnt.galahad.util.getXmlBuilder
 import org.w3c.dom.Document
@@ -12,10 +13,10 @@ import java.io.OutputStream
 import kotlin.io.path.createTempDirectory
 
 
-class TEILayerMerger(
-    teiFile: TEIFile,
+class TeiMerger(
+    teiFile: TeiFile,
     transformMetadata: DocumentExport,
-) : LayerMerger<TEIFile>, LayerTransformer(transformMetadata) {
+) : LayerMerger<TeiFile>, LayerTransformer(transformMetadata) {
 
     private var xmlDoc = getXmlBuilder().newDocument()
     private val sortedWordForms = result.wordForms.sortedBy { it.offset }
@@ -24,10 +25,10 @@ class TEILayerMerger(
     private val deleteList = ArrayList<Node>()
     private var parser: BLFXMLParser
 
-    override fun merge(): TEIFile {
+    override fun merge(): TeiFile {
         val result = createTempDirectory("teimerge").toFile().resolve(document.name)
         result.writeText(parser.xmlToString(false))
-        return TEIFile(result, document.metadata.format)
+        return TeiFile(result, document.metadata.format)
     }
 
     init {
@@ -52,7 +53,7 @@ class TEILayerMerger(
         // add headers
         // typically we expect just 1 root node.
         for (i in 0 until parser.rootNodes.length) {
-            TEIMetadata(xmlDoc, parser.rootNodes.item(i), this, merging = true)
+            TeiMetadata(xmlDoc, parser.rootNodes.item(i), this, merging = true)
         }
 
         // Delete the marked notes

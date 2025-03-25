@@ -1,0 +1,57 @@
+package org.ivdnt.galahad.annotations
+
+import java.io.File
+
+abstract class AnnotationReader(
+    protected val file: File
+) {
+    val layer: Layer by lazy { read() }
+
+    protected val documents: MutableList<DocumentLayer> = mutableListOf()
+    protected val paragraphs: MutableList<ParagraphLayer> = mutableListOf()
+    protected val sentences: MutableList<SentenceLayer> = mutableListOf()
+    protected val terms: MutableList<Term> = mutableListOf()
+    protected val spans: MutableMap<Annotation, List<TermSpan>> = mutableMapOf()
+
+    protected var offset: Int = 0
+
+    protected var docID: String? = null
+        get() = field ?: "d$dIndex"
+    protected var parID: String? = null
+        get() = field ?: "p$pIndex"
+    protected var sentID: String? = null
+        get() = field ?: "s$sIndex"
+    protected var wordID: String? = null
+        get() = field ?: "w$wIndex"
+
+    private val wIndex: Int get() = terms.size + 1
+    private val sIndex: Int get() = sentences.size + 1
+    private val pIndex: Int get() = paragraphs.size + 1
+    private val dIndex: Int get() = documents.size + 1
+
+    protected abstract fun read(): Layer
+
+    protected open fun newDocument() {
+        newParagraph()
+        if (paragraphs.isNotEmpty()) {
+            documents.add(DocumentLayer(docID!!, paragraphs.toList()))
+            paragraphs.clear()
+        }
+    }
+
+    protected open fun newParagraph() {
+        newSentence()
+        if (sentences.isNotEmpty()) {
+            paragraphs.add(ParagraphLayer(parID!!, sentences.toList()))
+            sentences.clear()
+        }
+    }
+
+    protected open fun newSentence() {
+        if (terms.isNotEmpty()) {
+            sentences.add(SentenceLayer(sentID!!, terms.toList(), spans.toMap()))
+            terms.clear()
+            spans.clear()
+        }
+    }
+}

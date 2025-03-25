@@ -1,27 +1,17 @@
 package org.ivdnt.galahad.formats.conllu
 
-import org.ivdnt.galahad.annotations.AnnotationLayer
-import org.ivdnt.galahad.annotations.AnnotationType
-import org.ivdnt.galahad.annotations.Term2
-import org.ivdnt.galahad.annotations.WordForm
-import org.ivdnt.galahad.formats.AnnotationReader
+import org.ivdnt.galahad.annotations.Annotation
+import org.ivdnt.galahad.annotations.Layer
+import org.ivdnt.galahad.annotations.Term
+import org.ivdnt.galahad.annotations.AnnotationReader
 import java.io.File
 
 class ConlluReader(
     file: File
 ) : AnnotationReader(file) {
-
     private val ignorableMultiWordIds: MutableSet<String> = mutableSetOf()
-    val indices: Map<AnnotationType, Int> = mapOf(
-        AnnotationType.LEMMA to 2,
-        AnnotationType.POS to 4,
-        AnnotationType.HEAD to 6,
-        AnnotationType.DEPREL to 7,
-        AnnotationType.UPOS to -1, // see GetUpos
-        AnnotationType.NER to -1, // see GetNer
-    )
 
-    override fun read(): AnnotationLayer {
+    override fun read(): Layer {
         file.forEachLine {
             when {
                 it.startsWith("# newdoc") -> {
@@ -48,7 +38,7 @@ class ConlluReader(
         }
         // create a document for the remaining tokens
         newDocument()
-        return AnnotationLayer(documents)
+        return Layer(documents)
     }
 
     override fun newSentence() {
@@ -77,21 +67,34 @@ class ConlluReader(
         }
         if (id in ignorableMultiWordIds) return parseMultiWordToken(string) // ignore multi-word tokens
 
-        newWordform(fields)
         newTerm(fields)
     }
 
-    private fun newTerm(fields: List<String>) {
-        val wordform = wordforms.last()
-        for (column in indices.keys) {
-            getColumn(column, fields)?.let { terms.add(column, Term2(it, listOf(wordform))) }
-        }
+    private fun getColumn(annotation: Annotation, fields: List<String>): String? {
+        if (annotation == Annotation.UPOS) return getUpos(fields)
+        if (annotation == Annotation.NER) return getNER(fields)
+        return getColumn(indices[annotation]!!, fields)
     }
 
-    private fun getColumn(annotationType: AnnotationType, fields: List<String>): String? {
-        if (annotationType == AnnotationType.UPOS) return getUpos(fields)
-//        if (annotationType == AnnotationType.NER) return getNER(fields)
-        return getColumn(indices[annotationType]!!, fields)
+    /**
+     * Retrieve the NER from the MISC column and convert it to IOB.
+     */
+    fun getNER(values: List<String>): String? {
+        val misc = getColumn(9, values) ?: return null
+
+        // nerKeyValue is for example "NamedEntity=S-LOC"
+        val nerKeyValue: String =
+            misc.split("|").firstOrNull { nerAttrNames.contains(it.split("=").first()) } ?: return null
+        val nerValue: String = nerKeyValue.substringAfter('=')
+
+        // convert to IOB
+        // Replace /^S\-/ with B- and /^E\-/ with I-.
+        // E.g.: S-LOC -> B-LOC, E-LOC -> I-LOC
+        val replaceS = Regex("^S-")
+        val replaceE = Regex("^E-")
+        val nerIOB = nerValue.replace(replaceS, "B-").replace(replaceE, "I-")
+
+        return nerIOB
     }
 
     // returns null on _
@@ -107,15 +110,34 @@ class ConlluReader(
         }
     }
 
-    private fun newWordform(fields: List<String>) {
+    private fun newTerm(fields: List<String>) {
         val spaceAfter = !fields[9].contains("SpaceAfter=No")
-        val wordForm = WordForm(
-            id = fields[0], // id
-            literal = fields[1], // form
-            offset = offset, spaceAfter = spaceAfter
+
+        val annotations = mutableMapOf<Annotation, String>()
+        for (column in indices.keys) {
+            getColumn(column, fields)?.let { annotations[column] = it }
+        }
+        val term = Term(
+            id = fields[0], offset = offset, annotations = annotations, spaceAfter = spaceAfter
         )
+
+        terms.add(term)
+
         offset += fields[1].length
         if (spaceAfter) offset++ // add space after
-        wordforms.add(wordForm)
+    }
+
+    companion object {
+        /** Supported names for the ner attribute in the MISC column. */
+        private val nerAttrNames: List<String> = listOf("NamedEntity", "ner")
+
+        private val indices: Map<Annotation, Int> = mapOf(
+            Annotation.LEMMA to 2,
+            Annotation.POS to 4,
+            Annotation.HEAD to 6,
+            Annotation.DEPREL to 7,
+            Annotation.UPOS to -1, // see GetUpos
+            Annotation.NER to -1, // see GetNer
+        )
     }
 }

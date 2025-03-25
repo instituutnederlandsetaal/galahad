@@ -3,7 +3,7 @@ description: "PIE trained on newspapers"
 tagset: "TDN-Core"
 eraFrom: "1600"
 eraTo: "1700"
-produces:
+annotations:
   - lemma
   - pos
 model:

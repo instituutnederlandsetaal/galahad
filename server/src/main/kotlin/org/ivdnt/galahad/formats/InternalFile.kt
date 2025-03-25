@@ -1,41 +1,38 @@
 package org.ivdnt.galahad.formats
 
+import org.ivdnt.galahad.annotations.AnnotationReader
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.corpora.documents.DocumentFormat
 import org.ivdnt.galahad.exceptions.DocumentInvalidException
 import org.ivdnt.galahad.formats.conllu.ConlluFile
 import org.ivdnt.galahad.formats.folia.FoliaFile
-import org.ivdnt.galahad.formats.naf.NAFFile
-import org.ivdnt.galahad.formats.tei.TEIFile
-import org.ivdnt.galahad.formats.tsv.TSVFile
+import org.ivdnt.galahad.formats.naf.NafFile
+import org.ivdnt.galahad.formats.tei.TeiFile
+import org.ivdnt.galahad.formats.tsv.TsvFile
 import org.ivdnt.galahad.formats.txt.TxtFile
 import java.io.File
 
 /** A document parsed as a file of a certain file type, e.g. TEI, TSV, Folia. */
-interface InternalFile {
-    val file: File
-    val format: DocumentFormat
-    val plaintext: String
-    val sourceLayer: Layer
-
-    /**
-     * merge the uploaded file with the data from the layer, creating a new file.
-     */
-    fun merge(export: DocumentExport): InternalFile
+abstract class InternalFile {
+    abstract val file: File
+    abstract val format: DocumentFormat
+    val plaintext: String by lazy { reader.layer.toString() }
+    val layer: Layer by lazy { reader.layer }
+    protected abstract val reader: AnnotationReader
 
     companion object {
         fun create(file: File): InternalFile {
             return when (val format = DocumentFormat.fromFile(file)) {
-                DocumentFormat.Tsv -> TSVFile(file)
+                DocumentFormat.Tsv -> TsvFile(file)
                 DocumentFormat.Folia -> FoliaFile(file)
-                DocumentFormat.Naf -> NAFFile(file)
+                DocumentFormat.Naf -> NafFile(file)
                 DocumentFormat.Txt -> TxtFile(file)
                 DocumentFormat.Conllu -> ConlluFile(file)
                 // Multiple TEI formats
                 DocumentFormat.TeiP4Legacy,
                 DocumentFormat.TeiP5Legacy,
                 DocumentFormat.TeiP5,
-                    -> TEIFile(file, format)
+                    -> TeiFile(file, format)
 
                 else -> throw DocumentInvalidException(file.name, "Unsupported format.")
             }

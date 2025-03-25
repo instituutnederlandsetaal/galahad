@@ -3,15 +3,13 @@ description: "spacy"
 tagset: "Universal Dependencies"
 eraFrom: "2000"
 eraTo: "2020"
-produces:
+annotations:
   - lemma
   - pos
   - upos
   - head
   - deprel
-  - misc
-  - id
-  - named-entity
+  - ner
 model:
   name: nl_core_news_lg
   href: https://github.com/explosion/spacy-models/releases/tag/nl_core_news_lg-3.8.0

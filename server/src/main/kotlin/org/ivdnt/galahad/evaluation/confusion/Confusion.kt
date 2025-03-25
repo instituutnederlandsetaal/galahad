@@ -1,10 +1,10 @@
 package org.ivdnt.galahad.evaluation.confusion
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import org.ivdnt.galahad.annotations.AnnotationType
+import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.evaluation.EvaluationEntry
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
-import org.ivdnt.galahad.formats.csv.CSVFile
+import org.ivdnt.galahad.export.csv.CSVFile
 
 const val MULTIPLE_POS: String = "MULTIPLE"
 const val OTHER_POS: String = "OTHER"
@@ -14,7 +14,7 @@ const val OTHER_POS_REGEX: String = """^[^a-zA-Z]"""
  * Generic class for the part of speech confusion of a corpus or document.
  * The idea is to sum up the confusions as we go through the terms one by one using [add].
  */
-open class Confusion(private val truncate: Boolean = true, val annotation: AnnotationType) {
+open class Confusion(private val truncate: Boolean = true, val annotation: Annotation) {
 
     /**
      * null-key if there is no match

@@ -1,15 +1,19 @@
 package org.ivdnt.galahad.formats.folia
 
-import org.ivdnt.galahad.formats.LayerTransformer
+import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.formats.xml.XMLMetadata
 import org.ivdnt.galahad.formats.xml.tagName
 import org.ivdnt.galahad.util.insertAfter
-import org.ivdnt.galahad.util.nextNonTextSibling
+import org.ivdnt.galahad.util.nextElementSibling
 import org.w3c.dom.Document
 import org.w3c.dom.Node
 
-class FoliaMetadata(xmlDoc: Document, root: Node, layer: LayerTransformer) : XMLMetadata(xmlDoc, root, layer) {
-    fun write() {
+class FoliaMetadata(
+    xml: Document,
+    val root: Node,
+    val export: DocumentExport
+) : XMLMetadata(xml) {
+    init {
         val meta = root.getOrCreateChild("metadata")
         val annotations: Node = meta.getOrCreateChild("annotations")
 
@@ -25,30 +29,30 @@ class FoliaMetadata(xmlDoc: Document, root: Node, layer: LayerTransformer) : XML
 
         // Order matters, <provenance> needs to be directly after annotations
         val provenance: Node
-        val nextNonTextSibling = annotations.nextNonTextSibling()
+        val nextNonTextSibling = annotations.nextElementSibling()
         if (nextNonTextSibling?.tagName() == "provenance") {
             provenance = nextNonTextSibling
         } else {
-            provenance = xmlDoc.createElement("provenance")
+            provenance = xml.createElement("provenance")
             annotations.parentNode.insertAfter(provenance, annotations)
         }
 
-        val processor = xmlDoc.createElement("processor")
-        processor.setAttribute("xml:id", layer.tagger.id)
-        processor.setAttribute("name", layer.tagger.id)
+        val processor = xml.createElement("processor")
+        processor.setAttribute("xml:id", export.tagger.id)
+        processor.setAttribute("name", export.tagger.id)
         processor.setAttribute("type", "auto")
         processor.setAttribute("src", "https://github.com/INL/galahad-taggers-dockerized")
-        processor.setAttribute("host", "galahad.ivdnt.org")
-        processor.setAttribute("user", layer.export.user.id)
+        processor.setAttribute("host", "https://galahad.ivdnt.org")
+        processor.setAttribute("user", export.user.id)
 
         provenance.appendChild(processor)
     }
 
     private fun addAnnotationDefinition(annotations: Node, name: String) {
-        val anot = xmlDoc.createElement("$name-annotation")
-        anot.setAttribute("set", layer.tagger.id)
-        val annotator = xmlDoc.createElement("annotator")
-        annotator.setAttribute("processor", layer.tagger.id)
+        val anot = xml.createElement("$name-annotation")
+        anot.setAttribute("set", export.tagger.id)
+        val annotator = xml.createElement("annotator")
+        annotator.setAttribute("processor", export.tagger.id)
         anot.appendChild(annotator)
         annotations.appendChild(anot)
     }

@@ -8,7 +8,7 @@ import java.io.File
 internal class TSVPlaintextTest {
     @Test
     fun `Parsed plaintext and mapping`() {
-        val tsvFile = TSVFile(File("src/test/resources/tsv/plaintext/peerle.tsv"))
+        val tsvFile = TsvFile(File("src/test/resources/tsv/plaintext/peerle.tsv"))
         // Parsing creates entries and plaintext.
         tsvFile.parse()
         assertEquals(1812, tsvFile.entries.size)

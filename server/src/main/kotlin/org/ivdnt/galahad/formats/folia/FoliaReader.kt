@@ -1,168 +1,116 @@
 package org.ivdnt.galahad.formats.folia
 
+import org.ivdnt.galahad.annotations.Annotation
+import org.ivdnt.galahad.annotations.AnnotationReader
 import org.ivdnt.galahad.annotations.Layer
-import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.annotations.Term
-import org.ivdnt.galahad.annotations.WordForm
-import org.ivdnt.galahad.formats.folia.export.deepcopy
-import org.ivdnt.galahad.formats.xml.reparseText
-import org.ivdnt.galahad.formats.xml.tagName
-import org.ivdnt.galahad.util.containedIn
-import org.ivdnt.galahad.util.getXmlBuilder
+import org.ivdnt.galahad.util.*
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import java.io.File
 
 class FoliaReader(
-    val file: File,
-    val nodeHandler: (node: Node, offset: Int, document: Document) -> Unit,
-) {
-    val xmlDoc: Document = getXmlBuilder().parse(file)
-    val plainTextBuilder: StringBuilder = StringBuilder()
-    val sourceLayer: Layer = Layer(SOURCE_LAYER_NAME)
+    file: File,
+) : AnnotationReader(file) {
+    val xml: Document = getXmlBuilder().parse(file)
+    private var literal: String = ""
+    private var pos: String = ""
+    private var lemma: String = ""
 
-    // Used to add spaces between words, but not between punctuation and words.
-    private var previousWasW = false
-
-    fun read() {
-        val plaintextBuilder = StringBuilder()
-        // Parsable nodes.
-        val texts = xmlDoc.getElementsByTagName("text").deepcopy()
-        val speeches = xmlDoc.getElementsByTagName("speech").deepcopy()
-        texts.addAll(speeches)
-
-        for (child in texts) {
-            processText(child)
-            plaintextBuilder.append(child.textContent)
-        }
+    override fun read(): Layer {
+        parseTopLevelTextNodes(xml.documentElement)
+        return Layer(documents)
     }
 
-    /** Within correction & speech, we only enter certain tags. Outside, we enter everything. */
-    private fun shouldParse(node: Node): Boolean {
-        // Don't parse notes and morphology.
-        if (node.tagName() == "note" || node.tagName() == "morphology") return false
-
-        val inCorrection: Boolean = node.parentNode?.tagName() == "correction"
-        val parseableCorrections: Boolean = node.tagName() == "new" || node.tagName() == "current"
-
-        val inSpeech: Boolean = node.parentNode?.tagName() == "speech"
-        val parsableSpeech: Boolean = node.tagName() == "utt" || node.tagName() == "s"
-
-        return if (inCorrection) parseableCorrections
-        else if (inSpeech) return parsableSpeech
-        else true
-    }
-
-    private fun processText(node: Node) {
-
-        fun recurse() {
-            val oldChildNodes = node.childNodes.deepcopy()
-            for (child in oldChildNodes) {
-                if (shouldParse(child)) processText(child)
+    private fun parseTopLevelTextNodes(node: Node) {
+        node.childElements.forEach { child ->
+            if (child.tagName == "text" || child.tagName == "speech") {
+                // parse document
+                parseNodesIntoDocument(child)
+                docID = child.getAttribute("xml:id")
+                newDocument()
+            } else {
+                // recurse
+                parseTopLevelTextNodes(child)
             }
         }
+    }
 
-        if (node.nodeType == Node.ELEMENT_NODE) {
-            val elem = node as Element
-            when (elem.tagName) {
-                "w" -> {
-                    processW(elem)
-                    previousWasW = true
+    private fun parseNodesIntoDocument(node: Node) {
+        node.children.forEach { child ->
+            if (child.nodeType == Node.ELEMENT_NODE && !IGNORABLE_TAGS.contains((child as Element).tagName)) {
+                val tag = child.tagName
+                val id = child.getAttribute("xml:id")
+
+                // recurse
+                parseNodesIntoDocument(child)
+
+                // create paragraph/sentence/word from the recursed text
+                if (PARAGRAPH_TAGS.contains(tag)) {
+                    // New paragraph
+                    parID = id
+                    newParagraph()
+                } else if (SENTENCE_TAGS.contains(tag)) {
+                    // New sentence
+                    sentID = id
+                    newSentence()
+                } else if (tag == "pos") {
+                    pos = child.getAttribute("class")
+                } else if (tag == "lemma") {
+                    lemma = child.getAttribute("class")
+                } else if (tag == "w") {
+                    // New wordform
+                    wordID = id
+                    newWordform(child)
                 }
-                // Extract plaintext that isn't in a <w>.
-                "t" -> {
-                    if (!elem.containedIn("w")) {
-                        // Extract text first, before nodeHandler changes anything.
-                        val text = elem.textContent.addNonFloatingSpace()
-                        nodeHandler(node, plainTextBuilder.length, xmlDoc)
-                        // Trim to correct for cases like: <t>abc\n       </t>
-                        plainTextBuilder.append(text)
+
+            } else if (child.nodeType == Node.TEXT_NODE) {
+                val text = child.textContent
+                val words = text.split("\\s+".toRegex())
+                for ((j, word) in words.withIndex()) {
+                    if (j > 0) {
+                        newWordform()
                     }
-                }
-
-                "s" -> {
-                    nonFloatingNL()
-                    recurse()
-                    nonFloatingNL()
-                    previousWasW = false
-                }
-
-                "p" -> {
-                    nonFloatingDoubleNL()
-                    recurse()
-                    nonFloatingDoubleNL()
-                    previousWasW = false
-                }
-
-                else -> {
-                    recurse()
+                    literal += word
                 }
             }
         }
     }
 
-    /** Adds a newline if the last character exists and is a non newline.*/
-    private fun nonFloatingNL() {
-        if (plainTextBuilder.isNotEmpty() && !plainTextBuilder.endsWith("\n")) {
-            plainTextBuilder.append("\n")
-        }
+    private fun newWordform(el: Element? = null) {
+        if (literal.isBlank()) return
+
+        val annotations = mutableMapOf<Annotation, String>()
+        lemma.takeIf { it.isNotBlank() }?.let { annotations[Annotation.LEMMA] = it }
+        pos.takeIf { it.isNotBlank() }?.let { annotations[Annotation.POS] = it }
+        annotations[Annotation.TOKEN] = literal
+
+        val term = Term(wordID!!, offset, annotations, el?.getAttribute("space") != "no")
+        terms.add(term)
+        offset += literal.length
+        literal = ""
     }
 
-    private fun nonFloatingDoubleNL() {
-        nonFloatingNL()
-        if (plainTextBuilder.isNotEmpty() && !plainTextBuilder.endsWith("\n\n")) {
-            plainTextBuilder.append("\n")
-        }
-    }
+    companion object {
+        private val PARAGRAPH_TAGS = listOf(
+            "text", // top most <text> defines a document, any other <text> is treated as a paragraph
+            "speech", // same for speech
+            "div",
+            "p",
+            "head",
+            "list",
+            "item",
+            "event",
+            "table",
+            "part",
+        )
+        private val SENTENCE_TAGS = listOf("s", "utt")
+        private val IGNORABLE_TAGS = listOf(
+            "note", "figure", "comment",
+            "original", // correction
+            "suggestion", // correction
 
-    private fun String.addNonFloatingSpace(): String {
-        return if (this.isEmpty()) this
-        else {
-            val text = reparseText(this).trim()
-            // Sometimes, <t>'s follow each other up without e.g. an opening or closing <p>.
-            // So we need to add spacing ourselves.
-            "$text "
-        }
-    }
-
-    private fun processW(w: Element) {
-        var literal = ""
-        val id = w.getAttribute("xml:id")
-        var lem: String? = null
-        var pos: String? = null
-
-        fun recurse(w: Node) {
-            for (i in 0 until w.childNodes.length) {
-                // Recurse
-                val childNode = w.childNodes.item(i)
-                if (shouldParse(childNode)) recurse(childNode)
-
-                if (childNode.nodeType == Node.ELEMENT_NODE) {
-                    val childElem = childNode as Element
-                    when (childElem.tagName) {
-                        // Trim to correct for cases like: <t>abc\n       </t>
-                        "t" -> literal = childElem.textContent.trim()
-                        "lemma" -> lem = childElem.getAttribute("class")
-                        "pos" -> pos = childElem.getAttribute("class")
-                    }
-                }
-            }
-        }
-        // Extract the information
-        recurse(w)
-
-        if (previousWasW && pos?.startsWith("LET") != true) {
-            plainTextBuilder.append(" ")
-        }
-        // We need the " " for the correct offset to give to nodeHandler.
-        nodeHandler(w as Node, plainTextBuilder.length, xmlDoc)
-
-        val wordForm = WordForm(literal, plainTextBuilder.length, id)
-        sourceLayer.wordForms.add(wordForm)
-        val term = Term(lem, pos, mutableListOf(wordForm))
-        sourceLayer.terms.add(term)
-
-        plainTextBuilder.append(literal)
+        )
     }
 }

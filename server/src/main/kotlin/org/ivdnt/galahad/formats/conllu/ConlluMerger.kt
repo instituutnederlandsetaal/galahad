@@ -1,19 +1,18 @@
-package org.ivdnt.galahad.formats.conllu.export
+package org.ivdnt.galahad.formats.conllu
 
-import org.ivdnt.galahad.annotations.AnnotationType
+import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.Term
-import org.ivdnt.galahad.formats.DocumentExport
-import org.ivdnt.galahad.formats.conllu.ConlluFile
-import org.ivdnt.galahad.formats.tsv.export.TSVLayerMerger
+import org.ivdnt.galahad.export.DocumentExport
+import org.ivdnt.galahad.formats.tsv.TsvMerger
 
 /**
  * Merge a layer with a CoNLLU file. Uses _ for null values. Splits PoS in head and features.
  * Do not call directly. Use [ConlluFile.merge] instead.
  */
-internal class ConlluLayerMerger(
+internal class ConlluMerger(
     override val sourceFile: ConlluFile, transformMetadata: DocumentExport,
-) : TSVLayerMerger(sourceFile, transformMetadata) {
+) : TsvMerger(sourceFile, transformMetadata) {
 
     override val hasHeader: Boolean = false
 
@@ -27,31 +26,31 @@ internal class ConlluLayerMerger(
         columns: MutableList<String>,
         layer: Layer,
         termIndex: Int,
-        annotationType: AnnotationType,
+        annotation: Annotation,
         columnIndex: Int,
     ) {
-        when (annotationType) {
-            AnnotationType.MISC -> {
+        when (annotation) {
+            Annotation.MISC -> {
                 // construct MISC by combining NER and MISC
                 val term: Term = layer.terms[termIndex]
-                var ner: String? = term.annotations[AnnotationType.NER]?.let { "NamedEntity=$it" }
-                val misc: String? = term.annotations[AnnotationType.MISC]
+                var ner: String? = term.annotations[Annotation.NER]?.let { "NamedEntity=$it" }
+                val misc: String? = term.annotations[Annotation.MISC]
                 val miscField: String = listOfNotNull(ner, misc).joinToString("|")
                 columns[columnIndex] = miscField.ifEmpty { "_" }
             }
 
-            AnnotationType.NER -> return // NER is already in MISC
-            AnnotationType.UPOS -> {
+            Annotation.NER -> return // NER is already in MISC
+            Annotation.UPOS -> {
                 // Split UPOS into head and features
                 val term: Term = layer.terms[termIndex]
-                val head: String = term.annotationHead(AnnotationType.UPOS) ?: "_"
-                val features: String = Term.features(term.annotations[AnnotationType.UPOS]) ?: "_"
+                val head: String = term.annotationHead(Annotation.UPOS) ?: "_"
+                val features: String = Term.features(term.annotations[Annotation.UPOS]) ?: "_"
                 columns[sourceFile.uposIndex] = head
                 columns[sourceFile.featsIndex] = features
             }
 
-            AnnotationType.ID -> return // Don't overwrite
-            else -> super.mergeSingleColumn(columns, layer, termIndex, annotationType, columnIndex)
+            Annotation.ID -> return // Don't overwrite
+            else -> super.mergeSingleColumn(columns, layer, termIndex, annotation, columnIndex)
         }
     }
 }

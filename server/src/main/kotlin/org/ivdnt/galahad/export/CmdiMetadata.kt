@@ -1,4 +1,4 @@
-package org.ivdnt.galahad.formats
+package org.ivdnt.galahad.export
 
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.corpora.MutableCorpusMetadata
@@ -19,16 +19,16 @@ import javax.xml.xpath.XPathFactory
 import kotlin.io.path.createTempDirectory
 
 /** Constructs a CMDI file for exported documents. */
-class CmdiMetadata(transformMetadata: DocumentExport) : LayerTransformer(transformMetadata) {
+class CmdiMetadata(val export: DocumentExport) {
 
     companion object {
         private val tmp_dir: File = createTempDirectory("cmdi").toFile()
     }
 
     // Some vals for repeated access.
-    private val docTitle = document.uploadedFile.nameWithoutExtension
-    private val corpusMetadata: MutableCorpusMetadata = transformMetadata.corpus.mutableMetadata
-    private val format = transformMetadata.targetFormat.identifier
+    private val docTitle = export.document.uploadedFile.nameWithoutExtension
+    private val corpusMetadata: MutableCorpusMetadata = export.corpus.mutableMetadata
+    private val format = export.format.identifier
 
     /** After initialization this file will contain the CMDI */
     val file: File
@@ -62,7 +62,8 @@ class CmdiMetadata(transformMetadata: DocumentExport) : LayerTransformer(transfo
         val day = SimpleDateFormat("dd").format(now)
         val date = "$year-$month-$day"
         val galahadVersion = Config.galahadVersion()
-        val uuid = document.metadata.uuid
+        val uuid = export.document.metadata.uuid
+        val tagger = export.tagger
 
         // Define replacements
         return mapOf(

@@ -3,7 +3,7 @@ description: "PIE trained on DBNL excerpts, GTB dictionary quotations & CLVN (14
 tagset: "TDN-Core"
 eraFrom: "1400"
 eraTo: "1600"
-produces:
+annotations:
   - lemma
   - pos
 model:

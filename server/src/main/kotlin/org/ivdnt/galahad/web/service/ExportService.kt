@@ -8,9 +8,8 @@ import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.corpora.documents.Document
 import org.ivdnt.galahad.corpora.documents.DocumentFormat
 import org.ivdnt.galahad.exceptions.MergeNotImplementedException
-import org.ivdnt.galahad.formats.CorpusExport
-import org.ivdnt.galahad.formats.DocumentExport
-import org.ivdnt.galahad.formats.InternalFile
+import org.ivdnt.galahad.export.CorpusExport
+import org.ivdnt.galahad.export.DocumentExport
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.io.File
@@ -27,29 +26,15 @@ class ExportService(val corpora: CorporaService) : Logging {
     private val user get() = User.fromRequest(request)
 
 
-    fun mergeDoc(corpus: UUID, job: String, document: String, posHeadOnly: Boolean): InternalFile {
+    fun mergeDoc(corpus: UUID, job: String, document: String, posHeadOnly: Boolean): File {
         val doc = corpora.readAsWriterOrThrow(corpus, user).documents.readOrThrow(document)
-        val dtm = getDocumentTransformMetadata(corpus, job, document, doc.metadata.format)
-        return mergeDoc(dtm, posHeadOnly)
+        val export = getDocumentExport(corpus, job, document, doc.metadata.format, posHeadOnly)
+        return export.merge()
     }
 
-    fun mergeDoc(dtm: DocumentExport, posHeadOnly: Boolean): InternalFile {
-        if (posHeadOnly) {
-            dtm.convertLayerToPosHead()
-        }
-        return dtm.document.merge(dtm)
-    }
-
-    fun convertDoc(corpus: UUID, job: String, document: String, format: String, posHeadOnly: Boolean): File {
-        val dtm = getDocumentTransformMetadata(corpus, job, document, DocumentFormat.fromString(format))
-        return convertDoc(dtm, posHeadOnly)
-    }
-
-    fun convertDoc(dtm: DocumentExport, posHeadOnly: Boolean): File {
-        if (posHeadOnly) {
-            dtm.convertLayerToPosHead()
-        }
-        return dtm.document.convert(dtm)
+    fun convertDoc(corpus: UUID, job: String, document: String, format: DocumentFormat, posHeadOnly: Boolean): File {
+        val export = getDocumentExport(corpus, job, document, format, posHeadOnly)
+        return export.convert()
     }
 
     /**
@@ -58,22 +43,21 @@ class ExportService(val corpora: CorporaService) : Logging {
     fun exportCorpusJobInFormat(
         corpus: UUID,
         job: String,
-        formatName: String,
+        format: DocumentFormat,
         shouldMerge: Boolean,
         posHeadOnly: Boolean,
     ) {
-        val format = DocumentFormat.fromString(formatName)
-        val ctm = getCorpusTransformMetadata(corpus, job, format)
-        ctm.corpus.export(ctm, formatMapper = {
+        val corpusExport = getCorpusTransformMetadata(corpus, job, format, posHeadOnly)
+        corpusExport.corpus.export(corpusExport, formatMapper = {
             try {
                 // Document conversions.
-                val dtm = ctm.docExport(it.name)
+                val docExport = DocumentExport.create(corpusExport, it)
                 return@export if (shouldMerge && mergeFormatMatches(it, format)) {
                     logger.info("Merging ${it.name} of format ${it.metadata.format}")
-                    mergeDoc(dtm, posHeadOnly).file
+                    docExport.merge()
                 } else {
                     logger.info("Converting ${it.name} of format ${it.metadata.format} to $format")
-                    convertDoc(dtm, posHeadOnly)
+                    docExport.convert()
                 }
             } catch (e: MergeNotImplementedException) {
                 throw e
@@ -82,30 +66,27 @@ class ExportService(val corpora: CorporaService) : Logging {
             }
         }, filter = {
             // Filter out untagged documents.
-                document ->
-            ctm.docExport(document.name).layer != Layer.EMPTY
+                DocumentExport.create(corpusExport, it).layer != Layer.EMPTY
         }, outputStream = response?.outputStream)
     }
 
     private fun getCorpusTransformMetadata(
         corpusID: UUID,
         jobName: String,
-        formatName: DocumentFormat,
+        format: DocumentFormat,
+        posHeadOnly: Boolean
     ): CorpusExport {
-        // Exporting documents requires you to have write access.
         val corpus = corpora.readAsWriterOrThrow(corpusID, user)
-        val job = corpus.jobs.readOrThrow(jobName)
-        return CorpusExport(
-            corpus, job, User.fromRequest(request), formatName
-        )
+        return CorpusExport.create(corpus, jobName, format, posHeadOnly, user)
     }
 
-    private fun getDocumentTransformMetadata(
+    private fun getDocumentExport(
         corpus: UUID,
         job: String,
         document: String,
         format: DocumentFormat,
-    ): DocumentExport = getCorpusTransformMetadata(corpus, job, format).docExport(document)
+        posHeadOnly: Boolean
+    ): DocumentExport = DocumentExport.create(getCorpusTransformMetadata(corpus, job, format, posHeadOnly), document)
 
     private fun mergeFormatMatches(
         it: Document, format: DocumentFormat,

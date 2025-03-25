@@ -1,6 +1,6 @@
 package org.ivdnt.galahad.evaluation.distribution
 
-import org.ivdnt.galahad.formats.csv.CSVFile
+import org.ivdnt.galahad.export.csv.CSVFile
 
 class LiteralsEntry(
     val literals: Map<String, Int>,

@@ -6,7 +6,7 @@ import org.ivdnt.galahad.evaluation.CsvSampleExporter
 import org.ivdnt.galahad.evaluation.EvaluationEntry
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
 import org.ivdnt.galahad.exceptions.InvalidClassificationTypeException
-import org.ivdnt.galahad.formats.csv.CSVFile
+import org.ivdnt.galahad.export.csv.CSVFile
 import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.util.toFixed
 

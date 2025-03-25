@@ -2,19 +2,18 @@ package org.ivdnt.galahad.formats.tsv
 
 import org.ivdnt.galahad.annotations.*
 import org.ivdnt.galahad.corpora.documents.DocumentFormat
-import org.ivdnt.galahad.formats.DocumentExport
+import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.formats.InternalFile
 import org.ivdnt.galahad.formats.conllu.ConlluFile
-import org.ivdnt.galahad.formats.tsv.export.TSVLayerMerger
 import java.io.File
 import java.io.FileOutputStream
 
-open class TSVFile(
+open class TsvFile(
     override val file: File,
 ) : InternalFile {
     override val format: DocumentFormat = DocumentFormat.Tsv
     override val plaintext: String by lazy { parse(); plainTextFile.readText() }
-    override val sourceLayer: Layer by lazy { parse(); _sourceLayer }
+    override val layer: Layer by lazy { parse(); _sourceLayer }
 
     private val plainTextFile = File.createTempFile("galahad-${file.name}-plaintext", ".txt")
     val entries: ArrayList<Annotations> = ArrayList<Annotations>()
@@ -23,17 +22,17 @@ open class TSVFile(
 
     private var isParsed: Boolean = false
 
-    open val columnIndices: MutableMap<AnnotationType, Int> = mutableMapOf()
+    open val columnIndices: MutableMap<org.ivdnt.galahad.annotations.Annotation, Int> = mutableMapOf()
 
-    val columnNames: Map<AnnotationType, List<String>> = mapOf(
-        AnnotationType.TOKEN to listOf("word", "token", "literal", "term", "form"),
-        AnnotationType.LEMMA to listOf("lemma"),
-        AnnotationType.POS to listOf("pos", "xpos"),
-        AnnotationType.UPOS to listOf("upos"),
-        AnnotationType.DEPREL to listOf("deprel"),
-        AnnotationType.HEAD to listOf("head"),
-        AnnotationType.ID to listOf("id"),
-        AnnotationType.NER to listOf("entity", "ner", "named-entity", "NamedEntity"),
+    val columnNames: Map<org.ivdnt.galahad.annotations.Annotation, List<String>> = mapOf(
+        Annotation.TOKEN to listOf("word", "token", "literal", "term", "form"),
+        Annotation.LEMMA to listOf("lemma"),
+        Annotation.POS to listOf("pos", "xpos"),
+        Annotation.UPOS to listOf("upos"),
+        Annotation.DEPREL to listOf("deprel"),
+        Annotation.HEAD to listOf("head"),
+        Annotation.ID to listOf("id"),
+        Annotation.NER to listOf("entity", "ner", "named-entity", "NamedEntity"),
     )
 
     /**
@@ -68,7 +67,7 @@ open class TSVFile(
         getColumnIndices(headers)
 
         // Check for the presence of a token
-        if (columnIndices[AnnotationType.TOKEN] == null) {
+        if (columnIndices[Annotation.TOKEN] == null) {
             throw IllegalArgumentException("No token column found in TSV file.")
         }
     }
@@ -98,13 +97,13 @@ open class TSVFile(
         val values: List<String> = line.split("\t")
 
         // Retrieve values
-        val mutAnnot: MutableMap<AnnotationType, String?> = mutableMapOf()
+        val mutAnnot: MutableMap<org.ivdnt.galahad.annotations.Annotation, String?> = mutableMapOf()
         for (column in columnIndices.entries) {
             getColumn(column.value, values)?.let { mutAnnot[column.key] = it }
         }
 
         // Skip newlines by checking for non-empty literals.
-        if (mutAnnot[AnnotationType.TOKEN] != null && values.size >= 2) {
+        if (mutAnnot[Annotation.TOKEN] != null && values.size >= 2) {
             val annotations: Annotations = mutAnnot
             // Commit values if non-empty
             entries.add(annotations)
@@ -160,9 +159,9 @@ open class TSVFile(
         return newLayer
     }
 
-    override fun merge(export: DocumentExport): TSVFile {
+    override fun merge(export: DocumentExport): TsvFile {
         // Sets header indices needed to merge.
         parse()
-        return TSVLayerMerger(this, export).merge()
+        return TsvMerger(this, export).merge()
     }
 }

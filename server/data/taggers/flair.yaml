@@ -3,9 +3,9 @@ description: "flair"
 tagset: "Universal Dependencies"
 eraFrom: "2000"
 eraTo: "2020"
-produces:
+annotations:
   - upos
-  - named-entity
+  - ner
 model:
   name: ner-dutch-large
   href: https://huggingface.co/flair/ner-dutch-large

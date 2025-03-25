@@ -2,7 +2,7 @@ package org.ivdnt.galahad.web.service
 
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.ivdnt.galahad.annotations.AnnotationType
+import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.corpora.CorpusMetadata
@@ -14,7 +14,7 @@ import org.ivdnt.galahad.evaluation.frequency.TokenFrequency
 import org.ivdnt.galahad.evaluation.metrics.*
 import org.ivdnt.galahad.exceptions.AnnotationNotSupported
 import org.ivdnt.galahad.exceptions.InvalidMetricsTypeException
-import org.ivdnt.galahad.formats.csv.CSVFile
+import org.ivdnt.galahad.export.csv.CSVFile
 import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.util.createZipFile
 import org.ivdnt.galahad.util.setContentDisposition
@@ -41,9 +41,9 @@ class EvaluationService(val corpora: CorporaService) {
     fun getDistribution(
         corpus: UUID,
         job: String,
-    ): Map<AnnotationType, CorpusDistribution> {
+    ): Map<Annotation, CorpusDistribution> {
         val allAnnots = annotationTypesForTagger(job, corpus)
-        if (!allAnnots.contains(AnnotationType.LEMMA)) {
+        if (!allAnnots.contains(Annotation.LEMMA)) {
             return emptyMap()
         }
         val annotationTypes = CONFUSION_TYPES.filter { allAnnots.contains(it) }
@@ -61,7 +61,7 @@ class EvaluationService(val corpora: CorporaService) {
         corpus: UUID,
         job: String,
         reference: String?,
-    ): Map<AnnotationType, CorpusConfusion> {
+    ): Map<Annotation, CorpusConfusion> {
         val allAnnots = annotationTypesForTagger(job, corpus)
         val annotationTypes = CONFUSION_TYPES.filter { allAnnots.contains(it) }
         val confusions = annotationTypes.associateWith {
@@ -78,26 +78,25 @@ class EvaluationService(val corpora: CorporaService) {
     fun getConfusionSamples(
         hypoFilter: String,
         refFilter: String,
-        annotation: String,
+        annotation: Annotation,
         corpus: UUID,
         job: String,
         reference: String,
     ): ByteArray {
         // Ensure the job has the required annotation types.
-        val annotationType = AnnotationType.fromString(annotation)
-        if (!annotationTypesForTagger(job, corpus).contains(annotationType)) {
-            throw AnnotationNotSupported(job, annotationType)
+        if (!annotationTypesForTagger(job, corpus).contains(annotation)) {
+            throw AnnotationNotSupported(job, annotation)
         }
         var layerFilter: ConfusionLayerFilter? = ConfusionLayerFilter(
-            HeadGroupTermFilter(annotationType, hypoFilter),
-            HeadGroupTermFilter(annotationType, refFilter),
+            HeadGroupTermFilter(annotation, hypoFilter),
+            HeadGroupTermFilter(annotation, refFilter),
         )
         val cc = CorpusConfusion(
             corpus = corpora.readAsReaderOrThrow(corpus, user),
             hypothesis = job,
             reference = reference,
             layerFilter = layerFilter,
-            annotation = AnnotationType.fromString(annotation)
+            annotation = annotation
         )
         val fileName = "confusion-${refFilter}-${hypoFilter}.csv"
         val csv = cc.samplesToCSV()
@@ -240,9 +239,9 @@ class EvaluationService(val corpora: CorporaService) {
         return metadata
     }
 
-    private fun annotationTypesForTagger(job: String, corpus: UUID): List<AnnotationType> {
+    private fun annotationTypesForTagger(job: String, corpus: UUID): Set<Annotation> {
         val corpusObj = corpora.readAsReaderOrThrow(corpus, user)
-        return Tagger.readOrThrow(job, corpusObj).annotationTypes
+        return Tagger.readOrThrow(job, corpusObj).annotations
     }
 
     fun samplesToZip(

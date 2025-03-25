@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
-import org.ivdnt.galahad.formats.csv.CSVFile
-import org.ivdnt.galahad.formats.csv.CSVHeader
+import org.ivdnt.galahad.export.csv.CSVFile
+import org.ivdnt.galahad.export.csv.CSVHeader
 import org.ivdnt.galahad.taggers.Tagger
 
 

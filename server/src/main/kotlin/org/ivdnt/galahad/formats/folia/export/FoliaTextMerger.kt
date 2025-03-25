@@ -1,6 +1,6 @@
 package org.ivdnt.galahad.formats.folia.export
 
-import org.ivdnt.galahad.annotations.AnnotationType
+import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.annotations.WordForm
@@ -122,7 +122,7 @@ class FoliaTextMerger(
 
     private fun Element.addTerm(term: Term) {
         this.addTermFeature("lemma", term.lemmaOrEmpty)
-        val posHead = term.annotationHead(AnnotationType.POS) ?: ""
+        val posHead = term.annotationHead(Annotation.POS) ?: ""
         this.addTermFeature("pos", term.posOrEmpty, posHead)
     }
 

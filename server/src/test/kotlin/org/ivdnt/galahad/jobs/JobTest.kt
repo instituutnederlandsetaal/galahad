@@ -32,7 +32,7 @@ class JobTest {
         // verify from state cache
         assertEquals(LayerPreview.EMPTY, job.metadata.preview)
         assertEquals(0, job.metadata.progress.total)
-        assertEquals(0, job.metadata.resultSummary.numWordForms)
+        assertEquals(0, job.metadata.resultSummary.tokens)
     }
 
     @Test

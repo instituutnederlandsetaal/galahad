@@ -7,6 +7,6 @@ import org.junit.jupiter.api.Test
 class NafImportTest {
     @Test
     fun `Import a NAF`() {
-        assertPlaintextAndSourcelayer("naf/import", NAFFile(Resource.get("naf/import/input.naf.xml")))
+        assertPlaintextAndSourcelayer("naf/import", NafFile(Resource.get("naf/import/input.naf.xml")))
     }
 }

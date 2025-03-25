@@ -1,6 +1,6 @@
 package org.ivdnt.galahad.evaluation
 
-import org.ivdnt.galahad.annotations.AnnotationType
+import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.annotations.WordForm
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
@@ -20,7 +20,7 @@ class TermComparisonTest {
             val term1 = Term("", "", mutableListOf(target1))
             val term2 = Term("", "", mutableListOf(target2))
             TermComparison(term1, term2).apply {
-                assertTrue(fullOverlap)
+                assertTrue(overlap)
                 assertFalse(partialOverlap)
             }
         }
@@ -32,7 +32,7 @@ class TermComparisonTest {
             val term1 = Term("", "", mutableListOf(target1))
             val term2 = Term("", "", mutableListOf(target2))
             TermComparison(term1, term2).apply {
-                assertFalse(fullOverlap)
+                assertFalse(overlap)
                 assertTrue(partialOverlap)
             }
         }
@@ -49,8 +49,8 @@ class TermComparisonTest {
             val hypoTerm = Term(hypoLemma, hypoPos, mutableListOf())
             val refTerm = Term(refLemma, refPos, mutableListOf())
             TermComparison(hypoTerm, refTerm).apply {
-                assertEquals(lemmaEqual, equalAnnotation(AnnotationType.LEMMA))
-                assertEquals(posEqual, equalAnnotation(AnnotationType.POS))
+                assertEquals(lemmaEqual, equalAnnotation(Annotation.LEMMA))
+                assertEquals(posEqual, equalAnnotation(Annotation.POS))
             }
         }
 

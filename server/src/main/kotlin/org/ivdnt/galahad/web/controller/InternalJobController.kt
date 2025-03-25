@@ -11,7 +11,7 @@ import org.ivdnt.galahad.corpora.jobs.Job
 import org.ivdnt.galahad.exceptions.InvalidDocumentFormatException
 import org.ivdnt.galahad.formats.InternalFile
 import org.ivdnt.galahad.formats.conllu.ConlluFile
-import org.ivdnt.galahad.formats.tsv.TSVFile
+import org.ivdnt.galahad.formats.tsv.TsvFile
 import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.taggers.Tagset
 import org.ivdnt.galahad.web.service.CorporaService
@@ -82,7 +82,7 @@ class InternalJobController(
 
                 }
 
-                is TSVFile -> {
+                is TsvFile -> {
                     val alignedLayer = uploadedFile.mapOnPlainText(
                         plaintext = original.plaintext, layerName = jobName
                     )

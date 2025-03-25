@@ -1,6 +1,6 @@
 package org.ivdnt.galahad.evaluation.confusion
 
-import org.ivdnt.galahad.annotations.AnnotationType
+import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.evaluation.comparison.LayerComparison
@@ -14,7 +14,7 @@ class DocumentConfusion(
     hypothesis: Layer,
     reference: Layer,
     layerFilter: LayerFilter? = null,
-    annotation: AnnotationType = AnnotationType.POS,
+    annotation: Annotation = Annotation.POS,
 ) : Confusion(truncate = layerFilter == null, annotation) {
 
     init {

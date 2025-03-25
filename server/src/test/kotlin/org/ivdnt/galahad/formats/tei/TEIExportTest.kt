@@ -4,8 +4,8 @@ import org.ivdnt.galahad.TestConfig
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.corpora.documents.DocumentFormat
+import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.formats.*
-import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.taggers.Tagset
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -22,7 +22,7 @@ internal class TEIExportTest {
 
     @Test
     fun `Merge pie-tdn result with heavily twined tei`() {
-        val file = TEIFile(Resource.get("tei/twine/twine.input.xml"))
+        val file = TeiFile(Resource.get("tei/twine/twine.input.xml"))
         assertPlainText("tei/twine", file)
 
         val plaintext: String = Resource.get("tei/twine/plaintext.txt").readText()
@@ -35,7 +35,7 @@ internal class TEIExportTest {
     @Test
     fun `Merge doc with alphanumeric PC`() {
         fun asserAlphaNumericPC(folder: String) {
-            val file = TEIFile(Resource.get("$folder/input.tei.xml"))
+            val file = TeiFile(Resource.get("$folder/input.tei.xml"))
             assertPlainText(folder, file)
 
             val plaintext: String = Resource.get("$folder/plaintext.txt").readText()
@@ -61,7 +61,7 @@ internal class TEIExportTest {
 
     @Test
     fun `Merge a pie-tdn layer with a tei file that only contains plaintext`() {
-        val file = TEIFile(Resource.get("tei/brieven/input.tei.xml"))
+        val file = TeiFile(Resource.get("tei/brieven/input.tei.xml"))
         assertPlainText("tei/brieven", file)
 
         val plaintext: String = Resource.get("tei/brieven/plaintext.txt").readText()
@@ -74,7 +74,7 @@ internal class TEIExportTest {
     @Test
     fun punctuationExportTest() {
 
-        val teiFile = TEIFile(Resource.get("tei/oneparagraph/mocktei.xml"))
+        val teiFile = TeiFile(Resource.get("tei/oneparagraph/mocktei.xml"))
         DocTest.builder(corpus).expecting("Dit is wat oefentekst.").got(teiFile.plaintext)
             .ignoreTrailingWhiteSpaces().result()
 
@@ -94,7 +94,7 @@ internal class TEIExportTest {
     fun mergePuncutationTest() {
 
         val tagset = Tagset.readOrThrow("TDN-Core")
-        val plaintext = TEIFile(Resource.get("tei/dummies/punctutation-mixed-tags.xml")).plaintext
+        val plaintext = TeiFile(Resource.get("tei/dummies/punctutation-mixed-tags.xml")).plaintext
         val layer = LayerBuilder().loadLayerFromTSV("tei/dummies/punctuation-mixed-tags-sample-layer.tsv", plaintext)
             .setTagset(tagset).build()
 
@@ -157,7 +157,7 @@ internal class TEIExportTest {
                 job = job,
                 document = doc,
                 user = User("test-user"),
-                targetFormat = DocumentFormat.TeiP5
+                format = DocumentFormat.TeiP5
             )
         )
 
@@ -174,7 +174,7 @@ internal class TEIExportTest {
                 job = corpus.jobs.readOrThrow(jobName),
                 document = corpus.documents.readOrThrow(teiUploadedDoc.name),
                 user = User("test-user"),
-                targetFormat = DocumentFormat.TeiP5
+                format = DocumentFormat.TeiP5
             )
         )
 

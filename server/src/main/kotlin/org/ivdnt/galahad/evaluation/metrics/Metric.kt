@@ -5,9 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.evaluation.EvaluationEntry
-import org.ivdnt.galahad.formats.csv.CSVFile
-import org.ivdnt.galahad.formats.csv.CSVHeader
-import org.ivdnt.galahad.formats.csv.CSVRecord
+import org.ivdnt.galahad.export.csv.CSVFile
+import org.ivdnt.galahad.export.csv.CSVHeader
+import org.ivdnt.galahad.export.csv.CSVRecord
 import org.ivdnt.galahad.util.toFixed
 
 /**
@@ -96,8 +96,7 @@ open class ClassificationClasses(
     /** sample count without duplicates, for calculating accuracy. */
     @JsonIgnore var count: Int = 1,
 ) {
-    open val classCount: Int
-        get() = truePositive.count + falsePositive.count + falseNegative.count + noMatch.count
+    open val classCount: Int get() = truePositive.count + falsePositive.count + falseNegative.count + noMatch.count
 
     fun add(other: ClassificationClasses, truncate: Boolean = true): ClassificationClasses {
         truePositive = EvaluationEntry.add(truePositive, other.truePositive, truncate)

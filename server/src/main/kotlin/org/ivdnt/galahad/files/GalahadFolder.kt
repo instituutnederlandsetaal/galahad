@@ -14,6 +14,5 @@ abstract class GalahadFolder(
     val lastModified: Long
         get() = dir.walkTopDown().map { it.lastModified() }.reduceOrNull { f, g -> f.coerceAtLeast(g) } ?: -1
 
-    val sizeInBytes: Long
-        get() = dir.walkTopDown().filter { it.isFile }.map { it.length() }.sum()
+    val sizeInBytes: Long get() = dir.walkTopDown().filter { it.isFile }.map { it.length() }.sum()
 }

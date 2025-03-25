@@ -9,12 +9,10 @@ const val MAX_SAMPLE_LENGTH: Int = 10
 
 data class EvaluationEntry(
     val count: Int = 0,
-    @JsonIgnore
-    val samples: MutableList<TermComparison> = mutableListOf(),
+    @JsonIgnore val samples: MutableList<TermComparison> = mutableListOf(),
 ) {
     @get:JsonProperty("samples")
-    val jsonSamples: List<TermComparison>
-        get() = samples.asSequence().shuffled().take(MAX_SAMPLE_LENGTH).toList()
+    val jsonSamples: List<TermComparison> get() = samples.asSequence().shuffled().take(MAX_SAMPLE_LENGTH).toList()
 
     companion object {
         /**

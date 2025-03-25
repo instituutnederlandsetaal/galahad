@@ -3,15 +3,13 @@ description: "stanza trained on conll02 for NER and alpino for the rest"
 tagset: "Universal Dependencies"
 eraFrom: "2000"
 eraTo: "2020"
-produces:
+annotations:
   - lemma
   - pos
   - upos
   - head
   - deprel
-  - misc
-  - id
-  - named-entity
+  - ner
 model:
   name: dutch alpino
   href: https://stanfordnlp.github.io/stanza/performance.html#system-performance-on-ud-treebanks

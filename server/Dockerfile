@@ -1,4 +1,4 @@
-FROM gradle:8.12.1-jdk21-alpine AS build
+FROM gradle:8.13.0-jdk23-alpine AS build
 # Note: the gradle version must match the version in build.gradle.kts
 COPY --chown=gradle:gradle . /home/gradle/src
 WORKDIR /home/gradle/src
@@ -8,10 +8,7 @@ RUN echo "Contents of workdir:" && ls -l . \
     && rm build/libs/*-plain.jar \
     && echo "Contents of build/libs after removing plain jars:" && ls -l build/libs
 
-FROM eclipse-temurin:23.0.1_11-jre-alpine
-
-# FIX CVE-2023-52425
-RUN apk --no-cache add --upgrade expat
+FROM eclipse-temurin:23.0.2_7-jre-alpine-3.21
 
 EXPOSE 8010:8080
 COPY --from=build /home/gradle/src/build/libs/*.jar galahad-server.jar

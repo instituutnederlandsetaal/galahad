@@ -3,7 +3,7 @@ description: "PIE trained on DBNL excerpts, GTB dictionary quotations, newspaper
 tagset: "TDN-Core"
 eraFrom: "1600"
 eraTo: "1900"
-produces:
+annotations:
   - lemma
   - pos
 model:

@@ -2,7 +2,7 @@ package org.ivdnt.galahad.evaluation.confusion
 
 import org.ivdnt.galahad.TestConfig
 import org.ivdnt.galahad.corpora.Corpus
-import org.ivdnt.galahad.annotations.AnnotationType
+import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.evaluation.EvaluationUtil
 import org.ivdnt.galahad.evaluation.comparison.ConfusionLayerFilter
 import org.ivdnt.galahad.evaluation.comparison.HeadGroupTermFilter
@@ -58,8 +58,8 @@ class CorpusConfusionTest {
     fun `PoS confusion with filter`() {
         EvaluationUtil.addDocWithMissingMatches(corpus)
         val filter = ConfusionLayerFilter(
-            hypoTermFilter = HeadGroupTermFilter(AnnotationType.POS, "LET"),
-            refTermFilter = HeadGroupTermFilter(AnnotationType.POS, TermComparison.MISSING_MATCH),
+            hypoTermFilter = HeadGroupTermFilter(Annotation.POS, "LET"),
+            refTermFilter = HeadGroupTermFilter(Annotation.POS, TermComparison.MISSING_MATCH),
         )
 
         val cc = CorpusConfusion(corpus, TestConfig.TAGGER_NAME, layerFilter = filter)

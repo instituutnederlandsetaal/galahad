@@ -1,91 +1,62 @@
 package org.ivdnt.galahad.annotations
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonProperty
 
 
-/**
- * A term in a [Layer]. A term has a [lemma], a [pos] and refers to one or multiple [WordForm].
- * Referring to multiple [WordForm] is used to represent multi-word terms, although it is currently not used.
- * Lemma and pos can be null.
- */
 data class Term(
-    @JsonProperty("annotations") val annotations: Annotations,
-    @JsonProperty("targets") val targets: MutableList<WordForm>,
+    val id: String, val offset: Int, val annotations: Annotations, val spaceAfter: Boolean = true
 ) {
-    constructor(lemma: String?, pos: String?, targets: MutableList<WordForm>) : this(
-        mapOf(AnnotationType.LEMMA to lemma, AnnotationType.POS to pos).filterValues { it != null },
-        targets
-    )
+    @get:JsonIgnore
+    val token: String = annotations[Annotation.TOKEN]!!
 
     @get:JsonIgnore
-    val lemma: String? = annotations[AnnotationType.LEMMA]
+    val lemma: String? get() = annotations[Annotation.LEMMA]
 
     @get:JsonIgnore
-    val pos: String? = annotations[AnnotationType.POS]
-
-    /** Whether the lemma is not null. */
-    @get:JsonIgnore
-    val hasLemma: Boolean = lemma != null
-
-    /** Whether the pos is not null. */
-    @get:JsonIgnore
-    val hasPOS: Boolean = pos != null
+    val pos: String? = annotations[Annotation.POS]
 
     @get:JsonIgnore
-    val lemmaOrEmpty: String
-        get() = lemma ?: ""
+    val upos: String? = annotations[Annotation.UPOS]
 
     @get:JsonIgnore
-    val posOrEmpty: String
-        get() = pos ?: ""
+    val head: String? = annotations[Annotation.HEAD]
 
-    /** Whether this term refers to multiple [WordForm]. */
     @get:JsonIgnore
-    val isMultiTarget: Boolean = targets.size > 1
+    val deprel: String? = annotations[Annotation.DEPREL]
 
-    fun isMulti(annotation: AnnotationType): Boolean = annotations[annotation]?.contains("+") == true
-
-    /** Offset of the first [WordForm] in [targets].*/
     @get:JsonIgnore
-    val firstOffset: Int get() = targets.minOfOrNull { it.offset } ?: -1
+    val ner: String? = annotations[Annotation.NER]
 
-    /** String constructed from all the [WordForm] in [targets]. */
-    @get:JsonIgnore
-    val literals: String
-        get() = targets.joinToString(" ") { it.literal }
+
+    fun isMulti(annotation: Annotation): Boolean = annotations[annotation]?.contains("+") == true
 
     /**
      * Returns the annotation head or NO_[annotation] if it is missing.
      * E.g. NOU-C for NOU-c(num=sg); or NO_POS.
      */
-    fun annotationHeadOrMissing(annotation: AnnotationType): String =
-        annotationHead(annotation) ?: missingName(annotation)
+    fun annotationHeadOrMissing(annotation: Annotation): String = annotationHead(annotation) ?: missingName(annotation)
 
     /**
      * Returns the annotation or NO_[annotation] if it is missing.
      * E.g. NOU-C(num=sg); or NO_POS.
      */
-    fun annotationOrMissing(annotation: AnnotationType): String = annotations[annotation] ?: missingName(annotation)
+    fun annotationOrMissing(annotation: Annotation): String = annotations[annotation] ?: missingName(annotation)
 
     /**
      * The head of [annotation]. E.g. "PD+NOU" for "PD(type=art)+NOU(num=sg)"
      * or "VG" for "VG|neven" or ORG for B-ORG.
      */
-    fun annotationHead(annotationType: AnnotationType): String? {
+    fun annotationHead(annotationType: Annotation): String? {
         // get annotation
-        val annotation = annotations[annotationType]
-        if (annotation == null) {
-            return null
-        }
+        val annotation = annotations[annotationType] ?: return null
         // for NER
-        if (annotationType == AnnotationType.NER) {
+        if (annotationType == Annotation.NER) {
             if (annotation.contains('-')) {
                 return annotation.split('-')[1]
             }
         }
         // for POS & UPOS
-        else if (listOf(AnnotationType.POS, AnnotationType.UPOS).contains(annotationType)) {
+        else if (listOf(Annotation.POS, Annotation.UPOS).contains(annotationType)) {
             return if (isMulti(annotationType)) {
                 // Split on + and transform each part
                 annotation.split("+").map { singlePosToHead(it) }.joinToString("+")
@@ -98,11 +69,11 @@ data class Term(
     }
 
     companion object {
-        val EMPTY: Term = Term(mapOf(), mutableListOf())
+        val EMPTY: Term = Term("", 0, emptyMap())
 
-        fun missingName(annotationType: AnnotationType): String =
+        fun missingName(annotation: Annotation): String =
             // simply uppercase and prepend "NO_"
-            "NO_${annotationType.value.uppercase()}"
+            "NO_${annotation.value.uppercase()}"
 
         /** The features of [pos]. E.g. "num=sg" for "NOU(num=sg)". Does not support multi-pos. */
         fun features(pos: String?): String? {
@@ -128,8 +99,3 @@ data class Term(
         }
     }
 }
-
-data class Term2(
-    val value: String,
-    val targets: List<WordForm>,
-)

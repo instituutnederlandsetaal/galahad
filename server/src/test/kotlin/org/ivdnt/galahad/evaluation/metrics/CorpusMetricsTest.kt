@@ -2,7 +2,7 @@ package org.ivdnt.galahad.evaluation.metrics
 
 import org.ivdnt.galahad.TestConfig
 import org.ivdnt.galahad.corpora.Corpus
-import org.ivdnt.galahad.annotations.AnnotationType
+import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.evaluation.EvaluationUtil
 import org.ivdnt.galahad.evaluation.comparison.HeadGroupTermFilter
 import org.ivdnt.galahad.evaluation.comparison.MetricsLayerFilter
@@ -54,7 +54,7 @@ class CorpusMetricsTest {
         EvaluationUtil.add_two_docs_to_corpus(corpus)
         EvaluationUtil.addDocWithMatchingMultiPosLemma(corpus)
 
-        val termFilter = HeadGroupTermFilter(AnnotationType.POS, "PD+NOU-C")
+        val termFilter = HeadGroupTermFilter(Annotation.POS, "PD+NOU-C")
         val filter = MetricsLayerFilter(termFilter,termFilter)
         val filteredMetrics = CorpusMetrics(corpus, listOf(PosByPosMetricsSettings()), TestConfig.TAGGER_NAME, layerFilter = filter)
         val filteredGlobal = filteredMetrics.metricTypes.values.first()

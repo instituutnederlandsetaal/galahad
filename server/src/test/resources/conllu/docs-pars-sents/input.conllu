@@ -32,8 +32,8 @@
 # sent_id = karel.p2.s2
 # text = Dat koning Carel slaepen beghonde.
 1	Dat	dat	_	CONJ(type=sub)	_	_	_	_	_
-2	koning	koning	_	NOU-C(number=sg)	_	_	_	_	_
-3	Carel	Carel	_	NOU-P	_	_	_	_	_
+2	koning	koning	_	NOU-C(number=sg)	_	_	_	_	NamedEntity=B-PER
+3	Carel	Carel	_	NOU-P	_	_	_	_	NamedEntity=I-PER
 4	slaepen	slaap	_	NOU-C(number=pl)	_	_	_	_	_
 5	beghonde	beginnen	_	VRB(finiteness=fin,tense=past)	_	_	_	_	SpaceAfter=No
 6	.	.	_	PC	_	_	_	_	_
@@ -42,7 +42,7 @@
 # newpar id = martijn.p1
 # sent_id = martijn.p1.s1
 # text = Martijn, slaepstu? slaept dijn sin?
-1	Martijn	Martijn	_	NOU-P	_	_	_	_	SpaceAfter=No
+1	Martijn	Martijn	_	NOU-P	_	_	_	_	SpaceAfter=No|NamedEntity=S-PER
 2	,	,	_	PC	_	_	_	_	_
 3	slaepstu	slapen+du	_	VRB(finiteness=fin,tense=pres)+PD(type=pers,position=free)	_	_	_	_	SpaceAfter=No
 4	?	?	_	PC	_	_	_	_	_

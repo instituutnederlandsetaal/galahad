@@ -2,7 +2,7 @@ package org.ivdnt.galahad.formats.tsv
 
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
-import org.ivdnt.galahad.annotations.AnnotationType
+import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Annotations
 import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.annotations.lemma
@@ -15,7 +15,7 @@ import java.io.File
 internal class TSVBodyTest {
     @Test
     fun `Skip empty lines`() {
-        val tsvFile = TSVFile(File("src/test/resources/tsv/body/emptylines.tsv"))
+        val tsvFile = TsvFile(File("src/test/resources/tsv/body/emptylines.tsv"))
         assertTSVFile(tsvFile)
     }
 
@@ -23,13 +23,13 @@ internal class TSVBodyTest {
     // but some corpora use # above a sentence/document to indicate provenance.
     @Test
     fun `Skip comments`() {
-        val tsvFile = TSVFile(File("src/test/resources/tsv/body/comments.tsv"))
+        val tsvFile = TsvFile(File("src/test/resources/tsv/body/comments.tsv"))
         assertTSVFile(tsvFile)
     }
 
     @Test
     fun `Body with extra columns`() {
-        val tsvFile = TSVFile(File("src/test/resources/tsv/body/extra-columns.tsv"))
+        val tsvFile = TsvFile(File("src/test/resources/tsv/body/extra-columns.tsv"))
         assertTSVFile(tsvFile)
         val expected = "scholen loop " // Note the space.
         assertEquals(expected, tsvFile.plaintext)
@@ -39,7 +39,7 @@ internal class TSVBodyTest {
     fun `Missing values`() {
         // Contains 3 files with a missing value for lemma, pos and literal.
         for (file in File("src/test/resources/tsv/body-missing-values").listFiles()!!) {
-            val tsvFile = TSVFile(file)
+            val tsvFile = TsvFile(file)
             tsvFile.parse()
             val type = file.nameWithoutExtension.split("-")[1]
             val entries = tsvFile.entries
@@ -55,10 +55,10 @@ internal class TSVBodyTest {
     }
 
     // The files in the body/ folder have the same content, so reuse the same test.
-    private fun assertTSVFile(tsvFile: TSVFile) {
+    private fun assertTSVFile(tsvFile: TsvFile) {
         tsvFile.parse()
         assertEntries(tsvFile.entries)
-        assertSourceLayer(tsvFile.sourceLayer)
+        assertSourceLayer(tsvFile.layer)
     }
 
     private fun assertEntries(entries: ArrayList<Annotations>) {
@@ -100,6 +100,6 @@ internal class TSVBodyTest {
         assertEquals(false, term.isMultiTarget)
         assertEquals(literal, term.literals)
         assertEquals(null, Term.features(term.pos))
-        assertEquals(pos, term.annotationHead(AnnotationType.POS))
+        assertEquals(pos, term.annotationHead(Annotation.POS))
     }
 }

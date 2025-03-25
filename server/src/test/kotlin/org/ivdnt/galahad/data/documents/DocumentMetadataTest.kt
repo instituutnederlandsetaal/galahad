@@ -30,7 +30,7 @@ class DocumentMetadataTest {
         assertEquals(plaintext.length, meta.numChars)
         assertEquals(plaintext, meta.preview) // This works because the preview is < MAX_PREVIEW_LENGTH
         val layer = meta.layerSummary
-        val total = layer.numWordForms
+        val total = layer.tokens
         assertEquals(0, total)
     }
 
@@ -47,6 +47,6 @@ class DocumentMetadataTest {
         assertEquals(plaintext.length, meta.numChars)
         assertEquals(plaintext, meta.preview) // This works because the preview is < MAX_PREVIEW_LENGTH
         val layer = meta.layerSummary
-        assertEquals(21, layer.numWordForms)
+        assertEquals(21, layer.tokens)
     }
 }

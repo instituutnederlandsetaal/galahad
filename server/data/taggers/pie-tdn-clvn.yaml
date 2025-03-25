@@ -3,7 +3,7 @@ description: "PIE trained on CLVN"
 tagset: "TDN-Core"
 eraFrom: "1500"
 eraTo: "1600"
-produces:
+annotations:
   - lemma
   - pos
 model:

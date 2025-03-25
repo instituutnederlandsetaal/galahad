@@ -3,12 +3,8 @@ package org.ivdnt.galahad.evaluation.comparison
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.Term
-import org.ivdnt.galahad.annotations.WordForm
 
-fun ListIterator<Term>.nextOrNull(): Term? {
-    val iter = iterator()
-    return if (iter.hasNext()) iter.next() else null
-}
+fun Iterator<Term>.nextOrNull(): Term? = if (hasNext()) next() else null
 
 // Some hardcoded punctuation
 val PUNCTUATION: List<String> = listOf(",", ".", "?", "!", ":", ";", ")", "(", "'", "\"")
@@ -34,10 +30,10 @@ open class LayerComparison(
     val hypothesisTermsWithoutMatches: MutableList<Term> = ArrayList()
 
     @JsonIgnore
-    private val hypoIter: ListIterator<Term> = iterForTermsInLayer(hypothesisLayer)
+    private val hypoIter: Iterator<Term> = iterForTermsInLayer(hypothesisLayer)
 
     @JsonIgnore
-    private val refIter: ListIterator<Term> = iterForTermsInLayer(referenceLayer)
+    private val refIter: Iterator<Term> = iterForTermsInLayer(referenceLayer)
 
     @JsonIgnore
     private var currentHypoTerm: Term? = Term.EMPTY
@@ -74,13 +70,13 @@ open class LayerComparison(
 
     private fun compareTerm(comp: TermComparison) {
         // Act on the comparison
-        if (comp.fullOverlap) {
+        if (comp.overlap) {
             fullMatch(comp)
         } else {
             // Unequal first offset
-            if (comp.hypoTerm.firstOffset < comp.refTerm.firstOffset) {
+            if (comp.hypoTerm.offset < comp.refTerm.offset) {
                 hypoNoMatch()
-            } else if (comp.hypoTerm.firstOffset > comp.refTerm.firstOffset) {
+            } else if (comp.hypoTerm.offset > comp.refTerm.offset) {
                 refNoMatch()
             }
             // Equal first offset but no match.
@@ -95,9 +91,9 @@ open class LayerComparison(
         }
     }
 
-    private fun fullMatch(termComparison: TermComparison) {
-        if (layerFilter?.filter(termComparison) != false) {
-            matches.add(termComparison)
+    private fun fullMatch(comp: TermComparison) {
+        if (layerFilter?.filter(comp) != false) {
+            matches.add(comp)
         }
         nextHypo()
         nextRef()
@@ -135,17 +131,17 @@ open class LayerComparison(
     }
 
     /** Iterate through the terms of the layer sorted on offset. */
-    private fun iterForTermsInLayer(layer: Layer): ListIterator<Term> {
+    private fun iterForTermsInLayer(layer: Layer): Iterator<Term> {
         return layer.terms
             // Terms can only be a match if their first offset is the same
-            .sortedBy { it.firstOffset }.listIterator()
+            .sortedBy { it.offset }.iterator()
     }
 
 
     companion object {
         fun symmetricTruncatedPcMatch(comp: TermComparison): Boolean {
-            val aStr: String = comp.hypoTerm.literals
-            val bStr: String = comp.refTerm.literals
+            val aStr: String = comp.hypoTerm.token
+            val bStr: String = comp.refTerm.token
             return truncatedPcMatch(aStr, bStr) || truncatedPcMatch(bStr, aStr)
         }
 

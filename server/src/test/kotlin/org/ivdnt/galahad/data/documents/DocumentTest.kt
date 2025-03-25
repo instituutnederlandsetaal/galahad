@@ -4,6 +4,7 @@ import org.ivdnt.galahad.TestConfig
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.corpora.documents.DocumentFormat
+import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.formats.*
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach

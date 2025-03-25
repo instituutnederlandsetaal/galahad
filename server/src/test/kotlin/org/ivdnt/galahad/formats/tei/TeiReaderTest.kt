@@ -43,6 +43,11 @@ class TeiReaderTest {
 
     @Test
     fun `Rijmbijbel`() {
-        println(TeiReader(Resource.get("tei/4000.tei.xml")).layer)
+        println(TeiReader(Resource.get("tei/4000.xml")).layer)
+    }
+
+    @Test
+    fun `Utrecht`() {
+        println(TeiReader(Resource.get("tei/utrecht.xml")).layer)
     }
 }

@@ -1,11 +1,10 @@
 package org.ivdnt.galahad.formats.tei
 
-import org.ivdnt.galahad.annotations.AnnotationLayer
-import org.ivdnt.galahad.annotations.AnnotationType
-import org.ivdnt.galahad.annotations.Term2
-import org.ivdnt.galahad.annotations.WordForm
-import org.ivdnt.galahad.formats.AnnotationReader
-import org.ivdnt.galahad.util.getXmlBuilder
+import org.ivdnt.galahad.annotations.Annotation
+import org.ivdnt.galahad.annotations.AnnotationReader
+import org.ivdnt.galahad.annotations.Layer
+import org.ivdnt.galahad.annotations.Term
+import org.ivdnt.galahad.util.*
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -16,11 +15,10 @@ class TeiReader(
 ) : AnnotationReader(file) {
     private val doc: Document by lazy { getXmlBuilder().parse(file) }
     private var literal: String = ""
-    private var wID: String = ""
 
-    override fun read(): AnnotationLayer {
+    override fun read(): Layer {
         parseTopLevelTextNodes(doc.documentElement)
-        return AnnotationLayer(documents)
+        return Layer(documents)
     }
 
     /**
@@ -28,10 +26,8 @@ class TeiReader(
      * i.e. a <text> node that is not contained in another <text> node, parse it.
      */
     private fun parseTopLevelTextNodes(node: Node) {
-        val children = node.childNodes
-        for (i in 0 until children.length) {
-            val child = children.item(i)
-            if (child.nodeType == Node.ELEMENT_NODE && (child as Element).tagName == "text") {
+        node.childElements.forEach { child ->
+            if (child.tagName == "text") {
                 // parse document
                 parseNodesIntoDocument(child)
                 docID = child.getAttribute("xml:id")
@@ -44,32 +40,31 @@ class TeiReader(
     }
 
     /**
-     * Parse a <text> node and its children into an AnnotationLayer.
+     * Parse a <text> node and its children into an Layer.
      */
     private fun parseNodesIntoDocument(node: Node) {
-        val children = node.childNodes
-        for (i in 0 until children.length) {
-            val child = children.item(i)
-            if (child.nodeType == Node.ELEMENT_NODE) {
-                val tag = (child as Element).tagName
-                if (IGNORABLE_TAGS.contains(tag)) {
-                    continue
-                }
-                parseNodesIntoDocument(child)
+        node.children.forEach { child ->
+            if (child.nodeType == Node.ELEMENT_NODE && !IGNORABLE_TAGS.contains((child as Element).tagName)) {
+                val tag = child.tagName
                 val id = child.getAttribute("xml:id")
-                if (PARAGRAPH_TAGS.contains(tag)) {
-                    // New paragraph
-                    parID = id
-                    newParagraph()
-                } else if (SENTENCE_TAGS.contains(tag)) {
-                    // New sentence
-                    sentID = id
-                    newSentence()
-                } else if (tag == "w" || tag == "pc") {
+
+                // handle text outside of a paragraph/sentence when we are currently at a new <p>/<s>.
+                // E.g.: <text> blabla <p> blabla </p> blabla </text>
+                newSentenceOrParagraph(tag, id)
+
+                // recurse
+                if (tag == "subst") { // TODO should it not be sufficient to add <del> to IGNORABLE_TAGS?
+                    child.childOrNull("add")?.textContent?.let { literal += it }
+                } else {
+                    parseNodesIntoDocument(child)
+                }
+
+                // create paragraph/sentence/word from the recursed text
+                newSentenceOrParagraph(tag, id)
+                if (tag == "w" || tag == "pc") {
                     // New wordform
-                    wID = id
-                    newWordform(child.nextSibling?.nodeName != "pc")
-                    newTerm(child)
+                    wordID = id
+                    newWordform(child)
                 }
             } else if (child.nodeType == Node.TEXT_NODE) {
                 val text = child.textContent
@@ -84,13 +79,16 @@ class TeiReader(
         }
     }
 
-    private fun newTerm(el: Element) {
-        val wordform = wordforms.last()
-        // extract lemma
-        el.getAttribute("lemma").ifBlank { null }?.let { terms.add(AnnotationType.LEMMA, Term2(it, listOf(wordform))) }
-        // extract pos
-        el.getAttribute("pos").ifBlank { el.getAttribute("type").ifBlank { null } }
-            ?.let { terms.add(AnnotationType.POS, Term2(it, listOf(wordform))) }
+    private fun newSentenceOrParagraph(tag: String, id: String?) {
+        if (PARAGRAPH_TAGS.contains(tag)) {
+            // New paragraph
+            parID = id
+            newParagraph()
+        } else if (SENTENCE_TAGS.contains(tag)) {
+            // New sentence
+            sentID = id
+            newSentence()
+        }
     }
 
     override fun newSentence() {
@@ -98,11 +96,53 @@ class TeiReader(
         super.newSentence()
     }
 
-    private fun newWordform(spaceAfter: Boolean = true) {
+    private fun newWordform(el: Element? = null) {
         if (literal.isBlank()) return
-        wordforms.add(WordForm(literal, offset, wID, spaceAfter))
+
+        val annotations = mutableMapOf<Annotation, String>()
+        el?.getAttribute("lemma")?.ifBlank { null }?.let { annotations[Annotation.LEMMA] = it }
+        el?.getAttribute("pos")?.ifBlank { el.getAttribute("type").ifBlank { null } }
+            ?.let { annotations[Annotation.POS] = it }
+        // overwrite pos if PC
+        if (el?.tagName == "pc") {
+            annotations[Annotation.POS] = "PC"
+        }
+        annotations[Annotation.TOKEN] = literal
+
+        val term = Term(wordID!!, offset, annotations, spaceAfter(el))
+        terms.add(term)
         offset += literal.length
         literal = ""
+    }
+
+    /**
+     * No space after if:
+     * - join="right" or "both" on this element
+     * - No space between this and the next element (inline xml)
+     * - join="left" or "both" on the next element, skipping any next text nodes
+     *
+     * Else, space after.
+     */
+    private fun spaceAfter(el: Element?): Boolean {
+        // join="right" or "both" on this element
+        val join = el?.getAttribute("join")
+        val joins = listOf("right", "both")
+        if (join in joins) {
+            return false
+        }
+
+        // No space between this and the next element (inline xml)
+        if (el?.nextSibling?.nodeType == Node.ELEMENT_NODE) {
+            return false
+        }
+
+        // join="left" or "both" on the next element, skipping any next text nodes
+        val nextEl = el?.nextElementSibling()
+        val nextJoin = nextEl?.getAttribute("join")
+        val nextJoins = listOf("left", "both")
+        return nextJoin !in nextJoins
+
+        // space after
     }
 
     companion object {
@@ -138,11 +178,11 @@ class TeiReader(
             "ab",
             "p",
             "cit",
-            "quote",
+            "quote", // TODO should <quote> be a paragraph?
             "floatingText",
             "said"
         )
         private val SENTENCE_TAGS = listOf("s", "l", "u")
-        private val IGNORABLE_TAGS = listOf("note")
+        private val IGNORABLE_TAGS = listOf("note", "listBibl", "listWit", "figure")
     }
 }

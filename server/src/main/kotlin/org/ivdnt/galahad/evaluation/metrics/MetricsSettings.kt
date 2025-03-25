@@ -2,7 +2,7 @@ package org.ivdnt.galahad.evaluation.metrics
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
-import org.ivdnt.galahad.annotations.AnnotationType
+import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.evaluation.comparison.LayerComparison.Companion.truncatePC
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
@@ -19,14 +19,13 @@ interface MetricsSettings {
     fun filterBy(term: TermComparison): Boolean = true
 
     @get:JsonIgnore
-    val hasFalsePositive: Boolean
-        get() = true
+    val hasFalsePositive: Boolean get() = true
 
     @get:JsonIgnore
     val nullTerm: String
 
     @get:JsonIgnore
-    val requiredAnnotations: List<AnnotationType>
+    val requiredAnnotations: List<Annotation>
 
     @get:JsonProperty("id")
     val id: String
@@ -38,43 +37,43 @@ interface MetricsSettings {
     val group: String
 
     @get:JsonIgnore
-    val groupAnnotation: AnnotationType
+    val groupAnnotation: Annotation
 }
 
 open class PosByPosMetricsSettings : MetricsSettings {
     override val id: String = "posByPos"
     override val annotation: String = "PoS"
     override val group: String = "PoS"
-    override val groupAnnotation: AnnotationType = AnnotationType.POS
+    override val groupAnnotation: Annotation = Annotation.POS
     override val nullTerm: String = "NO_POS"
-    override val requiredAnnotations: List<AnnotationType> = listOf(AnnotationType.POS)
+    override val requiredAnnotations: List<Annotation> = listOf(Annotation.POS)
 
-    override fun termsEqual(comp: TermComparison): Boolean = comp.equalAnnotation(AnnotationType.POS)
+    override fun termsEqual(comp: TermComparison): Boolean = comp.equalAnnotation(Annotation.POS)
 
-    override fun groupBy(term: Term): String = term.annotationHeadOrMissing(AnnotationType.POS)
+    override fun groupBy(term: Term): String = term.annotationHeadOrMissing(Annotation.POS)
 }
 
 class MultiPosByPosMetricsSettings : PosByPosMetricsSettings() {
     override val id: String = "multiPosByPos"
     override val annotation: String = "PoS (multiple)"
-    override fun filterBy(term: TermComparison): Boolean = term.refTerm.isMulti(AnnotationType.POS)
+    override fun filterBy(term: TermComparison): Boolean = term.refTerm.isMulti(Annotation.POS)
 }
 
 class SinglePosByPosMetricsSettings : PosByPosMetricsSettings() {
     override val id: String = "singlePosByPos"
     override val annotation: String = "PoS (single)"
-    override fun filterBy(term: TermComparison): Boolean = !term.refTerm.isMulti(AnnotationType.POS)
+    override fun filterBy(term: TermComparison): Boolean = !term.refTerm.isMulti(Annotation.POS)
 }
 
 open class LemmaByLemmaMetricsSettings : MetricsSettings {
     override val id: String = "lemmaByLemma"
     override val annotation: String = "Lemma"
     override val group: String = "Lemma"
-    override val groupAnnotation: AnnotationType = AnnotationType.LEMMA
+    override val groupAnnotation: Annotation = Annotation.LEMMA
     override val nullTerm: String = "NO_LEMMA"
-    override val requiredAnnotations: List<AnnotationType> = listOf(AnnotationType.LEMMA)
+    override val requiredAnnotations: List<Annotation> = listOf(Annotation.LEMMA)
 
-    override fun termsEqual(comp: TermComparison): Boolean = comp.equalAnnotation(AnnotationType.LEMMA, Regex("_"))
+    override fun termsEqual(comp: TermComparison): Boolean = comp.equalAnnotation(Annotation.LEMMA, Regex("_"))
 
     override fun groupBy(term: Term): String = term.lemma ?: nullTerm
 }
@@ -83,39 +82,39 @@ open class DeprelByDeprel : MetricsSettings {
     override val id: String = "deprelByDeprel"
     override val annotation: String = "Deprel"
     override val group: String = "Deprel"
-    override val groupAnnotation: AnnotationType = AnnotationType.DEPREL
+    override val groupAnnotation: Annotation = Annotation.DEPREL
     override val nullTerm: String = "NO_DEPREL"
-    override val requiredAnnotations: List<AnnotationType> = listOf(AnnotationType.DEPREL)
+    override val requiredAnnotations: List<Annotation> = listOf(Annotation.DEPREL)
 
-    override fun termsEqual(comp: TermComparison): Boolean = comp.equalAnnotation(AnnotationType.DEPREL)
+    override fun termsEqual(comp: TermComparison): Boolean = comp.equalAnnotation(Annotation.DEPREL)
 
-    override fun groupBy(term: Term): String = term.annotations[AnnotationType.DEPREL] ?: nullTerm
+    override fun groupBy(term: Term): String = term.annotations[Annotation.DEPREL] ?: nullTerm
 }
 
 class HeadByHead : MetricsSettings {
     override val id: String = "headByHead"
     override val annotation: String = "Head"
     override val group: String = "Head"
-    override val groupAnnotation: AnnotationType = AnnotationType.HEAD
+    override val groupAnnotation: Annotation = Annotation.HEAD
     override val nullTerm: String = "NO_HEAD"
-    override val requiredAnnotations: List<AnnotationType> = listOf(AnnotationType.HEAD)
+    override val requiredAnnotations: List<Annotation> = listOf(Annotation.HEAD)
 
-    override fun termsEqual(comp: TermComparison): Boolean = comp.equalAnnotation(AnnotationType.HEAD)
+    override fun termsEqual(comp: TermComparison): Boolean = comp.equalAnnotation(Annotation.HEAD)
 
-    override fun groupBy(term: Term): String = term.annotations[AnnotationType.HEAD] ?: nullTerm
+    override fun groupBy(term: Term): String = term.annotations[Annotation.HEAD] ?: nullTerm
 }
 
 class MultiLemmaByLemmaMetricsSettings : LemmaByLemmaMetricsSettings() {
     override val id: String = "multiLemmaByLemma"
     override val annotation: String = "Lemma (multiple)"
-    override fun filterBy(term: TermComparison): Boolean = term.refTerm.isMulti(AnnotationType.LEMMA)
+    override fun filterBy(term: TermComparison): Boolean = term.refTerm.isMulti(Annotation.LEMMA)
 }
 
 class SingleLemmaByLemmaMetricsSettings : LemmaByLemmaMetricsSettings() {
     override val id: String = "singleLemmaByLemma"
     override val annotation: String = "Lemma (single)"
     override fun filterBy(term: TermComparison): Boolean {
-        val isMulti = term.refTerm.isMulti(AnnotationType.LEMMA)
+        val isMulti = term.refTerm.isMulti(Annotation.LEMMA)
         return !isMulti
     }
 }
@@ -123,70 +122,70 @@ class SingleLemmaByLemmaMetricsSettings : LemmaByLemmaMetricsSettings() {
 class LemmaByPosMetricsSettings : PosByPosMetricsSettings() {
     override val id: String = "lemmaByPos"
     override val annotation: String = "Lemma"
-    override val requiredAnnotations: List<AnnotationType> = listOf(AnnotationType.LEMMA, AnnotationType.POS)
+    override val requiredAnnotations: List<Annotation> = listOf(Annotation.LEMMA, Annotation.POS)
 
-    override fun termsEqual(comp: TermComparison): Boolean = comp.equalAnnotation(AnnotationType.LEMMA)
+    override fun termsEqual(comp: TermComparison): Boolean = comp.equalAnnotation(Annotation.LEMMA)
 }
 
 class PosByLemmaMetricsSettings : LemmaByLemmaMetricsSettings() {
     override val id: String = "posByLemma"
     override val annotation: String = "PoS"
-    override val requiredAnnotations: List<AnnotationType> = listOf(AnnotationType.LEMMA, AnnotationType.POS)
+    override val requiredAnnotations: List<Annotation> = listOf(Annotation.LEMMA, Annotation.POS)
 
-    override fun termsEqual(comp: TermComparison): Boolean = comp.equalAnnotation(AnnotationType.POS)
+    override fun termsEqual(comp: TermComparison): Boolean = comp.equalAnnotation(Annotation.POS)
 }
 
 class LemmaPosByPosMetricsSettings : PosByPosMetricsSettings() {
     override val id: String = "lemmaPosByPos"
     override val annotation: String = "Lemma + PoS"
-    override val requiredAnnotations: List<AnnotationType> = listOf(AnnotationType.LEMMA, AnnotationType.POS)
+    override val requiredAnnotations: List<Annotation> = listOf(Annotation.LEMMA, Annotation.POS)
 
     override fun termsEqual(comp: TermComparison): Boolean =
-        comp.equalAnnotation(AnnotationType.POS) && comp.equalAnnotation(AnnotationType.LEMMA)
+        comp.equalAnnotation(Annotation.POS) && comp.equalAnnotation(Annotation.LEMMA)
 }
 
 class DeprelHeadbyDeprelMetricsSettings : DeprelByDeprel() {
     override val id: String = "deprelHeadByDeprel"
     override val annotation: String = "Deprel + Head"
-    override val requiredAnnotations: List<AnnotationType> = listOf(AnnotationType.DEPREL, AnnotationType.HEAD)
+    override val requiredAnnotations: List<Annotation> = listOf(Annotation.DEPREL, Annotation.HEAD)
 
     override fun termsEqual(comp: TermComparison): Boolean =
-        comp.equalAnnotation(AnnotationType.DEPREL) && comp.equalAnnotation(AnnotationType.HEAD)
+        comp.equalAnnotation(Annotation.DEPREL) && comp.equalAnnotation(Annotation.HEAD)
 }
 
 class LemmaPosByLemmaMetricsSettings : LemmaByLemmaMetricsSettings() {
     override val id: String = "lemmaPosByLemma"
     override val annotation: String = "Lemma + PoS"
-    override val requiredAnnotations: List<AnnotationType> = listOf(AnnotationType.LEMMA, AnnotationType.POS)
+    override val requiredAnnotations: List<Annotation> = listOf(Annotation.LEMMA, Annotation.POS)
 
     override fun termsEqual(comp: TermComparison): Boolean =
-        comp.equalAnnotation(AnnotationType.POS) && comp.equalAnnotation(AnnotationType.LEMMA)
+        comp.equalAnnotation(Annotation.POS) && comp.equalAnnotation(Annotation.LEMMA)
 }
 
 class UposByUposMetricsSettings : MetricsSettings {
     override val id: String = "uposByUpos"
     override val annotation: String = "upos"
     override val group: String = "upos"
-    override val groupAnnotation: AnnotationType = AnnotationType.UPOS
+    override val groupAnnotation: Annotation = Annotation.UPOS
     override val nullTerm: String = "NO_UPOS"
-    override val requiredAnnotations: List<AnnotationType> = listOf(AnnotationType.UPOS)
+    override val requiredAnnotations: List<Annotation> = listOf(Annotation.UPOS)
 
-    override fun termsEqual(comp: TermComparison): Boolean = comp.equalAnnotation(AnnotationType.UPOS)
+    override fun termsEqual(comp: TermComparison): Boolean = comp.equalAnnotation(Annotation.UPOS)
 
-    override fun groupBy(term: Term): String = term.annotationHeadOrMissing(AnnotationType.UPOS)
+    override fun groupBy(term: Term): String = term.annotationHeadOrMissing(Annotation.UPOS)
 }
 
 class NerByNerMetricsSettings : MetricsSettings {
     override val id: String = "named-entityByNamed-entity"
     override val annotation: String = "named-entity"
     override val group: String = "named-entity"
-    override val groupAnnotation: AnnotationType = AnnotationType.NER
+    override val groupAnnotation: Annotation = Annotation.NER
     override val nullTerm: String = "NO_NAMED_ENTITY"
-    override val requiredAnnotations: List<AnnotationType> = listOf(AnnotationType.NER)
+    override val requiredAnnotations: List<Annotation> = listOf(Annotation.NER)
 
-    override fun termsEqual(comp: TermComparison): Boolean = comp.equalAnnotation(AnnotationType.NER)
+    override fun termsEqual(comp: TermComparison): Boolean = comp.equalAnnotation(Annotation.NER)
 
-    override fun groupBy(term: Term): String = term.annotationHeadOrMissing(AnnotationType.NER)
+    override fun groupBy(term: Term): String = term.annotationHeadOrMissing(Annotation.NER)
 }
 
 class FrequencyMetricsSettings(
@@ -196,17 +195,16 @@ class FrequencyMetricsSettings(
     override val id: String = "${metric.annotation}ByFrequency"
     override val annotation: String = metric.annotation
     override val group: String = "frequency"
-    override val groupAnnotation: AnnotationType = metric.groupAnnotation
+    override val groupAnnotation: Annotation = metric.groupAnnotation
     override val nullTerm: String = metric.nullTerm
-    override val requiredAnnotations: List<AnnotationType> = metric.requiredAnnotations
-    override val hasFalsePositive: Boolean
-        get() = false
+    override val requiredAnnotations: List<Annotation> = metric.requiredAnnotations
+    override val hasFalsePositive: Boolean get() = false
 
     override fun termsEqual(comp: TermComparison): Boolean = metric.termsEqual(comp)
 
     override fun groupBy(term: Term): String {
-        val freq = tokenFrequency.getFrequency(term.literals.lowercase())
-        val truncatedFreq = tokenFrequency.getFrequency(truncatePC(term.literals.lowercase()))
+        val freq = tokenFrequency.getFrequency(term.token.lowercase())
+        val truncatedFreq = tokenFrequency.getFrequency(truncatePC(term.token.lowercase()))
         return if (freq == 0) {
             truncatedFreq.toString()
         } else {

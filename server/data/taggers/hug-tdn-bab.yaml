@@ -3,7 +3,7 @@ description: "INT-Hug trained on letters as loot (Brieven als Buit)"
 tagset: "TDN-Core"
 eraFrom: "1600"
 eraTo: "1800"
-produces:
+annotations:
   - lemma
   - pos
 model:

@@ -2,7 +2,7 @@ package org.ivdnt.galahad.evaluation
 
 import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
-import org.ivdnt.galahad.formats.csv.CSVFile
+import org.ivdnt.galahad.export.csv.CSVFile
 import org.ivdnt.galahad.taggers.Tagger
 
 interface CsvSampleExporter {
@@ -12,8 +12,8 @@ interface CsvSampleExporter {
 
         // [Tagger].produces is a Set<>, making the order unpredictable
         // So create an alphabetically sorted list once and reuse it
-        val hypoColumns = hypoJob.annotationTypes.sorted()
-        val refColumns = refJob.annotationTypes.sorted()
+        val hypoColumns = hypoJob.annotations.sorted()
+        val refColumns = refJob.annotations.sorted()
 
         // header
         val columns: MutableList<String> = mutableListOf("token")
@@ -23,7 +23,7 @@ interface CsvSampleExporter {
 
         // body
         comps?.forEach { termComp ->
-            val literal = termComp.hypoTerm.literals.ifEmpty { termComp.refTerm.literals }
+            val literal = termComp.hypoTerm.token.ifEmpty { termComp.refTerm.token }
             val refAnnots = refColumns.map { termComp.refTerm.annotations[it] ?: Term.missingName(it) }
             val hypoAnnots = hypoColumns.map { termComp.hypoTerm.annotations[it] ?: Term.missingName(it) }
             csv += CSVFile.toCSVRecord(listOf(literal) + refAnnots + hypoAnnots)
