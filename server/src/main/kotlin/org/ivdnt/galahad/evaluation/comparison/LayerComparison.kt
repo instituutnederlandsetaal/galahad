@@ -3,6 +3,7 @@ package org.ivdnt.galahad.evaluation.comparison
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.Term
+import org.ivdnt.galahad.export.DocumentExport
 
 fun Iterator<Term>.nextOrNull(): Term? = if (hasNext()) next() else null
 
@@ -20,6 +21,8 @@ open class LayerComparison(
     private val referenceLayer: Layer,
     private val layerFilter: LayerFilter? = null,
 ) {
+    constructor(export: DocumentExport) : this(export.layer, export.sourceLayer)
+
     @JsonIgnore
     val matches: MutableList<TermComparison> = ArrayList()
 
@@ -30,10 +33,10 @@ open class LayerComparison(
     val hypothesisTermsWithoutMatches: MutableList<Term> = ArrayList()
 
     @JsonIgnore
-    private val hypoIter: Iterator<Term> = iterForTermsInLayer(hypothesisLayer)
+    private val hypoIter: Iterator<Term> = hypothesisLayer.terms.iterator()
 
     @JsonIgnore
-    private val refIter: Iterator<Term> = iterForTermsInLayer(referenceLayer)
+    private val refIter: Iterator<Term> = referenceLayer.terms.iterator()
 
     @JsonIgnore
     private var currentHypoTerm: Term? = Term.EMPTY
@@ -129,14 +132,6 @@ open class LayerComparison(
     private fun nextRef() {
         currentRefTerm = refIter.nextOrNull()
     }
-
-    /** Iterate through the terms of the layer sorted on offset. */
-    private fun iterForTermsInLayer(layer: Layer): Iterator<Term> {
-        return layer.terms
-            // Terms can only be a match if their first offset is the same
-            .sortedBy { it.offset }.iterator()
-    }
-
 
     companion object {
         fun symmetricTruncatedPcMatch(comp: TermComparison): Boolean {

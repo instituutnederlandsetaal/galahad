@@ -7,8 +7,7 @@ const val SOURCE_LAYER_NAME: String = "sourceLayer"
  * Those may be split into paragraphs, sentences, etc.
  */
 class Layer(
-    val documents: List<DocumentLayer>,
-    val name: String = SOURCE_LAYER_NAME,
+    val documents: List<DocumentLayer>
 ) {
     val summary: LayerSummary by lazy { LayerSummary(tokens = terms.count()) }
     val preview: LayerPreview by lazy { LayerPreview(terms.take(LAYER_PREVIEW_LENGTH).toList()) }
@@ -36,7 +35,7 @@ class Layer(
     override fun toString(): String = StringBuilder().apply { documents.forEach { append("$it\n") } }.toString()
 
     companion object {
-        val EMPTY: Layer = Layer(emptyList(), "EMPTY")
+        val EMPTY: Layer = Layer(emptyList())
     }
 }
 

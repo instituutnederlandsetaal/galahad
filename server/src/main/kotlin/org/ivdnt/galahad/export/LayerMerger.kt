@@ -1,16 +1,21 @@
 package org.ivdnt.galahad.export
 
+import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.corpora.documents.DocumentFormat
+import org.ivdnt.galahad.evaluation.comparison.LayerComparison
+import org.ivdnt.galahad.evaluation.comparison.TermComparison
 import org.ivdnt.galahad.exceptions.InvalidDocumentFormatException
 import org.ivdnt.galahad.formats.conllu.ConlluMerger
-import org.ivdnt.galahad.formats.folia.export.FoliaMerger
+import org.ivdnt.galahad.formats.folia.FoliaMerger
+import org.ivdnt.galahad.formats.tei.TeiMerger
 import org.ivdnt.galahad.formats.tsv.TsvMerger
-import java.io.File
 import java.io.OutputStream
 
 abstract class LayerMerger(protected val export: DocumentExport) {
-
-    abstract fun merge(out: OutputStream): File
+    protected val layerComparison: LayerComparison = LayerComparison(export)
+    protected val sourceTermComparisons: List<TermComparison> = (layerComparison.matches + layerComparison.referenceTermsWithoutMatches.map { TermComparison(
+        Term.EMPTY, it) }).sortedBy { it.refTerm.offset }
+    abstract fun merge(out: OutputStream)
 
     companion object {
         fun create(export: DocumentExport): LayerMerger = when (export.format) {
@@ -21,5 +26,4 @@ abstract class LayerMerger(protected val export: DocumentExport) {
             else -> throw InvalidDocumentFormatException("Unsupported export conversion format: ${export.format}")
         }
     }
-
 }

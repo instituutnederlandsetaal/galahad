@@ -132,6 +132,7 @@ class ConlluReader(
         private val nerAttrNames: List<String> = listOf("NamedEntity", "ner")
 
         private val indices: Map<Annotation, Int> = mapOf(
+            Annotation.TOKEN to 0,
             Annotation.LEMMA to 2,
             Annotation.POS to 4,
             Annotation.HEAD to 6,

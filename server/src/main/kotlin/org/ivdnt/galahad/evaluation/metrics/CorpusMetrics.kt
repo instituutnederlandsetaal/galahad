@@ -18,8 +18,7 @@ class CorpusMetrics(
     truncate: Boolean = true,
 ) : Metrics(corpus, settings, hypothesis, reference, truncate = truncate) {
 
-    private val hypothesisJob = corpus.jobs.readOrThrow(hypothesis)
-    private val referenceJob = corpus.jobs.readOrThrow(reference)
+
 
     @JsonProperty
     val hypothesisLastModified: Long = hypothesisJob.lastModified
@@ -31,12 +30,13 @@ class CorpusMetrics(
     val generated: Long = System.currentTimeMillis()
 
     init {
-        corpus.documents.readAll().forEach {
+        corpus.documents.readAll().forEach { doc ->
             add(
                 DocumentMetrics(
                     corpus,
-                    hypothesisJob.layer(it),
-                    referenceJob.layer(it),
+                    doc,
+                    hypothesis,
+                    reference,
                     settings,
                     layerFilter,
                     truncate

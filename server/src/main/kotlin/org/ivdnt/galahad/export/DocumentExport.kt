@@ -1,6 +1,7 @@
 package org.ivdnt.galahad.export
 
 import org.ivdnt.galahad.annotations.Layer
+import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.corpora.documents.Document
@@ -19,6 +20,7 @@ class DocumentExport private constructor(
     private val posHeadOnly: Boolean,
 ) {
     val layer: Layer = job.layer(document)
+    val sourceLayer: Layer by lazy { corpus.jobs.readOrNull(SOURCE_LAYER_NAME)?.layer(document) ?: Layer.EMPTY }
     val tagger: Tagger = Tagger.readOrThrow(job.name, corpus)
     private val fileName: String =
         "$document.uploadedFile.nameWithoutExtension}.${format.extension}" // TODO this will double .tei.tei.xml

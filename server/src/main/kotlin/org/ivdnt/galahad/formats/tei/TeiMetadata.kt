@@ -3,26 +3,20 @@ package org.ivdnt.galahad.formats.tei
 import org.ivdnt.galahad.corpora.MutableCorpusMetadata
 import org.ivdnt.galahad.corpora.documents.DocumentFormat
 import org.ivdnt.galahad.export.DocumentExport
-import org.ivdnt.galahad.formats.xml.XMLMetadata
+import org.ivdnt.galahad.util.XmlMetadata
 import org.ivdnt.galahad.util.childOrNull
 import org.ivdnt.galahad.util.toNonEmptyString
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
-import java.io.OutputStream
 import java.text.SimpleDateFormat
-import javax.xml.transform.OutputKeys
-import javax.xml.transform.Transformer
-import javax.xml.transform.TransformerFactory
-import javax.xml.transform.dom.DOMSource
-import javax.xml.transform.stream.StreamResult
 
 class TeiMetadata(
     xml: Document,
     val root: Node,
     val export: DocumentExport,
     val merging: Boolean,
-) : XMLMetadata(xml) {
+) : XmlMetadata(xml) {
 
     /** GaLAHaD-generated UUID */
     private val internalPid: String = export.document.metadata.uuid.toString()
@@ -45,17 +39,6 @@ class TeiMetadata(
 
     init {
         write()
-    }
-
-    fun toPlainXMLText(stream: OutputStream) {
-        // For now, we only write the listBibl to stream.
-        // Future metadata implementation might need something different?
-        // In that case, perhaps use a `nodeName: string` parameter and a recursive node grabber.
-        val teiHeader = root.getOrCreateChild("teiHeader")
-        val tf: Transformer = TransformerFactory.newInstance().newTransformer()
-        tf.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes")
-        tf.setOutputProperty(OutputKeys.INDENT, "yes")
-        tf.transform(DOMSource(teiHeader), StreamResult(stream))
     }
 
     // There could be multiple root nodes in the document.

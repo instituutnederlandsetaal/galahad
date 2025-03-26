@@ -5,13 +5,12 @@ import org.ivdnt.galahad.corpora.MutableCorpusMetadata
 import org.ivdnt.galahad.taggers.Tagset
 import org.ivdnt.galahad.util.escapeXML
 import org.ivdnt.galahad.util.getXmlBuilder
+import org.ivdnt.galahad.util.getXmlTransformer
 import org.ivdnt.galahad.util.toNonEmptyString
 import org.w3c.dom.Node
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
-import javax.xml.transform.Transformer
-import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 import javax.xml.xpath.XPathConstants
@@ -45,13 +44,13 @@ class CmdiMetadata(val export: DocumentExport) {
             for (key in keys) {
                 val expr = xpath.compile("CMD//$key")
                 val node = expr.evaluate(xmlDoc, XPathConstants.NODE) as Node
-                node.textContent = value.escapeXML()
+                node.textContent =
+                    value.escapeXML() // TODO: escapeXML might not be necessary, we are writing to a DOM and its transformer should handle this
             }
         }
         // Write to disk
         file = tmp_dir.resolve("CMDI-$docTitle.xml")
-        val tf: Transformer = TransformerFactory.newInstance().newTransformer()
-        tf.transform(DOMSource(xmlDoc), StreamResult(file.outputStream()))
+        getXmlTransformer().transform(DOMSource(xmlDoc), StreamResult(file.outputStream()))
     }
 
     private fun getReplacements(): Map<List<String>, String> {

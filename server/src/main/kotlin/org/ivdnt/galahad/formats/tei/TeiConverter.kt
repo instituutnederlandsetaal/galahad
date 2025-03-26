@@ -58,7 +58,6 @@ class TeiConverter(export: DocumentExport) : LayerConverter(export) {
             }
         }
 
-        val tf = getXmlTransformer()
-        tf.transform(DOMSource(root), StreamResult(out))
+        getXmlTransformer().transform(DOMSource(root), StreamResult(out))
     }
 }

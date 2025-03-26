@@ -1,9 +1,7 @@
 package org.ivdnt.galahad.formats.folia
 
 import org.ivdnt.galahad.corpora.documents.DocumentFormat
-import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.formats.InternalFile
-import org.ivdnt.galahad.formats.folia.export.FoliaMerger
 import java.io.File
 
 class FoliaFile(

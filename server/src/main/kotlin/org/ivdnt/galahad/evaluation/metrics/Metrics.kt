@@ -27,6 +27,8 @@ open class Metrics(
 
     val hypoTagger: Tagger = Tagger.readOrThrow(hypothesis, corpus)
     val refTagger: Tagger = Tagger.readOrThrow(reference, corpus)
+    protected val hypothesisJob = corpus.jobs.readOrThrow(hypothesis)
+    protected val referenceJob = corpus.jobs.readOrThrow(reference)
 
     init {
         settings.forEach { metricTypes[it.id] = MetricsType(it, hypoTagger, refTagger).also { it.truncate = truncate } }

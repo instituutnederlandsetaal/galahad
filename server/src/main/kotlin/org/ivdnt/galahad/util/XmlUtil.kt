@@ -1,11 +1,32 @@
-package org.ivdnt.galahad.formats.xml
+package org.ivdnt.galahad.util
 
-import org.ivdnt.galahad.util.childOrNull
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
+import javax.xml.parsers.DocumentBuilder
+import javax.xml.parsers.DocumentBuilderFactory
+import javax.xml.transform.OutputKeys
+import javax.xml.transform.Transformer
+import javax.xml.transform.TransformerFactory
 
-abstract class XMLMetadata(
+/**
+ * Get a new XML builder with external DTD loading disabled. Needed for loading some TEIp4 files.
+ */
+fun getXmlBuilder(): DocumentBuilder {
+    val dbf = DocumentBuilderFactory.newInstance()
+    dbf.isIgnoringComments = true
+    dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
+    return dbf.newDocumentBuilder()
+}
+
+fun getXmlTransformer(): Transformer = TransformerFactory.newInstance().newTransformer().apply {
+    // Pretty print
+    setOutputProperty(OutputKeys.INDENT, "yes")
+    // For some reason needed to print the root on a new line instead of on the same line as the doctype.
+    setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "yes")
+}
+
+abstract class XmlMetadata(
     val xml: Document,
 ) {
     protected fun Node.getOrCreateChild(childTag: String, prepend: Boolean = false): Element {

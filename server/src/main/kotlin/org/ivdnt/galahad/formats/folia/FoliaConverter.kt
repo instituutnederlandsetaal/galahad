@@ -4,7 +4,10 @@ import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.export.LayerConverter
 import org.ivdnt.galahad.util.getXmlBuilder
+import org.ivdnt.galahad.util.getXmlTransformer
 import java.io.OutputStream
+import javax.xml.transform.dom.DOMSource
+import javax.xml.transform.stream.StreamResult
 
 class FoliaConverter(
     export: DocumentExport,
@@ -54,5 +57,6 @@ class FoliaConverter(
                 }
             }
         }
+        getXmlTransformer().transform(DOMSource(xml), StreamResult(out))
     }
 }

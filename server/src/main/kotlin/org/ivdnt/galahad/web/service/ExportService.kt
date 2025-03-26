@@ -47,7 +47,7 @@ class ExportService(val corpora: CorporaService) : Logging {
         shouldMerge: Boolean,
         posHeadOnly: Boolean,
     ) {
-        val corpusExport = getCorpusTransformMetadata(corpus, job, format, posHeadOnly)
+        val corpusExport = getCorpusExport(corpus, job, format, posHeadOnly)
         corpusExport.corpus.export(corpusExport, formatMapper = {
             try {
                 // Document conversions.
@@ -70,7 +70,7 @@ class ExportService(val corpora: CorporaService) : Logging {
         }, outputStream = response?.outputStream)
     }
 
-    private fun getCorpusTransformMetadata(
+    private fun getCorpusExport(
         corpusID: UUID,
         jobName: String,
         format: DocumentFormat,
@@ -86,7 +86,7 @@ class ExportService(val corpora: CorporaService) : Logging {
         document: String,
         format: DocumentFormat,
         posHeadOnly: Boolean
-    ): DocumentExport = DocumentExport.create(getCorpusTransformMetadata(corpus, job, format, posHeadOnly), document)
+    ): DocumentExport = DocumentExport.create(getCorpusExport(corpus, job, format, posHeadOnly), document)
 
     private fun mergeFormatMatches(
         it: Document, format: DocumentFormat,

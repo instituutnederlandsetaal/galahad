@@ -1,77 +1,72 @@
 package org.ivdnt.galahad.formats.tsv
 
 import org.ivdnt.galahad.annotations.Annotation
-import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.export.LayerMerger
-import java.io.File
 import java.io.OutputStream
-import kotlin.io.path.createTempDirectory
+import java.io.PrintWriter
 
-/**
- * Do not call directly. Use [TsvFile.merge] instead.
- */
-class TsvMerger(
+open class TsvMerger(
     export: DocumentExport,
 ) : LayerMerger(export) {
-    val layer = export.layer
-    val outFile: File = createTempDirectory("teimerge").toFile().resolve(export.document.name)
-    protected open val hasHeader: Boolean = true
+    protected open val columnIndices: MutableMap<Annotation, Int> = mutableMapOf()
+    override fun merge(out: OutputStream): Unit = merge(PrintWriter(out.bufferedWriter()))
+    protected var termIndex: Int = 0
 
     /**
      * Merge uploaded raw file with tagger layer. Headers indices are already determined by TSVFile.
      * Read in per line, split on tabs, swap out pos & lemma and commit to new file
      */
-    override fun merge(out: OutputStream): File {
-        sourceFile.parse() // parse the sourceFile if needed.
-        parseByLine()
-        return TsvFile(outFile)
+    fun merge(out: PrintWriter) {
+        export.document.uploadedFile.forEachLine { line ->
+            if (columnIndices.isEmpty()) {
+                getColumnIndices(line.split("\t"))
+            } else {
+                if (line.isBlank()) {
+                    out.println()
+                }
+                val columns = line.split("\t").toMutableList()
+                // Swap out pos & lemma, keep the rest.
+                replaceColumns(columns)
+                out.println(columns.joinToString("\t") + "\n")
+                termIndex++
+            }
+        }
     }
 
-    protected fun parseByLine() {
-        var termIndex = if (hasHeader) -1 else 0 // Start at -1 to take the header into account.
-        sourceFile.file.inputStream().bufferedReader().forEachLine { line ->
-            if (termIndex == -1) {
-                // Copy header to output & continue
-                outFile.appendText(line + "\n")
-                termIndex++
-            } else {
-                val columns = line.split("\t").toMutableList()
-                if (columns.size >= 2) {
-                    // Swap out pos & lemma, keep the rest.
-                    replaceColumns(columns, layer, termIndex)
-                    outFile.appendText(columns.joinToString("\t") + "\n")
-                    termIndex++
-                } else {
-                    // Output whatever was on that line. Presumably whitespace.
-                    outFile.appendText(line + "\n")
+    private fun getColumnIndices(
+        headers: List<String>,
+    ) {
+        headers.forEachIndexed { index, header ->
+            TsvReader.columnNames.entries
+                // from the columnNames, find the first AnnotationType that has a name that matches the header.
+                .firstOrNull { (_, names) ->
+                    names.any { name -> header.equals(name, ignoreCase = true) }
+                    // if it exists, register the index
+                }?.let { (annotation, _) ->
+                    columnIndices[annotation] = index
                 }
-            }
         }
     }
 
     /*
      * Replace annotations in their previously indexed columns.
      */
-    protected open fun replaceColumns(
+    private fun replaceColumns(
         columns: MutableList<String>,
-        layer: Layer,
-        termIndex: Int,
     ) {
-        tagger.annotationTypes.forEach { annotationType ->
-            val index = sourceFile.columnIndices[annotationType] ?: return@forEach // Skip if not in the file.
-            mergeSingleColumn(columns, layer, termIndex, annotationType, index)
+        export.tagger.annotations.forEach { annot ->
+            val index = columnIndices[annot] ?: return@forEach // Skip if not in the file.
+            mergeSingleColumn(columns, annot, index)
         }
     }
 
     protected open fun mergeSingleColumn(
         columns: MutableList<String>,
-        layer: Layer,
-        termIndex: Int,
         annotation: Annotation,
         columnIndex: Int,
     ) {
-        val term = layer.terms[termIndex]
-        columns[columnIndex] = term.annotations[annotation] ?: ""
+        val term = sourceTermComparisons[termIndex].hypoTerm
+        columns[columnIndex] = term.annotationOrMissing(annotation)
     }
 }

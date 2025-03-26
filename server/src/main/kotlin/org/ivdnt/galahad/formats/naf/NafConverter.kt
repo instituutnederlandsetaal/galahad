@@ -27,8 +27,7 @@ class NafConverter(export: DocumentExport) : LayerConverter(export) {
         addText(xml, root)
         addTerms(xml, root)
 
-        val tf = getXmlTransformer()
-        tf.transform(DOMSource(root), StreamResult(out))
+        getXmlTransformer().transform(DOMSource(root), StreamResult(out))
     }
 
     private fun addTerms(xml: Document, root: Element) {

@@ -1,8 +1,18 @@
 package org.ivdnt.galahad.util
 
-import org.ivdnt.galahad.formats.xml.tagName
 import org.w3c.dom.Element
 import org.w3c.dom.Node
+import org.w3c.dom.NodeList
+
+fun NodeList.deepcopy(): ArrayList<Node> {
+    val copy = ArrayList<Node>()
+    for (i in 0 until this.length) {
+        copy.add(this.item(i))
+    }
+    return copy
+}
+
+fun Node.tagName(): String? = if (this.nodeType == Node.ELEMENT_NODE) (this as Element).tagName else null
 
 val Node.children: Sequence<Node>
     get() = object : Sequence<Node> {
