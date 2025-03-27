@@ -16,13 +16,14 @@ abstract class AnnotationReader(
     protected var offset: Int = 0
 
     protected var docID: String? = null
-        get() = field ?: "d$dIndex"
     protected var parID: String? = null
-        get() = field ?: "p$pIndex"
     protected var sentID: String? = null
-        get() = field ?: "s$sIndex"
     protected var wordID: String? = null
-        get() = field ?: "w$wIndex"
+
+    private fun docID(): String = docID ?: "d$dIndex"
+    private fun parID(): String = parID ?: "p$pIndex"
+    private fun sentID(): String = sentID ?: "s$sIndex"
+    protected fun wordID(): String = wordID ?: "w$wIndex"
 
     private val wIndex: Int get() = terms.size + 1
     private val sIndex: Int get() = sentences.size + 1
@@ -34,7 +35,7 @@ abstract class AnnotationReader(
     protected open fun newDocument() {
         newParagraph()
         if (paragraphs.isNotEmpty()) {
-            documents.add(DocumentLayer(docID!!, paragraphs.toList()))
+            documents.add(DocumentLayer(docID(), paragraphs.toList()))
             paragraphs.clear()
         }
     }
@@ -42,14 +43,14 @@ abstract class AnnotationReader(
     protected open fun newParagraph() {
         newSentence()
         if (sentences.isNotEmpty()) {
-            paragraphs.add(ParagraphLayer(parID!!, sentences.toList()))
+            paragraphs.add(ParagraphLayer(parID(), sentences.toList()))
             sentences.clear()
         }
     }
 
     protected open fun newSentence() {
         if (terms.isNotEmpty()) {
-            sentences.add(SentenceLayer(sentID!!, terms.toList(), spans.toMap()))
+            sentences.add(SentenceLayer(sentID(), terms.toList(), spans.toMap()))
             terms.clear()
             spans.clear()
         }

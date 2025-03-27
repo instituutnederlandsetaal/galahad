@@ -28,7 +28,7 @@ class ConlluConverter(export: DocumentExport) : LayerConverter(export) {
                         val head = t.head ?: "_"
 
                         // Misc in the form spaceAfter=NO|NamedEntity=ORG (depending on the nullable values)
-                        val spaceAfter = if (!t.spaceAfter) "SpaceAfter=NO" else null
+                        val spaceAfter = if (t.spaceAfter == false) "SpaceAfter=No" else null
                         val ner = t.ner?.let { "NamedEntity=$it" }
                         val misc = listOfNotNull(spaceAfter, ner).joinToString("|").ifEmpty { "_" }
 

@@ -4,19 +4,18 @@ import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.AnnotationReader
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.Term
+import org.ivdnt.galahad.util.XmlUtil
 import org.ivdnt.galahad.util.childElements
 import org.ivdnt.galahad.util.childOrNull
-import org.ivdnt.galahad.util.getXmlBuilder
-import org.w3c.dom.Document
 import java.io.File
 
 typealias WordformID = String
 typealias TermID = String
 
 class NafReader(file: File) : AnnotationReader(file) {
-    val xml: Document = getXmlBuilder().parse(file)
-    val root = xml.documentElement
-    val nafWordforms = root.childOrNull("text")!!.childElements.map {
+    private val xml = XmlUtil.builder.parse(file)
+    private val root = xml.documentElement
+    private val nafWordforms = root.childOrNull("text")!!.childElements.map {
         NafWordform(
             id = it.getAttribute("id"),
             offset = it.getAttribute("offset").toInt(),
@@ -25,7 +24,7 @@ class NafReader(file: File) : AnnotationReader(file) {
             para = it.getAttribute("para").toIntOrNull()
         )
     }
-    val nafTerms = root.childOrNull("terms")!!.childElements.map {
+    private val nafTerms = root.childOrNull("terms")!!.childElements.map {
         NafTerm(
             id = it.getAttribute("id"),
             lemma = it.getAttribute("lemma").ifEmpty { null },
@@ -33,18 +32,18 @@ class NafReader(file: File) : AnnotationReader(file) {
             targets = it.childElements.first().childElements.map { it.getAttribute("id") }.toList()
         )
     }
-    val nafDeps = root.childOrNull("deps")?.childElements?.map {
+    private val nafDeps = root.childOrNull("deps")?.childElements?.map {
         NafDep(
             from = it.getAttribute("from"), to = it.getAttribute("to"), rfunc = it.getAttribute("rfunc")
         )
     }
-    val nafEntities = root.childOrNull("entities")?.childElements?.map {
+    private val nafEntities = root.childOrNull("entities")?.childElements?.map {
         NafEntity(
             type = it.getAttribute("type").ifEmpty { null },
             references = it.childElements.map { it.childElements.map { it.getAttribute("id") }.toList() }.toList()
         )
     }
-    val id = root.childOrNull("nafHeader")?.childOrNull("public")?.getAttribute("publicId").orEmpty().ifEmpty { null }
+    private val id = root.childOrNull("nafHeader")?.childOrNull("public")?.getAttribute("publicId").orEmpty().ifEmpty { null }
 
     override fun read(): Layer {
         // group wordforms paragraph, then sentence, then sort by offset in sentence

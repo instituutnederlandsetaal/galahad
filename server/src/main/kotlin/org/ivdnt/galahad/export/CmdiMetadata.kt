@@ -3,89 +3,107 @@ package org.ivdnt.galahad.export
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.corpora.MutableCorpusMetadata
 import org.ivdnt.galahad.taggers.Tagset
-import org.ivdnt.galahad.util.escapeXML
-import org.ivdnt.galahad.util.getXmlBuilder
-import org.ivdnt.galahad.util.getXmlTransformer
-import org.ivdnt.galahad.util.toNonEmptyString
-import org.w3c.dom.Node
+import org.ivdnt.galahad.util.XmlUtil
+import org.ivdnt.galahad.util.child
+import org.ivdnt.galahad.util.childElements
+import org.ivdnt.galahad.util.ifNullOrBlank
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
-import javax.xml.xpath.XPathConstants
-import javax.xml.xpath.XPathFactory
 import kotlin.io.path.createTempDirectory
 
 /** Constructs a CMDI file for exported documents. */
 class CmdiMetadata(val export: DocumentExport) {
 
-    companion object {
-        private val tmp_dir: File = createTempDirectory("cmdi").toFile()
-    }
-
     // Some vals for repeated access.
     private val docTitle = export.document.uploadedFile.nameWithoutExtension
-    private val corpusMetadata: MutableCorpusMetadata = export.corpus.mutableMetadata
+    private val corpus: MutableCorpusMetadata = export.corpus.mutableMetadata
     private val format = export.format.identifier
+    private val now = Date()
+    private val year = SimpleDateFormat("yyyy").format(now)
+    private val month = SimpleDateFormat("MM").format(now)
+    private val day = SimpleDateFormat("dd").format(now)
+    private val date = "$year-$month-$day"
+    private val uuid = export.document.metadata.uuid
+    private val tagset = Tagset.readOrNull(export.tagger)?.longName.ifNullOrBlank { "!No tagset defined!" }
+    private val tagger = export.tagger
+    private val language = corpus.language.ifNullOrBlank { "Dutch" }
+    private val sourceName = corpus.sourceName.ifNullOrBlank { "!No source name defined!" }
+    private val sourceUrl = corpus.sourceURL?.toString().ifNullOrBlank { "!No source URL defined!" }
 
     /** After initialization this file will contain the CMDI */
     val file: File
 
     init {
-        // Load CMDI template
-        val cmdiTemplate = this::class.java.classLoader.getResourceAsStream("CMDI-template.xml")
-        val xmlDoc = getXmlBuilder().parse(cmdiTemplate)
-
-        val replacements: Map<List<String>, String> = getReplacements()
-        // Replace them
-        for ((keys, value) in replacements) {
-            val xpath = XPathFactory.newInstance().newXPath()
-            for (key in keys) {
-                val expr = xpath.compile("CMD//$key")
-                val node = expr.evaluate(xmlDoc, XPathConstants.NODE) as Node
-                node.textContent =
-                    value.escapeXML() // TODO: escapeXML might not be necessary, we are writing to a DOM and its transformer should handle this
-            }
+        // Header
+        val header = root.child("cmd:Header")
+        header.child("cmd:MdCreationDate").textContent = date
+        header.child("cmd:MdCollectionDisplayName").textContent = corpus.name
+        // Resources
+        val resources = root.child("cmd:Resources")
+        val resourceProxyList = resources.child("cmd:ResourceProxyList")
+        val resourceProxy = resourceProxyList.child("cmd:ResourceProxy")
+        resourceProxy.child("cmd:ResourceRef").textContent = "https://resolver.ivdnt.org/$uuid"
+        // Components
+        val components = root.child("cmd:Components").childElements.first()
+        // Components.corpusName
+        components.child("cmdp:corpusName").textContent = corpus.name
+        // Components.TextFile_GaLAHaD
+        val textFileGalahad = components.child("cmdp:TextFile_GaLAHaD")
+        textFileGalahad.child("cmdp:GaLAHaDPersistentIdentifier").textContent = "${uuid}_$format"
+        // Components.TextFile_GaLAHaD.Conversion_GaLAHaD
+        val conversionGalahad = textFileGalahad.child("cmdp:Conversion_GaLAHaD")
+        conversionGalahad.child("cmdp:conversionDescription").textContent = "exported to $format by GaLAHaD"
+        conversionGalahad.child("cmdp:Tool").child("cmdp:toolVersion").textContent = version
+        // Components.Source_GaLAHaD
+        val sourceGalahad = components.child("cmdp:Source_GaLAHaD")
+        sourceGalahad.child("cmdp:sourceID").textContent = docTitle
+        sourceGalahad.child("cmdp:sourceCollection").textContent = sourceName
+        sourceGalahad.child("cmdp:sourceCollectionURI").textContent = sourceUrl
+        // Components.Source_GaLAHaD.Date_Period
+        sourceGalahad.child("cmdp:Date_Period").apply {
+            child("cmdp:yearFrom").textContent = "${corpus.eraFrom}"
+            child("cmdp:yearTo").textContent = "${corpus.eraTo}"
+        }
+        // Components.Language_GaLAHaD
+        components.child("cmdp:Language_GaLAHaD").child("cmdp:languageName").textContent = language
+        // Components.Annotation_GaLAHaD
+        val annotationGalahad = components.child("cmdp:Annotation_GaLAHaD")
+        annotationGalahad.child("cmdp:annotationSet").textContent = tagset
+        // Components.Annotation_GaLAHaD.Provenance
+        val provenance = annotationGalahad.child("cmdp:Provenance")
+        provenance.child("cmdp:annotationFormat").textContent = format
+        // Components.Annotation_GaLAHaD.Provenance.AnnotationProcess
+        val annotationProcess = provenance.child("cmdp:AnnotationProcess")
+        // Components.Annotation_GaLAHaD.Provenance.AnnotationProcess.ProcessorsAnnotators.Tool
+        annotationProcess.child("cmdp:ProcessorsAnnotators").child("cmdp:Tool").apply {
+            child("cmdp:toolName").textContent = tagger.id
+            child("cmdp:toolVersion").textContent = tagger.version
+            child("cmdp:toolURL").textContent = tagger.model.href
+        }
+        // Components.Annotation_GaLAHaD.Provenance.AnnotationProcess.Date_Period
+        annotationProcess.child("cmdp:Date_Period").apply {
+            child("cmdp:yearFrom").textContent = year
+            child("cmdp:yearTo").textContent = year
+            child("cmdp:monthFrom").textContent = "--$month"
+            child("cmdp:monthTo").textContent = "--$month"
+            child("cmdp:dayFrom").textContent = "---$day"
+            child("cmdp:dayTo").textContent = "---$day"
         }
         // Write to disk
         file = tmp_dir.resolve("CMDI-$docTitle.xml")
-        getXmlTransformer().transform(DOMSource(xmlDoc), StreamResult(file.outputStream()))
+        XmlUtil.transformer.transform(DOMSource(xml), StreamResult(file.outputStream()))
     }
 
-    private fun getReplacements(): Map<List<String>, String> {
-        // Current year, month and day, zero-padded
-        val now = Date()
-        val year = SimpleDateFormat("yyyy").format(now)
-        val month = SimpleDateFormat("MM").format(now)
-        val day = SimpleDateFormat("dd").format(now)
-        val date = "$year-$month-$day"
-        val galahadVersion = Config.galahadVersion()
-        val uuid = export.document.metadata.uuid
-        val tagger = export.tagger
-
-        // Define replacements
-        return mapOf(
-            listOf("MdCollectionDisplayName", "corpusName") to corpusMetadata.name,
-            listOf("MdCreationDate") to date,
-            listOf("Annotation_GaLAHaD//yearFrom", "Annotation_GaLAHaD//yearTo") to year,
-            listOf("Annotation_GaLAHaD//monthFrom", "Annotation_GaLAHaD//monthTo") to "--$month",
-            listOf("Annotation_GaLAHaD//dayFrom", "Annotation_GaLAHaD//dayTo") to "---$day",
-            listOf("ResourceRef") to "https://resolver.ivdnt.org/$uuid",
-            listOf("GaLAHaDPersistentIdentifier") to "${uuid}_tei",
-            listOf("conversionDescription") to "exported to $format by GaLAHaD",
-            listOf("Conversion_GaLAHaD//toolVersion") to galahadVersion,
-            listOf("sourceID") to docTitle,
-            listOf("sourceCollection") to corpusMetadata.sourceName.toNonEmptyString("!No source name defined!"),
-            listOf("sourceCollectionURI") to corpusMetadata.sourceURL.toNonEmptyString("!No source URL defined!"),
-            listOf("Source_GaLAHaD//yearFrom") to corpusMetadata.eraFrom.toString(),
-            listOf("Source_GaLAHaD//yearTo") to corpusMetadata.eraTo.toString(),
-            listOf("languageName") to corpusMetadata.language.toNonEmptyString("Dutch"),
-            listOf("annotationSet") to Tagset.readOrNull(tagger)?.longName.toNonEmptyString("!No tagset defined!"),
-            listOf("annotationFormat") to format,
-            listOf("Annotation_GaLAHaD//toolName") to tagger.id,
-            listOf("Annotation_GaLAHaD//toolVersion") to tagger.version,
-            listOf("Annotation_GaLAHaD//toolURL") to tagger.model.href,
-        )
+    companion object {
+        // Load CMDI template
+        private val cmdiTemplate = CmdiMetadata::class.java.classLoader.getResourceAsStream("CMDI-template.xml")
+        private val xml = XmlUtil.builder.parse(cmdiTemplate)
+        private val root = xml.documentElement
+        private val tmp_dir: File = createTempDirectory("cmdi").toFile()
+        // This read a file from disk, so only do it once.
+        private val version: String = Config.galahadVersion
     }
 }

@@ -1,7 +1,6 @@
 package org.ivdnt.galahad.corpora.jobs
 
-import com.beust.klaxon.JsonObject
-import com.beust.klaxon.Parser
+import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.apache.logging.log4j.kotlin.Logging
@@ -53,7 +52,7 @@ class Job(
     val jobDocuments: JobDocuments = JobDocuments(dir.resolve(DOCUMENT_JOBS_FOLDER))
 
     // Files
-    val isActiveFile: File = dir.resolve(IS_ACTIVE_FILE)
+    private val isActiveFile: File = dir.resolve(IS_ACTIVE_FILE)
     val metadataFile: File = dir.resolve(METADATA_FILE)
 
     // Values
@@ -147,11 +146,11 @@ class Job(
             // For each document that claims to be processing, verify if its pid is present at the tagger
             // If not, delete pid.
             try {
-                val jsonStr: String? =
-                    taggerRequest(this, "status/${documentJob.processingID!!}", HttpMethod.GET, String::class.java)
-                val parser: Parser = Parser.default()
-                val json: JsonObject = parser.parse(StringBuilder(jsonStr!!)) as JsonObject
-                if (json.boolean("busy") == false && json.boolean("pending") == false) {
+                val jsonStr: String? = taggerRequest(this, "status/${documentJob.processingID!!}", HttpMethod.GET, String::class.java)
+                val json = mapper.readTree(jsonStr)
+                val busy = json.get("busy").asBoolean()
+                val pending = json.get("pending").asBoolean()
+                if (!busy && !pending) {
                     // The doc is either finished, has an error, or does not exist.
                     documentJob.cancel()
                     metadataFile.delete()
@@ -257,6 +256,8 @@ class Job(
     }
 
     companion object {
+        private val mapper: ObjectMapper by lazy { ObjectMapper() }
+
         private fun <T : Any> taggerRequest(
             job: Job, route: String, method: HttpMethod, type: Class<T>,
             requestEntity: HttpEntity<LinkedMultiValueMap<String, Any>>? = null,

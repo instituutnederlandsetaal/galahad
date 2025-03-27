@@ -3,6 +3,7 @@ package org.ivdnt.galahad.evaluation.metrics
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.ivdnt.galahad.corpora.Corpus
+import org.ivdnt.galahad.corpora.jobs.Job
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
 import org.ivdnt.galahad.export.csv.CSVFile
 import org.ivdnt.galahad.export.csv.CSVHeader
@@ -16,19 +17,17 @@ const val TRUNCATE: Int = 100
  * The idea is to sum up the distribution as we go through the terms one by one using [add].
  */
 open class Metrics(
-    corpus: Corpus,
     @JsonIgnore val settings: List<MetricsSettings>,
-    val hypothesis: String,
-    val reference: String,
+    protected open val hypoTagger: Tagger,
+    protected open val refTagger: Tagger,
+    protected open val hypothesisJob: Job,
+    protected open val referenceJob: Job,
     @JsonIgnore val truncate: Boolean = true,
 ) {
     @JsonProperty("metrics")
     val metricTypes: MutableMap<String, MetricsType> = HashMap()
 
-    val hypoTagger: Tagger = Tagger.readOrThrow(hypothesis, corpus)
-    val refTagger: Tagger = Tagger.readOrThrow(reference, corpus)
-    protected val hypothesisJob = corpus.jobs.readOrThrow(hypothesis)
-    protected val referenceJob = corpus.jobs.readOrThrow(reference)
+
 
     init {
         settings.forEach { metricTypes[it.id] = MetricsType(it, hypoTagger, refTagger).also { it.truncate = truncate } }

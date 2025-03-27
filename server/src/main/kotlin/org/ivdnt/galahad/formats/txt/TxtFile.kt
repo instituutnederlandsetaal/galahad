@@ -1,8 +1,6 @@
 package org.ivdnt.galahad.formats.txt
 
 import org.ivdnt.galahad.corpora.documents.DocumentFormat
-import org.ivdnt.galahad.exceptions.MergeNotImplementedException
-import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.formats.InternalFile
 import java.io.File
 

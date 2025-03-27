@@ -13,18 +13,14 @@ import java.util.zip.ZipOutputStream
  *
  * @param files Sequence of files to be zipped. As it is a Sequence type,
  * you may want to perform some transformations to map data to a file.
- * @param outStream If provided, used as a ZipOutputStream.
+ * @param out If provided, used as a ZipOutputStream.
  * @param includeCMDI include the GaLAHaD CMDI template files in the zip.
  * @return The flushed and closed zipfile.
  */
-fun createZipFile(files: Sequence<File>, outStream: OutputStream? = null, includeCMDI: Boolean = false): File {
+fun createZipFile(files: Sequence<File>, out: OutputStream? = null, includeCMDI: Boolean = false): File {
     // Create zip and stream.
     val zipFile = File.createTempFile("tmp", ".zip")
-    val zipStream = ZipOutputStream(
-        BufferedOutputStream(
-            outStream ?: FileOutputStream(zipFile)
-        )
-    )
+    val zipStream = ZipOutputStream(BufferedOutputStream(out ?: FileOutputStream(zipFile)))
     // Loop through the Sequence of files
     // Any transformations occur on demand.
     for (f in files) {

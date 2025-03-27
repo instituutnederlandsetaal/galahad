@@ -3,8 +3,7 @@ package org.ivdnt.galahad.formats.naf
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.export.LayerConverter
-import org.ivdnt.galahad.util.getXmlBuilder
-import org.ivdnt.galahad.util.getXmlTransformer
+import org.ivdnt.galahad.util.XmlUtil
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import java.io.OutputStream
@@ -15,7 +14,7 @@ class NafConverter(export: DocumentExport) : LayerConverter(export) {
     val now: Long = System.currentTimeMillis()
 
     override fun convert(out: OutputStream) {
-        val xml = getXmlBuilder().newDocument()
+        val xml = XmlUtil.builder.newDocument()
         val root = xml.createElement("NAF").apply {
             setAttribute("version", "v3.3")
             setAttribute("xml:lang", "dum")
@@ -27,7 +26,7 @@ class NafConverter(export: DocumentExport) : LayerConverter(export) {
         addText(xml, root)
         addTerms(xml, root)
 
-        getXmlTransformer().transform(DOMSource(root), StreamResult(out))
+        XmlUtil.transformer.transform(DOMSource(root), StreamResult(out))
     }
 
     private fun addTerms(xml: Document, root: Element) {

@@ -17,13 +17,13 @@ class DocumentExport private constructor(
     val document: Document,
     val user: User,
     val format: DocumentFormat,
+    val tagger: Tagger,
     private val posHeadOnly: Boolean,
 ) {
     val layer: Layer = job.layer(document)
     val sourceLayer: Layer by lazy { corpus.jobs.readOrNull(SOURCE_LAYER_NAME)?.layer(document) ?: Layer.EMPTY }
-    val tagger: Tagger = Tagger.readOrThrow(job.name, corpus)
-    private val fileName: String =
-        "$document.uploadedFile.nameWithoutExtension}.${format.extension}" // TODO this will double .tei.tei.xml
+    // TODO this will double .tei.tei.xml
+    private val fileName: String = "${document.uploadedFile.nameWithoutExtension}.${format.extension}"
     private val file: File = createTempDirectory().resolve(fileName).toFile()
 
     fun convert(): File = file.also { LayerConverter.create(this).convert(file.outputStream()) }
@@ -37,8 +37,9 @@ class DocumentExport private constructor(
             job = export.job,
             document = export.corpus.documents.readOrThrow(docName),
             user = export.user,
-            format = export.targetFormat,
+            format = export.format,
             posHeadOnly = export.posHeadOnly,
+            tagger = export.tagger
         )
     }
 }

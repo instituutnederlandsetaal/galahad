@@ -11,7 +11,10 @@ class TsvConverter(export: DocumentExport) : LayerConverter(export) {
 
     private fun convert(out: PrintWriter) {
         val header: List<Annotation> = export.tagger.annotations.toList()
-        out.println(header.joinToString("\n"))
+        // force the header list to be in the order of [Annotation.entries]
+        header.sortedBy { 1 + Annotation.entries.indexOf(it) } // +1 otherwise index 0 will be last
+
+        out.println(header.joinToString("\t"))
         // We only write sentence boundaries (\n) and no #-comments, under the assumption that other TSV software can't handle this.
         export.layer.documents.forEach { document ->
             document.paragraphs.forEach { paragraph ->

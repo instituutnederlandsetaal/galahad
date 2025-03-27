@@ -19,7 +19,7 @@ class TxtReader(
             if (it.isNotBlank()) {
                 // split on whitespace
                 for (word in it.split(Regex("""\s+"""))) {
-                    terms += Term(wordID!!, offset, mapOf(Annotation.TOKEN to word))
+                    terms += Term(wordID(), offset, mapOf(Annotation.TOKEN to word))
                     offset += word.length + 1 // +1 for space/LF
                 }
                 /** Create a [SentenceLayer] after each LF. */

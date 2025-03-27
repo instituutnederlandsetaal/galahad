@@ -9,24 +9,7 @@ import javax.xml.transform.OutputKeys
 import javax.xml.transform.Transformer
 import javax.xml.transform.TransformerFactory
 
-/**
- * Get a new XML builder with external DTD loading disabled. Needed for loading some TEIp4 files.
- */
-fun getXmlBuilder(): DocumentBuilder {
-    val dbf = DocumentBuilderFactory.newInstance()
-    dbf.isIgnoringComments = true
-    dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
-    return dbf.newDocumentBuilder()
-}
-
-fun getXmlTransformer(): Transformer = TransformerFactory.newInstance().newTransformer().apply {
-    // Pretty print
-    setOutputProperty(OutputKeys.INDENT, "yes")
-    // For some reason needed to print the root on a new line instead of on the same line as the doctype.
-    setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "yes")
-}
-
-abstract class XmlMetadata(
+abstract class XmlUtil(
     val xml: Document,
 ) {
     protected fun Node.getOrCreateChild(childTag: String, prepend: Boolean = false): Element {
@@ -80,5 +63,23 @@ abstract class XmlMetadata(
             .apply { attrs.forEach { (key, value) -> this.setAttribute(key, value) } }
             // Set text content
             .apply { this.textContent = textContent }
+    }
+
+    companion object {
+        val builder: DocumentBuilder by lazy {
+            DocumentBuilderFactory.newInstance().apply {
+                isIgnoringComments = true
+                setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
+            }.newDocumentBuilder()
+        }
+
+        val transformer: Transformer by lazy {
+            TransformerFactory.newInstance().newTransformer().apply {
+                // Pretty print
+                setOutputProperty(OutputKeys.INDENT, "yes")
+                // For some reason needed to print the root on a new line instead of on the same line as the doctype.
+                setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "yes")
+            }
+        }
     }
 }

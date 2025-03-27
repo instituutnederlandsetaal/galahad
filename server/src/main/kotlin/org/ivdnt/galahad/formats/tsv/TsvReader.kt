@@ -3,6 +3,7 @@ package org.ivdnt.galahad.formats.tsv
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.AnnotationReader
 import org.ivdnt.galahad.annotations.Layer
+import org.ivdnt.galahad.annotations.Term
 import java.io.File
 
 class TsvReader(
@@ -60,6 +61,7 @@ class TsvReader(
     private fun parseBody(line: String) {
         if (line.isBlank()) {
             newSentence()
+            return
         }
 
         // Split on tabs
@@ -70,6 +72,8 @@ class TsvReader(
         for (column in columnIndices.entries) {
             getColumn(column.value, values)?.let { mutAnnot[column.key] = it }
         }
+        terms += Term(wordID(), offset, mutAnnot)
+        offset += mutAnnot[Annotation.TOKEN]?.length ?: 0
     }
 
     // Retrieves a column with bounds checking.

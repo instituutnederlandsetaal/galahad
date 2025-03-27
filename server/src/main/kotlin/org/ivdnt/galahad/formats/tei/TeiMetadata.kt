@@ -3,9 +3,9 @@ package org.ivdnt.galahad.formats.tei
 import org.ivdnt.galahad.corpora.MutableCorpusMetadata
 import org.ivdnt.galahad.corpora.documents.DocumentFormat
 import org.ivdnt.galahad.export.DocumentExport
-import org.ivdnt.galahad.util.XmlMetadata
+import org.ivdnt.galahad.util.XmlUtil
 import org.ivdnt.galahad.util.childOrNull
-import org.ivdnt.galahad.util.toNonEmptyString
+import org.ivdnt.galahad.util.ifNullOrBlank
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -16,7 +16,7 @@ class TeiMetadata(
     val root: Node,
     val export: DocumentExport,
     val merging: Boolean,
-) : XmlMetadata(xml) {
+) : XmlUtil(xml) {
 
     /** GaLAHaD-generated UUID */
     private val internalPid: String = export.document.metadata.uuid.toString()
@@ -151,8 +151,8 @@ class TeiMetadata(
     private fun addNotesStmt(fileDesc: Element) {
         val notesStmt = fileDesc.getOrCreateChild("notesStmt")
         addNote(notesStmt, "corpusName", corpusMetadata.name)
-        addNote(notesStmt, "sourceCollection", corpusMetadata.sourceName.toNonEmptyString("!No source name defined!"))
-        val url = corpusMetadata.sourceURL.toNonEmptyString("!No source URL defined!")
+        addNote(notesStmt, "sourceCollection", corpusMetadata.sourceName.ifNullOrBlank { "!No source name defined!" })
+        val url = corpusMetadata.sourceURL?.toString().ifNullOrBlank { "!No source URL defined!" }
         addNote(notesStmt, "sourceCollectionURL", url)
     }
 
@@ -323,7 +323,7 @@ class TeiMetadata(
         // Only add if not already present (when merging).
         if (profileDesc.childOrNull("langUsage") == null) {
             val langUsage = profileDesc.createChild("langUsage")
-            val languageName = corpusMetadata.language.toNonEmptyString("Dutch")
+            val languageName = corpusMetadata.language.ifNullOrBlank { "Dutch" }
             // TODO: note that for @ident we default to dutch
             val language = langUsage.createChild("language", "ident" to "nl", languageName)
             addInterGrpTo(language, "dominantLanguage", "true")

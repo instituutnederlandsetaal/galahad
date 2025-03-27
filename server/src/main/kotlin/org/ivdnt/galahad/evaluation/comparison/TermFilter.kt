@@ -11,7 +11,7 @@ interface TermFilter {
 }
 
 class CombinedTermFilter(
-    val filters: List<TermFilter>,
+    private val filters: List<TermFilter>,
 ) : TermFilter {
     override fun filter(term: Term): Boolean = filters.all { it.filter(term) }
 }

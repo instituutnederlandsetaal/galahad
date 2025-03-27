@@ -2,8 +2,7 @@ package org.ivdnt.galahad.formats.tei
 
 import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.export.LayerConverter
-import org.ivdnt.galahad.util.getXmlBuilder
-import org.ivdnt.galahad.util.getXmlTransformer
+import org.ivdnt.galahad.util.XmlUtil
 import org.w3c.dom.Element
 import java.io.OutputStream
 import javax.xml.transform.dom.DOMSource
@@ -13,7 +12,7 @@ class TeiConverter(export: DocumentExport) : LayerConverter(export) {
     // TODO add metadata
     override fun convert(out: OutputStream) {
         // generate an XML document from the annotation layer and write it to the output stream
-        val xml = getXmlBuilder().newDocument()
+        val xml = XmlUtil.builder.newDocument()
         val root = xml.createElement("TEI").apply {
             setAttribute("xmlns", "http://www.tei-c.org/ns/1.0")
             setAttribute("xmlns:tei", "http://www.tei-c.org/ns/1.0")
@@ -40,17 +39,16 @@ class TeiConverter(export: DocumentExport) : LayerConverter(export) {
 
                     sentence.terms.forEach { t ->
                         val el: Element
-                        val alphaNumeric = Regex("""[a-zA-Z0-9]""")
-
                         if (t.pos == "PC" && !t.token.contains(alphaNumeric)) {
                             el = xml.createElement("pc").apply { setAttribute("xml:id", t.id) }
-                            el.appendChild(xml.createTextNode(t.token))
-                            sentElem.appendChild(el)
                         } else {
                             el = xml.createElement("w").apply { setAttribute("xml:id", t.id) }
-                            el.appendChild(xml.createTextNode(t.token))
                             t.lemma?.let { el.setAttribute("lemma", it) }
                             t.pos?.let { el.setAttribute("pos", it) }
+                        }
+                        el.appendChild(xml.createTextNode(t.token))
+                        if (t.spaceAfter == false) {
+                            el.setAttribute("join", "right")
                         }
                         sentElem.appendChild(el)
                     }
@@ -58,6 +56,10 @@ class TeiConverter(export: DocumentExport) : LayerConverter(export) {
             }
         }
 
-        getXmlTransformer().transform(DOMSource(root), StreamResult(out))
+        XmlUtil.transformer.transform(DOMSource(root), StreamResult(out))
+    }
+
+    companion object {
+        private val alphaNumeric = Regex("""[a-zA-Z0-9]""")
     }
 }

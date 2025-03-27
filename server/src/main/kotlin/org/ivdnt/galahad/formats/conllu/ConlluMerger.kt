@@ -32,7 +32,7 @@ class ConlluMerger(
                 // construct MISC by combining NER and MISC
                 val term: Term = sourceTermComparisons[termIndex].hypoTerm
                 val ner: String? = term.annotations[Annotation.NER]?.let { "NamedEntity=$it" }
-                val spaceAfter: String? = if (!term.spaceAfter) "SpaceAfter=No" else null
+                val spaceAfter: String? = if (term.spaceAfter == false) "SpaceAfter=No" else null
                 val miscField: String = listOfNotNull(ner, spaceAfter).joinToString("|")
                 columns[columnIndex] = miscField.ifEmpty { "_" }
             }

@@ -45,7 +45,7 @@ class JobTest {
         val layer = LayerBuilder().loadDummies(100).build()
         job.setLayerForKey(doc.name, layer)
         // verify
-        assertEquals(100, job.layer(doc).terms.size)
+        assertEquals(100, job.layer(doc).terms.count())
         assertEquals(1, job.progress.finished)
     }
 }

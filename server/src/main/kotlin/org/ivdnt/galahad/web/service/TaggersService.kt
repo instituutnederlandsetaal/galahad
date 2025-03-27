@@ -1,8 +1,6 @@
 package org.ivdnt.galahad.web.service
 
-import com.beust.klaxon.JsonObject
-import com.beust.klaxon.Parser
-import com.beust.klaxon.Parser.Companion.default
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.taggers.TaggerHealth
@@ -34,17 +32,19 @@ class TaggersService : Logging {
 
         return try {
             val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-            val parser: Parser = default()
-            val json: JsonObject = parser.parse(StringBuilder(response.body())) as JsonObject
+            val json = mapper.readTree(response.body())
+            val healthy = json.get("healthy").asBoolean()
+            val queueSizeAtTagger = json.get("queueSizeAtTagger").asInt()
+            val processingSpeed = json.get("processingSpeed").asInt()
 
             // Note that this queuesize only represents the queue present at a single instance of the tagger,
             // also the processing speed is of a single tagger
             // not any pending documents on the server
             // We could get this by count all pending document for this tagger in all corpora
             TaggerHealth(
-                status = if (json.boolean("healthy") == true) TaggerHealthStatus.HEALTHY else TaggerHealthStatus.NOT_HEALTHY,
-                queueSizeAtTagger = json.int("queueSizeAtTagger") ?: 0,
-                processingSpeed = json.int("processingSpeed") ?: 0,
+                status = if (healthy) TaggerHealthStatus.HEALTHY else TaggerHealthStatus.NOT_HEALTHY,
+                queueSizeAtTagger = queueSizeAtTagger,
+                processingSpeed = processingSpeed,
                 message = "Can connect to tagger. Taggers health response: ${response.body()}"
             )
         } catch (e: Exception) {
@@ -71,11 +71,11 @@ class TaggersService : Logging {
                     builder.build().encode().toUri(), HttpMethod.GET, null, String::class.java
                 )
                 val jsonStr: String? = res.body
-                val json: JsonObject = default().parse(StringBuilder(jsonStr!!)) as JsonObject
-                // Json is a map of uuid -> status dict. Iterate on the uuids.
-                for (key in json.keys) {
-                    val status = json.obj(key)
-                    if (status?.boolean("pending") == true || status?.boolean("busy") == true) {
+                val json = mapper.readTree(jsonStr)
+                json.forEach {
+                    val pending = it.get("pending").asBoolean()
+                    val busy = it.get("busy").asBoolean()
+                    if (pending || busy) {
                         count++
                     }
                 }
@@ -86,4 +86,7 @@ class TaggersService : Logging {
         return count
     }
 
+    companion object {
+        private val mapper: ObjectMapper by lazy { ObjectMapper() }
+    }
 }

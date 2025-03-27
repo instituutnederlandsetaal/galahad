@@ -5,7 +5,15 @@ import com.fasterxml.jackson.annotation.JsonValue
 import org.ivdnt.galahad.exceptions.InvalidAnnotationException
 
 enum class Annotation(@JsonValue val value: String) {
-    TOKEN("token"), LEMMA("lemma"), POS("pos"), UPOS("upos"), HEAD("head"), DEPREL("deprel"), NER("ner");
+    TOKEN("token"),
+    LEMMA("lemma"),
+    POS("pos"),
+    UPOS("upos"),
+    HEAD("head"),
+    DEPREL("deprel"),
+    NER("ner");
+
+    override fun toString(): String = value
 
     companion object {
         @JsonCreator

@@ -20,7 +20,7 @@ repositories {
 
 dependencies {
     // Spring
-    // Versions controlled by Spring Boot plygin
+    // Versions controlled by Spring Boot plugin
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -40,10 +40,14 @@ dependencies {
     implementation("org.yaml:snakeyaml:2.4")
 
     // json
-    implementation("com.beust:klaxon:5.6")
+//    implementation("com.beust:klaxon:5.6")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     // cache
     implementation("com.github.ben-manes.caffeine:caffeine:3.2.0")
+
+    // immutable arrays
+    implementation("com.danrusu.pods4k:pods4k:0.7.0")
 }
 
 tasks.withType<Test> {

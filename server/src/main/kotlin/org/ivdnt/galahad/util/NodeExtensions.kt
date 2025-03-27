@@ -12,38 +12,22 @@ fun NodeList.deepcopy(): ArrayList<Node> {
     return copy
 }
 
-fun Node.tagName(): String? = if (this.nodeType == Node.ELEMENT_NODE) (this as Element).tagName else null
-
 val Node.children: Sequence<Node>
     get() = object : Sequence<Node> {
-    override fun iterator(): Iterator<Node> = object : Iterator<Node> {
-        var index = 0
-        override fun hasNext(): Boolean = index < childNodes.length
-        override fun next(): Node = childNodes.item(index++)
-    }
-}
-
-val Node.childElements: Sequence<Element>
-    get() = object : Sequence<Element> {
-    override fun iterator(): Iterator<Element> = object : Iterator<Element> {
-        var index = 0
-        override fun hasNext(): Boolean = index < childNodes.length
-        override fun next(): Element {
-            val node = childNodes.item(index++)
-            if (node.nodeType == Node.ELEMENT_NODE) {
-                return node as Element
-            }
-            return next()
+        override fun iterator(): Iterator<Node> = object : Iterator<Node> {
+            var index = 0
+            override fun hasNext(): Boolean = index < childNodes.length
+            override fun next(): Node = childNodes.item(index++)
         }
     }
-}
+
+val Node.childElements: Sequence<Element>
+    get() = children.mapNotNull { it.takeIf { it.nodeType == Node.ELEMENT_NODE } as Element? }
 
 /** Whether this node is contained in a node with name [tagName]*/
 fun Node.containedIn(tagName: String): Boolean {
-    if (this.parentNode == null)
-        return false
-    if (this.parentNode?.tagName() == tagName)
-        return true
+    if (this.parentNode == null) return false
+    if (this.parentNode?.localName == tagName) return true
     // Recursion
     return this.parentNode.containedIn(tagName)
 }
@@ -71,21 +55,6 @@ fun Node.nextElementSibling(): Element? {
     return next as Element?
 }
 
-/** Looks for the first child node, 1 deep, or null. */
-fun Node.childOrNull(childTag: String, recurse: Boolean = false): Node? {
-    for (i in 0 until this.childNodes.length) {
-        if (this.childNodes.item(i).nodeType == Node.ELEMENT_NODE) {
-            if ((this.childNodes.item(i) as Element).tagName == childTag) {
-                return this.childNodes.item(i)
-            }
-            val childReturn = this.childNodes.item(i).childOrNull(childTag, recurse)
-            if (childReturn != null) {
-                return childReturn
-            }
-        }
-    }
-    return null
-}
-
-/** Looks for the first child node, 1 deep, or null. */
-fun Element.childOrNull(childTag: String): Element? = (this as Node).childOrNull(childTag) as Element?
+fun Node.child(tag: String): Node = childElements.first { it.tagName == tag }
+fun Node.childOrNull(tag: String): Node? = childElements.firstOrNull { it.tagName == tag }
+fun Element.childOrNull(tag: String): Element? = (this as Node).childOrNull(tag) as Element?

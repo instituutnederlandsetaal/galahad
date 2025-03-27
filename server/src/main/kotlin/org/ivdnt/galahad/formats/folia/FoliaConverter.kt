@@ -3,8 +3,7 @@ package org.ivdnt.galahad.formats.folia
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.export.LayerConverter
-import org.ivdnt.galahad.util.getXmlBuilder
-import org.ivdnt.galahad.util.getXmlTransformer
+import org.ivdnt.galahad.util.XmlUtil
 import java.io.OutputStream
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
@@ -14,7 +13,7 @@ class FoliaConverter(
 ) : LayerConverter(export) {
 
     override fun convert(out: OutputStream) {
-        val xml = getXmlBuilder().newDocument()
+        val xml = XmlUtil.builder.newDocument()
         val root = xml.createElement("FoLiA").apply {
             setAttribute("xmlns", "http://ilk.uvt.nl/folia")
             setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink")
@@ -44,7 +43,7 @@ class FoliaConverter(
                                 setAttribute("set", export.tagger.id)
                                 setAttribute("processor", export.tagger.id)
                             }
-                        }.also { w.appendChild(it) }
+                        }?.also { w.appendChild(it) }
                         term.pos?.let {
                             xml.createElement("pos").apply {
                                 setAttribute("class", it)
@@ -52,11 +51,11 @@ class FoliaConverter(
                                 setAttribute("set", export.tagger.id)
                                 setAttribute("processor", export.tagger.id)
                             }
-                        }.also { w.appendChild(it) }
+                        }?.also { w.appendChild(it) }
                     }
                 }
             }
         }
-        getXmlTransformer().transform(DOMSource(xml), StreamResult(out))
+        XmlUtil.transformer.transform(DOMSource(xml), StreamResult(out))
     }
 }

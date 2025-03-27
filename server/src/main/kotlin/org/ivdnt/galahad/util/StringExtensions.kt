@@ -9,6 +9,4 @@ fun String.matchesUpTo(textToMatch: String): Int {
     return matchingIndex
 }
 
-/** Same as toString, unless the caller is null or the resulting string is empty: then we use [default]. */
-fun Any?.toNonEmptyString(default: String): String =
-    if (this == null || this.toString().isEmpty()) default else this.toString()
+fun String?.ifNullOrBlank(default: () -> String): String = this.takeIf { !it.isNullOrBlank() } ?: default()

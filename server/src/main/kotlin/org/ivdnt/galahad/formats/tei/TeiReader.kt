@@ -13,11 +13,11 @@ import java.io.File
 class TeiReader(
     file: File
 ) : AnnotationReader(file) {
-    private val doc: Document by lazy { getXmlBuilder().parse(file) }
+    private val xml: Document by lazy { XmlUtil.builder.parse(file) }
     private var literal: String = ""
 
     override fun read(): Layer {
-        parseTopLevelTextNodes(doc.documentElement)
+        parseTopLevelTextNodes(xml.documentElement)
         return Layer(documents)
     }
 
@@ -30,7 +30,7 @@ class TeiReader(
             if (child.tagName == "text") {
                 // parse document
                 parseNodesIntoDocument(child)
-                docID = child.getAttribute("xml:id")
+                docID = child.getAttribute("xml:id").ifBlank { null }
                 newDocument()
             } else {
                 // recurse
@@ -46,7 +46,7 @@ class TeiReader(
         node.children.forEach { child ->
             if (child.nodeType == Node.ELEMENT_NODE && !IGNORABLE_TAGS.contains((child as Element).tagName)) {
                 val tag = child.tagName
-                val id = child.getAttribute("xml:id")
+                val id = child.getAttribute("xml:id").ifBlank { null }
 
                 // handle text outside of a paragraph/sentence when we are currently at a new <p>/<s>.
                 // E.g.: <text> blabla <p> blabla </p> blabla </text>
@@ -109,7 +109,7 @@ class TeiReader(
         }
         annotations[Annotation.TOKEN] = literal
 
-        val term = Term(wordID!!, offset, annotations, spaceAfter(el))
+        val term = Term(wordID(), offset, annotations, spaceAfter(el))
         terms.add(term)
         offset += literal.length
         literal = ""
@@ -183,6 +183,6 @@ class TeiReader(
             "said"
         )
         private val SENTENCE_TAGS = listOf("s", "l", "u")
-        private val IGNORABLE_TAGS = listOf("note", "listBibl", "listWit", "figure")
+        private val IGNORABLE_TAGS = listOf("note", "listBibl", "listWit", "figure", "xr", "fs")
     }
 }

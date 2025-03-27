@@ -3,14 +3,17 @@ package org.ivdnt.galahad.app
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
 import io.swagger.v3.oas.models.info.Contact
+import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.info.License
 import io.swagger.v3.oas.models.servers.Server
+import org.ivdnt.galahad.corpora.documents.DocumentFormat
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.convert.converter.Converter
 import org.springframework.scheduling.annotation.EnableScheduling
 import java.io.File
 import java.math.BigDecimal
@@ -72,14 +75,8 @@ class Config {
     fun getWorkingDirectory(): File = File(workDir)
 
     companion object {
-        fun galahadVersion(): String = galahadVersionYaml().getProperty("GITHUB_REF_NAME")
-
-        fun galahadVersionYaml(): Properties {
-            val versionStream = this::class.java.classLoader.getResource("version.yml")!!.openStream()
-            val versionProperties = Properties()
-            versionProperties.load(versionStream)
-            return versionProperties
-        }
+        val galahadVersionYaml: Properties by lazy { Properties().apply { load(Config::class.java.getResourceAsStream("/version.yml")) } }
+        val galahadVersion: String by lazy { galahadVersionYaml.getProperty("GITHUB_REF_NAME") }
     }
 }
 
@@ -88,12 +85,8 @@ class Config {
 class GalahadApplication {
     @Bean
     fun customOpenAPI(): OpenAPI {
-        var api = OpenAPI()
-            .components(Components())
-            .info(
-                io.swagger.v3.oas.models.info.Info()
-                    .title("GaLAHaD API")
-                    .version(Config.galahadVersion())
+        var api = OpenAPI().components(Components()).info(
+                Info().title("GaLAHaD API").version(Config.galahadVersion)
                     .license(License().name("Apache 2.0").url("https://www.apache.org/licenses/"))
                     .description("Generating Linguistic Annotations for Historical Dutch")
                     .contact(Contact().name("GaLAHaD GitHub").url("https://github.com/inl/galahad"))
@@ -137,4 +130,9 @@ class MultipartConfig {
             return returnValue
         }
     }
+}
+
+@Configuration
+class DocumentFormatConverter : Converter<String, DocumentFormat> {
+    override fun convert(source: String): DocumentFormat = DocumentFormat.fromString(source)
 }

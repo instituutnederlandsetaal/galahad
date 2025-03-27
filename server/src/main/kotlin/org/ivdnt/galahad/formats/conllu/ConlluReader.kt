@@ -1,9 +1,9 @@
 package org.ivdnt.galahad.formats.conllu
 
 import org.ivdnt.galahad.annotations.Annotation
+import org.ivdnt.galahad.annotations.AnnotationReader
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.Term
-import org.ivdnt.galahad.annotations.AnnotationReader
 import java.io.File
 
 class ConlluReader(
@@ -79,7 +79,7 @@ class ConlluReader(
     /**
      * Retrieve the NER from the MISC column and convert it to IOB.
      */
-    fun getNER(values: List<String>): String? {
+    private fun getNER(values: List<String>): String? {
         val misc = getColumn(9, values) ?: return null
 
         // nerKeyValue is for example "NamedEntity=S-LOC"
@@ -117,12 +117,7 @@ class ConlluReader(
         for (column in indices.keys) {
             getColumn(column, fields)?.let { annotations[column] = it }
         }
-        val term = Term(
-            id = fields[0], offset = offset, annotations = annotations, spaceAfter = spaceAfter
-        )
-
-        terms.add(term)
-
+        terms += Term(wordID(), offset, annotations, spaceAfter)
         offset += fields[1].length
         if (spaceAfter) offset++ // add space after
     }
@@ -132,7 +127,7 @@ class ConlluReader(
         private val nerAttrNames: List<String> = listOf("NamedEntity", "ner")
 
         private val indices: Map<Annotation, Int> = mapOf(
-            Annotation.TOKEN to 0,
+            Annotation.TOKEN to 1,
             Annotation.LEMMA to 2,
             Annotation.POS to 4,
             Annotation.HEAD to 6,

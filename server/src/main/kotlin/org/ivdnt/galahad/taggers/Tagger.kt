@@ -57,12 +57,12 @@ class Tagger(
 
     companion object {
         val EMPTY: Tagger = Tagger("EMPTY")
-        const val TAGGERS_DIR: String = "data/taggers"
+        private const val TAGGERS_DIR: String = "data/taggers"
         private val dir: File = File(TAGGERS_DIR)
 
         val taggers: Map<String, Tagger> by lazy {
             dir.listFiles()
-                .map { Yaml(Constructor(Tagger::class.java, LoaderOptions())).load<Tagger>(it.inputStream()) }
+                .map { Yaml(Constructor(Tagger::class.java, LoaderOptions().apply { isEnumCaseSensitive = false })).load<Tagger>(it.inputStream()) }
                 .associateBy { it.id }
         }
 

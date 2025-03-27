@@ -57,7 +57,7 @@ class MetricsType(
         get() = map.values.map { it.cls }.toMutableList().apply { this.add(0, ClassificationClasses(count = 0)) }
             .reduce { a, b -> a.add(b, truncate) }.apply { falsePositive = EvaluationEntry() }
 
-    val macro: ClassificationMetrics
+    private val macro: ClassificationMetrics
         get() {
             if (map.isEmpty()) {
                 return ClassificationMetrics()
@@ -65,7 +65,7 @@ class MetricsType(
             return map.values.map { it.clsMetrics }.reduce { a, b -> a + b } / map.size
         }
 
-    val micro: ClassificationMetrics
+    private val micro: ClassificationMetrics
         get() {
             if (map.isEmpty()) {
                 return ClassificationMetrics()
@@ -196,7 +196,7 @@ class MetricsType(
     }
 
 
-    fun samplesToCSV(comps: List<TermComparison>?): String = samplesToCSV(comps, hypothesis, reference)
+    private fun samplesToCSV(comps: List<TermComparison>?): String = samplesToCSV(comps, hypothesis, reference)
 
     override fun samplesToCSV(): String {
         throw NotImplementedError()

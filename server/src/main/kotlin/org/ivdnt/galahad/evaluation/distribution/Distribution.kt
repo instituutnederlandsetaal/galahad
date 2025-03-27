@@ -8,7 +8,7 @@ import org.ivdnt.galahad.annotations.Term
  * Generic class for frequency distributions of terms in a corpus or document.
  * The idea is to sum up the distribution as we go through the terms one by one using [add].
  */
-open class Distribution(val groupingAnnotation: Annotation) {
+open class Distribution(private val groupingAnnotation: Annotation) {
 
     /**
      * (lem, pos) -> (count, literal[])

@@ -6,7 +6,7 @@ import org.ivdnt.galahad.annotations.LayerSummary
 import org.ivdnt.galahad.formats.InternalFile
 import java.util.*
 
-class DocumentMetadata private constructor(
+data class DocumentMetadata(
     /** Name of the uploaded file including extension. Used as a working directory name. */
     val name: String,
     /** Format of the uploaded file as induced by FormatInducer. */

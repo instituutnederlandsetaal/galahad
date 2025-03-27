@@ -3,9 +3,14 @@ package org.ivdnt.galahad.annotations
 import com.fasterxml.jackson.annotation.JsonIgnore
 
 
-data class Term(
-    val id: String, val offset: Int, val annotations: Annotations, val spaceAfter: Boolean = true
+class Term(
+    val id: String,
+    val offset: Int,
+    val annotations: Annotations,
+    spaceAfter: Boolean? = null
 ) {
+    val spaceAfter: Boolean? = if (spaceAfter == false) false else null
+
     @get:JsonIgnore
     val token: String = annotations[Annotation.TOKEN]!!
 
@@ -69,7 +74,7 @@ data class Term(
     }
 
     companion object {
-        val EMPTY: Term = Term("", 0, emptyMap())
+        val EMPTY: Term = Term("", 0, mapOf(Annotation.TOKEN to ""))
 
         fun missingName(annotation: Annotation): String =
             // simply uppercase and prepend "NO_"

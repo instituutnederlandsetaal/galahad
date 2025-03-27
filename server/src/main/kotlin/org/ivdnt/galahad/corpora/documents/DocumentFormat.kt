@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonValue
 import org.apache.logging.log4j.kotlin.logger
 import org.ivdnt.galahad.exceptions.InvalidDocumentFormatException
-import org.ivdnt.galahad.util.getXmlBuilder
+import org.ivdnt.galahad.util.XmlUtil
 import org.w3c.dom.Document
 import java.io.File
 import javax.xml.xpath.XPath
@@ -33,7 +33,7 @@ enum class DocumentFormat(val identifier: String, val extension: String) {
         /**
          * BlackLab uses formats that contain -, which is not allowed in an enum, so we need this mapping
          */
-        @JsonCreator
+        @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
         fun fromString(s: String): DocumentFormat =
             entries.firstOrNull { it.identifier == s } ?: throw InvalidDocumentFormatException(
                 "Invalid format $s, valid formats are ${entries.map { it.identifier }}"
@@ -60,11 +60,11 @@ enum class DocumentFormat(val identifier: String, val extension: String) {
          * Differentiate based on the root node.
          */
         private fun determineXmlFormat(file: File): DocumentFormat {
-            val xmlDoc: Document = getXmlBuilder().parse(file)
-            return when (xmlDoc.documentElement.tagName) {
+            val xml: Document = XmlUtil.builder.parse(file)
+            return when (xml.documentElement.tagName) {
                 "FoLiA" -> Folia
                 "TEI.2", "teiCorpus.2" -> TeiP4Legacy
-                "TEI", "teiCorpus" -> determineTeiP5Format(xmlDoc)
+                "TEI", "teiCorpus" -> determineTeiP5Format(xml)
                 "NAF" -> Naf
                 else -> Unknown
             }

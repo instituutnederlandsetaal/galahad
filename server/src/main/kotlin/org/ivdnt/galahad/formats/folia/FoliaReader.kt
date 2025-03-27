@@ -4,7 +4,10 @@ import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.AnnotationReader
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.Term
-import org.ivdnt.galahad.util.*
+import org.ivdnt.galahad.util.XmlUtil
+import org.ivdnt.galahad.util.childElements
+import org.ivdnt.galahad.util.children
+import org.ivdnt.galahad.util.containedIn
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -13,7 +16,7 @@ import java.io.File
 class FoliaReader(
     file: File,
 ) : AnnotationReader(file) {
-    val xml: Document = getXmlBuilder().parse(file)
+    val xml: Document = XmlUtil.builder.parse(file)
     private var literal: String = ""
     private var pos: String = ""
     private var lemma: String = ""
@@ -28,7 +31,7 @@ class FoliaReader(
             if (child.tagName == "text" || child.tagName == "speech") {
                 // parse document
                 parseNodesIntoDocument(child)
-                docID = child.getAttribute("xml:id")
+                docID = child.getAttribute("xml:id").ifBlank { null }
                 newDocument()
             } else {
                 // recurse
@@ -41,7 +44,7 @@ class FoliaReader(
         node.children.forEach { child ->
             if (child.nodeType == Node.ELEMENT_NODE && !IGNORABLE_TAGS.contains((child as Element).tagName)) {
                 val tag = child.tagName
-                val id = child.getAttribute("xml:id")
+                val id = child.getAttribute("xml:id").ifBlank { null }
 
                 // recurse
                 parseNodesIntoDocument(child)
@@ -65,7 +68,7 @@ class FoliaReader(
                     newWordform(child)
                 }
 
-            } else if (child.nodeType == Node.TEXT_NODE) {
+            } else if (child.nodeType == Node.TEXT_NODE && child.containedIn("t")) {
                 val text = child.textContent
                 val words = text.split("\\s+".toRegex())
                 for ((j, word) in words.withIndex()) {
@@ -85,9 +88,9 @@ class FoliaReader(
         lemma.takeIf { it.isNotBlank() }?.let { annotations[Annotation.LEMMA] = it }
         pos.takeIf { it.isNotBlank() }?.let { annotations[Annotation.POS] = it }
         annotations[Annotation.TOKEN] = literal
+        val spaceAfter = el?.getAttribute("space") != "no"
 
-        val term = Term(wordID!!, offset, annotations, el?.getAttribute("space") != "no")
-        terms.add(term)
+        terms += Term(wordID(), offset, annotations, spaceAfter)
         offset += literal.length
         literal = ""
     }
@@ -107,10 +110,9 @@ class FoliaReader(
         )
         private val SENTENCE_TAGS = listOf("s", "utt")
         private val IGNORABLE_TAGS = listOf(
-            "note", "figure", "comment",
+            "morphology", "note", "figure", "comment",
             "original", // correction
             "suggestion", // correction
-
         )
     }
 }

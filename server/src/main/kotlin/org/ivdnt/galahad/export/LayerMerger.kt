@@ -12,7 +12,7 @@ import org.ivdnt.galahad.formats.tsv.TsvMerger
 import java.io.OutputStream
 
 abstract class LayerMerger(protected val export: DocumentExport) {
-    protected val layerComparison: LayerComparison = LayerComparison(export)
+    private val layerComparison: LayerComparison = LayerComparison(export)
     protected val sourceTermComparisons: List<TermComparison> = (layerComparison.matches + layerComparison.referenceTermsWithoutMatches.map { TermComparison(
         Term.EMPTY, it) }).sortedBy { it.refTerm.offset }
     abstract fun merge(out: OutputStream)

@@ -113,9 +113,8 @@ class DocumentsService(val corpora: CorporaService) : Logging {
         // access the corpus
         val docs = corpus.writeDocs()
         // create the document
-        val document: Document
         try {
-            document = docs.createOrThrow(file)
+            docs.createOrThrow(file)
         } catch (e: Exception) {
             // Document is somehow invalid.
             // Show error to user, but don't save the file

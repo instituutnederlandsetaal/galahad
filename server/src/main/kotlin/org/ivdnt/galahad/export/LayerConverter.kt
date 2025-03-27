@@ -6,8 +6,8 @@ import org.ivdnt.galahad.formats.conllu.ConlluConverter
 import org.ivdnt.galahad.formats.folia.FoliaConverter
 import org.ivdnt.galahad.formats.naf.NafConverter
 import org.ivdnt.galahad.formats.tei.TeiConverter
-import org.ivdnt.galahad.formats.txt.TxtConverter
 import org.ivdnt.galahad.formats.tsv.TsvConverter
+import org.ivdnt.galahad.formats.txt.TxtConverter
 import java.io.OutputStream
 
 abstract class LayerConverter(protected val export: DocumentExport) {

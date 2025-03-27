@@ -21,7 +21,7 @@ class DistributionRow(
     val lemma: String,
     val pos: String,
     val count: Int,
-    val literals: LiteralsEntry,
+    private val literals: LiteralsEntry,
 ) {
     fun toCSVRecord(): String = CSVFile.toCSVRecord(listOf(lemma, pos, count.toString(), literals.literals.toString()))
 

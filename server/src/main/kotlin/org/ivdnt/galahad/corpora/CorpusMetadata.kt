@@ -1,7 +1,6 @@
 package org.ivdnt.galahad.corpora
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import org.ivdnt.galahad.app.JSONable
 import java.net.URL
 import java.util.*
 
@@ -45,7 +44,7 @@ class CorpusMetadata(
     viewers = viewers.toMutableSet(),
     sourceName = sourceName,
     sourceURL = sourceURL
-), JSONable {
+) {
     companion object {
         fun create(corpus: Corpus): CorpusMetadata {
             val allJobs = corpus.jobs.readAll()

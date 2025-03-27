@@ -2,7 +2,6 @@ package org.ivdnt.galahad.corpora
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
-import org.ivdnt.galahad.app.JSONable
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.exceptions.CorpusNameInvalidException
 import org.ivdnt.galahad.exceptions.CorpusUnauthorizedException
@@ -26,7 +25,7 @@ open class MutableCorpusMetadata(
     @JsonProperty("viewers") var viewers: MutableSet<String>,
     @JsonProperty("sourceName") @Nullable var sourceName: String?,
     @JsonProperty("sourceURL") @Nullable var sourceURL: URL?,
-) : JSONable {
+) {
 
     @JsonIgnore
     var id: UUID? = null

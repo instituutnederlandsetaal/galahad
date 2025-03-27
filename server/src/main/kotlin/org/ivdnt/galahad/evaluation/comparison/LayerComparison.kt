@@ -140,7 +140,7 @@ open class LayerComparison(
             return truncatedPcMatch(aStr, bStr) || truncatedPcMatch(bStr, aStr)
         }
 
-        fun truncatedPcMatch(aStr: String, bStr: String): Boolean {
+        private fun truncatedPcMatch(aStr: String, bStr: String): Boolean {
             if (aStr.isEmpty() || bStr.isEmpty()) {
                 return false
             }

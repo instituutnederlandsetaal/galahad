@@ -3,7 +3,6 @@ package org.ivdnt.galahad.corpora.documents
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.corpora.Corpus
-import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.files.DiskValue
 import org.ivdnt.galahad.files.GalahadFolder
 import org.ivdnt.galahad.formats.InternalFile
@@ -34,7 +33,7 @@ class Document(
         try {
             plaintextFile.readText()
         } catch (e: Exception) {
-            logger.error("Error reading plaintext file, creating new plaintext", e)
+            logger.warn("Error reading plaintext file, creating new plaintext", e)
             val internalFile = InternalFile.create(uploadedFile)
             val text = internalFile.plaintext
             plaintextFile.writeText(text)
@@ -51,7 +50,7 @@ class Document(
         try {
             DiskValue<DocumentMetadata>(metadataFile).readOrThrow()
         } catch (e: Exception) {
-            logger.error("Error reading metadata file, creating new metadata", e)
+            logger.warn("Error reading metadata file, creating new metadata", e)
             val metadata = DocumentMetadata.create(internalFile)
             DiskValue<DocumentMetadata>(metadataFile).write(metadata)
         }
@@ -76,9 +75,10 @@ class Document(
 
             // plaintext & sourceLayer
             val internalFile = InternalFile.create(file)
-            // sourceLayer as job
-            corpus.jobs.createOrThrow(SOURCE_LAYER_NAME).jobDocuments.createOrThrow(doc.name).layer =
-                internalFile.layer
+            // First try to access the layer. If the file is invalid, this will throw.
+            val sourceLayer = internalFile.layer
+            // Set sourceLayer as job. Note that if we threw, we don't unnecessarily create a job folder, keeping the disk clean.
+            corpus.jobs.createOrThrow(SOURCE_LAYER_NAME).jobDocuments.createOrThrow(doc.name).layer = sourceLayer
             // plaintext
             doc.plaintextFile.writeText(internalFile.plaintext)
 

@@ -1,10 +1,9 @@
 package org.ivdnt.galahad.formats.folia
 
 import org.ivdnt.galahad.export.DocumentExport
-import org.ivdnt.galahad.util.XmlMetadata
+import org.ivdnt.galahad.util.XmlUtil
 import org.ivdnt.galahad.util.insertAfter
 import org.ivdnt.galahad.util.nextElementSibling
-import org.ivdnt.galahad.util.tagName
 import org.w3c.dom.Document
 import org.w3c.dom.Node
 
@@ -12,7 +11,7 @@ class FoliaMetadata(
     xml: Document,
     val root: Node,
     val export: DocumentExport
-) : XmlMetadata(xml) {
+) : XmlUtil(xml) {
     init {
         val meta = root.getOrCreateChild("metadata")
         val annotations: Node = meta.getOrCreateChild("annotations")
@@ -30,7 +29,7 @@ class FoliaMetadata(
         // Order matters, <provenance> needs to be directly after annotations
         val provenance: Node
         val nextNonTextSibling = annotations.nextElementSibling()
-        if (nextNonTextSibling?.tagName() == "provenance") {
+        if (nextNonTextSibling?.localName == "provenance") {
             provenance = nextNonTextSibling
         } else {
             provenance = xml.createElement("provenance")
