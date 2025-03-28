@@ -23,12 +23,11 @@ class Log : Filter, Logging {
         try {
             chain.doFilter(req, resp)
         } finally {
-            var url = (req as HttpServletRequest).requestURI
+            val url = (req as HttpServletRequest).requestURI
             if (url != "/user") {
                 val finish = Instant.now()
                 val time: Long = Duration.between(start, finish).toMillis()
-                val method = req.method
-                logger.info("in $time ms: $method $url")
+                logger.info("in $time ms: ${req.method} $url")
             }
         }
     }

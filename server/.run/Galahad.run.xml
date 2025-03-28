@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="GalahadApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+  <configuration default="false" name="Galahad" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
     <option name="ALTERNATIVE_JRE_PATH" value="graalvm-ce-23" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
     <envs>
@@ -7,7 +7,7 @@
     </envs>
     <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
     <module name="galahad.main" />
-    <option name="SPRING_BOOT_MAIN_CLASS" value="org.ivdnt.galahad.app.GalahadApplicationKt" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="org.ivdnt.galahad.app.Galahad" />
     <option name="VM_PARAMETERS" value="-Xms3g -Xmx6g" />
     <method v="2">
       <option name="Make" enabled="true" />

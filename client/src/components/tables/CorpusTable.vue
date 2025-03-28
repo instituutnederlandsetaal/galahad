@@ -26,7 +26,7 @@
 
         <template #prepend>
             <div style="display: flex; align-items: center; justify-content: center; margin-bottom:1em"
-                v-if="userStore.user.admin || type != TableCorporaType.Dataset">
+                v-if="userStore.user.isAdmin || type != TableCorporaType.Dataset">
                 <GButton green @click="$emit('create')" v-if="type == TableCorporaType.User">
                     New
                 </GButton>

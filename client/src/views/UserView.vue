@@ -7,7 +7,7 @@
       Username:<br />
       <b>{{ user.user.id }}</b>
       <br /><br />
-      <b v-if="user.user.admin"> You are an admin.</b>
+      <b v-if="user.user.isAdmin"> You are an admin.</b>
     </p>
     <!-- <div>
       Things that could be listed here:

@@ -44,17 +44,14 @@
                 {{ data.value }}
             </template>
 
-            <template #head-layerSummary>
-                annotation
-            </template>
             <!-- layerSummary cell -->
             <template #cell-layerSummary="data">
                 <RightFloatCell>
                     <template #left>
-                        {{ data.value.numTokens }}
+                        {{ data.value.tokens }}
                     </template>
                     <template #right>
-                        <InspectButton v-if="data.value.numTokens > 0"
+                        <InspectButton v-if="data.value.tokens > 0"
                             @click="preview = data.value.layerPreview; previewDocument = data.item" />
                     </template>
                 </RightFloatCell>
@@ -144,7 +141,7 @@ const columns = computed<Field[]>(() => {
         { key: "name", sortOn: (x: DocumentMetadata) => x.name, textAlign: "left" },
         { key: "format", sortOn: (x: DocumentMetadata) => x.format },
         { key: "preview", textAlign: "left" },
-        { key: "layerSummary" },
+        { key: "layerSummary", label: "tokens", sortOn: (x: DocumentMetadata) => x.layerSummary?.tokens },
         { key: "lastModified", label: "last modified", sortOn: (x: DocumentMetadata) => x.lastModified }
     ] as Field[];
     if (userStore.hasWriteAccess && props.type == TableDocumentsType.User) {

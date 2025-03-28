@@ -5,6 +5,7 @@ import org.w3c.dom.Element
 import org.w3c.dom.Node
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
+import javax.xml.stream.XMLInputFactory
 import javax.xml.transform.OutputKeys
 import javax.xml.transform.Transformer
 import javax.xml.transform.TransformerFactory
@@ -69,6 +70,7 @@ abstract class XmlUtil(
         val builder: DocumentBuilder by lazy {
             DocumentBuilderFactory.newInstance().apply {
                 isIgnoringComments = true
+                isNamespaceAware = true
                 setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
             }.newDocumentBuilder()
         }
@@ -81,5 +83,7 @@ abstract class XmlUtil(
                 setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "yes")
             }
         }
+
+        val inputFactory: XMLInputFactory by lazy { XMLInputFactory.newInstance() }
     }
 }

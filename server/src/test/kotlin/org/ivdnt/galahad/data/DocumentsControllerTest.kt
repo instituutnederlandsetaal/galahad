@@ -2,7 +2,7 @@ package org.ivdnt.galahad.data
 
 import org.ivdnt.galahad.*
 import org.ivdnt.galahad.app.Config
-import org.ivdnt.galahad.app.GalahadApplication
+import org.ivdnt.galahad.app.Galahad
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.corpora.documents.DocumentMetadata
 import org.ivdnt.galahad.formats.Resource
@@ -21,7 +21,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import java.io.File
 
 @WebMvcTest(properties = ["spring.main.allow-bean-definition-overriding=true"])
-@ContextConfiguration(classes = [GalahadApplication::class, TestConfig::class])
+@ContextConfiguration(classes = [Galahad::class, TestConfig::class])
 class DocumentsControllerTest(
     @Autowired val mvc: MockMvc,
     @Autowired val config: Config,

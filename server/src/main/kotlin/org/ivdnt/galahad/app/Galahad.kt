@@ -82,7 +82,7 @@ class Config {
 
 @ComponentScan("org.ivdnt.galahad")
 @SpringBootApplication
-class GalahadApplication {
+class Galahad {
     @Bean
     fun customOpenAPI(): OpenAPI {
         var api = OpenAPI().components(Components()).info(
@@ -99,7 +99,7 @@ class GalahadApplication {
 }
 
 fun main(args: Array<String>) {
-    runApplication<GalahadApplication>(*args)
+    runApplication<Galahad>(*args)
 }
 
 @Configuration

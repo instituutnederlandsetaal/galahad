@@ -26,8 +26,6 @@ const columns = computed(() => {
 
 const items = computed(() => {
   return props.layer?.terms.map((term) => {
-    delete term.annotations["token"]
-    term.annotations["token"] = term.targets.map(x => x.literal).join('_')
     return term.annotations
   })
 })

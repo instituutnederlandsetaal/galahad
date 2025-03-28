@@ -4,7 +4,7 @@ import org.ivdnt.galahad.corpora.documents.DocumentFormat
 import org.ivdnt.galahad.formats.InternalFile
 import java.io.File
 
-open class TsvFile(
+class TsvFile(
     override val file: File,
 ) : InternalFile() {
     override val format: DocumentFormat = DocumentFormat.Tsv

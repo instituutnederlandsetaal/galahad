@@ -11,7 +11,7 @@ import { UUID } from "@/types/corpora"
 // For some reason the terms are undefined sometimes
 // We handle it here
 export function literalsForTerm(term: Term): string {
-    return term.targets.map(x => x.literal).join("..")
+    return term.annotations["token"]
 }
 
 export function literalsForTermComparison(termComparison: TermComparison): string {

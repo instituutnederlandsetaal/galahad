@@ -33,10 +33,8 @@ class Tagger(
     var trainedBy: String = "",
     var date: String = "",
     var language: String? = "",
+    var version: String = "",
 ) {
-    @JsonIgnore
-    var version: String = ""
-
     @JsonIgnore
     var devport: Int? = 0
 

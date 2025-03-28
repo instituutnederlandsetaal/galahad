@@ -4,7 +4,7 @@ import org.ivdnt.galahad.JSON
 import org.ivdnt.galahad.TestConfig
 import org.ivdnt.galahad.UserHeader
 import org.ivdnt.galahad.app.Config
-import org.ivdnt.galahad.app.GalahadApplication
+import org.ivdnt.galahad.app.Galahad
 import org.ivdnt.galahad.corpora.CorpusMetadata
 import org.ivdnt.galahad.corpora.MutableCorpusMetadata
 import org.ivdnt.galahad.web.controller.CorporaController
@@ -23,7 +23,7 @@ import java.nio.charset.StandardCharsets
 import java.util.*
 
 @WebMvcTest(properties = ["spring.main.allow-bean-definition-overriding=true"])
-@ContextConfiguration(classes = [GalahadApplication::class, TestConfig::class])
+@ContextConfiguration(classes = [Galahad::class, TestConfig::class])
 class CorporaControllerTest(
     @Autowired val mvc: MockMvc,
     @Autowired val config: Config,

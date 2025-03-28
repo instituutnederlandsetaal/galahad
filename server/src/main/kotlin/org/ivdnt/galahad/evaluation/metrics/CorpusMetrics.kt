@@ -23,18 +23,13 @@ class CorpusMetrics(
     hypothesisJob2: Job = corpus.jobs.readOrThrow(hypothesis),
     referenceJob2: Job = corpus.jobs.readOrThrow(reference),
 ) : Metrics(settings, hypoTagger2, refTagger2, hypothesisJob2, referenceJob2, truncate = truncate) {
-    @JsonProperty
     val hypothesisLastModified: Long = hypothesisJob.lastModified
 
-    @JsonProperty
     val referenceLastModified: Long = referenceJob.lastModified
 
-    @JsonProperty
     val generated: Long = System.currentTimeMillis()
 
     init {
-
-
         corpus.documents.readAll().forEach { doc ->
             add(
                 DocumentMetrics(

@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.taggers
 
 import org.ivdnt.galahad.TestConfig
-import org.ivdnt.galahad.app.GalahadApplication
+import org.ivdnt.galahad.app.Galahad
 import org.ivdnt.galahad.exceptions.TaggerNotFoundException
 import org.ivdnt.galahad.web.controller.TaggersController
 import org.junit.jupiter.api.Assertions.*
@@ -12,7 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.test.context.ContextConfiguration
 
 @WebMvcTest(properties = ["spring.main.allow-bean-definition-overriding=true"])
-@ContextConfiguration(classes = [GalahadApplication::class])
+@ContextConfiguration(classes = [Galahad::class])
 class TaggerStoreControllerTest(
     @Autowired val ctrl: TaggersController,
 ) {

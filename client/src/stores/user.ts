@@ -15,9 +15,9 @@ const useUser = defineStore('user', () => {
     const corporaStore = stores.useCorpora() as CorporaStore
 
     // Fields
-    const user = ref({ id: 'NO USER', admin: false } as User)
+    const user = ref({ id: 'NO USER', isAdmin: false } as User)
     const hasWriteAccess = computed((): boolean => {
-        return corporaStore.userIsCollaborator || user.value.admin || corporaStore.activeCorpus?.owner === user.value.id
+        return corporaStore.userIsCollaborator || user.value.isAdmin || corporaStore.activeCorpus?.owner === user.value.id
     })
     const hasDeleteAccess = computed((): boolean => {
         return canDelete(corporaStore.activeCorpus)
@@ -30,7 +30,7 @@ const useUser = defineStore('user', () => {
      */
     function canDelete(corpus: CorpusMetadata | null): boolean {
         if (!corpus) return false
-        return corpus.owner === user.value.id || user.value.admin
+        return corpus.owner === user.value.id || user.value.isAdmin
     }
 
     /**

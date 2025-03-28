@@ -5,7 +5,7 @@ import org.ivdnt.galahad.TestConfig
 import org.ivdnt.galahad.UserHeader
 import org.ivdnt.galahad.addUrlParams
 import org.ivdnt.galahad.app.Config
-import org.ivdnt.galahad.app.GalahadApplication
+import org.ivdnt.galahad.app.Galahad
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.formats.Resource
 import org.ivdnt.galahad.formats.createCorpus
@@ -21,7 +21,7 @@ import java.io.File
 import java.nio.charset.StandardCharsets
 
 @WebMvcTest(properties = ["spring.main.allow-bean-definition-overriding=true"])
-@ContextConfiguration(classes = [GalahadApplication::class, TestConfig::class])
+@ContextConfiguration(classes = [Galahad::class, TestConfig::class])
 class EvaluationControllerTest(
     @Autowired val mvc: MockMvc,
     @Autowired val config: Config,

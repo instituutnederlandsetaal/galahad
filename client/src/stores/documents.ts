@@ -28,7 +28,7 @@ const documents = defineStore('documents', () => {
     // Fields
     const loading = ref(false)
     const available = ref([] as DocumentMetadata[])
-    const numSourceAnnotations = computed(() => available.value.filter(i => i.layerSummary?.numTokens > 0).length)
+    const numSourceAnnotations = computed(() => available.value.filter(i => i.layerSummary?.tokens > 0).length)
     const totalSizeInChars = computed(() => available.value.reduce((x, y) => x + y.numChars, 0))
     const uploading: Record<string, FileStatus> = reactive({})
     const uploadBusyCount = computed(() => Object.values(uploading).filter(i => i.status === "busy").length)

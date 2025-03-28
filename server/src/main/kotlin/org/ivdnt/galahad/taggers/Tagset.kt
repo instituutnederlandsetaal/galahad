@@ -9,10 +9,10 @@ import java.io.File
 
 class Tagset(
     // The identifier should be equal to the filename
-    @JsonProperty var identifier: String = "",
-    @JsonProperty var longName: String = "",
-    @JsonProperty var shortName: String = "",
-    @JsonProperty var punctuationTags: Set<String> = setOf()
+    var identifier: String = "",
+    var longName: String = "",
+    var shortName: String = "",
+    var punctuationTags: Set<String> = setOf()
 ) {
     companion object {
         val UNKNOWN: Tagset = Tagset(

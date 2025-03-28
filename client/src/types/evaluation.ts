@@ -72,7 +72,6 @@ export type TermComparison = {
 }
 
 export interface Term {
-    targets: WordForm[]
     annotations: Record<string, string>
 }
 

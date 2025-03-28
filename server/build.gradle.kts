@@ -40,8 +40,10 @@ dependencies {
     implementation("org.yaml:snakeyaml:2.4")
 
     // json
-//    implementation("com.beust:klaxon:5.6")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+
+    // xml
+    implementation("com.fasterxml:aalto-xml:1.3.3")
 
     // cache
     implementation("com.github.ben-manes.caffeine:caffeine:3.2.0")

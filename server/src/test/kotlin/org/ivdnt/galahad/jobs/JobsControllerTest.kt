@@ -2,7 +2,7 @@ package org.ivdnt.galahad.jobs
 
 import org.ivdnt.galahad.TestConfig
 import org.ivdnt.galahad.app.Config
-import org.ivdnt.galahad.app.GalahadApplication
+import org.ivdnt.galahad.app.Galahad
 import org.ivdnt.galahad.createCorpus
 import org.ivdnt.galahad.corpora.jobs.JobMetadata
 import org.ivdnt.galahad.corpora.jobs.Progress
@@ -24,7 +24,7 @@ import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import java.util.*
 
-@ContextConfiguration(classes = [GalahadApplication::class, TestConfig::class])
+@ContextConfiguration(classes = [Galahad::class, TestConfig::class])
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
     properties = ["server.port=8010", "spring.main.allow-bean-definition-overriding=true"]

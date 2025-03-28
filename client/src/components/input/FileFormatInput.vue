@@ -25,7 +25,7 @@ const options = [
     { value: Format.Tsv, text: "TSV (Tab-separated values)" },
 ]
 // Admins can also export txt.
-if (userStore.user.admin) {
+if (userStore.user.isAdmin) {
     // This exports the plain text, not the annotations.
     options.push({ value: Format.Txt, text: "TXT (Plain text)" })
 }

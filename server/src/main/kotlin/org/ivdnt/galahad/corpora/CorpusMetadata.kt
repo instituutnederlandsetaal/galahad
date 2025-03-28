@@ -26,12 +26,12 @@ class CorpusMetadata(
     @JsonProperty("sourceName") sourceName: String? = null,
     @JsonProperty("sourceURL") sourceURL: URL? = null,
     // Immutable fields
-    @JsonProperty("uuid") val uuid: UUID = UUID(0, 0),
-    @JsonProperty("activeJobs") val activeJobs: Int = 0,
-    @JsonProperty("numResults") val numResults: Int = 0,
-    @JsonProperty("numDocs") val numDocs: Int = 0,
-    @JsonProperty("sizeInBytes") val sizeInBytes: Long = 0,
-    @JsonProperty("lastModified") val lastModified: Long = 0,
+    val uuid: UUID = UUID(0, 0),
+    val activeJobs: Int = 0,
+    val numResults: Int = 0,
+    val numDocs: Int = 0,
+    val sizeInBytes: Long = 0,
+    val lastModified: Long = 0,
 ) : MutableCorpusMetadata(
     owner = owner,
     name = name,

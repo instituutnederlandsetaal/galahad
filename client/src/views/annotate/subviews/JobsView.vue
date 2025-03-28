@@ -29,10 +29,10 @@
                 <div v-else>{{ d.item.tagger.tagset }}</div>
             </template>
 
-            <!-- produces cell -->
-            <template #cell-produces="d">
-                {{ sort_tagger_produces(d.item.tagger.produces).join(", ") }}
-                <i v-if="d.item.tagger.produces.length === 0">None</i>
+            <!-- annotations cell -->
+            <template #cell-annotations="d">
+                {{ sort_tagger_annotations(d.item.tagger.annotations).join(", ") }}
+                <i v-if="d.item.tagger.annotations.length === 0">None</i>
             </template>
 
             <!-- result summary cell -->
@@ -44,11 +44,11 @@
             <!-- era cell -->
             <template #cell-era="d">
                 <div style="white-space: nowrap"><b v-if="eraRange[0] <= d.item.tagger.eraFrom">{{ d.item.tagger.eraFrom
-                }}</b><span v-else>{{ d.item.tagger.eraFrom }}</span>
+                        }}</b><span v-else>{{ d.item.tagger.eraFrom }}</span>
                     &ndash;
                     <b v-if="eraRange[1] >= d.item.tagger.eraTo">{{ d.item.tagger.eraTo }}</b><span v-else>{{
                         d.item.tagger.eraTo
-                        }}</span>
+                    }}</span>
                 </div>
             </template>
 
@@ -137,7 +137,7 @@ import stores, { DocumentsStore, JobsStore, UserStore, CorporaStore } from '@/st
 // API & types
 import { Job, Progress, SOURCE_LAYER } from '@/types/jobs'
 import { Field } from '@/types/table'
-import { sort_tagger_produces } from "@/stores/taggers"
+import { sort_tagger_annotations } from "@/stores/taggers"
 // Components
 import { GButton, GNav, GTable, GInput, GSpinner, AnnotateTab, JobModal } from '@/components'
 import help from '@/components/help'
@@ -173,7 +173,7 @@ const displayJobs = computed(() =>
         })
         .filter(job => {
             for (const type of requireType.value) {
-                if (!job.tagger.produces.includes(type)) {
+                if (!job.tagger.annotations.includes(type)) {
                     return false
                 }
             }
@@ -192,7 +192,7 @@ const columns = computed(() => {
     const publicFields = [
         { key: "id", label: "tagger", sortOn: x => x.tagger.id, textAlign: "left" },
         { key: "tagset", sortOn: x => x.tagger.tagset },
-        { key: "produces", label: "type", },
+        { key: "annotations", label: "annotations", },
         { key: "resultSummary", label: "tokens", sortOn: x => x.resultSummary.numTokens },
         { key: "era", label: "period", sortOn: x => x.tagger.eraFrom.toString() + x.tagger.eraTo.toString() },
         { key: "lastModified", label: "last modified", sortOn: x => x.lastModified },
@@ -209,7 +209,7 @@ const columns = computed(() => {
 
 const types = computed(() => {
     return Object.values(jobsStore.taggableJobs)
-        .flatMap((x: Job) => x.tagger.produces)
+        .flatMap((x: Job) => x.tagger.annotations)
         .filter((val, ind, arr) => arr.indexOf(val) === ind) // unique values
         .sort()
 })

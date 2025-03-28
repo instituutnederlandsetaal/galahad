@@ -36,5 +36,5 @@ export type LayerPreview = {
 }
 
 export type LayerSummary = {
-    numTokens: number
+    tokens: number
 }

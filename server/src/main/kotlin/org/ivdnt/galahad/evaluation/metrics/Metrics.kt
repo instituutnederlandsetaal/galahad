@@ -22,7 +22,7 @@ open class Metrics(
     protected open val refTagger: Tagger,
     protected open val hypothesisJob: Job,
     protected open val referenceJob: Job,
-    @JsonIgnore val truncate: Boolean = true,
+    truncate: Boolean = true,
 ) {
     @JsonProperty("metrics")
     val metricTypes: MutableMap<String, MetricsType> = HashMap()

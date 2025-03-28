@@ -7,10 +7,10 @@ import { Tagger } from '@/types/taggers'
 import * as API from '@/api/taggers'
 
 /**
- * Sort the 'produces' field of the taggers. The order is stochastic when retrieved from the API.
+ * Sort the 'annotations' field of the taggers. The order is stochastic when retrieved from the API.
  * For the interface, we want the order to be fixed.
  */
-export function sort_tagger_produces(types: string[]): string[] {
+export function sort_tagger_annotations(types: string[]): string[] {
     // By pure coincidence, reverse sorting makes the order TOK, POS, LEM, which is acceptable.
     // But we might want a different order at some point.
     return types.sort((a, b) => b.localeCompare(a))

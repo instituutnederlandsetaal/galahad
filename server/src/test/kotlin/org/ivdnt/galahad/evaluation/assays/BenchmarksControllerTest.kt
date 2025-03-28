@@ -3,7 +3,7 @@ package org.ivdnt.galahad.evaluation.assays
 import org.ivdnt.galahad.JSON
 import org.ivdnt.galahad.TestConfig
 import org.ivdnt.galahad.app.Config
-import org.ivdnt.galahad.app.GalahadApplication
+import org.ivdnt.galahad.app.Galahad
 import org.ivdnt.galahad.evaluation.EvaluationUtil
 import org.ivdnt.galahad.evaluation.metrics.FlatMetricType
 import org.ivdnt.galahad.formats.LayerBuilder
@@ -21,7 +21,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import java.io.File
 
 @WebMvcTest(properties = ["spring.main.allow-bean-definition-overriding=true"])
-@ContextConfiguration(classes = [GalahadApplication::class, TestConfig::class])
+@ContextConfiguration(classes = [Galahad::class, TestConfig::class])
 class BenchmarksControllerTest(
     @Autowired val mvc: MockMvc,
     @Autowired val config: Config,

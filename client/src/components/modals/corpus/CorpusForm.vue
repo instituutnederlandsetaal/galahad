@@ -47,7 +47,7 @@
                     </td>
                 </tr>
 
-                <template v-if="userStore.user.admin">
+                <template v-if="userStore.user.isAdmin">
                     <tr>
                         <td colspan="2">
                             <hr>

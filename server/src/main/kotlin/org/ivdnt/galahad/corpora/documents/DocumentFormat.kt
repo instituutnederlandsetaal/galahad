@@ -7,6 +7,8 @@ import org.ivdnt.galahad.exceptions.InvalidDocumentFormatException
 import org.ivdnt.galahad.util.XmlUtil
 import org.w3c.dom.Document
 import java.io.File
+import javax.xml.stream.XMLInputFactory
+import javax.xml.stream.XMLStreamReader
 import javax.xml.xpath.XPath
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
@@ -60,14 +62,19 @@ enum class DocumentFormat(val identifier: String, val extension: String) {
          * Differentiate based on the root node.
          */
         private fun determineXmlFormat(file: File): DocumentFormat {
-            val xml: Document = XmlUtil.builder.parse(file)
-            return when (xml.documentElement.tagName) {
-                "FoLiA" -> Folia
-                "TEI.2", "teiCorpus.2" -> TeiP4Legacy
-                "TEI", "teiCorpus" -> determineTeiP5Format(xml)
-                "NAF" -> Naf
-                else -> Unknown
+            val sr = XmlUtil.inputFactory.createXMLStreamReader(file.inputStream())
+            while (sr.hasNext()) {
+                if (sr.next() == XMLStreamReader.START_ELEMENT) {
+                    return when (sr.localName.lowercase()) {
+                        "folia" -> Folia
+                        "tei.2", "teicorpus.2" -> TeiP4Legacy
+                        "tei", "teicorpus" -> TeiP5
+                        "naf" -> Naf
+                        else -> Unknown
+                    }
+                }
             }
+            return Unknown // No root element found
         }
 
         /** Differentiate between TeiP5 and TeiP5Legacy by the presence of pos as an XML attribute.

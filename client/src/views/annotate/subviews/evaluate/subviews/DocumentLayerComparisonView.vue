@@ -24,16 +24,15 @@
 
         <div v-if="selectedDoc && selectedAnnotation" class="document">
 
-            <template v-for="tc in termcomps.slice(firstRecord, firstRecord + rowsToDisplay)"
-                :key="tc.refTerm.targets[0].id">
+            <template v-for="tc in termcomps.slice(firstRecord, firstRecord + rowsToDisplay)" :key="tc.refTerm.id">
 
                 <span class="wordComparison" :class="{ 'incorrect': !annotationsEqual(tc) }">
-                    {{ tc.refTerm.targets[0].literal }}
+                    {{ tc.refTerm.annotations["token"] }}
                     <SingleTermComparisonTable :hypoTerm="tc.hypoTerm" :refTerm="tc.refTerm" class="tooltip" />
                 </span>
 
                 <!-- add newline after . -->
-                <br v-if="tc.refTerm.targets[0].literal == '.'" />
+                <br v-if="tc.refTerm.annotations['token'] == '.'" />
             </template>
 
             <Paginator v-if="termcomps.length > rowsToDisplay" v-model:first="firstRecord" :rows="rowsToDisplay"
