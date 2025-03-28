@@ -5,6 +5,7 @@ import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.AnnotationReader
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.Term
+import org.ivdnt.galahad.util.XmlUtil
 import java.io.File
 import javax.xml.stream.XMLInputFactory
 import javax.xml.stream.XMLStreamConstants
@@ -12,14 +13,13 @@ import javax.xml.stream.XMLStreamReader
 
 class AaltoFoliaReader(file: File,
 ) : AnnotationReader(file)  {
-    private val factory: XMLInputFactory = InputFactoryImpl()
     private var pos: String = ""
     private var lemma: String = ""
     private var literal: String = ""
     private var ignoring: Boolean = false
 
     override fun read(): Layer {
-        val reader = factory.createXMLStreamReader(file.inputStream())
+        val reader = XmlUtil.inputFactory.createXMLStreamReader(file.inputStream())
         parseTopLevelTextNodes(reader)
         return Layer(documents)
     }

@@ -1,5 +1,6 @@
 package org.ivdnt.galahad.util
 
+import com.fasterxml.aalto.stax.InputFactoryImpl
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -83,7 +84,6 @@ abstract class XmlUtil(
                 setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "yes")
             }
         }
-
-        val inputFactory: XMLInputFactory by lazy { XMLInputFactory.newInstance() }
+        val inputFactory: XMLInputFactory by lazy { InputFactoryImpl() }
     }
 }
