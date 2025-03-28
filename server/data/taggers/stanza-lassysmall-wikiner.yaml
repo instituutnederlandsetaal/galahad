@@ -9,9 +9,7 @@ annotations:
   - upos
   - head
   - deprel
-  - misc
-  - id
-  - named-entity
+  - ner
 model:
   name: dutch lassysmall
   href: https://stanfordnlp.github.io/stanza/performance.html#system-performance-on-ud-treebanks
