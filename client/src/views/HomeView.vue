@@ -16,9 +16,9 @@
                         spelling variation when querying and analysing the data.
                     </p>
                     <p>
-                        GaLAHaD serves two purposes. One is to make annotation and tool evaluation easily accessible to
-                        researchers, the other to make it easy for developers to contribute their tools and models to
-                        the platform, and thus compare them to other tools with gold standard material.
+                        <i>GaLAHaD</i> serves two purposes. One is to make annotation and tool evaluation easily
+                        accessible to researchers, the other to make it easy for developers to contribute their tools
+                        and models to the platform, and thus compare them to other tools with gold standard material.
                     </p>
                     <p>
                         <i>GaLAHaD</i> is designed to enable end users to choose the optimal path for their material.
@@ -37,22 +37,34 @@
                         tools to the platform. The application and taggers are hosted by the INT and accessible with any
                         CLARIN-account. There is also the option to self-host an instance using the publicly available
                         docker images from the
-                        <a href="https://hub.docker.com/u/instituutnederlandsetaal">INT Docker Hub</a> or the open
-                        source code available on <a href="https://github.com/INL/galahad">GitHub</a>.
+                        <ExternalLink href="https://hub.docker.com/u/instituutnederlandsetaal">INT Docker Hub</ExternalLink> or the open
+                        source code available on <ExternalLink href="https://github.com/INL/galahad">GitHub</ExternalLink>.
                     </p>
                 </div>
 
                 <figure class="right">
-                    <img src="@/assets/galahad-graal-medium.png" />
+                    <img src="@/assets/galahad-graal-medium.png"
+                        title="Verbaasd laat Galahad de graal uit zijn handen vallen als hij ziet wat erin zit."
+                        alt="Verbaasd laat Galahad de graal uit zijn handen vallen als hij ziet wat erin zit." />
                     <figcaption>
                         <i>
-                            &ldquo;Ende seget datmen daer doe wan<br>
-                            Galaadde den goeden man,<br>
-                            Den besten riddre die wesen mochte,<br>
-                            Ende die ten inde brochte,<br>
-                            Nader historien tale,<br>
-                            Davonturen vanden grale&rdquo;<br>
+                            &ldquo;Ende seget datmen daer doe wan
+                            <br />
+                            Galaadten, den goeden man,
+                            <br />
+                            ja Den besten riddre die wesen mochte
+                            <br />
+                            Ende die ten inde brochte
+                            <br />
+                            Nader historien tale
+                            <br />
+                            Davonturen vanden Grale,&rdquo;
                         </i>
+                        <small>
+                            <ExternalLink href="https://galerij.kb.nl/kb.html#/nl/lancelot/page/45/zoom/5/lat/-66/lng/-107">
+                                Lancelotcompilatie, fol. 41vb, vers 15.444-15449
+                            </ExternalLink>
+                        </small>
                     </figcaption>
                 </figure>
             </div>
@@ -96,6 +108,11 @@ import { GCard, ExternalLink } from '@/components'
         img {
             object-fit: contain;
             width: 100%;
+        }
+
+        figcaption small {
+            display: block;
+            margin-top: 0.8em;
         }
     }
 }
