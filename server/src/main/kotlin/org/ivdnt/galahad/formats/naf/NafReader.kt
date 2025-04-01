@@ -80,7 +80,7 @@ class NafReader(file: File) : AnnotationReader(file) {
             newParagraph()
         }
         newDocument()
-        return Layer(documents)
+        return Layer(documents.toTypedArray())
     }
 
     data class NafWordform(

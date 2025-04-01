@@ -49,7 +49,7 @@ dependencies {
     implementation("com.github.ben-manes.caffeine:caffeine:3.2.0")
 
     // immutable arrays
-    implementation("com.danrusu.pods4k:pods4k:0.7.0")
+    // implementation("com.danrusu.pods4k:pods4k:0.7.0")
 }
 
 tasks.withType<Test> {

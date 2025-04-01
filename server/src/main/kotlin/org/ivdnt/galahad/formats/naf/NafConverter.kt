@@ -54,7 +54,7 @@ class NafConverter(export: DocumentExport) : LayerConverter(export) {
     private fun addText(xml: Document, root: Element) {
         val text = xml.createElement("text")
         root.appendChild(text)
-        val paragraphs = export.layer.documents.flatMap { it.paragraphs }
+        val paragraphs = export.layer.documents.flatMap { it.paragraphs.asSequence() }
         var iSent = 1
         paragraphs.forEachIndexed { iPar, paragraph ->
             paragraph.sentences.forEach { sentence ->

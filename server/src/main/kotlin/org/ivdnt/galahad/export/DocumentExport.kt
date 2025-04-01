@@ -9,6 +9,7 @@ import org.ivdnt.galahad.corpora.documents.DocumentFormat
 import org.ivdnt.galahad.corpora.jobs.Job
 import org.ivdnt.galahad.taggers.Tagger
 import java.io.File
+import java.io.OutputStream
 import kotlin.io.path.createTempDirectory
 
 class DocumentExport private constructor(
@@ -28,6 +29,10 @@ class DocumentExport private constructor(
 
     fun convert(): File = file.also { LayerConverter.create(this).convert(file.outputStream()) }
     fun merge(): File = file.also { LayerMerger.create(this).merge(file.outputStream()) }
+
+    fun convert(out: OutputStream): Unit = LayerConverter.create(this).convert(out)
+    fun merge(out: OutputStream): Unit = LayerMerger.create(this).merge(out)
+    fun cmdi(): CmdiMetadata = CmdiMetadata(this)
 
     companion object {
         fun create(export: CorpusExport, doc: Document): DocumentExport = create(export, doc.name)

@@ -9,7 +9,7 @@ const val SOURCE_LAYER_NAME: String = "sourceLayer"
  * Those may be split into paragraphs, sentences, etc.
  */
 class Layer(
-    val documents: List<DocumentLayer>
+    val documents: Array<DocumentLayer>
 ) {
     @get:JsonIgnore
     val spans: Map<Annotation, Sequence<TermSpan>> by lazy {
@@ -41,28 +41,28 @@ class Layer(
     override fun toString(): String = documents.joinToString("\n\n") + "\n" // Unix convention EOF
 
     companion object {
-        val EMPTY: Layer = Layer(emptyList())
+        val EMPTY: Layer = Layer(emptyArray())
     }
 }
 
 class DocumentLayer(
     val id: String,
-    val paragraphs: List<ParagraphLayer>,
+    val paragraphs: Array<ParagraphLayer>,
 ) {
     override fun toString(): String = paragraphs.joinToString("\n\n")
 }
 
 class ParagraphLayer(
     val id: String,
-    val sentences: List<SentenceLayer>,
+    val sentences: Array<SentenceLayer>,
 ) {
     override fun toString(): String = sentences.joinToString("\n")
 }
 
 class SentenceLayer(
     val id: String,
-    val terms: List<Term>,
-    val spans: Map<Annotation, List<TermSpan>>,
+    val terms: Array<Term>,
+    val spans: Map<Annotation, Array<TermSpan>>,
 ) {
     override fun toString(): String = terms.joinToString("") { it.token + (if (it.spaceAfter == false) "" else " ") }
 }

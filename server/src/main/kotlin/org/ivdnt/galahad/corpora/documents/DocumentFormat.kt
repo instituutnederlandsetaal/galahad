@@ -44,18 +44,14 @@ enum class DocumentFormat(val identifier: String, val extension: String) {
         /**
          * Induce the format of a document based on its file extension and content (e.g. root XML node).
          */
-        fun fromFile(file: File): DocumentFormat {
-            val format = when (file.extension) {
-                "tsv" -> Tsv
-                "folia" -> Folia
-                "conllu" -> Conllu
-                "xml", "tei" -> determineXmlFormat(file) // TEI can be either P4 or P5, so still check.
-                "txt" -> Txt
-                "naf" -> Naf
-                else -> Unknown
-            }
-            logger.debug { "Induced format $format for file ${file.name}" }
-            return format
+        fun fromFile(file: File): DocumentFormat = when (file.extension) {
+            "tsv" -> Tsv
+            "folia" -> Folia
+            "conllu" -> Conllu
+            "xml", "tei" -> determineXmlFormat(file) // TEI can be either P4 or P5, so still check.
+            "txt" -> Txt
+            "naf" -> Naf
+            else -> Unknown
         }
 
         /**
@@ -75,19 +71,6 @@ enum class DocumentFormat(val identifier: String, val extension: String) {
                 }
             }
             return Unknown // No root element found
-        }
-
-        /** Differentiate between TeiP5 and TeiP5Legacy by the presence of pos as an XML attribute.
-         * - 1 or more pos are present, it's TeiP5
-         * - if no pos are present, but at least one type is present, it's TeiP5Legacy
-         * - if no pos or type are present, it's unannotated and we default to TeiP5
-         */
-        private fun determineTeiP5Format(xmlDoc: Document): DocumentFormat {
-            val xPath: XPath = XPathFactory.newInstance().newXPath()
-            val numPos = xPath.compile("count(.//w[@pos])").evaluate(xmlDoc, XPathConstants.NUMBER) as Double
-            val numTypes = xPath.compile("count(.//w[@type])").evaluate(xmlDoc, XPathConstants.NUMBER) as Double
-            if (numTypes == 0.0 || numPos > 0) return TeiP5
-            return TeiP5Legacy // No pos but at least one type: assume legacy mode
         }
     }
 }

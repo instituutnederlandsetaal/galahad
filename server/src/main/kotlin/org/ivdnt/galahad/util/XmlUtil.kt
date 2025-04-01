@@ -1,12 +1,14 @@
 package org.ivdnt.galahad.util
 
 import com.fasterxml.aalto.stax.InputFactoryImpl
+import com.fasterxml.aalto.stax.OutputFactoryImpl
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.stream.XMLInputFactory
+import javax.xml.stream.XMLOutputFactory
 import javax.xml.transform.OutputKeys
 import javax.xml.transform.Transformer
 import javax.xml.transform.TransformerFactory
@@ -68,22 +70,24 @@ abstract class XmlUtil(
     }
 
     companion object {
-        val builder: DocumentBuilder by lazy {
-            DocumentBuilderFactory.newInstance().apply {
-                isIgnoringComments = true
-                isNamespaceAware = true
-                setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
-            }.newDocumentBuilder()
+        val builder: DocumentBuilder = DocumentBuilderFactory.newInstance().apply {
+            isIgnoringComments = true
+            isNamespaceAware = true
+            setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false)
+        }.newDocumentBuilder()
+
+        val transformer: Transformer = TransformerFactory.newInstance().newTransformer().apply {
+            // Pretty print
+            setOutputProperty(OutputKeys.INDENT, "yes")
+            // For some reason needed to print the root on a new line instead of on the same line as the doctype.
+            setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "yes")
+        }
+        val inputFactory: XMLInputFactory = InputFactoryImpl().apply {
+            setProperty(XMLInputFactory.SUPPORT_DTD, false)
         }
 
-        val transformer: Transformer by lazy {
-            TransformerFactory.newInstance().newTransformer().apply {
-                // Pretty print
-                setOutputProperty(OutputKeys.INDENT, "yes")
-                // For some reason needed to print the root on a new line instead of on the same line as the doctype.
-                setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "yes")
-            }
+        val outputFactory: XMLOutputFactory = OutputFactoryImpl().apply {
+            configureForSpeed()
         }
-        val inputFactory: XMLInputFactory by lazy { InputFactoryImpl() }
     }
 }

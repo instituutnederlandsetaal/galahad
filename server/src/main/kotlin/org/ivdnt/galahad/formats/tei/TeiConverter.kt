@@ -9,7 +9,6 @@ import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 
 class TeiConverter(export: DocumentExport) : LayerConverter(export) {
-    // TODO add metadata
     override fun convert(out: OutputStream) {
         // generate an XML document from the annotation layer and write it to the output stream
         val xml = XmlUtil.builder.newDocument()

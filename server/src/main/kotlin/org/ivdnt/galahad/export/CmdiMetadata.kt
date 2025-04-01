@@ -8,6 +8,7 @@ import org.ivdnt.galahad.util.child
 import org.ivdnt.galahad.util.childElements
 import org.ivdnt.galahad.util.ifNullOrBlank
 import java.io.File
+import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.xml.transform.dom.DOMSource
@@ -33,10 +34,7 @@ class CmdiMetadata(val export: DocumentExport) {
     private val sourceName = corpus.sourceName.ifNullOrBlank { "!No source name defined!" }
     private val sourceUrl = corpus.sourceURL?.toString().ifNullOrBlank { "!No source URL defined!" }
 
-    /** After initialization this file will contain the CMDI */
-    val file: File
-
-    init {
+    fun write(out: OutputStream) {
         // Header
         val header = root.child("cmd:Header")
         header.child("cmd:MdCreationDate").textContent = date
@@ -93,8 +91,7 @@ class CmdiMetadata(val export: DocumentExport) {
             child("cmdp:dayTo").textContent = "---$day"
         }
         // Write to disk
-        file = tmp_dir.resolve("CMDI-$docTitle.xml")
-        XmlUtil.transformer.transform(DOMSource(xml), StreamResult(file.outputStream()))
+        XmlUtil.transformer.transform(DOMSource(xml), StreamResult(out))
     }
 
     companion object {

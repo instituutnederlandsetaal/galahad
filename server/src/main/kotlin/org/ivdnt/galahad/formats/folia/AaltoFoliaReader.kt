@@ -1,13 +1,12 @@
 package org.ivdnt.galahad.formats.folia
 
-import com.fasterxml.aalto.stax.InputFactoryImpl
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.AnnotationReader
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.util.XmlUtil
 import java.io.File
-import javax.xml.stream.XMLInputFactory
+import javax.xml.XMLConstants
 import javax.xml.stream.XMLStreamConstants
 import javax.xml.stream.XMLStreamReader
 
@@ -17,21 +16,21 @@ class AaltoFoliaReader(file: File,
     private var lemma: String = ""
     private var literal: String = ""
     private var ignoring: Boolean = false
+    private val reader: XMLStreamReader by lazy { XmlUtil.inputFactory.createXMLStreamReader(file.inputStream()) }
 
     override fun read(): Layer {
-        val reader = XmlUtil.inputFactory.createXMLStreamReader(file.inputStream())
-        parseTopLevelTextNodes(reader)
-        return Layer(documents)
+        parseTopLevelTextNodes()
+        return Layer(documents.toTypedArray())
     }
 
-    private fun parseTopLevelTextNodes(reader: XMLStreamReader) {
+    private fun parseTopLevelTextNodes() {
         while (reader.hasNext()) {
             when (reader.next()) {
                 XMLStreamConstants.START_ELEMENT -> {
                     val tagName = reader.localName
                     if (tagName == "text" || tagName == "speech") {
-                        docID = reader.getAttributeValue(null, "xml:id")?.takeIf { it.isNotBlank() }
-                        parseNodesIntoDocument(reader)
+                        docID = reader.getAttributeValue(XMLConstants.XML_NS_URI, "id")?.takeIf { it.isNotBlank() }
+                        parseNodesIntoDocument()
                         newDocument()
                     }
                 }
@@ -39,7 +38,7 @@ class AaltoFoliaReader(file: File,
         }
     }
 
-    private fun parseNodesIntoDocument(reader: XMLStreamReader) {
+    private fun parseNodesIntoDocument() {
         while (reader.hasNext()) {
             when (reader.next()) {
                 XMLStreamConstants.START_ELEMENT -> {
@@ -50,7 +49,7 @@ class AaltoFoliaReader(file: File,
                         continue
                     }
 
-                    val id = reader.getAttributeValue(null, "xml:id")?.takeIf { it.isNotBlank() }
+                    val id = reader.getAttributeValue(XMLConstants.XML_NS_URI, "id")?.takeIf { it.isNotBlank() }
 
                     if (PARAGRAPH_TAGS.contains(tag)) {
                         parID = id
@@ -97,7 +96,7 @@ class AaltoFoliaReader(file: File,
     private fun newWordform() {
         if (literal.isBlank()) return
 
-        val annotations = mutableMapOf<Annotation, String>().apply {
+        val annotations = buildMap {
             lemma.takeIf { it.isNotBlank() }?.let { put(Annotation.LEMMA, it) }
             pos.takeIf { it.isNotBlank() }?.let { put(Annotation.POS, it) }
             put(Annotation.TOKEN, literal)
@@ -111,7 +110,7 @@ class AaltoFoliaReader(file: File,
 
     companion object {
         private val whitespace: Regex = Regex("""\s+""")
-        private val PARAGRAPH_TAGS = listOf(
+        private val PARAGRAPH_TAGS = arrayOf(
             "text", // top most <text> defines a document, any other <text> is treated as a paragraph
             "speech", // same for speech
             "div",
@@ -123,8 +122,8 @@ class AaltoFoliaReader(file: File,
             "table",
             "part",
         )
-        private val SENTENCE_TAGS = listOf("s", "utt")
-        private val IGNORABLE_TAGS = listOf(
+        private val SENTENCE_TAGS = arrayOf("s", "utt")
+        private val IGNORABLE_TAGS = arrayOf(
             "morphology", "note", "figure", "comment",
             "original", // correction
             "suggestion", // correction

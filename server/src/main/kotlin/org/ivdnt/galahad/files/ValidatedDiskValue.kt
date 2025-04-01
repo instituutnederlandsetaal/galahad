@@ -11,7 +11,6 @@ abstract class ValidatedDiskValue<T>(
     inline fun <reified T> readOrCreate(): T = if (isValid(lastModified)) {
         readOrThrow<T>()
     } else {
-        logger.debug("DiskValue<${T::class.simpleName}> is invalid. Will set new value.")
         write<T>(set() as T)
     }
 }

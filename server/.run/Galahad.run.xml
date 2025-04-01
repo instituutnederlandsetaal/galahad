@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Galahad" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+  <configuration default="true" name="Galahad" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
     <option name="ALTERNATIVE_JRE_PATH" value="graalvm-ce-23" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
     <envs>

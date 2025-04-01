@@ -20,7 +20,7 @@ class TsvReader(
             }
         }
         newDocument()
-        return Layer(documents)
+        return Layer(documents.toTypedArray())
     }
 
     /**

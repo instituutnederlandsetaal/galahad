@@ -192,7 +192,7 @@ class EvaluationService(val corpora: CorporaService) {
         response.setContentDisposition(metadata.name + "-evaluation.zip")
 
         // zip the directory
-        val zipFile = createZipFile(dir.listFiles()!!.asSequence())
+        val zipFile = dir // createZipFile(dir.listFiles()!!.asSequence()) // TODO: Fix this
         return zipFile.readBytes()
     }
 
@@ -258,7 +258,7 @@ class EvaluationService(val corpora: CorporaService) {
         file.appendText(csvBody)
         // Write metadata & create zip
         val metadata = writeMetadataToDir(corpus, job, reference, dir)
-        val zipFile = createZipFile(dir.listFiles()!!.asSequence())
+        val zipFile = dir //createZipFile(dir.listFiles()!!.asSequence()) // TODO: Fix this
         // Configure response for zip.
         response!!.contentType = "application/zip"
         response.setContentDisposition(metadata.name + "-evaluation.zip")

@@ -11,7 +11,7 @@ abstract class AnnotationReader(
     protected val paragraphs: MutableList<ParagraphLayer> = mutableListOf()
     protected val sentences: MutableList<SentenceLayer> = mutableListOf()
     protected val terms: MutableList<Term> = mutableListOf()
-    protected val spans: MutableMap<Annotation, List<TermSpan>> = mutableMapOf()
+    protected val spans: MutableMap<Annotation, Array<TermSpan>> = mutableMapOf()
 
     protected var offset: Int = 0
 
@@ -35,7 +35,7 @@ abstract class AnnotationReader(
     protected open fun newDocument() {
         newParagraph()
         if (paragraphs.isNotEmpty()) {
-            documents.add(DocumentLayer(docID(), paragraphs.toList()))
+            documents.add(DocumentLayer(docID(), paragraphs.toTypedArray()))
             paragraphs.clear()
         }
     }
@@ -43,14 +43,14 @@ abstract class AnnotationReader(
     protected open fun newParagraph() {
         newSentence()
         if (sentences.isNotEmpty()) {
-            paragraphs.add(ParagraphLayer(parID(), sentences.toList()))
+            paragraphs.add(ParagraphLayer(parID(), sentences.toTypedArray()))
             sentences.clear()
         }
     }
 
     protected open fun newSentence() {
         if (terms.isNotEmpty()) {
-            sentences.add(SentenceLayer(sentID(), terms.toList(), spans.toMap()))
+            sentences.add(SentenceLayer(sentID(), terms.toTypedArray(), spans.toMap()))
             terms.clear()
             spans.clear()
         }

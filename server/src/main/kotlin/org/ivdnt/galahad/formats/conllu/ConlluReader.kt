@@ -38,7 +38,7 @@ class ConlluReader(
         }
         // create a document for the remaining tokens
         newDocument()
-        return Layer(documents)
+        return Layer(documents.toTypedArray())
     }
 
     override fun newSentence() {

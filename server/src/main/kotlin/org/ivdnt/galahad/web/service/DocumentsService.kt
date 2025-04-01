@@ -9,6 +9,7 @@ import org.ivdnt.galahad.corpora.documents.Documents
 import org.ivdnt.galahad.corpora.jobs.Jobs
 import org.ivdnt.galahad.exceptions.DocumentInvalidException
 import org.ivdnt.galahad.exceptions.FileUploadException
+import org.ivdnt.galahad.util.ThreadPoolUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
@@ -16,6 +17,8 @@ import java.io.File
 import java.io.InputStream
 import java.nio.file.Paths
 import java.util.*
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 import java.util.zip.ZipFile
 import kotlin.io.path.createTempDirectory
 
@@ -76,23 +79,26 @@ class DocumentsService(val corpora: CorporaService) : Logging {
         file.transferTo(localFile)
         val exceptions = HashMap<String, Exception>() // <filename, exception>
         ZipFile(localFile).use { zip ->
-            zip.entries().asSequence().forEach { entry ->
-                zip.getInputStream(entry).use { input ->
-                    try {
-                        if (!entry.isDirectory && entry.name.split(".").last() != "zip") {
-                            logger.info("Unzipped ${entry.name} from ${file.originalFilename}. Will convert it to document.")
-                            // The entry might be in a subfolder, so extract the true file name.
-                            val fileName = Paths.get(entry.name).fileName.toString()
-                            createDocumentWithSourceLayer(corpus, fileName, input)
+            val futures = zip.entries().asSequence().map { entry ->
+                ThreadPoolUtil.pool.submit {
+                    zip.getInputStream(entry).use { input ->
+                        try {
+                            if (!entry.isDirectory && entry.name.split(".").last() != "zip") {
+                                logger.info("Unzipped ${entry.name} from ${file.originalFilename}. Will convert it to document.")
+                                // The entry might be in a subfolder, so extract the true file name.
+                                val fileName = Paths.get(entry.name).fileName.toString()
+                                createDocumentWithSourceLayer(corpus, fileName, input)
+                            }
+                        } catch (e: Exception) {
+                            // Some things might go wrong when processing a file, for example the file can be invalid
+                            // This is however not a reason not to process the other files
+                            // But is an exception to throw, we just collect the exceptions and throw them as one
+                            exceptions[entry.name] = e
                         }
-                    } catch (e: Exception) {
-                        // Some things might go wrong when processing a file, for example the file can be invalid
-                        // This is however not a reason not to process the other files
-                        // But is an exception to throw, we just collect the exceptions and throw them as one
-                        exceptions[entry.name] = e
                     }
                 }
             }
+            futures.forEach { it.get() }
         }
         if (exceptions.isNotEmpty()) {
             var message = "${exceptions.size} exceptions encountered: "
@@ -121,5 +127,9 @@ class DocumentsService(val corpora: CorporaService) : Logging {
             docs.deleteOrNull(file.name)
             throw DocumentInvalidException(file.name, e.message)
         }
+    }
+
+    companion object {
+        val pool: ExecutorService = Executors.newCachedThreadPool()
     }
 }

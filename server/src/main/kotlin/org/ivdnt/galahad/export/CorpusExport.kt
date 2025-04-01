@@ -10,6 +10,7 @@ import org.ivdnt.galahad.corpora.documents.Documents
 import org.ivdnt.galahad.corpora.jobs.Job
 import org.ivdnt.galahad.exceptions.MergeNotImplementedException
 import org.ivdnt.galahad.taggers.Tagger
+import org.ivdnt.galahad.util.FileMapper
 import org.ivdnt.galahad.util.createZipFile
 import java.io.File
 import java.io.OutputStream
@@ -38,16 +39,16 @@ class CorpusExport private constructor(
     }
 
 
-    fun formatMapper(doc: Document): File {
+    private fun formatMapper(doc: Document, out: OutputStream) {
         try {
             // Document conversions.
             val docExport = DocumentExport.create(this, doc)
-            return if (shouldMerge && mergeFormatMatches(doc, format)) {
+            if (shouldMerge && mergeFormatMatches(doc, format)) {
                 logger.info("Merging ${doc.name} of format ${doc.metadata.format}")
-                docExport.merge()
+                docExport.merge(out)
             } else {
                 logger.info("Converting ${doc.name} of format ${doc.metadata.format} to $format")
-                docExport.convert()
+                docExport.convert(out)
             }
         } catch (e: MergeNotImplementedException) {
             throw e
@@ -63,13 +64,8 @@ class CorpusExport private constructor(
         out: OutputStream,
     ) {
         val documents = corpus.documents.readAll().filter { DocumentExport.create(this, it).layer != Layer.EMPTY }
-        val convertedDocs = documents.asSequence().map(::formatMapper)
-        val docsToCmdi = documents.asSequence().map { CmdiMetadata(DocumentExport.create(this, it)).file }
-        val cmdiZip = createZipFile(docsToCmdi, includeCMDI = true)
-        // rename the cmdiZip to "metadata"
-        val dest = createTempDirectory("metadata").toFile().resolve("metadata.zip")
-        Files.move(cmdiZip.toPath(), dest.toPath())
-        createZipFile(convertedDocs + dest, out)
+        val seq: Sequence<FileMapper> = documents.asSequence().map { doc -> doc.name to { out -> formatMapper(doc, out) } }
+        createZipFile(seq, out)
     }
 
     companion object {

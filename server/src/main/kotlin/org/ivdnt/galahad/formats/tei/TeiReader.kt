@@ -18,7 +18,7 @@ class TeiReader(
 
     override fun read(): Layer {
         parseTopLevelTextNodes(xml.documentElement)
-        return Layer(documents)
+        return Layer(documents.toTypedArray())
     }
 
     /**

@@ -31,6 +31,6 @@ class TxtReader(
         }
         /** Create a single [DocumentLayer]. */
         newDocument()
-        return Layer(documents)
+        return Layer(documents.toTypedArray())
     }
 }

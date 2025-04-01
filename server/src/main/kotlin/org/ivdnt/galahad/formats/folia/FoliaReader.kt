@@ -16,14 +16,14 @@ import java.io.File
 class FoliaReader(
     file: File,
 ) : AnnotationReader(file) {
-    val xml: Document = XmlUtil.builder.parse(file)
+    val xml: Document by lazy { XmlUtil.builder.parse(file) }
     private var literal: String = ""
     private var pos: String = ""
     private var lemma: String = ""
 
     override fun read(): Layer {
         parseTopLevelTextNodes(xml.documentElement)
-        return Layer(documents)
+        return Layer(documents.toTypedArray())
     }
 
     private fun parseTopLevelTextNodes(node: Node) {
