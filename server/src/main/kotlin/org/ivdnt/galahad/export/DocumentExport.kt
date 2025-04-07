@@ -32,7 +32,7 @@ class DocumentExport private constructor(
 
     fun convert(out: OutputStream): Unit = LayerConverter.create(this).convert(out)
     fun merge(out: OutputStream): Unit = LayerMerger.create(this).merge(out)
-    fun cmdi(): CmdiMetadata = CmdiMetadata(this)
+    fun cmdi(out: OutputStream): Unit = CmdiMetadata(this).write(out)
 
     companion object {
         fun create(export: CorpusExport, doc: Document): DocumentExport = create(export, doc.name)

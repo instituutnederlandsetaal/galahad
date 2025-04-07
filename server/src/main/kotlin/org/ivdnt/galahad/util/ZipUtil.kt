@@ -32,10 +32,10 @@ fun createZipFile(files: Sequence<FileMapper>, out: OutputStream? = null, includ
     }
 
     if (includeCMDI) {
-        val cmdis = listOf("TextProfileINT_GaLAHaD.xml", "TextProfileINT_GaLAHaD.xsd")
+        val cmdis = arrayOf("TextProfileINT_GaLAHaD.xml", "TextProfileINT_GaLAHaD.xsd")
         for (cmdi in cmdis) {
             val cmdiFile = getResourceStream(cmdi)
-            zipStream.putNextEntry(ZipEntry(cmdi))
+            zipStream.putNextEntry(ZipEntry("metadata/$cmdi"))
             zipStream.write(cmdiFile!!.readBytes())
         }
     }
