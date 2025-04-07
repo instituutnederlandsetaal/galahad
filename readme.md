@@ -42,12 +42,13 @@ Note that this infrastructure can also be of interest for other languages and er
 - Katrien Depuydt
 
 ## Quick start
-
-Do you have docker and docker-compose? Do you have access to the public Docker Hub [instituutnederlandsetaal](https://hub.docker.com/repositories/instituutnederlandsetaal)? Then you can clone this repository and run
-
+Create a `.env` file containing:
+```sh
+VERSION=latest # docker image version
+TAGGERS_NETWORK=galahad-taggers # docker taggers network
+PORT=80 # proxy port
 ```
-docker compose up
-```
+Next, run `docker compose up`.
 This requires an external taggers network to exists. You can use the `docker-compose.yml` from `https://github.com/INL/galahad-taggers-dockerized` to start a taggers network.
 
 The webclient is then available at `http://localhost/galahad/home`.
@@ -120,4 +121,3 @@ Once you have launched the application, you can explore the public API at
 ### application BasePath
 
 The INT runs the application behind a portal on a path `/galahad`. Therefore this is set as the default path for the application. Changing this basePath requires to at least rebuild the client application with a different `vite build --base=/galahad/` set.
-

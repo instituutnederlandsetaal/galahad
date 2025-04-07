@@ -1,31 +1,23 @@
-# Docker compose file for galahad client, server and proxy
+name: galahad
+
 services:
+    
     client:
-        image: instituutnederlandsetaal/galahad-client:${APP_VERSION}
+        image: instituutnederlandsetaal/galahad-client:$VERSION
         build:
             context: client
         restart: unless-stopped
-        networks:
-            - proxy_network
-        deploy:
-            resources:
-                limits:
-                    cpus: '0.50'
-                    memory: 512M
-                reservations:
-                    cpus: '0.25'
-                    memory: 128M
+
     server:
-        image: instituutnederlandsetaal/galahad-server:${APP_VERSION}
+        image: instituutnederlandsetaal/galahad-server:$VERSION
         build:
             context: server
         restart: unless-stopped
         volumes:
             - user-corpora-volume:/data/corpora/custom
             - preset-corpora-volume:/data/corpora/presets
-            - admins-volume:/data/admins
+            - ./server/data/admins:/data/admins
         networks:
-            - proxy_network
             - taggers
         deploy:
             resources:
@@ -37,6 +29,7 @@ services:
                     memory: 2G
         environment: # Otherwise container doesn't restart on OutOfMemory
             - "JAVA_OPTS=-XX:+ExitOnOutOfMemoryError"
+    
     proxy:
         image: nginx:1.27.3-alpine3.20
         volumes:
@@ -45,24 +38,15 @@ services:
             - client
             - server
         ports:
-            - "80:80"
+            - "$PORT:80"
         restart: unless-stopped
-        networks:
-            - proxy_network
 
 
 networks:
-    front:
-        driver: bridge
-    proxy_network:
-        driver: bridge
     taggers:
         external: true
-        name: $taggers_network
+        name: $TAGGERS_NETWORK
+
 volumes:
     user-corpora-volume:
     preset-corpora-volume:
-    formats-volume:
-    taggers-volume:
-    tagsets-volume:
-    admins-volume:
