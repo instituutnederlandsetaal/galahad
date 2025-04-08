@@ -1,4 +1,4 @@
-token	pos	lemma	group_id
+token	pos	lemma
 Reconventie	NOU-C(number=sg)	reconventie	
 heeft	VRB(finiteness=fin,tense=pres)	hebben	
 ordinarie	AA(degree=pos,position=prenom)	ordinarie	

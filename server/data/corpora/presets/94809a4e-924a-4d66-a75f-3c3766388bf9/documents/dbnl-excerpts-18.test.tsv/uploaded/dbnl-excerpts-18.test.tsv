@@ -1,4 +1,4 @@
-token	pos	lemma	group_id
+token	pos	lemma
 Op	ADP(type=pre)	op	
 Nevensgaande	AA(degree=pos,position=prenom)	nevensgaand	
 Kaart	NOU-C(number=sg)	kaart	

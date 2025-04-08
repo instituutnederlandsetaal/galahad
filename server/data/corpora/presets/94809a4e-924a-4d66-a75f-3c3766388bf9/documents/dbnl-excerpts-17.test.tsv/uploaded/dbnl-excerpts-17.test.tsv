@@ -1,4 +1,4 @@
-token	pos	lemma	group_id
+token	pos	lemma
 Gy	PD(type=pers,position=free)	gij	
 sult	VRB(finiteness=fin,tense=pres)	zullen	
 de	PD(type=d-p,subtype=art,position=prenom)	de	

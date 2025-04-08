@@ -1,4 +1,4 @@
-token	pos	lemma	group_id
+token	pos	lemma
 —	PC		
 Wat	PD(type=w-p,position=free)	wat	
 baet	VRB(finiteness=fin,tense=pres)	baten	

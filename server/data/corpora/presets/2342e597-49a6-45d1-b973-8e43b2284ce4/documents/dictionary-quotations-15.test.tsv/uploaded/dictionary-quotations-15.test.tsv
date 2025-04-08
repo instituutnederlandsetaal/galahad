@@ -1,4 +1,4 @@
-token	pos	lemma	group_id
+token	pos	lemma
 Dat	PD(type=d-p,position=free)	dat	
 hoverdie	NOU-C(number=sg)	hovaardij	
 nederwerpt	VRB(finiteness=fin,tense=pres)	nederwerpen	
