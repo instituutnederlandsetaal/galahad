@@ -1,4 +1,4 @@
-token	pos	lemma	group_id
+token	pos	lemma
 Wels	NOU-P	Wels	
 den	PD(type=d-p,subtype=art,position=prenom)	de	
 28	NUM(type=ord,position=prenom,representation=dig)	achtentwintigste	

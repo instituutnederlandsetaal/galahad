@@ -1,4 +1,4 @@
-token	pos	lemma	group_id
+token	pos	lemma
 Voor	ADP(type=pre)	voor	
 allen	PD(type=indef,position=free)	al	
 vooringenomen	AA(degree=pos,position=prenom)	vooringenomen	

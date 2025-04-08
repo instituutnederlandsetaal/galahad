@@ -1,4 +1,4 @@
-token	pos	lemma	group_id
+token	pos	lemma
 Anno	RES(type=for)	anno	
 Domini	RES(type=for)	domini	
 millesimo	RES(type=for)	millesimo	

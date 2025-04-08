@@ -1,4 +1,4 @@
-token	pos	lemma	group_id
+token	pos	lemma
 Zy	PD(type=pers,position=free)	zij	
 is	VRB(finiteness=fin,tense=pres)	zijn	
 zeer	AA(degree=pos,position=free)	zeer	

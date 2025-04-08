@@ -1,4 +1,4 @@
-token	pos	lemma	group_id
+token	pos	lemma
 In	ADP(type=pre)	in	
 den	PD(type=d-p,subtype=art,position=prenom)	de	
 heilgen	AA(degree=pos,position=prenom)	heilig	

@@ -1,4 +1,4 @@
-token	pos	lemma	group_id
+token	pos	lemma
 desen	PD(type=d-p,subtype=oth,position=prenom)	deze	
 brief	NOU-C(number=sg)	brief	
 sal	VRB(finiteness=fin,tense=pres)	zullen	
