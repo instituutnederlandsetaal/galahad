@@ -31,7 +31,7 @@ class ExportController(
 
     private fun getCorpusTransformMetadata(corpusID: UUID, jobName: String, formatName: DocumentFormat): CorpusTransformMetadata {
         // Exporting documents requires you to have write access.
-        val corpus = corpora.getWriteAccessOrThrow(corpusID, request)
+        val corpus = corpora.getReadAccessOrThrow(corpusID, request)
         val job = corpus.jobs.readOrThrow(jobName)
         return CorpusTransformMetadata(
             corpus = corpus, job = job, user = User.getUserFromRequestOrThrow(request), targetFormat = formatName
@@ -141,7 +141,7 @@ class ExportController(
         @PathVariable document: String,
         @RequestParam("posHeadOnly") posHeadOnly: Boolean,
     ): ByteArray? {
-        val doc = corpora.getWriteAccessOrThrow(corpus, request).documents.readOrThrow(document)
+        val doc = corpora.getReadAccessOrThrow(corpus, request).documents.readOrThrow(document)
         val dtm = getDocumentTransformMetadata(corpus, job, document, doc.format)
         // TODO("set headers")
         return mergeAndExportDocument(dtm, posHeadOnly).file.readBytes()

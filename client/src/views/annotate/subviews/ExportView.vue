@@ -1,5 +1,5 @@
 <template>
-    <AnnotateTab :hidePermissionsError="false">
+    <AnnotateTab :hidePermissionsError="true">
         <GCard :title="`Export corpus ${corporaStore.activeCorpus?.name}`" helpSubject="export">
             <template #help>
                 <component :is="help.export"></component>
