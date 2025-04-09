@@ -4,7 +4,7 @@
         { id: 'documents', title: 'Documents', disabled: !corporaStore.activeCorpus },
         { id: 'jobs', title: 'Jobs', disabled: !corporaStore.hasDocs },
         { id: 'evaluate', title: 'Evaluate', disabled: !corporaStore.hasDocs },
-        { id: 'export', title: 'Export', disabled: !userStore.hasWriteAccess || !corporaStore.hasDocs }
+        { id: 'export', title: 'Export', disabled: !corporaStore.hasDocs }
     ]" />
 </template>
 
