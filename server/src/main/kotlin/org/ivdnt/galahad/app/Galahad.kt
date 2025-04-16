@@ -89,7 +89,7 @@ class Galahad {
                 Info().title("GaLAHaD API").version(Config.galahadVersion)
                     .license(License().name("Apache 2.0").url("https://www.apache.org/licenses/"))
                     .description("Generating Linguistic Annotations for Historical Dutch")
-                    .contact(Contact().name("GaLAHaD GitHub").url("https://github.com/inl/galahad"))
+                    .contact(Contact().name("GaLAHaD GitHub").url("https://github.com/instituutnederlandsetaal/galahad"))
             )
         if (application_profile.contains("prod")) {
             api = api.servers(listOf(Server().url("/galahad/api").description("GaLAHaD API")))

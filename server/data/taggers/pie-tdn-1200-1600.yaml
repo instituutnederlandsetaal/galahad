@@ -1,0 +1,21 @@
+id: pie-tdn-1200-1600
+description: "PIE trained on DBNL excerpts, GTB dictionary quotations, CLVN & Gysseling (1400-1600)"
+tagset: "TDN-Core"
+eraFrom: "1200"
+eraTo: "1600"
+annotations:
+  - lemma
+  - pos
+model:
+  name: pie-tdn-1200-1600
+  href: https://github.com/instituutnederlandsetaal/galahad-taggers/tree/1.1.0/pie/TDN-1200-1600
+software:
+  name: int-pie
+  href: https://github.com/instituutnederlandsetaal/int-pie/tree/1.1.0
+dataset:
+  name: 1200-1600
+  href: https://github.com/instituutnederlandsetaal/galahad-corpus-data/tree/1.1.0/combinations/1200-1600.combination.json
+trainedBy: "INT"
+date: "2025-04-07"
+devport: 8100
+version: "1.1.0"
