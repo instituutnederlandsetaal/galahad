@@ -23,51 +23,38 @@ abstract class XmlUtil(
         return createChild(childTag, prepend)
     }
 
-    protected fun Node.createChild(name: String, prepend: Boolean = false): Element {
-        val newNode = xml.createElement(name)
-        if (prepend && this.childNodes.length > 0) { // TODO checking length might not be necessary
-            this.insertBefore(newNode, this.firstChild)
-        } else {
-            this.appendChild(newNode)
+    protected fun Node.createChild(name: String, prepend: Boolean = false): Element =
+        xml.createElement(name).also {
+            if (prepend) {
+                insertBefore(it, firstChild)
+            } else {
+                appendChild(it)
+            }
         }
-        return newNode
-    }
 
     /**
-     * Add a tag to [this] with [name], [textContent], and optional [attrValue]
+     * Add a tag to [this] with [name], [text], and optional [attrValue]
      * Defaults to writing attribute @type.
      */
-    protected fun Node.createChild(
-        name: String,
-        textContent: String,
-        attrValue: String,
-    ): Element = this.createChild(name, mapOf("type" to attrValue), textContent)
+    protected fun Node.createChild(name: String, text: String, attrValue: String): Element =
+        createChild(name, mapOf("type" to attrValue), text)
 
-    protected fun Node.createChild(
-        name: String,
-        textContent: String,
-    ): Element = this.createChild(name, mapOf(), textContent)
+    protected fun Node.createChild(name: String, text: String): Element = createChild(name, mapOf(), text)
 
-    protected fun Node.createChild(
-        name: String,
-        attr: Pair<String, String>,
-        textContent: String = "",
-    ): Element = this.createChild(name, mapOf(attr), textContent)
+    protected fun Node.createChild(name: String, attr: Pair<String, String>, text: String = ""): Element =
+        createChild(name, mapOf(attr), text)
 
-    protected fun Node.createChild(
-        name: String,
-        attrs: Map<String, String>,
-        textContent: String = "",
-    ): Element {
+    protected fun Node.createChild(name: String, attrs: Map<String, String>, text: String = ""): Element =
         // Create empty tag
-        return xml.createElement(name)
-            // Add to parent
-            .also { appendChild(it) }
+        xml.createElement(name).apply {
             // Set attributes
-            .apply { attrs.forEach { (key, value) -> this.setAttribute(key, value) } }
+            attrs.forEach { (key, value) -> setAttribute(key, value) }
             // Set text content
-            .apply { this.textContent = textContent }
-    }
+            textContent = text
+        }.also {
+            // Add to parent
+            appendChild(it)
+        }
 
     companion object {
         val builder: DocumentBuilder = DocumentBuilderFactory.newInstance().apply {
@@ -82,12 +69,8 @@ abstract class XmlUtil(
             // For some reason needed to print the root on a new line instead of on the same line as the doctype.
             setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "yes")
         }
-        val inputFactory: XMLInputFactory = InputFactoryImpl().apply {
-            setProperty(XMLInputFactory.SUPPORT_DTD, false)
-        }
 
-        val outputFactory: XMLOutputFactory = OutputFactoryImpl().apply {
-            configureForSpeed()
-        }
+        val inputFactory: XMLInputFactory = InputFactoryImpl().apply { setProperty(XMLInputFactory.SUPPORT_DTD, false) }
+        val outputFactory: XMLOutputFactory = OutputFactoryImpl().apply { configureForSpeed() }
     }
 }
