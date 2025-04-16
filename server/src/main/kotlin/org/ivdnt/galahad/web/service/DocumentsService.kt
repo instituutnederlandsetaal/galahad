@@ -13,13 +13,14 @@ import org.ivdnt.galahad.util.ThreadPoolUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
+import java.io.BufferedInputStream
 import java.io.File
 import java.io.InputStream
 import java.nio.file.Paths
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import java.util.zip.ZipFile
+import java.util.zip.ZipInputStream
 import kotlin.io.path.createTempDirectory
 
 
@@ -74,32 +75,25 @@ class DocumentsService(val corpora: CorporaService) : Logging {
     }
 
     private fun uploadZipFile(file: MultipartFile, corpus: UUID) {
-        logger.info("${file.originalFilename} is a zip file. Will unzip it.")
-        val localFile = File.createTempFile("zip", file.originalFilename!!)
-        file.transferTo(localFile)
-        val exceptions = HashMap<String, Exception>() // <filename, exception>
-        ZipFile(localFile).use { zip ->
-            val futures = zip.entries().asSequence().map { entry ->
+        logger.debug("Unzipping ${file.originalFilename}")
+        val exceptions = HashMap<String, Exception>()
+        val futures = ZipInputStream(BufferedInputStream(file.inputStream)).use { stream ->
+            generateSequence { stream.nextEntry }.filterNot { it.isDirectory }.map { entry ->
+                val fileName = Paths.get(entry.name).fileName.toString()
+                val entryData = stream.readBytes()
                 ThreadPoolUtil.pool.submit {
-                    zip.getInputStream(entry).use { input ->
-                        try {
-                            if (!entry.isDirectory && entry.name.split(".").last() != "zip") {
-                                logger.info("Unzipped ${entry.name} from ${file.originalFilename}. Will convert it to document.")
-                                // The entry might be in a subfolder, so extract the true file name.
-                                val fileName = Paths.get(entry.name).fileName.toString()
-                                createDocumentWithSourceLayer(corpus, fileName, input)
-                            }
-                        } catch (e: Exception) {
-                            // Some things might go wrong when processing a file, for example the file can be invalid
-                            // This is however not a reason not to process the other files
-                            // But is an exception to throw, we just collect the exceptions and throw them as one
-                            exceptions[entry.name] = e
-                        }
+                    logger.debug("Unzipping ${entry.name} in thread ${Thread.currentThread().name}")
+                    try {
+                        createDocumentWithSourceLayer(corpus, fileName, entryData.inputStream())
+                    } catch (e: Exception) {
+                        exceptions[fileName] = e
                     }
                 }
-            }
-            futures.forEach { it.get() }
+            }.toList()
         }
+        // Wait for all futures to complete
+        futures.forEach { it.get() }
+        // Check if any exceptions were thrown
         if (exceptions.isNotEmpty()) {
             var message = "${exceptions.size} exceptions encountered: "
             exceptions.toList().mapIndexed { index, pair ->
@@ -127,9 +121,5 @@ class DocumentsService(val corpora: CorporaService) : Logging {
             docs.deleteOrNull(file.name)
             throw DocumentInvalidException(file.name, e.message)
         }
-    }
-
-    companion object {
-        val pool: ExecutorService = Executors.newCachedThreadPool()
     }
 }
