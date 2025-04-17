@@ -43,10 +43,10 @@ class EvaluationService(val corpora: CorporaService) {
         job: String,
     ): Map<Annotation, CorpusDistribution> {
         val allAnnots = annotationTypesForTagger(job, corpus)
-        if (!allAnnots.contains(Annotation.LEMMA)) {
+        if (Annotation.LEMMA !in allAnnots) {
             return emptyMap()
         }
-        val annotationTypes = CONFUSION_TYPES.filter { allAnnots.contains(it) }
+        val annotationTypes = CONFUSION_TYPES.filter { it in allAnnots }
         val distributions = annotationTypes.associateWith {
             CorpusDistribution(
                 corpora.readAsReaderOrThrow(corpus, user),
@@ -63,7 +63,7 @@ class EvaluationService(val corpora: CorporaService) {
         reference: String?,
     ): Map<Annotation, CorpusConfusion> {
         val allAnnots = annotationTypesForTagger(job, corpus)
-        val annotationTypes = CONFUSION_TYPES.filter { allAnnots.contains(it) }
+        val annotationTypes = CONFUSION_TYPES.filter { it in allAnnots }
         val confusions = annotationTypes.associateWith {
             CorpusConfusion(
                 corpora.readAsReaderOrThrow(corpus, user),
@@ -84,7 +84,7 @@ class EvaluationService(val corpora: CorporaService) {
         reference: String,
     ): ByteArray {
         // Ensure the job has the required annotation types.
-        if (!annotationTypesForTagger(job, corpus).contains(annotation)) {
+        if (annotation !in annotationTypesForTagger(job, corpus)) {
             throw AnnotationNotSupported(job, annotation)
         }
         var layerFilter: ConfusionLayerFilter? = ConfusionLayerFilter(
@@ -110,7 +110,7 @@ class EvaluationService(val corpora: CorporaService) {
     ): CorpusMetrics {
         val corpusObj = corpora.readAsReaderOrThrow(corpus, user)
         val allAnnots = annotationTypesForTagger(job, corpus)
-        val settings = METRIC_TYPES.filter { it.requiredAnnotations.all { allAnnots.contains(it) } }.toMutableList()
+        val settings = METRIC_TYPES.filter { it.requiredAnnotations.all { it in allAnnots } }.toMutableList()
         val freq = TokenFrequency(corpusObj, job)
         val freqSettings = settings.map { FrequencyMetricsSettings(freq, it) }
         settings.addAll(freqSettings)

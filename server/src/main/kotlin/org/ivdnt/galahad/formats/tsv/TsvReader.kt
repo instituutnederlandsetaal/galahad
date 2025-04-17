@@ -7,8 +7,8 @@ import org.ivdnt.galahad.annotations.Term
 import java.io.File
 
 class TsvReader(
-    file: File
-) : AnnotationReader(file) {
+    val file: File
+) : AnnotationReader() {
     private val columnIndices: MutableMap<Annotation, Int> = mutableMapOf()
 
     override fun read(): Layer {

@@ -91,7 +91,7 @@ class Galahad {
                     .description("Generating Linguistic Annotations for Historical Dutch")
                     .contact(Contact().name("GaLAHaD GitHub").url("https://github.com/instituutnederlandsetaal/galahad"))
             )
-        if (application_profile.contains("prod")) {
+        if ("prod" in application_profile) {
             api = api.servers(listOf(Server().url("/galahad/api").description("GaLAHaD API")))
         }
         return api

@@ -38,13 +38,13 @@ open class MutableCorpusMetadata(
      * Whether the user is in the list of collaborators of this corpus.
      * Note that this is not the same as having write access: use [hasWriteAccess].
      */
-    fun isCollaborator(user: User): Boolean = collaborators.contains(user.id) == true
+    fun isCollaborator(user: User): Boolean = user.id in collaborators
 
     /**
      * Whether the user is in the list of viewers of this corpus.
      * Note that this is not the same as having read access: use [hasReadAccess].
      */
-    fun isViewer(user: User): Boolean = viewers.contains(user.id) == true
+    fun isViewer(user: User): Boolean = user.id in viewers
 
     /** To have write access, you need to be an owner, collaborator or admin. */
     fun hasWriteAccess(user: User): Boolean {
@@ -165,7 +165,7 @@ open class MutableCorpusMetadata(
             newMeta.viewers.remove(newMeta.owner)
 
             // Remove collaborators from list of viewers
-            newMeta.viewers.removeIf { newMeta.collaborators.contains(it) }
+            newMeta.viewers.removeIf { it in newMeta.collaborators }
 
             return newMeta
         }

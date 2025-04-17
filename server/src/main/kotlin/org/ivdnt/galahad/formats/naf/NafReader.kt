@@ -12,7 +12,7 @@ import java.io.File
 typealias WordformID = String
 typealias TermID = String
 
-class NafReader(file: File) : AnnotationReader(file) {
+class NafReader(file: File) : AnnotationReader() {
     private val xml = XmlUtil.builder.parse(file)
     private val root = xml.documentElement
     private val nafWordforms = root.childOrNull("text")!!.childElements.map {
@@ -53,8 +53,8 @@ class NafReader(file: File) : AnnotationReader(file) {
             para.forEach { sent ->
                 sent.forEachIndexed { i, wordform ->
                     // retrieve term, entity, and dependencies
-                    val term = nafTerms.find { it.targets.contains(wordform.id) }!!
-                    val entity = nafEntities?.find { it.references.any { it.contains(term.id) } }
+                    val term = nafTerms.find { wordform.id in it.targets }!!
+                    val entity = nafEntities?.find { it.references.any { term.id in it } }
                     val dep = nafDeps?.first { it.to == term.id }
 
                     // annotations

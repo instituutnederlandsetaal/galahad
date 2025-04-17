@@ -8,7 +8,7 @@ import org.ivdnt.galahad.export.DocumentExport
 fun Iterator<Term>.nextOrNull(): Term? = if (hasNext()) next() else null
 
 // Some hardcoded punctuation
-val PUNCTUATION: List<String> = listOf(",", ".", "?", "!", ":", ";", ")", "(", "'", "\"")
+val PUNCTUATION: Array<Char> = arrayOf(',', '.', '?', '!', ':', ';', ')', '(', '\'', '"')
 
 /**
  * Match the [Layer.terms] of two layers based on their [WordForm] position (offset and length)
@@ -148,7 +148,7 @@ open class LayerComparison(
         }
 
         fun truncatePC(str: String): String {
-            return if (str.isNotEmpty() && PUNCTUATION.contains(str.last().toString())) {
+            return if (str.isNotEmpty() && str.last() in PUNCTUATION) {
                 str.slice(0 until str.lastIndex)
             } else {
                 str

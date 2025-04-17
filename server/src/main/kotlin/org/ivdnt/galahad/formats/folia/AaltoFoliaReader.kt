@@ -1,132 +1,34 @@
 package org.ivdnt.galahad.formats.folia
 
-import org.ivdnt.galahad.annotations.Annotation
-import org.ivdnt.galahad.annotations.AnnotationReader
-import org.ivdnt.galahad.annotations.Layer
-import org.ivdnt.galahad.annotations.Term
-import org.ivdnt.galahad.util.XmlUtil
-import java.io.File
-import javax.xml.XMLConstants
-import javax.xml.stream.XMLStreamConstants
-import javax.xml.stream.XMLStreamReader
+import org.ivdnt.galahad.formats.xml.XmlReader
+import java.io.InputStream
 
-class AaltoFoliaReader(file: File,
-) : AnnotationReader(file)  {
-    private var pos: String = ""
-    private var lemma: String = ""
-    private var literal: String = ""
-    private var ignoring: Boolean = false
-    private val reader: XMLStreamReader by lazy { XmlUtil.inputFactory.createXMLStreamReader(file.inputStream()) }
+class AaltoFoliaReader(
+    stream: InputStream,
+) : XmlReader(stream) {
+    override val documentTags: Array<String> = DOCUMENT_TAGS
+    override val paragraphTags: Array<String> = PARAGRAPH_TAGS
+    override val sentenceTags: Array<String> = SENTENCE_TAGS
+    override val wordTags: Array<String> = WORD_TAGS
+    override val ignorableTags: Array<String> = IGNORABLE_TAGS
+    override val wordDataTags: Array<String> = WORD_DATA_TAGS
 
-    override fun read(): Layer {
-        parseTopLevelTextNodes()
-        return Layer(documents.toTypedArray())
-    }
-
-    private fun parseTopLevelTextNodes() {
-        while (reader.hasNext()) {
-            when (reader.next()) {
-                XMLStreamConstants.START_ELEMENT -> {
-                    val tagName = reader.localName
-                    if (tagName == "text" || tagName == "speech") {
-                        docID = reader.getAttributeValue(XMLConstants.XML_NS_URI, "id")?.takeIf { it.isNotBlank() }
-                        parseNodesIntoDocument()
-                        newDocument()
-                    }
-                }
-            }
+    override fun parseWordData() {
+        when (reader.localName) {
+            "pos" -> pos = reader.getAttributeValue(null, "class") ?: ""
+            "lemma" -> lemma = reader.getAttributeValue(null, "class") ?: ""
+            "w" -> spaceAfter = reader.getAttributeValue(null, "space") != "no"
         }
-    }
-
-    private fun parseNodesIntoDocument() {
-        while (reader.hasNext()) {
-            when (reader.next()) {
-                XMLStreamConstants.START_ELEMENT -> {
-                    val tag = reader.localName
-
-                    if (IGNORABLE_TAGS.contains(tag) || ignoring) {
-                        ignoring = true
-                        continue
-                    }
-
-                    val id = reader.getAttributeValue(XMLConstants.XML_NS_URI, "id")?.takeIf { it.isNotBlank() }
-
-                    if (PARAGRAPH_TAGS.contains(tag)) {
-                        parID = id
-                        newParagraph()
-                    } else if (SENTENCE_TAGS.contains(tag)) {
-                        sentID = id
-                        newSentence()
-                    } else if (tag == "pos") {
-                        pos = reader.getAttributeValue(null, "class") ?: ""
-                    } else if (tag == "lemma") {
-                        lemma = reader.getAttributeValue(null, "class") ?: ""
-                    } else if (tag == "w") {
-                        wordID = id
-                        newWordform()
-                    }
-                }
-                XMLStreamConstants.CHARACTERS -> {
-                    if (ignoring) continue
-
-                    val text = reader.text
-                    if (text.isNotBlank()) {
-                        val words = text.split(whitespace)
-                        for ((j, word) in words.withIndex()) {
-                            if (j > 0) newWordform()
-                            literal += word
-                        }
-                    }
-                }
-                XMLStreamConstants.END_ELEMENT -> {
-                    val tag = reader.localName
-                    if (IGNORABLE_TAGS.contains(tag)) {
-                        ignoring = false
-                        continue
-                    }
-                    if (ignoring) continue
-                    if (reader.localName == "w") {
-                        newWordform()
-                    }
-                }
-            }
-        }
-    }
-
-    private fun newWordform() {
-        if (literal.isBlank()) return
-
-        val annotations = buildMap {
-            lemma.takeIf { it.isNotBlank() }?.let { put(Annotation.LEMMA, it) }
-            pos.takeIf { it.isNotBlank() }?.let { put(Annotation.POS, it) }
-            put(Annotation.TOKEN, literal)
-        }
-
-        val spaceAfter = true
-        terms += Term(wordID ?: "", offset, annotations, spaceAfter)
-        offset += literal.length
-        literal = ""
     }
 
     companion object {
-        private val whitespace: Regex = Regex("""\s+""")
-        private val PARAGRAPH_TAGS = arrayOf(
-            "text", // top most <text> defines a document, any other <text> is treated as a paragraph
-            "speech", // same for speech
-            "div",
-            "p",
-            "head",
-            "list",
-            "item",
-            "event",
-            "table",
-            "part",
-        )
+        // top most <text> or <speech> defines a document, any other is treated as a paragraph
+        private val DOCUMENT_TAGS = arrayOf("text", "speech")
+        private val PARAGRAPH_TAGS =
+            arrayOf("text", "speech", "div", "p", "head", "list", "item", "event", "table", "part")
         private val SENTENCE_TAGS = arrayOf("s", "utt")
-        private val IGNORABLE_TAGS = arrayOf(
-            "morphology", "note", "figure", "comment",
-            "original", // correction
-            "suggestion", // correction
-        )
+        private val WORD_TAGS = arrayOf("w")
+        private val WORD_DATA_TAGS = arrayOf("w", "lemma", "pos")
+        private val IGNORABLE_TAGS = arrayOf("morphology", "note", "figure", "comment", "original", "suggestion")
     }
 }

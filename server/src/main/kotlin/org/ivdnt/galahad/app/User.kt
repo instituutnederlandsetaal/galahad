@@ -12,10 +12,9 @@ class User(
         private val ADMIN_FILE: File = File("data/admins/admins.txt")
         private val DEFAULT_USER: User get() = User(id = USERNAME, isAdmin = isAdmin(USERNAME))
 
-        private fun isAdmin(string: String): Boolean {
+        private fun isAdmin(username: String): Boolean {
             if (!ADMIN_FILE.exists()) return false // When no admins are set, no one is admin by default
-            return ADMIN_FILE.readLines().map { it.trim() }
-                .contains(string) // Otherwise only declared admins are admins
+            return username in ADMIN_FILE.readLines().map { it.trim() } // Otherwise only declared admins are admins
         }
 
         fun fromRequest(request: HttpServletRequest?): User {

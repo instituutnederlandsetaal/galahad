@@ -7,8 +7,8 @@ import org.ivdnt.galahad.annotations.Term
 import java.io.File
 
 class ConlluReader(
-    file: File
-) : AnnotationReader(file) {
+    val file: File
+) : AnnotationReader() {
     private val ignorableMultiWordIds: MutableSet<String> = mutableSetOf()
 
     override fun read(): Layer {
@@ -84,7 +84,7 @@ class ConlluReader(
 
         // nerKeyValue is for example "NamedEntity=S-LOC"
         val nerKeyValue: String =
-            misc.split("|").firstOrNull { nerAttrNames.contains(it.split("=").first()) } ?: return null
+            misc.split("|").firstOrNull { it.split("=").first() in nerAttrNames } ?: return null
         val nerValue: String = nerKeyValue.substringAfter('=')
 
         // convert to IOB

@@ -15,7 +15,7 @@ import java.io.File
 
 class FoliaReader(
     file: File,
-) : AnnotationReader(file) {
+) : AnnotationReader() {
     val xml: Document by lazy { XmlUtil.builder.parse(file) }
     private var literal: String = ""
     private var pos: String = ""
@@ -84,10 +84,11 @@ class FoliaReader(
     private fun newWordform(el: Element? = null) {
         if (literal.isBlank()) return
 
-        val annotations = mutableMapOf<Annotation, String>()
-        lemma.takeIf { it.isNotBlank() }?.let { annotations[Annotation.LEMMA] = it }
-        pos.takeIf { it.isNotBlank() }?.let { annotations[Annotation.POS] = it }
-        annotations[Annotation.TOKEN] = literal
+        val annotations = mapOf(
+            Annotation.LEMMA to lemma.takeIf { it.isNotBlank() },
+            Annotation.POS to pos.takeIf { it.isNotBlank() },
+            Annotation.TOKEN to literal
+        ).filterValues { it != null } as Map<Annotation, String>
         val spaceAfter = el?.getAttribute("space") != "no"
 
         terms += Term(wordID(), offset, annotations, spaceAfter)

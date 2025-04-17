@@ -13,7 +13,7 @@ import org.ivdnt.galahad.formats.txt.TxtFile
 import java.io.File
 
 /** A document parsed as a file of a certain file type, e.g. TEI, TSV, Folia. */
-abstract class InternalFile {
+abstract class InternalFile protected constructor() {
     abstract val file: File
     abstract val format: DocumentFormat
     val plaintext: String by lazy { reader.layer.toString() }

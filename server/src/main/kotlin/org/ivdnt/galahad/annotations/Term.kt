@@ -32,6 +32,10 @@ class Term(
     @get:JsonIgnore
     val ner: String? = annotations[Annotation.NER]
 
+    /**
+     * Returns a term with the same data, except its offset is aligned to that of [refTerm].
+     */
+    fun alignedTo(refTerm: Term): Term = Term(id, refTerm.offset, annotations, spaceAfter)
 
     fun isMulti(annotation: Annotation): Boolean = annotations[annotation]?.contains("+") == true
 
@@ -56,15 +60,15 @@ class Term(
         val annotation = annotations[annotationType] ?: return null
         // for NER
         if (annotationType == Annotation.NER) {
-            if (annotation.contains('-')) {
+            if ('-' in annotation) {
                 return annotation.split('-')[1]
             }
         }
         // for POS & UPOS
-        else if (listOf(Annotation.POS, Annotation.UPOS).contains(annotationType)) {
+        else if (annotationType in posAnnotations) {
             return if (isMulti(annotationType)) {
                 // Split on + and transform each part
-                annotation.split("+").map { singlePosToHead(it) }.joinToString("+")
+                annotation.split("+").joinToString("+") { singlePosToHead(it) }
             } else {
                 singlePosToHead(annotation)
             }
@@ -75,10 +79,11 @@ class Term(
 
     companion object {
         val EMPTY: Term = Term("", 0, mapOf(Annotation.TOKEN to ""))
+        private val posAnnotations: Array<Annotation> = arrayOf(Annotation.POS, Annotation.UPOS)
+        private val posHeadSeparators: Array<Char> = arrayOf('(', '|')
 
-        fun missingName(annotation: Annotation): String =
-            // simply uppercase and prepend "NO_"
-            "NO_${annotation.value.uppercase()}"
+        // simply uppercase and prepend "NO_"
+        fun missingName(annotation: Annotation): String = "NO_${annotation.value.uppercase()}"
 
         /** The features of [pos]. E.g. "num=sg" for "NOU(num=sg)". Does not support multi-pos. */
         fun features(pos: String?): String? {
@@ -91,9 +96,8 @@ class Term(
         }
 
         fun singlePosToHead(pos: String): String {
-            val separators = listOf('(', '|')
-            for (separator in separators) {
-                if (pos.contains(separator)) {
+            for (separator in posHeadSeparators) {
+                if (separator in pos) {
                     val head = pos.split(separator)[0]
                     // presumably head won't be empty, but this way we could
                     // parse something like (VRB) if anyone would ever use that

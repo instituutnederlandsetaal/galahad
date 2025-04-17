@@ -12,10 +12,7 @@ import org.ivdnt.galahad.exceptions.MergeNotImplementedException
 import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.util.FileMapper
 import org.ivdnt.galahad.util.createZipFile
-import java.io.File
 import java.io.OutputStream
-import java.nio.file.Files
-import kotlin.io.path.createTempDirectory
 
 class CorpusExport private constructor(
     val corpus: Corpus,
@@ -26,7 +23,6 @@ class CorpusExport private constructor(
     val tagger: Tagger,
     val shouldMerge: Boolean,
 ) : Logging {
-
     private fun mergeFormatMatches(
         it: Document, format: DocumentFormat,
     ): Boolean {
@@ -37,7 +33,6 @@ class CorpusExport private constructor(
         }
         return otherFormat == format
     }
-
 
     private fun formatMapper(doc: Document, out: OutputStream) {
         try {
@@ -64,8 +59,16 @@ class CorpusExport private constructor(
         out: OutputStream,
     ) {
         val documents = corpus.documents.readAll().filter { DocumentExport.create(this, it).layer != Layer.EMPTY }
-        val seq: Sequence<FileMapper> = documents.asSequence().map { doc -> doc.name to { out -> formatMapper(doc, out) } }
-        val seqCmdi: Sequence<FileMapper> = documents.asSequence().map { doc -> "metadata/CMDI-${doc.uploadedFile.nameWithoutExtension}.xml" to { out -> DocumentExport.create(this, doc).cmdi(out) } }
+        val seq: Sequence<FileMapper> =
+            documents.asSequence().map { doc -> doc.name to { out -> formatMapper(doc, out) } }
+        val seqCmdi: Sequence<FileMapper> = documents.asSequence().map { doc ->
+            "metadata/CMDI-${doc.uploadedFile.nameWithoutExtension}.xml" to { out ->
+                DocumentExport.create(
+                    this,
+                    doc
+                ).cmdi(out)
+            }
+        }
         createZipFile(seq + seqCmdi, out, includeCMDI = true)
     }
 

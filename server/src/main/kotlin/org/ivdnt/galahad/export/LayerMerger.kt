@@ -11,10 +11,17 @@ import org.ivdnt.galahad.formats.tei.TeiMerger
 import org.ivdnt.galahad.formats.tsv.TsvMerger
 import java.io.OutputStream
 
-abstract class LayerMerger(protected val export: DocumentExport) {
+abstract class LayerMerger protected constructor(protected val export: DocumentExport) {
     private val layerComparison: LayerComparison = LayerComparison(export)
-    protected val sourceTermComparisons: List<TermComparison> = (layerComparison.matches + layerComparison.referenceTermsWithoutMatches.map { TermComparison(
-        Term.EMPTY, it) }).sortedBy { it.refTerm.offset }
+    // TODO move to LayerComparison
+    protected val sourceTermComparisons: List<TermComparison> =
+        (layerComparison.matches + layerComparison.referenceTermsWithoutMatches.map {
+            TermComparison(
+                Term.EMPTY,
+                it
+            )
+        }).sortedBy { it.refTerm.offset }
+
     abstract fun merge(out: OutputStream)
 
     companion object {

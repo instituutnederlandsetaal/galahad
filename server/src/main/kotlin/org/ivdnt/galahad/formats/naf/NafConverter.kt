@@ -112,7 +112,7 @@ class NafConverter(export: DocumentExport) : LayerConverter(export) {
         lpTerms.appendChild(lp)
         nafHeader.appendChild(lpTerms)
 
-        if (export.tagger.annotations.contains(Annotation.NER)) {
+        if (Annotation.NER in export.tagger.annotations) {
             val lpNer = xml.createElement("linguisticProcessors").apply {
                 setAttribute("layer", "entities")
             }
@@ -120,7 +120,7 @@ class NafConverter(export: DocumentExport) : LayerConverter(export) {
             nafHeader.appendChild(lpNer)
         }
 
-        if (export.tagger.annotations.contains(Annotation.DEPREL)) {
+        if (Annotation.DEPREL in export.tagger.annotations) {
             val lpDep = xml.createElement("linguisticProcessors").apply {
                 setAttribute("layer", "deps")
             }

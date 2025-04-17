@@ -20,7 +20,7 @@ class TagsetsControllerTest(
     fun `Get valid tagset`() {
         val tagset = ctrl.getTagset("TDN-Core")
         assertNotNull(tagset)
-        assertTrue(tagset.punctuationTags.contains("PC"))
+        assertTrue("PC" in tagset.punctuationTags)
     }
 
     @Test

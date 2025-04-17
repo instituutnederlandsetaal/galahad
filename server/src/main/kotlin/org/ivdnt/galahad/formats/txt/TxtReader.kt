@@ -12,8 +12,8 @@ import java.io.File
  * .txt files don't support more than one document, so only 1 [DocumentLayer].
  */
 class TxtReader(
-    file: File
-) : AnnotationReader(file) {
+    val file: File
+) : AnnotationReader() {
     override fun read(): Layer {
         file.forEachLine {
             if (it.isNotBlank()) {

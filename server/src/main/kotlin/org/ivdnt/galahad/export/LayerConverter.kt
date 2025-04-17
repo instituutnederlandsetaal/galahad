@@ -11,7 +11,7 @@ import org.ivdnt.galahad.formats.tsv.TsvConverter
 import org.ivdnt.galahad.formats.txt.TxtConverter
 import java.io.OutputStream
 
-abstract class LayerConverter(protected val export: DocumentExport) {
+abstract class LayerConverter protected constructor(protected val export: DocumentExport) {
     abstract fun convert(out: OutputStream)
 
     companion object {

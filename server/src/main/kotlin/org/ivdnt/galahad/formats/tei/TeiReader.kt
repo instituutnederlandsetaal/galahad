@@ -12,7 +12,7 @@ import java.io.File
 
 class TeiReader(
     file: File
-) : AnnotationReader(file) {
+) : AnnotationReader() {
     private val xml: Document by lazy { XmlUtil.builder.parse(file) }
     private var literal: String = ""
 
@@ -126,8 +126,7 @@ class TeiReader(
     private fun spaceAfter(el: Element?): Boolean {
         // join="right" or "both" on this element
         val join = el?.getAttribute("join")
-        val joins = listOf("right", "both")
-        if (join in joins) {
+        if (join in arrayOf("right", "both")) {
             return false
         }
 

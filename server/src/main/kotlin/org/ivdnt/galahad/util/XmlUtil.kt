@@ -70,7 +70,10 @@ abstract class XmlUtil(
             setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, "yes")
         }
 
-        val inputFactory: XMLInputFactory = InputFactoryImpl().apply { setProperty(XMLInputFactory.SUPPORT_DTD, false) }
-        val outputFactory: XMLOutputFactory = OutputFactoryImpl().apply { configureForSpeed() }
+        val inputFactory: InputFactoryImpl = InputFactoryImpl().apply {
+            configureForSpeed()
+            setProperty(XMLInputFactory.SUPPORT_DTD, false)
+        }
+        val outputFactory: OutputFactoryImpl = OutputFactoryImpl().apply { configureForSpeed() }
     }
 }

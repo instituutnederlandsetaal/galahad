@@ -22,7 +22,6 @@ class ExportService(val corpora: CorporaService) : Logging {
 
     private val user get() = User.fromRequest(request)
 
-
     fun mergeDoc(corpus: UUID, job: String, document: String, posHeadOnly: Boolean): File {
         val doc = corpora.readAsWriterOrThrow(corpus, user).documents.readOrThrow(document)
         val export = getDocumentExport(corpus, job, document, doc.metadata.format, posHeadOnly)
@@ -55,7 +54,6 @@ class ExportService(val corpora: CorporaService) : Logging {
     private fun getDocumentExport(
         corpus: UUID, job: String, document: String, format: DocumentFormat, posHeadOnly: Boolean
     ): DocumentExport = DocumentExport.create(getCorpusExport(corpus, job, format, posHeadOnly), document)
-
 
     fun getCorpusName(corpus: UUID): String = corpora.readAsWriterOrThrow(corpus, user).mutableMetadata.name
 }

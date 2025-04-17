@@ -42,7 +42,7 @@ class Tagger(
     // and then filled from yaml, meaning that devport is 0 at the time of initialization
     @get:JsonIgnore
     val url: URL
-        get() = if (application_profile.contains("dev")) {
+        get() = if ("dev" in application_profile) {
             URI("http://localhost:$devport").toURL()
         } else {
             URI("http://$id:8080").toURL()
