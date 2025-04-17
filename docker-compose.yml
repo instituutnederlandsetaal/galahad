@@ -19,6 +19,7 @@ services:
             - ./server/data/admins:/data/admins
         networks:
             - taggers
+            - default
         deploy:
             resources:
                 limits:
@@ -43,6 +44,7 @@ services:
 
 
 networks:
+    default:
     taggers:
         external: true
         name: $TAGGERS_NETWORK
