@@ -11,8 +11,8 @@ import javax.xml.stream.XMLStreamConstants
 import javax.xml.stream.XMLStreamReader
 
 abstract class XmlReader(stream: InputStream) : AnnotationReader() {
-    protected var pos: String = ""
-    protected var lemma: String = ""
+    protected var pos: String? = null
+    protected var lemma: String? = null
     protected var literal: String = ""
     protected var spaceAfter: Boolean = true
     protected val reader: XMLStreamReader by lazy { XmlUtil.inputFactory.createXMLStreamReader(stream) }
@@ -89,8 +89,8 @@ abstract class XmlReader(stream: InputStream) : AnnotationReader() {
     private fun newWordform() {
         if (literal.isBlank()) return
         val annotations = buildMap {
-            lemma.takeIf { it.isNotBlank() }?.let { put(Annotation.LEMMA, it) }
-            pos.takeIf { it.isNotBlank() }?.let { put(Annotation.POS, it) }
+            lemma?.takeIf { it.isNotBlank() }?.let { put(Annotation.LEMMA, it) }
+            pos?.takeIf { it.isNotBlank() }?.let { put(Annotation.POS, it) }
             put(Annotation.TOKEN, literal)
         }
         terms += Term(wordID(), offset, annotations, spaceAfter)

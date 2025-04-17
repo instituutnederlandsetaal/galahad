@@ -15,8 +15,8 @@ class AaltoFoliaReader(
 
     override fun parseWordData() {
         when (reader.localName) {
-            "pos" -> pos = reader.getAttributeValue(null, "class") ?: ""
-            "lemma" -> lemma = reader.getAttributeValue(null, "class") ?: ""
+            "pos" -> pos = reader.getAttributeValue(null, "class")
+            "lemma" -> lemma = reader.getAttributeValue(null, "class")
             "w" -> spaceAfter = reader.getAttributeValue(null, "space") != "no"
         }
     }
