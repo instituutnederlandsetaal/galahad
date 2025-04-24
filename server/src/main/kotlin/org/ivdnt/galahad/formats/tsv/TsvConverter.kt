@@ -7,25 +7,32 @@ import java.io.OutputStream
 import java.io.PrintWriter
 
 class TsvConverter(export: DocumentExport) : LayerConverter(export) {
-    override fun convert(out: OutputStream): Unit = convert(PrintWriter(out.bufferedWriter()))
+    override fun convert(out: OutputStream): Unit = convert(PrintWriter(out))
 
     private fun convert(out: PrintWriter) {
         val header: List<Annotation> = export.tagger.annotations.toList()
         // force the header list to be in the order of [Annotation.entries]
-        header.sortedBy { 1 + Annotation.entries.indexOf(it) } // +1 otherwise index 0 will be last
+        val orderedHeader = Annotation.entries.toMutableList()
+        orderedHeader.removeIf { it !in header }
 
-        out.println(header.joinToString("\t"))
+        out.println("id\t" + orderedHeader.joinToString("\t"))
         // We only write sentence boundaries (\n) and no #-comments, under the assumption that other TSV software can't handle this.
-        export.layer.documents.forEach { document ->
-            document.paragraphs.forEach { paragraph ->
-                paragraph.sentences.forEach { sentence ->
-                    sentence.terms.forEach { term ->
-                        val fields = header.map { term.annotations[it] ?: "" }
+        documents.forEachIndexed { docI, doc ->
+            doc.paragraphs.forEachIndexed { parI, par ->
+                par.sentences.forEachIndexed { sentI, sent ->
+                    sent.terms.forEach { term ->
+                        val fields = listOf(term.id) + orderedHeader.map { term.annotations[it] ?: "" }
                         out.println(fields.joinToString("\t"))
                     }
-                    out.println() // empty line between sentences
+                    // empty line between sentences
+                    val isLastSent = docI == documents.lastIndex && parI == doc.paragraphs.lastIndex && sentI == par.sentences.lastIndex
+                    if (!isLastSent) out.println()
                 }
+                // empty line between paragraphs
+                val isLastPar = docI == documents.lastIndex && parI == doc.paragraphs.lastIndex
+                if (!isLastPar) out.println()
             }
         }
+        out.flush()
     }
 }

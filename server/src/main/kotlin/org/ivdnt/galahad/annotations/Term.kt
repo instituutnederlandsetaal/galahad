@@ -12,6 +12,9 @@ class Term(
     val spaceAfter: Boolean? = if (spaceAfter == false) false else null
 
     @get:JsonIgnore
+    val space: String = if (spaceAfter == false) "" else " "
+
+    @get:JsonIgnore
     val token: String = annotations[Annotation.TOKEN]!!
 
     @get:JsonIgnore

@@ -10,7 +10,7 @@ class User(
     companion object {
         private const val USERNAME: String = "user"
         private val ADMIN_FILE: File = File("data/admins/admins.txt")
-        private val DEFAULT_USER: User get() = User(id = USERNAME, isAdmin = isAdmin(USERNAME))
+        val DEFAULT_USER: User get() = User(id = USERNAME, isAdmin = isAdmin(USERNAME))
 
         private fun isAdmin(username: String): Boolean {
             if (!ADMIN_FILE.exists()) return false // When no admins are set, no one is admin by default

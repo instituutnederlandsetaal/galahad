@@ -17,8 +17,8 @@ val PUNCTUATION: Array<Char> = arrayOf(',', '.', '?', '!', ':', ';', ')', '(', '
  * (Still, aggregating these matches is up to the (corpus/documents) evaluation classes)
  */
 open class LayerComparison(
-    private val hypothesisLayer: Layer,
-    private val referenceLayer: Layer,
+    hypothesisLayer: Layer,
+    referenceLayer: Layer,
     private val layerFilter: LayerFilter? = null,
 ) {
     constructor(export: DocumentExport) : this(export.layer, export.sourceLayer)

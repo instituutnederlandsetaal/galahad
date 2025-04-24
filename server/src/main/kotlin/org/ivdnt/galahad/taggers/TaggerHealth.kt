@@ -1,7 +1,5 @@
 package org.ivdnt.galahad.taggers
 
-import com.fasterxml.jackson.annotation.JsonProperty
-
 class TaggerHealth(
     val status: TaggerHealthStatus = TaggerHealthStatus.UNKNOWN,
     val queueSizeAtTagger: Int = 0, // bytes

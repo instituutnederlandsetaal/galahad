@@ -2,6 +2,7 @@ package org.ivdnt.galahad.util
 
 import com.fasterxml.aalto.stax.InputFactoryImpl
 import com.fasterxml.aalto.stax.OutputFactoryImpl
+import org.codehaus.stax2.XMLOutputFactory2
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -72,8 +73,10 @@ abstract class XmlUtil(
 
         val inputFactory: InputFactoryImpl = InputFactoryImpl().apply {
             configureForSpeed()
-            setProperty(XMLInputFactory.SUPPORT_DTD, false)
+            setProperty(InputFactoryImpl.SUPPORT_DTD, false)
         }
-        val outputFactory: OutputFactoryImpl = OutputFactoryImpl().apply { configureForSpeed() }
+        val outputFactory: OutputFactoryImpl = OutputFactoryImpl().apply {
+            configureForSpeed()
+        }
     }
 }

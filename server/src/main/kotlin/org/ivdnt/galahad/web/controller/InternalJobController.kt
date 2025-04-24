@@ -57,7 +57,7 @@ class InternalJobController(
                 ?: throw Exception("Processing ID not found, was this file uploaded by me?")
             val job: Job = corpora.readCorpusUnsafe(corpusID).jobs.readOrThrow(jobName)
 
-            job.jobDocuments.createOrThrow(documentName).layer = InternalFile.create(tempFile).layer
+            job.setLayer(documentName, InternalFile.create(tempFile).layer)
 
             // If this was the last file, set active false
             if (job.progress.pending == 0 && job.progress.processing == 0) {

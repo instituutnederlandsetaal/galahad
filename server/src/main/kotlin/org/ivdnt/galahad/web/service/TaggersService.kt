@@ -87,6 +87,6 @@ class TaggersService : Logging {
     }
 
     companion object {
-        private val mapper: ObjectMapper by lazy { ObjectMapper() }
+        private val mapper: ObjectMapper = ObjectMapper()
     }
 }

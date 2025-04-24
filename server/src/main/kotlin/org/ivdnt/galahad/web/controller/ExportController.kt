@@ -140,9 +140,9 @@ class ExportController(
         @PathVariable @Parameter(description = "Document name") document: String,
         @RequestParam @Parameter(description = "Export format") format: DocumentFormat,
         @RequestParam(defaultValue = "false") @Parameter(description = "Only export the head of PoS (e.g. PD in PD(type=art))") posHeadOnly: Boolean = false,
-    ): ByteArray? {
+    ) {
         response?.contentType = "text/plain"
-        return exportService.convertDoc(corpus, job, document, format, posHeadOnly).readBytes()
+        exportService.convertDoc(corpus, job, document, format, posHeadOnly)
     }
 
     @Operation(
@@ -176,8 +176,8 @@ class ExportController(
         @PathVariable @Parameter(description = "Tagger name") job: String,
         @PathVariable @Parameter(description = "Document name") document: String,
         @RequestParam(defaultValue = "false") @Parameter(description = "Only export the head of PoS (e.g. PD in PD(type=art))") posHeadOnly: Boolean = false,
-    ): ByteArray? {
+    ) {
         response?.contentType = "text/plain"
-        return exportService.mergeDoc(corpus, job, document, posHeadOnly).readBytes()
+        return exportService.mergeDoc(corpus, job, document, posHeadOnly)
     }
 }

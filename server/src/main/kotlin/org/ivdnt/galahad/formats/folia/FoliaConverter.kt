@@ -16,7 +16,6 @@ class FoliaConverter(
         val xml = XmlUtil.builder.newDocument()
         val root = xml.createElement("FoLiA").apply {
             setAttribute("xmlns", "http://ilk.uvt.nl/folia")
-            setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink")
             setAttribute("xml:id", export.document.metadata.uuid.toString())
             setAttribute("generator", "galahad.ivdnt.org")
             setAttribute("version", "2.5.3")

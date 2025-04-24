@@ -23,9 +23,7 @@ class CorpusExport private constructor(
     val tagger: Tagger,
     val shouldMerge: Boolean,
 ) : Logging {
-    private fun mergeFormatMatches(
-        it: Document, format: DocumentFormat,
-    ): Boolean {
+    private fun mergeFormatMatches(it: Document, format: DocumentFormat): Boolean {
         var otherFormat = it.metadata.format
         // Overwrite the format for legacy formats that can in fact be merged.
         if (otherFormat == DocumentFormat.TeiP5Legacy) {
@@ -55,22 +53,21 @@ class CorpusExport private constructor(
     /**
      * Maps all [Document] found in [Documents] to the desired [DocumentFormat] and zips them. [formatMapper] should perform the mapping.
      */
-    fun export(
-        out: OutputStream,
-    ) {
+    fun export(out: OutputStream) {
         val documents = corpus.documents.readAll().filter { DocumentExport.create(this, it).layer != Layer.EMPTY }
         val seq: Sequence<FileMapper> =
             documents.asSequence().map { doc -> doc.name to { out -> formatMapper(doc, out) } }
         val seqCmdi: Sequence<FileMapper> = documents.asSequence().map { doc ->
             "metadata/CMDI-${doc.uploadedFile.nameWithoutExtension}.xml" to { out ->
                 DocumentExport.create(
-                    this,
-                    doc
+                    this, doc
                 ).cmdi(out)
             }
         }
         createZipFile(seq + seqCmdi, out, includeCMDI = true)
     }
+
+    fun documentExport(doc: Document): DocumentExport = DocumentExport.create(this, doc)
 
     companion object {
         fun create(

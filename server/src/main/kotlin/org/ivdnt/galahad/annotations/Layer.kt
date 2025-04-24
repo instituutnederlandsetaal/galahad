@@ -1,6 +1,7 @@
 package org.ivdnt.galahad.annotations
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import java.util.UUID
 
 const val SOURCE_LAYER_NAME: String = "sourceLayer"
 
@@ -9,7 +10,8 @@ const val SOURCE_LAYER_NAME: String = "sourceLayer"
  * Those may be split into paragraphs, sentences, etc.
  */
 class Layer(
-    val documents: Array<DocumentLayer>
+    val documents: Array<DocumentLayer>,
+    val id: String = UUID.randomUUID().toString(),
 ) {
     @get:JsonIgnore
     val spans: Map<Annotation, Sequence<TermSpan>> by lazy {
@@ -23,10 +25,13 @@ class Layer(
             }
         }
     }
+
     @get:JsonIgnore
     val summary: LayerSummary by lazy { LayerSummary(tokens = terms.count()) }
+
     @get:JsonIgnore
     val preview: LayerPreview by lazy { LayerPreview(terms.take(LAYER_PREVIEW_LENGTH).toList()) }
+
     @get:JsonIgnore
     val terms: Sequence<Term> by lazy {
         documents.asSequence().flatMap { document ->
@@ -41,7 +46,7 @@ class Layer(
     override fun toString(): String = documents.joinToString("\n\n") + "\n" // Unix convention EOF
 
     companion object {
-        val EMPTY: Layer = Layer(emptyArray())
+        val EMPTY: Layer = Layer(emptyArray(), "")
     }
 }
 
@@ -64,5 +69,10 @@ class SentenceLayer(
     val terms: Array<Term>,
     val spans: Map<Annotation, Array<TermSpan>>,
 ) {
-    override fun toString(): String = terms.joinToString("") { it.token + (if (it.spaceAfter == false) "" else " ") }
+    override fun toString(): String = buildString {
+        terms.forEachIndexed { i, t ->
+            append(t.token)
+            if (i != terms.lastIndex) append(t.space)
+        }
+    }
 }

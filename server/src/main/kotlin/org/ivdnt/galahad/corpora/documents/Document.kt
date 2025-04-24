@@ -80,7 +80,7 @@ class Document(
             // First try to access the layer. If the file is invalid, this will throw.
             val sourceLayer = internalFile.layer
             // Set sourceLayer as job. Note that if we threw, we don't unnecessarily create a job folder, keeping the disk clean.
-            corpus.jobs.createOrThrow(SOURCE_LAYER_NAME).jobDocuments.createOrThrow(doc.name).layer = sourceLayer
+            corpus.jobs.createOrThrow(SOURCE_LAYER_NAME).setLayer(doc.name, sourceLayer)
             // plaintext
             ThreadPoolUtil.pool.execute {
                 doc.plaintextFile.writeText(internalFile.plaintext)

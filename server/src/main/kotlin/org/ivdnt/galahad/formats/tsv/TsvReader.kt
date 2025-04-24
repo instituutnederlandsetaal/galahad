@@ -10,6 +10,7 @@ class TsvReader(
     val file: File
 ) : AnnotationReader() {
     private val columnIndices: MutableMap<Annotation, Int> = mutableMapOf()
+    private var lastLineWasBlank: Boolean = false
 
     override fun read(): Layer {
         file.forEachLine { line ->
@@ -61,16 +62,20 @@ class TsvReader(
     private fun parseBody(line: String) {
         if (line.isBlank()) {
             newSentence()
+            if (lastLineWasBlank) newParagraph()
+            lastLineWasBlank = true
             return
         }
+        lastLineWasBlank = false
 
         // Split on tabs
         val values: List<String> = line.split("\t")
 
         // Retrieve values
-        val mutAnnot: MutableMap<Annotation, String> = mutableMapOf()
-        for (column in columnIndices.entries) {
-            getColumn(column.value, values)?.let { mutAnnot[column.key] = it }
+        val mutAnnot: Map<Annotation, String> = buildMap {
+            for (column in columnIndices.entries) {
+                getColumn(column.value, values)?.let { put(column.key, it) }
+            }
         }
         terms += Term(wordID(), offset, mutAnnot)
         offset += mutAnnot[Annotation.TOKEN]?.length ?: 0

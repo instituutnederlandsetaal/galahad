@@ -8,9 +8,7 @@ import org.ivdnt.galahad.corpora.documents.Document
 import org.ivdnt.galahad.corpora.documents.DocumentFormat
 import org.ivdnt.galahad.corpora.jobs.Job
 import org.ivdnt.galahad.taggers.Tagger
-import java.io.File
 import java.io.OutputStream
-import kotlin.io.path.createTempDirectory
 
 class DocumentExport private constructor(
     val corpus: Corpus,
@@ -21,14 +19,8 @@ class DocumentExport private constructor(
     val tagger: Tagger,
     private val posHeadOnly: Boolean,
 ) {
-    val layer: Layer = job.layer(document)
-    val sourceLayer: Layer by lazy { corpus.jobs.readOrNull(SOURCE_LAYER_NAME)?.layer(document) ?: Layer.EMPTY }
-    // TODO this will double .tei.tei.xml
-    private val fileName: String = "${document.uploadedFile.nameWithoutExtension}.${format.extension}"
-    private val file: File = createTempDirectory().resolve(fileName).toFile()
-
-    fun convert(): File = file.also { LayerConverter.create(this).convert(file.outputStream()) }
-    fun merge(): File = file.also { LayerMerger.create(this).merge(file.outputStream()) }
+    val layer: Layer = job.getLayer(document)
+    val sourceLayer: Layer by lazy { corpus.jobs.readOrNull(SOURCE_LAYER_NAME)?.getLayer(document) ?: Layer.EMPTY }
 
     fun convert(out: OutputStream): Unit = LayerConverter.create(this).convert(out)
     fun merge(out: OutputStream): Unit = LayerMerger.create(this).merge(out)

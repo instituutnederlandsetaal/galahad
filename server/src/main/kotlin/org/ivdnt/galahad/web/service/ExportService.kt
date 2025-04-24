@@ -9,7 +9,6 @@ import org.ivdnt.galahad.export.CorpusExport
 import org.ivdnt.galahad.export.DocumentExport
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.io.File
 import java.util.*
 
 @Service
@@ -22,16 +21,14 @@ class ExportService(val corpora: CorporaService) : Logging {
 
     private val user get() = User.fromRequest(request)
 
-    fun mergeDoc(corpus: UUID, job: String, document: String, posHeadOnly: Boolean): File {
+    fun mergeDoc(corpus: UUID, job: String, document: String, posHeadOnly: Boolean) {
         val doc = corpora.readAsWriterOrThrow(corpus, user).documents.readOrThrow(document)
-        val export = getDocumentExport(corpus, job, document, doc.metadata.format, posHeadOnly)
-        return export.merge()
+        val export = getDocumentExport(corpus, job, document, doc.metadata.format, posHeadOnly, true)
+        export.merge(response!!.outputStream)
     }
 
-    fun convertDoc(corpus: UUID, job: String, document: String, format: DocumentFormat, posHeadOnly: Boolean): File {
-        val export = getDocumentExport(corpus, job, document, format, posHeadOnly)
-        return export.convert()
-    }
+    fun convertDoc(corpus: UUID, job: String, document: String, format: DocumentFormat, posHeadOnly: Boolean): Unit =
+        getDocumentExport(corpus, job, document, format, posHeadOnly, false).convert(response!!.outputStream)
 
     /**
      * Export corpus job in a stream. Allows for longer response times, because converting takes time.
@@ -42,18 +39,18 @@ class ExportService(val corpora: CorporaService) : Logging {
         format: DocumentFormat,
         shouldMerge: Boolean,
         posHeadOnly: Boolean,
-    ): Unit = getCorpusExport(corpus, job, format, posHeadOnly).export(response!!.outputStream)
+    ): Unit = getCorpusExport(corpus, job, format, posHeadOnly, shouldMerge).export(response!!.outputStream)
 
     private fun getCorpusExport(
-        corpusID: UUID, jobName: String, format: DocumentFormat, posHeadOnly: Boolean, shouldMerge: Boolean = false
+        corpusID: UUID, jobName: String, format: DocumentFormat, posHeadOnly: Boolean, shouldMerge: Boolean
     ): CorpusExport {
         val corpus = corpora.readAsWriterOrThrow(corpusID, user)
         return CorpusExport.create(corpus, jobName, format, posHeadOnly, user, shouldMerge)
     }
 
     private fun getDocumentExport(
-        corpus: UUID, job: String, document: String, format: DocumentFormat, posHeadOnly: Boolean
-    ): DocumentExport = DocumentExport.create(getCorpusExport(corpus, job, format, posHeadOnly), document)
+        corpus: UUID, job: String, document: String, format: DocumentFormat, posHeadOnly: Boolean, shouldMerge: Boolean
+    ): DocumentExport = DocumentExport.create(getCorpusExport(corpus, job, format, posHeadOnly, shouldMerge), document)
 
     fun getCorpusName(corpus: UUID): String = corpora.readAsWriterOrThrow(corpus, user).mutableMetadata.name
 }

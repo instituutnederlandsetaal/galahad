@@ -42,7 +42,7 @@ open class DiskValue<T>(
             registerKotlinModule()
             setSerializationInclusion(JsonInclude.Include.NON_NULL)
         }
-        val cache: Cache<String, Any> = Caffeine.newBuilder().recordStats().maximumWeight(100_000_000) // 100MB
+        val cache: Cache<String, Any> = Caffeine.newBuilder().recordStats().maximumWeight(500_000_000) // 500MB
             // Weigher is used once at put() time
             .weigher<String, Any> { key, _ -> File(key).length().toInt() }.build()
     }

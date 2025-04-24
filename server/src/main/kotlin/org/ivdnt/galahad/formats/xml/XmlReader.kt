@@ -6,6 +6,7 @@ import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.util.XmlUtil
 import java.io.InputStream
+import java.util.UUID
 import javax.xml.XMLConstants
 import javax.xml.stream.XMLStreamConstants
 import javax.xml.stream.XMLStreamReader
@@ -27,8 +28,18 @@ abstract class XmlReader(stream: InputStream) : AnnotationReader() {
     abstract val ignorableTags: Array<String>
 
     final override fun read(): Layer {
+        // retrieve the XML ID of the document root
+        var rootID: String = UUID.randomUUID().toString()
+        while (reader.hasNext()) {
+            when (reader.next()) {
+                XMLStreamConstants.START_ELEMENT -> {
+                    currentXmlID?.let { rootID = it }
+                    break
+                }
+            }
+        }
         parseDocuments()
-        return Layer(documents.toTypedArray())
+        return Layer(documents.toTypedArray(), rootID)
     }
 
     private fun parseDocuments() {
@@ -96,6 +107,8 @@ abstract class XmlReader(stream: InputStream) : AnnotationReader() {
         terms += Term(wordID(), offset, annotations, spaceAfter)
         offset += literal.length
         literal = ""
+        lemma = null
+        pos = null
     }
 
     companion object {

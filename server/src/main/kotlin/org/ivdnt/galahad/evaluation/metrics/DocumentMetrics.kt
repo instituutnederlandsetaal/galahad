@@ -1,7 +1,6 @@
 package org.ivdnt.galahad.evaluation.metrics
 
 import org.ivdnt.galahad.annotations.Term
-import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.corpora.documents.Document
 import org.ivdnt.galahad.corpora.jobs.Job
 import org.ivdnt.galahad.evaluation.comparison.LayerComparison
@@ -24,7 +23,7 @@ class DocumentMetrics(
 ) : Metrics(settings, hypoTagger, refTagger, hypothesisJob, referenceJob, truncate = truncate) {
 
     init {
-        val layerComparison = LayerComparison(hypothesisJob.layer(doc), referenceJob.layer(doc), layerFilter)
+        val layerComparison = LayerComparison(hypothesisJob.getLayer(doc), referenceJob.getLayer(doc), layerFilter)
 
         layerComparison.matches.forEach(this::add)
 

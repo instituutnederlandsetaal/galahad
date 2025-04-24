@@ -25,7 +25,7 @@ class CorpusDistribution(
 
     init {
         corpus.documents.readAll().forEach {
-            val layer = hypothesisJob.layer(it)
+            val layer = hypothesisJob.getLayer(it)
             // Add to ourselves
             this.add(DocumentDistribution(layer, it.metadata, groupingAnnotation))
         }

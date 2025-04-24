@@ -39,8 +39,8 @@ class CorpusConfusion(
         corpus.documents.readAll().forEach {
             add(
                 DocumentConfusion(
-                    hypothesisJob.layer(it),
-                    referenceJob.layer(it),
+                    hypothesisJob.getLayer(it),
+                    referenceJob.getLayer(it),
                     layerFilter,
                     annotation,
                 )

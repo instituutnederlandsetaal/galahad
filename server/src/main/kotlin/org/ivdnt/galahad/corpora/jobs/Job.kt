@@ -113,11 +113,12 @@ class Job(
         override fun set() = JobMetadata.create(this@Job)
     }
 
-    fun layer(doc: Document): Layer = layer(doc.name)
-    fun layer(key: String): Layer = jobDocuments.readOrNull(key)?.layer ?: Layer.EMPTY
-    fun setLayerForKey(key: String, layer: Layer) {
+    fun getLayer(doc: Document): Layer = getLayer(doc.name)
+    fun getLayer(key: String): Layer = jobDocuments.readOrNull(key)?.layer ?: Layer.EMPTY
+    fun setLayer(key: String, layer: Layer) {
         jobDocuments.createOrThrow(key).layer = layer
     }
+    fun setLayer(doc: Document, layer: Layer): Unit = setLayer(doc.name, layer)
 
     //////////////////////////////////////////////////////
     // TODO: check everything below
@@ -256,7 +257,7 @@ class Job(
     }
 
     companion object {
-        private val mapper: ObjectMapper by lazy { ObjectMapper() }
+        private val mapper: ObjectMapper = ObjectMapper()
 
         private fun <T : Any> taggerRequest(
             job: Job, route: String, method: HttpMethod, type: Class<T>,

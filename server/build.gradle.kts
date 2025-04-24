@@ -54,5 +54,6 @@ dependencies {
 
 tasks.withType<Test> {
     environment(mapOf("profile" to "dev"))
+    systemProperty("line.separator", "\n")
     useJUnitPlatform()
 }

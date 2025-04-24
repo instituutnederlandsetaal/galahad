@@ -23,11 +23,9 @@ class Tagset(
         private const val TAGSETS_DIR: String = "data/tagsets"
         private val dir = File(TAGSETS_DIR)
 
-        val tagsets: Map<String, Tagset> by lazy {
-            dir.listFiles()
-                .map { Yaml(Constructor(Tagset::class.java, LoaderOptions())).load<Tagset>(it.inputStream()) }
-                .associateBy { it.identifier }
-        }
+        val tagsets: Map<String, Tagset> = dir.listFiles()
+            .map { Yaml(Constructor(Tagset::class.java, LoaderOptions())).load<Tagset>(it.inputStream()) }
+            .associateBy { it.identifier }
 
         fun readOrNull(tagger: Tagger): Tagset? = tagsets[tagger.tagset]
         fun readOrNull(id: String): Tagset? = tagsets[id]

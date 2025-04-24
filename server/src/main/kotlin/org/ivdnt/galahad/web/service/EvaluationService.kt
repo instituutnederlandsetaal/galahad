@@ -16,7 +16,6 @@ import org.ivdnt.galahad.exceptions.AnnotationNotSupported
 import org.ivdnt.galahad.exceptions.InvalidMetricsTypeException
 import org.ivdnt.galahad.export.csv.CSVFile
 import org.ivdnt.galahad.taggers.Tagger
-import org.ivdnt.galahad.util.createZipFile
 import org.ivdnt.galahad.util.setContentDisposition
 import org.ivdnt.galahad.util.toValidFileName
 import org.ivdnt.galahad.web.controller.DISTRIBUTION_MAX_SIZE
@@ -170,8 +169,8 @@ class EvaluationService(val corpora: CorporaService) {
     ): List<TermComparison> {
         val reference: String = reference ?: SOURCE_LAYER_NAME
         return DocumentLayerComparison(
-            hypothesisLayer = corpora.readAsReaderOrThrow(corpus, user).jobs.readOrThrow(job).layer(document),
-            referenceLayer = corpora.readAsReaderOrThrow(corpus, user).jobs.readOrThrow(reference).layer(document)
+            hypothesisLayer = corpora.readAsReaderOrThrow(corpus, user).jobs.readOrThrow(job).getLayer(document),
+            referenceLayer = corpora.readAsReaderOrThrow(corpus, user).jobs.readOrThrow(reference).getLayer(document)
         ).matches
     }
 
