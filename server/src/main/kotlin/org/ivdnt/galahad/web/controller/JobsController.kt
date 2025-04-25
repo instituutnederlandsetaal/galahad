@@ -12,9 +12,9 @@ import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.app.JOBS_URL
 import org.ivdnt.galahad.app.JOB_URL
 import org.ivdnt.galahad.app.User
-import org.ivdnt.galahad.corpora.jobs.JobMetadata
-import org.ivdnt.galahad.corpora.jobs.Jobs
-import org.ivdnt.galahad.corpora.jobs.Progress
+import org.ivdnt.galahad.jobs.JobMetadata
+import org.ivdnt.galahad.jobs.Jobs
+import org.ivdnt.galahad.jobs.Progress
 import org.ivdnt.galahad.exceptions.ErrorResponse
 import org.ivdnt.galahad.web.service.CorporaService
 import org.springframework.beans.factory.annotation.Autowired

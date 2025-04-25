@@ -1,21 +1,12 @@
 package org.ivdnt.galahad.corpora
 
-import org.ivdnt.galahad.corpora.documents.Document
-import org.ivdnt.galahad.corpora.documents.DocumentFormat
-import org.ivdnt.galahad.corpora.documents.Documents
-import org.ivdnt.galahad.corpora.jobs.Jobs
-import org.ivdnt.galahad.export.CmdiMetadata
-import org.ivdnt.galahad.export.CorpusExport
-import org.ivdnt.galahad.export.DocumentExport
+import org.ivdnt.galahad.documents.Documents
+import org.ivdnt.galahad.jobs.Jobs
 import org.ivdnt.galahad.files.DiskValue
 import org.ivdnt.galahad.files.GalahadFolder
 import org.ivdnt.galahad.files.ValidatedDiskValue
-import org.ivdnt.galahad.util.createZipFile
 import java.io.File
-import java.io.OutputStream
-import java.nio.file.Files
 import java.util.*
-import kotlin.io.path.createTempDirectory
 
 /**
  * A corpus is a collection of documents, metadata and jobs, saved to a folder. The folder contents are:

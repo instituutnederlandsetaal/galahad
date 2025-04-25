@@ -4,8 +4,8 @@ import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.corpora.Corpus
-import org.ivdnt.galahad.corpora.documents.DocumentFormat
-import org.ivdnt.galahad.corpora.documents.Documents
+import org.ivdnt.galahad.documents.DocumentFormat
+import org.ivdnt.galahad.documents.Documents
 import org.ivdnt.galahad.export.CorpusExport
 import org.junit.jupiter.api.BeforeEach
 import java.io.ByteArrayOutputStream
@@ -71,6 +71,11 @@ open class ConverterTest {
         fun `Tei to Conllu`() {
             formatToFormat(DocumentFormat.TeiP5, DocumentFormat.Conllu)
         }
+
+        @Test
+        fun `Tei to Naf`() {
+            formatToFormat(DocumentFormat.TeiP5, DocumentFormat.Naf)
+        }
     }
 
     @Nested
@@ -98,6 +103,11 @@ open class ConverterTest {
         @Test
         fun `Folia to Conllu`() {
             formatToFormat(DocumentFormat.Folia, DocumentFormat.Conllu)
+        }
+
+        @Test
+        fun `Folia to Naf`() {
+            formatToFormat(DocumentFormat.Folia, DocumentFormat.Naf)
         }
     }
 
@@ -127,6 +137,11 @@ open class ConverterTest {
         fun `Tsv to Conllu`() {
             formatToFormat(DocumentFormat.Tsv, DocumentFormat.Conllu)
         }
+
+        @Test
+        fun `Tsv to Naf`() {
+            formatToFormat(DocumentFormat.Tsv, DocumentFormat.Naf)
+        }
     }
 
     @Nested
@@ -154,6 +169,11 @@ open class ConverterTest {
         @Test
         fun `Conllu to TXT`() {
             formatToFormat(DocumentFormat.Conllu, DocumentFormat.Txt)
+        }
+
+        @Test
+        fun `Conllu to Naf`() {
+            formatToFormat(DocumentFormat.Conllu, DocumentFormat.Naf)
         }
     }
 }

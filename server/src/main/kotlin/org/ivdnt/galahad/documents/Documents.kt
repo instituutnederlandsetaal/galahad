@@ -1,4 +1,4 @@
-package org.ivdnt.galahad.corpora.documents
+package org.ivdnt.galahad.documents
 
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.exceptions.DocumentNotFoundException

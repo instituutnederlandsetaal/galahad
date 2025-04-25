@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.export
 
 import org.ivdnt.galahad.annotations.Term
-import org.ivdnt.galahad.corpora.documents.DocumentFormat
+import org.ivdnt.galahad.documents.DocumentFormat
 import org.ivdnt.galahad.evaluation.comparison.LayerComparison
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
 import org.ivdnt.galahad.exceptions.InvalidDocumentFormatException

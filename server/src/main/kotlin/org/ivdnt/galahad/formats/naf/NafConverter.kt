@@ -25,6 +25,7 @@ class NafConverter(export: DocumentExport) : LayerConverter(export) {
         addRaw(xml, root)
         addText(xml, root)
         addTerms(xml, root)
+        addEntities(xml, root)
 
         XmlUtil.transformer.transform(DOMSource(root), StreamResult(out))
     }
@@ -126,6 +127,37 @@ class NafConverter(export: DocumentExport) : LayerConverter(export) {
             }
             lpDep.appendChild(lp.cloneNode(true))
             nafHeader.appendChild(lpDep)
+        }
+    }
+
+    private fun addEntities(xml: Document, root: Element) {
+        val entities = xml.createElement("entities")
+        root.appendChild(entities)
+
+        documents.forEach { doc ->
+            doc.paragraphs.forEach { par ->
+                par.sentences.forEach { sent ->
+                    sent.spans[Annotation.NER]?.forEach { termSpan ->
+                        val spanEl = xml.createElement("span")
+                        val terms = termSpan.indices.map { sent.terms[it] }
+                        terms.forEach { t ->
+                            val target = xml.createElement("target").apply {
+                                setAttribute("id", t.id)
+                            }
+                            spanEl.appendChild(target)
+                        }
+                        val references = xml.createElement("references")
+                        references.appendChild(spanEl)
+                        val termSpanId = terms.joinToString("_") { it.id }
+                        val entity = xml.createElement("entity").apply {
+                            setAttribute("id", termSpanId) // Alternatively, e1, e2, etc.
+                            setAttribute("type", termSpan.value)
+                        }
+                        entity.appendChild(references)
+                        entities.appendChild(entity)
+                    }
+                }
+            }
         }
     }
 }

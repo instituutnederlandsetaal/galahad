@@ -1,4 +1,4 @@
-package org.ivdnt.galahad.corpora.jobs
+package org.ivdnt.galahad.jobs
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.ivdnt.galahad.annotations.LayerPreview

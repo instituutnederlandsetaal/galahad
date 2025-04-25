@@ -1,10 +1,9 @@
-package org.ivdnt.galahad.corpora.documents
+package org.ivdnt.galahad.documents
 
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.LayerPreview
 import org.ivdnt.galahad.annotations.LayerSummary
 import org.ivdnt.galahad.formats.InternalFile
-import java.util.*
 
 data class DocumentMetadata(
     /** Name of the uploaded file including extension. Used as a working directory name. */

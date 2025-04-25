@@ -3,10 +3,10 @@ package org.ivdnt.galahad.web.service
 import jakarta.servlet.http.HttpServletRequest
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.app.User
-import org.ivdnt.galahad.corpora.documents.Document
-import org.ivdnt.galahad.corpora.documents.DocumentMetadata
-import org.ivdnt.galahad.corpora.documents.Documents
-import org.ivdnt.galahad.corpora.jobs.Jobs
+import org.ivdnt.galahad.documents.Document
+import org.ivdnt.galahad.documents.DocumentMetadata
+import org.ivdnt.galahad.documents.Documents
+import org.ivdnt.galahad.jobs.Jobs
 import org.ivdnt.galahad.exceptions.DocumentInvalidException
 import org.ivdnt.galahad.exceptions.FileUploadException
 import org.ivdnt.galahad.util.ThreadPoolUtil
@@ -18,8 +18,6 @@ import java.io.File
 import java.io.InputStream
 import java.nio.file.Paths
 import java.util.*
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 import java.util.zip.ZipInputStream
 import kotlin.io.path.createTempDirectory
 

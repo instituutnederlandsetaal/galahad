@@ -45,42 +45,29 @@ abstract class XmlReader(stream: InputStream) : AnnotationReader() {
     private fun parseDocuments() {
         while (reader.hasNext()) {
             when (reader.next()) {
-                XMLStreamConstants.START_ELEMENT -> if (reader.localName in documentTags) {
-                    setID()
-                    parseNodesInDocument()
-                    newDocument()
-                }
-            }
-        }
-    }
-
-    private fun parseNodesInDocument() {
-        while (reader.hasNext()) {
-            when (reader.next()) {
                 XMLStreamConstants.START_ELEMENT -> if (!shouldIgnore()) {
-                    setID()
+                    parseAttrs()
                     when (reader.localName) {
-                        in paragraphTags -> newParagraph()
-                        in sentenceTags -> newSentence()
-                        in wordDataTags -> parseWordData()
+                        in documentTags -> docID = currentXmlID
+                        in paragraphTags -> parID = currentXmlID
+                        in sentenceTags -> sentID = currentXmlID
+                        in wordTags -> wordID = currentXmlID
                     }
                 }
                 XMLStreamConstants.CHARACTERS -> if (!ignoring) parseChars()
-                XMLStreamConstants.END_ELEMENT -> if (!ignoring && reader.localName in wordTags) newWordform()
+                XMLStreamConstants.END_ELEMENT -> if (!ignoring) {
+                    when (reader.localName) {
+                        in documentTags -> newDocument()
+                        in paragraphTags -> newParagraph()
+                        in sentenceTags -> newSentence()
+                        in wordTags -> newWordform()
+                    }
+                }
             }
         }
     }
 
-    private fun setID() {
-        when (reader.localName) {
-            in documentTags -> docID = currentXmlID
-            in paragraphTags -> parID = currentXmlID
-            in sentenceTags -> sentID = currentXmlID
-            in wordTags -> wordID = currentXmlID
-        }
-    }
-
-    protected abstract fun parseWordData()
+    protected abstract fun parseAttrs()
 
     private fun shouldIgnore(): Boolean = ignoring.also { ignoring = reader.localName in ignorableTags }
 
@@ -92,12 +79,7 @@ abstract class XmlReader(stream: InputStream) : AnnotationReader() {
         }
     }
 
-    override fun newSentence() {
-        newWordform()
-        super.newSentence()
-    }
-
-    private fun newWordform() {
+    override fun newWordform() {
         if (literal.isBlank()) return
         val annotations = buildMap {
             lemma?.takeIf { it.isNotBlank() }?.let { put(Annotation.LEMMA, it) }

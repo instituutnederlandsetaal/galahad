@@ -1,4 +1,4 @@
-package org.ivdnt.galahad.app
+package org.ivdnt.galahad.web.controller
 
 import io.swagger.v3.oas.annotations.Hidden
 import jakarta.servlet.http.HttpServletRequest
@@ -13,12 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class ErrorHandler : ErrorController, Logging {
+class ErrorController : ErrorController, Logging {
     @Autowired
     private val response: HttpServletResponse? = null
 
-    // TODO separate file inherit ErrorController
-    // Perhaps even in galahad.web
     @RequestMapping("/error")
     @Hidden
     @CrossOrigin

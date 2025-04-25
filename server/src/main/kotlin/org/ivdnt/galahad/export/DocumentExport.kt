@@ -4,9 +4,9 @@ import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.corpora.Corpus
-import org.ivdnt.galahad.corpora.documents.Document
-import org.ivdnt.galahad.corpora.documents.DocumentFormat
-import org.ivdnt.galahad.corpora.jobs.Job
+import org.ivdnt.galahad.documents.Document
+import org.ivdnt.galahad.documents.DocumentFormat
+import org.ivdnt.galahad.jobs.Job
 import org.ivdnt.galahad.taggers.Tagger
 import java.io.OutputStream
 

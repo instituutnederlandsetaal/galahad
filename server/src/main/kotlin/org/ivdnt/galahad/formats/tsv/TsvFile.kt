@@ -1,6 +1,6 @@
 package org.ivdnt.galahad.formats.tsv
 
-import org.ivdnt.galahad.corpora.documents.DocumentFormat
+import org.ivdnt.galahad.documents.DocumentFormat
 import org.ivdnt.galahad.formats.InternalFile
 import java.io.File
 

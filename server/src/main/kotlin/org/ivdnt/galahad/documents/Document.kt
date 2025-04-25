@@ -1,4 +1,4 @@
-package org.ivdnt.galahad.corpora.documents
+package org.ivdnt.galahad.documents
 
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME

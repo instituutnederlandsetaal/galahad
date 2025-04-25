@@ -1,4 +1,4 @@
-package org.ivdnt.galahad.corpora.jobs
+package org.ivdnt.galahad.jobs
 
 class Progress(
     val pending: Int = 0,

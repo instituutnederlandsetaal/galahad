@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.formats.naf
 
 import org.ivdnt.galahad.annotations.AnnotationReader
-import org.ivdnt.galahad.corpora.documents.DocumentFormat
+import org.ivdnt.galahad.documents.DocumentFormat
 import org.ivdnt.galahad.formats.InternalFile
 import java.io.File
 

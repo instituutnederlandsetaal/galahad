@@ -1,119 +1,34 @@
 package org.ivdnt.galahad.formats.folia
 
-import org.ivdnt.galahad.annotations.Annotation
-import org.ivdnt.galahad.annotations.AnnotationReader
-import org.ivdnt.galahad.annotations.Layer
-import org.ivdnt.galahad.annotations.Term
-import org.ivdnt.galahad.util.XmlUtil
-import org.ivdnt.galahad.util.childElements
-import org.ivdnt.galahad.util.children
-import org.ivdnt.galahad.util.containedIn
-import org.w3c.dom.Document
-import org.w3c.dom.Element
-import org.w3c.dom.Node
-import java.io.File
+import org.ivdnt.galahad.formats.xml.XmlReader
+import java.io.InputStream
 
 class FoliaReader(
-    file: File,
-) : AnnotationReader() {
-    val xml: Document by lazy { XmlUtil.builder.parse(file) }
-    private var literal: String = ""
-    private var pos: String = ""
-    private var lemma: String = ""
+    stream: InputStream,
+) : XmlReader(stream) {
+    override val documentTags: Array<String> = DOCUMENT_TAGS
+    override val paragraphTags: Array<String> = PARAGRAPH_TAGS
+    override val sentenceTags: Array<String> = SENTENCE_TAGS
+    override val wordTags: Array<String> = WORD_TAGS
+    override val ignorableTags: Array<String> = IGNORABLE_TAGS
+    override val wordDataTags: Array<String> = WORD_DATA_TAGS
 
-    override fun read(): Layer {
-        parseTopLevelTextNodes(xml.documentElement)
-        return Layer(documents.toTypedArray())
-    }
-
-    private fun parseTopLevelTextNodes(node: Node) {
-        node.childElements.forEach { child ->
-            if (child.tagName == "text" || child.tagName == "speech") {
-                // parse document
-                parseNodesIntoDocument(child)
-                docID = child.getAttribute("xml:id").ifBlank { null }
-                newDocument()
-            } else {
-                // recurse
-                parseTopLevelTextNodes(child)
-            }
+    override fun parseAttrs() {
+        when (reader.localName) {
+            "pos" -> pos = reader.getAttributeValue(null, "class")
+            "lemma" -> lemma = reader.getAttributeValue(null, "class")
+            "w" -> spaceAfter = reader.getAttributeValue(null, "space") != "no"
         }
-    }
-
-    private fun parseNodesIntoDocument(node: Node) {
-        node.children.forEach { child ->
-            if (child.nodeType == Node.ELEMENT_NODE && !IGNORABLE_TAGS.contains((child as Element).tagName)) {
-                val tag = child.tagName
-                val id = child.getAttribute("xml:id").ifBlank { null }
-
-                // recurse
-                parseNodesIntoDocument(child)
-
-                // create paragraph/sentence/word from the recursed text
-                if (PARAGRAPH_TAGS.contains(tag)) {
-                    // New paragraph
-                    parID = id
-                    newParagraph()
-                } else if (SENTENCE_TAGS.contains(tag)) {
-                    // New sentence
-                    sentID = id
-                    newSentence()
-                } else if (tag == "pos") {
-                    pos = child.getAttribute("class")
-                } else if (tag == "lemma") {
-                    lemma = child.getAttribute("class")
-                } else if (tag == "w") {
-                    // New wordform
-                    wordID = id
-                    newWordform(child)
-                }
-
-            } else if (child.nodeType == Node.TEXT_NODE && child.containedIn("t")) {
-                val text = child.textContent
-                val words = text.split("\\s+".toRegex())
-                for ((j, word) in words.withIndex()) {
-                    if (j > 0) {
-                        newWordform()
-                    }
-                    literal += word
-                }
-            }
-        }
-    }
-
-    private fun newWordform(el: Element? = null) {
-        if (literal.isBlank()) return
-
-        val annotations = mapOf(
-            Annotation.LEMMA to lemma.takeIf { it.isNotBlank() },
-            Annotation.POS to pos.takeIf { it.isNotBlank() },
-            Annotation.TOKEN to literal
-        ).filterValues { it != null } as Map<Annotation, String>
-        val spaceAfter = el?.getAttribute("space") != "no"
-
-        terms += Term(wordID(), offset, annotations, spaceAfter)
-        offset += literal.length
-        literal = ""
     }
 
     companion object {
-        private val PARAGRAPH_TAGS = listOf(
-            "text", // top most <text> defines a document, any other <text> is treated as a paragraph
-            "speech", // same for speech
-            "div",
-            "p",
-            "head",
-            "list",
-            "item",
-            "event",
-            "table",
-            "part",
-        )
-        private val SENTENCE_TAGS = listOf("s", "utt")
-        private val IGNORABLE_TAGS = listOf(
-            "morphology", "note", "figure", "comment",
-            "original", // correction
-            "suggestion", // correction
-        )
+        // top most <text> or <speech> defines a document, any other is treated as a paragraph
+        private val DOCUMENT_TAGS = arrayOf("text", "speech")
+        private val PARAGRAPH_TAGS =
+            arrayOf("text", "speech", "div", "p", "head", "list", "item", "event", "table", "part")
+        private val SENTENCE_TAGS = arrayOf("s", "utt")
+        private val WORD_TAGS = arrayOf("w")
+        private val WORD_DATA_TAGS = arrayOf("w", "lemma", "pos")
+        private val IGNORABLE_TAGS = arrayOf("morphology", "note", "figure", "comment", "original", "suggestion")
     }
 }

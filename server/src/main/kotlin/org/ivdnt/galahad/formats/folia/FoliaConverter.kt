@@ -1,60 +1,98 @@
 package org.ivdnt.galahad.formats.folia
 
+import org.codehaus.stax2.XMLStreamWriter2
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.export.LayerConverter
-import org.ivdnt.galahad.util.XmlUtil
+import org.ivdnt.galahad.formats.xml.PrettyXMLWriter
+import org.ivdnt.galahad.util.XmlUtil.Companion.outputFactory
 import java.io.OutputStream
-import javax.xml.transform.dom.DOMSource
-import javax.xml.transform.stream.StreamResult
+import javax.xml.XMLConstants
 
-class FoliaConverter(
-    export: DocumentExport,
-) : LayerConverter(export) {
-
+class FoliaConverter(export: DocumentExport) : LayerConverter(export) {
     override fun convert(out: OutputStream) {
-        val xml = XmlUtil.builder.newDocument()
-        val root = xml.createElement("FoLiA").apply {
-            setAttribute("xmlns", "http://ilk.uvt.nl/folia")
-            setAttribute("xml:id", export.document.metadata.uuid.toString())
-            setAttribute("generator", "galahad.ivdnt.org")
-            setAttribute("version", "2.5.3")
-        }
-        xml.appendChild(root)
-        FoliaMetadata(xml, root, export)
-        export.layer.documents.forEach { document ->
-            val text = xml.createElement("text").apply { setAttribute("id", document.id) }
-            root.appendChild(text)
-            document.paragraphs.forEach { paragraph ->
-                val p = xml.createElement("p").apply { setAttribute("id", paragraph.id) }
-                text.appendChild(p)
+        val writer = PrettyXMLWriter(outputFactory.createXMLStreamWriter(out) as XMLStreamWriter2)
+
+        writer.writeStartDocument("UTF-8", "1.0")
+        writer.writeStartElement("FoLiA")
+        writer.writeNamespace("", "http://ilk.uvt.nl/folia")
+        writer.writeNamespace("xml", "http://www.w3.org/XML/1998/namespace")
+        writer.writeAttribute("", "generator", "galahad.ivdnt.org")
+        writer.writeAttribute("", "version", "2.5.3")
+        writer.writeAttribute(XMLConstants.XML_NS_URI, "id", export.layer.id)
+
+        documents.forEach { doc ->
+            writer.writeStartElement("text")
+            writer.writeAttribute(XMLConstants.XML_NS_URI, "id", doc.id)
+
+            doc.paragraphs.forEach { paragraph ->
+                writer.writeStartElement("p")
+                writer.writeAttribute(XMLConstants.XML_NS_URI, "id", paragraph.id)
+
                 paragraph.sentences.forEach { sentence ->
-                    val s = xml.createElement("s").apply { setAttribute("id", sentence.id) }
-                    p.appendChild(s)
-                    sentence.terms.forEach { term ->
-                        val w = xml.createElement("w").apply { setAttribute("id", term.id) }
-                        s.appendChild(w)
-                        val t = xml.createElement("t").apply { textContent = term.token }
-                        w.appendChild(t)
-                        term.lemma?.let {
-                            xml.createElement("lemma").apply {
-                                setAttribute("class", it)
-                                setAttribute("set", export.tagger.id)
-                                setAttribute("processor", export.tagger.id)
-                            }
-                        }?.also { w.appendChild(it) }
-                        term.pos?.let {
-                            xml.createElement("pos").apply {
-                                setAttribute("class", it)
-                                setAttribute("head", term.annotationHead(Annotation.POS) ?: "")
-                                setAttribute("set", export.tagger.id)
-                                setAttribute("processor", export.tagger.id)
-                            }
-                        }?.also { w.appendChild(it) }
+                    writer.writeStartElement("s")
+                    writer.writeAttribute(XMLConstants.XML_NS_URI, "id", sentence.id)
+
+                    sentence.terms.forEachIndexed { termI, t ->
+                        val wClass = if (t.pos == "PC" && !t.token.contains(alphaNumeric)) "PUNCTUATION" else "WORD"
+
+                        writer.writeStartElement("w")
+                        writer.writeAttribute(XMLConstants.XML_NS_URI, "id", t.id)
+                        writer.writeAttribute("class", wClass)
+                        if (t.spaceAfter == false) writer.writeAttribute("space", "no")
+
+                        writer.writeStartElement("t")
+                        writer.writeCharacters(t.token)
+                        writer.writeEndElement()
+
+                        if (wClass == "WORD" && t.lemma != null) {
+                            writer.writeStartElement("lemma")
+                            writer.writeAttribute("class", t.lemma)
+                            writer.writeEndElement(indent = false)
+                        }
+
+                        if (t.pos != null) {
+                            writer.writeStartElement("pos")
+                            writer.writeAttribute("class", t.pos)
+                            writer.writeAttribute("head", t.annotationHead(Annotation.POS))
+                            writer.writeEndElement(indent = false)
+                        }
+
+                        writer.writeEndElement() // w
                     }
+
+                    sentence.spans[Annotation.NER]?.let { nerSpans ->
+                        writer.writeStartElement("entities")
+                        nerSpans.forEachIndexed { spanI, span ->
+                            writer.writeStartElement("entity")
+                            val spanId = "${sentence.id}.e${spanI + 1}"
+                            writer.writeAttribute(XMLConstants.XML_NS_URI, "id", spanId)
+                            writer.writeAttribute("class", span.value)
+                            span.indices.forEach { termI ->
+                                val term = sentence.terms[termI]
+                                writer.writeStartElement("wref")
+                                writer.writeAttribute("id", term.id)
+                                writer.writeAttribute("t", term.token)
+                                writer.writeEndElement(indent = false)
+                            }
+                            writer.writeEndElement() // entity
+                        }
+                        writer.writeEndElement() // entities
+                    }
+
+                    writer.writeEndElement() // s
                 }
+                writer.writeEndElement() // p
             }
+            writer.writeEndElement() // text
         }
-        XmlUtil.transformer.transform(DOMSource(xml), StreamResult(out))
+        writer.writeEndElement() // TEI
+        writer.writeEndDocument()
+        writer.flush()
+        writer.close()
+    }
+
+    companion object {
+        private val alphaNumeric = Regex("""[a-zA-Z0-9]""")
     }
 }

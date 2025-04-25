@@ -1,11 +1,10 @@
 package org.ivdnt.galahad.web.service
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.taggers.TaggerHealth
 import org.ivdnt.galahad.taggers.TaggerHealthStatus
-
+import org.ivdnt.galahad.util.JsonUtil
 import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
@@ -26,13 +25,11 @@ class TaggersService : Logging {
         // However, we still think it is representative/informative
         val client = HttpClient.newBuilder().build()
         val tagger = Tagger.readOrThrow(tagger)
-        val request = HttpRequest.newBuilder()
-            .uri(URI.create("${tagger.url}/health"))
-            .build()
+        val request = HttpRequest.newBuilder().uri(URI.create("${tagger.url}/health")).build()
 
         return try {
             val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-            val json = mapper.readTree(response.body())
+            val json = JsonUtil.mapper.readTree(response.body())
             val healthy = json.get("healthy").asBoolean()
             val queueSizeAtTagger = json.get("queueSizeAtTagger").asInt()
             val processingSpeed = json.get("processingSpeed").asInt()
@@ -71,7 +68,7 @@ class TaggersService : Logging {
                     builder.build().encode().toUri(), HttpMethod.GET, null, String::class.java
                 )
                 val jsonStr: String? = res.body
-                val json = mapper.readTree(jsonStr)
+                val json = JsonUtil.mapper.readTree(jsonStr)
                 json.forEach {
                     val pending = it.get("pending").asBoolean()
                     val busy = it.get("busy").asBoolean()
@@ -84,9 +81,5 @@ class TaggersService : Logging {
             }
         }
         return count
-    }
-
-    companion object {
-        private val mapper: ObjectMapper = ObjectMapper()
     }
 }

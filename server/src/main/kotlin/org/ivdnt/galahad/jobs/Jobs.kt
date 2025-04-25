@@ -1,4 +1,4 @@
-package org.ivdnt.galahad.corpora.jobs
+package org.ivdnt.galahad.jobs
 
 import org.ivdnt.galahad.annotations.LayerPreview
 import org.ivdnt.galahad.annotations.LayerSummary

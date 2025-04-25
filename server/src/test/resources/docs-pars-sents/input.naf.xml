@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<NAF version="v3.3" xml:lang="dum">
+    <nafHeader>
+        <fileDesc author="user" creationtime="1745591638145" filename="input.conllu" filetype="conllu" title="input.conllu"/>
+        <public publicId="8701d5ce-be9c-4a02-91a5-8663da93a14e"/>
+        <linguisticProcessors layer="terms">
+            <lp beginTimestamp="1745591638145" endTimestamp="1745591638145" hostname="https://galahad.ivdnt.org" name="sourceLayer" timestamp="1745591638145" version=""/>
+        </linguisticProcessors>
+        <linguisticProcessors layer="entities">
+            <lp beginTimestamp="1745591638145" endTimestamp="1745591638145" hostname="https://galahad.ivdnt.org" name="sourceLayer" timestamp="1745591638145" version=""/>
+        </linguisticProcessors>
+    </nafHeader>
+    <raw><![CDATA[Fraaie historie ende alwaer.
+Magh 'k u vertellen, hoirt naer.
+
+'t Was op enen avondstonde.
+Dat koning Carel slaepen beghonde.
+
+"Martijn, slaepstu? slaept dijn sin?"
+Sprec! hebstu gheen spreken in?
+
+Du dinkes mi verdoren.
+Dune achtes meer no min
+]]></raw>
+    <text>
+        <wf id="karel.p1.s1.w1" length="6" offset="0" para="0" sent="1">Fraaie</wf>
+        <wf id="karel.p1.s1.w2" length="8" offset="7" para="0" sent="1">historie</wf>
+        <wf id="karel.p1.s1.w3" length="4" offset="16" para="0" sent="1">ende</wf>
+        <wf id="karel.p1.s1.w4" length="6" offset="21" para="0" sent="1">alwaer</wf>
+        <wf id="karel.p1.s1.w5" length="1" offset="27" para="0" sent="1">.</wf>
+        <wf id="karel.p1.s2.w1" length="4" offset="29" para="0" sent="2">Magh</wf>
+        <wf id="karel.p1.s2.w2" length="2" offset="34" para="0" sent="2">'k</wf>
+        <wf id="karel.p1.s2.w3" length="1" offset="37" para="0" sent="2">u</wf>
+        <wf id="karel.p1.s2.w4" length="9" offset="39" para="0" sent="2">vertellen</wf>
+        <wf id="karel.p1.s2.w5" length="1" offset="48" para="0" sent="2">,</wf>
+        <wf id="karel.p1.s2.w6" length="5" offset="50" para="0" sent="2">hoirt</wf>
+        <wf id="karel.p1.s2.w7" length="4" offset="56" para="0" sent="2">naer</wf>
+        <wf id="karel.p1.s2.w8" length="1" offset="60" para="0" sent="2">.</wf>
+        <wf id="karel.p2.s1.w1" length="2" offset="62" para="1" sent="3">'t</wf>
+        <wf id="karel.p2.s1.w2" length="3" offset="65" para="1" sent="3">Was</wf>
+        <wf id="karel.p2.s1.w3" length="2" offset="69" para="1" sent="3">op</wf>
+        <wf id="karel.p2.s1.w4" length="4" offset="72" para="1" sent="3">enen</wf>
+        <wf id="karel.p2.s1.w5" length="11" offset="77" para="1" sent="3">avondstonde</wf>
+        <wf id="karel.p2.s1.w6" length="1" offset="88" para="1" sent="3">.</wf>
+        <wf id="karel.p2.s2.w1" length="3" offset="90" para="1" sent="4">Dat</wf>
+        <wf id="karel.p2.s2.w2" length="6" offset="94" para="1" sent="4">koning</wf>
+        <wf id="karel.p2.s2.w3" length="5" offset="101" para="1" sent="4">Carel</wf>
+        <wf id="karel.p2.s2.w4" length="7" offset="107" para="1" sent="4">slaepen</wf>
+        <wf id="karel.p2.s2.w5" length="8" offset="115" para="1" sent="4">beghonde</wf>
+        <wf id="karel.p2.s2.w6" length="1" offset="123" para="1" sent="4">.</wf>
+        <wf id="martijn.p1.s1.w1" length="1" offset="125" para="2" sent="5">"</wf>
+        <wf id="martijn.p1.s1.w2" length="7" offset="126" para="2" sent="5">Martijn</wf>
+        <wf id="martijn.p1.s1.w3" length="1" offset="133" para="2" sent="5">,</wf>
+        <wf id="martijn.p1.s1.w4" length="8" offset="135" para="2" sent="5">slaepstu</wf>
+        <wf id="martijn.p1.s1.w5" length="1" offset="143" para="2" sent="5">?</wf>
+        <wf id="martijn.p1.s1.w6" length="6" offset="145" para="2" sent="5">slaept</wf>
+        <wf id="martijn.p1.s1.w7" length="4" offset="152" para="2" sent="5">dijn</wf>
+        <wf id="martijn.p1.s1.w8" length="3" offset="157" para="2" sent="5">sin</wf>
+        <wf id="martijn.p1.s1.w9" length="1" offset="160" para="2" sent="5">?</wf>
+        <wf id="martijn.p1.s1.w10" length="1" offset="161" para="2" sent="5">"</wf>
+        <wf id="martijn.p1.s2.w1" length="5" offset="163" para="2" sent="6">Sprec</wf>
+        <wf id="martijn.p1.s2.w2" length="1" offset="168" para="2" sent="6">!</wf>
+        <wf id="martijn.p1.s2.w3" length="6" offset="170" para="2" sent="6">hebstu</wf>
+        <wf id="martijn.p1.s2.w4" length="5" offset="177" para="2" sent="6">gheen</wf>
+        <wf id="martijn.p1.s2.w5" length="7" offset="183" para="2" sent="6">spreken</wf>
+        <wf id="martijn.p1.s2.w6" length="2" offset="191" para="2" sent="6">in</wf>
+        <wf id="martijn.p1.s2.w7" length="1" offset="193" para="2" sent="6">?</wf>
+        <wf id="martijn.p2.s1.w1" length="2" offset="195" para="3" sent="7">Du</wf>
+        <wf id="martijn.p2.s1.w2" length="6" offset="198" para="3" sent="7">dinkes</wf>
+        <wf id="martijn.p2.s1.w3" length="2" offset="205" para="3" sent="7">mi</wf>
+        <wf id="martijn.p2.s1.w4" length="8" offset="208" para="3" sent="7">verdoren</wf>
+        <wf id="martijn.p2.s1.w5" length="1" offset="216" para="3" sent="7">.</wf>
+        <wf id="martijn.p2.s2.w1" length="4" offset="218" para="3" sent="8">Dune</wf>
+        <wf id="martijn.p2.s2.w2" length="6" offset="223" para="3" sent="8">achtes</wf>
+        <wf id="martijn.p2.s2.w3" length="4" offset="230" para="3" sent="8">meer</wf>
+        <wf id="martijn.p2.s2.w4" length="2" offset="235" para="3" sent="8">no</wf>
+        <wf id="martijn.p2.s2.w5" length="3" offset="238" para="3" sent="8">min</wf>
+    </text>
+    <terms>
+        <term id="t0" lemma="fraai" pos="AA(degree=pos,position=prenom)">
+            <span>
+                <target id="karel.p1.s1.w1"/>
+            </span>
+        </term>
+        <term id="t1" lemma="historie" pos="NOU-C(number=sg)">
+            <span>
+                <target id="karel.p1.s1.w2"/>
+            </span>
+        </term>
+        <term id="t2" lemma="en" pos="CONJ(type=coor)">
+            <span>
+                <target id="karel.p1.s1.w3"/>
+            </span>
+        </term>
+        <term id="t3" lemma="alwaar" pos="ADV(type=reg)">
+            <span>
+                <target id="karel.p1.s1.w4"/>
+            </span>
+        </term>
+        <term id="t4" pos="PC">
+            <span>
+                <target id="karel.p1.s1.w5"/>
+            </span>
+        </term>
+        <term id="t5" lemma="mogen" pos="VRB(finiteness=fin,tense=pres)">
+            <span>
+                <target id="karel.p1.s2.w1"/>
+            </span>
+        </term>
+        <term id="t6" lemma="ik" pos="PD(type=pers,position=free)">
+            <span>
+                <target id="karel.p1.s2.w2"/>
+            </span>
+        </term>
+        <term id="t7" lemma="u" pos="PD(type=pers,position=free)">
+            <span>
+                <target id="karel.p1.s2.w3"/>
+            </span>
+        </term>
+        <term id="t8" lemma="vertellen" pos="VRB(finiteness=inf)">
+            <span>
+                <target id="karel.p1.s2.w4"/>
+            </span>
+        </term>
+        <term id="t9" pos="PC">
+            <span>
+                <target id="karel.p1.s2.w5"/>
+            </span>
+        </term>
+        <term id="t10" lemma="naarhoren" pos="VRB(finiteness=fin,tense=pres)">
+            <span>
+                <target id="karel.p1.s2.w6"/>
+            </span>
+        </term>
+        <term id="t11" lemma="naarhoren" pos="VRB(finiteness=fin,tense=pres)">
+            <span>
+                <target id="karel.p1.s2.w7"/>
+            </span>
+        </term>
+        <term id="t12" pos="PC">
+            <span>
+                <target id="karel.p1.s2.w8"/>
+            </span>
+        </term>
+        <term id="t13" lemma="het" pos="PD(type=pers,position=free)">
+            <span>
+                <target id="karel.p2.s1.w1"/>
+            </span>
+        </term>
+        <term id="t14" lemma="zijn" pos="VRB(finiteness=fin,tense=past)">
+            <span>
+                <target id="karel.p2.s1.w2"/>
+            </span>
+        </term>
+        <term id="t15" lemma="op" pos="ADP(type=pre)">
+            <span>
+                <target id="karel.p2.s1.w3"/>
+            </span>
+        </term>
+        <term id="t16" lemma="een" pos="PD(type=indef,subtype=art,position=prenom)">
+            <span>
+                <target id="karel.p2.s1.w4"/>
+            </span>
+        </term>
+        <term id="t17" lemma="avondstond" pos="NOU-C(number=sg)">
+            <span>
+                <target id="karel.p2.s1.w5"/>
+            </span>
+        </term>
+        <term id="t18" pos="PC">
+            <span>
+                <target id="karel.p2.s1.w6"/>
+            </span>
+        </term>
+        <term id="t19" lemma="dat" pos="CONJ(type=sub)">
+            <span>
+                <target id="karel.p2.s2.w1"/>
+            </span>
+        </term>
+        <term id="t20" lemma="koning" pos="NOU-C(number=sg)">
+            <span>
+                <target id="karel.p2.s2.w2"/>
+            </span>
+        </term>
+        <term id="t21" lemma="Carel" pos="NOU-P">
+            <span>
+                <target id="karel.p2.s2.w3"/>
+            </span>
+        </term>
+        <term id="t22" lemma="slaap" pos="NOU-C(number=pl)">
+            <span>
+                <target id="karel.p2.s2.w4"/>
+            </span>
+        </term>
+        <term id="t23" lemma="beginnen" pos="VRB(finiteness=fin,tense=past)">
+            <span>
+                <target id="karel.p2.s2.w5"/>
+            </span>
+        </term>
+        <term id="t24" pos="PC">
+            <span>
+                <target id="karel.p2.s2.w6"/>
+            </span>
+        </term>
+        <term id="t25" pos="PC">
+            <span>
+                <target id="martijn.p1.s1.w1"/>
+            </span>
+        </term>
+        <term id="t26" lemma="Martijn" pos="NOU-P">
+            <span>
+                <target id="martijn.p1.s1.w2"/>
+            </span>
+        </term>
+        <term id="t27" pos="PC">
+            <span>
+                <target id="martijn.p1.s1.w3"/>
+            </span>
+        </term>
+        <term id="t28" lemma="slapen+du" pos="VRB(finiteness=fin,tense=pres)+PD(type=pers,position=free)">
+            <span>
+                <target id="martijn.p1.s1.w4"/>
+            </span>
+        </term>
+        <term id="t29" pos="PC">
+            <span>
+                <target id="martijn.p1.s1.w5"/>
+            </span>
+        </term>
+        <term id="t30" lemma="slapen" pos="VRB(finiteness=fin,tense=pres)">
+            <span>
+                <target id="martijn.p1.s1.w6"/>
+            </span>
+        </term>
+        <term id="t31" lemma="dijn" pos="PD(type=poss,position=prenom)">
+            <span>
+                <target id="martijn.p1.s1.w7"/>
+            </span>
+        </term>
+        <term id="t32" lemma="zin" pos="NOU-C(number=sg)">
+            <span>
+                <target id="martijn.p1.s1.w8"/>
+            </span>
+        </term>
+        <term id="t33" pos="PC">
+            <span>
+                <target id="martijn.p1.s1.w9"/>
+            </span>
+        </term>
+        <term id="t34" pos="PC">
+            <span>
+                <target id="martijn.p1.s1.w10"/>
+            </span>
+        </term>
+        <term id="t35" lemma="spreken" pos="VRB(finiteness=fin,tense=pres)">
+            <span>
+                <target id="martijn.p1.s2.w1"/>
+            </span>
+        </term>
+        <term id="t36" pos="PC">
+            <span>
+                <target id="martijn.p1.s2.w2"/>
+            </span>
+        </term>
+        <term id="t37" lemma="inhebben+du" pos="VRB(finiteness=fin,tense=pres)+PD(type=pers,position=free)">
+            <span>
+                <target id="martijn.p1.s2.w3"/>
+            </span>
+        </term>
+        <term id="t38" lemma="geen" pos="PD(type=indef,subtype=oth,position=prenom)">
+            <span>
+                <target id="martijn.p1.s2.w4"/>
+            </span>
+        </term>
+        <term id="t39" lemma="spreken" pos="NOU-C(number=sg)">
+            <span>
+                <target id="martijn.p1.s2.w5"/>
+            </span>
+        </term>
+        <term id="t40" lemma="inhebben+du" pos="VRB(finiteness=fin,tense=pres)+PD(type=pers,position=free)">
+            <span>
+                <target id="martijn.p1.s2.w6"/>
+            </span>
+        </term>
+        <term id="t41" pos="PC">
+            <span>
+                <target id="martijn.p1.s2.w7"/>
+            </span>
+        </term>
+        <term id="t42" lemma="du" pos="PD(type=pers,position=free)">
+            <span>
+                <target id="martijn.p2.s1.w1"/>
+            </span>
+        </term>
+        <term id="t43" lemma="dunken" pos="VRB(finiteness=fin,tense=pres)">
+            <span>
+                <target id="martijn.p2.s1.w2"/>
+            </span>
+        </term>
+        <term id="t44" lemma="ik" pos="PD(type=pers,position=free)">
+            <span>
+                <target id="martijn.p2.s1.w3"/>
+            </span>
+        </term>
+        <term id="t45" lemma="verdoren" pos="VRB(finiteness=inf)">
+            <span>
+                <target id="martijn.p2.s1.w4"/>
+            </span>
+        </term>
+        <term id="t46" pos="PC">
+            <span>
+                <target id="martijn.p2.s1.w5"/>
+            </span>
+        </term>
+        <term id="t47" lemma="du+ne" pos="PD(type=pers,position=free)+ADV(type=reg)">
+            <span>
+                <target id="martijn.p2.s2.w1"/>
+            </span>
+        </term>
+        <term id="t48" lemma="achten" pos="VRB(finiteness=fin,tense=pres)">
+            <span>
+                <target id="martijn.p2.s2.w2"/>
+            </span>
+        </term>
+        <term id="t49" lemma="meer" pos="PD(type=indef,position=free)">
+            <span>
+                <target id="martijn.p2.s2.w3"/>
+            </span>
+        </term>
+        <term id="t50" lemma="noch" pos="CONJ(type=coor)">
+            <span>
+                <target id="martijn.p2.s2.w4"/>
+            </span>
+        </term>
+        <term id="t51" lemma="min" pos="PD(type=indef,position=free)">
+            <span>
+                <target id="martijn.p2.s2.w5"/>
+            </span>
+        </term>
+    </terms>
+    <entities>
+        <entity id="karel.p2.s2.w2_karel.p2.s2.w3" type="PER">
+            <references>
+                <span>
+                    <target id="karel.p2.s2.w2"/>
+                    <target id="karel.p2.s2.w3"/>
+                </span>
+            </references>
+        </entity>
+        <entity id="martijn.p1.s1.w2" type="PER">
+            <references>
+                <span>
+                    <target id="martijn.p1.s1.w2"/>
+                </span>
+            </references>
+        </entity>
+    </entities>
+</NAF>

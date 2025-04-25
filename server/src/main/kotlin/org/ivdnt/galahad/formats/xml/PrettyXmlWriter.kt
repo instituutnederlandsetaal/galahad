@@ -2,7 +2,7 @@ package org.ivdnt.galahad.formats.xml
 
 import org.codehaus.stax2.XMLStreamWriter2
 
-class PrettyXMLStreamWriter(private val writer: XMLStreamWriter2) : XMLStreamWriter2 by writer {
+class PrettyXMLWriter(private val writer: XMLStreamWriter2) : XMLStreamWriter2 by writer {
     private var indentLevel = 0
     private val indentStr = " ".repeat(4)
     private var newLine = true

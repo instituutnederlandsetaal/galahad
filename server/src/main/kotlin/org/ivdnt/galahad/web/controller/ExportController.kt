@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpServletResponse
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.app.JOB_DOCUMENT_URL
 import org.ivdnt.galahad.app.JOB_URL
-import org.ivdnt.galahad.corpora.documents.DocumentFormat
+import org.ivdnt.galahad.documents.DocumentFormat
 import org.ivdnt.galahad.exceptions.ErrorResponse
 import org.ivdnt.galahad.util.setContentDisposition
 import org.ivdnt.galahad.web.service.CorporaService

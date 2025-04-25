@@ -2,7 +2,7 @@ package org.ivdnt.galahad.evaluation.distribution
 
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Layer
-import org.ivdnt.galahad.corpora.documents.DocumentMetadata
+import org.ivdnt.galahad.documents.DocumentMetadata
 
 /**
  * The frequency distribution of terms in a document for a specific tagger layer.

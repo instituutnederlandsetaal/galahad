@@ -1,4 +1,4 @@
-package org.ivdnt.galahad.corpora.documents
+package org.ivdnt.galahad.documents
 
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonValue

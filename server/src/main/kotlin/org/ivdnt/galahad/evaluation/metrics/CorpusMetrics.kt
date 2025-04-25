@@ -3,7 +3,7 @@ package org.ivdnt.galahad.evaluation.metrics
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.corpora.Corpus
-import org.ivdnt.galahad.corpora.jobs.Job
+import org.ivdnt.galahad.jobs.Job
 import org.ivdnt.galahad.evaluation.comparison.LayerFilter
 import org.ivdnt.galahad.taggers.Tagger
 

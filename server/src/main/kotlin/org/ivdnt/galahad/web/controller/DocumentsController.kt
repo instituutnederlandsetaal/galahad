@@ -11,7 +11,7 @@ import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.app.DOCUMENTS_URL
 import org.ivdnt.galahad.app.DOCUMENT_RAW_FILE_URL
 import org.ivdnt.galahad.app.DOCUMENT_URL
-import org.ivdnt.galahad.corpora.documents.DocumentMetadata
+import org.ivdnt.galahad.documents.DocumentMetadata
 import org.ivdnt.galahad.exceptions.ErrorResponse
 import org.ivdnt.galahad.util.setContentDisposition
 import org.ivdnt.galahad.web.service.CorporaService

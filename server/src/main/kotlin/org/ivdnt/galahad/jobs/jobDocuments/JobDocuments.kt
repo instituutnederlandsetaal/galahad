@@ -1,4 +1,4 @@
-package org.ivdnt.galahad.corpora.jobs.jobDocuments
+package org.ivdnt.galahad.jobs.jobDocuments
 
 import org.ivdnt.galahad.exceptions.DocumentJobNotFoundException
 import org.ivdnt.galahad.files.GalahadFolderManager

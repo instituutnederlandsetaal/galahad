@@ -1,8 +1,8 @@
-package org.ivdnt.galahad.corpora.jobs.jobDocuments
+package org.ivdnt.galahad.jobs.jobDocuments
 
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.annotations.Layer
-import org.ivdnt.galahad.corpora.jobs.jobDocuments.JobDocument.DocumentProcessingStatus
+import org.ivdnt.galahad.jobs.jobDocuments.JobDocument.DocumentProcessingStatus
 import org.ivdnt.galahad.files.DiskValue
 import org.ivdnt.galahad.files.GalahadFolder
 import java.io.File

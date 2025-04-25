@@ -1,7 +1,5 @@
 package org.ivdnt.galahad.annotations
 
-import kotlin.collections.plus
-
 abstract class AnnotationReader {
     val layer: Layer by lazy { read() }
 
@@ -47,23 +45,29 @@ abstract class AnnotationReader {
     }
 
     protected open fun newSentence() {
+        newWordform()
         if (terms.isNotEmpty()) {
-            // loop through all the terms and turn the NER into a span
-            val indices = mutableListOf<Int>()
-            terms.forEachIndexed { i, t ->
-                t.ner?.let {
-                   indices += i
-                }
-            }
-            if (indices.isNotEmpty()) {
-                val ners = mutableListOf<TermSpan>()
-                ners += TermSpan(indices, terms[indices.first()].annotationHead(Annotation.NER)!!)
-                spans[Annotation.NER] = ners.toTypedArray()
-            }
-
+            extractSpans()
             sentences.add(SentenceLayer(sentID(), terms.toTypedArray(), spans.toMap()))
             terms.clear()
             spans.clear()
+        }
+    }
+
+    protected open fun newWordform() {}
+
+    private fun extractSpans() {
+        // loop through all the terms and turn the NER into a span
+        val indices = mutableListOf<Int>()
+        terms.forEachIndexed { i, t ->
+            t.ner?.let {
+                indices += i
+            }
+        }
+        if (indices.isNotEmpty()) {
+            val ners = mutableListOf<TermSpan>()
+            ners += TermSpan(indices, terms[indices.first()].annotationHead(Annotation.NER)!!)
+            spans[Annotation.NER] = ners.toTypedArray()
         }
     }
 }

@@ -1,15 +1,14 @@
-package org.ivdnt.galahad.corpora.jobs
+package org.ivdnt.galahad.jobs
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.corpora.Corpus
-import org.ivdnt.galahad.corpora.documents.Document
-import org.ivdnt.galahad.corpora.jobs.jobDocuments.JobDocument.DocumentProcessingStatus
-import org.ivdnt.galahad.corpora.jobs.jobDocuments.JobDocuments
+import org.ivdnt.galahad.documents.Document
+import org.ivdnt.galahad.jobs.jobDocuments.JobDocument.DocumentProcessingStatus
+import org.ivdnt.galahad.jobs.jobDocuments.JobDocuments
 import org.ivdnt.galahad.evaluation.metrics.CorpusMetrics
 import org.ivdnt.galahad.evaluation.metrics.FlatMetricType
 import org.ivdnt.galahad.evaluation.metrics.METRIC_TYPES
@@ -19,6 +18,7 @@ import org.ivdnt.galahad.exceptions.TaggerNoConnectionException
 import org.ivdnt.galahad.files.GalahadFolder
 import org.ivdnt.galahad.files.ValidatedDiskValue
 import org.ivdnt.galahad.taggers.Tagger
+import org.ivdnt.galahad.util.JsonUtil
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.*
 import org.springframework.util.LinkedMultiValueMap
@@ -39,7 +39,7 @@ private const val METADATA_FILE = "metadata.json"
 /**
  * A job is saved to disk as a folder under jobs/ (managed by [Jobs]), with the following files:
  *
- * - documents/: a folder containing all documents in the job. A single document is represented by [org.ivdnt.galahad.corpora.jobs.jobDocuments.JobDocument]. These can be retrieved with [readOrThrow].
+ * - documents/: a folder containing all documents in the job. A single document is represented by [org.ivdnt.galahad.jobs.jobDocuments.JobDocument]. These can be retrieved with [readOrThrow].
  * - _isActive: a file that stores whether the job is currently being processed by the tagger.
  * - assay.cache: a cache file storing the global [Metrics] of the job.
  * - state.cache: a cache file storing the [JobMetadata] of the job.
@@ -61,7 +61,7 @@ class Job(
             .any { it.status == DocumentProcessingStatus.FINISHED }
 
     /**
-     * Progress of the job based on the status of the [org.ivdnt.galahad.corpora.jobs.jobDocuments.JobDocument]s of this job.
+     * Progress of the job based on the status of the [org.ivdnt.galahad.jobs.jobDocuments.JobDocument]s of this job.
      */
     val progress: Progress
         get() {
@@ -148,7 +148,7 @@ class Job(
             // If not, delete pid.
             try {
                 val jsonStr: String? = taggerRequest(this, "status/${documentJob.processingID!!}", HttpMethod.GET, String::class.java)
-                val json = mapper.readTree(jsonStr)
+                val json = JsonUtil.mapper.readTree(jsonStr)
                 val busy = json.get("busy").asBoolean()
                 val pending = json.get("pending").asBoolean()
                 if (!busy && !pending) {
@@ -190,7 +190,7 @@ class Job(
     /**
      * Upload documents to the tagger where they will be automatically processed.
      * Only ever upload as many files such that there are [DOC_PARALLELIZATION_SIZE] number of documents at the tagger.
-     * Upon upload, a processingID is returned by the tagger, which we store in the respective [org.ivdnt.galahad.corpora.jobs.jobDocuments.JobDocument].
+     * Upon upload, a processingID is returned by the tagger, which we store in the respective [org.ivdnt.galahad.jobs.jobDocuments.JobDocument].
      */
     private fun uploadDocs() {
         // Quickly count the documents currently being processed
@@ -257,8 +257,6 @@ class Job(
     }
 
     companion object {
-        private val mapper: ObjectMapper = ObjectMapper()
-
         private fun <T : Any> taggerRequest(
             job: Job, route: String, method: HttpMethod, type: Class<T>,
             requestEntity: HttpEntity<LinkedMultiValueMap<String, Any>>? = null,
