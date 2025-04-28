@@ -2,7 +2,7 @@
 <NAF version="v3.3" xml:lang="dum">
     <nafHeader>
         <fileDesc author="user" creationtime="1745591638145" filename="input.conllu" filetype="conllu" title="input.conllu"/>
-        <public publicId="8701d5ce-be9c-4a02-91a5-8663da93a14e"/>
+        <public publicId="galahadTest"/>
         <linguisticProcessors layer="terms">
             <lp beginTimestamp="1745591638145" endTimestamp="1745591638145" hostname="https://galahad.ivdnt.org" name="sourceLayer" timestamp="1745591638145" version=""/>
         </linguisticProcessors>

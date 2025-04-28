@@ -12,12 +12,16 @@ class FoliaReader(
     override val wordTags: Array<String> = WORD_TAGS
     override val ignorableTags: Array<String> = IGNORABLE_TAGS
     override val wordDataTags: Array<String> = WORD_DATA_TAGS
+    override val spanTags: Array<String> = SPAN_TAGS
+    override val spanDataTags: Array<String> = SPAN_DATA_TAGS
 
     override fun parseAttrs() {
         when (reader.localName) {
             "pos" -> pos = reader.getAttributeValue(null, "class")
             "lemma" -> lemma = reader.getAttributeValue(null, "class")
             "w" -> spaceAfter = reader.getAttributeValue(null, "space") != "no"
+            "entity" -> spanValue = reader.getAttributeValue(null, "class")
+            "wref" -> reader.getAttributeValue(null, "id")?.let { spanTargets += it }
         }
     }
 
@@ -30,5 +34,7 @@ class FoliaReader(
         private val WORD_TAGS = arrayOf("w")
         private val WORD_DATA_TAGS = arrayOf("w", "lemma", "pos")
         private val IGNORABLE_TAGS = arrayOf("morphology", "note", "figure", "comment", "original", "suggestion")
+        private val SPAN_TAGS = arrayOf("entity")
+        private val SPAN_DATA_TAGS = arrayOf("wref", "entity")
     }
 }

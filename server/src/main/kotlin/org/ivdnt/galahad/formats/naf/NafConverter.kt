@@ -25,61 +25,11 @@ class NafConverter(export: DocumentExport) : LayerConverter(export) {
         addRaw(xml, root)
         addText(xml, root)
         addTerms(xml, root)
-        addEntities(xml, root)
+        if (Annotation.NER in export.tagger.annotations) {
+            addEntities(xml, root)
+        }
 
         XmlUtil.transformer.transform(DOMSource(root), StreamResult(out))
-    }
-
-    private fun addTerms(xml: Document, root: Element) {
-        val terms = xml.createElement("terms")
-        root.appendChild(terms)
-        export.layer.terms.forEachIndexed { i, it ->
-            val term = xml.createElement("term").apply {
-                setAttribute("id", "t$i")
-            }
-            it.lemma?.let { term.setAttribute("lemma", it) }
-            it.pos?.let { term.setAttribute("pos", it) }
-            terms.appendChild(term)
-
-            // target span
-            val target = xml.createElement("target").apply {
-                setAttribute("id", it.id)
-            }
-            val span = xml.createElement("span").apply {
-                appendChild(target)
-            }
-            term.appendChild(span)
-        }
-    }
-
-    private fun addText(xml: Document, root: Element) {
-        val text = xml.createElement("text")
-        root.appendChild(text)
-        val paragraphs = export.layer.documents.flatMap { it.paragraphs.asSequence() }
-        var iSent = 1
-        paragraphs.forEachIndexed { iPar, paragraph ->
-            paragraph.sentences.forEach { sentence ->
-                sentence.terms.forEach { t ->
-                    val wf = xml.createElement("wf").apply {
-                        setAttribute("id", t.id)
-                        setAttribute("offset", t.offset.toString())
-                        setAttribute("length", t.token.length.toString())
-                        setAttribute("sent", iSent.toString())
-                        setAttribute("para", iPar.toString())
-                        textContent = t.token
-                    }
-                    text.appendChild(wf)
-                }
-                iSent++
-            }
-        }
-    }
-
-    private fun addRaw(xml: Document, root: Element) {
-        val cdata = xml.createCDATASection(export.layer.toString())
-        val raw = xml.createElement("raw")
-        raw.appendChild(cdata)
-        root.appendChild(raw)
     }
 
     private fun addNafHeader(xml: Document, root: Element) {
@@ -95,7 +45,7 @@ class NafConverter(export: DocumentExport) : LayerConverter(export) {
         }
         nafHeader.appendChild(fileDesc)
         val public = xml.createElement("public").apply {
-            setAttribute("publicId", export.document.metadata.uuid.toString())
+            setAttribute("publicId", export.layer.id)
         }
         nafHeader.appendChild(public)
 
@@ -127,6 +77,58 @@ class NafConverter(export: DocumentExport) : LayerConverter(export) {
             }
             lpDep.appendChild(lp.cloneNode(true))
             nafHeader.appendChild(lpDep)
+        }
+    }
+
+    private fun addRaw(xml: Document, root: Element) {
+        val cdata = xml.createCDATASection(export.layer.toString())
+        val raw = xml.createElement("raw")
+        raw.appendChild(cdata)
+        root.appendChild(raw)
+    }
+
+    private fun addText(xml: Document, root: Element) {
+        val text = xml.createElement("text")
+        root.appendChild(text)
+        val paragraphs = export.layer.documents.flatMap { it.paragraphs.asSequence() }
+        var iSent = 1
+        paragraphs.forEachIndexed { iPar, paragraph ->
+            paragraph.sentences.forEach { sentence ->
+                sentence.terms.forEach { t ->
+                    val wf = xml.createElement("wf").apply {
+                        setAttribute("id", t.id)
+                        setAttribute("offset", t.offset.toString())
+                        setAttribute("length", t.token.length.toString())
+                        setAttribute("sent", iSent.toString())
+                        setAttribute("para", iPar.toString())
+                        textContent = t.token
+                    }
+                    text.appendChild(wf)
+                }
+                iSent++
+            }
+        }
+    }
+
+    private fun addTerms(xml: Document, root: Element) {
+        val terms = xml.createElement("terms")
+        root.appendChild(terms)
+        export.layer.terms.forEachIndexed { i, it ->
+            val term = xml.createElement("term").apply {
+                setAttribute("id", "t$i")
+            }
+            it.lemma?.let { term.setAttribute("lemma", it) }
+            it.pos?.let { term.setAttribute("pos", it) }
+            terms.appendChild(term)
+
+            // target span
+            val target = xml.createElement("target").apply {
+                setAttribute("id", it.id)
+            }
+            val span = xml.createElement("span").apply {
+                appendChild(target)
+            }
+            term.appendChild(span)
         }
     }
 

@@ -1,6 +1,6 @@
 package org.ivdnt.galahad.annotations
 
-data class TermSpan(
-    val indices: List<Int>,
+class TermSpan(
+    val indices: IntArray,
     val value: String,
 )

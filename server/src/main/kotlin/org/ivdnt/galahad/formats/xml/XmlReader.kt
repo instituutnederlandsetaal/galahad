@@ -4,6 +4,7 @@ import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.AnnotationReader
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.Term
+import org.ivdnt.galahad.annotations.TermSpan
 import org.ivdnt.galahad.util.XmlUtil
 import java.io.InputStream
 import java.util.UUID
@@ -16,16 +17,24 @@ abstract class XmlReader(stream: InputStream) : AnnotationReader() {
     protected var lemma: String? = null
     protected var literal: String = ""
     protected var spaceAfter: Boolean = true
+    protected var spanValue: String? = null
+    protected var spanTargets: MutableList<String> = mutableListOf()
+
     protected val reader: XMLStreamReader by lazy { XmlUtil.inputFactory.createXMLStreamReader(stream) }
+
     private val currentXmlID: String?
         get() = reader.getAttributeValue(XMLConstants.XML_NS_URI, "id")?.takeIf { it.isNotBlank() }
     private var ignoring: Boolean = false
+
+    abstract val spanTags: Array<String>
+    abstract val spanDataTags: Array<String>
     abstract val documentTags: Array<String>
     abstract val paragraphTags: Array<String>
     abstract val sentenceTags: Array<String>
     abstract val wordTags: Array<String>
     abstract val wordDataTags: Array<String>
     abstract val ignorableTags: Array<String>
+
 
     final override fun read(): Layer {
         // retrieve the XML ID of the document root
@@ -61,10 +70,32 @@ abstract class XmlReader(stream: InputStream) : AnnotationReader() {
                         in paragraphTags -> newParagraph()
                         in sentenceTags -> newSentence()
                         in wordTags -> newWordform()
+                        in spanTags -> newSpan()
                     }
                 }
             }
         }
+    }
+
+    override fun newSentence() {
+        // edit the NER value of the terms if spans are present
+        spans[Annotation.NER]?.forEach { span ->
+            span.indices.forEachIndexed { spanI, termI ->
+                // Note the difference spanI and termI; e.g. span.indices = [4, 5]; so (0, 4) = (1, 5)
+                val t = terms[termI]
+                val iob = (if (spanI == 0) "B-" else "I-") + span.value
+                terms[termI] = Term(t.id, t.offset, t.annotations + (Annotation.NER to iob), t.spaceAfter)
+            }
+        }
+        super.newSentence()
+    }
+
+    fun newSpan() {
+        if (spanValue == null) return
+        val indices = spanTargets.map { id -> terms.indexOfFirst { t -> t.id == id } }.toIntArray()
+        spans.getOrPut(Annotation.NER, ::mutableListOf) += TermSpan(indices, spanValue!!)
+        spanValue = null
+        spanTargets.clear()
     }
 
     protected abstract fun parseAttrs()
@@ -88,6 +119,7 @@ abstract class XmlReader(stream: InputStream) : AnnotationReader() {
         }
         terms += Term(wordID(), offset, annotations, spaceAfter)
         offset += literal.length
+        if (spaceAfter) offset++
         literal = ""
         lemma = null
         pos = null

@@ -1,0 +1,63 @@
+token	lemma	pos	ner
+Fraaie	fraai	AA(degree=pos,position=prenom)
+historie	historie	NOU-C(number=sg)
+ende	en	CONJ(type=coor)
+alwaer	alwaar	ADV(type=reg)
+.		PC
+
+Magh	mogen	VRB(finiteness=fin,tense=pres)
+'k	ik	PD(type=pers,position=free)
+u	u	PD(type=pers,position=free)
+vertellen	vertellen	VRB(finiteness=inf)
+,		PC
+hoirt	naarhoren	VRB(finiteness=fin,tense=pres)
+naer	naarhoren	VRB(finiteness=fin,tense=pres)
+.		PC
+
+
+'t	het	PD(type=pers,position=free)
+Was	zijn	VRB(finiteness=fin,tense=past)
+op	op	ADP(type=pre)
+enen	een	PD(type=indef,subtype=art,position=prenom)
+avondstonde	avondstond	NOU-C(number=sg)
+.		PC
+
+Dat	dat	CONJ(type=sub)
+koning	koning	NOU-C(number=sg)	B-PER
+Carel	Carel	NOU-P	I-PER
+slaepen	slaap	NOU-C(number=pl)
+beghonde	beginnen	VRB(finiteness=fin,tense=past)
+.		PC
+
+
+"		PC
+Martijn	Martijn	NOU-P	B-PER
+,		PC
+slaepstu	slapen+du	VRB(finiteness=fin,tense=pres)+PD(type=pers,position=free)
+?		PC
+slaept	slapen	VRB(finiteness=fin,tense=pres)
+dijn	dijn	PD(type=poss,position=prenom)
+sin	zin	NOU-C(number=sg)
+?		PC
+"		PC
+
+Sprec	spreken	VRB(finiteness=fin,tense=pres)
+!		PC
+hebstu	inhebben+du	VRB(finiteness=fin,tense=pres)+PD(type=pers,position=free)
+gheen	geen	PD(type=indef,subtype=oth,position=prenom)
+spreken	spreken	NOU-C(number=sg)
+in	inhebben+du	VRB(finiteness=fin,tense=pres)+PD(type=pers,position=free)
+?		PC
+
+
+Du	du	PD(type=pers,position=free)
+dinkes	dunken	VRB(finiteness=fin,tense=pres)
+mi	ik	PD(type=pers,position=free)
+verdoren	verdoren	VRB(finiteness=inf)
+.		PC
+
+Dune	du+ne	PD(type=pers,position=free)+ADV(type=reg)
+achtes	achten	VRB(finiteness=fin,tense=pres)
+meer	meer	PD(type=indef,position=free)
+no	noch	CONJ(type=coor)
+min	min	PD(type=indef,position=free)

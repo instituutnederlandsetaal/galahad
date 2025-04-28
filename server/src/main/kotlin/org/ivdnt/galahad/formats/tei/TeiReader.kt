@@ -2,10 +2,13 @@ package org.ivdnt.galahad.formats.tei
 
 import org.ivdnt.galahad.formats.xml.XmlReader
 import java.io.BufferedInputStream
+import javax.xml.XMLConstants
 
 class TeiReader(
     stream: BufferedInputStream,
 ) : XmlReader(stream) {
+    override val spanTags: Array<String> = SPAN_TAGS
+    override val spanDataTags: Array<String> = SPAN_DATA_TAGS
     override val documentTags: Array<String> = DOCUMENT_TAGS
     override val paragraphTags: Array<String> = PARAGRAPH_TAGS
     override val sentenceTags: Array<String> = SENTENCE_TAGS
@@ -14,11 +17,23 @@ class TeiReader(
     override val wordDataTags: Array<String> = WORD_DATA_TAGS
 
     override fun parseAttrs() {
-        lemma = reader.getAttributeValue(null, "lemma")?.takeIf { it.isNotBlank() }
-        pos =
-            reader.getAttributeValue(null, "pos")?.takeIf { it.isNotBlank() } ?: reader.getAttributeValue(null, "type")
-                ?.takeIf { it.isNotBlank() }
-        spaceAfter = reader.getAttributeValue(null, "join") !in arrayOf("right", "both")
+        when (reader.localName) {
+            in wordDataTags -> {
+                lemma = reader.getAttributeValue(null, "lemma")?.takeIf { it.isNotBlank() }
+                pos = reader.getAttributeValue(null, "pos")?.takeIf { it.isNotBlank() } ?: reader.getAttributeValue(
+                    null,
+                    "type"
+                )?.takeIf { it.isNotBlank() }
+                spaceAfter = reader.getAttributeValue(null, "join") !in arrayOf("right", "both")
+                // if spanValue is not null, it means we are in a span tag
+                if (spanValue != null) {
+                    spanTargets.add(reader.getAttributeValue(XMLConstants.XML_NS_URI, "id"))
+                }
+            }
+            in SPAN_TAGS -> {
+                spanValue = reader.getAttributeValue(null, "type")
+            }
+        }
     }
 
     companion object {
@@ -27,6 +42,8 @@ class TeiReader(
         private val WORD_DATA_TAGS = arrayOf("w", "pc")
         private val SENTENCE_TAGS = arrayOf("s", "l", "u")
         private val IGNORABLE_TAGS = arrayOf("note", "listBibl", "listWit", "figure", "xr", "fs", "del")
+        private val SPAN_TAGS = arrayOf("name")
+        private val SPAN_DATA_TAGS = arrayOf("w", "name")
         private val PARAGRAPH_TAGS = arrayOf(
             "text", // top most <text> defines a document, any other <text> is treated as a paragraph
             "body",

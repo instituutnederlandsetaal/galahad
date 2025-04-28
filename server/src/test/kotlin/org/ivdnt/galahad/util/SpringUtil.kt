@@ -1,4 +1,4 @@
-package org.ivdnt.galahad
+package org.ivdnt.galahad.util
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -31,7 +31,7 @@ object UserHeader {
 
 fun createCorpus(config: Config): Corpus {
     val workdir = config.getWorkingDirectory().resolve("corpora").resolve("custom")
-    return org.ivdnt.galahad.formats.createCorpus(workdir)
+    return TestUtil.createCorpus(workdir)
 }
 
 fun MockMvc.uploadFile(file: File, corpus: Corpus, mediaType: String = MediaType.TEXT_PLAIN_VALUE): MvcResult {

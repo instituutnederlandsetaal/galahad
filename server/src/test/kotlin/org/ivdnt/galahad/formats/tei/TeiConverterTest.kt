@@ -1,28 +1,37 @@
 package org.ivdnt.galahad.formats.tei
 
-import org.ivdnt.galahad.formats.Resource
-import org.junit.jupiter.api.Assertions.*
+import org.ivdnt.galahad.documents.DocumentFormat
+import org.ivdnt.galahad.formats.ConverterTest
 import org.junit.jupiter.api.Test
-import java.io.ByteArrayOutputStream
-import java.io.OutputStream
-import java.io.OutputStreamWriter
-import java.io.StringWriter
 
-class TeiConverterTest {
-    fun test(path: String) {
-        val layer = TeiReader(Resource.get(path)).layer
-        val outputStream = ByteArrayOutputStream()
-        TeiConverter(layer).convert(outputStream)
-        println(outputStream.toString())
+class TeiConverterTest : ConverterTest() {
+    @Test
+    fun `Tei to Tei`() {
+        formatToFormat(DocumentFormat.TeiP5, DocumentFormat.TeiP5)
     }
 
     @Test
-    fun `Read and write`() {
-        test("tei/docs-pars-sents/input.tei.xml")
+    fun `Tei to Folia`() {
+        formatToFormat(DocumentFormat.TeiP5, DocumentFormat.Folia)
     }
 
     @Test
-    fun `Rijmbijbel`() {
-        test("tei/4000.tei.xml")
+    fun `Tei to Tsv`() {
+        formatToFormat(DocumentFormat.TeiP5, DocumentFormat.Tsv)
+    }
+
+    @Test
+    fun `Tei to TXT`() {
+        formatToFormat(DocumentFormat.TeiP5, DocumentFormat.Txt)
+    }
+
+    @Test
+    fun `Tei to Conllu`() {
+        formatToFormat(DocumentFormat.TeiP5, DocumentFormat.Conllu)
+    }
+
+    @Test
+    fun `Tei to Naf`() {
+        formatToFormat(DocumentFormat.TeiP5, DocumentFormat.Naf)
     }
 }

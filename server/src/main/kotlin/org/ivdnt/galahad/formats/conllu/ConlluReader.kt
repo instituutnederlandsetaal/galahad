@@ -117,9 +117,9 @@ class ConlluReader(
         for (column in indices.keys) {
             getColumn(column, fields)?.let { annotations[column] = it }
         }
-        terms += Term("${sentID()}.${wordID()}", offset, annotations, spaceAfter)
+        terms += Term(wordID(), offset, annotations, spaceAfter)
         offset += fields[1].length
-        if (spaceAfter) offset++ // add space after
+        if (spaceAfter) offset++ // space after
     }
 
     companion object {

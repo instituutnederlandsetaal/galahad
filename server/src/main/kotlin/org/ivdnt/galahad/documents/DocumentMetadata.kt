@@ -22,8 +22,6 @@ data class DocumentMetadata(
     val layerSummary: LayerSummary,
     /** Last modified timestamp in milliseconds. */
     val lastModified: Long,
-    /** UUID of the document. */
-    val uuid: String,
     /** Annotation types in the source layer. */
     val annotations: Set<Annotation>,
 ) {
@@ -41,7 +39,6 @@ data class DocumentMetadata(
                 layerPreview = file.layer.preview,
                 layerSummary = file.layer.summary,
                 lastModified = System.currentTimeMillis(),
-                uuid = file.layer.id,
                 annotations = file.layer.terms.flatMap { it.annotations.keys }.toSet()
             )
         }

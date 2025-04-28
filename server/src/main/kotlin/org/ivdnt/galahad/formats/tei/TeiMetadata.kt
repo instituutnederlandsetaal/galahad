@@ -19,7 +19,7 @@ class TeiMetadata(
 ) : XmlUtil(xml) {
 
     /** GaLAHaD-generated UUID */
-    private val internalPid: String = export.document.metadata.uuid.toString()
+    private val internalPid: String = export.layer.id
 
     /**
      * Return the title of the document as described in titleStmt,

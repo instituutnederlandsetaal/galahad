@@ -7,8 +7,8 @@ import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.documents.Document
 import org.ivdnt.galahad.documents.DocumentFormat
 import org.ivdnt.galahad.documents.Documents
-import org.ivdnt.galahad.jobs.Job
 import org.ivdnt.galahad.exceptions.MergeNotImplementedException
+import org.ivdnt.galahad.jobs.Job
 import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.util.FileMapper
 import org.ivdnt.galahad.util.createZipFile
@@ -17,11 +17,11 @@ import java.io.OutputStream
 class CorpusExport private constructor(
     val corpus: Corpus,
     val job: Job,
-    val user: User,
     val format: DocumentFormat,
-    val posHeadOnly: Boolean,
+    val user: User,
     val tagger: Tagger,
     val shouldMerge: Boolean,
+    val posHeadOnly: Boolean,
 ) : Logging {
     private fun mergeFormatMatches(it: Document, format: DocumentFormat): Boolean {
         var otherFormat = it.metadata.format
@@ -54,10 +54,9 @@ class CorpusExport private constructor(
      * Maps all [Document] found in [Documents] to the desired [DocumentFormat] and zips them. [formatMapper] should perform the mapping.
      */
     fun export(out: OutputStream) {
-        val documents = corpus.documents.readAll().filter { DocumentExport.create(this, it).layer != Layer.EMPTY }
-        val seq: Sequence<FileMapper> =
-            documents.asSequence().map { doc -> doc.name to { out -> formatMapper(doc, out) } }
-        val seqCmdi: Sequence<FileMapper> = documents.asSequence().map { doc ->
+        val docs = corpus.documents.readAll().filter { DocumentExport.create(this, it).layer != Layer.EMPTY }
+        val seq: Sequence<FileMapper> = docs.asSequence().map { doc -> doc.name to { out -> formatMapper(doc, out) } }
+        val seqCmdi: Sequence<FileMapper> = docs.asSequence().map { doc ->
             "metadata/CMDI-${doc.uploadedFile.nameWithoutExtension}.xml" to { out ->
                 DocumentExport.create(
                     this, doc
@@ -74,17 +73,17 @@ class CorpusExport private constructor(
             corpus: Corpus,
             jobName: String,
             format: DocumentFormat,
-            posHeadOnly: Boolean,
             user: User,
-            shouldMerge: Boolean
+            shouldMerge: Boolean,
+            posHeadOnly: Boolean
         ): CorpusExport = CorpusExport(
             corpus = corpus,
             job = corpus.jobs.readOrThrow(jobName),
-            user = user,
             format = format,
-            posHeadOnly = posHeadOnly,
+            user = user,
             tagger = Tagger.readOrThrow(jobName, corpus),
-            shouldMerge = shouldMerge
+            shouldMerge = shouldMerge,
+            posHeadOnly = posHeadOnly
         )
     }
 }

@@ -45,7 +45,7 @@ class ExportService(val corpora: CorporaService) : Logging {
         corpusID: UUID, jobName: String, format: DocumentFormat, posHeadOnly: Boolean, shouldMerge: Boolean
     ): CorpusExport {
         val corpus = corpora.readAsWriterOrThrow(corpusID, user)
-        return CorpusExport.create(corpus, jobName, format, posHeadOnly, user, shouldMerge)
+        return CorpusExport.create(corpus, jobName, format, user, shouldMerge, posHeadOnly)
     }
 
     private fun getDocumentExport(

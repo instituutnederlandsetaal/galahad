@@ -40,7 +40,7 @@ class TeiConverter(export: DocumentExport) : LayerConverter(export) {
                         // <name type="ORG">
                         //     <w>...</w>
                         // </name>
-                        ners?.firstOrNull<TermSpan> { termI == it.indices.first<Int>() }?.let {
+                        ners?.firstOrNull<TermSpan> { termI == it.indices.first() }?.let {
                             writer.writeStartElement("name")
                             writer.writeAttribute("type", it.value)
                         }

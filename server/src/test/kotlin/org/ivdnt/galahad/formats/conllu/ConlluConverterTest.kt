@@ -1,27 +1,41 @@
 package org.ivdnt.galahad.formats.conllu
 
-import org.ivdnt.galahad.formats.Resource
-import org.ivdnt.galahad.formats.tei.TeiReader
-import org.junit.jupiter.api.Assertions.*
+import org.ivdnt.galahad.documents.DocumentFormat
+import org.ivdnt.galahad.formats.ConverterTest
 import org.junit.jupiter.api.Test
-import java.io.OutputStream
-import java.io.OutputStreamWriter
-import java.io.PrintStream
-import java.io.PrintWriter
-import java.io.StringWriter
 
-class ConlluConverterTest {
+class ConlluConverterTest : ConverterTest() {
+    /** Conllu has no root node id */
+    override val overwriteLayerId: Boolean = true
+
     @Test
-    fun `Reproduce document`() {
-        val reader = TeiReader(Resource.get("tei/docs-pars-sents/input.tei.xml"))
-        val layer = reader.layer
-        val converter = ConlluConverter(layer)
-        val stringWriter = StringWriter()
-        val writer = PrintWriter(stringWriter)
-        // print to a string
-        converter.convert(writer)
-        writer.flush()
-        val text = stringWriter.toString()
-        println(text)
+    fun `Conllu to Conllu`() {
+        formatToFormat(DocumentFormat.Conllu, DocumentFormat.Conllu)
     }
+
+    @Test
+    fun `Conllu to Tei`() {
+        formatToFormat(DocumentFormat.Conllu, DocumentFormat.TeiP5)
+    }
+
+    @Test
+    fun `Conllu to Folia`() {
+        formatToFormat(DocumentFormat.Conllu, DocumentFormat.Folia)
+    }
+
+    @Test
+    fun `Conllu to Tsv`() {
+        formatToFormat(DocumentFormat.Conllu, DocumentFormat.Tsv)
+    }
+
+    @Test
+    fun `Conllu to TXT`() {
+        formatToFormat(DocumentFormat.Conllu, DocumentFormat.Txt)
+    }
+
+    @Test
+    fun `Conllu to Naf`() {
+        formatToFormat(DocumentFormat.Conllu, DocumentFormat.Naf)
+    }
+
 }

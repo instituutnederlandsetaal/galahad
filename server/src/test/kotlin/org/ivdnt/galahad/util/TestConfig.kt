@@ -1,4 +1,4 @@
-package org.ivdnt.galahad
+package org.ivdnt.galahad.util
 
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
