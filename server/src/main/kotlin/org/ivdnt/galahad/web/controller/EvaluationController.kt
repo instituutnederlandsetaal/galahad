@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
+import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.app.*
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
 import org.ivdnt.galahad.evaluation.confusion.Confusion
@@ -191,4 +192,12 @@ class EvaluationController(
         @PathVariable @Parameter(description = "Tagger name or sourceLayer") job: String,
         @RequestParam(defaultValue = SOURCE_LAYER_NAME) @Parameter(description = "Tagger name or sourceLayer") reference: String? = SOURCE_LAYER_NAME,
     ): CorpusMetrics = evaluationService.getTokenFrequency(corpus, job, reference)
+
+    @CrossOrigin
+    @GetMapping(ENTITIES_URL)
+    fun getEntities(
+        @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
+        @PathVariable @Parameter(description = "Document name") document: String,
+        @PathVariable @Parameter(description = "Tagger name or sourceLayer") job: String,
+    ): List<Pair<String, List<Term>>> = evaluationService.getEntities(corpus, document, job)
 }

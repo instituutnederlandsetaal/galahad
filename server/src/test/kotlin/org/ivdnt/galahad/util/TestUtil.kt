@@ -20,8 +20,11 @@ object TestUtil {
 
     fun get(path: String): File = File(this::class.java.classLoader.getResource(path)!!.toURI())
 
-    val mapper: ObjectMapper = JsonMapper.builder().configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
-        .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true).build()
+    val mapper: ObjectMapper = JsonMapper.builder()
+        .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
+        .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
+        .configure(SerializationFeature.INDENT_OUTPUT, true)
+        .build()
 
     fun createCorpus(workdir: File? = null, isDataset: Boolean = false, isAdmin: Boolean = false): Corpus {
         val parent = workdir ?: createTempDirectory().toFile()

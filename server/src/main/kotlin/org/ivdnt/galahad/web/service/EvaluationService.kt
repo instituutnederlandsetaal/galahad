@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
+import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.corpora.CorpusMetadata
 import org.ivdnt.galahad.evaluation.comparison.*
@@ -276,5 +277,10 @@ class EvaluationService(val corpora: CorporaService) {
             reference = if (reference.isNullOrBlank()) SOURCE_LAYER_NAME else reference
         )
         return cm
+    }
+
+    fun getEntities(corpus: UUID, document: String, job: String): List<Pair<String, List<Term>>>{
+        val layer = corpora.readAsReaderOrThrow(corpus, user).jobs.readOrThrow(job).getLayer(document)
+        return layer.documents.flatMap { it.paragraphs.flatMap { it.sentences.flatMap { sent -> sent.spans[Annotation.NER]?.map { span -> span.value to span.indices.map { sent.terms[it] } } ?: emptyList() } } }
     }
 }

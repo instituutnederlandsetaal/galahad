@@ -1,13 +1,10 @@
 package org.ivdnt.galahad.formats.xml
 
+import org.ivdnt.galahad.annotations.*
 import org.ivdnt.galahad.annotations.Annotation
-import org.ivdnt.galahad.annotations.AnnotationReader
-import org.ivdnt.galahad.annotations.Layer
-import org.ivdnt.galahad.annotations.Term
-import org.ivdnt.galahad.annotations.TermSpan
 import org.ivdnt.galahad.util.XmlUtil
 import java.io.InputStream
-import java.util.UUID
+import java.util.*
 import javax.xml.XMLConstants
 import javax.xml.stream.XMLStreamConstants
 import javax.xml.stream.XMLStreamReader
@@ -25,6 +22,8 @@ abstract class XmlReader(stream: InputStream) : AnnotationReader() {
     private val currentXmlID: String?
         get() = reader.getAttributeValue(XMLConstants.XML_NS_URI, "id")?.ifBlank { null }
     private var ignoring: Boolean = false
+    private var currentDepth: Int = 0
+    private var ignoreDepth: Int? = null
 
     abstract val spanTags: Array<String>
     abstract val spanDataTags: Array<String>
@@ -34,7 +33,6 @@ abstract class XmlReader(stream: InputStream) : AnnotationReader() {
     abstract val wordTags: Array<String>
     abstract val wordDataTags: Array<String>
     abstract val ignorableTags: Array<String>
-
 
     final override fun read(): Layer {
         // retrieve the XML ID of the document root
@@ -64,7 +62,7 @@ abstract class XmlReader(stream: InputStream) : AnnotationReader() {
                     }
                 }
                 XMLStreamConstants.CHARACTERS -> if (!ignoring) parseChars()
-                XMLStreamConstants.END_ELEMENT -> if (!ignoring) {
+                XMLStreamConstants.END_ELEMENT -> if (!shouldIgnore()) {
                     when (reader.localName) {
                         in documentTags -> newDocument()
                         in paragraphTags -> newParagraph()
@@ -100,7 +98,22 @@ abstract class XmlReader(stream: InputStream) : AnnotationReader() {
 
     protected abstract fun parseAttrs()
 
-    private fun shouldIgnore(): Boolean = ignoring.also { ignoring = reader.localName in ignorableTags }
+    private fun shouldIgnore(): Boolean {
+        if (reader.isStartElement) {
+            currentDepth++
+            if (!ignoring && reader.localName in ignorableTags) {
+                ignoring = true
+                ignoreDepth = currentDepth
+            }
+        } else if (reader.isEndElement) {
+            if (currentDepth == ignoreDepth) {
+                ignoring = false
+                ignoreDepth = null
+            }
+            currentDepth--
+        }
+        return ignoring
+    }
 
     private fun parseChars() {
         val words = reader.text.ifBlank { null }?.split(whitespace) ?: emptyList()
