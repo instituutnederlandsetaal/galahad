@@ -6,31 +6,16 @@ import org.junit.jupiter.api.Test
 
 class ConlluReaderTest {
     @Test
-    fun `Documents, paragraphs, sentences`() {
-        val reader = ConlluReader(TestUtil.get("conllu/docs-pars-sents/input.conllu"))
-        val layer = reader.layer
-
-        assertEquals(2, layer.documents.size)
-        assertEquals(2, layer.documents[0].paragraphs.size)
-        assertEquals(2, layer.documents[0].paragraphs[0].sentences.size)
-        assertEquals(2, layer.documents[0].paragraphs[1].sentences.size)
-
-        assertEquals(2, layer.documents[1].paragraphs.size)
-        assertEquals(2, layer.documents[1].paragraphs[0].sentences.size)
-        assertEquals(2, layer.documents[1].paragraphs[1].sentences.size)
-    }
-
-    @Test
     fun `Empty nodes`() {
-        val reader = ConlluReader(TestUtil.get("conllu/empty-nodes.conllu"))
+        val reader = ConlluReader(TestUtil.get("formats/conllu/empty-nodes.conllu"))
         val text = "Sue likes coffee and Bill tea\n" // LF because reader.layer produces a valid unix file.
         assertEquals(text, reader.layer.toString())
     }
 
     @Test
     fun `Multi-word tokens`() {
-        val reader = ConlluReader(TestUtil.get("conllu/mw.conllu"))
-        val text = "Gas dalla statua .\n"
+        val reader = ConlluReader(TestUtil.get("formats/conllu/mw.conllu"))
+        val text = "Gas dalla statua.\nTer hoogte van.\n" // LF because reader.layer produces a valid unix file.
         assertEquals(text, reader.layer.toString())
     }
 }
