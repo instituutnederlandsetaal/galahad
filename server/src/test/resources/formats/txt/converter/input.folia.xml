@@ -1,0 +1,146 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<FoLiA xmlns="http://ilk.uvt.nl/folia" xmlns:xml="http://www.w3.org/XML/1998/namespace" generator="galahad.ivdnt.org" version="2.5.3" xml:id="galahadTest">
+    <text xml:id="d1">
+        <p xml:id="d1.p1">
+            <s xml:id="d1.p1.s1">
+                <w xml:id="d1.p1.s1.w1" class="WORD">
+                    <t>Fraaie</t>
+                </w>
+                <w xml:id="d1.p1.s1.w2" class="WORD">
+                    <t>historie</t>
+                </w>
+                <w xml:id="d1.p1.s1.w3" class="WORD">
+                    <t>ende</t>
+                </w>
+                <w xml:id="d1.p1.s1.w4" class="WORD">
+                    <t>alwaer.</t>
+                </w>
+            </s>
+            <s xml:id="d1.p1.s2">
+                <w xml:id="d1.p1.s2.w1" class="WORD">
+                    <t>Magh</t>
+                </w>
+                <w xml:id="d1.p1.s2.w2" class="WORD">
+                    <t>'k</t>
+                </w>
+                <w xml:id="d1.p1.s2.w3" class="WORD">
+                    <t>u</t>
+                </w>
+                <w xml:id="d1.p1.s2.w4" class="WORD">
+                    <t>vertellen,</t>
+                </w>
+                <w xml:id="d1.p1.s2.w5" class="WORD">
+                    <t>hoirt</t>
+                </w>
+                <w xml:id="d1.p1.s2.w6" class="WORD">
+                    <t>naer.</t>
+                </w>
+            </s>
+        </p>
+        <p xml:id="d1.p2">
+            <s xml:id="d1.p2.s1">
+                <w xml:id="d1.p2.s1.w1" class="WORD">
+                    <t>'t</t>
+                </w>
+                <w xml:id="d1.p2.s1.w2" class="WORD">
+                    <t>Was</t>
+                </w>
+                <w xml:id="d1.p2.s1.w3" class="WORD">
+                    <t>op</t>
+                </w>
+                <w xml:id="d1.p2.s1.w4" class="WORD">
+                    <t>enen</t>
+                </w>
+                <w xml:id="d1.p2.s1.w5" class="WORD">
+                    <t>avondstonde.</t>
+                </w>
+            </s>
+            <s xml:id="d1.p2.s2">
+                <w xml:id="d1.p2.s2.w1" class="WORD">
+                    <t>Dat</t>
+                </w>
+                <w xml:id="d1.p2.s2.w2" class="WORD">
+                    <t>koning</t>
+                </w>
+                <w xml:id="d1.p2.s2.w3" class="WORD">
+                    <t>Carel</t>
+                </w>
+                <w xml:id="d1.p2.s2.w4" class="WORD">
+                    <t>slaepen</t>
+                </w>
+                <w xml:id="d1.p2.s2.w5" class="WORD">
+                    <t>beghonde.</t>
+                </w>
+            </s>
+        </p>
+        <p xml:id="d1.p3">
+            <s xml:id="d1.p3.s1">
+                <w xml:id="d1.p3.s1.w1" class="WORD">
+                    <t>"Martijn,</t>
+                </w>
+                <w xml:id="d1.p3.s1.w2" class="WORD">
+                    <t>slaepstu?</t>
+                </w>
+                <w xml:id="d1.p3.s1.w3" class="WORD">
+                    <t>slaept</t>
+                </w>
+                <w xml:id="d1.p3.s1.w4" class="WORD">
+                    <t>dijn</t>
+                </w>
+                <w xml:id="d1.p3.s1.w5" class="WORD">
+                    <t>sin?"</t>
+                </w>
+            </s>
+            <s xml:id="d1.p3.s2">
+                <w xml:id="d1.p3.s2.w1" class="WORD">
+                    <t>Sprec!</t>
+                </w>
+                <w xml:id="d1.p3.s2.w2" class="WORD">
+                    <t>hebstu</t>
+                </w>
+                <w xml:id="d1.p3.s2.w3" class="WORD">
+                    <t>gheen</t>
+                </w>
+                <w xml:id="d1.p3.s2.w4" class="WORD">
+                    <t>spreken</t>
+                </w>
+                <w xml:id="d1.p3.s2.w5" class="WORD">
+                    <t>in?</t>
+                </w>
+            </s>
+        </p>
+        <p xml:id="d1.p4">
+            <s xml:id="d1.p4.s1">
+                <w xml:id="d1.p4.s1.w1" class="WORD">
+                    <t>Du</t>
+                </w>
+                <w xml:id="d1.p4.s1.w2" class="WORD">
+                    <t>dinkes</t>
+                </w>
+                <w xml:id="d1.p4.s1.w3" class="WORD">
+                    <t>mi</t>
+                </w>
+                <w xml:id="d1.p4.s1.w4" class="WORD">
+                    <t>verdoren.</t>
+                </w>
+            </s>
+            <s xml:id="d1.p4.s2">
+                <w xml:id="d1.p4.s2.w1" class="WORD">
+                    <t>Dune</t>
+                </w>
+                <w xml:id="d1.p4.s2.w2" class="WORD">
+                    <t>achtes</t>
+                </w>
+                <w xml:id="d1.p4.s2.w3" class="WORD">
+                    <t>meer</t>
+                </w>
+                <w xml:id="d1.p4.s2.w4" class="WORD">
+                    <t>no</t>
+                </w>
+                <w xml:id="d1.p4.s2.w5" class="WORD">
+                    <t>min</t>
+                </w>
+            </s>
+        </p>
+    </text>
+</FoLiA>

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 class Term(
     val id: String,
     val offset: Int,
-    val annotations: Annotations,
+    val annotations: Map<Annotation, String?>,
     spaceAfter: Boolean? = null
 ) {
     val spaceAfter: Boolean? = if (spaceAfter == false) false else null
@@ -58,26 +58,26 @@ class Term(
      * The head of [annotation]. E.g. "PD+NOU" for "PD(type=art)+NOU(num=sg)"
      * or "VG" for "VG|neven" or ORG for B-ORG.
      */
-    fun annotationHead(annotationType: Annotation): String? {
+    fun annotationHead(annotation: Annotation): String? {
         // get annotation
-        val annotation = annotations[annotationType] ?: return null
+        val value = annotations[annotation] ?: return null
         // for NER
-        if (annotationType == Annotation.NER) {
-            if ('-' in annotation) {
-                return annotation.split('-')[1]
+        if (annotation == Annotation.NER) {
+            if ('-' in value) {
+                return value.split('-')[1]
             }
         }
         // for POS & UPOS
-        else if (annotationType in posAnnotations) {
-            return if (isMulti(annotationType)) {
+        else if (annotation in posAnnotations) {
+            return if (isMulti(annotation)) {
                 // Split on + and transform each part
-                annotation.split("+").joinToString("+") { singlePosToHead(it) }
+                value.split("+").joinToString("+") { singlePosToHead(it) }
             } else {
-                singlePosToHead(annotation)
+                singlePosToHead(value)
             }
         }
         // else leave as is
-        return annotation
+        return value
     }
 
     companion object {

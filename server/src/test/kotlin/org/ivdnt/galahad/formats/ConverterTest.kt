@@ -17,7 +17,7 @@ open class ConverterTest {
     private lateinit var corpus: Corpus
     private val fileName = "input"
 
-    protected open val folder: String = "docs-pars-sents"
+    protected open val folder: String = "shared-converter"
 
     /** Whether to override the [Layer].id for the sake of a consistent test.
      * For formats like tsv that don't define an id at the root node. */
@@ -29,8 +29,8 @@ open class ConverterTest {
     }
 
     fun formatToFormat(input: DocumentFormat, output: DocumentFormat) {
-        val inputFile: File = TestUtil.get("$folder/$fileName.${input.extension}")
-        val outputFile: File = TestUtil.get("$folder/$fileName.${output.extension}")
+        val inputFile: File = TestUtil.get("formats/$folder/$fileName.${input.extension}")
+        val outputFile: File = TestUtil.get("formats/$folder/$fileName.${output.extension}")
         val doc = corpus.documents.createOrThrow(inputFile)
 
         // at this point, a layer id has been assigned
@@ -65,8 +65,6 @@ open class ConverterTest {
         val TEXT_CLEANING: Array<Regex> = arrayOf(
             Regex("""creationtime="[0-9]+""""),
             Regex("""timestamp="[0-9]+""""),
-            Regex("""beginTimestamp="[0-9]+""""),
-            Regex("""endTimestamp="[0-9]+""""),
             Regex("""filename="[^"]+""""),
             Regex("""filetype="[^"]+""""),
             Regex("""title="[^"]+""""),

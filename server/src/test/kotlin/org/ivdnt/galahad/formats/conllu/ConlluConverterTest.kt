@@ -29,7 +29,7 @@ class ConlluConverterTest : ConverterTest() {
     }
 
     @Test
-    fun `Conllu to TXT`() {
+    fun `Conllu to Txt`() {
         formatToFormat(DocumentFormat.Conllu, DocumentFormat.Txt)
     }
 

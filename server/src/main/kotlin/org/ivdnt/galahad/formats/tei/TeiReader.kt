@@ -19,11 +19,11 @@ class TeiReader(
     override fun parseAttrs() {
         when (reader.localName) {
             in wordDataTags -> {
-                lemma = reader.getAttributeValue(null, "lemma")?.takeIf { it.isNotBlank() }
-                pos = reader.getAttributeValue(null, "pos")?.takeIf { it.isNotBlank() } ?: reader.getAttributeValue(
+                lemma = reader.getAttributeValue(null, "lemma")?.ifBlank { null }
+                pos = reader.getAttributeValue(null, "pos")?.ifBlank { null } ?: reader.getAttributeValue(
                     null,
                     "type"
-                )?.takeIf { it.isNotBlank() }
+                )?.ifBlank { null }
                 spaceAfter = reader.getAttributeValue(null, "join") !in arrayOf("right", "both")
                 // if spanValue is not null, it means we are in a span tag
                 if (spanValue != null) {

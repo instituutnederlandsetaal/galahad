@@ -24,4 +24,3 @@ enum class Annotation(@JsonValue val value: String) {
     }
 }
 
-typealias Annotations = Map<Annotation, String?>

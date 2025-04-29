@@ -1,14 +1,13 @@
 package org.ivdnt.galahad.formats.tsv
 
+import org.ivdnt.galahad.annotations.*
 import org.ivdnt.galahad.annotations.Annotation
-import org.ivdnt.galahad.annotations.AnnotationReader
-import org.ivdnt.galahad.annotations.Layer
-import org.ivdnt.galahad.annotations.Term
+import org.ivdnt.galahad.formats.LineReader
 import java.io.File
 
 class TsvReader(
     val file: File
-) : AnnotationReader() {
+) : LineReader() {
     private val columnIndices: MutableMap<Annotation, Int> = mutableMapOf()
     private var lastLineWasBlank: Boolean = false
 
@@ -53,8 +52,8 @@ class TsvReader(
                 .firstOrNull { (_, names) ->
                     names.any { name -> header.equals(name, ignoreCase = true) }
                     // if it exists, register the index
-                }?.let { (annotationType, _) ->
-                    columnIndices[annotationType] = index
+                }?.let { (annotation, _) ->
+                    columnIndices[annotation] = index
                 }
         }
     }
@@ -72,18 +71,19 @@ class TsvReader(
         val values: List<String> = line.split("\t")
 
         // Retrieve values
-        val mutAnnot: Map<Annotation, String> = buildMap {
+        val annotations: Map<Annotation, String> = buildMap {
             for (column in columnIndices.entries) {
-                getColumn(column.value, values)?.let { put(column.key, it) }
+                columnOrNull(column.value, values)?.let { put(column.key, it) }
             }
         }
-        terms += Term(wordID(), offset, mutAnnot)
-        offset += mutAnnot[Annotation.TOKEN]?.length ?: 0
+        Term(wordID(), offset, annotations).also {
+            terms += it
+            offset += it.token.length
+        }
     }
 
     // Retrieves a column with bounds checking.
-    private fun getColumn(index: Int, values: List<String>): String? =
-        values.getOrNull(index)?.takeIf { it.isNotBlank() }
+    private fun columnOrNull(i: Int, values: List<String>): String? = values.getOrNull(i)?.ifBlank { null }
 
     companion object {
         val columnNames: Map<Annotation, List<String>> = mapOf(

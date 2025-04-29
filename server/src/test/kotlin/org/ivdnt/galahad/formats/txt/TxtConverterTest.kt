@@ -1,11 +1,11 @@
-package org.ivdnt.galahad.formats.Txt
+package org.ivdnt.galahad.formats.txt
 
 import org.ivdnt.galahad.documents.DocumentFormat
 import org.ivdnt.galahad.formats.ConverterTest
 import org.junit.jupiter.api.Test
 
 class TxtConverterTest : ConverterTest() {
-    override val folder: String = "pars-sents"
+    override val folder: String = "txt/converter"
     override val overwriteLayerId: Boolean = true
 
     @Test

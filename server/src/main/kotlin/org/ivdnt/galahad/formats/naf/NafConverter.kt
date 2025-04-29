@@ -4,6 +4,7 @@ import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.export.LayerConverter
 import org.ivdnt.galahad.util.XmlUtil
+import org.ivdnt.galahad.util.ifNullOrBlank
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import java.io.OutputStream
@@ -51,11 +52,9 @@ class NafConverter(export: DocumentExport) : LayerConverter(export) {
 
         val lp = xml.createElement("lp").apply {
             setAttribute("name", export.tagger.id)
-            setAttribute("version", export.tagger.version)
             setAttribute("timestamp", now.toString())
-            setAttribute("beginTimestamp", now.toString())
-            setAttribute("endTimestamp", now.toString())
             setAttribute("hostname", "https://galahad.ivdnt.org")
+            export.tagger.version.ifBlank { null }?.let{ setAttribute("version", it) }
         }
         val lpTerms = xml.createElement("linguisticProcessors").apply {
             setAttribute("layer", "terms")
@@ -100,7 +99,7 @@ class NafConverter(export: DocumentExport) : LayerConverter(export) {
                         setAttribute("offset", t.offset.toString())
                         setAttribute("length", t.token.length.toString())
                         setAttribute("sent", iSent.toString())
-                        setAttribute("para", iPar.toString())
+                        setAttribute("para", (iPar+1).toString())
                         textContent = t.token
                     }
                     text.appendChild(wf)
@@ -115,7 +114,7 @@ class NafConverter(export: DocumentExport) : LayerConverter(export) {
         root.appendChild(terms)
         export.layer.terms.forEachIndexed { i, it ->
             val term = xml.createElement("term").apply {
-                setAttribute("id", "t$i")
+                setAttribute("id", "t${i+1}")
             }
             it.lemma?.let { term.setAttribute("lemma", it) }
             it.pos?.let { term.setAttribute("pos", it) }

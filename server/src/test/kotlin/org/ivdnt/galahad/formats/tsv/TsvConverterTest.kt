@@ -1,11 +1,11 @@
-package org.ivdnt.galahad.formats.Tsv
+package org.ivdnt.galahad.formats.tsv
 
 import org.ivdnt.galahad.documents.DocumentFormat
 import org.ivdnt.galahad.formats.ConverterTest
 import org.junit.jupiter.api.Test
 
 class TsvConverterTest : ConverterTest() {
-    override val folder: String = "pars-sents"
+    override val folder: String = "tsv/converter"
     override val overwriteLayerId: Boolean = true
 
     @Test
@@ -24,7 +24,7 @@ class TsvConverterTest : ConverterTest() {
     }
 
     @Test
-    fun `Tsv to TXT`() {
+    fun `Tsv to Txt`() {
         formatToFormat(DocumentFormat.Tsv, DocumentFormat.Txt)
     }
 

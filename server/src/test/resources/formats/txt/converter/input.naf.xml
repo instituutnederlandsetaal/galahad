@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<NAF version="v3.3" xml:lang="dum">
+    <nafHeader>
+        <fileDesc author="user" creationtime="1745591638145" filename="input.conllu" filetype="conllu" title="input.conllu"/>
+        <public publicId="galahadTest"/>
+        <linguisticProcessors layer="terms">
+            <lp hostname="https://galahad.ivdnt.org" name="sourceLayer" timestamp="1745591638145"/>
+        </linguisticProcessors>
+    </nafHeader>
+    <raw><![CDATA[Fraaie historie ende alwaer.
+Magh 'k u vertellen, hoirt naer.
+
+'t Was op enen avondstonde.
+Dat koning Carel slaepen beghonde.
+
+"Martijn, slaepstu? slaept dijn sin?"
+Sprec! hebstu gheen spreken in?
+
+Du dinkes mi verdoren.
+Dune achtes meer no min
+]]></raw>
+    <text>
+        <wf id="d1.p1.s1.w1" length="6" offset="0" para="1" sent="1">Fraaie</wf>
+        <wf id="d1.p1.s1.w2" length="8" offset="7" para="1" sent="1">historie</wf>
+        <wf id="d1.p1.s1.w3" length="4" offset="16" para="1" sent="1">ende</wf>
+        <wf id="d1.p1.s1.w4" length="7" offset="21" para="1" sent="1">alwaer.</wf>
+        <wf id="d1.p1.s2.w1" length="4" offset="29" para="1" sent="2">Magh</wf>
+        <wf id="d1.p1.s2.w2" length="2" offset="34" para="1" sent="2">'k</wf>
+        <wf id="d1.p1.s2.w3" length="1" offset="37" para="1" sent="2">u</wf>
+        <wf id="d1.p1.s2.w4" length="10" offset="39" para="1" sent="2">vertellen,</wf>
+        <wf id="d1.p1.s2.w5" length="5" offset="50" para="1" sent="2">hoirt</wf>
+        <wf id="d1.p1.s2.w6" length="5" offset="56" para="1" sent="2">naer.</wf>
+        <wf id="d1.p2.s1.w1" length="2" offset="62" para="2" sent="3">'t</wf>
+        <wf id="d1.p2.s1.w2" length="3" offset="65" para="2" sent="3">Was</wf>
+        <wf id="d1.p2.s1.w3" length="2" offset="69" para="2" sent="3">op</wf>
+        <wf id="d1.p2.s1.w4" length="4" offset="72" para="2" sent="3">enen</wf>
+        <wf id="d1.p2.s1.w5" length="12" offset="77" para="2" sent="3">avondstonde.</wf>
+        <wf id="d1.p2.s2.w1" length="3" offset="90" para="2" sent="4">Dat</wf>
+        <wf id="d1.p2.s2.w2" length="6" offset="94" para="2" sent="4">koning</wf>
+        <wf id="d1.p2.s2.w3" length="5" offset="101" para="2" sent="4">Carel</wf>
+        <wf id="d1.p2.s2.w4" length="7" offset="107" para="2" sent="4">slaepen</wf>
+        <wf id="d1.p2.s2.w5" length="9" offset="115" para="2" sent="4">beghonde.</wf>
+        <wf id="d1.p3.s1.w1" length="9" offset="125" para="3" sent="5">"Martijn,</wf>
+        <wf id="d1.p3.s1.w2" length="9" offset="135" para="3" sent="5">slaepstu?</wf>
+        <wf id="d1.p3.s1.w3" length="6" offset="145" para="3" sent="5">slaept</wf>
+        <wf id="d1.p3.s1.w4" length="4" offset="152" para="3" sent="5">dijn</wf>
+        <wf id="d1.p3.s1.w5" length="5" offset="157" para="3" sent="5">sin?"</wf>
+        <wf id="d1.p3.s2.w1" length="6" offset="163" para="3" sent="6">Sprec!</wf>
+        <wf id="d1.p3.s2.w2" length="6" offset="170" para="3" sent="6">hebstu</wf>
+        <wf id="d1.p3.s2.w3" length="5" offset="177" para="3" sent="6">gheen</wf>
+        <wf id="d1.p3.s2.w4" length="7" offset="183" para="3" sent="6">spreken</wf>
+        <wf id="d1.p3.s2.w5" length="3" offset="191" para="3" sent="6">in?</wf>
+        <wf id="d1.p4.s1.w1" length="2" offset="195" para="4" sent="7">Du</wf>
+        <wf id="d1.p4.s1.w2" length="6" offset="198" para="4" sent="7">dinkes</wf>
+        <wf id="d1.p4.s1.w3" length="2" offset="205" para="4" sent="7">mi</wf>
+        <wf id="d1.p4.s1.w4" length="9" offset="208" para="4" sent="7">verdoren.</wf>
+        <wf id="d1.p4.s2.w1" length="4" offset="218" para="4" sent="8">Dune</wf>
+        <wf id="d1.p4.s2.w2" length="6" offset="223" para="4" sent="8">achtes</wf>
+        <wf id="d1.p4.s2.w3" length="4" offset="230" para="4" sent="8">meer</wf>
+        <wf id="d1.p4.s2.w4" length="2" offset="235" para="4" sent="8">no</wf>
+        <wf id="d1.p4.s2.w5" length="3" offset="238" para="4" sent="8">min</wf>
+    </text>
+    <terms>
+        <term id="t1">
+            <span>
+                <target id="d1.p1.s1.w1"/>
+            </span>
+        </term>
+        <term id="t2">
+            <span>
+                <target id="d1.p1.s1.w2"/>
+            </span>
+        </term>
+        <term id="t3">
+            <span>
+                <target id="d1.p1.s1.w3"/>
+            </span>
+        </term>
+        <term id="t4">
+            <span>
+                <target id="d1.p1.s1.w4"/>
+            </span>
+        </term>
+        <term id="t5">
+            <span>
+                <target id="d1.p1.s2.w1"/>
+            </span>
+        </term>
+        <term id="t6">
+            <span>
+                <target id="d1.p1.s2.w2"/>
+            </span>
+        </term>
+        <term id="t7">
+            <span>
+                <target id="d1.p1.s2.w3"/>
+            </span>
+        </term>
+        <term id="t8">
+            <span>
+                <target id="d1.p1.s2.w4"/>
+            </span>
+        </term>
+        <term id="t9">
+            <span>
+                <target id="d1.p1.s2.w5"/>
+            </span>
+        </term>
+        <term id="t10">
+            <span>
+                <target id="d1.p1.s2.w6"/>
+            </span>
+        </term>
+        <term id="t11">
+            <span>
+                <target id="d1.p2.s1.w1"/>
+            </span>
+        </term>
+        <term id="t12">
+            <span>
+                <target id="d1.p2.s1.w2"/>
+            </span>
+        </term>
+        <term id="t13">
+            <span>
+                <target id="d1.p2.s1.w3"/>
+            </span>
+        </term>
+        <term id="t14">
+            <span>
+                <target id="d1.p2.s1.w4"/>
+            </span>
+        </term>
+        <term id="t15">
+            <span>
+                <target id="d1.p2.s1.w5"/>
+            </span>
+        </term>
+        <term id="t16">
+            <span>
+                <target id="d1.p2.s2.w1"/>
+            </span>
+        </term>
+        <term id="t17">
+            <span>
+                <target id="d1.p2.s2.w2"/>
+            </span>
+        </term>
+        <term id="t18">
+            <span>
+                <target id="d1.p2.s2.w3"/>
+            </span>
+        </term>
+        <term id="t19">
+            <span>
+                <target id="d1.p2.s2.w4"/>
+            </span>
+        </term>
+        <term id="t20">
+            <span>
+                <target id="d1.p2.s2.w5"/>
+            </span>
+        </term>
+        <term id="t21">
+            <span>
+                <target id="d1.p3.s1.w1"/>
+            </span>
+        </term>
+        <term id="t22">
+            <span>
+                <target id="d1.p3.s1.w2"/>
+            </span>
+        </term>
+        <term id="t23">
+            <span>
+                <target id="d1.p3.s1.w3"/>
+            </span>
+        </term>
+        <term id="t24">
+            <span>
+                <target id="d1.p3.s1.w4"/>
+            </span>
+        </term>
+        <term id="t25">
+            <span>
+                <target id="d1.p3.s1.w5"/>
+            </span>
+        </term>
+        <term id="t26">
+            <span>
+                <target id="d1.p3.s2.w1"/>
+            </span>
+        </term>
+        <term id="t27">
+            <span>
+                <target id="d1.p3.s2.w2"/>
+            </span>
+        </term>
+        <term id="t28">
+            <span>
+                <target id="d1.p3.s2.w3"/>
+            </span>
+        </term>
+        <term id="t29">
+            <span>
+                <target id="d1.p3.s2.w4"/>
+            </span>
+        </term>
+        <term id="t30">
+            <span>
+                <target id="d1.p3.s2.w5"/>
+            </span>
+        </term>
+        <term id="t31">
+            <span>
+                <target id="d1.p4.s1.w1"/>
+            </span>
+        </term>
+        <term id="t32">
+            <span>
+                <target id="d1.p4.s1.w2"/>
+            </span>
+        </term>
+        <term id="t33">
+            <span>
+                <target id="d1.p4.s1.w3"/>
+            </span>
+        </term>
+        <term id="t34">
+            <span>
+                <target id="d1.p4.s1.w4"/>
+            </span>
+        </term>
+        <term id="t35">
+            <span>
+                <target id="d1.p4.s2.w1"/>
+            </span>
+        </term>
+        <term id="t36">
+            <span>
+                <target id="d1.p4.s2.w2"/>
+            </span>
+        </term>
+        <term id="t37">
+            <span>
+                <target id="d1.p4.s2.w3"/>
+            </span>
+        </term>
+        <term id="t38">
+            <span>
+                <target id="d1.p4.s2.w4"/>
+            </span>
+        </term>
+        <term id="t39">
+            <span>
+                <target id="d1.p4.s2.w5"/>
+            </span>
+        </term>
+    </terms>
+</NAF>

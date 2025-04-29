@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:id="galahadTest">
+    <text xml:id="d1">
+        <body>
+            <p xml:id="d1.p1">
+                <s xml:id="d1.p1.s1">
+                    <w xml:id="d1.p1.s1.w1">Fraaie</w>
+                    <w xml:id="d1.p1.s1.w2">historie</w>
+                    <w xml:id="d1.p1.s1.w3">ende</w>
+                    <w xml:id="d1.p1.s1.w4">alwaer.</w>
+                </s>
+                <s xml:id="d1.p1.s2">
+                    <w xml:id="d1.p1.s2.w1">Magh</w>
+                    <w xml:id="d1.p1.s2.w2">'k</w>
+                    <w xml:id="d1.p1.s2.w3">u</w>
+                    <w xml:id="d1.p1.s2.w4">vertellen,</w>
+                    <w xml:id="d1.p1.s2.w5">hoirt</w>
+                    <w xml:id="d1.p1.s2.w6">naer.</w>
+                </s>
+            </p>
+            <p xml:id="d1.p2">
+                <s xml:id="d1.p2.s1">
+                    <w xml:id="d1.p2.s1.w1">'t</w>
+                    <w xml:id="d1.p2.s1.w2">Was</w>
+                    <w xml:id="d1.p2.s1.w3">op</w>
+                    <w xml:id="d1.p2.s1.w4">enen</w>
+                    <w xml:id="d1.p2.s1.w5">avondstonde.</w>
+                </s>
+                <s xml:id="d1.p2.s2">
+                    <w xml:id="d1.p2.s2.w1">Dat</w>
+                    <w xml:id="d1.p2.s2.w2">koning</w>
+                    <w xml:id="d1.p2.s2.w3">Carel</w>
+                    <w xml:id="d1.p2.s2.w4">slaepen</w>
+                    <w xml:id="d1.p2.s2.w5">beghonde.</w>
+                </s>
+            </p>
+            <p xml:id="d1.p3">
+                <s xml:id="d1.p3.s1">
+                    <w xml:id="d1.p3.s1.w1">"Martijn,</w>
+                    <w xml:id="d1.p3.s1.w2">slaepstu?</w>
+                    <w xml:id="d1.p3.s1.w3">slaept</w>
+                    <w xml:id="d1.p3.s1.w4">dijn</w>
+                    <w xml:id="d1.p3.s1.w5">sin?"</w>
+                </s>
+                <s xml:id="d1.p3.s2">
+                    <w xml:id="d1.p3.s2.w1">Sprec!</w>
+                    <w xml:id="d1.p3.s2.w2">hebstu</w>
+                    <w xml:id="d1.p3.s2.w3">gheen</w>
+                    <w xml:id="d1.p3.s2.w4">spreken</w>
+                    <w xml:id="d1.p3.s2.w5">in?</w>
+                </s>
+            </p>
+            <p xml:id="d1.p4">
+                <s xml:id="d1.p4.s1">
+                    <w xml:id="d1.p4.s1.w1">Du</w>
+                    <w xml:id="d1.p4.s1.w2">dinkes</w>
+                    <w xml:id="d1.p4.s1.w3">mi</w>
+                    <w xml:id="d1.p4.s1.w4">verdoren.</w>
+                </s>
+                <s xml:id="d1.p4.s2">
+                    <w xml:id="d1.p4.s2.w1">Dune</w>
+                    <w xml:id="d1.p4.s2.w2">achtes</w>
+                    <w xml:id="d1.p4.s2.w3">meer</w>
+                    <w xml:id="d1.p4.s2.w4">no</w>
+                    <w xml:id="d1.p4.s2.w5">min</w>
+                </s>
+            </p>
+        </body>
+    </text>
+</TEI>

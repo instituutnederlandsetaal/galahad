@@ -21,7 +21,7 @@ class FoliaConverterTest : ConverterTest() {
     }
 
     @Test
-    fun `Folia to TXT`() {
+    fun `Folia to Txt`() {
         formatToFormat(DocumentFormat.Folia, DocumentFormat.Txt)
     }
 

@@ -1,13 +1,12 @@
 package org.ivdnt.galahad.formats.naf
 
+import org.ivdnt.galahad.annotations.*
 import org.ivdnt.galahad.annotations.Annotation
-import org.ivdnt.galahad.annotations.AnnotationReader
-import org.ivdnt.galahad.annotations.Layer
-import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.util.XmlUtil
 import org.ivdnt.galahad.util.childElements
 import org.ivdnt.galahad.util.childOrNull
 import java.io.File
+import java.util.*
 
 typealias WordformID = String
 typealias TermID = String
@@ -40,10 +39,11 @@ class NafReader(file: File) : AnnotationReader() {
     private val nafEntities = root.childOrNull("entities")?.childElements?.map {
         NafEntity(
             type = it.getAttribute("type").ifEmpty { null },
-            references = it.childElements.map { it.childElements.map { it.getAttribute("id") }.toList() }.toList()
+            references = it.childOrNull("references")?.childElements?.map { it.childElements.map { it.getAttribute("id") }.toList() }?.toList()!!
         )
-    }
-    private val id = root.childOrNull("nafHeader")?.childOrNull("public")?.getAttribute("publicId").orEmpty().ifEmpty { null }
+    }?.toList()
+    private val id: String = root.childOrNull("nafHeader")?.childOrNull("public")?.getAttribute("publicId").orEmpty()
+        .ifEmpty { UUID.randomUUID().toString() }
 
     override fun read(): Layer {
         // group wordforms paragraph, then sentence, then sort by offset in sentence
@@ -70,17 +70,36 @@ class NafReader(file: File) : AnnotationReader() {
 
                     // space after
                     val nextWordform = sent.getOrNull(i + 1)
-                    val spaceAfter = nextWordform?.offset == wordform.offset + wordform.token.length
+                    val spaceAfter = nextWordform?.offset != (wordform.offset + wordform.token.length)
 
                     terms += Term(wordform.id, wordform.offset, annotations, spaceAfter)
                 }
-                // TODO sentence level spans
+                // collect all spans that refer to one of the terms in this sentence
+                val termIds = terms.map { it.id }
+                val nerSpans = nafEntities?.flatMap { e -> e.references.map { e.type!! to it } }
+                nerSpans?.filter { (_, ids) -> ids.any { it in termIds } }?.ifEmpty { null }
+                    ?.map { (value, ids) -> TermSpan(ids.map { id -> sent.indexOfFirst { it.id == id } }, value) }
+                    ?.toMutableList()?.let { spans[Annotation.NER] = it }
+
                 newSentence()
             }
             newParagraph()
         }
         newDocument()
-        return Layer(documents.toTypedArray())
+        return Layer(documents.toTypedArray(), id)
+    }
+
+    override fun newSentence() {
+        // edit the NER value of the terms if spans are present
+        spans[Annotation.NER]?.forEach { span ->
+            span.indices.forEachIndexed { spanI, termI ->
+                // Note the difference spanI and termI; e.g. span.indices = [4, 5]; so (0, 4) = (1, 5)
+                val t = terms[termI]
+                val iob = (if (spanI == 0) "B-" else "I-") + span.value
+                terms[termI] = Term(t.id, t.offset, t.annotations + (Annotation.NER to iob), t.spaceAfter)
+            }
+        }
+        super.newSentence()
     }
 
     data class NafWordform(

@@ -1,11 +1,11 @@
 package org.ivdnt.galahad.formats.tei
 
-import org.ivdnt.galahad.TestUtil
+import org.ivdnt.galahad.util.TestUtil
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-internal class TEIImportTest {
+internal class TeiReaderTest {
     @Nested
     inner class TEIP5Test {
         @Test

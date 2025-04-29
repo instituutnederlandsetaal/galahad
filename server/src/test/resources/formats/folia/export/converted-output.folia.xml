@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FoLiA xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://ilk.uvt.nl/folia" xml:id="id_dummy_folia" generator="galahad.ivdnt.org" version="2.5.3">
+    <metadata type="native">
+        <annotations>
+            <text-annotation/>
+            <paragraph-annotation/>
+            <sentence-annotation/>
+            <token-annotation/>
+            <lemma-annotation set="pie-tdn-all">
+                <annotator processor="pie-tdn-all"/>
+            </lemma-annotation>
+            <pos-annotation set="pie-tdn-all">
+                <annotator processor="pie-tdn-all"/>
+            </pos-annotation>
+        </annotations>
+        <provenance>
+            <processor host="galahad.ivdnt.org" name="pie-tdn-all" src="https://github.com/INL/taggers-dockerized" type="auto" user="testUser" xml:id="pie-tdn-all"/>
+        </provenance>
+    </metadata>
+    <text xml:id="id_dummy_folia.text">
+        <p xml:id="id_dummy_folia.p1">
+            <w xml:id="id_dummy_folia.p1.w1">
+                <t>dummy</t>
+                <lemma class="dummy" processor="pie-tdn-all" set="pie-tdn-all"/>
+                <pos class="pos" head="pos" processor="pie-tdn-all" set="pie-tdn-all"/>
+            </w>
+            <w xml:id="id_dummy_folia.p1.w2">
+                <t>dummy</t>
+                <lemma class="dummy" processor="pie-tdn-all" set="pie-tdn-all"/>
+                <pos class="pos" head="pos" processor="pie-tdn-all" set="pie-tdn-all"/>
+            </w>
+            <w xml:id="id_dummy_folia.p1.w3">
+                <t>dummy</t>
+                <lemma class="dummy" processor="pie-tdn-all" set="pie-tdn-all"/>
+                <pos class="pos" head="pos" processor="pie-tdn-all" set="pie-tdn-all"/>
+            </w>
+        </p>
+    </text>
+</FoLiA>

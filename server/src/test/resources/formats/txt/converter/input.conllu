@@ -1,0 +1,67 @@
+# newdoc id = d1
+# newpar id = d1.p1
+# sent_id = d1.p1.s1
+# text = Fraaie historie ende alwaer.
+1	Fraaie	_	_	_	_	_	_	_	_
+2	historie	_	_	_	_	_	_	_	_
+3	ende	_	_	_	_	_	_	_	_
+4	alwaer.	_	_	_	_	_	_	_	_
+
+# sent_id = d1.p1.s2
+# text = Magh 'k u vertellen, hoirt naer.
+1	Magh	_	_	_	_	_	_	_	_
+2	'k	_	_	_	_	_	_	_	_
+3	u	_	_	_	_	_	_	_	_
+4	vertellen,	_	_	_	_	_	_	_	_
+5	hoirt	_	_	_	_	_	_	_	_
+6	naer.	_	_	_	_	_	_	_	_
+
+# newpar id = d1.p2
+# sent_id = d1.p2.s1
+# text = 't Was op enen avondstonde.
+1	't	_	_	_	_	_	_	_	_
+2	Was	_	_	_	_	_	_	_	_
+3	op	_	_	_	_	_	_	_	_
+4	enen	_	_	_	_	_	_	_	_
+5	avondstonde.	_	_	_	_	_	_	_	_
+
+# sent_id = d1.p2.s2
+# text = Dat koning Carel slaepen beghonde.
+1	Dat	_	_	_	_	_	_	_	_
+2	koning	_	_	_	_	_	_	_	_
+3	Carel	_	_	_	_	_	_	_	_
+4	slaepen	_	_	_	_	_	_	_	_
+5	beghonde.	_	_	_	_	_	_	_	_
+
+# newpar id = d1.p3
+# sent_id = d1.p3.s1
+# text = "Martijn, slaepstu? slaept dijn sin?"
+1	"Martijn,	_	_	_	_	_	_	_	_
+2	slaepstu?	_	_	_	_	_	_	_	_
+3	slaept	_	_	_	_	_	_	_	_
+4	dijn	_	_	_	_	_	_	_	_
+5	sin?"	_	_	_	_	_	_	_	_
+
+# sent_id = d1.p3.s2
+# text = Sprec! hebstu gheen spreken in?
+1	Sprec!	_	_	_	_	_	_	_	_
+2	hebstu	_	_	_	_	_	_	_	_
+3	gheen	_	_	_	_	_	_	_	_
+4	spreken	_	_	_	_	_	_	_	_
+5	in?	_	_	_	_	_	_	_	_
+
+# newpar id = d1.p4
+# sent_id = d1.p4.s1
+# text = Du dinkes mi verdoren.
+1	Du	_	_	_	_	_	_	_	_
+2	dinkes	_	_	_	_	_	_	_	_
+3	mi	_	_	_	_	_	_	_	_
+4	verdoren.	_	_	_	_	_	_	_	_
+
+# sent_id = d1.p4.s2
+# text = Dune achtes meer no min
+1	Dune	_	_	_	_	_	_	_	_
+2	achtes	_	_	_	_	_	_	_	_
+3	meer	_	_	_	_	_	_	_	_
+4	no	_	_	_	_	_	_	_	_
+5	min	_	_	_	_	_	_	_	_

@@ -4,12 +4,16 @@ import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.AnnotationReader
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.Term
+import org.ivdnt.galahad.formats.LineReader
 import java.io.File
 
 class ConlluReader(
     val file: File
-) : AnnotationReader() {
+) : LineReader() {
     private val ignorableMultiWordIds: MutableSet<String> = mutableSetOf()
+
+    private val String.id: String?
+        get() = idRegex.find(this)?.groupValues?.get(1) // 0 is the whole match
 
     override fun read(): Layer {
         file.forEachLine {
@@ -17,20 +21,20 @@ class ConlluReader(
                 it.startsWith("# newdoc") -> {
                     newDocument()
                     // get ID last, so we don't overwrite it while creating a new unit
-                    docID = Regex("id = (\\S+)").find(it)?.groupValues?.get(1) ?: "d${documents.size + 1}"
+                    docID = it.id
                 }
 
                 it.startsWith("# newpar") -> {
                     newParagraph()
                     // get ID last, so we don't overwrite it while creating a new unit
-                    parID = Regex("id = (\\S+)").find(it)?.groupValues?.get(1) ?: "p${paragraphs.size + 1}"
+                    parID = it.id
                 }
 
                 it.startsWith("# sent_id") || it.isBlank() -> {
                     newSentence()
-                    sentID = Regex("id = (\\S+)").find(it)?.groupValues?.get(1) ?: "s${sentences.size + 1}"
+                    // get ID last, so we don't overwrite it while creating a new unit
+                    sentID = it.id
                 }
-
                 !it.startsWith("#") -> {
                     newWord(it)
                 }
@@ -125,6 +129,8 @@ class ConlluReader(
     companion object {
         /** Supported names for the ner attribute in the MISC column. */
         private val nerAttrNames: List<String> = listOf("NamedEntity", "ner")
+        private val idRegex = Regex("id = (\\S+)")
+
 
         private val indices: Map<Annotation, Int> = mapOf(
             Annotation.TOKEN to 1,

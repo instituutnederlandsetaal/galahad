@@ -21,7 +21,7 @@ class TeiConverterTest : ConverterTest() {
     }
 
     @Test
-    fun `Tei to TXT`() {
+    fun `Tei to Txt`() {
         formatToFormat(DocumentFormat.TeiP5, DocumentFormat.Txt)
     }
 

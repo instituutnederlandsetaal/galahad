@@ -23,7 +23,7 @@ abstract class XmlReader(stream: InputStream) : AnnotationReader() {
     protected val reader: XMLStreamReader by lazy { XmlUtil.inputFactory.createXMLStreamReader(stream) }
 
     private val currentXmlID: String?
-        get() = reader.getAttributeValue(XMLConstants.XML_NS_URI, "id")?.takeIf { it.isNotBlank() }
+        get() = reader.getAttributeValue(XMLConstants.XML_NS_URI, "id")?.ifBlank { null }
     private var ignoring: Boolean = false
 
     abstract val spanTags: Array<String>
@@ -92,7 +92,7 @@ abstract class XmlReader(stream: InputStream) : AnnotationReader() {
 
     fun newSpan() {
         if (spanValue == null) return
-        val indices = spanTargets.map { id -> terms.indexOfFirst { t -> t.id == id } }.toIntArray()
+        val indices = spanTargets.map { id -> terms.indexOfFirst { t -> t.id == id } }
         spans.getOrPut(Annotation.NER, ::mutableListOf) += TermSpan(indices, spanValue!!)
         spanValue = null
         spanTargets.clear()
@@ -103,7 +103,7 @@ abstract class XmlReader(stream: InputStream) : AnnotationReader() {
     private fun shouldIgnore(): Boolean = ignoring.also { ignoring = reader.localName in ignorableTags }
 
     private fun parseChars() {
-        val words = reader.text.takeIf { it.isNotBlank() }?.split(whitespace) ?: emptyList()
+        val words = reader.text.ifBlank { null }?.split(whitespace) ?: emptyList()
         for ((j, word) in words.withIndex()) {
             if (j > 0) newWordform()
             literal += word
@@ -113,8 +113,8 @@ abstract class XmlReader(stream: InputStream) : AnnotationReader() {
     override fun newWordform() {
         if (literal.isBlank()) return
         val annotations = buildMap {
-            lemma?.takeIf { it.isNotBlank() }?.let { put(Annotation.LEMMA, it) }
-            pos?.takeIf { it.isNotBlank() }?.let { put(Annotation.POS, it) }
+            lemma?.ifBlank { null }?.let { put(Annotation.LEMMA, it) }
+            pos?.ifBlank { null }?.let { put(Annotation.POS, it) }
             put(Annotation.TOKEN, literal)
         }
         terms += Term(wordID(), offset, annotations, spaceAfter)
