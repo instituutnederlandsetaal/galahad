@@ -67,9 +67,9 @@ class ParagraphLayer(
 class SentenceLayer(
     val id: String,
     val terms: Array<Term>,
-    spans: Map<Annotation, Array<TermSpan>>,
+    spans: Map<Annotation, Array<TermSpan>>?,
 ) {
-    val spans: Map<Annotation, Array<TermSpan>>? = spans.ifEmpty { null }
+    val spans: Map<Annotation, Array<TermSpan>>? = spans?.ifEmpty { null }
 
     override fun toString(): String = buildString {
         terms.forEachIndexed { i, t ->

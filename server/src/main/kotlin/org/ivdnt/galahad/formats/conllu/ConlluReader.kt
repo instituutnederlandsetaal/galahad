@@ -56,8 +56,8 @@ class ConlluReader(
     }
 
     private fun newWord(string: String) {
-        // split on whitespace
-        val fields = string.split("\\s+".toRegex())
+        // split on tabs
+        val fields = string.split("\t")
         val id = fields[0]
         if (id.contains(".")) return // ignore empty nodes
         if (id.contains("-")) {
