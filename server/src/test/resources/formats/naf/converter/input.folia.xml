@@ -27,6 +27,40 @@
                     <t>.</t>
                     <pos class="PC" head="PC"/>
                 </w>
+                <dependencies>
+                    <dependency class="amod">
+                        <dep>
+                            <wref id="d1.p1.s1.w1" t="Fraaie"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p1.s1.w2" t="historie"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="cc">
+                        <dep>
+                            <wref id="d1.p1.s1.w3" t="ende"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p1.s1.w4" t="alwaer"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="conj">
+                        <dep>
+                            <wref id="d1.p1.s1.w4" t="alwaer"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p1.s1.w2" t="historie"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="punct">
+                        <dep>
+                            <wref id="d1.p1.s1.w5" t="."/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p1.s1.w2" t="historie"/>
+                        </hd>
+                    </dependency>
+                </dependencies>
             </s>
             <s xml:id="d1.p1.s2">
                 <w xml:id="d1.p1.s2.w1" class="WORD">
@@ -67,6 +101,64 @@
                     <t>.</t>
                     <pos class="PC" head="PC"/>
                 </w>
+                <dependencies>
+                    <dependency class="aux">
+                        <dep>
+                            <wref id="d1.p1.s2.w1" t="Magh"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p1.s2.w4" t="vertellen"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="nsubj">
+                        <dep>
+                            <wref id="d1.p1.s2.w2" t="&apos;k"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p1.s2.w4" t="vertellen"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="iobj">
+                        <dep>
+                            <wref id="d1.p1.s2.w3" t="u"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p1.s2.w4" t="vertellen"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="punct">
+                        <dep>
+                            <wref id="d1.p1.s2.w5" t=","/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p1.s2.w4" t="vertellen"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="conj">
+                        <dep>
+                            <wref id="d1.p1.s2.w6" t="hoirt"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p1.s2.w4" t="vertellen"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="advmod">
+                        <dep>
+                            <wref id="d1.p1.s2.w7" t="naer"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p1.s2.w6" t="hoirt"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="punct">
+                        <dep>
+                            <wref id="d1.p1.s2.w8" t="."/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p1.s2.w4" t="vertellen"/>
+                        </hd>
+                    </dependency>
+                </dependencies>
             </s>
         </p>
         <p xml:id="d1.p2">
@@ -100,6 +192,48 @@
                     <t>.</t>
                     <pos class="PC" head="PC"/>
                 </w>
+                <dependencies>
+                    <dependency class="expl">
+                        <dep>
+                            <wref id="d1.p2.s1.w1" t="&apos;t"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p2.s1.w2" t="Was"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="cop">
+                        <dep>
+                            <wref id="d1.p2.s1.w2" t="Was"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p2.s1.w5" t="avondstonde"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="case">
+                        <dep>
+                            <wref id="d1.p2.s1.w3" t="op"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p2.s1.w5" t="avondstonde"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="det">
+                        <dep>
+                            <wref id="d1.p2.s1.w4" t="enen"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p2.s1.w5" t="avondstonde"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="punct">
+                        <dep>
+                            <wref id="d1.p2.s1.w6" t="."/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p2.s1.w5" t="avondstonde"/>
+                        </hd>
+                    </dependency>
+                </dependencies>
             </s>
             <s xml:id="d1.p2.s2">
                 <w xml:id="d1.p2.s2.w1" class="WORD">
@@ -137,6 +271,48 @@
                         <wref id="d1.p2.s2.w3" t="Carel"/>
                     </entity>
                 </entities>
+                <dependencies>
+                    <dependency class="expl">
+                        <dep>
+                            <wref id="d1.p2.s2.w1" t="Dat"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p2.s2.w4" t="slaepen"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="nsubj">
+                        <dep>
+                            <wref id="d1.p2.s2.w2" t="koning"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p2.s2.w4" t="slaepen"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="flat">
+                        <dep>
+                            <wref id="d1.p2.s2.w3" t="Carel"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p2.s2.w2" t="koning"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="aux">
+                        <dep>
+                            <wref id="d1.p2.s2.w5" t="beghonde"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p2.s2.w4" t="slaepen"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="punct">
+                        <dep>
+                            <wref id="d1.p2.s2.w6" t="."/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p2.s2.w4" t="slaepen"/>
+                        </hd>
+                    </dependency>
+                </dependencies>
             </s>
         </p>
         <p xml:id="d1.p3">
@@ -191,6 +367,80 @@
                         <wref id="d1.p3.s1.w2" t="Martijn"/>
                     </entity>
                 </entities>
+                <dependencies>
+                    <dependency class="punct">
+                        <dep>
+                            <wref id="d1.p3.s1.w1" t="&quot;"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p3.s1.w4" t="slaepstu"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="nsubj">
+                        <dep>
+                            <wref id="d1.p3.s1.w2" t="Martijn"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p3.s1.w4" t="slaepstu"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="punct">
+                        <dep>
+                            <wref id="d1.p3.s1.w3" t=","/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p3.s1.w4" t="slaepstu"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="punct">
+                        <dep>
+                            <wref id="d1.p3.s1.w5" t="?"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p3.s1.w4" t="slaepstu"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="cc">
+                        <dep>
+                            <wref id="d1.p3.s1.w6" t="slaept"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p3.s1.w4" t="slaepstu"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="det">
+                        <dep>
+                            <wref id="d1.p3.s1.w7" t="dijn"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p3.s1.w8" t="sin"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="nsubj">
+                        <dep>
+                            <wref id="d1.p3.s1.w8" t="sin"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p3.s1.w6" t="slaept"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="punct">
+                        <dep>
+                            <wref id="d1.p3.s1.w9" t="?"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p3.s1.w4" t="slaepstu"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="punct">
+                        <dep>
+                            <wref id="d1.p3.s1.w10" t="&quot;"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p3.s1.w4" t="slaepstu"/>
+                        </hd>
+                    </dependency>
+                </dependencies>
             </s>
             <s xml:id="d1.p3.s2">
                 <w xml:id="d1.p3.s2.w1" class="WORD" space="no">
@@ -226,6 +476,56 @@
                     <t>?</t>
                     <pos class="PC" head="PC"/>
                 </w>
+                <dependencies>
+                    <dependency class="punct">
+                        <dep>
+                            <wref id="d1.p3.s2.w2" t="!"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p3.s2.w1" t="Sprec"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="aux">
+                        <dep>
+                            <wref id="d1.p3.s2.w3" t="hebstu"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p3.s2.w5" t="spreken"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="det">
+                        <dep>
+                            <wref id="d1.p3.s2.w4" t="gheen"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p3.s2.w4" t="gheen"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="obj">
+                        <dep>
+                            <wref id="d1.p3.s2.w5" t="spreken"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p3.s2.w3" t="hebstu"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="compound:prt">
+                        <dep>
+                            <wref id="d1.p3.s2.w6" t="in"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p3.s2.w3" t="hebstu"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="punct">
+                        <dep>
+                            <wref id="d1.p3.s2.w7" t="?"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p3.s2.w1" t="Sprec"/>
+                        </hd>
+                    </dependency>
+                </dependencies>
             </s>
         </p>
         <p xml:id="d1.p4">
@@ -254,6 +554,40 @@
                     <t>.</t>
                     <pos class="PC" head="PC"/>
                 </w>
+                <dependencies>
+                    <dependency class="nsubj">
+                        <dep>
+                            <wref id="d1.p4.s1.w1" t="Du"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p4.s1.w4" t="verdoren"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="aux">
+                        <dep>
+                            <wref id="d1.p4.s1.w2" t="dinkes"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p4.s1.w4" t="verdoren"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="obj">
+                        <dep>
+                            <wref id="d1.p4.s1.w3" t="mi"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p4.s1.w4" t="verdoren"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="punct">
+                        <dep>
+                            <wref id="d1.p4.s1.w5" t="."/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p4.s1.w5" t="."/>
+                        </hd>
+                    </dependency>
+                </dependencies>
             </s>
             <s xml:id="d1.p4.s2">
                 <w xml:id="d1.p4.s2.w1" class="WORD">
@@ -281,6 +615,40 @@
                     <lemma class="min"/>
                     <pos class="PD(type=indef,position=free)" head="PD"/>
                 </w>
+                <dependencies>
+                    <dependency class="subj">
+                        <dep>
+                            <wref id="d1.p4.s2.w1" t="Dune"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p4.s2.w2" t="achtes"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="advmod">
+                        <dep>
+                            <wref id="d1.p4.s2.w3" t="meer"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p4.s2.w2" t="achtes"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="conj">
+                        <dep>
+                            <wref id="d1.p4.s2.w4" t="no"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p4.s2.w3" t="meer"/>
+                        </hd>
+                    </dependency>
+                    <dependency class="cc">
+                        <dep>
+                            <wref id="d1.p4.s2.w5" t="min"/>
+                        </dep>
+                        <hd>
+                            <wref id="d1.p4.s2.w3" t="meer"/>
+                        </hd>
+                    </dependency>
+                </dependencies>
             </s>
         </p>
     </text>

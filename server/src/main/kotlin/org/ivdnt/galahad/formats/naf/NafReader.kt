@@ -30,16 +30,18 @@ class NafReader(file: File) : AnnotationReader() {
             pos = it.getAttribute("pos").ifEmpty { null },
             targets = it.childElements.first().childElements.map { it.getAttribute("id") }.toList()
         )
-    }
+    }.toList()
     private val nafDeps = root.childOrNull("deps")?.childElements?.map {
         NafDep(
             from = it.getAttribute("from"), to = it.getAttribute("to"), rfunc = it.getAttribute("rfunc")
         )
-    }
+    }?.toList()
     private val nafEntities = root.childOrNull("entities")?.childElements?.map {
         NafEntity(
             type = it.getAttribute("type").ifEmpty { null },
-            references = it.childOrNull("references")?.childElements?.map { it.childElements.map { it.getAttribute("id") }.toList() }?.toList()!!
+            references = it.childOrNull("references")?.childElements?.map {
+                it.childElements.map { it.getAttribute("id") }.toList()
+            }?.toList()!!
         )
     }?.toList()
     private val id: String = root.childOrNull("nafHeader")?.childOrNull("public")?.getAttribute("publicId").orEmpty()
@@ -55,7 +57,11 @@ class NafReader(file: File) : AnnotationReader() {
                     // retrieve term, entity, and dependencies
                     val term = nafTerms.find { wordform.id in it.targets }!!
                     val entity = nafEntities?.find { it.references.any { term.id in it } }
-                    val dep = nafDeps?.first { it.to == term.id }
+                    val dep: NafDep? = if (nafDeps.isNullOrEmpty()) {
+                        null
+                    } else {
+                        nafDeps.firstOrNull { it.to == term.id } ?: NafDep("0", "0", "root")
+                    }
 
                     // annotations
                     val annotations = mutableMapOf<Annotation, String>()
@@ -64,9 +70,14 @@ class NafReader(file: File) : AnnotationReader() {
                     term.pos?.let { annotations[Annotation.POS] = it }
                     entity?.type?.let { annotations[Annotation.NER] = it }
                     dep?.rfunc?.let { annotations[Annotation.DEPREL] = it }
-                    val headTerm = nafTerms.find { it.id == dep?.from }
-                    val headWordform = nafWordforms.find { it.id == headTerm?.targets?.first() }
-                    headWordform?.id?.let { annotations[Annotation.HEAD] = it }
+
+                    if (dep?.from == "0") {
+                        annotations[Annotation.HEAD] = "0"
+                    } else {
+                        val headTerm = nafTerms.find { it.id == dep?.from }
+                        val headWordform = nafWordforms.find { it.id == headTerm?.targets?.first() }
+                        headWordform?.let { annotations[Annotation.HEAD] = (sent.indexOf(headWordform) + 1).toString() }
+                    }
 
                     // space after
                     val nextWordform = sent.getOrNull(i + 1)
