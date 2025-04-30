@@ -4,7 +4,6 @@ import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.export.LayerConverter
 import org.ivdnt.galahad.util.XmlUtil
-import org.ivdnt.galahad.util.ifNullOrBlank
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import java.io.OutputStream
@@ -28,6 +27,9 @@ class NafConverter(export: DocumentExport) : LayerConverter(export) {
         addTerms(xml, root)
         if (Annotation.NER in export.tagger.annotations) {
             addEntities(xml, root)
+        }
+        if (Annotation.DEPREL in export.tagger.annotations) {
+            addDependencies(xml, root)
         }
 
         XmlUtil.transformer.transform(DOMSource(root), StreamResult(out))
@@ -54,7 +56,7 @@ class NafConverter(export: DocumentExport) : LayerConverter(export) {
             setAttribute("name", export.tagger.id)
             setAttribute("timestamp", now.toString())
             setAttribute("hostname", "https://galahad.ivdnt.org")
-            export.tagger.version.ifBlank { null }?.let{ setAttribute("version", it) }
+            export.tagger.version.ifBlank { null }?.let { setAttribute("version", it) }
         }
         val lpTerms = xml.createElement("linguisticProcessors").apply {
             setAttribute("layer", "terms")
@@ -99,7 +101,7 @@ class NafConverter(export: DocumentExport) : LayerConverter(export) {
                         setAttribute("offset", t.offset.toString())
                         setAttribute("length", t.token.length.toString())
                         setAttribute("sent", iSent.toString())
-                        setAttribute("para", (iPar+1).toString())
+                        setAttribute("para", (iPar + 1).toString())
                         textContent = t.token
                     }
                     text.appendChild(wf)
@@ -114,7 +116,7 @@ class NafConverter(export: DocumentExport) : LayerConverter(export) {
         root.appendChild(terms)
         export.layer.terms.forEachIndexed { i, it ->
             val term = xml.createElement("term").apply {
-                setAttribute("id", "t${i+1}")
+                setAttribute("id", "t${i + 1}")
             }
             it.lemma?.let { term.setAttribute("lemma", it) }
             it.pos?.let { term.setAttribute("pos", it) }
@@ -138,7 +140,7 @@ class NafConverter(export: DocumentExport) : LayerConverter(export) {
         documents.forEach { doc ->
             doc.paragraphs.forEach { par ->
                 par.sentences.forEach { sent ->
-                    sent.spans[Annotation.NER]?.forEach { termSpan ->
+                    sent.spans?.get(Annotation.NER)?.forEach { termSpan ->
                         val spanEl = xml.createElement("span")
                         val terms = termSpan.indices.map { sent.terms[it] }
                         terms.forEach { t ->
@@ -156,6 +158,31 @@ class NafConverter(export: DocumentExport) : LayerConverter(export) {
                         }
                         entity.appendChild(references)
                         entities.appendChild(entity)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun addDependencies(xml: Document, root: Element) {
+        val deps = xml.createElement("deps")
+        root.appendChild(deps)
+        var runningTermIndex = 0
+        var firstSentenceTermIndex = 0
+        documents.forEach { doc ->
+            doc.paragraphs.forEach { par ->
+                par.sentences.forEach { sent ->
+                    firstSentenceTermIndex = runningTermIndex
+                    sent.terms.forEachIndexed { i, t ->
+                        runningTermIndex++
+                        if (t.deprel?.lowercase() != "root") {
+                            xml.createElement("dep").apply {
+                                // <dep from="t5" to="t1" rfunc="nsubj"/>
+                                setAttribute("from", "t${firstSentenceTermIndex + t.head!!.toInt()}")
+                                setAttribute("to", "t$runningTermIndex")
+                                setAttribute("rfunc", t.deprel)
+                            }.also { deps.appendChild(it) }
+                        }
                     }
                 }
             }

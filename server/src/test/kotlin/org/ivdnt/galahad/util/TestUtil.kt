@@ -1,8 +1,11 @@
 package org.ivdnt.galahad.util
 
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.core.json.JsonWriteFeature
 import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.databind.cfg.DatatypeFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.corpora.Corpora
@@ -25,6 +28,7 @@ object TestUtil {
         .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
         .configure(SerializationFeature.INDENT_OUTPUT, true)
         .build()
+        .setSerializationInclusion(JsonInclude.Include.NON_NULL)
 
     fun createCorpus(workdir: File? = null, isDataset: Boolean = false, isAdmin: Boolean = false): Corpus {
         val parent = workdir ?: createTempDirectory().toFile()
@@ -57,7 +61,7 @@ object TestUtil {
         // Plain text
         assertPlainText(folder, file)
         // Source layer
-        val jsonExpected = get("$folder/sourcelayer.json").readText()
+        val jsonExpected = get("$folder/layer.json").readText()
         val json = mapper.writeValueAsString(file.layer)
         assertEquals(jsonExpected, json)
     }

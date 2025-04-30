@@ -14,8 +14,14 @@ abstract class XmlReader(stream: InputStream) : AnnotationReader() {
     protected var lemma: String? = null
     protected var literal: String = ""
     protected var spaceAfter: Boolean = true
-    protected var spanValue: String? = null
-    protected var spanTargets: MutableList<String> = mutableListOf()
+
+    protected var nerValue: String? = null
+    protected var nerTargets: MutableList<String> = mutableListOf()
+
+    protected var deprel: String? = null
+    protected var deprelFrom: String? = null
+    protected var deprelTo: String? = null
+
 
     protected val reader: XMLStreamReader by lazy { XmlUtil.inputFactory.createXMLStreamReader(stream) }
 
@@ -25,14 +31,16 @@ abstract class XmlReader(stream: InputStream) : AnnotationReader() {
     private var currentDepth: Int = 0
     private var ignoreDepth: Int? = null
 
-    abstract val spanTags: Array<String>
-    abstract val spanDataTags: Array<String>
+    abstract val nerTags: Array<String>
     abstract val documentTags: Array<String>
     abstract val paragraphTags: Array<String>
     abstract val sentenceTags: Array<String>
     abstract val wordTags: Array<String>
-    abstract val wordDataTags: Array<String>
     abstract val ignorableTags: Array<String>
+    abstract val depTags: Array<String>
+
+    /** Path of the current XML element */
+    protected val xmlPath: MutableList<String> = mutableListOf()
 
     final override fun read(): Layer {
         // retrieve the XML ID of the document root
@@ -68,10 +76,38 @@ abstract class XmlReader(stream: InputStream) : AnnotationReader() {
                         in paragraphTags -> newParagraph()
                         in sentenceTags -> newSentence()
                         in wordTags -> newWordform()
-                        in spanTags -> newSpan()
+                        in nerTags -> newSpan()
+                        in depTags -> newDep()
                     }
                 }
             }
+        }
+    }
+
+    private fun newDep() {
+        // edit the DEPREL and HEAD value of the terms
+        if (deprel != null) {
+            val depI = terms.indexOfFirst { it.id == deprelTo }
+            val dep = terms[depI]
+            val headI = terms.indexOfFirst { it.id == deprelFrom }
+
+            val annots = buildMap {
+                putAll(dep.annotations)
+                put(Annotation.DEPREL, deprel)
+                put(Annotation.HEAD, (headI + 1).toString())
+            }
+
+            terms[depI] = Term(
+                dep.id,
+                dep.offset,
+                annots,
+                dep.spaceAfter
+            )
+
+            // reset
+            deprel = null
+            deprelFrom = null
+            deprelTo = null
         }
     }
 
@@ -85,15 +121,27 @@ abstract class XmlReader(stream: InputStream) : AnnotationReader() {
                 terms[termI] = Term(t.id, t.offset, t.annotations + (Annotation.NER to iob), t.spaceAfter)
             }
         }
+        // if any DEPREL is present, set the root term to ROOT (i.e. the term with no deprel)
+        if (terms.any { it.deprel != null }) {
+            val rootI = terms.indexOfFirst { it.deprel == null }
+            val root = terms[rootI]
+            val annots = buildMap {
+                putAll(root.annotations)
+                put(Annotation.DEPREL, "root")
+                put(Annotation.HEAD, "0")
+            }
+            terms[rootI] = Term(root.id, root.offset, annots, root.spaceAfter)
+        }
         super.newSentence()
+        nerTargets.clear()
     }
 
-    fun newSpan() {
-        if (spanValue == null) return
-        val indices = spanTargets.map { id -> terms.indexOfFirst { t -> t.id == id } }
-        spans.getOrPut(Annotation.NER, ::mutableListOf) += TermSpan(indices, spanValue!!)
-        spanValue = null
-        spanTargets.clear()
+    private fun newSpan() {
+        if (nerValue == null) return
+        val indices = nerTargets.map { id -> terms.indexOfFirst { t -> t.id == id } }
+        spans.getOrPut(Annotation.NER, ::mutableListOf) += TermSpan(indices, nerValue!!)
+        nerValue = null
+        nerTargets.clear()
     }
 
     protected abstract fun parseAttrs()
@@ -101,6 +149,7 @@ abstract class XmlReader(stream: InputStream) : AnnotationReader() {
     private fun shouldIgnore(): Boolean {
         if (reader.isStartElement) {
             currentDepth++
+            xmlPath.add(reader.localName)
             if (!ignoring && reader.localName in ignorableTags) {
                 ignoring = true
                 ignoreDepth = currentDepth
@@ -111,6 +160,7 @@ abstract class XmlReader(stream: InputStream) : AnnotationReader() {
                 ignoreDepth = null
             }
             currentDepth--
+            xmlPath.removeLastOrNull()
         }
         return ignoring
     }

@@ -1,8 +1,8 @@
 package org.ivdnt.galahad.taggers
 
-import org.ivdnt.galahad.TestConfig
 import org.ivdnt.galahad.app.Galahad
 import org.ivdnt.galahad.exceptions.TaggerNotFoundException
+import org.ivdnt.galahad.util.TestConfig
 import org.ivdnt.galahad.web.controller.TaggersController
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test

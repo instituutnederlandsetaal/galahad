@@ -9,6 +9,9 @@
         <linguisticProcessors layer="entities">
             <lp hostname="https://galahad.ivdnt.org" name="sourceLayer" timestamp="1745591638145"/>
         </linguisticProcessors>
+        <linguisticProcessors layer="deps">
+            <lp hostname="https://galahad.ivdnt.org" name="sourceLayer" timestamp="1745591638145"/>
+        </linguisticProcessors>
     </nafHeader>
     <raw><![CDATA[Fraaie historie ende alwaer.
 Magh 'k u vertellen, hoirt naer.
@@ -355,4 +358,50 @@ Dune achtes meer no min
             </references>
         </entity>
     </entities>
+    <deps>
+        <dep from="t2" rfunc="amod" to="t1"/>
+        <dep from="t4" rfunc="cc" to="t3"/>
+        <dep from="t2" rfunc="conj" to="t4"/>
+        <dep from="t2" rfunc="punct" to="t5"/>
+        <dep from="t9" rfunc="aux" to="t6"/>
+        <dep from="t9" rfunc="nsubj" to="t7"/>
+        <dep from="t9" rfunc="iobj" to="t8"/>
+        <dep from="t9" rfunc="punct" to="t10"/>
+        <dep from="t9" rfunc="conj" to="t11"/>
+        <dep from="t11" rfunc="advmod" to="t12"/>
+        <dep from="t9" rfunc="punct" to="t13"/>
+        <dep from="t15" rfunc="expl" to="t14"/>
+        <dep from="t18" rfunc="cop" to="t15"/>
+        <dep from="t18" rfunc="case" to="t16"/>
+        <dep from="t18" rfunc="det" to="t17"/>
+        <dep from="t18" rfunc="punct" to="t19"/>
+        <dep from="t23" rfunc="expl" to="t20"/>
+        <dep from="t23" rfunc="nsubj" to="t21"/>
+        <dep from="t21" rfunc="flat" to="t22"/>
+        <dep from="t23" rfunc="aux" to="t24"/>
+        <dep from="t23" rfunc="punct" to="t25"/>
+        <dep from="t29" rfunc="punct" to="t26"/>
+        <dep from="t29" rfunc="nsubj" to="t27"/>
+        <dep from="t29" rfunc="punct" to="t28"/>
+        <dep from="t29" rfunc="punct" to="t30"/>
+        <dep from="t29" rfunc="cc" to="t31"/>
+        <dep from="t33" rfunc="det" to="t32"/>
+        <dep from="t31" rfunc="nsubj" to="t33"/>
+        <dep from="t29" rfunc="punct" to="t34"/>
+        <dep from="t29" rfunc="punct" to="t35"/>
+        <dep from="t36" rfunc="punct" to="t37"/>
+        <dep from="t40" rfunc="aux" to="t38"/>
+        <dep from="t39" rfunc="det" to="t39"/>
+        <dep from="t38" rfunc="obj" to="t40"/>
+        <dep from="t38" rfunc="compound:prt" to="t41"/>
+        <dep from="t36" rfunc="punct" to="t42"/>
+        <dep from="t46" rfunc="nsubj" to="t43"/>
+        <dep from="t46" rfunc="aux" to="t44"/>
+        <dep from="t46" rfunc="obj" to="t45"/>
+        <dep from="t47" rfunc="punct" to="t47"/>
+        <dep from="t49" rfunc="subj" to="t48"/>
+        <dep from="t49" rfunc="advmod" to="t50"/>
+        <dep from="t50" rfunc="conj" to="t51"/>
+        <dep from="t50" rfunc="cc" to="t52"/>
+    </deps>
 </NAF>

@@ -61,7 +61,7 @@ class FoliaConverter(export: DocumentExport) : LayerConverter(export) {
                         writer.writeEndElement() // w
                     }
 
-                    sentence.spans[Annotation.NER]?.let { nerSpans ->
+                    sentence.spans?.get(Annotation.NER)?.let { nerSpans ->
                         writer.writeStartElement("entities")
                         nerSpans.forEachIndexed { spanI, span ->
                             writer.writeStartElement("entity")
@@ -78,6 +78,33 @@ class FoliaConverter(export: DocumentExport) : LayerConverter(export) {
                             writer.writeEndElement() // entity
                         }
                         writer.writeEndElement() // entities
+                    }
+
+                    if (Annotation.DEPREL in export.tagger.annotations) {
+                        writer.writeStartElement("dependencies")
+                        sentence.terms.forEach { t ->
+                            if (t.deprel?.lowercase() != "root") {
+                                writer.writeStartElement("dependency")
+                                writer.writeAttribute("class", t.deprel)
+                                writer.writeStartElement("dep")
+
+                                writer.writeStartElement("wref")
+                                writer.writeAttribute("id", t.id)
+                                writer.writeAttribute("t", t.token)
+                                writer.writeEndElement(false) // wref
+                                writer.writeEndElement() // dep
+
+                                val head = sentence.terms[t.head!!.toInt() - 1]
+                                writer.writeStartElement("hd")
+                                writer.writeStartElement("wref")
+                                writer.writeAttribute("id", head.id)
+                                writer.writeAttribute("t", head.token)
+                                writer.writeEndElement(false) // wref
+                                writer.writeEndElement() // head
+                                writer.writeEndElement() // dependency
+                            }
+                        }
+                        writer.writeEndElement() // linkGrp
                     }
 
                     writer.writeEndElement() // s

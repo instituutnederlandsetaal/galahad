@@ -34,7 +34,7 @@ class TeiConverter(export: DocumentExport) : LayerConverter(export) {
                 paragraph.sentences.forEach { sentence ->
                     writer.writeStartElement("s")
                     writer.writeAttribute(XMLConstants.XML_NS_URI, "id", sentence.id)
-                    val ners = sentence.spans[Annotation.NER]
+                    val ners = sentence.spans?.get(Annotation.NER)
                     sentence.terms.forEachIndexed { termI, t ->
                         // if the term is in a span, we output:
                         // <name type="ORG">
@@ -60,6 +60,26 @@ class TeiConverter(export: DocumentExport) : LayerConverter(export) {
                         }
 
                     }
+                    // at the end of a sentence, write deprels. Example:
+                    // <linkGrp targFunc="head argument" type="UD-SYN">
+                    //     <link target="#d1.p1.s1.w1 #d1.p1.s1.w2" ana="ud-syn:det"/>
+                    // </linkGrp>
+                    if (Annotation.DEPREL in export.tagger.annotations) {
+                        writer.writeStartElement("linkGrp")
+                        writer.writeAttribute("targFunc", "head argument")
+                        writer.writeAttribute("type", "UD-SYN")
+                        sentence.terms.forEach { t ->
+                            if (t.deprel?.lowercase() != "root") {
+                                writer.writeStartElement("link")
+                                writer.writeAttribute("target", "#${sentence.terms[t.head!!.toInt() - 1].id} #${t.id}")
+                                writer.writeAttribute("ana", "ud-syn:${t.deprel}")
+                                writer.writeEndElement(false) // link
+                            }
+                        }
+                        writer.writeEndElement() // linkGrp
+                    }
+
+
                     writer.writeEndElement() // s
 
                 }

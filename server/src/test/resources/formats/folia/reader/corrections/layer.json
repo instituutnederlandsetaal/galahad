@@ -1,0 +1,85 @@
+{
+  "documents" : [ {
+    "id" : "page1263.text",
+    "paragraphs" : [ {
+      "id" : "page1263.text.p.1",
+      "sentences" : [ {
+        "id" : "page1263.text.p.1.s.1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "word1"
+          },
+          "id" : "page1263.text.p.1.s.1.w.1",
+          "offset" : 0
+        }, {
+          "annotations" : {
+            "token" : "word2"
+          },
+          "id" : "corrected.6bbb0a87",
+          "offset" : 6
+        } ]
+      }, {
+        "id" : "page1263.text.p.1.s.2",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "word3"
+          },
+          "id" : "page1263.text.p.1.s.2.w1",
+          "offset" : 12
+        }, {
+          "annotations" : {
+            "token" : "word4",
+            "pos" : "pos4"
+          },
+          "id" : "example.s.1.w.3",
+          "offset" : 18
+        } ]
+      }, {
+        "id" : "example.p.1.s.1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "word5"
+          },
+          "id" : "example.p.1.s.1.w.1",
+          "offset" : 24
+        }, {
+          "annotations" : {
+            "token" : "word6"
+          },
+          "id" : "example.p.1.s.1.w.2",
+          "offset" : 30
+        }, {
+          "annotations" : {
+            "token" : "word7"
+          },
+          "id" : "example.p.1.s.1.w.2",
+          "offset" : 36
+        } ]
+      }, {
+        "id" : "example.p.1.s.1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "word8"
+          },
+          "id" : "example.p.1.s.1.w.1",
+          "offset" : 42
+        }, {
+          "annotations" : {
+            "token" : "word9"
+          },
+          "id" : "example.s.1.w.3",
+          "offset" : 48
+        }, {
+          "annotations" : {
+            "token" : "word10",
+            "lemma" : "lemma10",
+            "pos" : "pos10"
+          },
+          "id" : "page1263.text.p.1.s.1.w.1",
+          "offset" : 54
+        } ]
+      } ]
+    } ]
+  } ],
+  "id" : "page1263"
+}

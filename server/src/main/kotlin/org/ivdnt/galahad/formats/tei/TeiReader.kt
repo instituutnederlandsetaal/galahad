@@ -7,14 +7,14 @@ import javax.xml.XMLConstants
 class TeiReader(
     stream: BufferedInputStream,
 ) : XmlReader(stream) {
-    override val spanTags: Array<String> = SPAN_TAGS
-    override val spanDataTags: Array<String> = SPAN_DATA_TAGS
+    override val nerTags: Array<String> = NER_TAGS
     override val documentTags: Array<String> = DOCUMENT_TAGS
     override val paragraphTags: Array<String> = PARAGRAPH_TAGS
     override val sentenceTags: Array<String> = SENTENCE_TAGS
     override val wordTags: Array<String> = WORD_TAGS
     override val ignorableTags: Array<String> = IGNORABLE_TAGS
-    override val wordDataTags: Array<String> = WORD_DATA_TAGS
+    override val depTags: Array<String> = DEP_TAGS
+    private val wordDataTags: Array<String> = WORD_DATA_TAGS
 
     override fun parseAttrs() {
         when (reader.localName) {
@@ -26,12 +26,19 @@ class TeiReader(
                 )?.ifBlank { null }
                 spaceAfter = reader.getAttributeValue(null, "join") !in arrayOf("right", "both")
                 // if spanValue is not null, it means we are in a span tag
-                if (spanValue != null) {
-                    spanTargets.add(reader.getAttributeValue(XMLConstants.XML_NS_URI, "id"))
+                if (nerValue != null) {
+                    nerTargets.add(reader.getAttributeValue(XMLConstants.XML_NS_URI, "id"))
                 }
             }
-            in SPAN_TAGS -> {
-                spanValue = reader.getAttributeValue(null, "type")
+            in NER_TAGS -> {
+                nerValue = reader.getAttributeValue(null, "type")
+            }
+            "link" -> {
+                deprel = reader.getAttributeValue(null, "ana")?.replace("ud-syn:", "")
+                reader.getAttributeValue(null, "target")?.split(" ")?.also {
+                    deprelFrom = it[0].substring(1) // ignore initial #
+                    deprelTo = it[1].substring(1)
+                }
             }
         }
     }
@@ -41,9 +48,9 @@ class TeiReader(
         private val WORD_TAGS = arrayOf("w", "pc")
         private val WORD_DATA_TAGS = arrayOf("w", "pc")
         private val SENTENCE_TAGS = arrayOf("s", "l", "u")
-        private val IGNORABLE_TAGS = arrayOf("note", "listBibl", "listWit", "figure", "xr", "fs", "del")
-        private val SPAN_TAGS = arrayOf("name")
-        private val SPAN_DATA_TAGS = arrayOf("w", "name")
+        private val IGNORABLE_TAGS = arrayOf("note", "listBibl", "listWit", "figure", "xr", "fs", "del", "teiHeader", "incident")
+        private val NER_TAGS = arrayOf("name")
+        private val DEP_TAGS = arrayOf("link")
         private val PARAGRAPH_TAGS = arrayOf(
             "text", // top most <text> defines a document, any other <text> is treated as a paragraph
             "body",
@@ -76,7 +83,6 @@ class TeiReader(
             "ab",
             "p",
             "cit",
-            "quote",
             "floatingText",
             "said"
         )

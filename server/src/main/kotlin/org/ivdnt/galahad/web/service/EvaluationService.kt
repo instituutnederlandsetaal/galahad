@@ -281,6 +281,7 @@ class EvaluationService(val corpora: CorporaService) {
 
     fun getEntities(corpus: UUID, document: String, job: String): List<Pair<String, List<Term>>>{
         val layer = corpora.readAsReaderOrThrow(corpus, user).jobs.readOrThrow(job).getLayer(document)
-        return layer.documents.flatMap { it.paragraphs.flatMap { it.sentences.flatMap { sent -> sent.spans[Annotation.NER]?.map { span -> span.value to span.indices.map { sent.terms[it] } } ?: emptyList() } } }
+        return layer.documents.flatMap { it.paragraphs.flatMap { it.sentences.flatMap { sent -> sent.spans?.get(Annotation.NER)
+            ?.map { span -> span.value to span.indices.map { sent.terms[it] } } ?: emptyList() } } }
     }
 }

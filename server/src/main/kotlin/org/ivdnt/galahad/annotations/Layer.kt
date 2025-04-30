@@ -19,7 +19,7 @@ class Layer(
             documents.asSequence().flatMap { document ->
                 document.paragraphs.asSequence().flatMap { paragraph ->
                     paragraph.sentences.asSequence().flatMap { sentence ->
-                        sentence.spans[annotation]?.asSequence() ?: emptySequence()
+                        sentence.spans?.get(annotation)?.asSequence() ?: emptySequence()
                     }
                 }
             }
@@ -67,8 +67,10 @@ class ParagraphLayer(
 class SentenceLayer(
     val id: String,
     val terms: Array<Term>,
-    val spans: Map<Annotation, Array<TermSpan>>,
+    spans: Map<Annotation, Array<TermSpan>>,
 ) {
+    val spans: Map<Annotation, Array<TermSpan>>? = spans.ifEmpty { null }
+
     override fun toString(): String = buildString {
         terms.forEachIndexed { i, t ->
             append(t.token)

@@ -9,6 +9,12 @@
                     <w xml:id="karel.p1.s1.w3" lemma="en" pos="CONJ(type=coor)">ende</w>
                     <w xml:id="karel.p1.s1.w4" lemma="alwaar" pos="ADV(type=reg)" join="right">alwaer</w>
                     <pc xml:id="karel.p1.s1.w5" pos="PC">.</pc>
+                    <linkGrp targFunc="head argument" type="UD-SYN">
+                        <link target="#karel.p1.s1.w2 #karel.p1.s1.w1" ana="ud-syn:amod"/>
+                        <link target="#karel.p1.s1.w4 #karel.p1.s1.w3" ana="ud-syn:cc"/>
+                        <link target="#karel.p1.s1.w2 #karel.p1.s1.w4" ana="ud-syn:conj"/>
+                        <link target="#karel.p1.s1.w2 #karel.p1.s1.w5" ana="ud-syn:punct"/>
+                    </linkGrp>
                 </s>
                 <s xml:id="karel.p1.s2">
                     <w xml:id="karel.p1.s2.w1" lemma="mogen" pos="VRB(finiteness=fin,tense=pres)">Magh</w>
@@ -19,6 +25,15 @@
                     <w xml:id="karel.p1.s2.w6" lemma="naarhoren" pos="VRB(finiteness=fin,tense=pres)">hoirt</w>
                     <w xml:id="karel.p1.s2.w7" lemma="naarhoren" pos="VRB(finiteness=fin,tense=pres)" join="right">naer</w>
                     <pc xml:id="karel.p1.s2.w8" pos="PC">.</pc>
+                    <linkGrp targFunc="head argument" type="UD-SYN">
+                        <link target="#karel.p1.s2.w4 #karel.p1.s2.w1" ana="ud-syn:aux"/>
+                        <link target="#karel.p1.s2.w4 #karel.p1.s2.w2" ana="ud-syn:nsubj"/>
+                        <link target="#karel.p1.s2.w4 #karel.p1.s2.w3" ana="ud-syn:iobj"/>
+                        <link target="#karel.p1.s2.w4 #karel.p1.s2.w5" ana="ud-syn:punct"/>
+                        <link target="#karel.p1.s2.w4 #karel.p1.s2.w6" ana="ud-syn:conj"/>
+                        <link target="#karel.p1.s2.w6 #karel.p1.s2.w7" ana="ud-syn:advmod"/>
+                        <link target="#karel.p1.s2.w4 #karel.p1.s2.w8" ana="ud-syn:punct"/>
+                    </linkGrp>
                 </s>
             </p>
             <p xml:id="karel.p2">
@@ -29,6 +44,13 @@
                     <w xml:id="karel.p2.s1.w4" lemma="een" pos="PD(type=indef,subtype=art,position=prenom)">enen</w>
                     <w xml:id="karel.p2.s1.w5" lemma="avondstond" pos="NOU-C(number=sg)" join="right">avondstonde</w>
                     <pc xml:id="karel.p2.s1.w6" pos="PC">.</pc>
+                    <linkGrp targFunc="head argument" type="UD-SYN">
+                        <link target="#karel.p2.s1.w2 #karel.p2.s1.w1" ana="ud-syn:expl"/>
+                        <link target="#karel.p2.s1.w5 #karel.p2.s1.w2" ana="ud-syn:cop"/>
+                        <link target="#karel.p2.s1.w5 #karel.p2.s1.w3" ana="ud-syn:case"/>
+                        <link target="#karel.p2.s1.w5 #karel.p2.s1.w4" ana="ud-syn:det"/>
+                        <link target="#karel.p2.s1.w5 #karel.p2.s1.w6" ana="ud-syn:punct"/>
+                    </linkGrp>
                 </s>
                 <s xml:id="karel.p2.s2">
                     <w xml:id="karel.p2.s2.w1" lemma="dat" pos="CONJ(type=sub)">Dat</w>
@@ -39,6 +61,13 @@
                     <w xml:id="karel.p2.s2.w4" lemma="slaap" pos="NOU-C(number=pl)">slaepen</w>
                     <w xml:id="karel.p2.s2.w5" lemma="beginnen" pos="VRB(finiteness=fin,tense=past)" join="right">beghonde</w>
                     <pc xml:id="karel.p2.s2.w6" pos="PC">.</pc>
+                    <linkGrp targFunc="head argument" type="UD-SYN">
+                        <link target="#karel.p2.s2.w4 #karel.p2.s2.w1" ana="ud-syn:expl"/>
+                        <link target="#karel.p2.s2.w4 #karel.p2.s2.w2" ana="ud-syn:nsubj"/>
+                        <link target="#karel.p2.s2.w2 #karel.p2.s2.w3" ana="ud-syn:flat"/>
+                        <link target="#karel.p2.s2.w4 #karel.p2.s2.w5" ana="ud-syn:aux"/>
+                        <link target="#karel.p2.s2.w4 #karel.p2.s2.w6" ana="ud-syn:punct"/>
+                    </linkGrp>
                 </s>
             </p>
         </body>
@@ -59,6 +88,17 @@
                     <w xml:id="martijn.p1.s1.w8" lemma="zin" pos="NOU-C(number=sg)" join="right">sin</w>
                     <pc xml:id="martijn.p1.s1.w9" pos="PC" join="right">?</pc>
                     <pc xml:id="martijn.p1.s1.w10" pos="PC">"</pc>
+                    <linkGrp targFunc="head argument" type="UD-SYN">
+                        <link target="#martijn.p1.s1.w4 #martijn.p1.s1.w1" ana="ud-syn:punct"/>
+                        <link target="#martijn.p1.s1.w4 #martijn.p1.s1.w2" ana="ud-syn:nsubj"/>
+                        <link target="#martijn.p1.s1.w4 #martijn.p1.s1.w3" ana="ud-syn:punct"/>
+                        <link target="#martijn.p1.s1.w4 #martijn.p1.s1.w5" ana="ud-syn:punct"/>
+                        <link target="#martijn.p1.s1.w4 #martijn.p1.s1.w6" ana="ud-syn:cc"/>
+                        <link target="#martijn.p1.s1.w8 #martijn.p1.s1.w7" ana="ud-syn:det"/>
+                        <link target="#martijn.p1.s1.w6 #martijn.p1.s1.w8" ana="ud-syn:nsubj"/>
+                        <link target="#martijn.p1.s1.w4 #martijn.p1.s1.w9" ana="ud-syn:punct"/>
+                        <link target="#martijn.p1.s1.w4 #martijn.p1.s1.w10" ana="ud-syn:punct"/>
+                    </linkGrp>
                 </s>
                 <s xml:id="martijn.p1.s2">
                     <w xml:id="martijn.p1.s2.w1" lemma="spreken" pos="VRB(finiteness=fin,tense=pres)" join="right">Sprec</w>
@@ -68,6 +108,14 @@
                     <w xml:id="martijn.p1.s2.w5" lemma="spreken" pos="NOU-C(number=sg)">spreken</w>
                     <w xml:id="martijn.p1.s2.w6" lemma="inhebben+du" pos="VRB(finiteness=fin,tense=pres)+PD(type=pers,position=free)" join="right">in</w>
                     <pc xml:id="martijn.p1.s2.w7" pos="PC">?</pc>
+                    <linkGrp targFunc="head argument" type="UD-SYN">
+                        <link target="#martijn.p1.s2.w1 #martijn.p1.s2.w2" ana="ud-syn:punct"/>
+                        <link target="#martijn.p1.s2.w5 #martijn.p1.s2.w3" ana="ud-syn:aux"/>
+                        <link target="#martijn.p1.s2.w4 #martijn.p1.s2.w4" ana="ud-syn:det"/>
+                        <link target="#martijn.p1.s2.w3 #martijn.p1.s2.w5" ana="ud-syn:obj"/>
+                        <link target="#martijn.p1.s2.w3 #martijn.p1.s2.w6" ana="ud-syn:compound:prt"/>
+                        <link target="#martijn.p1.s2.w1 #martijn.p1.s2.w7" ana="ud-syn:punct"/>
+                    </linkGrp>
                 </s>
             </p>
             <p xml:id="martijn.p2">
@@ -77,6 +125,12 @@
                     <w xml:id="martijn.p2.s1.w3" lemma="ik" pos="PD(type=pers,position=free)">mi</w>
                     <w xml:id="martijn.p2.s1.w4" lemma="verdoren" pos="VRB(finiteness=inf)" join="right">verdoren</w>
                     <pc xml:id="martijn.p2.s1.w5" pos="PC">.</pc>
+                    <linkGrp targFunc="head argument" type="UD-SYN">
+                        <link target="#martijn.p2.s1.w4 #martijn.p2.s1.w1" ana="ud-syn:nsubj"/>
+                        <link target="#martijn.p2.s1.w4 #martijn.p2.s1.w2" ana="ud-syn:aux"/>
+                        <link target="#martijn.p2.s1.w4 #martijn.p2.s1.w3" ana="ud-syn:obj"/>
+                        <link target="#martijn.p2.s1.w5 #martijn.p2.s1.w5" ana="ud-syn:punct"/>
+                    </linkGrp>
                 </s>
                 <s xml:id="martijn.p2.s2">
                     <w xml:id="martijn.p2.s2.w1" lemma="du+ne" pos="PD(type=pers,position=free)+ADV(type=reg)">Dune</w>
@@ -84,6 +138,12 @@
                     <w xml:id="martijn.p2.s2.w3" lemma="meer" pos="PD(type=indef,position=free)">meer</w>
                     <w xml:id="martijn.p2.s2.w4" lemma="noch" pos="CONJ(type=coor)">no</w>
                     <w xml:id="martijn.p2.s2.w5" lemma="min" pos="PD(type=indef,position=free)">min</w>
+                    <linkGrp targFunc="head argument" type="UD-SYN">
+                        <link target="#martijn.p2.s2.w2 #martijn.p2.s2.w1" ana="ud-syn:subj"/>
+                        <link target="#martijn.p2.s2.w2 #martijn.p2.s2.w3" ana="ud-syn:advmod"/>
+                        <link target="#martijn.p2.s2.w3 #martijn.p2.s2.w4" ana="ud-syn:conj"/>
+                        <link target="#martijn.p2.s2.w3 #martijn.p2.s2.w5" ana="ud-syn:cc"/>
+                    </linkGrp>
                 </s>
             </p>
         </body>

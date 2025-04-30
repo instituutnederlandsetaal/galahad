@@ -1,0 +1,845 @@
+{
+  "documents" : [ {
+    "id" : "WR-P-E-J-0000000050.text",
+    "paragraphs" : [ {
+      "id" : "WR-P-E-J-0000000050.head.1",
+      "sentences" : [ {
+        "id" : "WR-P-E-J-0000000050.head.1.s.1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "Golf",
+            "lemma" : "golf",
+            "pos" : "N(soort,ev,basis,onz,stan)"
+          },
+          "id" : "WR-P-E-J-0000000050.head.1.s.1.w.1",
+          "offset" : 0
+        }, {
+          "annotations" : {
+            "token" : "van",
+            "lemma" : "van",
+            "pos" : "VZ(init)"
+          },
+          "id" : "WR-P-E-J-0000000050.head.1.s.1.w.2",
+          "offset" : 5
+        }, {
+          "annotations" : {
+            "token" : "Hauraki",
+            "lemma" : "Hauraki",
+            "pos" : "SPEC(deeleigen)"
+          },
+          "id" : "WR-P-E-J-0000000050.head.1.s.1.w.3",
+          "offset" : 9
+        } ]
+      } ]
+    }, {
+      "id" : "WR-P-E-J-0000000050.p.1",
+      "sentences" : [ {
+        "id" : "WR-P-E-J-0000000050.p.1.s.1",
+        "spans" : {
+          "ner" : [ {
+            "indices" : [ 12 ],
+            "value" : "loc"
+          }, {
+            "indices" : [ 14 ],
+            "value" : "loc"
+          } ]
+        },
+        "terms" : [ {
+          "annotations" : {
+            "token" : "De",
+            "lemma" : "de",
+            "pos" : "LID(bep,stan,rest)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.1.s.1.w.1",
+          "offset" : 17
+        }, {
+          "annotations" : {
+            "token" : "Golf",
+            "lemma" : "Golf",
+            "pos" : "SPEC(deeleigen)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.1.s.1.w.2",
+          "offset" : 20
+        }, {
+          "annotations" : {
+            "token" : "van",
+            "lemma" : "van",
+            "pos" : "VZ(init)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.1.s.1.w.3",
+          "offset" : 25
+        }, {
+          "annotations" : {
+            "token" : "Hauraki",
+            "lemma" : "Hauraki",
+            "pos" : "SPEC(deeleigen)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.1.s.1.w.4",
+          "offset" : 29
+        }, {
+          "annotations" : {
+            "token" : "is",
+            "lemma" : "zijn",
+            "pos" : "WW(pv,tgw,ev)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.1.s.1.w.5",
+          "offset" : 37
+        }, {
+          "annotations" : {
+            "token" : "een",
+            "lemma" : "een",
+            "pos" : "LID(onbep,stan,agr)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.1.s.1.w.6",
+          "offset" : 40
+        }, {
+          "annotations" : {
+            "token" : "baai",
+            "lemma" : "baai",
+            "pos" : "N(soort,ev,basis,zijd,stan)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.1.s.1.w.7",
+          "offset" : 44
+        }, {
+          "annotations" : {
+            "token" : "in",
+            "lemma" : "in",
+            "pos" : "VZ(init)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.1.s.1.w.8",
+          "offset" : 49
+        }, {
+          "annotations" : {
+            "token" : "het",
+            "lemma" : "het",
+            "pos" : "LID(bep,stan,evon)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.1.s.1.w.9",
+          "offset" : 52
+        }, {
+          "annotations" : {
+            "token" : "noorden",
+            "lemma" : "noorden",
+            "pos" : "N(soort,ev,basis,onz,stan)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.1.s.1.w.10",
+          "offset" : 56
+        }, {
+          "annotations" : {
+            "token" : "van",
+            "lemma" : "van",
+            "pos" : "VZ(init)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.1.s.1.w.11",
+          "offset" : 64
+        }, {
+          "annotations" : {
+            "token" : "het",
+            "lemma" : "het",
+            "pos" : "LID(bep,stan,evon)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.1.s.1.w.12",
+          "offset" : 68
+        }, {
+          "annotations" : {
+            "token" : "Nieuw-Zeeland",
+            "lemma" : "Nieuw-Zeeland",
+            "pos" : "SPEC(deeleigen)",
+            "ner" : "B-loc"
+          },
+          "id" : "WR-P-E-J-0000000050.p.1.s.1.w.13",
+          "offset" : 72
+        }, {
+          "annotations" : {
+            "token" : "se",
+            "lemma" : "se",
+            "pos" : "SPEC(vreemd)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.1.s.1.w.14",
+          "offset" : 86
+        }, {
+          "annotations" : {
+            "token" : "Noordereiland",
+            "lemma" : "Noordereiland",
+            "pos" : "SPEC(vreemd)",
+            "ner" : "B-loc"
+          },
+          "id" : "WR-P-E-J-0000000050.p.1.s.1.w.15",
+          "offset" : 89
+        }, {
+          "annotations" : {
+            "token" : ".",
+            "lemma" : ".",
+            "pos" : "LET()"
+          },
+          "id" : "WR-P-E-J-0000000050.p.1.s.1.w.16",
+          "offset" : 103
+        } ]
+      } ]
+    }, {
+      "id" : "WR-P-E-J-0000000050.p.2",
+      "sentences" : [ {
+        "id" : "WR-P-E-J-0000000050.p.2.s.1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "Aan",
+            "lemma" : "aan",
+            "pos" : "VZ(init)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.1.w.1",
+          "offset" : 105
+        }, {
+          "annotations" : {
+            "token" : "het",
+            "lemma" : "het",
+            "pos" : "LID(bep,stan,evon)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.1.w.2",
+          "offset" : 109
+        }, {
+          "annotations" : {
+            "token" : "oosten",
+            "lemma" : "oosten",
+            "pos" : "N(soort,ev,basis,onz,stan)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.1.w.3",
+          "offset" : 113
+        }, {
+          "annotations" : {
+            "token" : "grenst",
+            "lemma" : "grenzen",
+            "pos" : "WW(pv,tgw,met-t)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.1.w.4",
+          "offset" : 120
+        }, {
+          "annotations" : {
+            "token" : "de",
+            "lemma" : "de",
+            "pos" : "LID(bep,stan,rest)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.1.w.5",
+          "offset" : 127
+        }, {
+          "annotations" : {
+            "token" : "baai",
+            "lemma" : "baai",
+            "pos" : "N(soort,ev,basis,zijd,stan)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.1.w.6",
+          "offset" : 130
+        }, {
+          "annotations" : {
+            "token" : "aan",
+            "lemma" : "aan",
+            "pos" : "VZ(init)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.1.w.7",
+          "offset" : 135
+        }, {
+          "annotations" : {
+            "token" : "de",
+            "lemma" : "de",
+            "pos" : "LID(bep,stan,rest)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.1.w.8",
+          "offset" : 139
+        }, {
+          "annotations" : {
+            "token" : "Coromandel",
+            "lemma" : "Coromandel",
+            "pos" : "SPEC(deeleigen)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.1.w.9",
+          "offset" : 142
+        }, {
+          "annotations" : {
+            "token" : "Peninsula",
+            "lemma" : "Peninsula",
+            "pos" : "SPEC(deeleigen)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.1.w.10",
+          "offset" : 153
+        }, {
+          "annotations" : {
+            "token" : ",",
+            "lemma" : ",",
+            "pos" : "LET()"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.1.w.11",
+          "offset" : 163
+        }, {
+          "annotations" : {
+            "token" : "ten",
+            "lemma" : "ten",
+            "pos" : "VZ(versm)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.1.w.12",
+          "offset" : 165
+        }, {
+          "annotations" : {
+            "token" : "zuiden",
+            "lemma" : "zuiden",
+            "pos" : "N(soort,ev,basis,onz,stan)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.1.w.13",
+          "offset" : 169
+        }, {
+          "annotations" : {
+            "token" : "liggen",
+            "lemma" : "liggen",
+            "pos" : "WW(pv,tgw,mv)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.1.w.14",
+          "offset" : 176
+        }, {
+          "annotations" : {
+            "token" : "de",
+            "lemma" : "de",
+            "pos" : "LID(bep,stan,rest)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.1.w.15",
+          "offset" : 183
+        }, {
+          "annotations" : {
+            "token" : "Hauraki-vlakte",
+            "lemma" : "hauraki-vlakte",
+            "pos" : "N(soort,ev,basis,zijd,stan)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.1.w.16",
+          "offset" : 186
+        }, {
+          "annotations" : {
+            "token" : "s",
+            "lemma" : "s",
+            "pos" : "N(soort,ev,basis,zijd,stan)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.1.w.17",
+          "offset" : 201
+        }, {
+          "annotations" : {
+            "token" : "en",
+            "lemma" : "en",
+            "pos" : "VG(neven)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.1.w.18",
+          "offset" : 203
+        }, {
+          "annotations" : {
+            "token" : "aan",
+            "lemma" : "aan",
+            "pos" : "VZ(init)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.1.w.19",
+          "offset" : 206
+        }, {
+          "annotations" : {
+            "token" : "de",
+            "lemma" : "de",
+            "pos" : "LID(bep,stan,rest)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.1.w.20",
+          "offset" : 210
+        }, {
+          "annotations" : {
+            "token" : "westkust",
+            "lemma" : "westkust",
+            "pos" : "N(soort,ev,basis,zijd,stan)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.1.w.21",
+          "offset" : 213
+        }, {
+          "annotations" : {
+            "token" : "ligt",
+            "lemma" : "liggen",
+            "pos" : "WW(pv,tgw,met-t)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.1.w.22",
+          "offset" : 222
+        }, {
+          "annotations" : {
+            "token" : "de",
+            "lemma" : "de",
+            "pos" : "LID(bep,stan,rest)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.1.w.23",
+          "offset" : 227
+        }, {
+          "annotations" : {
+            "token" : "bebouwing",
+            "lemma" : "bebouwing",
+            "pos" : "N(soort,ev,basis,zijd,stan)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.1.w.24",
+          "offset" : 230
+        }, {
+          "annotations" : {
+            "token" : "van",
+            "lemma" : "van",
+            "pos" : "VZ(init)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.1.w.25",
+          "offset" : 240
+        }, {
+          "annotations" : {
+            "token" : "Auckland",
+            "lemma" : "Auckland",
+            "pos" : "SPEC(deeleigen)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.1.w.26",
+          "offset" : 244
+        }, {
+          "annotations" : {
+            "token" : ".",
+            "lemma" : ".",
+            "pos" : "LET()"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.1.w.27",
+          "offset" : 253
+        } ]
+      }, {
+        "id" : "WR-P-E-J-0000000050.p.2.s.2",
+        "spans" : {
+          "ner" : [ {
+            "indices" : [ 9, 10, 11, 12, 13, 14, 15, 16, 17 ],
+            "value" : "pro"
+          } ]
+        },
+        "terms" : [ {
+          "annotations" : {
+            "token" : "In",
+            "lemma" : "in",
+            "pos" : "VZ(init)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.2.w.1",
+          "offset" : 255
+        }, {
+          "annotations" : {
+            "token" : "het",
+            "lemma" : "het",
+            "pos" : "LID(bep,stan,evon)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.2.w.2",
+          "offset" : 258
+        }, {
+          "annotations" : {
+            "token" : "noorden",
+            "lemma" : "noorden",
+            "pos" : "N(soort,ev,basis,onz,stan)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.2.w.3",
+          "offset" : 262
+        }, {
+          "annotations" : {
+            "token" : "wordt",
+            "lemma" : "worden",
+            "pos" : "WW(pv,tgw,met-t)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.2.w.4",
+          "offset" : 270
+        }, {
+          "annotations" : {
+            "token" : "het",
+            "lemma" : "het",
+            "pos" : "VNW(pers,pron,stan,red,3,ev,onz)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.2.w.5",
+          "offset" : 276
+        }, {
+          "annotations" : {
+            "token" : "grotendeels",
+            "lemma" : "grotendeels",
+            "pos" : "ADJ(vrij,basis,zonder)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.2.w.6",
+          "offset" : 280
+        }, {
+          "annotations" : {
+            "token" : "afgeschermd",
+            "lemma" : "afschermen",
+            "pos" : "WW(vd,vrij,zonder)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.2.w.7",
+          "offset" : 292
+        }, {
+          "annotations" : {
+            "token" : "van",
+            "lemma" : "van",
+            "pos" : "VZ(init)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.2.w.8",
+          "offset" : 304
+        }, {
+          "annotations" : {
+            "token" : "de",
+            "lemma" : "de",
+            "pos" : "LID(bep,stan,rest)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.2.w.9",
+          "offset" : 308
+        }, {
+          "annotations" : {
+            "token" : "Grote",
+            "lemma" : "Grote",
+            "pos" : "SPEC(deeleigen)",
+            "ner" : "B-pro"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.2.w.10",
+          "offset" : 311
+        }, {
+          "annotations" : {
+            "token" : "Oceaan",
+            "lemma" : "Oceaan",
+            "pos" : "SPEC(deeleigen)",
+            "ner" : "I-pro"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.2.w.11",
+          "offset" : 317
+        }, {
+          "annotations" : {
+            "token" : "door",
+            "lemma" : "door",
+            "pos" : "VZ(init)",
+            "ner" : "I-pro"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.2.w.12",
+          "offset" : 324
+        }, {
+          "annotations" : {
+            "token" : "de",
+            "lemma" : "de",
+            "pos" : "LID(bep,stan,rest)",
+            "ner" : "I-pro"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.2.w.13",
+          "offset" : 329
+        }, {
+          "annotations" : {
+            "token" : "Great",
+            "lemma" : "Great",
+            "pos" : "SPEC(vreemd)",
+            "ner" : "I-pro"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.2.w.14",
+          "offset" : 332
+        }, {
+          "annotations" : {
+            "token" : "Barrier-",
+            "lemma" : "Barrier-",
+            "pos" : "SPEC(afgebr)",
+            "ner" : "I-pro"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.2.w.15",
+          "offset" : 338
+        }, {
+          "annotations" : {
+            "token" : "en",
+            "lemma" : "en",
+            "pos" : "VG(neven)",
+            "ner" : "I-pro"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.2.w.16",
+          "offset" : 347
+        }, {
+          "annotations" : {
+            "token" : "Little",
+            "lemma" : "Little",
+            "pos" : "SPEC(deeleigen)",
+            "ner" : "I-pro"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.2.w.17",
+          "offset" : 350
+        }, {
+          "annotations" : {
+            "token" : "Barrier",
+            "lemma" : "Barrier",
+            "pos" : "SPEC(deeleigen)",
+            "ner" : "I-pro"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.2.w.18",
+          "offset" : 357
+        }, {
+          "annotations" : {
+            "token" : "eilanden",
+            "lemma" : "eiland",
+            "pos" : "N(soort,mv,basis)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.2.w.19",
+          "offset" : 365
+        }, {
+          "annotations" : {
+            "token" : ".",
+            "lemma" : ".",
+            "pos" : "LET()"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.2.w.20",
+          "offset" : 374
+        } ]
+      }, {
+        "id" : "WR-P-E-J-0000000050.p.2.s.3",
+        "spans" : {
+          "ner" : [ {
+            "indices" : [ 11, 12, 13 ],
+            "value" : "misc"
+          } ]
+        },
+        "terms" : [ {
+          "annotations" : {
+            "token" : "In",
+            "lemma" : "in",
+            "pos" : "VZ(init)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.3.w.1",
+          "offset" : 376
+        }, {
+          "annotations" : {
+            "token" : "de",
+            "lemma" : "de",
+            "pos" : "LID(bep,stan,rest)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.3.w.2",
+          "offset" : 379
+        }, {
+          "annotations" : {
+            "token" : "baai",
+            "lemma" : "baai",
+            "pos" : "N(soort,ev,basis,zijd,stan)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.3.w.3",
+          "offset" : 382
+        }, {
+          "annotations" : {
+            "token" : "zelf",
+            "lemma" : "zelf",
+            "pos" : "BW()"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.3.w.4",
+          "offset" : 387
+        }, {
+          "annotations" : {
+            "token" : "liggen",
+            "lemma" : "liggen",
+            "pos" : "WW(pv,tgw,mv)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.3.w.5",
+          "offset" : 392
+        }, {
+          "annotations" : {
+            "token" : "ook",
+            "lemma" : "ook",
+            "pos" : "BW()"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.3.w.6",
+          "offset" : 399
+        }, {
+          "annotations" : {
+            "token" : "een",
+            "lemma" : "een",
+            "pos" : "LID(onbep,stan,agr)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.3.w.7",
+          "offset" : 403
+        }, {
+          "annotations" : {
+            "token" : "aantal",
+            "lemma" : "aantal",
+            "pos" : "N(soort,ev,basis,onz,stan)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.3.w.8",
+          "offset" : 407
+        }, {
+          "annotations" : {
+            "token" : "eilanden",
+            "lemma" : "eiland",
+            "pos" : "N(soort,mv,basis)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.3.w.9",
+          "offset" : 414
+        }, {
+          "annotations" : {
+            "token" : ",",
+            "lemma" : ",",
+            "pos" : "LET()"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.3.w.10",
+          "offset" : 423
+        }, {
+          "annotations" : {
+            "token" : "waaronder",
+            "lemma" : "waaronder",
+            "pos" : "BW()"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.3.w.11",
+          "offset" : 425
+        }, {
+          "annotations" : {
+            "token" : "Waiheke-eiland",
+            "lemma" : "Waiheke-eiland",
+            "pos" : "SPEC(deeleigen)",
+            "ner" : "B-misc"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.3.w.12",
+          "offset" : 435
+        }, {
+          "annotations" : {
+            "token" : "en",
+            "lemma" : "en",
+            "pos" : "VG(neven)",
+            "ner" : "I-misc"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.3.w.13",
+          "offset" : 450
+        }, {
+          "annotations" : {
+            "token" : "Rangitoto",
+            "lemma" : "Rangitoto",
+            "pos" : "SPEC(deeleigen)",
+            "ner" : "I-misc"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.3.w.14",
+          "offset" : 453
+        }, {
+          "annotations" : {
+            "token" : ";",
+            "lemma" : ";",
+            "pos" : "LET()"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.3.w.15",
+          "offset" : 463
+        }, {
+          "annotations" : {
+            "token" : "een",
+            "lemma" : "een",
+            "pos" : "LID(onbep,stan,agr)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.3.w.16",
+          "offset" : 465
+        }, {
+          "annotations" : {
+            "token" : "uitgedoofde",
+            "lemma" : "uitdoven",
+            "pos" : "WW(vd,prenom,met-e)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.3.w.17",
+          "offset" : 469
+        }, {
+          "annotations" : {
+            "token" : "vulkaan",
+            "lemma" : "vulkaan",
+            "pos" : "N(soort,ev,basis,zijd,stan)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.3.w.18",
+          "offset" : 481
+        }, {
+          "annotations" : {
+            "token" : ".",
+            "lemma" : ".",
+            "pos" : "LET()"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.3.w.19",
+          "offset" : 489
+        } ]
+      }, {
+        "id" : "WR-P-E-J-0000000050.p.2.s.4",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "Aan",
+            "lemma" : "aan",
+            "pos" : "VZ(init)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.4.w.1",
+          "offset" : 491
+        }, {
+          "annotations" : {
+            "token" : "de",
+            "lemma" : "de",
+            "pos" : "LID(bep,stan,rest)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.4.w.2",
+          "offset" : 495
+        }, {
+          "annotations" : {
+            "token" : "kust",
+            "lemma" : "kust",
+            "pos" : "N(soort,ev,basis,zijd,stan)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.4.w.3",
+          "offset" : 498
+        }, {
+          "annotations" : {
+            "token" : "van",
+            "lemma" : "van",
+            "pos" : "VZ(init)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.4.w.4",
+          "offset" : 503
+        }, {
+          "annotations" : {
+            "token" : "de",
+            "lemma" : "de",
+            "pos" : "LID(bep,stan,rest)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.4.w.5",
+          "offset" : 507
+        }, {
+          "annotations" : {
+            "token" : "baai",
+            "lemma" : "baai",
+            "pos" : "N(soort,ev,basis,zijd,stan)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.4.w.6",
+          "offset" : 510
+        }, {
+          "annotations" : {
+            "token" : "bevinden",
+            "lemma" : "bevinden",
+            "pos" : "WW(pv,tgw,mv)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.4.w.7",
+          "offset" : 515
+        }, {
+          "annotations" : {
+            "token" : "zich",
+            "lemma" : "zich",
+            "pos" : "VNW(refl,pron,obl,red,3,getal)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.4.w.8",
+          "offset" : 524
+        }, {
+          "annotations" : {
+            "token" : "talloze",
+            "lemma" : "talloos",
+            "pos" : "ADJ(prenom,basis,met-e,stan)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.4.w.9",
+          "offset" : 529
+        }, {
+          "annotations" : {
+            "token" : "strand",
+            "lemma" : "strand",
+            "pos" : "N(soort,ev,basis,onz,stan)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.4.w.10",
+          "offset" : 537
+        }, {
+          "annotations" : {
+            "token" : "en",
+            "lemma" : "en",
+            "pos" : "VG(neven)"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.4.w.11",
+          "offset" : 544
+        }, {
+          "annotations" : {
+            "token" : ".",
+            "lemma" : ".",
+            "pos" : "LET()"
+          },
+          "id" : "WR-P-E-J-0000000050.p.2.s.4.w.12",
+          "offset" : 547
+        } ]
+      } ]
+    } ]
+  } ],
+  "id" : "WR-P-E-J-0000000050"
+}
