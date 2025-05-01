@@ -40,7 +40,7 @@ class FoliaMetadata(
         processor.setAttribute("xml:id", export.tagger.id)
         processor.setAttribute("name", export.tagger.id)
         processor.setAttribute("type", "auto")
-        processor.setAttribute("src", "https://github.com/INL/galahad-taggers-dockerized")
+        processor.setAttribute("src", "https://github.com/instituutnederlandsetaal/galahad-taggers-dockerized")
         processor.setAttribute("host", "https://galahad.ivdnt.org")
         processor.setAttribute("user", export.user.id)
 

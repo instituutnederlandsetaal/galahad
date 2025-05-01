@@ -37,8 +37,11 @@
                         tools to the platform. The application and taggers are hosted by the INT and accessible with any
                         CLARIN-account. There is also the option to self-host an instance using the publicly available
                         docker images from the
-                        <ExternalLink href="https://hub.docker.com/u/instituutnederlandsetaal">INT Docker Hub</ExternalLink> or the open
-                        source code available on <ExternalLink href="https://github.com/INL/galahad">GitHub</ExternalLink>.
+                        <ExternalLink href="https://hub.docker.com/u/instituutnederlandsetaal">INT Docker Hub
+                        </ExternalLink> or the
+                        open
+                        source code available on <ExternalLink href="https://github.com/INL/galahad">GitHub
+                        </ExternalLink>.
                     </p>
                 </div>
 
@@ -61,7 +64,8 @@
                             Davonturen vanden Grale,&rdquo;
                         </i>
                         <small>
-                            <ExternalLink href="https://galerij.kb.nl/kb.html#/nl/lancelot/page/45/zoom/5/lat/-66/lng/-107">
+                            <ExternalLink
+                                href="https://galerij.kb.nl/kb.html#/nl/lancelot/page/45/zoom/5/lat/-66/lng/-107">
                                 Lancelotcompilatie, fol. 41vb, vers 15.444-15449
                             </ExternalLink>
                         </small>

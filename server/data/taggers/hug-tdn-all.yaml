@@ -3,19 +3,20 @@ description: "INT-Hug trained on all TDN-Core material"
 tagset: "TDN-Core"
 eraFrom: "1400"
 eraTo: "1900"
-annotations:
-  - lemma
-  - pos
+produces:
+  - LEM
+  - POS
+  - TOK
 model:
   name: hug-tdn-all
   href: https://github.com/instituutnederlandsetaal/galahad-huggingface-models/tree/master/models/galahad/tagger/pos_model_tdn_ALL
 software:
   name: int-huggingface
-  href: https://github.com/instituutnederlandsetaal/int-huggingface-tagger/tree/1.0.0
+  href: https://github.com/instituutnederlandsetaal/int-huggingface-tagger/
 dataset:
   name: ALL
   href: https://github.com/instituutnederlandsetaal/galahad-corpus-data/tree/1.0.1/combinations/ALL.combination.json
 trainedBy: "INT"
 date: "2024-06-12"
-devport: 8120
+devport: 8112
 version: "1.0.0"
