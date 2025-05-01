@@ -1,0 +1,6 @@
+*
+!src/**
+!build.gradle.kts
+!settings.gradle.kts
+!application.properties
+!data/corpora/datasets/**

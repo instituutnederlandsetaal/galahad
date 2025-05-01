@@ -7,16 +7,8 @@ plugins {
 
 group = "org.ivdnt"
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(23)
-    }
-}
-
 kotlin {
-    compilerOptions {
-        extraWarnings = true
-    }
+    jvmToolchain(21)
 }
 
 repositories {
