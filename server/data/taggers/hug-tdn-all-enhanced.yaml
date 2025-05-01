@@ -3,10 +3,10 @@ description: "INT-Hug trained on all TDN-Core material with enhancements for sep
 tagset: "TDN-Core"
 eraFrom: "1400"
 eraTo: "1900"
-produces:
-  - LEM
-  - POS
-  - TOK
+annotations:
+  - token
+  - lemma
+  - pos
 model:
   name: hug-tdn-all-enhanced
   href: https://github.com/instituutnederlandsetaal/galahad-huggingface-models/tree/master/models/galahad/tagger/pos_model_tdn_all_enhanced

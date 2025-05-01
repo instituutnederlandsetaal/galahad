@@ -3,10 +3,10 @@ description: "PIE trained on DBNL excerpts, GTB dictionary quotations, CLVN & Gy
 tagset: "TDN-Core"
 eraFrom: "1200"
 eraTo: "1600"
-produces:
-  - LEM
-  - POS
-  - TOK
+annotations:
+  - token
+  - lemma
+  - pos
 model:
   name: pie-tdn-1200-1600
   href: https://github.com/instituutnederlandsetaal/galahad-taggers-dockerized/tree/1.1.0/pie/TDN-1200-1600

@@ -4,6 +4,7 @@ tagset: "Universal Dependencies"
 eraFrom: "2000"
 eraTo: "2020"
 annotations:
+  - token
   - upos
   - ner
 model:

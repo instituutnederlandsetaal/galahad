@@ -3,10 +3,10 @@ description: "PIE trained on all TDN-Core material"
 tagset: "TDN-Core"
 eraFrom: "1200"
 eraTo: "1900"
-produces:
-  - LEM
-  - POS
-  - TOK
+annotations:
+  - token
+  - lemma
+  - pos
 model:
   name: pie-tdn-all
   href: https://github.com/instituutnederlandsetaal/galahad-taggers-dockerized/tree/1.1.0/pie/TDN-ALL
