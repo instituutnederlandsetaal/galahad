@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.corpora.Corpus
+import org.ivdnt.galahad.util.ThreadPoolUtil
+import java.util.concurrent.ExecutorCompletionService
 
 /**
  * The frequency distribution of terms in a corpus for a specific tagger layer.
@@ -24,11 +26,16 @@ class CorpusDistribution(
     val generated: Long = System.currentTimeMillis()
 
     init {
-        corpus.documents.readAll().forEach {
-            val layer = hypothesisJob.getLayer(it)
-            // Add to ourselves
-            this.add(DocumentDistribution(layer, it.metadata, groupingAnnotation))
+        val completionService = ExecutorCompletionService<DocumentDistribution>(ThreadPoolUtil.pool)
+
+        val allDocs = corpus.documents.readAll()
+        allDocs.forEach { doc ->
+            completionService.submit {
+                DocumentDistribution(hypothesisJob.getLayer(doc), doc.metadata, groupingAnnotation)
+            }
         }
+
+        for (i in 0..<allDocs.size) add(completionService.take().get())
     }
 }
 

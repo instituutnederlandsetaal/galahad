@@ -1,11 +1,12 @@
 package org.ivdnt.galahad.evaluation.metrics
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.corpora.Corpus
-import org.ivdnt.galahad.jobs.Job
 import org.ivdnt.galahad.evaluation.comparison.LayerFilter
+import org.ivdnt.galahad.jobs.Job
 import org.ivdnt.galahad.taggers.Tagger
+import org.ivdnt.galahad.util.ThreadPoolUtil
+import java.util.concurrent.ExecutorCompletionService
 
 /**
  * The benchmark [Metric]s of a corpus for two different tagger layers.
@@ -30,19 +31,17 @@ class CorpusMetrics(
     val generated: Long = System.currentTimeMillis()
 
     init {
-        corpus.documents.readAll().forEach { doc ->
-            add(
+        val completionService = ExecutorCompletionService<DocumentMetrics>(ThreadPoolUtil.pool)
+
+        val allDocs = corpus.documents.readAll()
+        allDocs.forEach {
+            completionService.submit {
                 DocumentMetrics(
-                    doc,
-                    hypoTagger,
-                    refTagger,
-                    hypothesisJob,
-                    referenceJob,
-                    settings,
-                    layerFilter,
-                    truncate
+                    it, hypoTagger, refTagger, hypothesisJob, referenceJob, settings, layerFilter, truncate
                 )
-            )
+            }
         }
+
+        for (i in 0..<allDocs.size) add(completionService.take().get())
     }
 }

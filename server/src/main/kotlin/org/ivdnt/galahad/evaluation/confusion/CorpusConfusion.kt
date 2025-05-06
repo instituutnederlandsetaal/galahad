@@ -6,8 +6,10 @@ import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.evaluation.CsvSampleExporter
 import org.ivdnt.galahad.evaluation.comparison.LayerFilter
+import org.ivdnt.galahad.evaluation.distribution.DocumentDistribution
 import org.ivdnt.galahad.taggers.Tagger
-
+import org.ivdnt.galahad.util.ThreadPoolUtil
+import java.util.concurrent.ExecutorCompletionService
 
 /**
  * Part of speech confusion of a corpus for two different tagger layers.
@@ -36,16 +38,21 @@ class CorpusConfusion(
     val generated: Long = System.currentTimeMillis()
 
     init {
-        corpus.documents.readAll().forEach {
-            add(
+        val completionService = ExecutorCompletionService<DocumentConfusion>(ThreadPoolUtil.pool)
+        val allDocs = corpus.documents.readAll()
+
+        allDocs.forEach {
+            completionService.submit {
                 DocumentConfusion(
                     hypothesisJob.getLayer(it),
                     referenceJob.getLayer(it),
                     layerFilter,
                     annotation,
                 )
-            )
+            }
         }
+
+        for (i in 0..<allDocs.size) add(completionService.take().get())
     }
 
     /**

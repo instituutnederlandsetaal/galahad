@@ -57,7 +57,7 @@ class MetricsType(
         get() = map.values.map { it.cls }.toMutableList().apply { this.add(0, ClassificationClasses(count = 0)) }
             .reduce { a, b -> a.add(b, truncate) }.apply { falsePositive = EvaluationEntry() }
 
-    private val macro: ClassificationMetrics
+    val macro: ClassificationMetrics
         get() {
             if (map.isEmpty()) {
                 return ClassificationMetrics()
@@ -65,7 +65,7 @@ class MetricsType(
             return map.values.map { it.clsMetrics }.reduce { a, b -> a + b } / map.size
         }
 
-    private val micro: ClassificationMetrics
+    val micro: ClassificationMetrics
         get() {
             if (map.isEmpty()) {
                 return ClassificationMetrics()
