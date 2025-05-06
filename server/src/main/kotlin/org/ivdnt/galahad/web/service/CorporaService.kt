@@ -18,8 +18,8 @@ class CorporaService(
     config: Config,
 ) : GalahadFolder(config.getWorkingDirectory().resolve("corpora")) {
 
-    val custom: Corpora = Corpora(dir.resolve("custom"))
-    val presets: Corpora = Corpora(dir.resolve("presets"))
+    val custom: Corpora = Corpora(dir.resolve("user"))
+    val presets: Corpora = Corpora(dir.resolve("datasets"))
 
     val all: List<Corpus> get() = custom.readAll().toList() + presets.readAll().toList()
     val datasets: List<Corpus> get() = all.filter { it.mutableMetadata.dataset }
