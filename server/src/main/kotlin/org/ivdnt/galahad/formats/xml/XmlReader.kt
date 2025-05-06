@@ -87,9 +87,12 @@ abstract class XmlReader(stream: InputStream) : AnnotationReader() {
     private fun newDep() {
         // edit the DEPREL and HEAD value of the terms
         if (deprel != null) {
-            val depI = terms.indexOfFirst { it.id == deprelTo }
+            val depI = terms.indexOfFirst { it.id == deprelTo }.takeUnless { it == -1 }
+            val headI = terms.indexOfFirst { it.id == deprelFrom }.takeUnless { it == -1 }
+            // if either is null, this dependency is invalid
+            if (depI == null || headI == null) return
+
             val dep = terms[depI]
-            val headI = terms.indexOfFirst { it.id == deprelFrom }
 
             val annots = buildMap {
                 putAll(dep.annotations)
@@ -121,8 +124,9 @@ abstract class XmlReader(stream: InputStream) : AnnotationReader() {
                 terms[termI] = Term(t.id, t.offset, t.annotations + (Annotation.NER to iob), t.spaceAfter)
             }
         }
-        // if any DEPREL is present, set the root term to ROOT (i.e. the term with no deprel)
-        if (terms.any { it.deprel != null }) {
+        // if there exists exactly one term without a DEPREL, it is the root
+        // Note the edge case where a sentence has only one term
+        if (terms.count { it.deprel == null } == 1 && terms.size != 1) {
             val rootI = terms.indexOfFirst { it.deprel == null }
             val root = terms[rootI]
             val annots = buildMap {
