@@ -12,9 +12,7 @@ class TestConfig {
 
     @Bean
     @Primary
-    fun getWorkingDirectory(): File {
-        return File(workDir)
-    }
+    fun getWorkingDirectory(): File = File(workDir)
 
     companion object {
         const val TAGGER_NAME = "pie-tdn-all"

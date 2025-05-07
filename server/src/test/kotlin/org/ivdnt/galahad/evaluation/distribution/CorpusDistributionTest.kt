@@ -4,8 +4,7 @@ import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.evaluation.EvaluationUtil
-import org.ivdnt.galahad.formats.Resource
-import org.ivdnt.galahad.formats.createCorpus
+import org.ivdnt.galahad.util.TestUtil
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -15,7 +14,7 @@ class CorpusDistributionTest {
 
     @BeforeEach
     fun initCorpus() {
-        corpus = createCorpus()
+        corpus = TestUtil.createCorpus()
     }
 
     @Test
@@ -31,11 +30,11 @@ class CorpusDistributionTest {
         assertEquals(60, dist.coveredAlphabeticChars)
         assertFalse(dist.isTrimmed)
         // csv
-        assertEquals(Resource.get("evaluation/distribution/output.csv").readText(), dist.toCSV())
+        assertEquals(TestUtil.get("evaluation/distribution/output.csv").readText(), dist.toCSV())
         // Trimmed version
         val trimmed = dist.trim(2)
         assertEquals(2, trimmed.distribution.size)
         assertTrue(trimmed.isTrimmed)
-        assertEquals(Resource.get("evaluation/distribution/trimmed.csv").readText(), trimmed.toCSV())
+        assertEquals(TestUtil.get("evaluation/distribution/trimmed.csv").readText(), trimmed.toCSV())
     }
 }

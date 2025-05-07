@@ -4,59 +4,53 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class TermTest {
-    // Only the relevant parameters are initialized.
-    private val singleTarget = Term(
-        "", "", mutableListOf(WordForm("schooltje", 0,  "0"))
-    )
-    private val multiTarget = Term(
-        "", "", mutableListOf(
-            WordForm("hoogbouw", 0,  "0"), WordForm("en", 0,  "0"), WordForm("laagbouw", 0,  "0")
-        )
-    )
-
     // upos
-    private val singleUPos = Term(
+    private val singleUPos = Term("",0,
         mapOf(
+            Annotation.TOKEN to "token",
             Annotation.UPOS to "NOU-C(num=sg)"
-        ), mutableListOf()
+        ),
     )
 
     // ner
-    private val singleNer = Term(
+    private val singleNer = Term("",0,
         mapOf(
+            Annotation.TOKEN to "token",
             Annotation.NER to "B-LOC"
-        ), mutableListOf()
+        )
     )
 
     // pos
-    private val singlePos = Term(
+    private val singlePos = Term("",0,
         mapOf(
+            Annotation.TOKEN to "token",
             Annotation.POS to "NOU-C(num=sg)"
-        ), mutableListOf()
+        )
     )
 
-    private val multiPos = Term(
+    private val multiPos = Term("",0,
         mapOf(
+            Annotation.TOKEN to "token",
             Annotation.POS to "PD(type=art)+NOU-C(num=sg)"
-        ), mutableListOf()
+        )
     )
 
-    private val headOnlyPos = Term(
+    private val headOnlyPos = Term("",0,
         mapOf(
+            Annotation.TOKEN to "token",
             Annotation.POS to "NOU-C"
-        ), mutableListOf()
+        )
     )
-
 
     @Test
     fun `PoS head and features`() {
         // single pos
         assertEquals("NOU-C", singlePos.annotationHead(Annotation.POS))
-        assertEquals("num=sg", Term.features(singlePos.annotations.pos))
+        assertEquals("num=sg", Term.features(singlePos.pos))
 
         // upos
         assertEquals("NOU-C", singleUPos.annotationHead(Annotation.UPOS))
-        assertEquals("num=sg", Term.features(singleUPos.annotations.upos))
+        assertEquals("num=sg", Term.features(singleUPos.upos))
 
         // ner
         assertEquals("LOC", singleNer.annotationHead(Annotation.NER))
@@ -67,16 +61,6 @@ class TermTest {
 
         // head only pos
         assertEquals("NOU-C", headOnlyPos.annotationHead(Annotation.POS))
-        assertEquals(null, Term.features(headOnlyPos.annotations.pos))
-    }
-
-    @Test
-    fun `Literals for multi target term`() {
-        assertEquals("hoogbouw en laagbouw", multiTarget.literals)
-    }
-
-    @Test
-    fun `Literals for single target term`() {
-        assertEquals("schooltje", singleTarget.literals)
+        assertEquals(null, Term.features(headOnlyPos.pos))
     }
 }

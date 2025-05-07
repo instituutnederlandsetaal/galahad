@@ -1,9 +1,9 @@
 package org.ivdnt.galahad.jobs
 
-import org.ivdnt.galahad.TestConfig
+import org.ivdnt.galahad.util.TestConfig
 import org.ivdnt.galahad.corpora.Corpus
-import org.ivdnt.galahad.formats.createCorpus
 import org.ivdnt.galahad.taggers.Tagger
+import org.ivdnt.galahad.util.TestUtil
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -14,7 +14,7 @@ class JobsTest {
 
     @BeforeEach
     fun initCorpus() {
-        corpus = createCorpus()
+        corpus = TestUtil.createCorpus()
     }
 
     @Test

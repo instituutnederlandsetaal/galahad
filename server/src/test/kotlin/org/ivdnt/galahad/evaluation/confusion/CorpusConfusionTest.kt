@@ -1,14 +1,13 @@
 package org.ivdnt.galahad.evaluation.confusion
 
-import org.ivdnt.galahad.TestConfig
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.evaluation.EvaluationUtil
 import org.ivdnt.galahad.evaluation.comparison.ConfusionLayerFilter
 import org.ivdnt.galahad.evaluation.comparison.HeadGroupTermFilter
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
-import org.ivdnt.galahad.formats.Resource
-import org.ivdnt.galahad.formats.createCorpus
+import org.ivdnt.galahad.util.TestConfig
+import org.ivdnt.galahad.util.TestUtil
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -18,7 +17,7 @@ class CorpusConfusionTest {
 
     @BeforeEach
     fun initCorpus() {
-        corpus = createCorpus()
+        corpus = TestUtil.createCorpus()
     }
 
     @Test
@@ -51,7 +50,7 @@ class CorpusConfusionTest {
         EvaluationUtil.addDocWithMissingMatches(corpus)
         val cc = CorpusConfusion(corpus, TestConfig.TAGGER_NAME) // default reference is SOURCE_LAYER_NAME
         val csv: String = cc.countsToCSV()
-        assertEquals(Resource.get("evaluation/confusion/output.csv").readText(), csv)
+        assertEquals(TestUtil.get("evaluation/confusion/output.csv").readText(), csv)
     }
 
     @Test
@@ -63,6 +62,6 @@ class CorpusConfusionTest {
         )
 
         val cc = CorpusConfusion(corpus, TestConfig.TAGGER_NAME, layerFilter = filter)
-        assertEquals(Resource.get("evaluation/confusion/let-vs-missing.csv").readText(), cc.samplesToCSV())
+        assertEquals(TestUtil.get("evaluation/confusion/let-vs-missing.csv").readText(), cc.samplesToCSV())
     }
 }

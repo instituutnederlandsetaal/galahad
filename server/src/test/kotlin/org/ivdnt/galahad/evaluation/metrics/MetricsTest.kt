@@ -39,7 +39,7 @@ class MetricsTest {
     //
     // @Test
     // fun `To CSV`() {
-    //     assertEquals(Resource.get("evaluation/metrics/output.csv").readText(), dummyMetrics().toGlobalCsv())
+    //     assertEquals(TestUtil.get("evaluation/metrics/output.csv").readText(), dummyMetrics().toGlobalCsv())
     // }
     //
     // private fun dummyMetrics(): Metrics {

@@ -1,13 +1,13 @@
 package org.ivdnt.galahad.evaluation.assays
 
-import org.ivdnt.galahad.JSON
-import org.ivdnt.galahad.TestConfig
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.Galahad
 import org.ivdnt.galahad.evaluation.EvaluationUtil
 import org.ivdnt.galahad.evaluation.metrics.FlatMetricType
-import org.ivdnt.galahad.formats.LayerBuilder
-import org.ivdnt.galahad.formats.createCorpus
+import org.ivdnt.galahad.util.JSON
+import org.ivdnt.galahad.util.LayerBuilder
+import org.ivdnt.galahad.util.TestConfig
+import org.ivdnt.galahad.util.TestUtil
 import org.ivdnt.galahad.web.controller.BenchmarksMatrix
 import org.ivdnt.galahad.web.controller.BenchmarksController
 import org.junit.jupiter.api.Assertions.*
@@ -34,7 +34,7 @@ class BenchmarksControllerTest(
         assertEquals(0, assays.size)
 
         // Need a corpus first
-        val corpus = createCorpus(
+        val corpus = TestUtil.createCorpus(
             config.getWorkingDirectory().resolve("corpora").resolve("custom"),
             isDataset = true,
             isAdmin = true

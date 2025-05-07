@@ -1,13 +1,8 @@
 package org.ivdnt.galahad.formats.tsv
 
 import org.ivdnt.galahad.annotations.Layer
-import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.annotations.Annotation
-import org.ivdnt.galahad.annotations.Annotations
 import org.ivdnt.galahad.annotations.Term
-import org.ivdnt.galahad.annotations.lemma
-import org.ivdnt.galahad.annotations.pos
-import org.ivdnt.galahad.annotations.token
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -40,28 +35,26 @@ internal class TSVBodyTest {
         // Contains 3 files with a missing value for lemma, pos and literal.
         for (file in File("src/test/resources/tsv/body-missing-values").listFiles()!!) {
             val tsvFile = TsvFile(file)
-            tsvFile.parse()
             val type = file.nameWithoutExtension.split("-")[1]
-            val entries = tsvFile.entries
+            val entries = tsvFile.layer.terms
             when (type) {
                 // Empty string when lemma or pos is missing.
-                "lemma" -> assertEquals(null, entries[0].lemma)
-                "pos" -> assertEquals(null, entries[0].pos)
+                "lemma" -> assertEquals(null, entries.first().lemma)
+                "pos" -> assertEquals(null, entries.first().pos)
                 // No entries when literal is missing.
                 // After all, this would not generate plaintext.
-                "word" -> assertEquals(0, tsvFile.entries.size)
+                "word" -> assertEquals(0, entries.count())
             }
         }
     }
 
     // The files in the body/ folder have the same content, so reuse the same test.
     private fun assertTSVFile(tsvFile: TsvFile) {
-        tsvFile.parse()
-        assertEntries(tsvFile.entries)
+        assertEntries(tsvFile.layer.terms.toList())
         assertSourceLayer(tsvFile.layer)
     }
 
-    private fun assertEntries(entries: ArrayList<Annotations>) {
+    private fun assertEntries(entries: List<Term>) {
         assertEquals(2, entries.size)
         val first = entries[0]
         assertEquals("scholen", first.token)
@@ -74,10 +67,8 @@ internal class TSVBodyTest {
     }
 
     private fun assertSourceLayer(layer: Layer) {
-        assertEquals(SOURCE_LAYER_NAME, layer.name)
         // count
-        assertEquals(2, layer.wordForms.size)
-        assertEquals(2, layer.terms.size)
+        assertEquals(2, layer.terms.count())
         // wordforms
         assertWordFormAndTerm(layer, 0, "scholen", "school", "NOU")
         assertWordFormAndTerm(layer, 1, "loop", "lopen", "VRB")
@@ -87,18 +78,11 @@ internal class TSVBodyTest {
     private fun assertWordFormAndTerm(
         layer: Layer, i: Int, literal: String, lemma: String, pos: String,
     ) {
-        // wordform
-        val wf = layer.wordForms[i]
-        assertEquals(literal, wf.literal)
-        assertEquals("w$i", wf.id)
-        // term
-        val term = layer.terms[i]
+        val term = layer.terms.elementAt(i)
+        assertEquals(literal, term.token)
+        assertEquals("w$i", term.id)
         assertEquals(lemma, term.lemma)
         assertEquals(pos, term.pos)
-        assertEquals(1, term.targets.size)
-        assertEquals(wf, term.targets[0])
-        assertEquals(false, term.isMultiTarget)
-        assertEquals(literal, term.literals)
         assertEquals(null, Term.features(term.pos))
         assertEquals(pos, term.annotationHead(Annotation.POS))
     }

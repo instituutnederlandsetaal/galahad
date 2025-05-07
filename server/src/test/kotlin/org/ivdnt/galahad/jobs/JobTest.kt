@@ -1,12 +1,11 @@
 package org.ivdnt.galahad.jobs
 
-import org.ivdnt.galahad.TestConfig
+import org.ivdnt.galahad.util.TestConfig
 import org.ivdnt.galahad.corpora.Corpus
-import org.ivdnt.galahad.corpora.jobs.Job
 import org.ivdnt.galahad.annotations.LayerPreview
 import org.ivdnt.galahad.evaluation.metrics.FlatMetricType
-import org.ivdnt.galahad.formats.LayerBuilder
-import org.ivdnt.galahad.formats.createCorpus
+import org.ivdnt.galahad.util.LayerBuilder
+import org.ivdnt.galahad.util.TestUtil
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.BeforeEach
@@ -18,7 +17,7 @@ class JobTest {
 
     @BeforeEach
     fun initCorpus() {
-        corpus = createCorpus()
+        corpus = TestUtil.createCorpus()
     }
 
     @Test
@@ -43,9 +42,9 @@ class JobTest {
         val job: Job = corpus.jobs.createOrThrow(TestConfig.TAGGER_NAME)
         // fake a tagger result
         val layer = LayerBuilder().loadDummies(100).build()
-        job.setLayerForKey(doc.name, layer)
+        job.setLayer(doc.name, layer)
         // verify
-        assertEquals(100, job.layer(doc).terms.count())
+        assertEquals(100, job.getLayer(doc).terms.count())
         assertEquals(1, job.progress.finished)
     }
 }

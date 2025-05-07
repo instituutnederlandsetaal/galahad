@@ -11,6 +11,7 @@ import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.corpora.Corpora
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.corpora.MutableCorpusMetadata
+import org.ivdnt.galahad.documents.Document
 import org.ivdnt.galahad.formats.InternalFile
 import org.junit.jupiter.api.Assertions.assertEquals
 import java.io.File
@@ -22,6 +23,12 @@ object TestUtil {
     var corpus: Corpus = createCorpus()
 
     fun get(path: String): File = File(this::class.java.classLoader.getResource(path)!!.toURI())
+
+    fun getDoc(path: String): Document {
+        val file = get(path)
+        // Might already exist due to another unit test, so try to read it first.
+        return corpus.documents.readOrNull(file.name) ?: corpus.documents.createOrThrow(file)
+    }
 
     val mapper: ObjectMapper = JsonMapper.builder()
         .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)

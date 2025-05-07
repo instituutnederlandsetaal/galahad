@@ -1,8 +1,7 @@
 package org.ivdnt.galahad.data.documents
 
 import org.ivdnt.galahad.corpora.Corpus
-import org.ivdnt.galahad.formats.Resource
-import org.ivdnt.galahad.formats.createCorpus
+import org.ivdnt.galahad.util.TestUtil
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
@@ -14,7 +13,7 @@ class DocumentsTest {
 
     @BeforeEach
     fun initCorpus() {
-        corpus = createCorpus()
+        corpus = TestUtil.createCorpus()
     }
 
     @Test
@@ -39,7 +38,7 @@ class DocumentsTest {
     }
 
     fun addFile(path: String) {
-        val file = Resource.get(path)
+        val file = TestUtil.get(path)
         // The file does not exist
         assertThrows(Exception::class.java) { corpus.documents.readOrThrow(file.name) }
         assertNull(corpus.documents.readOrNull(file.name))

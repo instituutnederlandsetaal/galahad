@@ -1,10 +1,9 @@
 package org.ivdnt.galahad.formats.folia
 
 import org.ivdnt.galahad.corpora.Corpus
-import org.ivdnt.galahad.formats.DocTest
-import org.ivdnt.galahad.formats.LayerBuilder
-import org.ivdnt.galahad.formats.Resource
-import org.ivdnt.galahad.formats.createCorpus
+import org.ivdnt.galahad.util.DocTest
+import org.ivdnt.galahad.util.LayerBuilder
+import org.ivdnt.galahad.util.TestUtil
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.BeforeEach
@@ -15,7 +14,7 @@ internal class FoliaExportTest {
 
     @BeforeEach
     fun initCorpus() {
-        corpus = createCorpus()
+        corpus = TestUtil.createCorpus()
     }
 
     @Test
@@ -24,7 +23,7 @@ internal class FoliaExportTest {
         DocTest.builder(corpus)
             .expectingFile("folia/export/converted-output.folia.xml")
             // document.parse() will be called and throw on an empty file, hence the dummy file.
-            .convertToFolia(Resource.get("folia/dummy.folia.xml"), layer)
+            .convertToFolia(TestUtil.get("folia/dummy.folia.xml"), layer)
             .ignoreTrailingWhiteSpaces()
             .result()
     }
@@ -34,20 +33,20 @@ internal class FoliaExportTest {
         val layer = LayerBuilder().loadDummies(10, literal="word0 ").build()
         DocTest.builder(corpus)
             .expectingFile("folia/corrections/merged-output.folia.xml")
-            .mergeFolia(Resource.get("folia/corrections/input.folia.xml"), layer)
+            .mergeFolia(TestUtil.get("folia/corrections/input.folia.xml"), layer)
             .ignoreTrailingWhiteSpaces()
             .result()
     }
 
     @Test
     fun `Merge pie-tdn result with heavily style tag twined folia`() {
-        val plaintext: String = Resource.get("folia/twine/plaintext.txt").readText()
+        val plaintext: String = TestUtil.get("folia/twine/plaintext.txt").readText()
         val layer = LayerBuilder()
             .loadLayerFromTSV("folia/twine/pie-tdn.tsv", plaintext)
             .build()
         DocTest.builder(corpus)
             .expectingFile("folia/twine/merged-output.folia.xml")
-            .mergeFolia(Resource.get("folia/twine/twine.folia.xml"), layer)
+            .mergeFolia(TestUtil.get("folia/twine/twine.folia.xml"), layer)
             .ignoreTrailingWhiteSpaces()
             .result()
     }

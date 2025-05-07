@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.evaluation.metrics
 
 import org.ivdnt.galahad.corpora.Corpus
-import org.ivdnt.galahad.formats.createCorpus
+import org.ivdnt.galahad.util.TestUtil
 import org.junit.jupiter.api.BeforeEach
 
 class DocumentMetricsTest {
@@ -9,7 +9,7 @@ class DocumentMetricsTest {
 
     @BeforeEach
     fun initCorpus() {
-        corpus = createCorpus()
+        corpus = TestUtil.createCorpus()
     }
 
     // @Test

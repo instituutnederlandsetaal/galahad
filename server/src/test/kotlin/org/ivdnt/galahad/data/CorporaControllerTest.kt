@@ -1,8 +1,8 @@
 package org.ivdnt.galahad.data
 
-import org.ivdnt.galahad.JSON
-import org.ivdnt.galahad.TestConfig
-import org.ivdnt.galahad.UserHeader
+import org.ivdnt.galahad.util.JSON
+import org.ivdnt.galahad.util.TestConfig
+import org.ivdnt.galahad.util.UserHeader
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.Galahad
 import org.ivdnt.galahad.corpora.CorpusMetadata

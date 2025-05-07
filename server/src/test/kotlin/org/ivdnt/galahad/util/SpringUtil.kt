@@ -28,10 +28,11 @@ object UserHeader {
         return httpHeaders
     }
 }
-
-fun createCorpus(config: Config): Corpus {
-    val workdir = config.getWorkingDirectory().resolve("corpora").resolve("custom")
-    return TestUtil.createCorpus(workdir)
+object SpringUtil {
+    fun createCorpus(config: Config): Corpus {
+        val workdir = config.getWorkingDirectory().resolve("corpora").resolve("custom")
+        return TestUtil.createCorpus(workdir)
+    }
 }
 
 fun MockMvc.uploadFile(file: File, corpus: Corpus, mediaType: String = MediaType.TEXT_PLAIN_VALUE): MvcResult {

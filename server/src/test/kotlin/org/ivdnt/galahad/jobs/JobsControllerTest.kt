@@ -1,13 +1,11 @@
 package org.ivdnt.galahad.jobs
 
-import org.ivdnt.galahad.TestConfig
+import org.ivdnt.galahad.annotations.Layer
+import org.ivdnt.galahad.util.TestConfig
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.Galahad
-import org.ivdnt.galahad.createCorpus
-import org.ivdnt.galahad.corpora.jobs.JobMetadata
-import org.ivdnt.galahad.corpora.jobs.Progress
-import org.ivdnt.galahad.annotations.LayerMetadata
-import org.ivdnt.galahad.formats.Resource
+import org.ivdnt.galahad.util.SpringUtil
+import org.ivdnt.galahad.util.TestUtil
 import org.ivdnt.galahad.web.controller.JobsController
 import org.ivdnt.galahad.web.controller.TaggersController
 import org.junit.jupiter.api.Assertions.*
@@ -39,8 +37,8 @@ class JobsControllerTest(
     @Disabled
     @Test
     fun postJob() {
-        val corpus = createCorpus(config)
-        val doc = corpus.documents.createOrThrow(Resource.get("all-formats/input/input.tei.xml"))
+        val corpus = SpringUtil.createCorpus(config)
+        val doc = corpus.documents.createOrThrow(TestUtil.get("all-formats/input/input.tei.xml"))
         val uuid = corpus.immutableMetadata.uuid
 
         assertEquals(taggers.getTaggers().size + 1, getJobs(uuid).size) // +1 for the sourceLayer
@@ -58,10 +56,8 @@ class JobsControllerTest(
 
         // check result
         val resultPreview = getDocumentJobResult(uuid, TestConfig.TAGGER_NAME, doc.name)
-        assertEquals(TestConfig.TAGGER_NAME, resultPreview.name)
         assertTrue(resultPreview.summary.tokens > 0)
         assertTrue(resultPreview.preview.terms.isNotEmpty())
-        assertTrue(resultPreview.preview.wordforms.isNotEmpty())
     }
 
     private fun pollProgress(uuid: UUID, job: String): Progress {
@@ -77,12 +73,12 @@ class JobsControllerTest(
             object : ParameterizedTypeReference<Set<JobMetadata>>() {}).body!!
     }
 
-    private fun getDocumentJobResult(uuid: UUID, job: String, document: String): LayerMetadata {
+    private fun getDocumentJobResult(uuid: UUID, job: String, document: String): Layer {
         return rest.exchange(
             "/corpora/$uuid/jobs/$job/documents/$document/result",
             HttpMethod.GET,
             getHeaders(),
-            LayerMetadata::class.java
+            Layer::class.java
         ).body!!
     }
 

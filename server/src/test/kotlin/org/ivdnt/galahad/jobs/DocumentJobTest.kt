@@ -1,12 +1,11 @@
 package org.ivdnt.galahad.jobs
 
-import org.ivdnt.galahad.TestConfig
 import org.ivdnt.galahad.corpora.Corpus
-import org.ivdnt.galahad.corpora.jobs.Job
 import org.ivdnt.galahad.annotations.Layer
-import org.ivdnt.galahad.formats.LayerBuilder
-import org.ivdnt.galahad.formats.createCorpus
-import org.ivdnt.galahad.corpora.jobs.jobDocuments.JobDocument
+import org.ivdnt.galahad.jobs.jobDocuments.JobDocument
+import org.ivdnt.galahad.util.LayerBuilder
+import org.ivdnt.galahad.util.TestConfig
+import org.ivdnt.galahad.util.TestUtil
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -18,7 +17,7 @@ class DocumentJobTest {
 
     @BeforeEach
     fun initCorpus() {
-        corpus = createCorpus()
+        corpus = TestUtil.createCorpus()
     }
 
     @Test
@@ -60,7 +59,7 @@ class DocumentJobTest {
         // set result should finish
         val layer = LayerBuilder().loadDummies(100).build()
         dj.layer = layer
-        assertEquals(100, dj.layer!!.terms.size)
+        assertEquals(100, dj.layer!!.terms.count())
         assertNull(dj.processingID)
         assertNull(dj.error)
         assertEquals(JobDocument.DocumentProcessingStatus.FINISHED, dj.status)

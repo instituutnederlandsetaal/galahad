@@ -1,14 +1,13 @@
 package org.ivdnt.galahad.evaluation
 
 import java.util.zip.ZipInputStream
-import org.ivdnt.galahad.TestConfig
-import org.ivdnt.galahad.UserHeader
-import org.ivdnt.galahad.addUrlParams
+import org.ivdnt.galahad.util.TestConfig
+import org.ivdnt.galahad.util.UserHeader
+import org.ivdnt.galahad.util.addUrlParams
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.Galahad
 import org.ivdnt.galahad.corpora.Corpus
-import org.ivdnt.galahad.formats.Resource
-import org.ivdnt.galahad.formats.createCorpus
+import org.ivdnt.galahad.util.TestUtil
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
@@ -82,7 +81,7 @@ class EvaluationControllerTest(
 
     private fun corpus(): Corpus {
         // Need a corpus first
-        val corpus = createCorpus(
+        val corpus = TestUtil.createCorpus(
             config.getWorkingDirectory().resolve("corpora").resolve("custom")
         )
         EvaluationUtil.add_two_docs_to_corpus(corpus)
@@ -100,7 +99,7 @@ class EvaluationControllerTest(
             if (zipEntry.name.split(".")[1] == "csv") {
                 val f: File
                 try {
-                    f = Resource.get("evaluation/zip/${zipEntry.name}")
+                    f = TestUtil.get("evaluation/zip/${zipEntry.name}")
                     val content: String = f.readText()
                     assertEquals(content, fileContent)
                     evals++
@@ -122,7 +121,7 @@ class EvaluationControllerTest(
             println("unzipped: " + (zipEntry.name ?: ""))
             val fileContent = String(zipInputStream.readAllBytes(), StandardCharsets.UTF_16LE)
             if (zipEntry.name.split(".")[1] == "csv") {
-                assertEquals(Resource.get("evaluation/zip/$expected").readText(), fileContent)
+                assertEquals(TestUtil.get("evaluation/zip/$expected").readText(), fileContent)
                 evals++
             }
             zipEntry = zipInputStream.nextEntry

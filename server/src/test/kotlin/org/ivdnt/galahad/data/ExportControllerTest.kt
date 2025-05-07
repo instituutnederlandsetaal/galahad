@@ -1,16 +1,16 @@
 package org.ivdnt.galahad.data
 
-import org.ivdnt.galahad.TestConfig
-import org.ivdnt.galahad.UserHeader
+import org.ivdnt.galahad.util.TestConfig
+import org.ivdnt.galahad.util.UserHeader
+import org.ivdnt.galahad.util.uploadFile
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.Galahad
-import org.ivdnt.galahad.createCorpus
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.annotations.Layer
-import org.ivdnt.galahad.formats.LayerBuilder
-import org.ivdnt.galahad.formats.Resource
-import org.ivdnt.galahad.formats.TestResult
-import org.ivdnt.galahad.uploadFile
+import org.ivdnt.galahad.util.LayerBuilder
+import org.ivdnt.galahad.util.SpringUtil
+import org.ivdnt.galahad.util.TestResult
+import org.ivdnt.galahad.util.TestUtil
 import org.ivdnt.galahad.web.controller.ExportController
 import org.junit.jupiter.api.Test
 
@@ -44,7 +44,7 @@ class ExportControllerTest(
         val files = unzip(bytes)
         val teiToFolia: File = files.first { it.name.endsWith("tei.folia.xml") }
         val result = TestResult(
-            Resource.get("all-formats/output/from-TeiP5-to-Folia.folia.xml").readText(),
+            TestUtil.get("all-formats/output/from-TeiP5-to-Folia.folia.xml").readText(),
             teiToFolia.readText()
         )
         result.ignoreLineEndings().ignoreWhiteSpaceDocumentWide().result()
@@ -72,16 +72,16 @@ class ExportControllerTest(
 
     // Create and populate a corpus with a TEI and Folia document.
     fun createAndPopulateCorpus(): Corpus {
-        val corpus = createCorpus(config)
-        mvc.uploadFile(Resource.get("all-formats/input/input.tei.xml"), corpus)
+        val corpus = SpringUtil.createCorpus(config)
+        mvc.uploadFile(TestUtil.get("all-formats/input/input.tei.xml"), corpus)
         // hardcode layer
         val layer: Layer = LayerBuilder().loadLayerFromTSV(
             "all-formats/input/pie-tdn.tsv",
-            Resource.get("all-formats/input/input.txt").readText()
+            TestUtil.get("all-formats/input/input.txt").readText()
         ).build()
         val job = corpus.jobs.createOrThrow(TestConfig.TAGGER_NAME)
-        job.setLayerForKey("input.tei.xml",layer)
-        //mvc.uploadFile(Resource.get("all-formats/input/input.folia.xml"), corpus)
+        job.setLayer("input.tei.xml",layer)
+        //mvc.uploadFile(TestUtil.get("all-formats/input/input.folia.xml"), corpus)
         return corpus
     }
 }

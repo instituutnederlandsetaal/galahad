@@ -2,9 +2,9 @@ package org.ivdnt.galahad.formats.tsv
 
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.annotations.Layer
-import org.ivdnt.galahad.formats.DocTest
-import org.ivdnt.galahad.formats.LayerBuilder
-import org.ivdnt.galahad.formats.createCorpus
+import org.ivdnt.galahad.util.DocTest
+import org.ivdnt.galahad.util.LayerBuilder
+import org.ivdnt.galahad.util.TestUtil
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -14,7 +14,7 @@ internal class TSVExportTest {
 
     @BeforeEach
     fun initCorpus() {
-        corpus = createCorpus()
+        corpus = TestUtil.createCorpus()
     }
 
     @Test

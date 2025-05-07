@@ -1,9 +1,8 @@
 package org.ivdnt.galahad.data.documents
 
 import org.ivdnt.galahad.corpora.Corpus
-import org.ivdnt.galahad.corpora.documents.DocumentFormat
-import org.ivdnt.galahad.formats.Resource
-import org.ivdnt.galahad.formats.createCorpus
+import org.ivdnt.galahad.documents.DocumentFormat
+import org.ivdnt.galahad.util.TestUtil
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
@@ -14,15 +13,15 @@ class DocumentMetadataTest {
 
     @BeforeEach
     fun initCorpus() {
-        corpus = createCorpus()
+        corpus = TestUtil.createCorpus()
     }
 
     @Test
     fun `Properties for an unannotated file`() {
         val path = "all-formats/input/input.txt"
-        val file = Resource.get(path)
+        val file = TestUtil.get(path)
         val plaintext = file.readText()
-        val doc = Resource.getDoc(path)
+        val doc = TestUtil.getDoc(path)
         val meta = doc.metadata
         assertEquals("input.txt", meta.name)
         assertEquals(DocumentFormat.Txt, meta.format)
@@ -37,8 +36,8 @@ class DocumentMetadataTest {
     @Test
     fun `Properties for an annotated file`() {
         val path = "all-formats/input/input.tei.xml"
-        val file = Resource.get(path)
-        val doc = Resource.getDoc(path)
+        val file = TestUtil.get(path)
+        val doc = TestUtil.getDoc(path)
         val plaintext = doc.plaintext
         val meta = doc.metadata
         assertEquals("input.tei.xml", meta.name)
