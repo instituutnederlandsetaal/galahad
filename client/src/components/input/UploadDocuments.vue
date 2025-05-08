@@ -13,7 +13,7 @@
         </label>
         <!-- Actual input -->
         <input type="file" ref="uploadInput" name="filefield" multiple id="file-upload" style="display: none;"
-            accept=".xml, .tsv, .txt, .zip, .conllu, .naf"
+            accept=".xml, .tsv, .txt, .zip, .conllu, .naf, .pdf, .docx"
             @change="e => filesToUpload = Object.values(e.target.files as FileList)" />
 
 

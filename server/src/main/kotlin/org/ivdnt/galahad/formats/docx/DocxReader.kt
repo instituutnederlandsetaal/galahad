@@ -1,0 +1,34 @@
+package org.ivdnt.galahad.formats.docx
+
+import org.apache.poi.xwpf.usermodel.XWPFDocument
+import org.ivdnt.galahad.annotations.Annotation
+import org.ivdnt.galahad.annotations.AnnotationReader
+import org.ivdnt.galahad.annotations.Layer
+import org.ivdnt.galahad.annotations.Term
+import java.io.InputStream
+
+class DocxReader(
+    stream: InputStream
+) : AnnotationReader() {
+    val doc: XWPFDocument = XWPFDocument(stream)
+
+    override fun read(): Layer {
+        doc.paragraphs.forEach { paragraph ->
+            paragraph.text.ifBlank { null }?.split(whitespace)?.forEach { word ->
+                terms += Term(
+                    wordID(), offset, mapOf(
+                        Annotation.TOKEN to word
+                    )
+                )
+                offset += word.length + 1
+            }
+            newParagraph()
+        }
+        newDocument()
+        return Layer(documents.toTypedArray())
+    }
+
+    companion object {
+        val whitespace: Regex = Regex("""\s+""")
+    }
+}

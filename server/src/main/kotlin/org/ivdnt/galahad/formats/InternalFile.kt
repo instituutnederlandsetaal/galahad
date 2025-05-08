@@ -5,8 +5,10 @@ import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.documents.DocumentFormat
 import org.ivdnt.galahad.exceptions.DocumentInvalidException
 import org.ivdnt.galahad.formats.conllu.ConlluFile
+import org.ivdnt.galahad.formats.docx.DocxFile
 import org.ivdnt.galahad.formats.folia.FoliaFile
 import org.ivdnt.galahad.formats.naf.NafFile
+import org.ivdnt.galahad.formats.pdf.PdfFile
 import org.ivdnt.galahad.formats.tei.TeiFile
 import org.ivdnt.galahad.formats.tsv.TsvFile
 import org.ivdnt.galahad.formats.txt.TxtFile
@@ -28,6 +30,8 @@ abstract class InternalFile protected constructor() {
                 DocumentFormat.Naf -> NafFile(file)
                 DocumentFormat.Txt -> TxtFile(file)
                 DocumentFormat.Conllu -> ConlluFile(file)
+                DocumentFormat.Docx -> DocxFile(file)
+                DocumentFormat.Pdf -> PdfFile(file)
                 // Multiple TEI formats
                 DocumentFormat.TeiP4Legacy,
                 DocumentFormat.TeiP5Legacy,

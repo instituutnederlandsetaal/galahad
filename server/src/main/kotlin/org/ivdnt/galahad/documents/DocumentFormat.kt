@@ -26,6 +26,8 @@ enum class DocumentFormat(val identifier: String, val extension: String) {
     Conllu("conllu", "conllu"),
     Folia("folia", "folia.xml"),
     Txt("txt", "txt"),
+    Docx("docx", "docx"),
+    Pdf("pdf", "pdf"),
     Unknown("unknown", "unknown");
 
     @JsonValue
@@ -48,9 +50,11 @@ enum class DocumentFormat(val identifier: String, val extension: String) {
             "tsv" -> Tsv
             "folia" -> Folia
             "conllu" -> Conllu
+            "docx" -> Docx
             "xml", "tei" -> determineXmlFormat(file) // TEI can be either P4 or P5, so still check.
             "txt" -> Txt
             "naf" -> Naf
+            "pdf" -> Pdf
             else -> Unknown
         }
 
