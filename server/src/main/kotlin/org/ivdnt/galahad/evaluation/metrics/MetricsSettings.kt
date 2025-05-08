@@ -73,9 +73,13 @@ open class LemmaByLemmaMetricsSettings : MetricsSettings {
     override val nullTerm: String = "NO_LEMMA"
     override val requiredAnnotations: List<Annotation> = listOf(Annotation.LEMMA)
 
-    override fun termsEqual(comp: TermComparison): Boolean = comp.equalAnnotation(Annotation.LEMMA, Regex("_"))
+    override fun termsEqual(comp: TermComparison): Boolean = comp.equalAnnotation(Annotation.LEMMA, lemmaRegex)
 
     override fun groupBy(term: Term): String = term.lemma ?: nullTerm
+
+    companion object {
+        val lemmaRegex = Regex("_")
+    }
 }
 
 open class DeprelByDeprel : MetricsSettings {

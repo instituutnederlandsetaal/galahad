@@ -103,10 +103,14 @@ open class Confusion(private val truncate: Boolean = true, val annotation: Annot
             '+' in pos1 -> add(MULTIPLE_POS, pos2, evaluationEntry)
             '+' in pos2 -> add(pos1, MULTIPLE_POS, evaluationEntry)
             // Non-alphabetical pos are mapped to a single category "other"
-            Regex(OTHER_POS_REGEX) in pos1 -> add(OTHER_POS, pos2, evaluationEntry)
-            Regex(OTHER_POS_REGEX) in pos2 -> add(pos1, OTHER_POS, evaluationEntry)
+            regex_pos in pos1 -> add(OTHER_POS, pos2, evaluationEntry)
+            regex_pos in pos2 -> add(pos1, OTHER_POS, evaluationEntry)
             // Otherwise a simple merge
             else -> matrix.merge(Pair(pos1, pos2), evaluationEntry) { a, b -> EvaluationEntry.add(a, b, truncate) }
         }
+    }
+
+    companion object {
+        val regex_pos = Regex(OTHER_POS_REGEX)
     }
 }

@@ -129,7 +129,7 @@ class ConlluReader(
     companion object {
         /** Supported names for the ner attribute in the MISC column. */
         private val nerAttrNames: List<String> = listOf("NamedEntity", "ner")
-        private val idRegex = Regex("id = (\\S+)")
+        private val idRegex = Regex("""id = (\S+)""")
 
 
         private val indices: Map<Annotation, Int> = mapOf(
