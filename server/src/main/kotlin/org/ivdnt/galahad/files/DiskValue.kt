@@ -9,7 +9,6 @@ import org.ivdnt.galahad.util.JsonUtil
 import org.ivdnt.galahad.util.ThreadPoolUtil
 import java.io.File
 
-
 open class DiskValue<T>(
     val file: File,
 ) {

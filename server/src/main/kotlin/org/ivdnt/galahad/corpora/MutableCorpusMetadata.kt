@@ -33,7 +33,6 @@ open class MutableCorpusMetadata(
     @JsonIgnore
     var user: User? = null
 
-
     /**
      * Whether the user is in the list of collaborators of this corpus.
      * Note that this is not the same as having write access: use [hasWriteAccess].

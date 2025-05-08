@@ -7,8 +7,8 @@ import java.io.OutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
-
 typealias FileMapper = Pair<String, (OutputStream) -> Unit>
+
 /**
  * Create zip file for the given files, optionally to a specific stream.
  * Can be used as a streaming response zip, for when expensive transformations are applied to the Sequence<File>.

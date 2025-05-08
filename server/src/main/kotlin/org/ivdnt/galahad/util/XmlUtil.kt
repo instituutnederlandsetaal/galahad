@@ -2,14 +2,11 @@ package org.ivdnt.galahad.util
 
 import com.fasterxml.aalto.stax.InputFactoryImpl
 import com.fasterxml.aalto.stax.OutputFactoryImpl
-import org.codehaus.stax2.XMLOutputFactory2
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
-import javax.xml.stream.XMLInputFactory
-import javax.xml.stream.XMLOutputFactory
 import javax.xml.transform.OutputKeys
 import javax.xml.transform.Transformer
 import javax.xml.transform.TransformerFactory

@@ -10,5 +10,6 @@ class TeiFile(
     override val format: DocumentFormat,
 ) : InternalFile() {
     override val reader: TeiReader by lazy { TeiReader(BufferedInputStream(file.inputStream())) }
+
     constructor(file: File) : this(file, DocumentFormat.fromFile(file))
 }

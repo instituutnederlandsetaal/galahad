@@ -13,6 +13,7 @@ import java.io.OutputStream
 
 abstract class LayerMerger protected constructor(protected val export: DocumentExport) {
     private val layerComparison: LayerComparison = LayerComparison(export)
+
     // TODO move to LayerComparison
     protected val sourceTermComparisons: List<TermComparison> =
         (layerComparison.matches + layerComparison.referenceTermsWithoutMatches.map {

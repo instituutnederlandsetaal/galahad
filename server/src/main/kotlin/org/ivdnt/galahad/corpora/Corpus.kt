@@ -1,10 +1,10 @@
 package org.ivdnt.galahad.corpora
 
 import org.ivdnt.galahad.documents.Documents
-import org.ivdnt.galahad.jobs.Jobs
 import org.ivdnt.galahad.files.DiskValue
 import org.ivdnt.galahad.files.GalahadFolder
 import org.ivdnt.galahad.files.ValidatedDiskValue
+import org.ivdnt.galahad.jobs.Jobs
 import java.io.File
 import java.util.*
 

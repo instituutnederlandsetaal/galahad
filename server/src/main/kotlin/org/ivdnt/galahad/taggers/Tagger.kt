@@ -14,7 +14,6 @@ import java.io.File
 import java.net.URI
 import java.net.URL
 
-
 class Tagger(
     // The id should be equal to the filename
     // i.e. mytagger.yaml should have id 'mytagger'
@@ -59,7 +58,13 @@ class Tagger(
         private val dir: File = File(TAGGERS_DIR)
 
         val taggers: Map<String, Tagger> = dir.listFiles()
-            .map { Yaml(Constructor(Tagger::class.java, LoaderOptions().apply { isEnumCaseSensitive = false })).load<Tagger>(it.inputStream()) }
+            .map {
+                Yaml(
+                    Constructor(
+                        Tagger::class.java,
+                        LoaderOptions().apply { isEnumCaseSensitive = false })
+                ).load<Tagger>(it.inputStream())
+            }
             .associateBy { it.id }
 
         fun readOrThrow(id: String, corpus: Corpus? = null): Tagger = when (id) {

@@ -195,7 +195,6 @@ class MetricsType(
         }
     }
 
-
     private fun samplesToCSV(comps: List<TermComparison>?): String = samplesToCSV(comps, hypothesis, reference)
 
     override fun samplesToCSV(): String {

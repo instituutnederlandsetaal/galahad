@@ -1,6 +1,5 @@
 package org.ivdnt.galahad.taggers
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import org.ivdnt.galahad.exceptions.TagsetNotFoundException
 import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml

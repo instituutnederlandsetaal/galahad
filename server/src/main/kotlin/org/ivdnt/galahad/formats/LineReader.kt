@@ -12,7 +12,7 @@ abstract class LineReader : AnnotationReader() {
         buildList<Pair<String, MutableList<Int>>> {
             terms.forEachIndexed { i, t ->
                 if (t.ner?.startsWith("B-") == true) {
-                    add(t.annotationHead(org.ivdnt.galahad.annotations.Annotation.NER)!! to mutableListOf(i))
+                    add(t.annotationHead(Annotation.NER)!! to mutableListOf(i))
                 } else if (t.ner?.startsWith("I-") == true) {
                     last().second.add(i)
                 }

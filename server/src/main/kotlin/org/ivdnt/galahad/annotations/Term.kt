@@ -2,7 +2,6 @@ package org.ivdnt.galahad.annotations
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 
-
 class Term(
     val id: String,
     val offset: Int,

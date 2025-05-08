@@ -2,10 +2,10 @@ package org.ivdnt.galahad.evaluation.metrics
 
 import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.documents.Document
-import org.ivdnt.galahad.jobs.Job
 import org.ivdnt.galahad.evaluation.comparison.LayerComparison
 import org.ivdnt.galahad.evaluation.comparison.LayerFilter
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
+import org.ivdnt.galahad.jobs.Job
 import org.ivdnt.galahad.taggers.Tagger
 
 /**

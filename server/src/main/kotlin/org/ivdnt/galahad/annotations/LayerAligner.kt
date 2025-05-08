@@ -5,7 +5,7 @@ import org.ivdnt.galahad.evaluation.comparison.nextOrNull
 class LayerAligner(
     val hypothesis: Layer,
     val reference: Layer,
-): AnnotationReader() {
+) : AnnotationReader() {
     override fun read(): Layer {
         val hypoIter = hypothesis.terms.iterator()
 

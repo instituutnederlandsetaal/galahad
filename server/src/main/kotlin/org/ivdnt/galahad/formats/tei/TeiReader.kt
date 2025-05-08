@@ -48,7 +48,8 @@ class TeiReader(
         private val WORD_TAGS = arrayOf("w", "pc")
         private val WORD_DATA_TAGS = arrayOf("w", "pc")
         private val SENTENCE_TAGS = arrayOf("s", "l", "u")
-        private val IGNORABLE_TAGS = arrayOf("note", "listBibl", "listWit", "figure", "xr", "fs", "del", "teiHeader", "incident")
+        private val IGNORABLE_TAGS =
+            arrayOf("note", "listBibl", "listWit", "figure", "xr", "fs", "del", "teiHeader", "incident")
         private val NER_TAGS = arrayOf("name")
         private val DEP_TAGS = arrayOf("link")
         private val PARAGRAPH_TAGS = arrayOf(

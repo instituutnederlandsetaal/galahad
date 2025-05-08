@@ -7,8 +7,6 @@ import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.documents.Document
-import org.ivdnt.galahad.jobs.jobDocuments.JobDocument.DocumentProcessingStatus
-import org.ivdnt.galahad.jobs.jobDocuments.JobDocuments
 import org.ivdnt.galahad.evaluation.metrics.CorpusMetrics
 import org.ivdnt.galahad.evaluation.metrics.FlatMetricType
 import org.ivdnt.galahad.evaluation.metrics.METRIC_TYPES
@@ -17,6 +15,8 @@ import org.ivdnt.galahad.exceptions.SourceLayerNotATaggerException
 import org.ivdnt.galahad.exceptions.TaggerNoConnectionException
 import org.ivdnt.galahad.files.GalahadFolder
 import org.ivdnt.galahad.files.ValidatedDiskValue
+import org.ivdnt.galahad.jobs.jobDocuments.JobDocument.DocumentProcessingStatus
+import org.ivdnt.galahad.jobs.jobDocuments.JobDocuments
 import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.util.JsonUtil
 import org.springframework.core.io.FileSystemResource
@@ -118,6 +118,7 @@ class Job(
     fun setLayer(key: String, layer: Layer) {
         jobDocuments.createOrThrow(key).layer = layer
     }
+
     fun setLayer(doc: Document, layer: Layer): Unit = setLayer(doc.name, layer)
 
     //////////////////////////////////////////////////////
@@ -147,7 +148,8 @@ class Job(
             // For each document that claims to be processing, verify if its pid is present at the tagger
             // If not, delete pid.
             try {
-                val jsonStr: String? = taggerRequest(this, "status/${documentJob.processingID!!}", HttpMethod.GET, String::class.java)
+                val jsonStr: String? =
+                    taggerRequest(this, "status/${documentJob.processingID!!}", HttpMethod.GET, String::class.java)
                 val json = JsonUtil.mapper.readTree(jsonStr)
                 val busy = json.get("busy").asBoolean()
                 val pending = json.get("pending").asBoolean()

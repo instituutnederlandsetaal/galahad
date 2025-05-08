@@ -1,7 +1,8 @@
 package org.ivdnt.galahad.formats.tsv
 
-import org.ivdnt.galahad.annotations.*
 import org.ivdnt.galahad.annotations.Annotation
+import org.ivdnt.galahad.annotations.Layer
+import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.formats.LineReader
 import java.io.File
 

@@ -2,16 +2,10 @@ package org.ivdnt.galahad.documents
 
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonValue
-import org.apache.logging.log4j.kotlin.logger
 import org.ivdnt.galahad.exceptions.InvalidDocumentFormatException
 import org.ivdnt.galahad.util.XmlUtil
-import org.w3c.dom.Document
 import java.io.File
-import javax.xml.stream.XMLInputFactory
 import javax.xml.stream.XMLStreamReader
-import javax.xml.xpath.XPath
-import javax.xml.xpath.XPathConstants
-import javax.xml.xpath.XPathFactory
 
 /**
  * The DocumentFormat will be used to declare the format for indexing in BlackLab and

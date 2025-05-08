@@ -52,7 +52,6 @@ class CorporaController(
     @GetMapping(DATASETS_CORPORA_URL)
     fun getDatasetsCorpora(): Set<CorpusMetadata> = corporaService.readAllDatasets()
 
-
     @Operation(
         summary = "Get single corpus metadata",
         description = "Get the metadata of a corpus."

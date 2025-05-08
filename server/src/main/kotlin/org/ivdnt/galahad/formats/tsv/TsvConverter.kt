@@ -25,7 +25,8 @@ class TsvConverter(export: DocumentExport) : LayerConverter(export) {
                         out.println(fields.joinToString("\t"))
                     }
                     // empty line between sentences
-                    val isLastSent = docI == documents.lastIndex && parI == doc.paragraphs.lastIndex && sentI == par.sentences.lastIndex
+                    val isLastSent =
+                        docI == documents.lastIndex && parI == doc.paragraphs.lastIndex && sentI == par.sentences.lastIndex
                     if (!isLastSent) out.println()
                 }
                 // empty line between paragraphs

@@ -6,7 +6,6 @@ import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.evaluation.CsvSampleExporter
 import org.ivdnt.galahad.evaluation.comparison.LayerFilter
-import org.ivdnt.galahad.evaluation.distribution.DocumentDistribution
 import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.util.ThreadPoolUtil
 import java.util.concurrent.ExecutorCompletionService

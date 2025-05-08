@@ -47,7 +47,13 @@ abstract class AnnotationReader {
     protected open fun newSentence() {
         newWordform()
         if (terms.isNotEmpty()) {
-            sentences.add(SentenceLayer(sentID(), terms.toTypedArray(), spans.mapValues { it.value.toTypedArray() }.toMap()))
+            sentences.add(
+                SentenceLayer(
+                    sentID(),
+                    terms.toTypedArray(),
+                    spans.mapValues { it.value.toTypedArray() }.toMap()
+                )
+            )
             terms.clear()
             spans.clear()
         }

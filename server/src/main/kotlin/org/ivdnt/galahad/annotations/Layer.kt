@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.annotations
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import java.util.UUID
+import java.util.*
 
 const val SOURCE_LAYER_NAME: String = "sourceLayer"
 

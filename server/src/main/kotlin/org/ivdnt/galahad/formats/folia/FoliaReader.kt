@@ -14,7 +14,6 @@ class FoliaReader(
     override val nerTags: Array<String> = NER_TAGS
     override val depTags: Array<String> = DEP_TAGS
 
-
     override fun parseAttrs() {
         when (reader.localName) {
             "pos" -> pos = reader.getAttributeValue(null, "class")
@@ -41,7 +40,8 @@ class FoliaReader(
             arrayOf("text", "speech", "div", "p", "head", "list", "item", "event", "table", "part")
         private val SENTENCE_TAGS = arrayOf("s", "utt")
         private val WORD_TAGS = arrayOf("w")
-        private val IGNORABLE_TAGS = arrayOf("morphology", "note", "figure", "comment", "original", "suggestion", "metadata")
+        private val IGNORABLE_TAGS =
+            arrayOf("morphology", "note", "figure", "comment", "original", "suggestion", "metadata")
         private val NER_TAGS = arrayOf("entity")
         private val DEP_TAGS = arrayOf("dependency")
     }

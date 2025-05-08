@@ -5,7 +5,6 @@ import org.ivdnt.galahad.annotations.AnnotationReader
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.Term
 import java.io.File
-import java.util.UUID
 
 /**
  * Reads a .txt file and creates an [Layer] from it.

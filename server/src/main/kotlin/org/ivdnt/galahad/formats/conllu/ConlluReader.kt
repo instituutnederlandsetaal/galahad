@@ -1,7 +1,6 @@
 package org.ivdnt.galahad.formats.conllu
 
 import org.ivdnt.galahad.annotations.Annotation
-import org.ivdnt.galahad.annotations.AnnotationReader
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.formats.LineReader
@@ -130,7 +129,6 @@ class ConlluReader(
         /** Supported names for the ner attribute in the MISC column. */
         private val nerAttrNames: List<String> = listOf("NamedEntity", "ner")
         private val idRegex = Regex("""id = (\S+)""")
-
 
         private val indices: Map<Annotation, Int> = mapOf(
             Annotation.TOKEN to 1,

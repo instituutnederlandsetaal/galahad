@@ -2,13 +2,11 @@ package org.ivdnt.galahad.evaluation.metrics
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
-import org.ivdnt.galahad.corpora.Corpus
-import org.ivdnt.galahad.jobs.Job
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
 import org.ivdnt.galahad.export.csv.CSVFile
 import org.ivdnt.galahad.export.csv.CSVHeader
+import org.ivdnt.galahad.jobs.Job
 import org.ivdnt.galahad.taggers.Tagger
-
 
 const val TRUNCATE: Int = 100
 
@@ -26,8 +24,6 @@ open class Metrics(
 ) {
     @JsonProperty("metrics")
     val metricTypes: MutableMap<String, MetricsType> = HashMap()
-
-
 
     init {
         settings.forEach { metricTypes[it.id] = MetricsType(it, hypoTagger, refTagger).also { it.truncate = truncate } }

@@ -2,7 +2,6 @@ package org.ivdnt.galahad.formats.pdf
 
 import org.ivdnt.galahad.documents.DocumentFormat
 import org.ivdnt.galahad.formats.InternalFile
-import org.ivdnt.galahad.formats.docx.DocxReader
 import java.io.BufferedInputStream
 import java.io.File
 

@@ -6,9 +6,9 @@ import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.documents.Document
 import org.ivdnt.galahad.documents.DocumentMetadata
 import org.ivdnt.galahad.documents.Documents
-import org.ivdnt.galahad.jobs.Jobs
 import org.ivdnt.galahad.exceptions.DocumentInvalidException
 import org.ivdnt.galahad.exceptions.FileUploadException
+import org.ivdnt.galahad.jobs.Jobs
 import org.ivdnt.galahad.util.ThreadPoolUtil
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -20,7 +20,6 @@ import java.nio.file.Paths
 import java.util.*
 import java.util.zip.ZipInputStream
 import kotlin.io.path.createTempDirectory
-
 
 val ZIP_TYPES: List<String> = listOf("application/zip", "application/x-zip-compressed", "application/octet-stream")
 
@@ -36,7 +35,6 @@ class DocumentsService(val corpora: CorporaService) : Logging {
     fun UUID.readDocs(): Documents = corpora.readAsReaderOrThrow(this, user).documents
     fun UUID.writeDocs(): Documents = corpora.readAsWriterOrThrow(this, user).documents
     fun UUID.readJobs(): Jobs = corpora.readAsReaderOrThrow(this, user).jobs
-
 
     fun read(corpus: UUID, document: String): Document = corpus.readDocs().readOrThrow(document)
 

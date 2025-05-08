@@ -67,7 +67,6 @@ class TaggersController(
     fun getTaggerHealth(@PathVariable @Parameter(description = "Tagger name") tagger: String): TaggerHealth =
         taggersService.taggerHealth(tagger)
 
-
     @Operation(
         summary = "Number of active document jobs",
         description = "Get the number of documents actively being tagged, cumulative over all taggers. Indicates server load."

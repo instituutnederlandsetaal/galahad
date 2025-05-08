@@ -27,7 +27,6 @@ class EvaluationController(
     val evaluationService: EvaluationService,
 ) : Logging {
 
-
     @Operation(
         summary = "Get distribution",
         description = "Get the distribution of annotations in a corpus for a specific job."

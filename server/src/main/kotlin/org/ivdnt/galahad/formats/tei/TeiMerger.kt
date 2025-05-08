@@ -4,7 +4,6 @@ import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.export.LayerMerger
 import java.io.OutputStream
 
-
 class TeiMerger(
     export: DocumentExport,
 ) : LayerMerger(export) {

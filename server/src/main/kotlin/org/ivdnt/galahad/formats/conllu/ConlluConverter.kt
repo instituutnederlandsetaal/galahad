@@ -4,7 +4,6 @@ import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.export.LayerConverter
 import java.io.OutputStream
-import java.io.OutputStreamWriter
 import java.io.PrintWriter
 
 class ConlluConverter(export: DocumentExport) : LayerConverter(export) {
@@ -38,7 +37,8 @@ class ConlluConverter(export: DocumentExport) : LayerConverter(export) {
                         out.println(fields.joinToString("\t"))
                     }
                     // empty line between sentences
-                    val isLastSentence = docI == documents.lastIndex && parI == doc.paragraphs.lastIndex && sentI == par.sentences.lastIndex
+                    val isLastSentence =
+                        docI == documents.lastIndex && parI == doc.paragraphs.lastIndex && sentI == par.sentences.lastIndex
                     if (!isLastSentence) out.println()
                 }
             }

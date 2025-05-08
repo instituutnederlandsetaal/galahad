@@ -22,7 +22,6 @@ abstract class XmlReader(stream: InputStream) : AnnotationReader() {
     protected var deprelFrom: String? = null
     protected var deprelTo: String? = null
 
-
     protected val reader: XMLStreamReader by lazy { XmlUtil.inputFactory.createXMLStreamReader(stream) }
 
     private val currentXmlID: String?
