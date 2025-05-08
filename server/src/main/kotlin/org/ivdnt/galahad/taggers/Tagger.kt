@@ -53,7 +53,6 @@ class Tagger(
     )
 
     companion object {
-        val EMPTY: Tagger = Tagger("EMPTY")
         private const val TAGGERS_DIR: String = "data/taggers"
         private val dir: File = File(TAGGERS_DIR)
 
@@ -70,8 +69,6 @@ class Tagger(
         fun readOrThrow(id: String, corpus: Corpus? = null): Tagger = when (id) {
             SOURCE_LAYER_NAME -> corpus?.jobs?.readOrThrow(SOURCE_LAYER_NAME)?.metadata?.tagger
                 ?: throw TaggerNotFoundException(id)
-
-            EMPTY.id -> EMPTY
             else -> taggers[id] ?: throw TaggerNotFoundException(id)
         }
 

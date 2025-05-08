@@ -21,14 +21,14 @@ class CorporaService(
     val custom: Corpora = Corpora(dir.resolve("user"))
     val presets: Corpora = Corpora(dir.resolve("datasets"))
 
-    val all: List<Corpus> get() = custom.readAll().toList() + presets.readAll().toList()
+    val all: List<Corpus> get() = custom.readAll() + presets.readAll()
     val datasets: List<Corpus> get() = all.filter { it.mutableMetadata.dataset }
     val assaysFile: File get() = dir.resolve("benchmarks.json")
 
-    fun readAll(user: User): Set<CorpusMetadata> =
-        all.map { it.immutableMetadata }.filter { it.hasReadAccess(user, excludeAdmin = true) }.toSet()
+    fun readAll(user: User): List<CorpusMetadata> =
+        all.map { it.immutableMetadata }.filter { it.hasReadAccess(user, excludeAdmin = true) }
 
-    fun readAllDatasets(): Set<CorpusMetadata> = datasets.map { it.immutableMetadata }.toSet()
+    fun readAllDatasets(): List<CorpusMetadata> = datasets.map { it.immutableMetadata }
 
     fun readAsReaderOrThrow(key: UUID, user: User): Corpus {
         val (corpus, _) = findOrThrow(key)

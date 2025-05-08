@@ -92,9 +92,10 @@ open class MutableCorpusMetadata(
     }
 
     companion object {
+        val validNameRegex: Regex = Regex("""^.{3,100}$""")
 
         private fun assertCorpusNameValidOrThrow(corpusName: String) {
-            if (!Regex("^.{3,100}$").matches(corpusName.trim())) {
+            if (!validNameRegex.matches(corpusName.trim())) {
                 throw CorpusNameInvalidException(corpusName)
             }
         }

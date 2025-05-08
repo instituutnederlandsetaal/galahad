@@ -39,22 +39,6 @@ class Jobs(
         // Safe to create it now
         return ctor(key)
     }
-
     override fun ctor(key: String): Job = Job(dir.resolve(key), corpus)
     override fun throwNotFound(key: String): Nothing = throw JobNotFoundException(key)
-
-    fun readAllJobStatesIncludingPotentialJobs(): Set<JobMetadata> {
-        val existingJobs = readAll().map { it.metadata }
-        val numDocs = corpus.documents.readAll().size
-        val potentialJobs = Tagger.taggers.values.map {
-            JobMetadata(
-                it, Progress(pending = numDocs), LayerPreview.EMPTY, LayerSummary(0), 0
-            )
-        }
-        val jobMap = HashMap<String, JobMetadata>()
-        potentialJobs.forEach { jobMap[it.tagger.id] = it }
-        // Existing jobs take precedence above all, so they are put last.
-        existingJobs.forEach { jobMap[it.tagger.id] = it }
-        return jobMap.values.toSet()
-    }
 }

@@ -9,7 +9,7 @@ import java.io.File
 class ConlluReader(
     val file: File
 ) : LineReader() {
-    private val ignorableMultiWordIds: MutableSet<String> = mutableSetOf()
+    private val ignorableMultiWordIds: MutableList<String> = mutableListOf()
 
     private val String.id: String?
         get() = idRegex.find(this)?.groupValues?.get(1) // 0 is the whole match

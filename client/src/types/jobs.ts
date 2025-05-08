@@ -1,4 +1,3 @@
-import { Tagset } from "@/types/tagset"
 import { Tagger } from "@/types/taggers"
 import { Term, WordForm } from "@/types/evaluation"
 
@@ -11,13 +10,6 @@ export type Job = {
     lastModified: number | null
 }
 
-export type JobDocumentResult = {
-    name: string,
-    tagset: Tagset,
-    preview: LayerPreview,
-    summary: LayerSummary,
-}
-
 export type Progress = {
     pending: number,
     processing: number,
@@ -26,7 +18,7 @@ export type Progress = {
     total: number,
     untagged: number,
     busy: boolean,
-    hasError: boolean
+    hasError: boolean,
     errors: { [document: string]: string }
 }
 

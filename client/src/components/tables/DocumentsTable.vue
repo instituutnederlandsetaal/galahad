@@ -1,6 +1,5 @@
 <template>
     <div>
-
         <GTable :columns :items="documentsStore.available" :loading="documentsStore.loading" :displayOnEmpty="false"
             sortedByColumn="name" :sortDesc="false" hoverRow>
             <template #title>
@@ -96,7 +95,6 @@
         <DeleteModal :show="showDeleteModal" :item="deleteDocumentData"
             :displayname="'document ' + (deleteDocumentData !== null ? deleteDocumentData.name : '[null]') + ' and associated results'"
             @hide="showDeleteModal = false" @delete="deleteDocument" />
-
     </div>
 </template>
 
@@ -105,11 +103,10 @@
 import { computed, ref, PropType, watch, onMounted } from 'vue'
 import stores from '@/stores'
 // API & types
-import * as API from '@/api/jobs'
 import { TableDocumentsType, Field } from '@/types/table'
 import { DocumentMetadata } from '@/types/documents'
 import { CorpusMetadata } from '@/types/corpora'
-import { LayerPreview, SOURCE_LAYER } from '@/types/jobs'
+import { LayerPreview } from '@/types/jobs'
 // Utils
 import { formatDate } from '@/types/date'
 // Components
@@ -119,7 +116,6 @@ import UploadDocuments from '@/components/input/UploadDocuments.vue'
 import help from '@/components/help'
 
 // Stores
-const app = stores.useApp()
 const documentsStore = stores.useDocuments()
 const userStore = stores.useUser()
 
@@ -134,7 +130,6 @@ const deleteDocumentData = ref(null as null | DocumentMetadata)
 const previewDocument = ref(null as null | DocumentMetadata)
 const preview = ref(null as null | LayerPreview)
 const showDeleteModal = ref(false)
-const loading = ref(false)
 
 const columns = computed<Field[]>(() => {
     const publicFields = [
@@ -152,8 +147,7 @@ const columns = computed<Field[]>(() => {
         // public
         return publicFields
     }
-}
-)
+})
 
 // Methods
 function deleteDocument(document: DocumentMetadata) {
@@ -162,29 +156,8 @@ function deleteDocument(document: DocumentMetadata) {
 function download(document: DocumentMetadata) {
     return documentsStore.downloadRaw(document.name)
 }
-// function loadSourceLayer() {
-//     loading.value = true
-
-//     API.getJobDocumentResult(props.corpus?.uuid, SOURCE_LAYER, previewDocument.value.name)
-//         .then(response => {
-//             const encodedDocName = encodeURI(previewDocument.value.name)
-//             // Only load the preview if the response is for the current document
-//             if (response.request.responseURL.includes(encodedDocName)) {
-//                 preview.value = response.data.preview
-//                 loading.value = false
-//             }
-//         })
-//         .catch(error => {
-//             app.handleServerError("get job document result", error)
-//         })
-// }
 
 // Watches & mounts
-// When previewDocument is not null, the GModal already opens. So also autoload the source layer.
-// watch(() => previewDocument.value, () => {
-//     if (previewDocument.value !== null)
-//         loadSourceLayer()
-// })
 // Reload docs on uuid change (and onMounted). But don't show user docs on dataset tab.
 watch(() => props.corpus?.uuid, () => {
     if (props.type == TableDocumentsType.Dataset && !props.corpus?.dataset)

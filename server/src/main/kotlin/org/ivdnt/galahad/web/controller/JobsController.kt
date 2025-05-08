@@ -73,7 +73,7 @@ class JobsController(
     fun getJob(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,
-    ): JobMetadata? = corpus.readJobs().readOrThrow(job).metadata
+    ): JobMetadata = corpus.readJobs().readOrThrow(job).metadata
 
     @Operation(
         summary = "Start job",
@@ -102,7 +102,7 @@ class JobsController(
     fun postJob(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,
-    ): Progress? {
+    ): Progress {
         corpus.writeJobs().createOrThrow(job).start()
         response?.status = HttpServletResponse.SC_ACCEPTED
         return progress(corpus, job)
@@ -189,5 +189,5 @@ class JobsController(
     fun progress(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,
-    ): Progress? = corpus.readJobs().readOrThrow(job).progress
+    ): Progress = corpus.readJobs().readOrThrow(job).progress
 }

@@ -5,23 +5,18 @@
 // Libraries & stores
 import axios, { AxiosResponse } from "axios"
 // Types & API
-import { Job, Progress, JobDocumentResult } from "@/types/jobs"
+import { Job, Progress } from "@/types/jobs"
 import { UUID } from "@/types/corpora"
 
 // Paths
 const jobsPath = (corpus: UUID) => `/corpora/${corpus}/jobs`
 const jobPath = (corpus: UUID, job: string) => `/corpora/${corpus}/jobs/${job}`
-const jobDocumentResultPath = (corpus: UUID, job: string, document: string) => {
-    return `/corpora/${corpus}/jobs/${job}/documents/${document}/result`
-}
-const jobHasErrorPath = (corpus: UUID, job: string) => `/corpora/${corpus}/jobs/${job}/hasError`
 const jobIsBusyPath = (corpus: UUID, job: string) => `/corpora/${corpus}/jobs/${job}/isBusy`
 const jobProgressPath = (corpus: UUID, job: string) => `/corpora/${corpus}/jobs/${job}/progress`
 
 // Custom types
 type JobsResponse = AxiosResponse<Job[]>
 type JobResponse = AxiosResponse<Job>
-type JobDocumentResultResponse = AxiosResponse<JobDocumentResult>
 export type ProgressResponse = AxiosResponse<Progress>
 
 // Public methods
@@ -59,20 +54,6 @@ export function postJob(corpus: UUID, job: string): Promise<ProgressResponse> {
  */
 export function cancelOrDeleteJob(corpus: UUID, job: string, hard: boolean): Promise<ProgressResponse> {
     return axios.delete(jobPath(corpus, job), { params: { hard: hard } })
-}
-
-/**
- * Get the layer result of a tagger job. Only includes a preview (to spare bandwidth).
- * @param corpus UUID of the corpus.
- * @param job Tagger job name.
- * @param document Document name.
- */
-export function getJobDocumentResult(corpus: UUID, job: string, document: string): Promise<JobDocumentResultResponse> {
-    return axios.get(jobDocumentResultPath(corpus, job, document))
-}
-
-export function getJobHasError(corpus: UUID, job: string): Promise<AxiosResponse<boolean>> {
-    return axios.get(jobHasErrorPath(corpus, job))
 }
 
 /**

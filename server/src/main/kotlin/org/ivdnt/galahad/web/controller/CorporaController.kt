@@ -42,7 +42,7 @@ class CorporaController(
     )
     @CrossOrigin
     @GetMapping(CORPORA_URL)
-    fun getUserCorpora(): Set<CorpusMetadata> = corporaService.readAll(user)
+    fun getUserCorpora(): List<CorpusMetadata> = corporaService.readAll(user)
 
     @Operation(
         summary = "List benchmark datasets",
@@ -50,7 +50,7 @@ class CorporaController(
     )
     @CrossOrigin
     @GetMapping(DATASETS_CORPORA_URL)
-    fun getDatasetsCorpora(): Set<CorpusMetadata> = corporaService.readAllDatasets()
+    fun getDatasetsCorpora(): List<CorpusMetadata> = corporaService.readAllDatasets()
 
     @Operation(
         summary = "Get single corpus metadata",
