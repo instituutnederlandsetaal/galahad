@@ -30,15 +30,16 @@ abstract class GalahadFolderManager<ReadType : GalahadFolder, CreateType : Any>(
 
     protected abstract fun throwNotFound(key: String): Nothing
 
-    abstract fun createOrThrow(key: CreateType): ReadType
+    open fun createOrThrow(key: CreateType): ReadType = ctor(key.toString())
 
-    open fun readAll(): Set<ReadType> = dir.list()?.map { readOrThrow(it) }?.toSet() ?: setOf()
+    open fun readAll(): List<ReadType> = dir.list()?.map { readOrThrow(it) } ?: emptyList()
+    open fun readAllSequence(): Sequence<ReadType> = dir.list()?.asSequence()?.map { readOrThrow(it) } ?: emptySequence()
 
     open fun readOrNull(key: String): ReadType? = if (dir.resolve(key).exists()) ctor(key) else null
 
     fun readOrThrow(key: String): ReadType = readOrNull(key) ?: throwNotFound(key)
 
-    fun deleteOrThrow(key: String) {
+    open fun deleteOrThrow(key: String) {
         readOrThrow(key) // does it exist?
         if (!dir.resolve(key).deleteRecursively()) {
             logger.warn("Partial deletion of $key")

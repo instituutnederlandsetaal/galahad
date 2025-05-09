@@ -65,7 +65,7 @@ class DocumentsService(val corpora: CorporaService) : Logging {
 
     fun delete(corpus: UUID, document: String) {
         // Delete all jobs and results of this document.
-        corpus.writeJobs().readAll().forEach { it.jobDocuments.deleteOrNull(document) } // Doesn't matter if null.
+        corpus.writeJobs().readAll().forEach { it.results.deleteOrNull(document) } // Doesn't matter if null.
         // Now delete it
         corpus.writeDocs().deleteOrThrow(document)
     }

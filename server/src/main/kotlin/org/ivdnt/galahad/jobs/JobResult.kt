@@ -1,4 +1,4 @@
-package org.ivdnt.galahad.jobs.jobDocuments
+package org.ivdnt.galahad.jobs
 
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.annotations.Layer
@@ -7,18 +7,14 @@ import org.ivdnt.galahad.files.GalahadFolder
 import java.io.File
 import java.util.*
 
-private const val PROCESSING_ID_File = "pid.txt"
-private const val ERROR_FILE = "error.txt"
-private const val LAYER_FILE = "layer.json"
-
 /**
  * Represents a job that processes a single document in a corpus.
  * Corresponds to a directory in jobs/[jobname]/documents/[documentname], containing:
- * - result: a json [Layer]: when not [Layer.Companion.EMPTY], [DocumentProcessingStatus.FINISHED]
- * - processingID: a plaintext [UUID]: when present, [DocumentProcessingStatus.PROCESSING]
- * - error: a plaintext error message: when present, [DocumentProcessingStatus.ERROR]
+ * - result: a json [Layer]: when not [Layer.Companion.EMPTY], [JobStatus.FINISHED]
+ * - processingID: a plaintext [UUID]: when present, [JobStatus.PROCESSING]
+ * - error: a plaintext error message: when present, [JobStatus.ERROR]
  */
-class JobDocument(
+class JobResult(
     dir: File,
 ) : GalahadFolder(dir), Logging {
     // Files in the document job folder.
@@ -56,12 +52,12 @@ class JobDocument(
         }
 
     // /** Determines the status based on the presence of the processing ID, error file, or result file. */
-    val status: DocumentProcessingStatus
+    val status: JobStatus
         get() {
-            if (errorFile.exists()) return DocumentProcessingStatus.ERROR
-            if (processingIDFile.exists()) return DocumentProcessingStatus.PROCESSING
-            if (layer != null) return DocumentProcessingStatus.FINISHED
-            return DocumentProcessingStatus.PENDING
+            if (errorFile.exists()) return JobStatus.ERROR
+            if (processingIDFile.exists()) return JobStatus.PROCESSING
+            if (layer != null) return JobStatus.FINISHED
+            return JobStatus.PENDING
         }
 
     /** Cancels a job by deleting the processing ID. The [status] is updated accordingly. */
@@ -69,7 +65,9 @@ class JobDocument(
         processingIDFile.delete()
     }
 
-    enum class DocumentProcessingStatus {
-        PENDING, ERROR, PROCESSING, FINISHED
+    companion object {
+        private const val PROCESSING_ID_File = "pid.txt"
+        private const val ERROR_FILE = "error.txt"
+        private const val LAYER_FILE = "layer.json"
     }
 }

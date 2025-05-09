@@ -2,7 +2,6 @@ package org.ivdnt.galahad.jobs
 
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.annotations.Layer
-import org.ivdnt.galahad.jobs.jobDocuments.JobDocument
 import org.ivdnt.galahad.util.LayerBuilder
 import org.ivdnt.galahad.util.TestConfig
 import org.ivdnt.galahad.util.TestUtil
@@ -27,7 +26,7 @@ class DocumentJobTest {
         // create a job
         val job: Job = corpus.jobs.createOrThrow(TestConfig.TAGGER_NAME)
         // create a document job
-        val dj: JobDocument = job.jobDocuments.createOrThrow(doc.name)
+        val dj: JobResult = job.results.createOrThrow(doc.name)
         // set layer
         dj.layer = Layer.EMPTY
         // verify
@@ -36,25 +35,25 @@ class DocumentJobTest {
         assertNull(dj.processingID)
         assertFalse(dj.isProcessing)
         assertEquals(Layer.EMPTY, dj.layer)
-        assertEquals(JobDocument.DocumentProcessingStatus.PENDING, dj.status)
+        assertEquals(JobStatus.PENDING, dj.status)
 
         // set error
         dj.error = "error"
         assertEquals("error", dj.error)
-        assertEquals(JobDocument.DocumentProcessingStatus.ERROR, dj.status)
+        assertEquals(JobStatus.ERROR, dj.status)
 
         // setting pid should delete error
         val id = UUID.randomUUID()
         dj.processingID = id
         assertNull(dj.error)
         assertEquals(id, dj.processingID)
-        assertEquals(JobDocument.DocumentProcessingStatus.PROCESSING, dj.status)
+        assertEquals(JobStatus.PROCESSING, dj.status)
 
         // Cancel should delete pid
         dj.cancel()
         assertNull(dj.processingID)
         assertNull(dj.error)
-        assertEquals(JobDocument.DocumentProcessingStatus.PENDING, dj.status)
+        assertEquals(JobStatus.PENDING, dj.status)
 
         // set result should finish
         val layer = LayerBuilder().loadDummies(100).build()
@@ -62,7 +61,7 @@ class DocumentJobTest {
         assertEquals(100, dj.layer!!.terms.count())
         assertNull(dj.processingID)
         assertNull(dj.error)
-        assertEquals(JobDocument.DocumentProcessingStatus.FINISHED, dj.status)
+        assertEquals(JobStatus.FINISHED, dj.status)
 
     }
 }

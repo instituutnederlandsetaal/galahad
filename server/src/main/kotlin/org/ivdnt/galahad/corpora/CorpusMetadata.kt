@@ -47,15 +47,12 @@ class CorpusMetadata(
 ) {
     companion object {
         fun create(corpus: Corpus): CorpusMetadata {
-            val allJobs = corpus.jobs.readAll()
-            val allDocs = corpus.documents.readAll()
             val meta = CorpusMetadata(
                 // Immutable/calculated fields
                 // sourceAnnotationTypes = uniqueAnnotations,
                 uuid = UUID.fromString(corpus.name),
-                activeJobs = allJobs.count { it.isActive },
-                numResults = allJobs.count { it.hasResult },
-                numDocs = allDocs.size,
+                numResults = corpus.jobs.readAll().count { it.hasResult },
+                numDocs = corpus.documents.readAll().size,
                 sizeInBytes = corpus.sizeInBytes,
                 lastModified = System.currentTimeMillis(),
             )

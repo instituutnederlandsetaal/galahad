@@ -29,7 +29,7 @@ data class DocumentMetadata(
         private const val PREVIEW_LENGTH: Int = 100
 
         fun create(file: InternalFile): DocumentMetadata {
-            val text = file.plaintext
+            val text = file.layer.toString()
             return DocumentMetadata(
                 name = file.file.name,
                 format = file.format,

@@ -50,7 +50,7 @@ class CorpusConfusion(
                 )
             }
         }
-
+        // TODO: is Sequence.size the best way? There is also [corpus.documents.size]
         for (i in 0..<allDocs.size) add(completionService.take().get())
     }
 

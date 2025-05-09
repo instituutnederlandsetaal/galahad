@@ -1,7 +1,5 @@
 package org.ivdnt.galahad.jobs
 
-import org.ivdnt.galahad.annotations.LayerPreview
-import org.ivdnt.galahad.annotations.LayerSummary
 import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.exceptions.JobNotFoundException
@@ -41,4 +39,8 @@ class Jobs(
     }
     override fun ctor(key: String): Job = Job(dir.resolve(key), corpus)
     override fun throwNotFound(key: String): Nothing = throw JobNotFoundException(key)
+    override fun deleteOrThrow(key: String) {
+        JobController.unqueue(readOrThrow(key))
+        super.deleteOrThrow(key)
+    }
 }

@@ -26,13 +26,11 @@ import java.util.*
 class JobsController(
     val corpora: CorporaService,
 ) {
-
     @Autowired
     private val request: HttpServletRequest? = null
 
     @Autowired
     private val response: HttpServletResponse? = null
-
     private val user get() = User.fromRequest(request)
 
     fun UUID.readJobs(): Jobs = corpora.readAsReaderOrThrow(this, user).jobs
@@ -41,20 +39,14 @@ class JobsController(
     // TODO could this be replaced by /taggers?
     @Operation(
         summary = "Get all job metadata",
-        description = "Get a summary of the state of all tagger jobs and the source layer.",
+        description = "Get a summary of the state of all tagger jobs.",
     )
     @CrossOrigin
     @GetMapping(JOBS_URL)
     fun getJobs(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @RequestParam(defaultValue = "true") @Parameter(description = "Only show jobs that have a result. Otherwise also shows potential jobs.") hasResult: Boolean = true,
-    ): Set<JobMetadata> {
-        return if (hasResult) {
-            corpus.readJobs().readAll().map { it.metadata }.toSet()
-        } else {
-            corpus.readJobs().readAllJobStatesIncludingPotentialJobs()
-        }
-    }
+    ): List<JobMetadata> = corpus.readJobs().readAll().map { it.metadata }.toList()
 
     @Operation(
         summary = "Get single job metadata",
@@ -137,8 +129,11 @@ class JobsController(
         @PathVariable @Parameter(description = "Tagger name") job: String,
         @RequestParam @Parameter(description = "Whether to only cancel the current tagging queue (soft), or delete all job results (hard)") hard: Boolean,
     ): ResponseEntity<String> {
-        val jobObject = corpus.writeJobs().readOrThrow(job)
-        if (hard) jobObject.delete() else jobObject.cancel()
+        if (hard) {
+            corpus.writeJobs().deleteOrThrow(job)
+        } else {
+            corpus.writeJobs().readOrThrow(job).stop()
+        }
         return ResponseEntity.noContent().build()
     }
 
@@ -165,7 +160,7 @@ class JobsController(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,
         @PathVariable @Parameter(description = "Document name") document: String,
-    ): Layer = corpus.readJobs().readOrThrow(job).jobDocuments.readOrThrow(document).layer!!
+    ): Layer = corpus.readJobs().readOrThrow(job).results.readOrThrow(document).layer!!
 
     @Operation(
         summary = "Get job progress",

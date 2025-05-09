@@ -18,7 +18,6 @@ import java.io.File
 abstract class InternalFile protected constructor() {
     abstract val file: File
     abstract val format: DocumentFormat
-    val plaintext: String by lazy { reader.layer.toString() }
     val layer: Layer by lazy { reader.layer }
     protected abstract val reader: AnnotationReader
 

@@ -19,7 +19,7 @@ class JobMetadata(
 ) {
     companion object {
         fun create(job: Job): JobMetadata {
-            val djs = job.jobDocuments.readAll()
+            val djs = job.results.readAll()
             // sum up the number of tokens/lemmas/etc of all documents
             val resultSummary: LayerSummary =
                 djs.mapNotNull { it.layer?.summary }.reduceOrNull { a, b -> a + b } ?: LayerSummary(0)

@@ -1,4 +1,4 @@
-package org.ivdnt.galahad.jobs.jobDocuments
+package org.ivdnt.galahad.jobs
 
 import org.ivdnt.galahad.exceptions.DocumentJobNotFoundException
 import org.ivdnt.galahad.files.GalahadFolderManager
@@ -23,10 +23,9 @@ import java.io.File
  * // val docJob3 = documentJobs.readOrThrow(key) // throws
  * ```
  */
-class JobDocuments(
+class JobResults(
     dir: File,
-) : GalahadFolderManager<JobDocument, String>(dir) {
-    override fun createOrThrow(key: String): JobDocument = ctor(key)
-    override fun ctor(key: String): JobDocument = JobDocument(dir.resolve(key))
+) : GalahadFolderManager<JobResult, String>(dir) {
+    override fun ctor(key: String): JobResult = JobResult(dir.resolve(key))
     override fun throwNotFound(key: String): Nothing = throw DocumentJobNotFoundException(key)
 }

@@ -23,24 +23,10 @@ class Document(
     dir: File,
 ) : GalahadFolder(dir), Logging {
     // Files in the document folder.
-    val plaintextFile: File = dir.resolve(PLAINTEXT_FILE)
     private val metadataFile = dir.resolve(METADATA_FILE)
     val uploadedFile: File = dir.resolve("uploaded").resolve(name)
 
     // Values in those files.
-
-    /** The plaintext content of the document. */
-    val plaintext: String by lazy {
-        try {
-            plaintextFile.readText()
-        } catch (e: Exception) {
-            logger.warn("Error reading plaintext file, creating new plaintext", e)
-            val internalFile = InternalFile.create(uploadedFile)
-            val text = internalFile.plaintext
-            plaintextFile.writeText(text)
-            text
-        }
-    }
 
     /**
      * The UUID is only used as a metadata pid when converting a layer to TEI (for now).
@@ -62,7 +48,6 @@ class Document(
 
     internal companion object {
         private const val METADATA_FILE = "metadata.json"
-        private const val PLAINTEXT_FILE = "plaintext.txt"
 
         /**
          * Create a new document folder from an uploaded file and fill it with the necessary data.
@@ -81,10 +66,6 @@ class Document(
             val sourceLayer = internalFile.layer
             // Set sourceLayer as job. Note that if we threw, we don't unnecessarily create a job folder, keeping the disk clean.
             corpus.jobs.createOrThrow(SOURCE_LAYER_NAME).setLayer(doc.name, sourceLayer)
-            // plaintext
-            ThreadPoolUtil.pool.execute {
-                doc.plaintextFile.writeText(internalFile.plaintext)
-            }
             // metadata; needs to be serialized as well
             DiskValue<DocumentMetadata>(doc.metadataFile).write(DocumentMetadata.create(internalFile))
 
