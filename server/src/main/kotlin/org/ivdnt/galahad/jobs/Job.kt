@@ -93,6 +93,13 @@ class Job(
         JobController.unqueue(this)
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Job) return false
+        // Two jobs are equal if they have the same name and corpus name
+        return this.corpus.name == other.corpus.name && this.name == other.name
+    }
+
     companion object {
         private const val DOCUMENT_JOBS_FOLDER = "documents"
         /** Number of documents at the tagger per job */
