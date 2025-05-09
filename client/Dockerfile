@@ -1,5 +1,5 @@
 # Build stage
-FROM node:23.11.0-alpine3.21 as build
+FROM node:24.0.1-alpine3.21 as build
 COPY . .
 # Install project dependencies (somehow Python has to be installed)
 RUN apk --no-cache add --virtual .builds-deps build-base python3
@@ -8,7 +8,7 @@ RUN npm ci
 RUN npm run build
 
 # Production stage.
-FROM node:23.11.0-alpine3.21
+FROM node:24.0.1-alpine3.21
 WORKDIR /app
 # Install dependencies of server.js
 RUN npm install express connect-history-api-fallback && npm cache clean --force
