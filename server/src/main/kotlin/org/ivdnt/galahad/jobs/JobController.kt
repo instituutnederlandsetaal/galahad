@@ -24,6 +24,7 @@ import kotlin.io.path.createTempFile
 object JobController {
     private val queue: ArrayDeque<Job> = ArrayDeque<Job>()
     private var task: Task? = null
+    val queueSize: Int get() = queue.size
 
     fun queue(job: Job) {
         if (job.name == SOURCE_LAYER_NAME) throw SourceLayerNotATaggerException()
@@ -48,6 +49,7 @@ object JobController {
             queue -= task!!.job
         }
         // next document, or next job if all documents are tagged
+        task = null
         start()
     }
 

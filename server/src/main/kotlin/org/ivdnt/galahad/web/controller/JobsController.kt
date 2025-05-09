@@ -11,8 +11,10 @@ import jakarta.servlet.http.HttpServletResponse
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.app.JOBS_URL
 import org.ivdnt.galahad.app.JOB_URL
+import org.ivdnt.galahad.app.TAGGERS_URL
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.exceptions.ErrorResponse
+import org.ivdnt.galahad.jobs.JobController
 import org.ivdnt.galahad.jobs.JobMetadata
 import org.ivdnt.galahad.jobs.Jobs
 import org.ivdnt.galahad.jobs.Progress
@@ -185,4 +187,12 @@ class JobsController(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,
     ): Progress = corpus.readJobs().readOrThrow(job).progress
+
+    @Operation(
+        summary = "Number of active tagger jobs",
+        description = "Get the number of active jobs. Indicates server load."
+    )
+    @CrossOrigin
+    @GetMapping("$TAGGERS_URL/active")
+    fun activeJobs(): Int = JobController.queueSize
 }

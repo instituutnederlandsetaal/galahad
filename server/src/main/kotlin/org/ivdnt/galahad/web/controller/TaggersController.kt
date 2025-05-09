@@ -66,12 +66,4 @@ class TaggersController(
     @GetMapping(TAGGER_HEALTH_URL)
     fun getTaggerHealth(@PathVariable @Parameter(description = "Tagger name") tagger: String): TaggerHealth =
         taggersService.taggerHealth(tagger)
-
-    @Operation(
-        summary = "Number of active document jobs",
-        description = "Get the number of documents actively being tagged, cumulative over all taggers. Indicates server load."
-    )
-    @CrossOrigin
-    @GetMapping("$TAGGERS_URL/active")
-    fun getActiveDocsAtTaggers(): Int = taggersService.numActiveDocuments()
 }

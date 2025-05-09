@@ -30,8 +30,8 @@
             <template v-else>
                 <p class="centerText" v-if="job.progress.untagged > 0">
                     <template v-if="jobIndication != null">
-                        GaLAHaD is currently processing <b>{{ jobIndication }}</b> {{ jobIndication == 1 ? 'document' :
-                            'documents' }}
+                        GaLAHaD is currently processing <b>{{ jobIndication }}</b> {{ jobIndication == 1 ? 'job' :
+                            'jobs' }}
                     </template>
                     <template v-else>
                         Calculating current server load...
