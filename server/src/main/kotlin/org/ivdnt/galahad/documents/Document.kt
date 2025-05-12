@@ -54,7 +54,6 @@ class Document(
         fun create(dir: File, file: File, corpus: Corpus): Document {
             // Create a document to access the paths
             val doc = Document(dir)
-
             // uploaded file
             ThreadPoolUtil.pool.execute {
                 file.copyTo(doc.uploadedFile, overwrite = true)
@@ -66,7 +65,6 @@ class Document(
             corpus.jobs.createOrThrow(SOURCE_LAYER_NAME).setLayer(doc.name, sourceLayer)
             // metadata; needs to be serialized as well
             DiskValue<DocumentMetadata>(doc.metadataFile).write(DocumentMetadata.create(internalFile))
-
             // The same document object is now valid: it's folder data has been filled.
             return doc
         }

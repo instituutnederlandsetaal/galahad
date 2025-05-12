@@ -29,7 +29,7 @@ class TaggersController(
     )
     @CrossOrigin
     @GetMapping(TAGGERS_URL)
-    fun getTaggers(): Set<Tagger> = taggersService.readAll()
+    fun getTaggers(): Iterable<Tagger> = taggersService.readAll()
 
     @Operation(
         summary = "Get single tagger",

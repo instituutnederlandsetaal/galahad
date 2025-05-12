@@ -49,11 +49,13 @@ class Jobs(
 
     fun readAllMetadata(): List<JobMetadata> {
         // Create a map of all taggers with empty metadata
+        val numDocs = corpus.immutableMetadata.numDocs
         val allJobs = Tagger.taggers.mapValues {
-            JobMetadata(it.value, Progress(), LayerPreview(emptyList()), LayerSummary(0), 0)
+            JobMetadata(it.value, Progress(numDocs), LayerPreview.EMPTY, LayerSummary(0), 0)
         }
         // replace the entries for which a job exists
         val jobs = readAll().map { it.metadata }.associateBy { it.tagger.id }
+        // Replacement is simply plus
         return (allJobs + jobs).values.toList()
     }
 }

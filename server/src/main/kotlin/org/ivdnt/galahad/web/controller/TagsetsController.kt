@@ -24,7 +24,7 @@ class TagsetsController : Logging {
     )
     @CrossOrigin
     @GetMapping(TAGSETS_URL)
-    fun getTagsets(): Set<Tagset> = Tagset.tagsets.values.toSet()
+    fun getTagsets(): Iterable<Tagset> = Tagset.tagsets.values
 
     @Operation(
         summary = "Get single tagset",

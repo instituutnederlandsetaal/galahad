@@ -62,7 +62,7 @@
 <script setup lang='ts'>
 // Libraries & stores
 import { ref, onMounted } from 'vue'
-import stores, { CorporaStore, JobsStore } from '@/stores'
+import stores, { CorporaStore } from '@/stores'
 // Types & API
 import { CorpusMetadata } from '@/types/corpora'
 import { TableCorporaType } from '@/types/table'
@@ -75,7 +75,6 @@ import BenchmarkSetsHelp from "@/components/help/BenchmarkSetsHelp.vue"
 
 // Stores
 const corporaStore = stores.useCorpora() as CorporaStore
-const jobsStore = stores.useJobs() as JobsStore
 
 // Fields
 const showNewCorpusModal = ref(false)
@@ -92,10 +91,8 @@ const editMode = (corpus: CorpusMetadata) => {
 /** 
  * Although CorporaView lives in AnnotateView, which reloads corpora, 
  * the number of jobs could change when navigating between jobs and corpora, requiring a reload.
- * We also need the jobs store to poll for job status updates.
  */
 onMounted(() => {
     corporaStore.reload()
-    jobsStore.reload()
 })
 </script>
