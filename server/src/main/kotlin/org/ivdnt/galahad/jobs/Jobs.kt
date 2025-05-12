@@ -1,5 +1,7 @@
 package org.ivdnt.galahad.jobs
 
+import org.ivdnt.galahad.annotations.LayerPreview
+import org.ivdnt.galahad.annotations.LayerSummary
 import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.exceptions.JobNotFoundException
@@ -37,10 +39,21 @@ class Jobs(
         // Safe to create it now
         return ctor(key)
     }
+
     override fun ctor(key: String): Job = Job(dir.resolve(key), corpus)
     override fun throwNotFound(key: String): Nothing = throw JobNotFoundException(key)
     override fun deleteOrThrow(key: String) {
         JobController.unqueue(readOrThrow(key))
         super.deleteOrThrow(key)
+    }
+
+    fun readAllMetadata(): List<JobMetadata> {
+        // Create a map of all taggers with empty metadata
+        val allJobs = Tagger.taggers.mapValues {
+            JobMetadata(it.value, Progress(), LayerPreview(emptyList()), LayerSummary(0), 0)
+        }
+        // replace the entries for which a job exists
+        val jobs = readAll().map { it.metadata }.associateBy { it.tagger.id }
+        return (allJobs + jobs).values.toList()
     }
 }

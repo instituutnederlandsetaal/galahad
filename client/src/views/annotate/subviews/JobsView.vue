@@ -38,7 +38,7 @@
             <!-- result summary cell -->
             <template #cell-resultSummary="d">
                 <!-- <span v-for="key in Object.keys(d.value)" :key="key"><span :key="key" v-if="d.value[key] > 0">{{ key }}: {{ d.value[key] }}, </span></span> -->
-                {{ d.value.numTokens }}
+                {{ d.value.tokens }}
             </template>
 
             <!-- era cell -->
@@ -61,7 +61,7 @@
             <template #cell-progress="d">
                 <span>
                     <!-- note that percentage is calculated based on num documents, ie not very accurate -->
-                    {{ d.item.progress.total === 0 ? '' : formatProgress(d.item.progress) }}
+                    {{ d.item.progress.total === 0 ? '0%' : formatProgress(d.item.progress) }}
                     <span v-if="d.item.progress.hasError" style="color: var(--int-red)">error !!</span>
                 </span>
                 <GSpinner class="spinner" small v-show="d.item.progress.busy" />

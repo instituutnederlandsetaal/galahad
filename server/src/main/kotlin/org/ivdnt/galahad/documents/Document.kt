@@ -15,7 +15,6 @@ import java.io.File
  * Use [Document.create] instead.
  *
  * A folder has the following files, that store the document's data:
- * - plaintext.txt: the document's text content
  * - metadata.json: a cache file storing [DocumentMetadata] about the document
  * - uploaded/[name]: the uploaded raw file
  */
@@ -60,7 +59,6 @@ class Document(
             ThreadPoolUtil.pool.execute {
                 file.copyTo(doc.uploadedFile, overwrite = true)
             }
-            // plaintext & sourceLayer
             val internalFile = InternalFile.create(file)
             // First try to access the layer. If the file is invalid, this will throw.
             val sourceLayer = internalFile.layer

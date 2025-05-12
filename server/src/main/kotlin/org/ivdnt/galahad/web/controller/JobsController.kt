@@ -47,8 +47,7 @@ class JobsController(
     @GetMapping(JOBS_URL)
     fun getJobs(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
-        @RequestParam(defaultValue = "true") @Parameter(description = "Only show jobs that have a result. Otherwise also shows potential jobs.") hasResult: Boolean = true,
-    ): List<JobMetadata> = corpus.readJobs().readAll().map { it.metadata }.toList()
+    ): List<JobMetadata> = corpus.readJobs().readAllMetadata()
 
     @Operation(
         summary = "Get single job metadata",
