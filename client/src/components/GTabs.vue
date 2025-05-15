@@ -154,18 +154,20 @@ export default defineComponent({
 
     // header top tabs start
     .tabs-start {
+        align-self: flex-start;
 
         img {
             position: relative;
-            left: -6px;
-            height: 125px;
+            left: -3px;
+            top: -1px;
+            height: 82px;
             pointer-events: none;
         }
 
         a {
             display: block;
-            height: 110px;
-            width: 232px;
+            height: 70px;
+            width: 152px;
             position: relative;
         }
     }
@@ -180,11 +182,11 @@ export default defineComponent({
             font-style: normal;
             color: black;
             text-decoration: none;
-            font-size: 16px;
+            font-size: 0.8rem;
 
             &:last-child {
-                font-size: 50px;
-                line-height: 50px;
+                font-size: 1.7rem;
+                line-height: 1.7rem;
             }
         }
     }
@@ -214,7 +216,7 @@ export default defineComponent({
 .tabs .header .bottom {
     display: inline-flex;
     flex-wrap: wrap;
-    line-height: 50px;
+    line-height: 45px;
     background-color: var(--int-theme);
 
     >div {
@@ -266,14 +268,14 @@ export default defineComponent({
         background-color: var(--int-theme);
         z-index: 1;
         top: 0;
-        box-shadow: 0px 0px 10px black;
+        box-shadow: 0px 4px 5px 1px #ccc;
 
         .top {
-            height: 110px;
+            height: 70px;
         }
 
         .bottom {
-            line-height: 70px;
+            line-height: 52px;
             font-size: 18px;
         }
     }

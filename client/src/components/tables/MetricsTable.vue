@@ -6,6 +6,8 @@
                 <p><i>PoS comparison is base on the full PoS, including features.</i></p>
                 <p>Click on a entry to view samples.</p>
             </slot>
+            <br />
+            <br />
             <DifferentTagsetsHelp />
         </template>
 

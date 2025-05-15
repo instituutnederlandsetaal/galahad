@@ -24,10 +24,10 @@
             <!-- If we ever decide to make these links open in the same tab, this is how:
                 <GNav :route="{ path: '/help' }">Help</GNav>
             -->
-            <a href="/galahad/help" target="_blank">Help</a>
-            <a href="/galahad/application" target="_blank">About</a>
-            <a href="/galahad/contribute" target="_blank">Contribute</a>
-            <a href="https://portal.clarin.ivdnt.org/lancelot" target="_blank">LAnCeLoT</a>
+            <a href="/galahad/help" target="_blank">help</a>
+            <a href="/galahad/application" target="_blank">about</a>
+            <a href="/galahad/contribute" target="_blank">contribute</a>
+            <a href="https://portal.clarin.ivdnt.org/lancelot" target="_blank">lancelot</a>
         </template>
 
     </GTabs>
