@@ -4,7 +4,7 @@
     </AnnotateTab>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 // Libraries & stores
 import { onMounted } from 'vue'
 import stores, { CorporaStore } from '@/stores'

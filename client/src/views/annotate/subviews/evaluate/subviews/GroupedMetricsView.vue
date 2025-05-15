@@ -3,11 +3,9 @@
         <MetricsTable title="Grouped Metrics" :loading :columns :items @download="(data) => download(data)"
             :downloading>
             <template #help>
-                <p>
-                    In Grouped Metrics an overview is given of the (dis)agreement for lemma and PoS per part-of-speech.
-                    For each PoS, different metrics are given by choosing the annotation and the grouping. By clicking
-                    on a percentage, a data sample is shown.
-                </p>
+                In Grouped Metrics an overview is given of the (dis)agreement for lemma and PoS per part-of-speech.
+                For each PoS, different metrics are given by choosing the annotation and the grouping. By clicking
+                on a percentage, a data sample is shown.
             </template>
             <template #prepend v-if="metrics.metrics != null">
                 <p style="text-align: center;">
@@ -23,7 +21,7 @@
     </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 // Libraries & stores
 import { ref, computed } from 'vue'
 import { storeToRefs } from 'pinia'

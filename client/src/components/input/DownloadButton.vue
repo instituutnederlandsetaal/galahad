@@ -16,7 +16,7 @@ defineProps({
 })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .wide {
     padding: 0 1em;
 }

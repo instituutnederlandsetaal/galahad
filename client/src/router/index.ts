@@ -41,137 +41,137 @@ import PageNotFound from '@/views/PageNotFound.vue'
 export type RouterQuery = { corpus?: string, referenceJob?: string, hypothesisJob?: string }
 
 const routes = [
-  { path: '/:pathMatch(.*)*', component: PageNotFound },
-  {
-    path: '/',
-    redirect: '/home'
-  },
-  {
-    path: '/home',
-    name: 'Home',
-    component: HomeView
-  }, {
-    path: '/annotate',
-    name: 'Annotate',
-    redirect: '/annotate/corpora',
-    component: AnnotateView,
-    children: [
-      {
-        path: 'corpora',
-        name: 'Corpora',
-        component: CorporaView,
-      },
-      {
-        path: 'documents',
-        name: 'Documents',
-        component: DocumentsView,
-      },
-      {
-        path: 'jobs',
-        name: 'Jobs',
-        component: JobsView
-      },
-      {
-        path: 'evaluate',
-        name: 'Evaluate',
-        component: EvaluateView,
-        redirect: '/annotate/evaluate/distribution',
-        props: { basePath: "/annotate/evaluate" },
+    { path: '/:pathMatch(.*)*', component: PageNotFound },
+    {
+        path: '/',
+        redirect: '/home'
+    },
+    {
+        path: '/home',
+        name: 'Home',
+        component: HomeView
+    }, {
+        path: '/annotate',
+        name: 'Annotate',
+        redirect: '/annotate/corpora',
+        component: AnnotateView,
         children: [
-          {
-            path: 'distribution',
-            component: DistributionView
-          },
-          {
-            path: 'global_metrics',
-            component: GlobalMetricsView,
-          },
-          {
-            path: 'grouped_metrics',
-            component: GroupedMetricsView,
-          },
-          {
-            path: 'confusion',
-            component: ConfusionView
-          },
-          {
-            path: 'document_layer_comparison',
-            component: DocumentLayerComparisonView
-          }
+            {
+                path: 'corpora',
+                name: 'Corpora',
+                component: CorporaView,
+            },
+            {
+                path: 'documents',
+                name: 'Documents',
+                component: DocumentsView,
+            },
+            {
+                path: 'jobs',
+                name: 'Jobs',
+                component: JobsView
+            },
+            {
+                path: 'evaluate',
+                name: 'Evaluate',
+                component: EvaluateView,
+                redirect: '/annotate/evaluate/distribution',
+                props: { basePath: "/annotate/evaluate" },
+                children: [
+                    {
+                        path: 'distribution',
+                        component: DistributionView
+                    },
+                    {
+                        path: 'global_metrics',
+                        component: GlobalMetricsView,
+                    },
+                    {
+                        path: 'grouped_metrics',
+                        component: GroupedMetricsView,
+                    },
+                    {
+                        path: 'confusion',
+                        component: ConfusionView
+                    },
+                    {
+                        path: 'document_layer_comparison',
+                        component: DocumentLayerComparisonView
+                    }
+                ]
+            },
+            {
+                path: 'export',
+                name: 'Export',
+                component: ExportView
+            }
         ]
-      },
-      {
-        path: 'export',
-        name: 'Export',
-        component: ExportView
-      }
-    ]
-  }, {
-    path: '/application',
-    name: 'Application',
-    component: ApplicationView,
-    children: [
-      { path: 'about', component: AboutView },
-    ]
-  }, {
-    path: '/overview',
-    name: 'Overview',
-    redirect: '/overview/taggers',
-    component: OverviewView,
-    children: [
-      { path: 'taggers', component: TaggersView },
-      { path: 'tagsets', component: TagsetsView },
-      { path: 'datasets', component: DatasetsView },
-      { path: 'benchmarks', component: BenchmarksView },
-    ]
-  }, {
-    path: '/contribute', component: ContributeView, children: [
-      { path: 'taggers', component: ContributeTaggersView },
-      { path: 'datasets', component: ContributeDatasetsView }
-    ]
-  }, {
-    path: '/help',
-    name: 'Help',
-    redirect: '/help/general',
-    component: HelpView,
-    children: [
-      {
-        path: 'general',
-        component: GeneralView
-      },
-      {
-        path: 'formats',
-        component: DocumentFormatsView
-      },
-      {
-        path: 'evaluation',
-        component: EvaluationView
-      },
-    ]
-  }, {
-    path: '/user',
-    component: UserView
-  },
+    }, {
+        path: '/application',
+        name: 'Application',
+        component: ApplicationView,
+        children: [
+            { path: 'about', component: AboutView },
+        ]
+    }, {
+        path: '/overview',
+        name: 'Overview',
+        redirect: '/overview/taggers',
+        component: OverviewView,
+        children: [
+            { path: 'taggers', component: TaggersView },
+            { path: 'tagsets', component: TagsetsView },
+            { path: 'datasets', component: DatasetsView },
+            { path: 'benchmarks', component: BenchmarksView },
+        ]
+    }, {
+        path: '/contribute', component: ContributeView, children: [
+            { path: 'taggers', component: ContributeTaggersView },
+            { path: 'datasets', component: ContributeDatasetsView }
+        ]
+    }, {
+        path: '/help',
+        name: 'Help',
+        redirect: '/help/general',
+        component: HelpView,
+        children: [
+            {
+                path: 'general',
+                component: GeneralView
+            },
+            {
+                path: 'formats',
+                component: DocumentFormatsView
+            },
+            {
+                path: 'evaluation',
+                component: EvaluationView
+            },
+        ]
+    }, {
+        path: '/user',
+        component: UserView
+    },
 ]
 
 const router = createRouter({
-  history: createWebHistory('/galahad/'), //import.meta.env.BASE_URL ),
-  routes,
-  scrollBehavior(to, from, savedPosition) {
-    if (to && to.hash) {
-      return {
-        el: to.hash,
-        top: 200 // avoid the top bar
-        // behavior: 'smooth'
-      };
-    } else if (savedPosition) {
-      return savedPosition;
-    } else if (from.path === to.path) {
-      return // since we're on the same page, don't scroll to top
-    } else {
-      return { top: 0 };
+    history: createWebHistory('/galahad/'), //import.meta.env.BASE_URL ),
+    routes,
+    scrollBehavior(to, from, savedPosition) {
+        if (to && to.hash) {
+            return {
+                el: to.hash,
+                top: 200 // avoid the top bar
+                // behavior: 'smooth'
+            };
+        } else if (savedPosition) {
+            return savedPosition;
+        } else if (from.path === to.path) {
+            return // since we're on the same page, don't scroll to top
+        } else {
+            return { top: 0 };
+        }
     }
-  }
 })
 
 export default router

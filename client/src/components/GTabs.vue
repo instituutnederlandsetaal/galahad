@@ -1,8 +1,7 @@
-<!-- This is a Galahad specific version of tabs -->
 <template>
     <div class="tabs">
         <!-- header -->
-        <div class="header">
+        <header class="header">
 
             <div class="top">
                 <div v-if="$slots['tabs-start']" class="nav tabs-start">
@@ -14,7 +13,7 @@
                 </div>
             </div>
 
-            <div class="bottom">
+            <nav class="bottom">
                 <div v-for="tab in _tabs" :key="tab.id">
                     <a v-if="!tab.disabled && !tab.stub" disabled="disabled" :href='urlForTab(tab.id)'
                         :class="'textcolor ' + navLinkClass(tab.id)" @click.prevent="navigateTo(tab.id)">
@@ -25,9 +24,9 @@
                         <slot :name="`${tab.id}-title`">{{ tab.title || tab.id }}</slot>
                     </span>
                 </div>
-            </div>
+            </nav>
 
-        </div>
+        </header>
 
         <!-- content -->
         <RouterView class="content" @navigate="x => { $router.push(x); induceCurrentTab() }" v-slot="{ Component }">
@@ -39,7 +38,7 @@
     </div>
 </template>
 
-<script lang='ts'>
+<script lang="ts">
 import { defineComponent, PropType } from 'vue'
 
 // Stub means it does display as title, but it is not interactive, so you can implement custom functionality
@@ -133,7 +132,7 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .tabs {
     min-height: 0;
     flex: 1;

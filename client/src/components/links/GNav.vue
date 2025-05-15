@@ -4,7 +4,7 @@
     </a>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 // Libraries & stores
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'

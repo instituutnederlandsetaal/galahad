@@ -94,20 +94,19 @@
     </GModal>
 </template>
 
-<script lang='ts'>
+<script lang="ts">
 import { defineComponent } from 'vue';
 import stores from '@/stores'
 
 import { MutableCorpusMetadata } from '@/types/corpora'
 
-import { GInput, GButton, GlossaryLink, ExternalLink } from '@/components'
 // Component dependencies.
 import UserList from '@/components/modals/corpus/UserList.vue'
 
 export default defineComponent({
     name: "CorpusForm",
     components: {
-        GlossaryLink, UserList
+        UserList
     },
     props: {
         action: { type: Function },

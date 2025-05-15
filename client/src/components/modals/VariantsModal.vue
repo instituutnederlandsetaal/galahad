@@ -3,7 +3,7 @@
         <GTable compact showHelp :columns :items="items" sortedByColumn="occurrences" :sortDesc="true">
             <template #title>
                 Types of lemma <i>{{ variantsToDisplay?.lemma }}</i> and part-of-speech <i>{{ variantsToDisplay?.pos
-                    }}</i>
+                }}</i>
             </template>
             <template #help>
                 This is an overview of all types belonging to the chosen lemma, part-of-speech pair.
@@ -40,7 +40,7 @@ const items: DistEntry[] = computed(() => {
 })
 
 </script>
-<style scoped>
+<style scoped lang="scss">
 :deep(.my-small) {
     padding: 1em;
 }

@@ -13,7 +13,7 @@ const POLL_INTERVAL = 5000
 /**
  * Starts, stops and deletes jobs. Polls for job progress. Fetches available jobs.
  */
-const jobs = defineStore('jobs', () => {
+const useJobs = defineStore('jobs', () => {
     // Stores
     const app = stores.useApp() as AppStore
     const corporaStore = stores.useCorpora() as CorporaStore
@@ -158,11 +158,11 @@ const jobs = defineStore('jobs', () => {
     function getDocsAtTagger() {
         numActiveDocs.value = null
         getDocsAtTaggers()
-        .then((response) => {
-            numActiveDocs.value = response.data
-        }).catch((error) => {
-            // Ignore
-        })
+            .then((response) => {
+                numActiveDocs.value = response.data
+            }).catch((error) => {
+                // Ignore
+            })
     }
 
     // Exports
@@ -174,4 +174,4 @@ const jobs = defineStore('jobs', () => {
     }
 })
 
-export default jobs
+export default useJobs

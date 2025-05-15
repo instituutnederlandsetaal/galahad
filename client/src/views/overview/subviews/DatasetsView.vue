@@ -10,11 +10,11 @@
                 Here you can see a small preview of the documents within the selected benchmark set.
             </template>
         </DocumentsTable>
-        <GSpinner v-if="corporaStore.loading" medium class="spinner" />
+        <GSpinner v-if="corporaStore.loading" class="spinner" />
     </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 // Libraries & stores
 import { onMounted } from 'vue'
 import stores, { CorporaStore } from '@/stores'

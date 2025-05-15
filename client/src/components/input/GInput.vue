@@ -67,7 +67,7 @@
     </div>
 </template>
 
-<script lang='ts'>
+<script lang="ts">
 import { defineComponent, nextTick } from 'vue'
 
 export default defineComponent({

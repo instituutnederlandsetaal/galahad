@@ -44,11 +44,11 @@
             <!-- era cell -->
             <template #cell-era="d">
                 <div style="white-space: nowrap"><b v-if="eraRange[0] <= d.item.tagger.eraFrom">{{ d.item.tagger.eraFrom
-                        }}</b><span v-else>{{ d.item.tagger.eraFrom }}</span>
+                }}</b><span v-else>{{ d.item.tagger.eraFrom }}</span>
                     &ndash;
                     <b v-if="eraRange[1] >= d.item.tagger.eraTo">{{ d.item.tagger.eraTo }}</b><span v-else>{{
                         d.item.tagger.eraTo
-                    }}</span>
+                        }}</span>
                 </div>
             </template>
 
@@ -235,7 +235,7 @@ function formatProgress(progress: Progress) {
 
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .spinner {
     position: relative;
     top: 3px;

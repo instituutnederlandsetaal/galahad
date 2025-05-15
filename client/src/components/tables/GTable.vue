@@ -109,7 +109,7 @@
     </GCard>
 </template>
 
-<script lang='ts'>
+<script lang="ts">
 // Libraries & stores
 import { defineComponent, PropType } from 'vue'
 // API & types

@@ -9,9 +9,9 @@
                 <p v-else>Select a hypothesis layer and an annotation to generate a distribution.</p>
             </template>
             <template #help>
-                <p>The distribution shows what lemma, part-of-speech pairs have been assigned to which types. When there
-                    are more than five types you can click on the inspect symbol to view all types of a lemma-PoS
-                    combination.</p>
+                The distribution shows what lemma, part-of-speech pairs have been assigned to which types. When there
+                are more than five types you can click on the inspect symbol to view all types of a lemma-PoS
+                combination.
             </template>
             <template #header>
                 <p>
@@ -105,7 +105,7 @@
     </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 // Libraries & stores
 import { computed, ref, watch } from 'vue'
 import stores, { DistributionStore } from '@/stores'

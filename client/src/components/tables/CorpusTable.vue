@@ -74,7 +74,7 @@
     </GTable>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 // Libraries & stores
 import { PropType, ref, watch, computed } from 'vue'
 import stores from '@/stores'

@@ -626,7 +626,7 @@ import EvaluationExampleCorpus from './EvaluationExampleCorpus.vue';
 </script>
 
 
-<style scoped>
+<style scoped lang="scss">
 img {
     display: block;
     width: 100%;

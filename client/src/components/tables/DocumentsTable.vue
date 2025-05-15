@@ -98,7 +98,7 @@
     </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 // Libraries & stores
 import { computed, ref, PropType, watch, onMounted } from 'vue'
 import stores from '@/stores'

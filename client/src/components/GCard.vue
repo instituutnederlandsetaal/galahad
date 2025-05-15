@@ -16,23 +16,19 @@
                     </slot>
                 </h3>
                 <span v-if="!noHelp">
-                    <GButton plain v-if="!showHelp" class="question-mark" @click="expand = !expand" :disabled="disabled"
-                        title="Help">
-                        <!-- show &#10006; if expanded, else 𝚒 -->
+                    <GButton plain v-if="!showHelp" @click="expand = !expand" :disabled="disabled" title="Help">
                         {{ expand ? '&times;' : '?' }}
                     </GButton>
                 </span>
             </div>
 
             <!-- help -->
-            <Transition name="help">
-                <GInfo class="help" v-if="!noHelp" v-show="expand">
-                    <slot name="help">Someone forgot to put a help primer</slot>
-                    <div style="text-align: center; margin-top: 1em">
-                        <HelpLink v-if="helpSubject" :subject="helpSubject" />
-                    </div>
-                </GInfo>
-            </Transition>
+            <GInfo v-if="expand && !noHelp">
+                <slot name="help">Someone forgot to put a help primer</slot>
+                <template v-if="helpSubject" #footer>
+                    <HelpLink :subject="helpSubject" />
+                </template>
+            </GInfo>
 
             <!-- header -->
             <i class="header">
@@ -48,17 +44,10 @@
             </div>
         </div>
 
-        <!-- navs -->
-        <!-- <div class="navs">
-          <slot name="navs">
-            <div v-for="nav in navs" :key="nav.label"><GNav :route="nav.route">{{nav.label}}</GNav></div>
-          </slot>
-        </div> -->
-
     </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { ref } from 'vue'
 import { GButton, GInfo, HelpLink } from '@/components'
 
@@ -68,7 +57,6 @@ const props = defineProps({
     helpSubject: { type: String },
     highlight: { type: Boolean, default: false },
     id: { type: String, default: "" },
-    navs: { type: Array, default: () => [] }, // [ { route: {}, label: 'This could have been a useful nav' } ]},
     noHelp: { type: Boolean, default: false },
     showHelp: { type: Boolean, default: false },
     title: { type: String }
@@ -104,23 +92,6 @@ const expand = ref(props.showHelp)
     opacity: 0.5;
 }
 
-@keyframes wiggle {
-    0% {
-        transform: translateY(-0px);
-        background-color: var(--int-theme-active);
-    }
-
-    50% {
-        transform: translateY(-10px);
-        background-color: var(--int-theme);
-    }
-
-    100% {
-        transform: translateY(-0px);
-        background-color: var(--int-theme-active);
-    }
-}
-
 .badge {
     -webkit-user-select: none;
     /* Safari */
@@ -143,25 +114,6 @@ button.plain {
     justify-content: center;
     font-weight: bold;
     margin-left: 0.5em;
-}
-
-.help-enter-active,
-.help-leave-active {
-    transition: opacity 0.2s ease;
-}
-
-.help-enter-from,
-.help-leave-to {
-    opacity: 0;
-    transition: opacity 0.2s ease;
-}
-
-.question-mark {
-    cursor: pointer;
-}
-
-.navs {
-    text-align: right;
 }
 
 .content {

@@ -3,7 +3,7 @@
     <div> <!-- This div fills the background color. -->
         <!-- loading corpora-->
         <GCard v-if="corporaStore.loading && !hideCorpusError" title="Loading corpora" noHelp>
-            <GSpinner medium />
+            <GSpinner />
         </GCard>
         <!-- No corpus selected -->
         <GCard v-else-if="!corporaStore.activeCorpus && !hideCorpusError" title="No corpus selected" noHelp>
@@ -21,7 +21,7 @@
         </GCard>
         <!-- Loading documents -->
         <GCard v-else-if="documentsStore.loading && !hideDocsError" title="Loading documents" noHelp>
-            <GSpinner medium />
+            <GSpinner />
         </GCard>
         <!-- No documents in corpus-->
         <GCard v-else-if="!corporaStore.hasDocs && !hideDocsError" title="Empty corpus" noHelp>
@@ -32,7 +32,7 @@
         </GCard>
         <!-- Loading jobs -->
         <GCard v-else-if="jobsStore.loading && !hideAnnotationsError" title="Loading documents" noHelp>
-            <GSpinner medium />
+            <GSpinner />
         </GCard>
         <!-- No non-empty jobs-->
         <GCard v-else-if="jobSelectionStore.selectableJobs.length == 0 && !hideAnnotationsError" title="No annotations"
@@ -41,7 +41,8 @@
                 <p>None of the documents have annotations. Either:</p>
                 <ul>
                     <li>
-                        <GNav :route="{ path: '/annotate/documents' }">Upload documents</GNav> to this corpus that contain
+                        <GNav :route="{ path: '/annotate/documents' }">Upload documents</GNav> to this corpus that
+                        contain
                         source annotations
                     </li>
                     <li>
@@ -57,7 +58,7 @@
     </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 // Libraries & stores
 import stores, { CorporaStore, DocumentsStore, JobSelectionStore, JobsStore, UserStore } from '@/stores'
 // Components

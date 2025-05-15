@@ -45,7 +45,7 @@
     </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import versionYaml from '@/../version.yml'
 import { GCard, KeyValues } from '@/components'
 </script>
@@ -72,6 +72,7 @@ h3 {
     margin-top: -0.8em;
     margin-bottom: 0.5em;
 }
+
 h2#version {
     margin-bottom: 0;
 }

@@ -6,7 +6,7 @@
     </ExternalLink>.
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 // Components
 import { ExternalLink } from '@/components'
 </script>

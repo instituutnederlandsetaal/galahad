@@ -2,15 +2,14 @@
     <div class="center">
         <GCard title="Benchmarks" helpSubject="benchmarks">
             <template #help>
-                <p>
-                    Benchmarks show the performance of taggers on the default datasets.
-                    The accuracy scores are given for lemma, PoS, and both.
-                    <br />
-                    For more details on the datasets, see the
-                    <GNav :route="{ path: '/overview/datasets' }">
-                        datasets overview
-                    </GNav>.
-                </p>
+                Benchmarks show the performance of taggers on the default datasets.
+                The accuracy scores are given for lemma, PoS, and both.
+                <br />
+                For more details on the datasets, see the
+                <GNav :route="{ path: '/overview/datasets' }">
+                    datasets overview
+                </GNav>.
+                <br /> <br />
                 <b>*</b>: when taggers use a different tagset than the reference tagset, the score can be very low.
             </template>
 
@@ -58,7 +57,7 @@
     </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 // Libraries & stores
 import { computed, onMounted, ref } from 'vue'
 import stores, { AssaysStore } from '@/stores'

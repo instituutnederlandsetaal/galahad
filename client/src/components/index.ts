@@ -16,7 +16,6 @@ import ExternalLink from "./links/ExternalLink.vue"
 import MailAddress from "./links/MailAddress.vue"
 import GNav from "./links/GNav.vue"
 import HelpLink from "./links/HelpLink.vue"
-import GlossaryLink from "./links/GlossaryLink.vue"
 // Inputs
 import JobSelect from "./input/JobSelect.vue"
 import FileFormatInput from "./input/FileFormatInput.vue"
@@ -48,7 +47,6 @@ export {
     // Links
     ExternalLink,
     GNav,
-    GlossaryLink,
     HelpLink,
     MailAddress,
     ContributeTaggerLink,
@@ -91,7 +89,6 @@ export default {
         // Links
         app.component("ContributeTaggerLink", ContributeTaggerLink)
         app.component("ExternalLink", ExternalLink)
-        app.component("GlossaryLink", GlossaryLink)
         app.component("GNav", GNav)
         app.component("MailAddress", MailAddress)
         app.component("HelpLink", HelpLink)

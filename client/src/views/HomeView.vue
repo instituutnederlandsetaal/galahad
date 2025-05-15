@@ -46,7 +46,7 @@
                 </div>
 
                 <figure class="right">
-                    <img src="@/assets/galahad-graal-medium.png"
+                    <img src="@/assets/galahad-graal-klein.png"
                         title="Verbaasd laat Galahad de graal uit zijn handen vallen als hij ziet wat erin zit."
                         alt="Verbaasd laat Galahad de graal uit zijn handen vallen als hij ziet wat erin zit." />
                     <figcaption>
@@ -77,7 +77,7 @@
     </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { GCard, ExternalLink } from '@/components'
 </script>
 
@@ -110,8 +110,8 @@ import { GCard, ExternalLink } from '@/components'
         font-size: 20px;
 
         img {
-            object-fit: contain;
-            width: 100%;
+            width: 500px;
+            max-width: 100%;
         }
 
         figcaption small {

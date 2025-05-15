@@ -27,7 +27,7 @@
     </GModal>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 // Libraries & stores
 import { computed, ref, watch } from 'vue'
 import stores, { CorporaStore } from '@/stores'
@@ -119,7 +119,7 @@ watch(() => props.samples.annotationType, (annotation) => {
 
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 button,
 p {
     margin: 5px auto;

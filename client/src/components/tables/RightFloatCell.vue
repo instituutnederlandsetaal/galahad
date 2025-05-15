@@ -9,12 +9,13 @@
         </div>
     </div>
 </template>
-<style scoped>
+<style scoped lang="scss">
 .flex {
     display: flex;
     align-items: center;
     gap: 1em;
 }
+
 .left {
     text-align: center;
     flex: 1;

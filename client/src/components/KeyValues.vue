@@ -4,18 +4,21 @@
             <td>
                 <span>{{ key }}</span>
             </td>
-            <td><KeyValues v-if="isObject(data[key])" :data="data[key]" :highDuration="innerHighDuration"/>
-                <span v-else-if="key === 'FAILURE'">{{format( key, data[key] )}}</span>
+            <td>
+                <KeyValues v-if="isObject(data[key])" :data="data[key]" :highDuration="innerHighDuration" />
+                <span v-else-if="key === 'FAILURE'">{{ format(key, data[key]) }}</span>
                 <a v-else-if="key === 'link'" :href="data[key]" target="_blank" rel="noopener noreferrer">here</a>
-                <b v-else-if="key === 'duration'" :style="data[key] === highDuration && highDuration > 0 ? 'color: var(--int-red);' : ''">{{ format( key, data[key]) }}</b>
-                <span v-else>{{ format( key, data[key] ) }}</span>
+                <b v-else-if="key === 'duration'"
+                    :style="data[key] === highDuration && highDuration > 0 ? 'color: var(--int-red);' : ''">{{ format(
+                    key, data[key]) }}</b>
+                <span v-else>{{ format(key, data[key]) }}</span>
             </td>
         </tr>
     </table>
 </template>
 
-<script lang='ts'>
-import {defineComponent} from 'vue';
+<script lang="ts">
+import { defineComponent } from 'vue';
 
 export default defineComponent({
     name: "KeyValues",
@@ -75,7 +78,7 @@ export default defineComponent({
 
 <style scoped lang="scss">
 table {
-  border-collapse: collapse;
+    border-collapse: collapse;
 }
 
 tr {
@@ -99,5 +102,4 @@ td {
 tr:hover {
     opacity: 1;
 }
-
 </style>

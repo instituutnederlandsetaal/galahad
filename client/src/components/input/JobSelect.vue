@@ -4,7 +4,7 @@
             Select the result of a tagger job as a hypothesis or reference layer.
             It is also possible to select the source annotations.
         </template>
-        <GSpinner medium v-if="jobsStore.loading" />
+        <GSpinner v-if="jobsStore.loading" />
         <GInput v-else type="select" :options="jobSelectionStore.selectableJobs" v-model="private_value"
             :disabled="disabled">
         </GInput>
@@ -24,7 +24,7 @@
     </GCard>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 // Libraries & stores
 import { computed, ref, watch } from 'vue'
 import stores, { JobsStore, JobSelectionStore } from '@/stores'

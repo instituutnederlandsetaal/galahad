@@ -17,7 +17,7 @@
     </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 // Libraries & stores
 import { ref, computed } from 'vue'
 import { storeToRefs } from 'pinia'

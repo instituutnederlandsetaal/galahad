@@ -13,7 +13,7 @@ import { Format } from "@/types/documents"
 import { GInput } from "@/components"
 
 // Stores
-const exportStore = stores.useExportStore() as ExportStore
+const exportStore = stores.useExport() as ExportStore
 const userStore = stores.useUser() as UserStore
 
 // Fields

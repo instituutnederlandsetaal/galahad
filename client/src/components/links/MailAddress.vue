@@ -4,7 +4,7 @@
   </a>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 defineProps({
   address: { type: String, default: "servicedesk@ivdnt.org" }
 })

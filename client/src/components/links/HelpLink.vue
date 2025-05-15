@@ -4,7 +4,7 @@
     </a>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 const props = defineProps({
     subject: { type: String, required: true, default: "__missing_subject__" }
 })

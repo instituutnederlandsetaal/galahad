@@ -15,7 +15,7 @@ type ErrorMessage = {
 /**
  * Mostly for global error handling.
  */
-const app = defineStore('app', () => {
+const useApp = defineStore('app', () => {
     // Fields
     const benchmarks = ref("" as string)
     const errors = ref([] as string[])
@@ -38,7 +38,7 @@ const app = defineStore('app', () => {
         if (error.response) {
             // The request was made and the server responded with a status code
             // that falls out of the range of 2xx
-            addError("Server error: Failed to " + intent + " with the following error:\n" + error?.response?.data?.message)
+            addError("Failed to " + intent + ":\n" + error?.response?.data?.message)
         } else if (error.request) {
             // The request was made but no response was received
             // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
@@ -46,7 +46,7 @@ const app = defineStore('app', () => {
             // this is a disconnect, it is handled by the user store
         } else {
             // Something happened in setting up the request that triggered an Error
-            addError("Request error: Failed to " + intent + " because something went wrong setting up the request:\n" + error.message)
+            addError("Failed to " + intent + ":\n" + error.message)
         }
     }
 
@@ -62,4 +62,4 @@ const app = defineStore('app', () => {
     return { benchmarks, errors, resetErrors, fetchBenchmarks, handleServerError }
 })
 
-export default app
+export default useApp

@@ -102,7 +102,7 @@ function cleanAnnotation(term: Term) {
 
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 .document {
     padding: 2rem;
 }

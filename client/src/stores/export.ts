@@ -10,7 +10,7 @@ import * as Utils from '@/api/utils'
 /**
  * Used to download exported corpora.
  */
-const useExportStore = defineStore('exportStore', () => {
+const useExport = defineStore('exportStore', () => {
     // Stores
     const corporaStore = stores.useCorpora() as CorporaStore
     const app = stores.useApp() as AppStore
@@ -53,4 +53,4 @@ const useExportStore = defineStore('exportStore', () => {
     }
 })
 
-export default useExportStore
+export default useExport

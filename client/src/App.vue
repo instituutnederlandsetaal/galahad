@@ -35,7 +35,7 @@
     <GModal :show="app.errors.length > 0" title="Ocharme!" small noHelp @hide="app.resetErrors">
         Please try again or contact
         <MailAddress /> for support.
-        <GInfo error v-for="error, index in app.errors" :key="index">{{ error }}</GInfo>
+        <GInfo v-for="error, index in app.errors" :key="index" error>{{ error }}</GInfo>
     </GModal>
 </template>
 

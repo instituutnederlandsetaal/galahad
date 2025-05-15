@@ -38,7 +38,7 @@
         </template>
 
         <!-- Error for illegal selection -->
-        <GInfo error v-if="illegalFiles.length > 0">
+        <GInfo v-if="illegalFiles.length > 0" error>
             You have selected some filetype(s) that are not supported in GaLAHaD:
             <ul>
                 <li v-for="file in illegalFiles" :key="file.name">
@@ -61,7 +61,7 @@
         </GInfo>
 
         <!-- Errors for files that could not be parsed by the server (e.g. broken xml tags)-->
-        <GInfo error v-show="uploadErrorCount > 0">
+        <GInfo v-show="uploadErrorCount > 0" error>
             <div v-for="(value, key) in uploading" :key="key">
                 <span v-if="value.status == 'error'">{{ key }}: {{ value.message }}</span>
             </div>
@@ -69,7 +69,7 @@
     </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 // Libraries & stores
 import { onMounted, ref } from 'vue'
 import stores from '@/stores'

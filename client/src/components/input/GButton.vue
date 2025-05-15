@@ -5,7 +5,7 @@
     </button>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 // Libraries & stores
 import { computed } from 'vue'
 // Components

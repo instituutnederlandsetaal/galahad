@@ -38,11 +38,11 @@
     </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 defineProps(['eval'])
 </script>
 
-<style scoped lang='scss'>
+<style scoped lang="scss">
 .infobox {
     table {
         margin: 0 0 0 auto; // Align right

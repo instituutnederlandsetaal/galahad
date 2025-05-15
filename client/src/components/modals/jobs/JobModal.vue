@@ -16,13 +16,13 @@
         <!-- Loading screen -->
         <div v-if="taggerIsAvailable == null" class="centerText">
             <h3>Connecting to tagger...</h3>
-            <GSpinner medium />
+            <GSpinner />
         </div>
 
         <!-- Content -->
 
         <template v-else>
-            <GInfo error v-if="taggerIsAvailable == false">
+            <GInfo v-if="taggerIsAvailable == false" error>
                 The tagger is currently unavailable. Please try again later.
             </GInfo>
 
@@ -43,7 +43,7 @@
             <!-- Actions -->
             <div v-if="jobsStore.posting" class="centerText">
                 <!-- Show load icon while posting an action-->
-                <GSpinner medium />
+                <GSpinner />
             </div>
             <div class="buttons" v-else-if="taggerIsAvailable">
                 <GButton green :disabled="job.progress.pending === 0 || job.progress.busy"
@@ -81,7 +81,7 @@
             <LayerViewer :layer="job.preview" />
 
             <!-- errors -->
-            <GInfo :error="job.progress.failed > 0" v-if="job.progress.failed > 0">
+            <GInfo v-if="job.progress.failed > 0" error>
                 The following
                 {{ job.progress.failed == 1 ? "document" : "documents" }} encountered errors:<br /><br />
                 <ol>
@@ -103,7 +103,7 @@
     </GModal>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 // Libraries & stores
 import { computed, ref, onMounted, onUnmounted } from "vue"
 import stores, { JobsStore, AppStore } from "@/stores"
@@ -197,7 +197,7 @@ function firstFive(obj: Record<string, unknown>) {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .progress {
     max-width: 100%;
     margin: auto;

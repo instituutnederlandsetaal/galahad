@@ -11,7 +11,7 @@
     </GModal>
 </template>
 
-<script lang='ts'>
+<script lang="ts">
 import { defineComponent } from 'vue'
 import { GButton, GModal } from '@/components'
 

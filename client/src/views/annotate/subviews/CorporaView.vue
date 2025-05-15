@@ -59,7 +59,7 @@
     </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 // Libraries & stores
 import { ref, onMounted } from 'vue'
 import stores, { CorporaStore } from '@/stores'

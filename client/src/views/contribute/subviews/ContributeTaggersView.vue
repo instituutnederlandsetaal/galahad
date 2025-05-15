@@ -16,6 +16,6 @@
     </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 import { GCard, GInfo, ExternalLink } from '@/components'
 </script>

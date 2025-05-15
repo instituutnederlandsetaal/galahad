@@ -14,7 +14,7 @@ const defaultConfusion = () => ({ table: {} } as ConfusionWrapper)
 /**
  * Stores and fetches the confusion matrix.
  */
-const confusion = defineStore('confusion', () => {
+const useConfusion = defineStore('confusion', () => {
     // Fields
     const loading = ref(false)
     const confusion = ref(defaultConfusion())
@@ -56,4 +56,4 @@ const confusion = defineStore('confusion', () => {
     }
 })
 
-export default confusion
+export default useConfusion

@@ -22,7 +22,7 @@
   </GCard>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 // Libraries & stores
 import stores, { UserStore } from '@/stores'
 // Components

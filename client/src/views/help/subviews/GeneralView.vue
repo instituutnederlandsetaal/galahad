@@ -585,7 +585,7 @@ import { GCard } from '@/components'
 import GNav from '@/components/links/GNav.vue';
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 img {
   display: block;
   width: 100%;

@@ -18,18 +18,15 @@
 
                     <template v-if="showMergeOption">
                         <GInfo>
-                            <p>
-                                You have uploaded <b>{{ formatToHumanReadable(exportStore.format) }}</b> files to this
-                                corpus
-                                and
-                                you are now exporting <b>{{ formatToHumanReadable(exportStore.format) }}</b>. <br />
-                                It is possible to insert the annotation layer into the original file. This will retain
-                                the original encoding.
-                            </p>
-                            <p>
-                                If you do not choose the merge option, your export will ignore the original encoding of
-                                your uploaded document.
-                            </p>
+                            You have uploaded <b>{{ formatToHumanReadable(exportStore.format) }}</b> files to this
+                            corpus
+                            and
+                            you are now exporting <b>{{ formatToHumanReadable(exportStore.format) }}</b>. <br />
+                            It is possible to insert the annotation layer into the original file. This will retain
+                            the original encoding.
+                            <br /><br />
+                            If you do not choose the merge option, your export will ignore the original encoding of
+                            your uploaded document.
                         </GInfo>
 
                         <GInfo v-if="hasTeiP5Legacy && shouldMerge" style="max-width: 850px;">
@@ -41,8 +38,8 @@
                     <DownloadButton wide @click="exportStore.convert(shouldMerge, posHeadOnly)"
                         :disabled="exportStore.loading || !exportStore.linksAreValid" />
 
-                    <GInfo spinner v-if="exportStore.loading">
-                        <span><i>Please wait while your export is being processed.</i></span>
+                    <GInfo v-if="exportStore.loading" spinner>
+                        Please wait while your export is being processed.
                     </GInfo>
                 </div>
             </GCard>
@@ -64,7 +61,7 @@ import TeiP5LegacyWarning from '@/views/help/subviews/formats/TeiP5LegacyWarning
 // Stores
 const corporaStore = stores.useCorpora() as CorporaStore
 const jobsStore = stores.useJobs() as JobsStore
-const exportStore = stores.useExportStore() as ExportStore
+const exportStore = stores.useExport() as ExportStore
 const documentsStore = stores.useDocuments() as DocumentsStore
 
 // Fields
@@ -98,7 +95,7 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .content-wrapper {
     text-align: center;
 }

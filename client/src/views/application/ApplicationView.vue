@@ -11,7 +11,7 @@
     </GTabs>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 // Components
 import { GTabs, ExternalLink } from '@/components'
 
@@ -19,7 +19,7 @@ const apiURL = window.location.protocol + '//' + window.location.hostname + "/ga
 
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 :deep(.blockLink) {
     display: block;
     /* Makes block links full size in tab header */
