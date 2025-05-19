@@ -2,45 +2,31 @@
  * API calls for fetching evaluation metrics and downloading them as a zip report.
  */
 
-// Libraries & stores
-import axios, { AxiosResponse } from "axios"
-// API & types
-import { ConfusionWrapper, DistributionWrapper, Metrics, TermComparison } from "@/types/evaluation"
-import { UUID } from "@/types/corpora"
+// --- libraries ---
+import axios, { type AxiosResponse } from "axios"
+// --- api ---
 import * as Utils from "@/api/utils"
-import { BlobResponse } from "@/api/utils"
+// --- types ---
+import type { ConfusionWrapper, DistributionWrapper, Metrics, TermComparison } from "@/types/evaluation"
+import type { UUID } from "@/types/corpora"
+import type { BlobResponse } from "@/api/utils"
 
-// Paths
-const evaluationPath = (corpus: UUID, hypothesis: string) => `/corpora/${corpus}/jobs/${hypothesis}/evaluation`
-const confusionPath = (corpus: UUID, hypothesis: string) => {
-    return `${evaluationPath(corpus, hypothesis)}/confusion`
-}
-const confusionSamplesPath = (corpus: UUID, hypothesis: string) => {
-    return `${evaluationPath(corpus, hypothesis)}/confusion/download`
-}
-
-const distributionPath = (corpus: UUID, hypothesis: string) => `${evaluationPath(corpus, hypothesis)}/distribution`
-const metricsPath = (corpus: UUID, hypothesis: string) => {
-    return `${evaluationPath(corpus, hypothesis)}/metrics`
-}
-const metricsSamplesPath = (corpus: UUID, hypothesis: string) => {
-    return `${evaluationPath(corpus, hypothesis)}/metrics/download`
-}
-
-const downloadPath = (corpus: UUID, hypothesis: string) => {
-    return `${evaluationPath(corpus, hypothesis)}/download`
-}
-
-const documentLayerComparisonPath = (corpus: UUID, job: string, document: string) => {
-    return `/corpora/${corpus}/jobs/${job}/documents/${document}/evaluation`
-}
-
-// Custom Types
 type ConfusionResponse = AxiosResponse<ConfusionWrapper>
 type DistributionResponse = AxiosResponse<DistributionWrapper>
 type MetricsResponse = AxiosResponse<Metrics>
 
-// Public methods
+// --- computed ---
+const evaluationPath = (corpus: UUID, hypothesis: string) => `/corpora/${corpus}/jobs/${hypothesis}/evaluation`
+const confusionPath = (corpus: UUID, hypothesis: string) => `${evaluationPath(corpus, hypothesis)}/confusion`
+const confusionSamplesPath = (corpus: UUID, hypo: string) => `${evaluationPath(corpus, hypo)}/confusion/download`
+const distributionPath = (corpus: UUID, hypothesis: string) => `${evaluationPath(corpus, hypothesis)}/distribution`
+const metricsPath = (corpus: UUID, hypothesis: string) => `${evaluationPath(corpus, hypothesis)}/metrics`
+const metricsSamplesPath = (corpus: UUID, hypo: string) => `${evaluationPath(corpus, hypo)}/metrics/download`
+const downloadPath = (corpus: UUID, hypothesis: string) => `${evaluationPath(corpus, hypothesis)}/download`
+const documentLayerComparisonPath = (corpus: UUID, job: string, document: string) =>
+    `/corpora/${corpus}/jobs/${job}/documents/${document}/evaluation`
+
+// --- methods ---
 /**
  * Fetch term frequency distribution.
  * @param corpus UUID of the corpus.
@@ -57,7 +43,7 @@ export function getDistribution(corpus: UUID, hypothesis: string): Promise<Distr
  * @param reference Tagger job name as reference layer.
  */
 export function getConfusion(corpus: UUID, hypothesis: string, reference: string): Promise<ConfusionResponse> {
-    return axios.get(confusionPath(corpus, hypothesis), { params: { reference }})
+    return axios.get(confusionPath(corpus, hypothesis), { params: { reference } })
 }
 
 /**
@@ -67,7 +53,7 @@ export function getConfusion(corpus: UUID, hypothesis: string, reference: string
  * @param reference Tagger job name as reference layer.
  */
 export function getMetrics(corpus: UUID, hypothesis: string, reference: string): Promise<MetricsResponse> {
-    return axios.get(metricsPath(corpus, hypothesis), { params: { reference }})
+    return axios.get(metricsPath(corpus, hypothesis), { params: { reference } })
 }
 
 /**
@@ -77,7 +63,7 @@ export function getMetrics(corpus: UUID, hypothesis: string, reference: string):
  * @param reference  Tagger job name as reference layer.
  */
 export function getDownloadEvaluation(corpus: UUID, hypothesis: string, reference: string): Promise<BlobResponse> {
-    return Utils.getBlob(downloadPath(corpus, hypothesis), { params: { reference }})
+    return Utils.getBlob(downloadPath(corpus, hypothesis), { params: { reference } })
 }
 
 /**
@@ -88,8 +74,17 @@ export function getDownloadEvaluation(corpus: UUID, hypothesis: string, referenc
  * @param hypoAnnot PoS tag of the hypothesis layer to filter on.
  * @param refAnnot PoS tag of the reference layer to filter on.
  */
-export function getConfusionSamples(corpus: UUID, hypothesis: string, reference: string, hypoFilter: string, refFilter: string, annotationType: string): Promise<BlobResponse> {
-    return Utils.getBlob(confusionSamplesPath(corpus, hypothesis), { params: {reference, hypoFilter, refFilter, annotationType}})
+export function getConfusionSamples(
+    corpus: UUID,
+    hypothesis: string,
+    reference: string,
+    hypoFilter: string,
+    refFilter: string,
+    annotationType: string,
+): Promise<BlobResponse> {
+    return Utils.getBlob(confusionSamplesPath(corpus, hypothesis), {
+        params: { reference, hypoFilter, refFilter, annotationType },
+    })
 }
 
 /**
@@ -101,7 +96,14 @@ export function getConfusionSamples(corpus: UUID, hypothesis: string, reference:
  * @param classType Class type for the metrics. E.g. 'truePositive'.
  * @param group Group for the metrics. E.g. 'pos' or 'lemma'.
  */
-export function getMetricsSamples(corpus: UUID, hypothesis: string, reference: string, setting: string, classType: string, group?: string): Promise<BlobResponse> {
+export function getMetricsSamples(
+    corpus: UUID,
+    hypothesis: string,
+    reference: string,
+    setting: string,
+    classType: string,
+    group?: string,
+): Promise<BlobResponse> {
     const params: Record<string, string> = { reference, metricsType: setting, class: classType }
     if (group) {
         params.group = group
@@ -109,6 +111,19 @@ export function getMetricsSamples(corpus: UUID, hypothesis: string, reference: s
     return Utils.getBlob(metricsSamplesPath(corpus, hypothesis), { params })
 }
 
-export function getDocumentLayerComparison(corpus: UUID, job: string, document: string, reference: string): Promise<AxiosResponse<TermComparison[]>> {
-    return axios.get(documentLayerComparisonPath(corpus, job, document), { params: { reference }})
+/**
+ * Fetch the document layer comparison of a single document comparing the job layer to the reference layer.
+ * @param corpus UUID of the corpus.
+ * @param job Job name.
+ * @param document Document name.
+ * @param reference Reference layer name.
+ * @returns Document layer comparison.
+ */
+export function getDocumentLayerComparison(
+    corpus: UUID,
+    job: string,
+    document: string,
+    reference: string,
+): Promise<AxiosResponse<TermComparison[]>> {
+    return axios.get(documentLayerComparisonPath(corpus, job, document), { params: { reference } })
 }

@@ -2,7 +2,7 @@
     <div>
         <GTable title="Taggers overview" :columns :items="taggerStore.taggers" sortedByColumn="id" :sortDesc="false">
             <template #help>
-                Here you can see an overview of all available taggers within Galahad. <br>
+                Here you can see an overview of all available taggers within Galahad. <br />
                 For more information on the taggers, please visit GitHub:
                 <ExternalLink href="https://github.com/INL/galahad-taggers-dockerized/">
                     galahad-taggers-dockerized
@@ -46,7 +46,9 @@
                         <td style="text-align: right; white-space: nowrap">
                             <b>{{ key }}</b>
                         </td>
-                        <td style="text-align: left; overflow-wrap: break-word">{{ d.value[key] }}</td>
+                        <td style="text-align: left; overflow-wrap: break-word">
+                            {{ d.value[key] }}
+                        </td>
                     </tr>
                 </table>
             </template>

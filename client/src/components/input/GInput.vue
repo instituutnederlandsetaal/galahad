@@ -4,13 +4,13 @@
         <template v-if="type === 'select'">
             <!-- disabled does not work well with a dynamic property, therefore we have to bifurcate on the 'disabled' property -->
             <select v-if="disabled" disabled v-model="private_value">
-                <option hidden disabled selected value> -- select an option -- </option>
+                <option hidden disabled selected value>-- select an option --</option>
                 <option v-for="option in options" :key="option.key" :value="option.value" :disabled="option.disabled">
                     {{ option.text }}
                 </option>
             </select>
             <select v-else v-model="private_value">
-                <option hidden disabled selected value="null"> -- select an option -- </option>
+                <option hidden disabled selected value="null">-- select an option --</option>
                 <option v-for="option in options" :key="option.key" :value="option.value" :disabled="option.disabled">
                     {{ option.text }}
                 </option>
@@ -20,8 +20,12 @@
         <template v-else-if="type === 'select-group'">
             <select v-model="private_value">
                 <optgroup v-for="optgroup in options" :key="optgroup.label" :label="optgroup.label">
-                    <option v-for="option in optgroup.options" :key="option.key" :value="option.value"
-                        :disabled="option.disabled">
+                    <option
+                        v-for="option in optgroup.options"
+                        :key="option.key"
+                        :value="option.value"
+                        :disabled="option.disabled"
+                    >
                         {{ option.text }}
                     </option>
                 </optgroup>
@@ -29,14 +33,21 @@
         </template>
         <!-- number -->
         <template v-else-if="type === 'number'">
-            <input v-model.number="private_value" :type="type" :placeholder="placeholder" @keyup.enter="$emit('enter')"
-                :min="min" :max="max" :step="step">
+            <input
+                v-model.number="private_value"
+                :type="type"
+                :placeholder="placeholder"
+                @keyup.enter="$emit('enter')"
+                :min="min"
+                :max="max"
+                :step="step"
+            />
         </template>
         <!-- checkbox -->
         <template v-else-if="type === 'checkbox'">
             <label class="clickable checkbox-container">
                 <slot></slot>
-                <input v-model="private_value" :type="type" :placeholder="placeholder">
+                <input v-model="private_value" :type="type" :placeholder="placeholder" />
                 <span class="checkmark" tabindex="0" @keydown="check"></span>
             </label>
         </template>
@@ -44,16 +55,34 @@
         <template v-else>
             <!-- text with clear button-->
             <div v-if="clearBtn" class="clear">
-                <input v-model="private_value" :type="type" :placeholder="placeholder" :disabled="disabled" :list="list"
-                    :ref="refName" @keyup.enter="$emit('enter')">
-                <input type="reset" value="&#10006;" :disabled="private_value === null || private_value.length == 0"
-                    title="Clear" @click="private_value = ''" />
+                <input
+                    v-model="private_value"
+                    :type="type"
+                    :placeholder="placeholder"
+                    :disabled="disabled"
+                    :list="list"
+                    :ref="refName"
+                    @keyup.enter="$emit('enter')"
+                />
+                <input
+                    type="reset"
+                    value="&#10006;"
+                    :disabled="private_value === null || private_value.length == 0"
+                    title="Clear"
+                    @click="private_value = ''"
+                />
             </div>
             <!-- text without clear button-->
-            <input v-else v-model="private_value" :type="type" :placeholder="placeholder" :disabled="disabled"
-                :list="list" :ref="refName" @keyup.enter="$emit('enter')">
-
-
+            <input
+                v-else
+                v-model="private_value"
+                :type="type"
+                :placeholder="placeholder"
+                :disabled="disabled"
+                :list="list"
+                :ref="refName"
+                @keyup.enter="$emit('enter')"
+            />
         </template>
 
         <template v-if="validator">
@@ -68,11 +97,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, nextTick } from 'vue'
+import { defineComponent, nextTick } from "vue"
 
 export default defineComponent({
     name: "GInput",
-    emits: ['update:modelValue'],
+    emits: ["update:modelValue"],
     props: {
         checked: { type: Boolean, default: true },
         default: { default: "" },
@@ -82,7 +111,12 @@ export default defineComponent({
         list: { type: String },
         min: { type: Number },
         max: { type: Number },
-        options: { type: Array, default() { return [] } }, // for select
+        options: {
+            type: Array,
+            default() {
+                return []
+            },
+        }, // for select
         placeholder: {},
         step: { type: Number },
         type: { type: String, default: "text" },
@@ -97,11 +131,11 @@ export default defineComponent({
             if (e.keyCode == 13 || e.keyCode == 32) {
                 this.private_value = !this.private_value
             }
-        }
+        },
     },
     data() {
         return {
-            private_value: ""
+            private_value: "",
         }
     },
     mounted() {
@@ -113,19 +147,20 @@ export default defineComponent({
         }
     },
     computed: {
-        isValid(): boolean { // TODO: bubble up the validity
+        isValid(): boolean {
+            // TODO: bubble up the validity
             return this.validator(this.modelValue)
-        }
+        },
     },
     watch: {
         private_value(newVal) {
-            this.$emit('update:modelValue', newVal)
+            this.$emit("update:modelValue", newVal)
         },
         modelValue(newVal) {
             this.private_value = newVal
-        }
-    }
-});
+        },
+    },
+})
 </script>
 
 <style scoped lang="scss">
@@ -196,24 +231,24 @@ label {
 }
 
 /* On mouse-over, add a grey background color */
-.checkbox-container:hover input~.checkmark {
+.checkbox-container:hover input ~ .checkmark {
     background-color: var(--int-very-light-grey-hover);
 }
 
-.checkbox-container:active input~.checkmark {
+.checkbox-container:active input ~ .checkmark {
     background-color: var(--int-light-grey-hover);
 }
 
 /* When the checkbox is checked, add a INT background */
-.checkbox-container input:checked~.checkmark {
+.checkbox-container input:checked ~ .checkmark {
     background-color: var(--int-theme);
 }
 
-.checkbox-container:hover input:checked~.checkmark {
+.checkbox-container:hover input:checked ~ .checkmark {
     background-color: var(--int-theme-hover);
 }
 
-.checkbox-container:active input:checked~.checkmark {
+.checkbox-container:active input:checked ~ .checkmark {
     background-color: var(--int-theme-active);
 }
 
@@ -225,7 +260,7 @@ label {
 }
 
 /* Show the checkmark when checked */
-.checkbox-container input:checked~.checkmark:after {
+.checkbox-container input:checked ~ .checkmark:after {
     display: block;
 }
 
@@ -243,10 +278,10 @@ label {
 }
 
 /* Inputs */
-input[type=text],
-input[type=url],
-input[type=number],
-input[type=reset] {
+input[type="text"],
+input[type="url"],
+input[type="number"],
+input[type="reset"] {
     height: 39px;
     font-size: 1em;
     padding-left: 5px;
@@ -280,12 +315,12 @@ div.clear {
             outline: none;
         }
 
-        &[type=text] {
+        &[type="text"] {
             width: 169px;
             border-right: 0;
         }
 
-        &[type=reset] {
+        &[type="reset"] {
             background-color: var(--int-very-light-grey-hover);
             width: 39px;
             border-left: 0;
@@ -319,10 +354,12 @@ select {
     -moz-border-radius: 0px;
     -webkit-border-radius: 0px;
     border-radius: 0px;
-    padding: .375rem 1.75rem .375rem .75rem;
+    padding: 0.375rem 1.75rem 0.375rem 0.75rem;
     outline-width: 0;
     // Background-color is taken from the firefox default.
-    background: rgb(233, 233, 237) url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5'%3E%3Cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E") no-repeat right .75rem center/8px 10px;
+    background: rgb(233, 233, 237)
+        url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5'%3E%3Cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E")
+        no-repeat right 0.75rem center/8px 10px;
     font-size: 1em;
     cursor: pointer;
 

@@ -8,17 +8,19 @@ export type Tagger = {
     attributions: null | {
         [key: string]: string
     }
-    links: null | {
-        name: string
-        href: string
-    }[]
+    links:
+        | null
+        | {
+              name: string
+              href: string
+          }[]
 }
 
 export enum TaggerStatus {
-    HEALTHY = 'HEALTHY',
-    ERROR = 'ERROR',
-    NOT_HEALTHY = 'NOT_HEALTHY',
-    UNKOWN = 'UNKOWN'
+    HEALTHY = "HEALTHY",
+    ERROR = "ERROR",
+    NOT_HEALTHY = "NOT_HEALTHY",
+    UNKOWN = "UNKOWN",
 }
 
 export type TaggerHealth = {

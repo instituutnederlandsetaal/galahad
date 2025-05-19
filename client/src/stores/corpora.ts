@@ -1,15 +1,15 @@
 // Libraries & stores
-import { computed, ref } from 'vue'
-import { defineStore } from 'pinia'
-import stores, { AppStore, UserStore } from '@/stores'
+import { computed, ref } from "vue"
+import { defineStore } from "pinia"
+import stores, { type AppStore, type UserStore } from "@/stores"
 // Types & API
-import { CorpusMetadata, MutableCorpusMetadata, UUID } from '@/types/corpora'
-import * as API from '@/api/corpora'
+import type { CorpusMetadata, MutableCorpusMetadata, UUID } from "@/types/corpora"
+import * as API from "@/api/corpora"
 
 /**
  * Contains all corpora for which the user has read access.
  */
-const useCorpora = defineStore('corpora', () => {
+const useCorpora = defineStore("corpora", () => {
     // Stores
     const userStore = stores.useUser() as UserStore
     const app = stores.useApp() as AppStore
@@ -18,11 +18,13 @@ const useCorpora = defineStore('corpora', () => {
     const loading = ref(false)
     const activeUUID = ref(null as unknown as UUID) // has to be null for <select> to show its default value
     const allCorpora = ref([] as CorpusMetadata[])
-    const datasetCorpora = computed((): CorpusMetadata[] => allCorpora.value.filter(i => i.dataset))
-    const sharedCorpora = computed((): CorpusMetadata[] => allCorpora.value.filter(i => !i.dataset && i.owner != userStore.user.id))
+    const datasetCorpora = computed((): CorpusMetadata[] => allCorpora.value.filter((i) => i.dataset))
+    const sharedCorpora = computed((): CorpusMetadata[] =>
+        allCorpora.value.filter((i) => !i.dataset && i.owner != userStore.user.id),
+    )
     const activeCorpus = computed((): CorpusMetadata | null => {
-        const candidates = allCorpora.value.filter(x => x.uuid == activeUUID.value)
-        return (candidates.length === 1 ? candidates[0] : null)
+        const candidates = allCorpora.value.filter((x) => x.uuid == activeUUID.value)
+        return candidates.length === 1 ? candidates[0] : null
     })
     const hasDocs = computed((): boolean => {
         return (activeCorpus.value?.numDocs ?? 0) > 0
@@ -32,13 +34,18 @@ const useCorpora = defineStore('corpora', () => {
     })
 
     // Methods
-    /** 
+    /**
      * Only one corpus operation is allowed to run at a time
      * Is a corpus operation running? If, not request to start a new operation
      * It is the responsibility of the operation to call reload which will release loading.value after finishing
      */
     function corpusOperationLock(): boolean {
-        if (loading.value) { return true } else { loading.value = true; return false }
+        if (loading.value) {
+            return true
+        } else {
+            loading.value = true
+            return false
+        }
     }
 
     /**
@@ -47,9 +54,12 @@ const useCorpora = defineStore('corpora', () => {
     function reload() {
         loading.value = true // this will block any other operations
         API.getCorpora()
-            .then(response => allCorpora.value = response.data || [])
-            .catch(error => { allCorpora.value = []; app.handleServerError("get corpora", error) })
-            .finally(() => loading.value = false)
+            .then((response) => (allCorpora.value = response.data || []))
+            .catch((error) => {
+                allCorpora.value = []
+                app.handleServerError("get corpora", error)
+            })
+            .finally(() => (loading.value = false))
     }
 
     /**
@@ -60,8 +70,8 @@ const useCorpora = defineStore('corpora', () => {
         if (corpusOperationLock()) return
         API.postCorpus(metadata)
             // Automatically set the new corpus as active.
-            .then(response => activeUUID.value = response.data)
-            .catch(error => app.handleServerError("create corpus", error))
+            .then((response) => (activeUUID.value = response.data))
+            .catch((error) => app.handleServerError("create corpus", error))
             .finally(reload)
     }
 
@@ -78,7 +88,7 @@ const useCorpora = defineStore('corpora', () => {
                     activeUUID.value = null as unknown as UUID
                 }
             })
-            .catch(error => app.handleServerError("delete corpus", error))
+            .catch((error) => app.handleServerError("delete corpus", error))
             .finally(reload)
     }
 
@@ -90,16 +100,26 @@ const useCorpora = defineStore('corpora', () => {
     function updateCorpus(uuid: UUID, metadata: MutableCorpusMetadata) {
         if (corpusOperationLock()) return
         API.patchCorpus(uuid, metadata)
-            .catch(error => app.handleServerError("update corpus", error))
+            .catch((error) => app.handleServerError("update corpus", error))
             .finally(reload)
     }
 
     // Exports
     return {
         // Fields
-        allCorpora, loading, datasetCorpora, sharedCorpora, activeCorpus, hasDocs, activeUUID, userIsCollaborator,
+        allCorpora,
+        loading,
+        datasetCorpora,
+        sharedCorpora,
+        activeCorpus,
+        hasDocs,
+        activeUUID,
+        userIsCollaborator,
         // Methods
-        createCorpus, deleteCorpus, updateCorpus, reload,
+        createCorpus,
+        deleteCorpus,
+        updateCorpus,
+        reload,
     }
 })
 

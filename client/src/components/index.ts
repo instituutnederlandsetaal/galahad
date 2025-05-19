@@ -21,8 +21,8 @@ import JobSelect from "./input/JobSelect.vue"
 import FileFormatInput from "./input/FileFormatInput.vue"
 import GInput from "./input/GInput.vue"
 import GButton from "./input/GButton.vue"
-import DownloadButton from './input/DownloadButton.vue'
-import InspectButton from './input/InspectButton.vue'
+import DownloadButton from "./input/DownloadButton.vue"
+import InspectButton from "./input/InspectButton.vue"
 // Modals
 import GModal from "./modals/GModal.vue"
 import VariantsModal from "./modals/VariantsModal.vue"
@@ -106,5 +106,5 @@ export default {
         app.component("ComparisonModal", ComparisonModal)
         app.component("CorpusForm", CorpusForm)
         app.component("JobModal", JobModal)
-    }
+    },
 }

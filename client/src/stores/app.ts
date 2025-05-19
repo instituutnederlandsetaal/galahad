@@ -12,7 +12,7 @@ type ErrorMessage = {
 /**
  * Mostly for global error handling.
  */
-const useApp = defineStore('app', () => {
+const useApp = defineStore("app", () => {
     // Fields
     const errors = ref([] as string[])
 

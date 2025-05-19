@@ -2,21 +2,22 @@
  * API calls for creating, updating, deleting a corpus, and fetching the list of corpora.
  */
 
-// Libraries & stores
-import axios, { AxiosResponse } from "axios"
-// Types & API
-import { UUID, CorpusMetadata, MutableCorpusMetadata } from "@/types/corpora"
+// --- libraries ---
+import axios, { type AxiosResponse } from "axios"
+// --- types ---
+import type { UUID, CorpusMetadata, MutableCorpusMetadata } from "@/types/corpora"
 
-// Paths
-const corporaPath = `/corpora`
-const datasetCorporaPath = `/datasets_corpora`
-const corpusPath = (uuid: UUID) => `${corporaPath}/${uuid}`
-
-// Custom types
 type CorporaResponse = AxiosResponse<CorpusMetadata[]>
 type CorpusResponse = AxiosResponse<CorpusMetadata>
 
-// Public methods
+// --- data ---
+const corporaPath = `/corpora`
+const datasetCorporaPath = `/datasets_corpora`
+
+// --- computed ---
+const corpusPath = (uuid: UUID) => `${corporaPath}/${uuid}`
+
+// --- methods ---
 /**
  * Fetch all corpora for which the user has read access:
  * public (datasets), shared (collaborator/viewer), and owned.

@@ -3,9 +3,9 @@
  */
 
 // Libraries & stores
-import axios, { AxiosResponse } from "axios"
+import axios, { type AxiosResponse } from "axios"
 // Types & API
-import { Tagger, TaggerHealth } from "@/types/taggers"
+import type { Tagger, TaggerHealth } from "@/types/taggers"
 
 // Paths
 const taggersPath = `/taggers`

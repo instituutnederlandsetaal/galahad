@@ -1,9 +1,17 @@
 <template>
     <AnnotateTab hideAnnotationsError>
-        <GTable :title="`Jobs for corpus ${corporaStore.activeCorpus?.name}`" helpSubject="jobs" :columns
-            :items="displayJobs" :loading="jobsStore.loading" fill hoverRow sortedByColumn="id" :sortDesc="false"
-            class="jobsview">
-
+        <GTable
+            :title="`Jobs for corpus ${corporaStore.activeCorpus?.name}`"
+            helpSubject="jobs"
+            :columns
+            :items="displayJobs"
+            :loading="jobsStore.loading"
+            fill
+            hoverRow
+            sortedByColumn="id"
+            :sortDesc="false"
+            class="jobsview"
+        >
             <template #help>
                 <component :is="help.jobs"></component>
             </template>
@@ -14,8 +22,10 @@
 
             <!-- id cell -->
             <template #cell-id="d">
-                <ExternalLink v-if="d.item.tagger.id !== SOURCE_LAYER"
-                    :href="`/galahad/overview/taggers#${d.item.tagger.id}`">
+                <ExternalLink
+                    v-if="d.item.tagger.id !== SOURCE_LAYER"
+                    :href="`/galahad/overview/taggers#${d.item.tagger.id}`"
+                >
                     {{ d.item.tagger.id }}
                 </ExternalLink>
                 <div v-else>
@@ -43,25 +53,25 @@
 
             <!-- era cell -->
             <template #cell-era="d">
-                <div style="white-space: nowrap"><b v-if="eraRange[0] <= d.item.tagger.eraFrom">{{ d.item.tagger.eraFrom
-                }}</b><span v-else>{{ d.item.tagger.eraFrom }}</span>
+                <div style="white-space: nowrap">
+                    <b v-if="eraRange[0] <= d.item.tagger.eraFrom">{{ d.item.tagger.eraFrom }}</b
+                    ><span v-else>{{ d.item.tagger.eraFrom }}</span>
                     &ndash;
-                    <b v-if="eraRange[1] >= d.item.tagger.eraTo">{{ d.item.tagger.eraTo }}</b><span v-else>{{
-                        d.item.tagger.eraTo
-                        }}</span>
+                    <b v-if="eraRange[1] >= d.item.tagger.eraTo">{{ d.item.tagger.eraTo }}</b
+                    ><span v-else>{{ d.item.tagger.eraTo }}</span>
                 </div>
             </template>
 
             <!-- last modified cell -->
             <template #cell-lastModified="d">
-                <span style="white-space:nowrap">{{ formatDate(d.item.lastModified) }}</span>
+                <span style="white-space: nowrap">{{ formatDate(d.item.lastModified) }}</span>
             </template>
 
             <!-- progress cell -->
             <template #cell-progress="d">
                 <span>
                     <!-- note that percentage is calculated based on num documents, ie not very accurate -->
-                    {{ d.item.progress.total === 0 ? '0%' : formatProgress(d.item.progress) }}
+                    {{ d.item.progress.total === 0 ? "0%" : formatProgress(d.item.progress) }}
                     <span v-if="d.item.progress.hasError" style="color: var(--int-red)">error !!</span>
                 </span>
                 <GSpinner class="spinner" small v-show="d.item.progress.busy" />
@@ -72,14 +82,11 @@
                 <GNav v-if="!corporaStore.hasDocs" :route="{ path: '/annotate/data/documents' }">
                     Upload documents to start job
                 </GNav>
-                <GButton v-else @click="jobId = d.item.tagger.id"> View &amp; Tag
-                </GButton>
+                <GButton v-else @click="jobId = d.item.tagger.id"> View &amp; Tag </GButton>
             </template>
 
             <template #prepend>
-
                 <div class="table-controls">
-
                     <div class="table-control">
                         Search tagger name:
                         <GInput type="text" v-model="taggerNameFilter" placeholder="Tagger name" clearBtn></GInput>
@@ -87,63 +94,78 @@
 
                     <div class="table-control">
                         Tagset, any of:
-                        <div v-for="tagset in tagsets" :key="tagset" style="white-space: nowrap;">
-                            <GInput type="checkbox" v-model="includeTagset[tagset]"> {{ tagset || 'Unknown' }} </GInput>
+                        <div v-for="tagset in tagsets" :key="tagset" style="white-space: nowrap">
+                            <GInput type="checkbox" v-model="includeTagset[tagset]">
+                                {{ tagset || "Unknown" }}
+                            </GInput>
                         </div>
                     </div>
 
                     <div class="table-control">
                         Require annotation:
-                        <MultiSelect v-model="requireType" :options="types" placeholder="Annotation"
-                            :maxSelectedLabels="5" />
+                        <MultiSelect
+                            v-model="requireType"
+                            :options="types"
+                            placeholder="Annotation"
+                            :maxSelectedLabels="5"
+                        />
                     </div>
 
                     <div class="table-control slider">
                         Era range: {{ eraRange[0] }} &ndash; {{ eraRange[1] }}
-                        <vue-slider ref="slider" class="vue-slider" v-model="eraRange" :interval="50" :min="500"
-                            :max="2050" :min-range="1" lazy :marks="{
+                        <!-- <vue-slider
+                            ref="slider"
+                            class="vue-slider"
+                            v-model="eraRange"
+                            :interval="50"
+                            :min="500"
+                            :max="2050"
+                            :min-range="1"
+                            lazy
+                            :marks="{
                                 '500': '500',
                                 '1000': '1000',
                                 '1500': '1500',
                                 '2000': '2000',
-                            }" piecewise :piecewise-filter="x => x.label % 250 === 0" piecewise-label process-dragable
-                            :tooltip-dir="['bottom', 'top']">
-                        </vue-slider>
+                            }"
+                            piecewise
+                            :piecewise-filter="(x) => x.label % 250 === 0"
+                            piecewise-label
+                            process-dragable
+                            :tooltip-dir="['bottom', 'top']"
+                        >
+                        </vue-slider> -->
                     </div>
-
                 </div>
 
                 <p>
-                    Shown <b>{{ displayJobs.length }}</b> of <b>{{ Object.keys(jobsStore.taggableJobs).length }}</b>
+                    Shown <b>{{ displayJobs.length }}</b> of
+                    <b>{{ Object.keys(jobsStore.taggableJobs).length }}</b>
                     taggers.
                 </p>
             </template>
-
         </GTable>
-
 
         <!-- job modal -->
         <JobModal :show="!!jobId" v-if="jobId" :jobId="jobId" @hide="jobId = null" />
-
     </AnnotateTab>
 </template>
 
 <script setup lang="ts">
 // Libraries & stores
-import { computed, onMounted, ref, watch } from 'vue'
-import VueSlider from 'vue-slider-component'
-import 'vue-slider-component/theme/default.css'
-import stores, { DocumentsStore, JobsStore, UserStore, CorporaStore } from '@/stores'
+import { computed, onMounted, ref, watch } from "vue"
+// import VueSlider from "vue-slider-component"
+// import "vue-slider-component/theme/default.css"
+import stores, { DocumentsStore, JobsStore, UserStore, CorporaStore } from "@/stores"
 // API & types
-import { Job, Progress, SOURCE_LAYER } from '@/types/jobs'
-import { Field } from '@/types/table'
+import { Job, Progress, SOURCE_LAYER } from "@/types/jobs"
+import { Field } from "@/types/table"
 import { sort_tagger_annotations } from "@/stores/taggers"
 // Components
-import { GButton, GNav, GTable, GInput, GSpinner, AnnotateTab, JobModal } from '@/components'
-import help from '@/components/help'
-import MultiSelect from 'primevue/multiselect';
-import { formatDate } from '@/types/date'
-
+import { GButton, GNav, GTable, GInput, GSpinner, AnnotateTab, JobModal } from "@/components"
+import help from "@/components/help"
+import MultiSelect from "primevue/multiselect"
+import { formatDate } from "@/types/date"
 
 // Stores
 const userStore = stores.useUser() as UserStore
@@ -152,7 +174,7 @@ const jobsStore = stores.useJobs() as JobsStore
 const corporaStore = stores.useCorpora() as CorporaStore
 
 // Fields
-const taggerNameFilter = ref('')
+const taggerNameFilter = ref("")
 const includeTagset = ref({} as { [tagset: string]: boolean })
 const requireType = ref([])
 const eraRange = ref([500, 2050])
@@ -164,21 +186,20 @@ const displayJobs = computed(() =>
             // Case insensitive string comparison.
             return job.tagger.id.toLowerCase().includes(taggerNameFilter.value.toLowerCase())
         })
-        .filter(job => {
-            return (eraRange.value[0] <= job.tagger.eraTo) &&
-                (eraRange.value[1] >= job.tagger.eraFrom)
+        .filter((job) => {
+            return eraRange.value[0] <= job.tagger.eraTo && eraRange.value[1] >= job.tagger.eraFrom
         })
-        .filter(job => {
+        .filter((job) => {
             return includeTagset.value[job.tagger.tagset]
         })
-        .filter(job => {
+        .filter((job) => {
             for (const type of requireType.value) {
                 if (!job.tagger.annotations.includes(type)) {
                     return false
                 }
             }
             return true
-        })
+        }),
 )
 
 const tagsets = computed(() => {
@@ -190,18 +211,20 @@ const tagsets = computed(() => {
 
 const columns = computed(() => {
     const publicFields = [
-        { key: "id", label: "tagger", sortOn: x => x.tagger.id, textAlign: "left" },
-        { key: "tagset", sortOn: x => x.tagger.tagset },
-        { key: "annotations", label: "annotations", },
-        { key: "resultSummary", label: "tokens", sortOn: x => x.resultSummary.numTokens },
-        { key: "era", label: "period", sortOn: x => x.tagger.eraFrom.toString() + x.tagger.eraTo.toString() },
-        { key: "lastModified", label: "last modified", sortOn: x => x.lastModified },
-        { key: "progress", sortOn: x => x.progress.finished / x.progress.total },
-    ] as Field[];
+        { key: "id", label: "tagger", sortOn: (x) => x.tagger.id, textAlign: "left" },
+        { key: "tagset", sortOn: (x) => x.tagger.tagset },
+        { key: "annotations", label: "annotations" },
+        { key: "resultSummary", label: "tokens", sortOn: (x) => x.resultSummary.numTokens },
+        {
+            key: "era",
+            label: "period",
+            sortOn: (x) => x.tagger.eraFrom.toString() + x.tagger.eraTo.toString(),
+        },
+        { key: "lastModified", label: "last modified", sortOn: (x) => x.lastModified },
+        { key: "progress", sortOn: (x) => x.progress.finished / x.progress.total },
+    ] as Field[]
     if (userStore.hasWriteAccess) {
-        return publicFields.concat(
-            { key: "actions" },
-        )
+        return publicFields.concat({ key: "actions" })
     } else {
         return publicFields
     }
@@ -226,13 +249,12 @@ onMounted(enableAllTagsets)
 // Methods
 // Checkmarks
 function enableAllTagsets() {
-    tagsets.value.forEach(tagset => includeTagset.value[tagset] = true)
+    tagsets.value.forEach((tagset) => (includeTagset.value[tagset] = true))
 }
 // Format progress with Math.floor, because e.g. toFixed(0) rounds up 99.9% to 100%, which is confusing.
 function formatProgress(progress: Progress) {
-    return `${Math.floor(100 * progress.finished / progress.total)}%`
+    return `${Math.floor((100 * progress.finished) / progress.total)}%`
 }
-
 </script>
 
 <style scoped lang="scss">

@@ -2,21 +2,24 @@
     <div>
         <GCard title="About">
             <template #help>
-                Here you can find information about the application and the exact version you are
-                currently running.
+                Here you can find information about the application and the exact version you are currently running.
             </template>
             <section>
                 <p>
-                    GaLAHaD is created by the <ExternalLink href="https://www.ivdnt.org">Dutch Language Institute
-                    </ExternalLink>. For this work, funding was received from NWO.
+                    GaLAHaD is created by the
+                    <ExternalLink href="https://www.ivdnt.org">Dutch Language Institute </ExternalLink>. For this work,
+                    funding was received from NWO.
                     <br />
                     (Clariah Plus project 184.034.023 & SSHOC-NL 184.036.020)
                 </p>
 
                 <div class="logo">
                     <a href="https://www.ivdnt.org">
-                        <img src="@/assets/ivdNt-logo-3regels.svg" alt="Logo Instituut voor de Nederlandse taal"
-                            title="Instituut voor de Nederlandse taal" />
+                        <img
+                            src="@/assets/ivdNt-logo-3regels.svg"
+                            alt="Logo Instituut voor de Nederlandse taal"
+                            title="Instituut voor de Nederlandse taal"
+                        />
                     </a>
 
                     <a href="https://www.clariah.nl">
@@ -33,9 +36,10 @@
                 <i>Verbaasd laat Galahad de graal uit zijn handen vallen als hij ziet wat erin zit.</i>
                 <br />
                 Voor deze aquarel liet Karina van Dalen-Oskam zich inspireren door een detail van een miniatuur uit een
-                handschrift van <ExternalLink href="https://manuscripts.kb.nl/zoom/BYVANCKB%3Amimi_ka20%3A052r_min_b-c">
-                    Jacob van Maerlants Spiegel Historiael (Den Haag, Koninklijke Bibliotheek, KA XX fol. 52r)
-                </ExternalLink>.
+                handschrift van
+                <ExternalLink href="https://manuscripts.kb.nl/zoom/BYVANCKB%3Amimi_ka20%3A052r_min_b-c">
+                    Jacob van Maerlants Spiegel Historiael (Den Haag, Koninklijke Bibliotheek, KA XX fol. 52r) </ExternalLink
+                >.
             </section>
             <section>
                 <h2 id="version">Version</h2>
@@ -46,8 +50,8 @@
 </template>
 
 <script setup lang="ts">
-import versionYaml from '@/../version.yml'
-import { GCard, KeyValues } from '@/components'
+import versionYaml from "@/../version.yml"
+import { GCard, KeyValues } from "@/components"
 </script>
 
 <style scoped="true">

@@ -5,17 +5,31 @@
 
         <!-- Styled label for input -->
         <label for="file-upload" class="custom-file-upload">
-            <svg class="svg-icon" aria-hidden="true" role="img" focusable="false" xmlns="http://www.w3.org/2000/svg"
-                width="20" height="12" viewBox="0 0 20 12">
+            <svg
+                class="svg-icon"
+                aria-hidden="true"
+                role="img"
+                focusable="false"
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="12"
+                viewBox="0 0 20 12"
+            >
                 <polygon class="st0" points="10,4.2 2.2,12 0.1,9.9 10,0 19.9,9.9 17.8,12 "></polygon>
             </svg>
             Select file(s) or drag & drop
         </label>
         <!-- Actual input -->
-        <input type="file" ref="uploadInput" name="filefield" multiple id="file-upload" style="display: none;"
+        <input
+            type="file"
+            ref="uploadInput"
+            name="filefield"
+            multiple
+            id="file-upload"
+            style="display: none"
             accept=".xml, .tsv, .txt, .zip, .conllu, .naf, .pdf, .docx"
-            @change="e => filesToUpload = Object.values(e.target.files as FileList)" />
-
+            @change="(e) => (filesToUpload = Object.values(e.target.files as FileList))"
+        />
 
         <!-- List of currently selected files. -->
         <ul v-if="filesToUpload.length > 0">
@@ -23,16 +37,33 @@
             <li v-for="file in filesToUpload.slice(0, 4)" :key="file.name">{{ file.name }}</li>
             <!-- Overflow -->
             <li v-if="filesToUpload.length > 4">
-                + {{ filesToUpload.length - 4 }} more {{ filesToUpload.length == 5 ? "file" : "files" }}
+                + {{ filesToUpload.length - 4 }} more
+                {{ filesToUpload.length == 5 ? "file" : "files" }}
             </li>
         </ul>
 
         <!-- Confirmation and clear buttons after a selection has been made -->
         <template v-if="filesToUpload.length != 0">
-            <GButton green @click="documentsStore.uploadAll(); $refs.uploadInput.value = null">
+            <GButton
+                green
+                @click="
+                    () => {
+                        documentsStore.uploadAll()
+                        $refs.uploadInput.value = null
+                    }
+                "
+            >
                 Upload
             </GButton>
-            <GButton plain @click="filesToUpload = []; $refs.uploadInput.value = null">
+            <GButton
+                plain
+                @click="
+                    () => {
+                        filesToUpload = []
+                        $refs.uploadInput.value = null
+                    }
+                "
+            >
                 &#10006;&nbsp;clear
             </GButton>
         </template>
@@ -71,43 +102,43 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import { onMounted, ref } from 'vue'
-import stores from '@/stores'
-import { storeToRefs } from 'pinia'
+import { onMounted, ref } from "vue"
+import stores from "@/stores"
+import { storeToRefs } from "pinia"
 // Components
-import { GButton, GInfo } from '@/components'
+import { GButton, GInfo } from "@/components"
 
 // Stores
 const documentsStore = stores.useDocuments()
 const { filesToUpload, illegalFiles, uploadBusyCount, uploadErrorCount, uploading } = storeToRefs(documentsStore)
 
 // Fields
-var dropZone = ref(null as any as HTMLElement);
+const dropZone = ref(null as any as HTMLElement)
 
 // Methods
 function showDropZone(e: DragEvent) {
-    if (e.dataTransfer!.types.includes('Files')) {
+    if (e.dataTransfer!.types.includes("Files")) {
         dropZone.value.style.display = "block"
     }
 }
 function hideDropZone() {
-    dropZone.value.style.display = "none";
+    dropZone.value.style.display = "none"
 }
 function handleDrop(e: DragEvent) {
-    e.preventDefault();
-    hideDropZone();
+    e.preventDefault()
+    hideDropZone()
     filesToUpload.value = [...e.dataTransfer!.files]
 }
 
 // Watches & mounts
 onMounted(() => {
-    dropZone.value = document.getElementById('dropZone') as HTMLElement;
+    dropZone.value = document.getElementById("dropZone") as HTMLElement
     // Register drag events
-    window.addEventListener('dragenter', showDropZone)
-    dropZone.value.addEventListener('dragleave', hideDropZone)
-    dropZone.value.addEventListener('drop', handleDrop)
+    window.addEventListener("dragenter", showDropZone)
+    dropZone.value.addEventListener("dragleave", hideDropZone)
+    dropZone.value.addEventListener("drop", handleDrop)
     // Apparently, this is needed to prevent the browser from opening the file.
-    dropZone.value.addEventListener('dragover', e => e.preventDefault())
+    dropZone.value.addEventListener("dragover", (e) => e.preventDefault())
 })
 </script>
 

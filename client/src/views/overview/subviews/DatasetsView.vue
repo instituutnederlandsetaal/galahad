@@ -16,12 +16,12 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import { onMounted } from 'vue'
-import stores, { CorporaStore } from '@/stores'
+import { onMounted } from "vue"
+import stores, { CorporaStore } from "@/stores"
 // API & types
-import { TableCorporaType, TableDocumentsType } from '@/types/table'
+import { TableCorporaType, TableDocumentsType } from "@/types/table"
 // Components
-import { CorpusTable, DocumentsTable, GSpinner } from '@/components'
+import { CorpusTable, DocumentsTable, GSpinner } from "@/components"
 import BenchmarkSetsHelp from "@/components/help/BenchmarkSetsHelp.vue"
 
 // Stores
@@ -32,7 +32,6 @@ const corporaStore = stores.useCorpora() as CorporaStore
 onMounted(() => {
     corporaStore.reload()
 })
-
 </script>
 
 <style>

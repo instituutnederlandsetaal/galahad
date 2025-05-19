@@ -7,9 +7,9 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import { computed } from 'vue'
+import { computed } from "vue"
 // Components
-import { GSpinner } from '@/components/'
+import { GSpinner } from "@/components/"
 
 const props = defineProps<{
     disabled?: boolean
@@ -30,7 +30,7 @@ const cssClass = computed(() => {
     }
 })
 
-defineEmits(['click'])
+defineEmits(["click"])
 </script>
 
 <style scoped lang="scss">
@@ -84,7 +84,6 @@ button {
 
     // Only use hover & active when not disabled.
     &:not(:disabled) {
-
         &:hover {
             background-color: var(--int-theme-hover);
 

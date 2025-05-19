@@ -1,19 +1,19 @@
 // Libraries & stores
-import { computed, ref } from 'vue'
-import { defineStore } from 'pinia'
-import stores, { AppStore, CorporaStore } from '@/stores'
+import { computed, ref } from "vue"
+import { defineStore } from "pinia"
+import stores, { type AppStore, type CorporaStore } from "@/stores"
 // API & Types
-import { Job, SOURCE_LAYER } from '@/types/jobs'
-import * as API from '@/api/jobs'
-import { getDocsAtTaggers } from '@/api/taggers'
-import { ProgressResponse } from '@/api/jobs'
+import { type Job, SOURCE_LAYER } from "@/types/jobs"
+import * as API from "@/api/jobs"
+import { getDocsAtTaggers } from "@/api/taggers"
+import { type ProgressResponse } from "@/api/jobs"
 
 const POLL_INTERVAL = 5000
 
 /**
  * Starts, stops and deletes jobs. Polls for job progress. Fetches available jobs.
  */
-const useJobs = defineStore('jobs', () => {
+const useJobs = defineStore("jobs", () => {
     // Stores
     const app = stores.useApp() as AppStore
     const corporaStore = stores.useCorpora() as CorporaStore
@@ -22,7 +22,9 @@ const useJobs = defineStore('jobs', () => {
     // Job statuses for the taggers.
     const jobs = ref({} as Record<string, Job>)
     const taggableJobs = computed((): Job[] => {
-        return Object.keys(jobs.value).map(x => jobs.value[x]).filter(x => x.tagger.id !== SOURCE_LAYER)
+        return Object.keys(jobs.value)
+            .map((x) => jobs.value[x])
+            .filter((x) => x.tagger.id !== SOURCE_LAYER)
     })
     const loading = ref(false)
     const posting = ref(false)
@@ -30,14 +32,14 @@ const useJobs = defineStore('jobs', () => {
     const numActiveDocs = ref(null as number | null)
 
     // Methods
-    /** 
+    /**
      * Fetch the progress for the given job. To be used within a poller.
      * @param job Tagger job name.
      */
     function getProgress(job: string, corpus: string) {
         API.getJobProgress(corpus, job)
-            .then(response => setProgress(job, response))
-            .catch(error => app.handleServerError("fetch job progress", error))
+            .then((response) => setProgress(job, response))
+            .catch((error) => app.handleServerError("fetch job progress", error))
     }
 
     /**
@@ -67,7 +69,13 @@ const useJobs = defineStore('jobs', () => {
      */
     function startPolling(job: string, corpus: string) {
         if (!(job in pollers)) {
-            pollers[job] = setInterval((job: string) => { getProgress(job, corpus) }, POLL_INTERVAL, job)
+            pollers[job] = setInterval(
+                (job: string) => {
+                    getProgress(job, corpus)
+                },
+                POLL_INTERVAL,
+                job,
+            )
         }
     }
 
@@ -95,13 +103,13 @@ const useJobs = defineStore('jobs', () => {
             reset()
             return
         }
-        Object.keys(pollers).forEach(x => stopPolling(x))
+        Object.keys(pollers).forEach((x) => stopPolling(x))
         loading.value = true
         // Reload jobs
         API.getJobs(corporaStore.activeUUID, true) // TODO: This only works for the active corpus. We should probably fetch all jobs for all corpora.
-            .then(response => {
+            .then((response) => {
                 jobs.value = {} // reset the jobs value
-                response.data.forEach(job => {
+                response.data.forEach((job) => {
                     jobs.value[job.tagger.id] = job
                     if (job.progress.busy) {
                         // Restart polling any running job
@@ -109,16 +117,19 @@ const useJobs = defineStore('jobs', () => {
                     }
                 })
             })
-            .catch(error => { jobs.value = {}; app.handleServerError("fetch jobs", error) })
-            .finally(() => loading.value = false)
+            .catch((error) => {
+                jobs.value = {}
+                app.handleServerError("fetch jobs", error)
+            })
+            .finally(() => (loading.value = false))
     }
 
     function tag(job: string) {
         posting.value = true
         API.postJob(corporaStore.activeUUID, job)
-            .then(response => {
+            .then((response) => {
                 posting.value = false
-                // Fake it, because at this point all files will still be 'pending'. 
+                // Fake it, because at this point all files will still be 'pending'.
                 // isBusy however depends on 'processing', so at this point it will still be false.
                 // A future poll will probably set it to true.
                 response.data.busy = true
@@ -126,30 +137,30 @@ const useJobs = defineStore('jobs', () => {
                 startPolling(job, corporaStore.activeUUID) // TODO: this is a problem, because if the state doesn't change, the polling isn't stopped.
                 getDocsAtTagger()
             })
-            .catch(error => app.handleServerError("post job", error))
+            .catch((error) => app.handleServerError("post job", error))
     }
 
     function cancel(job: string) {
         posting.value = true
         API.cancelOrDeleteJob(corporaStore.activeUUID, job, false)
-            .then(response => {
+            .then((response) => {
                 posting.value = false
                 setProgress(job, response)
                 getDocsAtTagger()
             })
-            .catch(error => app.handleServerError("cancel job", error))
+            .catch((error) => app.handleServerError("cancel job", error))
     }
 
     // 'delete' is a reserved keyword
     function deleteJob(job: string) {
         posting.value = true
         API.cancelOrDeleteJob(corporaStore.activeUUID, job, true)
-            .then(response => {
+            .then((response) => {
                 posting.value = false
                 setProgress(job, response)
                 getDocsAtTagger()
             })
-            .catch(error => app.handleServerError("delete job", error))
+            .catch((error) => app.handleServerError("delete job", error))
     }
 
     /**
@@ -160,7 +171,8 @@ const useJobs = defineStore('jobs', () => {
         getDocsAtTaggers()
             .then((response) => {
                 numActiveDocs.value = response.data
-            }).catch((error) => {
+            })
+            .catch((error) => {
                 // Ignore
             })
     }
@@ -168,9 +180,18 @@ const useJobs = defineStore('jobs', () => {
     // Exports
     return {
         // Fields
-        jobs, taggableJobs, loading, posting, numActiveDocs,
+        jobs,
+        taggableJobs,
+        loading,
+        posting,
+        numActiveDocs,
         // Methods
-        tag, cancel, deleteJob, reload, reset, getDocsAtTagger
+        tag,
+        cancel,
+        deleteJob,
+        reload,
+        reset,
+        getDocsAtTagger,
     }
 })
 

@@ -12,6 +12,6 @@
 </template>
 
 <script setup lang="ts">
-import { GCard } from '@/components'
-import MailAddress from '@/components/links/MailAddress.vue';
+import { GCard } from "@/components"
+import MailAddress from "@/components/links/MailAddress.vue"
 </script>

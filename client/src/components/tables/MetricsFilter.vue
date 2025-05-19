@@ -19,8 +19,8 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import { ref, computed } from 'vue'
-import { storeToRefs } from 'pinia'
+import { ref, computed } from "vue"
+import { storeToRefs } from "pinia"
 import stores from "@/stores"
 
 const { metrics } = storeToRefs(stores.useMetrics())
@@ -30,7 +30,7 @@ const props = defineProps(["annotations"])
 const metricOptions = computed(() => {
     if (props.annotations == null) return []
     const names = Object.keys(props.annotations)
-        .filter(key => !(key.startsWith("single") || key.startsWith("multi")))
+        .filter((key) => !(key.startsWith("single") || key.startsWith("multi")))
         .map((key) => key.split("By")[0].toLowerCase())
     const uniqueNames = [...new Set(names)]
     return uniqueNames.map((name) => ({ value: name, text: name }))
@@ -38,7 +38,7 @@ const metricOptions = computed(() => {
 const groupOptions = computed(() => {
     if (props.annotations == null) return []
     const names = Object.keys(props.annotations)
-        .filter(key => !(key.startsWith("single") || key.startsWith("multi")))
+        .filter((key) => !(key.startsWith("single") || key.startsWith("multi")))
         .map((key) => key.split("By")[1].toLowerCase())
     const uniqueNames = [...new Set(names)]
     return uniqueNames.map((name) => ({ value: name, text: name }))
@@ -70,6 +70,6 @@ function capitalize(str: string): string {
 }
 
 defineExpose({
-    metricName
+    metricName,
 })
 </script>

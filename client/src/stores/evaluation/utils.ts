@@ -1,9 +1,9 @@
 // Libraries & stores
-import { AxiosResponse } from "axios"
-import { Ref } from "vue"
-import { CorporaStore, JobSelectionStore } from "@/stores"
+import type { AxiosResponse } from "axios"
+import type { Ref } from "vue"
+import type { CorporaStore, JobSelectionStore } from "@/stores"
 // API & types
-import { UUID } from '@/types/corpora'
+import type { UUID } from "@/types/corpora"
 
 /**
  * Reloads the data for an evaluation store.
@@ -40,7 +40,7 @@ export function reloadEval(
 
     return new Promise<void>((resolve, reject) => {
         ApiCall(corpus, hypothesis, reference)
-            .then(response => {
+            .then((response) => {
                 const corporaStore = stores.useCorpora() as CorporaStore
                 const jobSelection = stores.useJobSelection() as JobSelectionStore
                 // Retrieve latest selections
@@ -53,17 +53,16 @@ export function reloadEval(
                 // Distribution does not need a reference and instead passes an empty string.
                 const includesRef = reference == "" ? true : url.includes(currentReference)
 
-                if (url.includes(currentCorpus) && url.includes(currentHypothesis)
-                    && includesRef) {
+                if (url.includes(currentCorpus) && url.includes(currentHypothesis) && includesRef) {
                     // commit
                     data.value = response.data
                     resolve()
                 }
             })
-            .catch(error => { 
+            .catch((error) => {
                 stores.useApp().handleServerError(intent, error)
                 reject()
             })
-            .finally(() => loading.value = false)
+            .finally(() => (loading.value = false))
     })
 }

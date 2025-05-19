@@ -1,17 +1,24 @@
 <template>
     <div>
-
-        <GTable title="Part-of-speech confusion" helpSubject="evaluation" :columns :items="rows" id="confusionTable"
-            :loading="loading" sortedByColumn="referenceJob" :sortDesc="false" hoverRow>
+        <GTable
+            title="Part-of-speech confusion"
+            helpSubject="evaluation"
+            :columns
+            :items="rows"
+            id="confusionTable"
+            :loading="loading"
+            sortedByColumn="referenceJob"
+            :sortDesc="false"
+            hoverRow
+        >
             <template #help>
-                In part-of-speech confusion, an overview is given of the matches (in green) and mismatches per PoS
-                when comparing
-                the tagging of the hypothesis layer with the reference layer. Click on any frequency below to show a
-                data sample.
+                In part-of-speech confusion, an overview is given of the matches (in green) and mismatches per PoS when
+                comparing the tagging of the hypothesis layer with the reference layer. Click on any frequency below to
+                show a data sample.
                 <br /><br />
                 The category "MULTIPLE" contains combined tags like "ADP+NOU" or "VRB+PD+PD". These are shown in one
-                cell, but this does not mean that the taggers agree on the exact tags. Click on the cell or look at
-                the Global Metrics for more details.
+                cell, but this does not mean that the taggers agree on the exact tags. Click on the cell or look at the
+                Global Metrics for more details.
                 <br /><br />
                 <DifferentTagsetsHelp />
             </template>
@@ -25,56 +32,58 @@
                 </div>
             </template>
 
-            <template #table-empty-instruction>Select a reference layer, a hypothesis layer and an annotation to
-                generate a confusion
-                table.</template>
+            <template #table-empty-instruction
+                >Select a reference layer, a hypothesis layer and an annotation to generate a confusion table.</template
+            >
 
             <!-- top left header -->
             <template #head-referenceJob>
-                part-of-speech <br>
-                ({{ jobSelection.hypothesisJobId }}→)<br>
+                part-of-speech <br />
+                ({{ jobSelection.hypothesisJobId }}→)<br />
                 ({{ jobSelection.referenceJobId }}↓)
             </template>
 
             <!-- custom cell rendering -->
             <template #cell="data: Cell">
-
                 <!-- header column -->
                 <div v-if="data.field.key == 'referenceJob'">
                     {{ data.value }}
                 </div>
 
                 <!-- cell -->
-                <GButton v-else :disabled="!data.value.count" :class=cssClass(data) @click="openModal(data)">
-                    {{ `${(data.value ? data.value.count : 0).toString().padStart(3, '&nbsp;')}` }}
+                <GButton v-else :disabled="!data.value.count" :class="cssClass(data)" @click="openModal(data)">
+                    {{ `${(data.value ? data.value.count : 0).toString().padStart(3, "&nbsp;")}` }}
                 </GButton>
-
             </template>
-
         </GTable>
 
-        <ComparisonModal :show="showModal" @hide="showModal = false" :samples="samples" :downloading
-            @download="(data) => download(data)" :referenceJob="jobSelection.referenceJobId"
-            :hypothesisJob="jobSelection.hypothesisJobId" />
+        <ComparisonModal
+            :show="showModal"
+            @hide="showModal = false"
+            :samples="samples"
+            :downloading
+            @download="(data) => download(data)"
+            :referenceJob="jobSelection.referenceJobId"
+            :hypothesisJob="jobSelection.hypothesisJobId"
+        />
 
         <EvaluationInfoBox :eval="selectedConfusion" />
-
     </div>
 </template>
 
 <script setup lang="ts">
 // Libraries & stores
-import { computed, ref } from 'vue'
-import stores, { JobSelectionStore, CorporaStore, AppStore } from '@/stores'
-import { storeToRefs } from 'pinia'
+import { computed, ref } from "vue"
+import stores, { JobSelectionStore, CorporaStore, AppStore } from "@/stores"
+import { storeToRefs } from "pinia"
 // API & types
-import { Field } from '@/types/table'
+import { Field } from "@/types/table"
 import { TermComparison, EvaluationEntry } from "@/types/evaluation"
-import * as API from '@/api/evaluation'
+import * as API from "@/api/evaluation"
 import * as Utils from "@/api/utils"
 // Components
-import { GButton, GInfo, GTable, EvaluationInfoBox, ComparisonModal } from '@/components'
-import DifferentTagsetsHelp from '@/components/help/DifferentTagsetsHelp.vue'
+import { GButton, GInfo, GTable, EvaluationInfoBox, ComparisonModal } from "@/components"
+import DifferentTagsetsHelp from "@/components/help/DifferentTagsetsHelp.vue"
 
 // Stores
 const { loading, confusion } = storeToRefs(stores.useConfusion())
@@ -87,11 +96,13 @@ type Item = { [key: string]: EvaluationEntry } & { referenceJob: string }
 type Cell = { field: Field; item: Item; value: EvaluationEntry }
 
 // Fields
-const confusionableAnnotations = computed(() => Object.keys(confusion.value || {}).map((key) => ({ value: key, text: key })))
+const confusionableAnnotations = computed(() =>
+    Object.keys(confusion.value || {}).map((key) => ({ value: key, text: key })),
+)
 const selectedAnnotation = ref(null)
 const downloading = ref(false)
 const modalData = ref({})
-const samples = ref({ title: "", samples: [] } as { title: string, samples: TermComparison[] })
+const samples = ref({ title: "", samples: [] } as { title: string; samples: TermComparison[] })
 const showModal = ref(false)
 const selectedConfusion = computed(() => confusion?.value[selectedAnnotation.value] || { table: {} })
 
@@ -99,20 +110,20 @@ const columns = computed((): Field[] => {
     // add the entries
     const entries = {} as { [key: string]: boolean }
     Object.keys(selectedConfusion?.value?.table)?.map((k1) => {
-        Object.keys(selectedConfusion?.value?.table[k1])?.forEach((k2) => entries[k2] = true)
+        Object.keys(selectedConfusion?.value?.table[k1])?.forEach((k2) => (entries[k2] = true))
     })
 
     // add referenceJob, sort, map and return
     const refJobField = {
-        key: 'referenceJob',
+        key: "referenceJob",
         sortOn: (value: Item) => {
             const pos = value.referenceJob
-            return (posToBottom(pos) ? Infinity : pos)
-        }
+            return posToBottom(pos) ? Infinity : pos
+        },
     }
 
     const allFields = Object.keys(entries)
-        // GTable sort also uses localeCompare. Just using sort() as is messes up the order 
+        // GTable sort also uses localeCompare. Just using sort() as is messes up the order
         // between e.g. 'NOU' & 'NO_POS'. I don't know why, though.
         .sort((a, b) => {
             if (posToBottom(a)) return 1
@@ -120,10 +131,10 @@ const columns = computed((): Field[] => {
             return a.localeCompare(b)
         })
 
-    const returnVal = allFields.map(field => {
+    const returnVal = allFields.map((field) => {
         return {
             key: field,
-            sortOn: value => (field !== 'referenceJob' ? value[field]?.count : value?.referenceJob)
+            sortOn: (value) => (field !== "referenceJob" ? value[field]?.count : value?.referenceJob),
         }
     })
     returnVal.unshift(refJobField)
@@ -136,7 +147,7 @@ const rows = computed((): Item[] => {
             referenceJob: string
         }
         Object.keys(selectedConfusion.value.table[k1]).forEach(
-            (k2) => (ret[k2] = selectedConfusion.value.table[k1][k2])
+            (k2) => (ret[k2] = selectedConfusion.value.table[k1][k2]),
         )
         return ret
     })
@@ -148,12 +159,19 @@ function download() {
     const hypothesisPos = data.field.key
     const referencePos = data.item.referenceJob
     downloading.value = true
-    API.getConfusionSamples(corporaStore.activeUUID, jobSelection.hypothesisJobId, jobSelection.referenceJobId, hypothesisPos, referencePos, selectedAnnotation.value)
+    API.getConfusionSamples(
+        corporaStore.activeUUID,
+        jobSelection.hypothesisJobId,
+        jobSelection.referenceJobId,
+        hypothesisPos,
+        referencePos,
+        selectedAnnotation.value,
+    )
         .then((response) => {
             Utils.browserDownloadResponseFile(response)
         })
-        .catch(res => Utils.handleBlobError(res, "download confusion samples", app))
-        .finally(() => downloading.value = false)
+        .catch((res) => Utils.handleBlobError(res, "download confusion samples", app))
+        .finally(() => (downloading.value = false))
 }
 /**
  * Case insensitive string compare.
@@ -176,13 +194,12 @@ function cssClass(data) {
     if (warnings.includes(data.field.key)) {
         return {
             orange: match,
-            plain: !match
+            plain: !match,
         }
-    }
-    else {
+    } else {
         return {
             green: match,
-            plain: !match
+            plain: !match,
         }
     }
 }
@@ -194,7 +211,7 @@ function openModal(data) {
         samples: data.value.samples,
         hypothesisPos: data.field.key,
         referencePos: data.item.referenceJob,
-        annotationType: selectedAnnotation.value
+        annotationType: selectedAnnotation.value,
     }
     showModal.value = true
 }

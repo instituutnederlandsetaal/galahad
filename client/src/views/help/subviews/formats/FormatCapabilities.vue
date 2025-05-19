@@ -1,15 +1,9 @@
 <template>
     <div>
         <h4>Supports:</h4>
-        <span v-if="uploadable">
-            <i class="fa fa-fw fa-upload" aria-hidden="true"></i>Uploading
-        </span>
-        <span v-if="exportable">
-            <i class="fa fa-fw fa-share-square" aria-hidden="true"></i>Exporting
-        </span>
-        <span v-if="mergeable">
-            <i class="fa fa-fw fa-compress" aria-hidden="true"></i>Merging
-        </span>
+        <span v-if="uploadable"> <i class="fa fa-fw fa-upload" aria-hidden="true"></i>Uploading </span>
+        <span v-if="exportable"> <i class="fa fa-fw fa-share-square" aria-hidden="true"></i>Exporting </span>
+        <span v-if="mergeable"> <i class="fa fa-fw fa-compress" aria-hidden="true"></i>Merging </span>
     </div>
 </template>
 

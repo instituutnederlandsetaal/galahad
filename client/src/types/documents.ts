@@ -1,4 +1,4 @@
-import { LayerPreview, LayerSummary } from "./jobs"
+import type { LayerPreview, LayerSummary } from "./jobs"
 
 export enum Format {
     Tei_p4_legacy = "tei-p4-legacy",

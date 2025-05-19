@@ -1,11 +1,19 @@
 <template>
-    <GTable title="Corpora" :columns :items="displayCorpora" :loading="corporaStore.loading" sortedByColumn="name"
-        :sortDesc="false" :selectable="selectable" v-model="selectedCorpus"
-        v-if="displayCorpora.length > 0 || (type == TableCorporaType.User && !sharedWithYou)">
-
+    <GTable
+        title="Corpora"
+        :columns
+        :items="displayCorpora"
+        :loading="corporaStore.loading"
+        sortedByColumn="name"
+        :sortDesc="false"
+        :selectable="selectable"
+        v-model="selectedCorpus"
+        v-if="displayCorpora.length > 0 || (type == TableCorporaType.User && !sharedWithYou)"
+    >
         <template #title>
             <slot name="title">
-                {{ displayCorpora.length }} {{ type }} {{ displayCorpora.length == 1 ? ' corpus' : ' corpora' }}
+                {{ displayCorpora.length }} {{ type }}
+                {{ displayCorpora.length == 1 ? " corpus" : " corpora" }}
             </slot>
         </template>
 
@@ -19,25 +27,28 @@
         </template>
 
         <template #table-empty-instruction>
-            <slot name="tableEmpty">
-                First, create a new corpus.
-            </slot>
+            <slot name="tableEmpty"> First, create a new corpus. </slot>
         </template>
 
         <template #prepend>
-            <div style="display: flex; align-items: center; justify-content: center; margin-bottom:1em"
-                v-if="userStore.user.isAdmin || type != TableCorporaType.Dataset">
-                <GButton green @click="$emit('create')" v-if="type == TableCorporaType.User">
-                    New
+            <div
+                style="display: flex; align-items: center; justify-content: center; margin-bottom: 1em"
+                v-if="userStore.user.isAdmin || type != TableCorporaType.Dataset"
+            >
+                <GButton green @click="$emit('create')" v-if="type == TableCorporaType.User"> New </GButton>
+                <GButton orange :disabled="!activeCorpusInTable" @click="$emit('update', selectedCorpus)"
+                    >Edit
                 </GButton>
-                <GButton orange :disabled="!activeCorpusInTable" @click="$emit('update', selectedCorpus)">Edit
-                </GButton>
-                <GButton v-if="type == TableCorporaType.User"
-                    :disabled="!userStore.canDelete(selectedCorpus) || !activeCorpusInTable" red
-                    @click="$emit('delete', selectedCorpus)">Delete</GButton>
+                <GButton
+                    v-if="type == TableCorporaType.User"
+                    :disabled="!userStore.canDelete(selectedCorpus) || !activeCorpusInTable"
+                    red
+                    @click="$emit('delete', selectedCorpus)"
+                    >Delete</GButton
+                >
             </div>
-            <p v-if="displayCorpora.length > 0 && selectable" style="text-align: center">Click on a row to select a
-                corpus.
+            <p v-if="displayCorpora.length > 0 && selectable" style="text-align: center">
+                Click on a row to select a corpus.
             </p>
         </template>
 
@@ -49,7 +60,7 @@
 
         <!-- last modified cell -->
         <template #cell-lastModified="data">
-            <span style="white-space:nowrap">{{ formatDate(data.value) }}</span>
+            <span style="white-space: nowrap">{{ formatDate(data.value) }}</span>
         </template>
 
         <!-- collaborators cell -->
@@ -69,23 +80,23 @@
         <!-- jobs cell -->
         <template #cell-activeJobs="data: TableData<CorpusMetadata>">
             <span>{{ data.item.numResults }}</span>
-            <GSpinner small v-if="data.item.activeJobs > 0" style="vertical-align: sub; margin-left: 0.2rem;" />
+            <GSpinner small v-if="data.item.activeJobs > 0" style="vertical-align: sub; margin-left: 0.2rem" />
         </template>
     </GTable>
 </template>
 
 <script setup lang="ts">
 // Libraries & stores
-import { PropType, ref, watch, computed } from 'vue'
-import stores from '@/stores'
+import { PropType, ref, watch, computed } from "vue"
+import stores from "@/stores"
 // API & types
-import { CorpusMetadata } from '@/types/corpora'
-import { TableCorporaType, Field, TableData } from '@/types/table'
-import * as Utils from '@/api/utils'
+import { CorpusMetadata } from "@/types/corpora"
+import { TableCorporaType, Field, TableData } from "@/types/table"
+import * as Utils from "@/api/utils"
 // Components
-import { ExternalLink, GButton, GTable, HelpLink } from '@/components'
-import help from '@/components/help'
-import { formatDate } from '@/types/date'
+import { ExternalLink, GButton, GTable, HelpLink } from "@/components"
+import help from "@/components/help"
+import { formatDate } from "@/types/date"
 
 // Stores
 const userStore = stores.useUser()
@@ -93,8 +104,9 @@ const corporaStore = stores.useCorpora()
 
 // Props
 const props = defineProps({
-    corpora: Array<CorpusMetadata>, type: String as PropType<TableCorporaType>,
-    selectable: Boolean
+    corpora: Array<CorpusMetadata>,
+    type: String as PropType<TableCorporaType>,
+    selectable: Boolean,
 })
 
 // Fields
@@ -102,9 +114,11 @@ const selectedCorpus = ref(corporaStore.activeCorpus)
 const editable = props.type != TableCorporaType.Dataset
 const displayCorpora = computed(() => {
     if (props.type === TableCorporaType.User) {
-        return props.corpora.filter(i => i.owner === userStore.user.id)
+        return props.corpora.filter((i) => i.owner === userStore.user.id)
     } else if (props.type === TableCorporaType.Shared) {
-        return props.corpora.filter(i => i.collaborators.includes(userStore.user.id) || i.viewers.includes(userStore.user.id))
+        return props.corpora.filter(
+            (i) => i.collaborators.includes(userStore.user.id) || i.viewers.includes(userStore.user.id),
+        )
     } else {
         return props.corpora
     }
@@ -112,32 +126,45 @@ const displayCorpora = computed(() => {
 // Enable edit & delete buttons only if activeCorpus is in this table.
 // (Not that CorpusForm cares, but looks nicer)
 const activeCorpusInTable = computed(() => {
-    return displayCorpora.value.map(i => i.uuid).includes(selectedCorpus.value?.uuid)
+    return displayCorpora.value.map((i) => i.uuid).includes(selectedCorpus.value?.uuid)
 })
 const columns: Field[] = [
     { key: "uuid", isPrimaryField: true, hidden: true },
-    { key: "name", sortOn: x => x.name },
-    { key: "numDocs", sortOn: x => x.numDocs, label: "docs" },
-    { key: 'sizeInBytes', label: "size", sortOn: x => x.sizeInBytes },
-    { key: "eraFrom", sortOn: x => x.eraFrom, label: "year from" },
-    { key: "eraTo", sortOn: x => x.eraTo, label: "year to" },
-    { key: "tagset", sortOn: x => x.tagset },
-    { key: "source", label: "source", sortOn: x => x.source },
-    { key: "lastModified", sortOn: x => x.lastModified, label: "last modified" },
-    { key: "collaborators", hidden: !editable, sortOn: x => customSharedSort(x), label: "shared with" },
-    { key: "activeJobs", hidden: !editable, sortOn: x => x.activeJobs, label: "jobs" },
+    { key: "name", sortOn: (x) => x.name },
+    { key: "numDocs", sortOn: (x) => x.numDocs, label: "docs" },
+    { key: "sizeInBytes", label: "size", sortOn: (x) => x.sizeInBytes },
+    { key: "eraFrom", sortOn: (x) => x.eraFrom, label: "year from" },
+    { key: "eraTo", sortOn: (x) => x.eraTo, label: "year to" },
+    { key: "tagset", sortOn: (x) => x.tagset },
+    { key: "source", label: "source", sortOn: (x) => x.source },
+    { key: "lastModified", sortOn: (x) => x.lastModified, label: "last modified" },
+    {
+        key: "collaborators",
+        hidden: !editable,
+        sortOn: (x) => customSharedSort(x),
+        label: "shared with",
+    },
+    { key: "activeJobs", hidden: !editable, sortOn: (x) => x.activeJobs, label: "jobs" },
 ]
 
 // Watches
 // We can't use corporaStore.activeCorpus directly, because there will be multiple corpus tables on the page.
-watch(() => corporaStore.activeCorpus, () => {
-    return selectedCorpus.value = corporaStore.activeCorpus
-}, { immediate: true })
-watch(() => selectedCorpus.value, () => {
-    if (selectedCorpus.value) {
-        corporaStore.activeUUID = selectedCorpus.value?.uuid
-    }
-}, { immediate: true })
+watch(
+    () => corporaStore.activeCorpus,
+    () => {
+        return (selectedCorpus.value = corporaStore.activeCorpus)
+    },
+    { immediate: true },
+)
+watch(
+    () => selectedCorpus.value,
+    () => {
+        if (selectedCorpus.value) {
+            corporaStore.activeUUID = selectedCorpus.value?.uuid
+        }
+    },
+    { immediate: true },
+)
 
 // Methods
 function formatCollaborators(i: CorpusMetadata): string {

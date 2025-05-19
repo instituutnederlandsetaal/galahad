@@ -1,7 +1,7 @@
 <template>
     <tr>
         <td colspan="2">
-            <hr>
+            <hr />
         </td>
     </tr>
     <tr v-if="showAddDialog">
@@ -23,7 +23,7 @@
             <ul>
                 <li v-for="(userName, _) in users">
                     <div class="users">
-                        <p> {{ userName }}</p>
+                        <p>{{ userName }}</p>
                         <GButton plain @click="userToDelete = userName" v-if="canDelete(userName)">
                             &#10006;&nbsp;remove
                         </GButton>
@@ -34,14 +34,20 @@
     </tr>
 
     <!-- delete modal -->
-    <DeleteModal :show="userToDelete" :item="userToDelete" :displayname="userToDelete" @hide="userToDelete = null"
-        @delete="removeUser(userToDelete)" :noHelp="true">
+    <DeleteModal
+        :show="userToDelete"
+        :item="userToDelete"
+        :displayname="userToDelete"
+        @hide="userToDelete = null"
+        @delete="removeUser(userToDelete)"
+        :noHelp="true"
+    >
         <template #action>remove access for user</template>
     </DeleteModal>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent } from "vue"
 import stores from "@/stores"
 
 import { GInput, GButton } from "@/components"
@@ -50,21 +56,21 @@ export default defineComponent({
     name: "UserList",
     components: {
         GInput,
-        GButton
+        GButton,
     },
     props: {
         users: {
             type: Array<string>,
-            default: () => []
+            default: () => [],
         },
         listName: {
             type: String,
-            default: "Users"
+            default: "Users",
         },
         showAddDialog: {
             type: Boolean,
-            default: true
-        }
+            default: true,
+        },
     },
     setup() {
         const userStore = stores.useUser()
@@ -73,7 +79,7 @@ export default defineComponent({
     data() {
         return {
             newUser: "",
-            userToDelete: null
+            userToDelete: null,
         }
     },
     methods: {
@@ -86,15 +92,15 @@ export default defineComponent({
         setUser(username: string) {
             username = username.trim()
             if (!username) return
-            this.newUser = ''
+            this.newUser = ""
             if (this.users.includes(username)) return
             this.users.push(username)
         },
         removeUser(username: string) {
             const removeIndex = this.users.indexOf(username)
             this.users.splice(removeIndex, 1)
-        }
-    }
+        },
+    },
 })
 </script>
 
@@ -102,7 +108,7 @@ export default defineComponent({
 .users {
     display: flex;
 
-    >p {
+    > p {
         margin: 5px 0px;
         flex: 1;
     }
@@ -115,7 +121,7 @@ ul {
 .usersInput {
     display: flex;
 
-    >input {
+    > input {
         flex: 1;
     }
 }

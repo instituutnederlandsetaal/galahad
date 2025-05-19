@@ -1,9 +1,15 @@
 <template>
     <div>
-
-        <GTable class="right" :title="'Distribution of ' + (jobSelection.hypothesisJobId || 'the hypothesis layer')"
-            helpSubject="evaluation" :columns :items="itemsToDisplay" :loading="distributionStore.loading"
-            displayOnEmpty sortedByColumn="count">
+        <GTable
+            class="right"
+            :title="'Distribution of ' + (jobSelection.hypothesisJobId || 'the hypothesis layer')"
+            helpSubject="evaluation"
+            :columns
+            :items="itemsToDisplay"
+            :loading="distributionStore.loading"
+            displayOnEmpty
+            sortedByColumn="count"
+        >
             <template #table-empty-instruction>
                 <p v-if="distribution.generated">No results for current filter settings.</p>
                 <p v-else>Select a hypothesis layer and an annotation to generate a distribution.</p>
@@ -16,8 +22,8 @@
             <template #header>
                 <p>
                     <b v-if="distribution.trimmed">
-                        Because of the large corpus size only the 1000 most frequent lemma,
-                        part-of-speech pairs are shown.
+                        Because of the large corpus size only the 1000 most frequent lemma, part-of-speech pairs are
+                        shown.
                     </b>
                 </p>
             </template>
@@ -34,24 +40,38 @@
 
             <!-- variants-->
             <template #cell-variants="data">
-                <div style="min-width:200px">
+                <div style="min-width: 200px">
                     <template v-if="Object.keys(data.item.literals.literals).length <= 5">
                         <span
-                            v-for="(literal, index) in Object.keys(data.item.literals.literals).sort(function (a, b) { return data.item.literals.literals[b] - data.item.literals.literals[a] })"
-                            :key="literal">
-                            {{ literal }} <b>{{ `${data.item.literals.literals[literal]}` }}</b>{{ index !=
-                                Object.keys(data.item.literals.literals).length - 1 ? ', ' : '' }}
+                            v-for="(literal, index) in Object.keys(data.item.literals.literals).sort(function (a, b) {
+                                return data.item.literals.literals[b] - data.item.literals.literals[a]
+                            })"
+                            :key="literal"
+                        >
+                            {{ literal }} <b>{{ `${data.item.literals.literals[literal]}` }}</b
+                            >{{ index != Object.keys(data.item.literals.literals).length - 1 ? ", " : "" }}
                         </span>
                     </template>
                     <template v-else>
                         <RightFloatCell>
                             <template #left>
                                 <span
-                                    v-for="literal in Object.keys(data.item.literals.literals).sort(function (a, b) { return data.item.literals.literals[b] - data.item.literals.literals[a] }).slice(0, 5)"
-                                    :key="literal">
-                                    {{ literal }} <b>{{ `${data.item.literals.literals[literal]}` }}</b>,
+                                    v-for="literal in Object.keys(data.item.literals.literals)
+                                        .sort(function (a, b) {
+                                            return data.item.literals.literals[b] - data.item.literals.literals[a]
+                                        })
+                                        .slice(0, 5)"
+                                    :key="literal"
+                                >
+                                    {{ literal }}
+                                    <b>{{ `${data.item.literals.literals[literal]}` }}</b
+                                    >,
                                 </span>
-                                <i>... and {{ Object.keys(data.item.literals.literals).length - 5 }} more</i>
+                                <i
+                                    >... and
+                                    {{ Object.keys(data.item.literals.literals).length - 5 }}
+                                    more</i
+                                >
                             </template>
                             <template #right>
                                 <InspectButton @click="variantsToDisplay = data.item" />
@@ -65,8 +85,11 @@
                 <div style="display: flex; justify-content: center">
                     <div>
                         Annotation:
-                        <GInput type="select" :options="distributionStore.distributionOptions"
-                            v-model="selectedDistribution" />
+                        <GInput
+                            type="select"
+                            :options="distributionStore.distributionOptions"
+                            v-model="selectedDistribution"
+                        />
                     </div>
                 </div>
                 <template v-if="distribution.generated">
@@ -88,34 +111,40 @@
                             <GInput type="select" :options="singMultiPosOptions" v-model="selectedSingMultiPos" />
                         </div>
                         <div class="table-control">
-                            Include PoS: <br>
-                            <MultiSelect v-model="selectedPosses" :options="filteredPosses" placeholder="Select PoS"
-                                :maxSelectedLabels="5" />
+                            Include PoS: <br />
+                            <MultiSelect
+                                v-model="selectedPosses"
+                                :options="filteredPosses"
+                                placeholder="Select PoS"
+                                :maxSelectedLabels="5"
+                            />
                         </div>
                     </div>
                 </template>
             </template>
-
         </GTable>
 
         <EvaluationInfoBox :eval="distribution" />
 
-        <VariantsModal :variantsToDisplay="variantsToDisplay" :show="variantsToDisplay !== null"
-            @hide="variantsToDisplay = null" id="modal" />
+        <VariantsModal
+            :variantsToDisplay="variantsToDisplay"
+            :show="variantsToDisplay !== null"
+            @hide="variantsToDisplay = null"
+            id="modal"
+        />
     </div>
 </template>
 
 <script setup lang="ts">
 // Libraries & stores
-import { computed, ref, watch } from 'vue'
-import stores, { DistributionStore } from '@/stores'
-import { storeToRefs } from 'pinia'
+import { computed, ref, watch } from "vue"
+import stores, { DistributionStore } from "@/stores"
+import { storeToRefs } from "pinia"
 // API & types
-import { Distribution } from '@/types/evaluation'
+import { Distribution } from "@/types/evaluation"
 // Components
-import { GInput, GTable, EvaluationInfoBox, InspectButton, RightFloatCell, VariantsModal } from '@/components'
-import MultiSelect from 'primevue/multiselect';
-
+import { GInput, GTable, EvaluationInfoBox, InspectButton, RightFloatCell, VariantsModal } from "@/components"
+import MultiSelect from "primevue/multiselect"
 
 // Stores
 const distributionStore = stores.useDistribution() as DistributionStore
@@ -127,8 +156,8 @@ const jobSelection = stores.useJobSelection()
 const selectedPosses = ref([])
 // Table controls.
 const includePos = ref({} as { [pos: string]: boolean })
-const lemmaFilter = ref('')
-const literalFilter = ref('')
+const lemmaFilter = ref("")
+const literalFilter = ref("")
 // GModal for variants
 const variantsToDisplay = ref(null as null | Distribution)
 // Filtered table items.
@@ -136,38 +165,46 @@ const itemsToDisplay = computed((): Distribution[] => {
     // When distribution not yet generated.
     if (!distribution.value?.distribution?.length) return []
 
-    return distribution.value?.distribution
-        // Case insensitive string comparison.
-        .filter(x => x.lemma.toLowerCase().includes(lemmaFilter.value.toLowerCase()))
-        .filter(x => selectedPosses.value.includes(x.pos))
-        // Filter by single/multiple PoS
-        .filter(x => {
-            if (selectedSingMultiPos.value == "single") return !x.pos.includes("+")
-            if (selectedSingMultiPos.value == "multiple") return x.pos.includes("+")
-            return true
-        })
-        // Case insensitive string comparison.
-        // join on \n, as it can't be entered into a <input type=text>
-        .filter(x => Object.keys(x.literals.literals).join('\n').toLowerCase().includes(literalFilter.value.toLowerCase()))
+    return (
+        distribution.value?.distribution
+            // Case insensitive string comparison.
+            .filter((x) => x.lemma.toLowerCase().includes(lemmaFilter.value.toLowerCase()))
+            .filter((x) => selectedPosses.value.includes(x.pos))
+            // Filter by single/multiple PoS
+            .filter((x) => {
+                if (selectedSingMultiPos.value == "single") return !x.pos.includes("+")
+                if (selectedSingMultiPos.value == "multiple") return x.pos.includes("+")
+                return true
+            })
+            // Case insensitive string comparison.
+            // join on \n, as it can't be entered into a <input type=text>
+            .filter((x) =>
+                Object.keys(x.literals.literals).join("\n").toLowerCase().includes(literalFilter.value.toLowerCase()),
+            )
+    )
 })
 const columns = [
-    { key: 'lemma', label: 'lemma', sortOn: (x: Distribution) => x.lemma },
-    { key: 'pos', label: 'PoS', sortOn: (x: Distribution) => x.pos },
-    { key: 'count', label: 'total\noccurrences', sortOn: (x: Distribution) => x.count },
-    { key: 'variantCount', label: 'number\nof types', sortOn: (x: Distribution) => Object.keys(x.literals.literals).length },
-    { key: 'variants', label: 'types' },
+    { key: "lemma", label: "lemma", sortOn: (x: Distribution) => x.lemma },
+    { key: "pos", label: "PoS", sortOn: (x: Distribution) => x.pos },
+    { key: "count", label: "total\noccurrences", sortOn: (x: Distribution) => x.count },
+    {
+        key: "variantCount",
+        label: "number\nof types",
+        sortOn: (x: Distribution) => Object.keys(x.literals.literals).length,
+    },
+    { key: "variants", label: "types" },
 ]
 const singMultiPosOptions = [
-    { value: 'single', text: 'Single' },
-    { value: 'multiple', text: 'Multiple' },
-    { value: 'both', text: 'Both' },
+    { value: "single", text: "Single" },
+    { value: "multiple", text: "Multiple" },
+    { value: "both", text: "Both" },
 ]
 const selectedSingMultiPos = ref(singMultiPosOptions[0].value)
 const filteredPosses = computed(() => {
-    if (selectedSingMultiPos.value === 'single') {
-        return distributionStore.posses.filter(pos => !pos.includes("+"))
-    } else if (selectedSingMultiPos.value === 'multiple') {
-        return distributionStore.posses.filter(pos => pos.includes("+"))
+    if (selectedSingMultiPos.value === "single") {
+        return distributionStore.posses.filter((pos) => !pos.includes("+"))
+    } else if (selectedSingMultiPos.value === "multiple") {
+        return distributionStore.posses.filter((pos) => pos.includes("+"))
     } else {
         return distributionStore.posses
     }
@@ -175,16 +212,24 @@ const filteredPosses = computed(() => {
 
 // Watches
 /**
- * On switching jobs, turn on all PoS checkboxes. We check for change in distributionStore.posses, not in 
+ * On switching jobs, turn on all PoS checkboxes. We check for change in distributionStore.posses, not in
  * jobSelection.hypothesisJobId, because of the network delay.
  */
-watch(() => distributionStore.posses, () => {
-    distributionStore.posses.forEach(pos => includePos.value[pos] = true)
-}, { immediate: true })
+watch(
+    () => distributionStore.posses,
+    () => {
+        distributionStore.posses.forEach((pos) => (includePos.value[pos] = true))
+    },
+    { immediate: true },
+)
 
-watch(() => filteredPosses.value, () => {
-    selectedPosses.value = filteredPosses.value
-}, { immediate: true })
+watch(
+    () => filteredPosses.value,
+    () => {
+        selectedPosses.value = filteredPosses.value
+    },
+    { immediate: true },
+)
 </script>
 
 <style scoped lang="scss">
@@ -223,7 +268,7 @@ div:not(#modal)::v-deep() .g-card .content-wrapper .content {
     column-gap: 0px;
 }
 
-.posGrid span>div {
+.posGrid span > div {
     width: fit-content;
 }
 

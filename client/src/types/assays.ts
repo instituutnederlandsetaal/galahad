@@ -18,10 +18,6 @@ export type DatasetAssay = {
     [metricName: string]: MetricTypeAssay
 }
 
-export type Assays = {
+export type Benchmarks = {
     [datasetName: string]: DatasetAssay
-}
-
-export type IndividualAssay = {
-    [metricName: string]: TaggerAssay
 }

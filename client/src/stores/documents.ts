@@ -1,26 +1,26 @@
 // Libraries & stores
-import { computed, ref, reactive } from 'vue'
-import { defineStore } from 'pinia'
-import stores, { AppStore, CorporaStore } from '@/stores'
+import { computed, ref, reactive } from "vue"
+import { defineStore } from "pinia"
+import stores, { type AppStore, type CorporaStore } from "@/stores"
 // Types & API
-import { DocumentMetadata, Format } from '@/types/documents'
-import { UUID } from '@/types/corpora'
-import * as API from '@/api/documents'
-import * as Utils from '@/api/utils'
+import { type DocumentMetadata, Format } from "@/types/documents"
+import { type UUID } from "@/types/corpora"
+import * as API from "@/api/documents"
+import * as Utils from "@/api/utils"
 
 const MAX_FILE_SIZE = 10485760 // 10 MB
 
 // Custom types
 type FileStatus = {
-    status: 'busy' | 'success' | 'error',
+    status: "busy" | "success" | "error"
     message?: string
 }
 
-/** 
+/**
  * Contains the documents for the corporaStore.activeUUID
  * as well as functionality related to the user's documents, like uploading.
  */
-const documents = defineStore('documents', () => {
+const documents = defineStore("documents", () => {
     // Stores
     const app = stores.useApp() as AppStore
     const corporaStore = stores.useCorpora() as CorporaStore
@@ -28,16 +28,16 @@ const documents = defineStore('documents', () => {
     // Fields
     const loading = ref(false)
     const available = ref([] as DocumentMetadata[])
-    const numSourceAnnotations = computed(() => available.value.filter(i => i.layerSummary?.tokens > 0).length)
+    const numSourceAnnotations = computed(() => available.value.filter((i) => i.layerSummary?.tokens > 0).length)
     const totalSizeInChars = computed(() => available.value.reduce((x, y) => x + y.numChars, 0))
     const uploading: Record<string, FileStatus> = reactive({})
-    const uploadBusyCount = computed(() => Object.values(uploading).filter(i => i.status === "busy").length)
-    const uploadErrorCount = computed(() => Object.values(uploading).filter(i => i.status === "error").length)
+    const uploadBusyCount = computed(() => Object.values(uploading).filter((i) => i.status === "busy").length)
+    const uploadErrorCount = computed(() => Object.values(uploading).filter((i) => i.status === "error").length)
     const filesToUpload = ref([] as File[])
     const illegalFiles = computed((): File[] => {
         return filesToUpload.value.filter((x: any) => {
-            const ext = x.name.split('.').at(-1)
-            return !(['xml', 'tsv', 'txt', 'zip', 'conllu', 'naf'].includes(ext))
+            const ext = x.name.split(".").at(-1)
+            return !["xml", "tsv", "txt", "zip", "conllu", "naf"].includes(ext)
         })
     })
     const tooLargeFiles = computed((): File[] => {
@@ -47,7 +47,7 @@ const documents = defineStore('documents', () => {
     // Methods
     /**
      * Reloads documentsStore.available for a given corpus.
-     * @param corpus 
+     * @param corpus
      */
     function reloadDocumentsForCorpus(corpus: UUID) {
         if (!corpus) return
@@ -55,14 +55,16 @@ const documents = defineStore('documents', () => {
         loading.value = true
         // Fetch
         API.getDocuments(corpus)
-            .then(response => {
+            .then((response) => {
                 // Only update if the response is for the active corpus.
                 if (response.request.responseURL.includes(corpus)) {
                     available.value = response.data
                 }
             })
-            .catch(error => { app.handleServerError("fetch documents", error) })
-            .finally(() => loading.value = false)
+            .catch((error) => {
+                app.handleServerError("fetch documents", error)
+            })
+            .finally(() => (loading.value = false))
     }
 
     /**
@@ -80,7 +82,7 @@ const documents = defineStore('documents', () => {
      */
     function deleteDocument(documentName: string) {
         API.deleteDocument(corporaStore.activeUUID, documentName)
-            .catch(error => app.handleServerError("delete document", error))
+            .catch((error) => app.handleServerError("delete document", error))
             .finally(reloadForActiveUserCorpus)
     }
 
@@ -91,7 +93,7 @@ const documents = defineStore('documents', () => {
     function downloadRaw(documentName: string) {
         API.getRawDocument(corporaStore.activeUUID, documentName)
             .then(Utils.browserDownloadResponseFile)
-            .catch(res => Utils.handleBlobError(res, "download raw document", app))
+            .catch((res) => Utils.handleBlobError(res, "download raw document", app))
     }
 
     /**
@@ -100,13 +102,13 @@ const documents = defineStore('documents', () => {
      */
     function uploadAll() {
         for (let i = 0; i < filesToUpload.value.length; i++) {
-            const formData = new FormData();
-            const file = filesToUpload.value[i];
+            const formData = new FormData()
+            const file = filesToUpload.value[i]
             // if( file.size > MAX_FILE_SIZE ) continue // skip too large files
-            formData.append('file', file)
+            formData.append("file", file)
             uploading[file.name] = { status: "busy" }
             // Spread the uploads a little
-            setTimeout(() => upload(formData), i / 10 * 100)
+            setTimeout(() => upload(formData), (i / 10) * 100)
         }
         filesToUpload.value = []
     }
@@ -115,9 +117,8 @@ const documents = defineStore('documents', () => {
      * Clear errors from not yet uploaded files.
      */
     function clearUploadErrors() {
-        Object.keys(uploading).forEach(key => {
-            if (uploading[key].status === "error")
-                delete uploading[key]
+        Object.keys(uploading).forEach((key) => {
+            if (uploading[key].status === "error") delete uploading[key]
         })
     }
 
@@ -128,20 +129,20 @@ const documents = defineStore('documents', () => {
      * @param exts File extensions to apply the content type header to.
      */
     function addContentTypeHeader(fd: FormData): Record<string, string> | null {
-        let exts_and_headers = {
-            "tsv": "text/tab-separated-values",
-            "conllu": "text/tab-separated-values",
-            "naf": "text/xml",
+        const exts_and_headers = {
+            tsv: "text/tab-separated-values",
+            conllu: "text/tab-separated-values",
+            naf: "text/xml",
         }
 
         let file = fd.get("file") as File
-        const extension = file?.name.split('.').at(-1)
+        const extension = file?.name.split(".").at(-1)
         let header = null
 
         if (Object.keys(exts_and_headers).includes(extension)) {
             const contentType = exts_and_headers[extension]
             file = new File([file], file.name, { type: contentType })
-            header = { 'Content-Type': contentType }
+            header = { "Content-Type": contentType }
             fd.set("file", file)
         }
         return header
@@ -152,21 +153,26 @@ const documents = defineStore('documents', () => {
      * @param formData FormData with file to upload.
      */
     function upload(formData: FormData) {
-        let file = formData.get("file") as File
-        
+        const file = formData.get("file") as File
+
         // Some files need an explicit content type header.
-        let header = addContentTypeHeader(formData)
+        const header = addContentTypeHeader(formData)
 
         // Update status on upload, on success and on error.
-        uploading[(file?.name)] = { status: 'busy' }
+        uploading[file?.name] = { status: "busy" }
         API.postDocument(corporaStore.activeUUID, formData, header)
             .then(() => {
-                uploading[file?.name] = { status: 'success' }
+                uploading[file?.name] = { status: "success" }
             })
-            .catch(error => uploading[file.name] = { status: 'error', message: error.response.data.message })
+            .catch(
+                (error) =>
+                    (uploading[file.name] = {
+                        status: "error",
+                        message: error.response.data.message,
+                    }),
+            )
             .finally(() => {
-                if (uploadBusyCount.value == 0)
-                    reloadForActiveUserCorpus()
+                if (uploadBusyCount.value == 0) reloadForActiveUserCorpus()
             })
     }
 
@@ -174,7 +180,7 @@ const documents = defineStore('documents', () => {
      * Checks if the documentsStore.available contains at least one file of the given format.
      */
     function containsFormat(format: Format): boolean {
-        return available.value.some(i => {
+        return available.value.some((i) => {
             // Overwrite the format for legacy formats.
             let otherFormat = i.format
             if (otherFormat == Format.Tei_p5_legacy) {
@@ -187,10 +193,23 @@ const documents = defineStore('documents', () => {
     // Exports
     return {
         // Fields
-        available, filesToUpload, illegalFiles, loading, tooLargeFiles, uploading,
-        uploadBusyCount, uploadErrorCount, totalSizeInChars, numSourceAnnotations,
+        available,
+        filesToUpload,
+        illegalFiles,
+        loading,
+        tooLargeFiles,
+        uploading,
+        uploadBusyCount,
+        uploadErrorCount,
+        totalSizeInChars,
+        numSourceAnnotations,
         // Methods
-        reloadDocumentsForCorpus, deleteDocument, downloadRaw, uploadAll, clearUploadErrors, containsFormat
+        reloadDocumentsForCorpus,
+        deleteDocument,
+        downloadRaw,
+        uploadAll,
+        clearUploadErrors,
+        containsFormat,
     }
 })
 

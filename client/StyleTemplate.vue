@@ -9,23 +9,29 @@
 </template>
 
 <script setup lang="ts">
-// library imports
-import { computed, ref } from 'vue';
-// components imports
-// props
-// emits
-// data
+// -- libraries --
+import { computed, ref } from "vue"
+// --- components ---
+// --- stores ---
+// --- api ---
+// --- types ---
+// --- props ---
+const { foo = "bar" } = defineProps<{
+    foo?: string
+}>()
+// --- emits ---
+// --- data ---
 const visible = ref<boolean>(true)
-// computed
+// --- computed ---
 const isVisible = computed<boolean>(() => visible.value) // arrow function where possible
-// watch
-// lifecycle (in order of execution)
-// methods
+// --- watch ---
+// --- lifecycle (in order of execution) ---
+// --- methods ---
 </script>
 
 <style scoped lang="scss">
 /**
- * Avoid html element as selectors and use classes instead. 
+ * Avoid html element as selectors and use classes instead.
  */
 .btn {
     background-color: green;

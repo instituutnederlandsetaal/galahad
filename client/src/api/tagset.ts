@@ -3,9 +3,9 @@
  */
 
 // Libraries & stores
-import axios, { AxiosResponse } from "axios"
+import axios, { type AxiosResponse } from "axios"
 // Types & API
-import { Tagset } from "@/types/tagset"
+import type { Tagset } from "@/types/tagset"
 
 const tagsetsPath = `/tagsets`
 

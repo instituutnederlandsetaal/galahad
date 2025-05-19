@@ -1,10 +1,14 @@
 <template>
-    <GTabs ref="tabs" class="level-1" basePath="" :tabs="[
-        { id: 'annotate', title: 'Annotate & Evaluate' },
-        { id: 'overview', title: 'Taggers & Datasets' },
-        { id: 'user', title: 'User' },
-    ]">
-
+    <GTabs
+        ref="tabs"
+        class="level-1"
+        basePath=""
+        :tabs="[
+            { id: 'annotate', title: 'Annotate & Evaluate' },
+            { id: 'overview', title: 'Taggers & Datasets' },
+            { id: 'user', title: 'User' },
+        ]"
+    >
         <template #title>
             <div class="title">
                 <a href="https://ivdnt.org/" target="_blank" tabindex="-1" rel="noopener noreferrer">
@@ -29,33 +33,33 @@
             <a href="/galahad/contribute" target="_blank">contribute</a>
             <a href="https://portal.clarin.ivdnt.org/lancelot" target="_blank">lancelot</a>
         </template>
-
     </GTabs>
 
     <GModal :show="app.errors.length > 0" title="Ocharme!" small noHelp @hide="app.resetErrors">
         Please try again or contact
         <MailAddress /> for support.
-        <GInfo v-for="error, index in app.errors" :key="index" error>{{ error }}</GInfo>
+        <GInfo v-for="(error, index) in app.errors" :key="index" error>{{ error }}</GInfo>
     </GModal>
 </template>
 
 <script setup lang="ts">
 // Libraries & stores
-import { onMounted, ref } from 'vue'
-import stores, { AppStore, UserStore } from '@/stores'
+import { onMounted, ref } from "vue"
+import stores, { AppStore, UserStore } from "@/stores"
 // Components
-import { GInfo, GModal, GTabs, MailAddress } from '@/components'
+import { GInfo, GModal, GTabs, MailAddress } from "@/components"
 
 // Stores
 const app = stores.useApp() as AppStore
 const user = stores.useUser() as UserStore
 
-onMounted(() => { user.fetchUser() })
+onMounted(() => {
+    user.fetchUser()
+})
 
 // there is interference with other router changes TODO: figure this out
 // actually the jobSelection is now done on EvaluationView mount
 const tabs = ref(null)
-
 </script>
 
 <style lang="scss">
@@ -63,7 +67,7 @@ const tabs = ref(null)
 
 @font-face {
     font-family: "Schoolboek";
-    src: url("@/assets/Schoolboek-Regular.woff") format('woff'),
+    src: url("@/assets/Schoolboek-Regular.woff") format("woff");
 }
 
 $galahad-theme: #62b6ff;
@@ -74,31 +78,31 @@ $galahad-theme: #62b6ff;
     --int-blue: #359ff0;
     --int-blue-hover: #1188e4;
     //yellow
-    --int-yellow: #FFF064;
-    --int-yellow-lighter: #FFF7AD;
-    --int-yellow-hover: #FFEB33;
+    --int-yellow: #fff064;
+    --int-yellow-lighter: #fff7ad;
+    --int-yellow-hover: #ffeb33;
     --int-yellow-active: #d5c000;
     --int-yellow-outline: #ffe100; // custom; a bit darker than huisstijl yellow-outline
     // red
-    --int-red: #E8503D;
+    --int-red: #e8503d;
     --int-red-hover: #dd442f; // custom
-    --int-red-active: #D72F19; // made original hover into active
+    --int-red-active: #d72f19; // made original hover into active
     //orange
-    --int-orange: #FF8000;
-    --int-orange-hover: #DF7000;
-    --int-orange-active: #CC6600; // made original hover into active
+    --int-orange: #ff8000;
+    --int-orange-hover: #df7000;
+    --int-orange-active: #cc6600; // made original hover into active
     //green
-    --int-green: #89C24B;
-    --int-green-hover: #79B246;
-    --int-green-active: #6FA338; // made original hover into active
+    --int-green: #89c24b;
+    --int-green-hover: #79b246;
+    --int-green-active: #6fa338; // made original hover into active
     // INT monochrome
     --black: black;
-    --int-very-light-grey: #F3F3F3;
-    --int-very-light-grey-hover: #D9D9D9;
-    --int-light-grey: #CCCDCC;
-    --int-light-grey-hover: #B2B3B2;
-    --int-grey: #A4A5A8;
-    --int-grey-hover: #8A8B8F;
+    --int-very-light-grey: #f3f3f3;
+    --int-very-light-grey-hover: #d9d9d9;
+    --int-light-grey: #cccdcc;
+    --int-light-grey-hover: #b2b3b2;
+    --int-grey: #a4a5a8;
+    --int-grey-hover: #8a8b8f;
     --white: white;
     // Current Theme
     --int-theme: #{$galahad-theme};
@@ -142,7 +146,7 @@ h5 {
 }
 
 .textcolor {
-    color: var(--black)
+    color: var(--black);
 }
 
 ul li {
@@ -184,7 +188,6 @@ html {
 }
 
 #app {
-
     text-align: left;
     background-color: var(--int-very-light-grey);
     line-height: 1.5;
@@ -207,7 +210,7 @@ html {
         height: initial !important;
         min-height: 100% !important;
 
-        &>.header {
+        & > .header {
             position: initial;
         }
     }
@@ -218,7 +221,7 @@ html {
         display: none;
     }
 
-    .tabs>.content {
+    .tabs > .content {
         padding: 10px 0 0 0 !important;
     }
 }

@@ -22,29 +22,39 @@
         </div>
 
         <!-- Table tabs -->
-        <GTabs ref="tabs" class="level-3" :basePath="basePath" :tabs="[
-            { id: 'distribution', title: 'Distribution' },
-            { id: 'global_metrics', title: 'Global Metrics' },
-            { id: 'grouped_metrics', title: 'Grouped Metrics' },
-            { id: 'confusion', title: 'Pos Confusion' },
-            { id: 'document_layer_comparison', title: 'Document View' }
-        ]">
+        <GTabs
+            ref="tabs"
+            class="level-3"
+            :basePath="basePath"
+            :tabs="[
+                { id: 'distribution', title: 'Distribution' },
+                { id: 'global_metrics', title: 'Global Metrics' },
+                { id: 'grouped_metrics', title: 'Grouped Metrics' },
+                { id: 'confusion', title: 'Pos Confusion' },
+                { id: 'document_layer_comparison', title: 'Document View' },
+            ]"
+        >
         </GTabs>
-
     </AnnotateTab>
 </template>
 
 <script setup lang="ts">
 // Libraries & stores
-import { onMounted, watch } from 'vue'
+import { onMounted, watch } from "vue"
 import stores, {
-    DistributionStore, JobsStore, MetricsStore, EvaluationStore,
-    JobSelectionStore, ConfusionStore, CorporaStore, DocumentsStore
-} from '@/stores'
+    DistributionStore,
+    JobsStore,
+    MetricsStore,
+    EvaluationStore,
+    JobSelectionStore,
+    ConfusionStore,
+    CorporaStore,
+    DocumentsStore,
+} from "@/stores"
 // Components
-import { GCard, GTabs, AnnotateTab, JobSelect, DownloadButton } from '@/components'
-import help from '@/components/help'
-import { SOURCE_LAYER } from '@/types/jobs';
+import { GCard, GTabs, AnnotateTab, JobSelect, DownloadButton } from "@/components"
+import help from "@/components/help"
+import { SOURCE_LAYER } from "@/types/jobs"
 
 // Stores
 const jobsStore = stores.useJobs() as JobsStore
@@ -57,16 +67,18 @@ const corporaStore = stores.useCorpora() as CorporaStore
 const documentsStore = stores.useDocuments() as DocumentsStore
 
 // Fields
-const props = defineProps(['basePath'])
+const props = defineProps(["basePath"])
 
 // Methods
 /**
  * Whether the corpusUUID or the hypothesis/reference has changed since the last generated evaluation.
  */
 function evaluationRequestHasChanged(): boolean {
-    return evaluation.corpusUUID != corporaStore.activeUUID
-        || evaluation.hypothesis != jobSelection.hypothesisJobId
-        || evaluation.reference != jobSelection.referenceJobId
+    return (
+        evaluation.corpusUUID != corporaStore.activeUUID ||
+        evaluation.hypothesis != jobSelection.hypothesisJobId ||
+        evaluation.reference != jobSelection.referenceJobId
+    )
 }
 
 /**
@@ -113,34 +125,47 @@ onMounted(() => {
 })
 
 // On corpus (=dataset) selection, reload jobs & docs for that corpus
-watch(() => corporaStore.activeCorpus, () => {
-    // Jobs needed for jobs <select>.
-    jobsStore.reload()
-    // Docs needed to determine whether the sourceLayer job has annotations.
-    documentsStore.reloadDocumentsForCorpus(corporaStore.activeUUID)
-}, { immediate: true })
+watch(
+    () => corporaStore.activeCorpus,
+    () => {
+        // Jobs needed for jobs <select>.
+        jobsStore.reload()
+        // Docs needed to determine whether the sourceLayer job has annotations.
+        documentsStore.reloadDocumentsForCorpus(corporaStore.activeUUID)
+    },
+    { immediate: true },
+)
 
 // Reload data on job selection changes.
-watch(() => jobSelection.hypothesisJobId, () => {
-    if (!jobSelection.selectionsValid) return
-    reloadEvaluationData(true)
-})
-watch(() => jobSelection.referenceJobId, () => {
-    if (!jobSelection.selectionsValid) return
-    reloadEvaluationData()
-})
-// OnLoad, we also have to wait on validation.
-watch(() => jobSelection.selectionsValid, () => {
-    if (jobSelection.selectionsValid) {
+watch(
+    () => jobSelection.hypothesisJobId,
+    () => {
+        if (!jobSelection.selectionsValid) return
         reloadEvaluationData(true)
-    }
-    // At this point, invalid selections are set to null.
-    // So we can override the reference to the sourceLayer as a default (if it exists).
-    if (jobSelection.referenceJobId == null && documentsStore.numSourceAnnotations > 0) {
-        jobSelection.referenceJobId = SOURCE_LAYER
-    }
-}, { immediate: true })
-
+    },
+)
+watch(
+    () => jobSelection.referenceJobId,
+    () => {
+        if (!jobSelection.selectionsValid) return
+        reloadEvaluationData()
+    },
+)
+// OnLoad, we also have to wait on validation.
+watch(
+    () => jobSelection.selectionsValid,
+    () => {
+        if (jobSelection.selectionsValid) {
+            reloadEvaluationData(true)
+        }
+        // At this point, invalid selections are set to null.
+        // So we can override the reference to the sourceLayer as a default (if it exists).
+        if (jobSelection.referenceJobId == null && documentsStore.numSourceAnnotations > 0) {
+            jobSelection.referenceJobId = SOURCE_LAYER
+        }
+    },
+    { immediate: true },
+)
 </script>
 
 <style scoped lang="scss">

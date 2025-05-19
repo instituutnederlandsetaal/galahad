@@ -7,7 +7,7 @@
             <slot name="help"></slot>
         </template>
 
-        <div v-if="loading" style="text-align: center; margin:10px 0">
+        <div v-if="loading" style="text-align: center; margin: 10px 0">
             <GSpinner medium />
         </div>
 
@@ -22,21 +22,20 @@
             Here should be an instruction how to fill the content.
         </slot>
         <table :class="`${cssClass} ${loading ? ' loading' : ''} ${selectable ? ' selectable' : ''}`">
-            <thead v-if="!(isEmpty)">
+            <thead v-if="!isEmpty">
                 <tr>
-                    <th v-for="field in visibleFields" :key="field.key" style="text-align: center;">
+                    <th v-for="field in visibleFields" :key="field.key" style="text-align: center">
                         <div style="white-space: pre-line">
                             <!-- specific head -->
-                            <slot :name="'head-' + field.key" :field=field>
+                            <slot :name="'head-' + field.key" :field="field">
                                 <!-- generic head -->
-                                <slot name="head" :field=field>{{ field.label || field.key }}</slot>
+                                <slot name="head" :field="field">{{ field.label || field.key }}</slot>
                             </slot>
-
                         </div>
                         <span v-if="field.sortOn">
                             <span v-if="sortedBy != field.key" class="sort-control">
-                                <span @click="sortBy(field.key, false)">▲</span> | <span
-                                    @click="sortBy(field.key, true)">▼</span>
+                                <span @click="sortBy(field.key, false)">▲</span> |
+                                <span @click="sortBy(field.key, true)">▼</span>
                             </span>
                             <span v-else class="sort-control">
                                 <span v-if="!sortIsDesc" class="sort-control active">▲</span>
@@ -52,17 +51,35 @@
             </thead>
             <tbody>
                 <!-- the rows -->
-                <template v-for="item, i in itemsToDisplay" :key="'row' + i">
-                    <tr @click="rowClicked(item)" @dblclick="rowClicked(item); $emit('rowDoubleClicked')"
-                        :class="(equal(modelValue, item) ? 'selected' : '') + ' ' + (selectable ? 'cursor-pointer' : '')">
-                        <td v-for="field in visibleFields" :key="field.key"
-                            :style="`text-align: ${field.textAlign || 'center'};`">
+                <template v-for="(item, i) in itemsToDisplay" :key="'row' + i">
+                    <tr
+                        @click="rowClicked(item)"
+                        @dblclick="
+                            () => {
+                                rowClicked(item)
+                                $emit('rowDoubleClicked')
+                            }
+                        "
+                        :class="
+                            (equal(modelValue, item) ? 'selected' : '') + ' ' + (selectable ? 'cursor-pointer' : '')
+                        "
+                    >
+                        <td
+                            v-for="field in visibleFields"
+                            :key="field.key"
+                            :style="`text-align: ${field.textAlign || 'center'};`"
+                        >
                             <!-- specific cell rendering -->
-                            <slot :name="'cell-' + field.key" :field="_field(field)" :item="item"
-                                :value="item[field.key] || ''">
+                            <slot
+                                :name="'cell-' + field.key"
+                                :field="_field(field)"
+                                :item="item"
+                                :value="item[field.key] || ''"
+                            >
                                 <!-- generic cell rendering -->
                                 <slot name="cell" :field="_field(field)" :item="item" :value="item[field.key] || ''">
-                                    {{ item[field.key] }}</slot>
+                                    {{ item[field.key] }}</slot
+                                >
                             </slot>
                         </td>
                     </tr>
@@ -76,7 +93,7 @@
                 <!-- filler -->
                 <template v-if="fill && items.length > 0">
                     <tr v-for="filler in (0, pageSize - itemsToDisplay.length)" :key="itemsToDisplay.length + filler">
-                        <td v-for="field in visibleFields" :key="field.key"><br></td>
+                        <td v-for="field in visibleFields" :key="field.key"><br /></td>
                     </tr>
                 </template>
                 <!-- <tr id="append-row" key="append-row">
@@ -86,16 +103,22 @@
         </table>
         <div id="footer" v-if="!(isEmpty && !displayOnEmpty)">
             <!-- page controls -->
-            <div v-if="numPages > 1" id="page-controls" @click="this.$nextTick(() => this.$refs.test.scrollIntoView())"
-                ref="test">
+            <div
+                v-if="numPages > 1"
+                id="page-controls"
+                @click="this.$nextTick(() => this.$refs.test.scrollIntoView())"
+                ref="test"
+            >
                 <GButton plain @click="page = 1" :disabled="page == 1">1</GButton>
-                <GButton plain @click="page > 1 ? page -= 1 : null" :disabled="page == 1" title="Previous">
+                <GButton plain @click="page > 1 ? (page -= 1) : null" :disabled="page == 1" title="Previous">
                     <i class="fa fa-arrow-left"></i>
                 </GButton>
-                <select v-model=page>
-                    <option v-for="pageNumber in numPages" :key="pageNumber" :value=pageNumber>{{ pageNumber }}</option>
+                <select v-model="page">
+                    <option v-for="pageNumber in numPages" :key="pageNumber" :value="pageNumber">
+                        {{ pageNumber }}
+                    </option>
                 </select>
-                <GButton plain @click="page < numPages ? page += 1 : null" :disabled="page == numPages" title="Next">
+                <GButton plain @click="page < numPages ? (page += 1) : null" :disabled="page == numPages" title="Next">
                     <i class="fa fa-arrow-right"></i>
                 </GButton>
                 <GButton plain @click="page = numPages" :disabled="page == numPages">{{ numPages }}</GButton>
@@ -111,24 +134,29 @@
 
 <script lang="ts">
 // Libraries & stores
-import { defineComponent, PropType } from 'vue'
+import { defineComponent, PropType } from "vue"
 // API & types
-import { Field } from '@/types/table'
+import { Field } from "@/types/table"
 // Components
-import help from '@/components/help'
-import GButton from '@/components/input/GButton.vue'
-import GCard from '@/components/GCard.vue'
+import help from "@/components/help"
+import GButton from "@/components/input/GButton.vue"
+import GCard from "@/components/GCard.vue"
 
 type Item = { [key: string]: unknown }
 
 export default defineComponent({
     name: "GTable",
-    emits: ['rowClicked', 'rowDoubleClicked', 'update:modelValue'],
+    emits: ["rowClicked", "rowDoubleClicked", "update:modelValue"],
     components: { GCard, GButton },
     props: {
         title: { type: String, default: "You forgot the title" },
         displayOnEmpty: { type: Boolean, default: false },
-        columns: { type: Array as PropType<Field[]>, default() { return [] } },
+        columns: {
+            type: Array as PropType<Field[]>,
+            default() {
+                return []
+            },
+        },
         fill: { type: Boolean, default: false },
         headless: { type: Boolean, default: false },
         loading: { type: Boolean, default: false },
@@ -137,10 +165,15 @@ export default defineComponent({
         sortDesc: { type: Boolean, default: true },
         compact: { type: Boolean, default: false },
         showHelp: { type: Boolean, default: false },
-        items: { type: Array as PropType<Item[]>, default() { return [] } },
+        items: {
+            type: Array as PropType<Item[]>,
+            default() {
+                return []
+            },
+        },
         modelValue: { type: Object as PropType<Item>, default: null }, // use in conjunction with 'selectable' to make a v-model
         helpSubject: { type: String as () => keyof typeof help },
-        noHelp: { type: Boolean, default: false }
+        noHelp: { type: Boolean, default: false },
     },
     //   model: {
     //       prop: 'value',
@@ -150,29 +183,29 @@ export default defineComponent({
         return {
             page: 1,
             sortIsDesc: this.sortDesc as boolean,
-            sortedBy: this.sortedByColumn as null | string
+            sortedBy: this.sortedByColumn as null | string,
         }
     },
     computed: {
         cssClass() {
             let ret = ""
-            this.compact ? ret += "compact " : ''
+            this.compact ? (ret += "compact ") : ""
             return ret
         },
         isEmpty(): boolean {
-            return !this.items || this.items.length === 0;
+            return !this.items || this.items.length === 0
         },
         itemsToDisplay(): Item[] {
             const page = this.page
             const pageSize = this.pageSize
             function getPageItems(allItems: Item[]) {
-                return allItems.slice((page - 1) * pageSize, (page) * pageSize)
+                return allItems.slice((page - 1) * pageSize, page * pageSize)
             }
 
             // only paginate
             if (this.sortedBy === null) return getPageItems(this.items)
 
-            const sortOn = this.columns.filter(field => (field.key == this.sortedBy))[0]?.sortOn //hmm
+            const sortOn = this.columns.filter((field) => field.key == this.sortedBy)[0]?.sortOn //hmm
             function mapToSortProp(x: any) {
                 return sortOn ? sortOn(x) : x
             }
@@ -182,11 +215,12 @@ export default defineComponent({
                 return getPageItems(this.items)
             } else {
                 // sort and then paginate
-                const allItems = this.items.slice().sort(
-                    (a: Item, b: Item) =>
-                        (-1) ** (+this.sortIsDesc | 0) *
-                        this.compareAny(mapToSortProp(a), mapToSortProp(b))
-                )
+                const allItems = this.items
+                    .slice()
+                    .sort(
+                        (a: Item, b: Item) =>
+                            (-1) ** (+this.sortIsDesc | 0) * this.compareAny(mapToSortProp(a), mapToSortProp(b)),
+                    )
                 return getPageItems(allItems)
             }
         },
@@ -200,16 +234,18 @@ export default defineComponent({
             return this.items.length > 20 ? 20 : this.items.length
         },
         primaryKeyFields(): string[] {
-            return this.columns.filter(field => field.isPrimaryField).map(field => field.key)
+            return this.columns.filter((field) => field.isPrimaryField).map((field) => field.key)
         },
         visibleFields() {
-            return this.columns.filter(field => !field.hidden);
-        }
+            return this.columns.filter((field) => !field.hidden)
+        },
     },
     methods: {
         anyIncludes(whole: unknown, part: unknown): boolean {
             if (!whole) return false
-            return (whole as Record<string, unknown> | unknown[]).toString().includes((part as Record<string, unknown> | unknown[]).toString())
+            return (whole as Record<string, unknown> | unknown[])
+                .toString()
+                .includes((part as Record<string, unknown> | unknown[]).toString())
         },
         compareAny(a: unknown, b: unknown): number {
             // null and undefined are always smaller
@@ -229,8 +265,8 @@ export default defineComponent({
                 if (a.length === 0 && b.length === 0) return 0
                 if (a.length === 0) return -1
                 if (b.length === 0) return 1
-                return this.compareAny(a[0], b[0]) // Approximate               
-            } else if (typeof a === 'boolean' && typeof b === 'boolean') {
+                return this.compareAny(a[0], b[0]) // Approximate
+            } else if (typeof a === "boolean" && typeof b === "boolean") {
                 if (a === b) return 0
                 if (a) return 1
                 return -1
@@ -250,14 +286,16 @@ export default defineComponent({
             if (this.primaryKeyFields.length === 0) return item1 === item2
             if (this.nu(item1) && this.nu(item2)) return true
             if (this.nu(item1) || this.nu(item2)) return false
-            return this.primaryKeyFields.map((key: string) => item1[key] === item2[key]).filter(x => !x).length === 0
+            return this.primaryKeyFields.map((key: string) => item1[key] === item2[key]).filter((x) => !x).length === 0
         },
-        nu(v: unknown) { return v === null || v === undefined }, //utility
+        nu(v: unknown) {
+            return v === null || v === undefined
+        }, //utility
         rowClicked(item: Item): void {
             if (this.selectable) {
-                this.$emit('update:modelValue', item)
+                this.$emit("update:modelValue", item)
             } else {
-                this.$emit('rowClicked', item)
+                this.$emit("rowClicked", item)
             }
         },
         sortBy(key: string, sortIsDesc: boolean): void {
@@ -265,7 +303,7 @@ export default defineComponent({
             this.sortIsDesc = sortIsDesc
             // Reset to first page to see the effect of sorting.
             this.page = 1
-        }
+        },
     },
     watch: {
         numPages(newVal) {
@@ -273,8 +311,8 @@ export default defineComponent({
                 this.page = newVal
             }
         },
-    }
-});
+    },
+})
 </script>
 
 <style scoped lang="scss">
@@ -354,7 +392,7 @@ export default defineComponent({
 
     /* Standard */
     span {
-        cursor: pointer
+        cursor: pointer;
     }
 }
 
@@ -373,7 +411,9 @@ table.loading .loading-symbol {
 }
 
 table .loading-symbol {
-    transition: opacity 2s ease, visibility 2s ease;
+    transition:
+        opacity 2s ease,
+        visibility 2s ease;
     opacity: 0;
     z-index: 1;
     position: absolute;
@@ -391,7 +431,7 @@ table {
 
     caption {
         font-size: 1.5em;
-        margin: .5em 0 .75em;
+        margin: 0.5em 0 0.75em;
     }
 
     tr {
@@ -407,21 +447,21 @@ table {
     }
 
     thead {
-        >tr {
+        > tr {
             background-color: var(--int-theme) !important;
         }
     }
 
     th {
-        padding: .6em;
+        padding: 0.6em;
         text-align: center;
-        font-size: .85em;
-        letter-spacing: .1em;
+        font-size: 0.85em;
+        letter-spacing: 0.1em;
         text-transform: uppercase;
     }
 
     td {
-        padding: .5em;
+        padding: 0.5em;
         text-align: center;
         min-width: 60px;
     }
@@ -430,10 +470,9 @@ table {
 }
 
 table.compact {
-
     td,
     th {
-        padding: .1em 2em;
+        padding: 0.1em 2em;
     }
 
     margin: 0 auto;

@@ -1,10 +1,10 @@
 // Libraries & stores
-import { ref } from 'vue'
-import { defineStore } from 'pinia'
-import stores, { AppStore } from '@/stores'
+import { ref } from "vue"
+import { defineStore } from "pinia"
+import stores, { type AppStore } from "@/stores"
 // API & types
-import { Tagger } from '@/types/taggers'
-import * as API from '@/api/taggers'
+import { type Tagger } from "@/types/taggers"
+import * as API from "@/api/taggers"
 
 /**
  * Sort the 'annotations' field of the taggers. The order is stochastic when retrieved from the API.
@@ -19,7 +19,7 @@ export function sort_tagger_annotations(types: string[]): string[] {
 /**
  * Stores all available taggers. Mainly informational.
  */
-const useTaggers = defineStore('taggers', () => {
+const useTaggers = defineStore("taggers", () => {
     // Stores
     const app = stores.useApp() as AppStore
 
@@ -31,16 +31,19 @@ const useTaggers = defineStore('taggers', () => {
     function reload() {
         loading.value = true
         API.getTaggers()
-            .then(response => taggers.value = response.data)
-            .catch(error => { app.handleServerError("fetch taggers", error) })
-            .finally(() => loading.value = false)
+            .then((response) => (taggers.value = response.data))
+            .catch((error) => {
+                app.handleServerError("fetch taggers", error)
+            })
+            .finally(() => (loading.value = false))
     }
 
     reload() // load once
 
     // Exports
     return {
-        loading, taggers
+        loading,
+        taggers,
     }
 })
 

@@ -1,8 +1,6 @@
 <template>
     <div :id="id" :class="`g-card ${disabled ? 'disabled' : ''} ${highlight ? 'highlight' : ''}`">
-
         <div v-if="!headless">
-
             <!-- title -->
             <div class="title" style="text-align: center">
                 <h3>
@@ -10,14 +8,12 @@
                         <template v-if="title">
                             {{ title }}
                         </template>
-                        <template v-else>
-                            Someone forgot to put a title
-                        </template>
+                        <template v-else> Someone forgot to put a title </template>
                     </slot>
                 </h3>
                 <span v-if="!noHelp">
                     <GButton plain v-if="!showHelp" @click="expand = !expand" :disabled="disabled" title="Help">
-                        {{ expand ? '&times;' : '?' }}
+                        {{ expand ? "&times;" : "?" }}
                     </GButton>
                 </span>
             </div>
@@ -34,7 +30,6 @@
             <i class="header">
                 <slot name="header"></slot>
             </i>
-
         </div>
 
         <!-- content -->
@@ -43,13 +38,12 @@
                 <slot>Somenone forgot to put content</slot>
             </div>
         </div>
-
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { GButton, GInfo, HelpLink } from '@/components'
+import { ref } from "vue"
+import { GButton, GInfo, HelpLink } from "@/components"
 
 const props = defineProps({
     disabled: { type: Boolean, default: false },
@@ -59,7 +53,7 @@ const props = defineProps({
     id: { type: String, default: "" },
     noHelp: { type: Boolean, default: false },
     showHelp: { type: Boolean, default: false },
-    title: { type: String }
+    title: { type: String },
 })
 
 const expand = ref(props.showHelp)

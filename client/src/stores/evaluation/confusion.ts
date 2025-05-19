@@ -1,20 +1,20 @@
 // Libraries & stores
-import { ref } from 'vue'
-import { defineStore } from 'pinia'
-import stores from '@/stores'
+import { ref } from "vue"
+import { defineStore } from "pinia"
+import stores from "@/stores"
 // API & types
-import { UUID } from '@/types/corpora'
-import { ConfusionWrapper } from '@/types/evaluation'
-import * as API from '@/api/evaluation'
-import * as Utils from '@/stores/evaluation/utils'
+import type { UUID } from "@/types/corpora"
+import type { ConfusionWrapper } from "@/types/evaluation"
+import * as API from "@/api/evaluation"
+import * as Utils from "@/stores/evaluation/utils"
 
 // Allows for Object.keys(confusion.table), which dislikes null.
-const defaultConfusion = () => ({ table: {} } as ConfusionWrapper)
+const defaultConfusion = () => ({ table: {} }) as ConfusionWrapper
 
 /**
  * Stores and fetches the confusion matrix.
  */
-const useConfusion = defineStore('confusion', () => {
+const useConfusion = defineStore("confusion", () => {
     // Fields
     const loading = ref(false)
     const confusion = ref(defaultConfusion())
@@ -43,16 +43,18 @@ const useConfusion = defineStore('confusion', () => {
             stores,
             corpus,
             hypothesis,
-            reference
+            reference,
         )
     }
 
     // Exports
     return {
         // Fields
-        confusion, loading,
+        confusion,
+        loading,
         // Methods
-        reloadForUUIDHypothesisReference, reset,
+        reloadForUUIDHypothesisReference,
+        reset,
     }
 })
 

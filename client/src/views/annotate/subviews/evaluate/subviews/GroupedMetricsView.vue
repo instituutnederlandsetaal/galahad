@@ -1,17 +1,21 @@
 <template>
     <div>
-        <MetricsTable title="Grouped Metrics" :loading :columns :items @download="(data) => download(data)"
-            :downloading>
+        <MetricsTable
+            title="Grouped Metrics"
+            :loading
+            :columns
+            :items
+            @download="(data) => download(data)"
+            :downloading
+        >
             <template #help>
-                In Grouped Metrics an overview is given of the (dis)agreement for lemma and PoS per part-of-speech.
-                For each PoS, different metrics are given by choosing the annotation and the grouping. By clicking
-                on a percentage, a data sample is shown.
+                In Grouped Metrics an overview is given of the (dis)agreement for lemma and PoS per part-of-speech. For
+                each PoS, different metrics are given by choosing the annotation and the grouping. By clicking on a
+                percentage, a data sample is shown.
             </template>
             <template #prepend v-if="metrics.metrics != null">
-                <p style="text-align: center;">
-                    <b>
-                        Only the 100 most frequent groups are shown.
-                    </b>
+                <p style="text-align: center">
+                    <b> Only the 100 most frequent groups are shown. </b>
                 </p>
                 <MetricsFilter ref="metricsFilter" :annotations="metrics.metrics" />
             </template>
@@ -23,17 +27,17 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import { ref, computed } from 'vue'
-import { storeToRefs } from 'pinia'
+import { ref, computed } from "vue"
+import { storeToRefs } from "pinia"
 import stores from "@/stores"
 // API & types
-import { metricsPerPosColumns } from '@/stores/evaluation/metrics'
-import * as API from '@/api/evaluation'
+import { metricsPerPosColumns } from "@/stores/evaluation/metrics"
+import * as API from "@/api/evaluation"
 import * as Utils from "@/api/utils"
 // Components
-import { EvaluationInfoBox } from '@/components'
-import MetricsTable from '@/components/tables/MetricsTable.vue'
-import MetricsFilter from '@/components/tables/MetricsFilter.vue'
+import { EvaluationInfoBox } from "@/components"
+import MetricsTable from "@/components/tables/MetricsTable.vue"
+import MetricsFilter from "@/components/tables/MetricsFilter.vue"
 
 // Stores
 const { loading, metrics } = storeToRefs(stores.useMetrics())
@@ -51,7 +55,7 @@ const metricName = computed(() => {
 
 const posMetrics = computed(() => {
     if (metrics.value?.metrics?.[metricName.value] == null) return []
-    // Copy over the metrics (depending on selectedMetric.value) from: 
+    // Copy over the metrics (depending on selectedMetric.value) from:
     // { ADJ: { ADJ: { pos : { f1, recall, ... }, lemma : { f1, recall, ... } } } } }
     // to:
     // { ADJ: { ADJ: { f1, recall, ..., } } }
@@ -87,12 +91,18 @@ function download(data: Any) {
     const group = data.item.name
 
     downloading.value = true
-    API.getMetricsSamples(corporaStore.activeUUID, jobSelection.hypothesisJobId, jobSelection.referenceJobId, metricName.value, classType, group)
+    API.getMetricsSamples(
+        corporaStore.activeUUID,
+        jobSelection.hypothesisJobId,
+        jobSelection.referenceJobId,
+        metricName.value,
+        classType,
+        group,
+    )
         .then((response) => {
             Utils.browserDownloadResponseFile(response)
         })
-        .catch(res => Utils.handleBlobError(res, "download grouped metrics samples", app))
-        .finally(() => downloading.value = false)
-
+        .catch((res) => Utils.handleBlobError(res, "download grouped metrics samples", app))
+        .finally(() => (downloading.value = false))
 }
 </script>

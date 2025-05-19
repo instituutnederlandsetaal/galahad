@@ -1,23 +1,28 @@
 <template>
     <GCard :title="title" :disabled="disabled" noHelp>
         <template #help>
-            Select the result of a tagger job as a hypothesis or reference layer.
-            It is also possible to select the source annotations.
+            Select the result of a tagger job as a hypothesis or reference layer. It is also possible to select the
+            source annotations.
         </template>
         <GSpinner v-if="jobsStore.loading" />
-        <GInput v-else type="select" :options="jobSelectionStore.selectableJobs" v-model="private_value"
-            :disabled="disabled">
+        <GInput
+            v-else
+            type="select"
+            :options="jobSelectionStore.selectableJobs"
+            v-model="private_value"
+            :disabled="disabled"
+        >
         </GInput>
         <GInfo v-if="untaggedDocsExist">
             Not all documents have been tagged yet. It is still possible to select this layer, but it will be
             incomplete. <br />
-            Alternatively, <GNav :route="{ path: '/annotate/jobs' }">start a new tagger job</GNav> or wait for the
-            current job to finish.
+            Alternatively,
+            <GNav :route="{ path: '/annotate/jobs' }">start a new tagger job</GNav> or wait for the current job to
+            finish.
         </GInfo>
         <GInfo v-if="sourceLayerHasMissingAnnotations">
             Some documents in this corpus have no source annotations. It is still possible to select this layer, but it
-            will be
-            incomplete. <br />
+            will be incomplete. <br />
             Alternatively, <GNav :route="{ path: '/annotate/documents' }">go to documents</GNav> and remove or add
             documents.
         </GInfo>
@@ -26,12 +31,12 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import { computed, ref, watch } from 'vue'
-import stores, { JobsStore, JobSelectionStore } from '@/stores'
+import { computed, ref, watch } from "vue"
+import stores, { JobsStore, JobSelectionStore } from "@/stores"
 // API & Types
-import { SOURCE_LAYER } from '@/types/jobs'
+import { SOURCE_LAYER } from "@/types/jobs"
 // Components
-import { GCard, GInput, GSpinner } from '@/components'
+import { GCard, GInput, GSpinner } from "@/components"
 
 // Stores
 const jobsStore = stores.useJobs() as JobsStore
@@ -44,7 +49,7 @@ const props = defineProps({
     isReference: { default: false },
     customTitle: { default: null as string | null },
 })
-const title = computed(() => props.customTitle ?? (props.isReference ? 'Reference' : 'Hypothesis'))
+const title = computed(() => props.customTitle ?? (props.isReference ? "Reference" : "Hypothesis"))
 const private_value = ref(null)
 // Whether there are documents that have not been tagged yet.
 // Not relevant for source layer.
@@ -68,21 +73,24 @@ const sourceLayerHasMissingAnnotations = computed(() => {
 
 // Watches & mounts
 // watch both referenceJobId and hypothesisJobId
-watch(() => [jobSelectionStore.referenceJobId, jobSelectionStore.hypothesisJobId], () => {
-    if (props.isReference)
-        private_value.value = jobSelectionStore.referenceJobId
-    else
-        private_value.value = jobSelectionStore.hypothesisJobId
-}, { immediate: true })
+watch(
+    () => [jobSelectionStore.referenceJobId, jobSelectionStore.hypothesisJobId],
+    () => {
+        if (props.isReference) private_value.value = jobSelectionStore.referenceJobId
+        else private_value.value = jobSelectionStore.hypothesisJobId
+    },
+    { immediate: true },
+)
 // reverse
-watch(private_value, () => {
-    if (!private_value.value) return
-    if (props.isReference)
-        jobSelectionStore.referenceJobId = private_value.value
-    else
-        jobSelectionStore.hypothesisJobId = private_value.value
-}, { immediate: true })
-
+watch(
+    private_value,
+    () => {
+        if (!private_value.value) return
+        if (props.isReference) jobSelectionStore.referenceJobId = private_value.value
+        else jobSelectionStore.hypothesisJobId = private_value.value
+    },
+    { immediate: true },
+)
 </script>
 
 <style scoped lang="scss">

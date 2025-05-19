@@ -1,29 +1,22 @@
 /**
- * API calls for exporting corpora and documents. 
+ * API calls for exporting corpora and documents.
  * Either converted to a certain format or merged with their original file if the format supports it.
  */
 
-// Types & API
+// --- api ---
 import * as Utils from "@/api/utils"
-import { BlobResponse } from "@/api/utils"
+// --- types ---
+import type { BlobResponse } from "@/api/utils"
+import type { UUID } from "@/types/corpora"
 import { Format } from "@/types/documents"
-import { UUID } from "@/types/corpora"
 
-// Paths
-const convertCorpusPath = (corpus: UUID, job: string, format: Format, posHeadOnly: Boolean) => {
-    return `/corpora/${corpus}/jobs/${job}/export/convert?format=${format}&posHeadOnly=${posHeadOnly}`
-}
-const mergeCorpusPath = (corpus: UUID, job: string, format: Format, posHeadOnly: Boolean) => {
-    return `/corpora/${corpus}/jobs/${job}/export/merge?format=${format}&posHeadOnly=${posHeadOnly}`
-}
-const convertDocumentPath = (corpus: UUID, job: string, document: string, format: Format) => {
-    return `/corpora/${corpus}/jobs/${job}/documents/${document}/export/convert?format=${format}`
-}
-const mergeDocumentPath = (corpus: UUID, job: string, document: string) => {
-    return `/corpora/${corpus}/jobs/${job}/documents/${document}/export/merge`
-}
+// --- computed ---
+const convertCorpusPath = (corpus: UUID, job: string, format: Format, posHeadOnly: boolean) =>
+    `/corpora/${corpus}/jobs/${job}/export/convert?format=${format}&posHeadOnly=${posHeadOnly}`
+const mergeCorpusPath = (corpus: UUID, job: string, format: Format, posHeadOnly: boolean) =>
+    `/corpora/${corpus}/jobs/${job}/export/merge?format=${format}&posHeadOnly=${posHeadOnly}`
 
-// Public methods
+// --- methods ---
 /**
  * Download a corpus converted to the desired format.
  * @param corpus UUID of the corpus.
@@ -44,29 +37,4 @@ export function convertCorpus(corpus: UUID, job: string, format: Format, posHead
  */
 export function mergeCorpus(corpus: UUID, job: string, format: Format, posHeadOnly: boolean): Promise<BlobResponse> {
     return Utils.getBlob(mergeCorpusPath(corpus, job, format, posHeadOnly))
-}
-
-/**
- * Download a single document from a job convert to the desired format.
- * @param corpus UUID of the corpus.
- * @param job Tagger job name.
- * @param document Document name.
- * @param format Use enum here.
- */
-// Currently unused
-export function convertDocument(corpus: UUID, job: string, document: string, format: Format): Promise<BlobResponse> {
-    return Utils.getBlob(convertDocumentPath(corpus, job, document, format))
-}
-
-/**
- * Download a single document from a job convert to the desired format, 
- * merging it if the original file is of that format.
- * @param corpus UUID of the corpus.
- * @param job Tagger job name.
- * @param document Document name.
- * @param format Use enum here.
- */
-// Currently unused
-export function mergeDocument(corpus: UUID, job: string, document: string): Promise<BlobResponse> {
-    return Utils.getBlob(mergeDocumentPath(corpus, job, document))
 }

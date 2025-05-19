@@ -1,23 +1,23 @@
-import useApp from './app'
-import useUser from './user'
+import useApp from "./app"
+import useUser from "./user"
 
-import useCorpora from './corpora'
+import useCorpora from "./corpora"
 
-import useDocuments from './documents'
+import useDocuments from "./documents"
 
-import useJobs from './jobs'
-import useJobSelection from './jobselection'
+import useJobs from "./jobs"
+import useJobSelection from "./jobselection"
 
-import useTaggers from './taggers'
-import useTagsets from './tagsets'
-import useAssays from './assays'
+import useTaggers from "./taggers"
+import useTagsets from "./tagsets"
+import useAssays from "./assays"
 
-import useEvaluation from './evaluation'
-import useDistribution from './evaluation/distribution'
-import useMetrics from './evaluation/metrics'
-import useConfusion from './evaluation/confusion'
+import useEvaluation from "./evaluation"
+import useDistribution from "./evaluation/distribution"
+import useMetrics from "./evaluation/metrics"
+import useConfusion from "./evaluation/confusion"
 
-import useExport from './export'
+import useExport from "./export"
 
 // Custom types
 export type AppStore = ReturnType<typeof useApp>

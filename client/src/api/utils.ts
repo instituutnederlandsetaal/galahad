@@ -3,9 +3,9 @@
  */
 
 // Libraries & stores
-import { AppStore } from "@/stores"
-import axios, { AxiosResponse, AxiosError, AxiosRequestConfig } from "axios"
-import { parse } from 'content-disposition'
+import type { AppStore } from "@/stores"
+import axios, { type AxiosResponse, AxiosError, type AxiosRequestConfig } from "axios"
+import { parse } from "content-disposition"
 
 // Custom types
 export type BlobResponse = AxiosResponse<Blob>
@@ -15,7 +15,7 @@ export type BlobResponse = AxiosResponse<Blob>
  * @param path Request path.
  */
 export function getBlob(path: string, config?: AxiosRequestConfig): Promise<BlobResponse> {
-    return axios.get(path, { responseType: 'blob', ...config })
+    return axios.get(path, { responseType: "blob", ...config })
 }
 
 /**
@@ -24,17 +24,17 @@ export function getBlob(path: string, config?: AxiosRequestConfig): Promise<Blob
  */
 export function browserDownloadResponseFile(response: BlobResponse) {
     // Parse potential UTF8 filename.
-    const filename = parse(response.headers['content-disposition']).parameters.filename
+    const filename = parse(response.headers["content-disposition"]).parameters.filename
     // DOM link.
-    const linkEl = document.createElement('a')
+    const linkEl = document.createElement("a")
     linkEl.href = window.URL.createObjectURL(new Blob([response.data]))
-    linkEl.setAttribute('download', filename)
+    linkEl.setAttribute("download", filename)
     document.body.appendChild(linkEl)
     linkEl.click()
 }
 
 /**
- * Axios does not support multiple responseTypes. When trying to download a blob, 
+ * Axios does not support multiple responseTypes. When trying to download a blob,
  * we also receive a blob on error instead of json. So first parse to json.
  * https://medium.com/@fakiolinho/handle-blobs-requests-with-axios-the-right-way-bb905bdb1c04
  * @param error Axios error.
@@ -48,8 +48,8 @@ export function handleBlobError(error: AxiosError<Blob>, intent: string, app: Ap
         const json = JSON.parse(reader.result as string)
         const errObj = {
             response: {
-                data: json
-            }
+                data: json,
+            },
         } as AxiosError
         app.handleServerError(intent, errObj)
     }

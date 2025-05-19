@@ -1,12 +1,12 @@
 // Libraries & stores
 import { ref } from "vue"
 import { defineStore } from "pinia"
-import stores, { AppStore, CorporaStore, JobSelectionStore } from '@/stores'
+import stores, { type AppStore, type CorporaStore, type JobSelectionStore } from "@/stores"
 // API & types
 import * as API from "@/api/evaluation"
 import * as Utils from "@/api/utils"
-import { Term, TermComparison } from "@/types/evaluation"
-import { UUID } from "@/types/corpora"
+import type { Term, TermComparison } from "@/types/evaluation"
+import type { UUID } from "@/types/corpora"
 
 // For some reason the terms are undefined sometimes
 // We handle it here
@@ -16,8 +16,9 @@ export function literalsForTerm(term: Term): string {
 
 export function literalsForTermComparison(termComparison: TermComparison): string {
     // the literals could be different for term1 and term2
-    if (literalsForTerm(termComparison.hypoTerm) == literalsForTerm(termComparison.refTerm)
-        || literalsForTerm(termComparison.refTerm) == ""
+    if (
+        literalsForTerm(termComparison.hypoTerm) == literalsForTerm(termComparison.refTerm) ||
+        literalsForTerm(termComparison.refTerm) == ""
     ) {
         return literalsForTerm(termComparison.hypoTerm)
     } else if (literalsForTerm(termComparison.hypoTerm) == "") {
@@ -30,7 +31,7 @@ export function literalsForTermComparison(termComparison: TermComparison): strin
 /**
  * Used to download the evaluation CSV zip.
  */
-const useEvaluation = defineStore('evaluation', () => {
+const useEvaluation = defineStore("evaluation", () => {
     // Stores
     const app = stores.useApp() as AppStore
     const corporaStore = stores.useCorpora() as CorporaStore
@@ -48,8 +49,8 @@ const useEvaluation = defineStore('evaluation', () => {
         loading.value = true
         API.getDownloadEvaluation(corporaStore.activeUUID, jobSelection.hypothesisJobId, jobSelection.referenceJobId)
             .then(Utils.browserDownloadResponseFile)
-            .catch(error => Utils.handleBlobError(error, "download evaluation", app))
-            .finally(() => loading.value = false)
+            .catch((error) => Utils.handleBlobError(error, "download evaluation", app))
+            .finally(() => (loading.value = false))
     }
 
     // Exports

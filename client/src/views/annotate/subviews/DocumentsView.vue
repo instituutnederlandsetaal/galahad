@@ -1,17 +1,18 @@
 <template>
-    <AnnotateTab hideDocsError hideAnnotationsError> <!-- Afterall, this is where we will add docs -->
+    <AnnotateTab hideDocsError hideAnnotationsError>
+        <!-- Afterall, this is where we will add docs -->
         <DocumentsTable :type="TableDocumentsType.User" :corpus="corporaStore.activeCorpus" />
     </AnnotateTab>
 </template>
 
 <script setup lang="ts">
 // Libraries & stores
-import { onMounted } from 'vue'
-import stores, { CorporaStore } from '@/stores'
+import { onMounted } from "vue"
+import stores, { CorporaStore } from "@/stores"
 // API & types
-import { TableDocumentsType } from '@/types/table'
+import { TableDocumentsType } from "@/types/table"
 // Components
-import { DocumentsTable, AnnotateTab } from '@/components'
+import { DocumentsTable, AnnotateTab } from "@/components"
 
 // Stores
 const corporaStore = stores.useCorpora() as CorporaStore

@@ -1,16 +1,16 @@
 // Libraries & stores
-import { computed, ref } from 'vue'
-import { defineStore } from 'pinia'
-import stores, { AppStore, CorporaStore, JobSelectionStore } from '@/stores'
+import { computed, ref } from "vue"
+import { defineStore } from "pinia"
+import stores, { type AppStore, type CorporaStore, type JobSelectionStore } from "@/stores"
 // Types & API
-import * as API from '@/api/export'
-import { Format } from '@/types/documents'
-import * as Utils from '@/api/utils'
+import * as API from "@/api/export"
+import { Format } from "@/types/documents"
+import * as Utils from "@/api/utils"
 
 /**
  * Used to download exported corpora.
  */
-const useExport = defineStore('exportStore', () => {
+const useExport = defineStore("exportStore", () => {
     // Stores
     const corporaStore = stores.useCorpora() as CorporaStore
     const app = stores.useApp() as AppStore
@@ -32,22 +32,24 @@ const useExport = defineStore('exportStore', () => {
         loading.value = true
         API.convertCorpus(corporaStore.activeUUID, jobSelection.hypothesisJobId, format.value, posHeadOnly)
             .then(Utils.browserDownloadResponseFile)
-            .catch(res => Utils.handleBlobError(res, "convert corpus", app))
-            .finally(() => loading.value = false)
+            .catch((res) => Utils.handleBlobError(res, "convert corpus", app))
+            .finally(() => (loading.value = false))
     }
 
     function merge(posHeadOnly: boolean) {
         loading.value = true
         API.mergeCorpus(corporaStore.activeUUID, jobSelection.hypothesisJobId, format.value, posHeadOnly)
             .then(Utils.browserDownloadResponseFile)
-            .catch(res => Utils.handleBlobError(res, "merge corpus", app))
-            .finally(() => loading.value = false)
+            .catch((res) => Utils.handleBlobError(res, "merge corpus", app))
+            .finally(() => (loading.value = false))
     }
     // Exports
     return {
         // Fields
         // note: exporting the format seems necessary for reactivity
-        format, linksAreValid, loading,
+        format,
+        linksAreValid,
+        loading,
         // Methods
         convert,
     }

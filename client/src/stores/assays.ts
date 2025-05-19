@@ -1,21 +1,21 @@
 // Libraries & stores
-import { computed, ref } from 'vue'
-import { defineStore } from 'pinia'
-import stores, { AppStore } from '@/stores'
+import { ref } from "vue"
+import { defineStore } from "pinia"
+import stores, { type AppStore } from "@/stores"
 // Types & API
-import { Assays } from '@/types/assays'
-import * as API from '@/api/assays'
+import type { Benchmarks } from "@/types/assays"
+import * as API from "@/api/benchmarks"
 
 /**
  * Contains dataset assays.
  */
-const useAssays = defineStore('assays', () => {
+const useAssays = defineStore("assays", () => {
     // Stores
     const app = stores.useApp() as AppStore
 
     // Fields
     const loading = ref(false)
-    const assays = ref({} as Assays)
+    const assays = ref({} as Benchmarks)
 
     // Methods
     /**
@@ -23,16 +23,17 @@ const useAssays = defineStore('assays', () => {
      */
     function reload() {
         loading.value = true
-        API.getAssays()
-            .then(response => assays.value = response.data)
-            .catch(error => app.handleServerError("fetch assays", error))
-            .finally(() => loading.value = false)
+        API.getBenchmarks()
+            .then((response) => (assays.value = response.data))
+            .catch((error) => app.handleServerError("fetch assays", error))
+            .finally(() => (loading.value = false))
     }
 
     // Exports
     return {
         // Fields
-        assays, loading,
+        assays,
+        loading,
         // Methods
         reload,
     }

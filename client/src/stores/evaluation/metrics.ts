@@ -1,30 +1,46 @@
 // Libraries & stores
-import { ref } from 'vue'
-import { defineStore } from 'pinia'
-import stores from '@/stores'
+import { ref } from "vue"
+import { defineStore } from "pinia"
+import stores from "@/stores"
 // API & types
-import { UUID } from '@/types/corpora'
-import { Metrics, MetricsRow } from '@/types/evaluation'
-import * as API from '@/api/evaluation'
-import * as Utils from '@/stores/evaluation/utils'
+import type { UUID } from "@/types/corpora"
+import type { Metrics, MetricsRow } from "@/types/evaluation"
+import * as API from "@/api/evaluation"
+import * as Utils from "@/stores/evaluation/utils"
 
 export const metricsPerPosColumns = [
-    { key: 'name', label: 'group', sortOn: (x: MetricsRow) => isNaN(parseInt(x.name)) ? x.name : parseInt(x.name) },
+    {
+        key: "name",
+        label: "group",
+        sortOn: (x: MetricsRow) => (isNaN(parseInt(x.name)) ? x.name : parseInt(x.name)),
+    },
     // { key: 'accuracy', sortOn: (x: MetricsRow) => x.accuracy },
-    { key: 'precision', sortOn: (x: MetricsRow) => x.precision },
-    { key: 'recall', sortOn: (x: MetricsRow) => x.recall },
-    { key: 'f1', sortOn: (x: MetricsRow) => x.f1 },
-    { key: 'count', label: 'count', sortOn: (x: MetricsRow) => x.count },
-    { key: 'truePositive', label: 'true positive', sortOn: (x: MetricsRow) => x.truePositive.count / x.count },
-    { key: 'falsePositive', label: 'false positive', sortOn: (x: MetricsRow) => x.falsePositive.count / x.count },
-    { key: 'falseNegative', label: 'false negative', sortOn: (x: MetricsRow) => x.falseNegative.count / x.count },
-    { key: 'noMatch', label: "no match", sortOn: (x: MetricsRow) => x.noMatch.count / x.count },
+    { key: "precision", sortOn: (x: MetricsRow) => x.precision },
+    { key: "recall", sortOn: (x: MetricsRow) => x.recall },
+    { key: "f1", sortOn: (x: MetricsRow) => x.f1 },
+    { key: "count", label: "count", sortOn: (x: MetricsRow) => x.count },
+    {
+        key: "truePositive",
+        label: "true positive",
+        sortOn: (x: MetricsRow) => x.truePositive.count / x.count,
+    },
+    {
+        key: "falsePositive",
+        label: "false positive",
+        sortOn: (x: MetricsRow) => x.falsePositive.count / x.count,
+    },
+    {
+        key: "falseNegative",
+        label: "false negative",
+        sortOn: (x: MetricsRow) => x.falseNegative.count / x.count,
+    },
+    { key: "noMatch", label: "no match", sortOn: (x: MetricsRow) => x.noMatch.count / x.count },
 ]
 
 /**
  * Stores and fetches the Lemma & PoS accuracy metrics.
  */
-const useMetrics = defineStore('metrics', () => {
+const useMetrics = defineStore("metrics", () => {
     // Fields
     const loading = ref(false)
     const metrics = ref({} as Metrics)
@@ -53,16 +69,18 @@ const useMetrics = defineStore('metrics', () => {
             stores,
             corpus,
             hypothesis,
-            reference
+            reference,
         )
     }
 
     // Exports
     return {
         // Fields
-        loading, metrics,
+        loading,
+        metrics,
         // Methods
-        reloadForUUIDHypothesisReference, reset,
+        reloadForUUIDHypothesisReference,
+        reset,
     }
 })
 

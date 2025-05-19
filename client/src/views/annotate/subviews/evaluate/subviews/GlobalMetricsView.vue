@@ -1,15 +1,28 @@
 <template>
     <div>
-        <MetricsTable title="Basic Global Metrics" :loading :columns :items="basicItems"
-            @download="(data) => download(data)" :downloading>
+        <MetricsTable
+            title="Basic Global Metrics"
+            :loading
+            :columns
+            :items="basicItems"
+            @download="(data) => download(data)"
+            :downloading
+        >
             <template #help>
                 In Global Metrics an overview is given of the (dis)agreement between the two layers that have been
                 selected for lemma and PoS comparison. By clicking on the percentage, a data sample is shown.
             </template>
         </MetricsTable>
 
-        <MetricsTable title="Extended Global Metrics" :loading :columns :items="complexItems" noHelp
-            @download="(data) => download(data)" :downloading />
+        <MetricsTable
+            title="Extended Global Metrics"
+            :loading
+            :columns
+            :items="complexItems"
+            noHelp
+            @download="(data) => download(data)"
+            :downloading
+        />
 
         <EvaluationInfoBox :eval="metrics" />
     </div>
@@ -17,16 +30,16 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import { storeToRefs } from 'pinia'
-import { computed, ref } from 'vue'
+import { storeToRefs } from "pinia"
+import { computed, ref } from "vue"
 import stores, { CorporaStore, AppStore, JobSelectionStore } from "@/stores"
 // API & types
-import { metricsPerPosColumns } from '@/stores/evaluation/metrics'
-import * as API from '@/api/evaluation'
+import { metricsPerPosColumns } from "@/stores/evaluation/metrics"
+import * as API from "@/api/evaluation"
 import * as Utils from "@/api/utils"
 // Components
-import MetricsTable from '@/components/tables/MetricsTable.vue'
-import { EvaluationInfoBox } from '@/components'
+import MetricsTable from "@/components/tables/MetricsTable.vue"
+import { EvaluationInfoBox } from "@/components"
 
 // Types
 type GlobalMetricsRow = {
@@ -52,42 +65,45 @@ const app = stores.useApp() as AppStore
 // Fields
 const downloading = ref(false)
 const columns = computed(() => {
-    const withoutName = metricsPerPosColumns.filter((col) => !["precision", "recall", "f1", "falsePositive", "name"].includes(col.key))
+    const withoutName = metricsPerPosColumns.filter(
+        (col) => !["precision", "recall", "f1", "falsePositive", "name"].includes(col.key),
+    )
     const addColumns = [
-        { key: "name", label: "annotation", sortOn: x => x.annotation },
-        { key: "group", label: "grouped by", sortOn: x => x.group },
-        { key: "macroPrecision", label: "macro\nprecision", sortOn: x => x.macroPrecision },
-        { key: "macroRecall", label: "macro\nrecall", sortOn: x => x.macroRecall },
-        { key: "macroF1", label: "macro\nf1", sortOn: x => x.macroF1 },
-        { key: "microAccuracy", label: "micro\naccuracy", sortOn: x => x.microAccuracy }
+        { key: "name", label: "annotation", sortOn: (x) => x.annotation },
+        { key: "group", label: "grouped by", sortOn: (x) => x.group },
+        { key: "macroPrecision", label: "macro\nprecision", sortOn: (x) => x.macroPrecision },
+        { key: "macroRecall", label: "macro\nrecall", sortOn: (x) => x.macroRecall },
+        { key: "macroF1", label: "macro\nf1", sortOn: (x) => x.macroF1 },
+        { key: "microAccuracy", label: "micro\naccuracy", sortOn: (x) => x.microAccuracy },
     ]
     return addColumns.concat(withoutName)
 })
 const items = computed(() => {
-    if (metrics.value?.metrics == null)
-        return []
+    if (metrics.value?.metrics == null) return []
     else {
         // metrics has the form
         // { pos: { f1, recall, ... }, lemma: { f1, recall, ... }, lemmaPos: { f1, recall, ... } }
         // We want to transform this to
         // [ { name: "PoS", f1, recall, ... }, { name: "Lemma", f1, recall, ... }, { name: "Lemma & PoS", f1, recall, ... } ]
-        const ret = Object.keys(metrics.value.metrics).map((key) => ({ name: key, ...metrics.value.metrics[key] })).map((i) => {
-            const annoAndGroup = annotationAndGroupFromName(i.name)
-            return {
-                id: i.setting.id,
-                column: i.setting.annotation,
-                name: i.setting.annotation,
-                group: i.setting.group,
-                count: i.classes.classCount,
-                truePositive: i.classes.truePositive,
-                falseNegative: i.classes.falseNegative,
-                noMatch: i.classes.noMatch,
-                macroPrecision: i.macro.precision,
-                macroRecall: i.macro.recall,
-                macroF1: i.macro.f1,
-                microAccuracy: i.micro.accuracy,
-            }
-        })
+        const ret = Object.keys(metrics.value.metrics)
+            .map((key) => ({ name: key, ...metrics.value.metrics[key] }))
+            .map((i) => {
+                const annoAndGroup = annotationAndGroupFromName(i.name)
+                return {
+                    id: i.setting.id,
+                    column: i.setting.annotation,
+                    name: i.setting.annotation,
+                    group: i.setting.group,
+                    count: i.classes.classCount,
+                    truePositive: i.classes.truePositive,
+                    falseNegative: i.classes.falseNegative,
+                    noMatch: i.classes.noMatch,
+                    macroPrecision: i.macro.precision,
+                    macroRecall: i.macro.recall,
+                    macroF1: i.macro.f1,
+                    microAccuracy: i.micro.accuracy,
+                }
+            })
         return ret
     }
 })
@@ -111,12 +127,18 @@ function download(data: Any) {
     const setting = data.item.id
 
     downloading.value = true
-    API.getMetricsSamples(corporaStore.activeUUID, jobSelection.hypothesisJobId, jobSelection.referenceJobId, setting, classType)
+    API.getMetricsSamples(
+        corporaStore.activeUUID,
+        jobSelection.hypothesisJobId,
+        jobSelection.referenceJobId,
+        setting,
+        classType,
+    )
         .then((response) => {
             Utils.browserDownloadResponseFile(response)
         })
-        .catch(res => Utils.handleBlobError(res, "download global metrics samples", app))
-        .finally(() => downloading.value = false)
+        .catch((res) => Utils.handleBlobError(res, "download global metrics samples", app))
+        .finally(() => (downloading.value = false))
 }
 
 function basicMetricFilter(item: GlobalMetricsRow): boolean {

@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import { useSlots } from 'vue'
+import { useSlots } from "vue"
 const slots = useSlots()
 </script>
 

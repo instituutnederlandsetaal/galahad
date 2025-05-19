@@ -6,38 +6,63 @@
         </template>
         <table>
             <template v-if="userStore.hasWriteAccess || !item">
-
                 <tr>
                     <td>
                         <label>Name:</label> <span class="warning"><small>(Required)</small></span>
                     </td>
                     <td>
-                        <GInput v-model="name" refName="corpusName" placeholder="corpus name"
-                            :validator="validateCorpusName" validityDescriptor="3-100 characters" @enter="doAction" />
+                        <GInput
+                            v-model="name"
+                            refName="corpusName"
+                            placeholder="corpus name"
+                            :validator="validateCorpusName"
+                            validityDescriptor="3-100 characters"
+                            @enter="doAction"
+                        />
                     </td>
                 </tr>
                 <tr>
                     <td><label>Year from:</label></td>
                     <td>
-                        <GInput v-model.number="eraFrom" validityDescriptor="Must be before end year"
-                            :validator="(v) => { return v <= eraTo }" :min="-10000" :max="10000" placeholder="YYYY"
-                            :step="100" @enter="doAction" />
+                        <GInput
+                            v-model.number="eraFrom"
+                            validityDescriptor="Must be before end year"
+                            :validator="
+                                (v) => {
+                                    return v <= eraTo
+                                }
+                            "
+                            :min="-10000"
+                            :max="10000"
+                            placeholder="YYYY"
+                            :step="100"
+                            @enter="doAction"
+                        />
                     </td>
                 </tr>
 
                 <tr>
                     <td><label>Year to:</label></td>
                     <td>
-                        <GInput v-model.number="eraTo" validityDescriptor="Must be after start year" placeholder="YYYY"
-                            :validator="(v) => { return v >= eraFrom }" :min="-10000" :max="10000" @enter="doAction" />
+                        <GInput
+                            v-model.number="eraTo"
+                            validityDescriptor="Must be after start year"
+                            placeholder="YYYY"
+                            :validator="
+                                (v) => {
+                                    return v >= eraFrom
+                                }
+                            "
+                            :min="-10000"
+                            :max="10000"
+                            @enter="doAction"
+                        />
                     </td>
                 </tr>
 
                 <tr>
                     <td>
-                        <label>
-                            <ExternalLink href="/galahad/overview/tagsets">Tagset</ExternalLink>:
-                        </label>
+                        <label> <ExternalLink href="/galahad/overview/tagsets">Tagset</ExternalLink>: </label>
                     </td>
                     <td>
                         <GInput v-model="tagset" list="tagsets" @enter="doAction" placeholder="tagset name" />
@@ -50,7 +75,7 @@
                 <template v-if="userStore.user.isAdmin">
                     <tr>
                         <td colspan="2">
-                            <hr>
+                            <hr />
                         </td>
                     </tr>
 
@@ -64,7 +89,7 @@
 
                 <tr>
                     <td colspan="2">
-                        <hr>
+                        <hr />
                     </td>
                 </tr>
 
@@ -85,28 +110,27 @@
                 <UserList :users="collaborators" listName="Collaborators" :showAddDialog="showAddDialog" />
             </template>
             <UserList :users="viewers" listName="Viewers" :showAddDialog="showAddDialog" />
-
         </table>
 
         <template #buttons>
-            <GButton green @click="doAction" :disabled="disabled">{{ update ? 'Update' : 'Create' }}</GButton>
+            <GButton green @click="doAction" :disabled="disabled">{{ update ? "Update" : "Create" }}</GButton>
         </template>
     </GModal>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import stores from '@/stores'
+import { defineComponent } from "vue"
+import stores from "@/stores"
 
-import { MutableCorpusMetadata } from '@/types/corpora'
+import { MutableCorpusMetadata } from "@/types/corpora"
 
 // Component dependencies.
-import UserList from '@/components/modals/corpus/UserList.vue'
+import UserList from "@/components/modals/corpus/UserList.vue"
 
 export default defineComponent({
     name: "CorpusForm",
     components: {
-        UserList
+        UserList,
     },
     props: {
         action: { type: Function },
@@ -115,7 +139,7 @@ export default defineComponent({
         update: { type: Boolean, default: false },
         showHelp: { type: Boolean, default: false },
         title: { type: String, default: "" },
-        show: { type: Boolean, default: true }
+        show: { type: Boolean, default: true },
     },
     setup() {
         const userStore = stores.useUser()
@@ -147,16 +171,18 @@ export default defineComponent({
         disabled() {
             if (!this.item && this.update) return true
             const item = this.item as MutableCorpusMetadata
-            return !this.isValid || (this.update &&
-                this.name === item.name &&
-                this.eraFrom === item.eraFrom &&
-                this.eraTo === item.eraTo &&
-                this.tagset === item.tagset &&
-                this.collaborators.join('\n') === item.collaborators.join('\n') &&
-                this.viewers.join('\n') === item.viewers.join('\n') &&
-                this.sourceName === item.sourceName &&
-                this.sourceURL === item.sourceURL &&
-                this.dataset === item.dataset
+            return (
+                !this.isValid ||
+                (this.update &&
+                    this.name === item.name &&
+                    this.eraFrom === item.eraFrom &&
+                    this.eraTo === item.eraTo &&
+                    this.tagset === item.tagset &&
+                    this.collaborators.join("\n") === item.collaborators.join("\n") &&
+                    this.viewers.join("\n") === item.viewers.join("\n") &&
+                    this.sourceName === item.sourceName &&
+                    this.sourceURL === item.sourceURL &&
+                    this.dataset === item.dataset)
             )
         },
         isValid() {
@@ -166,7 +192,7 @@ export default defineComponent({
             if (this.eraTo && !Number.isInteger(this.eraTo)) return false
             if (this.eraFrom > this.eraTo) return false
             return true
-        }
+        },
     },
     methods: {
         doAction() {
@@ -213,7 +239,7 @@ export default defineComponent({
                 url = "http://" + url
             }
             return url
-        }
+        },
     },
     watch: {
         item: {
@@ -228,11 +254,12 @@ export default defineComponent({
                 this.sourceName = newValue.sourceName
                 this.sourceURL = newValue.sourceURL
                 this.dataset = newValue.dataset
-            }, immediate: true,
-            deep: true
-        }
-    }
-});
+            },
+            immediate: true,
+            deep: true,
+        },
+    },
+})
 </script>
 
 <style scoped lang="scss">

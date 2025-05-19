@@ -8,11 +8,11 @@
 </template>
 
 <script setup lang="ts">
-import { GCard, GInfo, GNav } from '@/components'
+import { GCard, GInfo, GNav } from "@/components"
 </script>
 
 <style scoped="true" lang="scss">
 .g-card {
-  overflow-y: auto
+    overflow-y: auto;
 }
 </style>

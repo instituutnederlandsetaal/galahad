@@ -1,7 +1,7 @@
 <template>
     <GButton green :loading="loading" :disabled="disabled" title="Download">
         <!-- Note this object syntax to add css classes with booleans. -->
-        <i class="fa fa-download" :class="{ 'wide': wide }"></i>
+        <i class="fa fa-download" :class="{ wide: wide }"></i>
     </GButton>
 </template>
 

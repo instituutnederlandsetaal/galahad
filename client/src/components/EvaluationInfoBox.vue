@@ -27,11 +27,11 @@
                 <!-- Distribution only -->
                 <tr v-if="eval.totalChars > 0">
                     <td><i>Covered characters:</i></td>
-                    <td>{{ (eval.coveredChars * 100 / eval.totalChars).toFixed(0) }}%</td>
+                    <td>{{ ((eval.coveredChars * 100) / eval.totalChars).toFixed(0) }}%</td>
                 </tr>
                 <tr v-if="eval.totalAlphabeticChars > 0">
                     <td><i>Covered alphabetic characters:</i></td>
-                    <td>{{ (eval.coveredAlphabeticChars * 100 / eval.totalAlphabeticChars).toFixed(0) }}%</td>
+                    <td>{{ ((eval.coveredAlphabeticChars * 100) / eval.totalAlphabeticChars).toFixed(0) }}%</td>
                 </tr>
             </tbody>
         </table>
@@ -39,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-defineProps(['eval'])
+defineProps(["eval"])
 </script>
 
 <style scoped lang="scss">

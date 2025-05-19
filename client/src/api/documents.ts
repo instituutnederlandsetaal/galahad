@@ -1,37 +1,31 @@
 /**
- * API calls for fetching documents for a corpus, uploading and deleting documents, 
+ * API calls for fetching documents for a corpus, uploading and deleting documents,
  * and downloading the uploaded source document.
  */
 
-// Libraries & stores
-import axios, { AxiosResponse } from "axios"
-// Types & API
-import { UUID } from "@/types/corpora"
-import { DocumentMetadata } from "@/types/documents"
+// --- libraries ---
+import axios, { type AxiosResponse } from "axios"
+// -- api ---
 import * as Utils from "@/api/utils"
-import { BlobResponse } from "@/api/utils"
+// --- types ---
+import type { UUID } from "@/types/corpora"
+import type { DocumentMetadata } from "@/types/documents"
+import type { BlobResponse } from "@/api/utils"
 
-// Paths
+type DocumentsResponse = AxiosResponse<DocumentMetadata[]>
+
+// --- computed ---
 const documentsPath = (corpus: UUID) => `/corpora/${corpus}/documents`
 const documentPath = (corpus: UUID, document: string) => `${documentsPath(corpus)}/${document}`
 const rawDocumentPath = (corpus: UUID, document: string) => `${documentPath(corpus, document)}/raw`
 
-// Custom types
-type DocumentsResponse = AxiosResponse<DocumentMetadata[]>
-type DocumentResponse = AxiosResponse<DocumentMetadata>
-
-// Public methods
+// --- methods ---
 /**
  * Fetch all documents for a corpus.
  * @param corpus UUID of the corpus.
  */
 export function getDocuments(corpus: UUID): Promise<DocumentsResponse> {
     return axios.get(documentsPath(corpus))
-}
-
-// unused
-export function getDocument(corpus: UUID, document: string): Promise<DocumentResponse> {
-    return axios.get(documentPath(corpus, document))
 }
 
 /**
@@ -51,11 +45,6 @@ export function postDocument(corpus: UUID, document: FormData, contentType?: any
  */
 export function deleteDocument(corpus: UUID, document: string) {
     return axios.delete(documentPath(corpus, document))
-}
-
-// unused
-export function patchDocument(corpus: UUID, document: string, documentData: DocumentMetadata) {
-    return axios.patch(documentPath(corpus, document), documentData)
 }
 
 /**

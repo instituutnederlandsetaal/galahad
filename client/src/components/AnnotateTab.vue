@@ -1,6 +1,7 @@
 <!-- AnnotateTab takes care of error messages for unselected and empty corpora for the subtabs under annotate/* -->
 <template>
-    <div> <!-- This div fills the background color. -->
+    <div>
+        <!-- This div fills the background color. -->
         <!-- loading corpora-->
         <GCard v-if="corporaStore.loading && !hideCorpusError" title="Loading corpora" noHelp>
             <GSpinner />
@@ -35,19 +36,19 @@
             <GSpinner />
         </GCard>
         <!-- No non-empty jobs-->
-        <GCard v-else-if="jobSelectionStore.selectableJobs.length == 0 && !hideAnnotationsError" title="No annotations"
-            noHelp>
+        <GCard
+            v-else-if="jobSelectionStore.selectableJobs.length == 0 && !hideAnnotationsError"
+            title="No annotations"
+            noHelp
+        >
             <GInfo error>
                 <p>None of the documents have annotations. Either:</p>
                 <ul>
                     <li>
                         <GNav :route="{ path: '/annotate/documents' }">Upload documents</GNav> to this corpus that
-                        contain
-                        source annotations
+                        contain source annotations
                     </li>
-                    <li>
-                        <GNav :route="{ path: '/annotate/jobs' }">Start a tagger job</GNav> to create annotations
-                    </li>
+                    <li><GNav :route="{ path: '/annotate/jobs' }">Start a tagger job</GNav> to create annotations</li>
                     <li>Or wait for an existing job to finish</li>
                 </ul>
             </GInfo>
@@ -60,9 +61,9 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import stores, { CorporaStore, DocumentsStore, JobSelectionStore, JobsStore, UserStore } from '@/stores'
+import stores, { CorporaStore, DocumentsStore, JobSelectionStore, JobsStore, UserStore } from "@/stores"
 // Components
-import { GCard, GInfo, GNav, GSpinner } from '@/components'
+import { GCard, GInfo, GNav, GSpinner } from "@/components"
 
 // Stores
 const corporaStore = stores.useCorpora() as CorporaStore
@@ -75,20 +76,19 @@ const userStore = stores.useUser() as UserStore
 const props = defineProps({
     hideDocsError: {
         type: Boolean,
-        default: false
+        default: false,
     },
     hideCorpusError: {
         type: Boolean,
-        default: false
+        default: false,
     },
     hideAnnotationsError: {
         type: Boolean,
-        default: false
+        default: false,
     },
     hidePermissionsError: {
         type: Boolean,
-        default: true
+        default: true,
     },
 })
-
 </script>

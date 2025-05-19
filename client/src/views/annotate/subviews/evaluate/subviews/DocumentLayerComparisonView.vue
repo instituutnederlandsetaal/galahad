@@ -1,10 +1,9 @@
 <template>
     <GCard title="Document View">
-
         <template #help>
-            The document view show the differences between the reference and hypothesis layer in a single
-            document. Red words indicate a difference between the layers for the selected annotation. Hover over a word
-            to see all annotations.
+            The document view show the differences between the reference and hypothesis layer in a single document. Red
+            words indicate a difference between the layers for the selected annotation. Hover over a word to see all
+            annotations.
         </template>
 
         <p v-if="loading">Loading...</p>
@@ -13,7 +12,6 @@
             <div class="table-control">
                 Document:
                 <GInput type="select" :options="docNames" v-model="selectedDoc" />
-
             </div>
             <div class="table-control">
                 Annotation:
@@ -21,12 +19,9 @@
             </div>
         </div>
 
-
         <div v-if="selectedDoc && selectedAnnotation" class="document">
-
             <template v-for="tc in termcomps.slice(firstRecord, firstRecord + rowsToDisplay)" :key="tc.refTerm.id">
-
-                <span class="wordComparison" :class="{ 'incorrect': !annotationsEqual(tc) }">
+                <span class="wordComparison" :class="{ incorrect: !annotationsEqual(tc) }">
                     {{ tc.refTerm.annotations["token"] }}
                     <SingleTermComparisonTable :hypoTerm="tc.hypoTerm" :refTerm="tc.refTerm" class="tooltip" />
                 </span>
@@ -35,25 +30,28 @@
                 <br v-if="tc.refTerm.annotations['token'] == '.'" />
             </template>
 
-            <Paginator v-if="termcomps.length > rowsToDisplay" v-model:first="firstRecord" :rows="rowsToDisplay"
-                :totalRecords="termcomps.length"></Paginator>
+            <Paginator
+                v-if="termcomps.length > rowsToDisplay"
+                v-model:first="firstRecord"
+                :rows="rowsToDisplay"
+                :totalRecords="termcomps.length"
+            ></Paginator>
         </div>
         <p v-else>Select a document and an annotation.</p>
-
     </GCard>
 </template>
 
 <script setup lang="ts">
 // Library & API
-import { onMounted, watch, computed, ref, Ref } from 'vue'
-import * as API from '@/api/evaluation'
+import { onMounted, watch, computed, ref, Ref } from "vue"
+import * as API from "@/api/evaluation"
 // Types & Stores
-import { TermComparison, Term } from '@/types/evaluation'
+import { TermComparison, Term } from "@/types/evaluation"
 import stores, { CorporaStore, JobsStore, ExportStore, DocumentsStore, JobSelectionStore } from "@/stores"
 // Components
 import { GInput, GCard } from "@/components"
-import SingleTermComparisonTable from '@/components/tables/SingleTermComparisonTable.vue'
-import Paginator from 'primevue/paginator';
+import SingleTermComparisonTable from "@/components/tables/SingleTermComparisonTable.vue"
+import Paginator from "primevue/paginator"
 
 // Stores
 const documentsStore = stores.useDocuments() as DocumentsStore
@@ -61,7 +59,7 @@ const corporaStore = stores.useCorpora() as CorporaStore
 const jobSelection = stores.useJobSelection() as JobSelectionStore
 
 // Fields
-const docNames = computed(() => documentsStore.available.map(doc => ({ value: doc.name, text: doc.name })))
+const docNames = computed(() => documentsStore.available.map((doc) => ({ value: doc.name, text: doc.name })))
 const selectedDoc = ref(null)
 const selectedAnnotation: Ref<string> = ref(null as any as string)
 const annotationOptions = ref(null)
@@ -74,19 +72,28 @@ const rowsToDisplay = ref(200)
 // Watches & mounts
 watch(selectedDoc, async (newVal) => {
     if (newVal) {
-        loading.value = true;
-        API.getDocumentLayerComparison(corporaStore.activeUUID, jobSelection.hypothesisJobId, newVal, jobSelection.referenceJobId)
-            .then(response => {
+        loading.value = true
+        API.getDocumentLayerComparison(
+            corporaStore.activeUUID,
+            jobSelection.hypothesisJobId,
+            newVal,
+            jobSelection.referenceJobId,
+        )
+            .then((response) => {
                 termcomps.value = response.data
-            }).finally(() => {
-                loading.value = false;
+            })
+            .finally(() => {
+                loading.value = false
             })
     }
 })
 
 watch(termcomps, () => {
     if (!termcomps.value) return
-    annotationOptions.value = Object.keys(termcomps.value[0].refTerm.annotations).map(key => ({ value: key, text: key }))
+    annotationOptions.value = Object.keys(termcomps.value[0].refTerm.annotations).map((key) => ({
+        value: key,
+        text: key,
+    }))
 })
 
 // Methods
@@ -99,7 +106,6 @@ function annotationsEqual(tc: TermComparison) {
 function cleanAnnotation(term: Term) {
     return term.annotations[selectedAnnotation.value]?.toLowerCase().replace("_", "")
 }
-
 </script>
 
 <style scoped lang="scss">

@@ -3,10 +3,10 @@
  */
 
 // Libraries & stores
-import axios, { AxiosResponse } from "axios"
+import axios, { type AxiosResponse } from "axios"
 // Types & API
-import { Job, Progress } from "@/types/jobs"
-import { UUID } from "@/types/corpora"
+import type { Job, Progress } from "@/types/jobs"
+import type { UUID } from "@/types/corpora"
 
 // Paths
 const jobsPath = (corpus: UUID) => `/corpora/${corpus}/jobs`
@@ -25,7 +25,7 @@ export type ProgressResponse = AxiosResponse<Progress>
  * @param corpus UUID of the corpus.
  */
 export function getJobs(corpus: UUID): Promise<JobsResponse> {
-    return axios.get(jobsPath(corpus), { params:{ hasResult: false }})
+    return axios.get(jobsPath(corpus), { params: { hasResult: false } })
 }
 
 /**
@@ -40,7 +40,7 @@ export function getJob(corpus: UUID, job: string) {
 /**
  * Post a job to start it. Will return an immediate ProgressResponse.busy=true to give the illusion of a started job.
  * @param corpus UUID of the corpus.
- * @param job Tagger job name. 
+ * @param job Tagger job name.
  */
 export function postJob(corpus: UUID, job: string): Promise<ProgressResponse> {
     return axios.post(jobPath(corpus, job))

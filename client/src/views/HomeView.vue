@@ -1,11 +1,9 @@
 <template>
     <div>
         <GCard noHelp>
-            <template #title>
-                Generating Linguistic Annotations for Historical Dutch
-            </template>
+            <template #title> Generating Linguistic Annotations for Historical Dutch </template>
 
-            <hr>
+            <hr />
 
             <div class="flex">
                 <div class="left">
@@ -37,18 +35,20 @@
                         tools to the platform. The application and taggers are hosted by the INT and accessible with any
                         CLARIN-account. There is also the option to self-host an instance using the publicly available
                         docker images from the
-                        <ExternalLink href="https://hub.docker.com/u/instituutnederlandsetaal">INT Docker Hub
-                        </ExternalLink> or the
-                        open
-                        source code available on <ExternalLink href="https://github.com/INL/galahad">GitHub
-                        </ExternalLink>.
+                        <ExternalLink href="https://hub.docker.com/u/instituutnederlandsetaal"
+                            >INT Docker Hub
+                        </ExternalLink>
+                        or the open source code available on
+                        <ExternalLink href="https://github.com/INL/galahad">GitHub </ExternalLink>.
                     </p>
                 </div>
 
                 <figure class="right">
-                    <img src="@/assets/galahad-graal-klein.png"
+                    <img
+                        src="@/assets/galahad-graal-klein.png"
                         title="Verbaasd laat Galahad de graal uit zijn handen vallen als hij ziet wat erin zit."
-                        alt="Verbaasd laat Galahad de graal uit zijn handen vallen als hij ziet wat erin zit." />
+                        alt="Verbaasd laat Galahad de graal uit zijn handen vallen als hij ziet wat erin zit."
+                    />
                     <figcaption>
                         <i>
                             &ldquo;Ende seget datmen daer doe wan
@@ -65,20 +65,20 @@
                         </i>
                         <small>
                             <ExternalLink
-                                href="https://galerij.kb.nl/kb.html#/nl/lancelot/page/45/zoom/5/lat/-66/lng/-107">
+                                href="https://galerij.kb.nl/kb.html#/nl/lancelot/page/45/zoom/5/lat/-66/lng/-107"
+                            >
                                 Lancelotcompilatie, fol. 41vb, vers 15.444-15449
                             </ExternalLink>
                         </small>
                     </figcaption>
                 </figure>
             </div>
-
         </GCard>
     </div>
 </template>
 
 <script setup lang="ts">
-import { GCard, ExternalLink } from '@/components'
+import { GCard, ExternalLink } from "@/components"
 </script>
 
 <style scoped="true" lang="scss">
@@ -106,7 +106,7 @@ import { GCard, ExternalLink } from '@/components'
         flex: 1 2 300px;
         max-width: 500px;
         text-align: center;
-        font-family: 'Times New Roman', Times, serif;
+        font-family: "Times New Roman", Times, serif;
         font-size: 20px;
 
         img {
@@ -121,12 +121,11 @@ import { GCard, ExternalLink } from '@/components'
     }
 }
 
-
 .content {
     background-color: white !important;
 }
 
 .g-card {
-    overflow-y: auto
+    overflow-y: auto;
 }
 </style>

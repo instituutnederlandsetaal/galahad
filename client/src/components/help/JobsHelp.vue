@@ -6,16 +6,14 @@
             annotation layer. Use the filters to find a tagger that works well for you or take a look at the
             <GNav :route="{ path: '/overview/benchmarks' }">benchmark results</GNav>.
         </p>
-        <p>
-            To start a tagging job, select one of the taggers and click on 'View & Tag'.
-        </p>
+        <p>To start a tagging job, select one of the taggers and click on 'View & Tag'.</p>
         <GNav :route="{ path: '/annotate/jobs' }" v-if="showLink">Go to <i>Annotate > Jobs</i></GNav>
     </div>
 </template>
 
 <script setup lang="ts">
 // Components
-import { GNav } from '@/components'
+import { GNav } from "@/components"
 
 defineProps({
     showLink: Boolean,

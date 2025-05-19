@@ -1,29 +1,31 @@
 // Libraries & stores
-import { computed, ref } from 'vue'
-import { defineStore } from 'pinia'
-import stores from '@/stores'
+import { computed, ref } from "vue"
+import { defineStore } from "pinia"
+import stores from "@/stores"
 // API & types
-import { UUID } from '@/types/corpora'
-import { DistributionWrapper } from '@/types/evaluation'
-import * as API from '@/api/evaluation'
-import * as Utils from '@/stores/evaluation/utils'
+// API & types
+import type { UUID } from "@/types/corpora"
+import type { DistributionWrapper } from "@/types/evaluation"
+import * as API from "@/api/evaluation"
+import * as Utils from "@/stores/evaluation/utils"
 
 // Allows for Object.keys(distribution.table), which dislikes null.
-const defaultDistribution = () => ({ distribution: {} } as DistributionWrapper)
+const defaultDistribution = () => ({ distribution: {} }) as DistributionWrapper
 
 /**
  * Stores and fetches the term frequency distribution.
  */
-const useDistribution = defineStore('distribution', () => {
+const useDistribution = defineStore("distribution", () => {
     // Fields
     const distributions = ref({} as Record<string, DistributionWrapper>)
     const distribution = computed(() => distributions.value[selectedDistribution.value] ?? defaultDistribution())
     const selectedDistribution = ref(null)
-    const distributionOptions = computed(() => Object.keys(distributions.value).map(x => ({ value: x, text: x })))
+    const distributionOptions = computed(() => Object.keys(distributions.value).map((x) => ({ value: x, text: x })))
     const loading = ref(false)
     const posses = computed(() => {
         // A bit hacky using Object.entries, but .map throws on undefined.
-        return Object.entries(distribution.value?.distribution)?.map(x => x[1].pos)
+        return Object.entries(distribution.value?.distribution)
+            ?.map((x) => x[1].pos)
             .filter((val, ind, arr) => arr.indexOf(val) === ind) // unique values
             .sort()
     })
@@ -51,7 +53,7 @@ const useDistribution = defineStore('distribution', () => {
             stores,
             corpus,
             hypothesis,
-            ""
+            "",
         )
         selectedDistribution.value = null
     }
@@ -59,9 +61,14 @@ const useDistribution = defineStore('distribution', () => {
     // Exports
     return {
         // Fields
-        loading, distribution, posses, selectedDistribution, distributionOptions,
+        loading,
+        distribution,
+        posses,
+        selectedDistribution,
+        distributionOptions,
         // Methods
-        reloadForUUIDHypothesis, reset,
+        reloadForUUIDHypothesis,
+        reset,
     }
 })
 

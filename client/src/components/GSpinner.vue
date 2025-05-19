@@ -1,14 +1,16 @@
 <template>
     <svg class="icon" height="100" width="100" viewBox="0 0 100 100" :class="classes">
-        <path class="grail"
-            d="M10 10 L90 10 Q90 40 65 40 L65 80 Q80 80 80 90 L20 90 Q20 80 35 80 L35 80 L35 40 Q10 40 10 10 Z" />
+        <path
+            class="grail"
+            d="M10 10 L90 10 Q90 40 65 40 L65 80 Q80 80 80 90 L20 90 Q20 80 35 80 L35 80 L35 40 Q10 40 10 10 Z"
+        />
         <ellipse class="wine" cx="60" cy="90" rx="30" ry="10" />
     </svg>
 </template>
 
 <script setup lang="ts">
 // library
-import { computed } from 'vue';
+import { computed } from "vue"
 // props
 const props = defineProps<{
     error?: boolean
@@ -19,7 +21,7 @@ const props = defineProps<{
 const classes = computed(() => ({
     error: props.error,
     small: props.small,
-    still: props.still
+    still: props.still,
 }))
 </script>
 

@@ -1,23 +1,25 @@
 // Libraries & stores
-import { ref, computed } from 'vue'
-import { defineStore } from 'pinia'
-import stores, { CorporaStore } from '@/stores'
+import { ref, computed } from "vue"
+import { defineStore } from "pinia"
+import stores, { type CorporaStore } from "@/stores"
 // API & Types
-import { CorpusMetadata } from '@/types/corpora'
-import { User } from '@/types/user'
-import * as API from '@/api/application'
+import type { CorpusMetadata } from "@/types/corpora"
+import type { User } from "@/types/user"
+import * as API from "@/api/user"
 
 /**
  * User store & permissions checks.
  */
-const useUser = defineStore('user', () => {
+const useUser = defineStore("user", () => {
     // Stores
     const corporaStore = stores.useCorpora() as CorporaStore
 
     // Fields
-    const user = ref({ id: 'NO USER', isAdmin: false } as User)
+    const user = ref({ id: "NO USER", isAdmin: false } as User)
     const hasWriteAccess = computed((): boolean => {
-        return corporaStore.userIsCollaborator || user.value.isAdmin || corporaStore.activeCorpus?.owner === user.value.id
+        return (
+            corporaStore.userIsCollaborator || user.value.isAdmin || corporaStore.activeCorpus?.owner === user.value.id
+        )
     })
     const hasDeleteAccess = computed((): boolean => {
         return canDelete(corporaStore.activeCorpus)
@@ -37,20 +39,28 @@ const useUser = defineStore('user', () => {
      * Poll for the user account. On error, refresh page.
      */
     function fetchUser() {
-        API.getUser().then(response => {
-            user.value = response.data
-        }).catch(_ => {
-            // On error we wait 5 seconds then reload the page to force a new login
-            setTimeout(() => { console.log('Reloading page'); window.location.reload() }, 5000)
-        })
+        API.getUser()
+            .then((response) => {
+                user.value = response.data
+            })
+            .catch((_) => {
+                // On error we wait 5 seconds then reload the page to force a new login
+                setTimeout(() => {
+                    console.log("Reloading page")
+                    window.location.reload()
+                }, 5000)
+            })
     }
 
     // Exports
     return {
         // Fields
-        user, hasWriteAccess, hasDeleteAccess,
+        user,
+        hasWriteAccess,
+        hasDeleteAccess,
         // Methods
-        fetchUser, canDelete,
+        fetchUser,
+        canDelete,
     }
 })
 

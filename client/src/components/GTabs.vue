@@ -2,7 +2,6 @@
     <div class="tabs">
         <!-- header -->
         <header class="header">
-
             <div class="top">
                 <div v-if="$slots['tabs-start']" class="nav tabs-start">
                     <slot :name="'tabs-start'"></slot>
@@ -15,9 +14,15 @@
 
             <nav class="bottom">
                 <div v-for="tab in _tabs" :key="tab.id">
-                    <a v-if="!tab.disabled && !tab.stub" disabled="disabled" :href='urlForTab(tab.id)'
-                        :class="'textcolor ' + navLinkClass(tab.id)" @click.prevent="navigateTo(tab.id)">
-                        <slot :name="`${tab.id}-title`" :isActive="currentTab === tab.id">{{ tab.title || tab.id }}
+                    <a
+                        v-if="!tab.disabled && !tab.stub"
+                        disabled="disabled"
+                        :href="urlForTab(tab.id)"
+                        :class="'textcolor ' + navLinkClass(tab.id)"
+                        @click.prevent="navigateTo(tab.id)"
+                    >
+                        <slot :name="`${tab.id}-title`" :isActive="currentTab === tab.id"
+                            >{{ tab.title || tab.id }}
                         </slot>
                     </a>
                     <span :class="`nav-link ${tab.disabled ? 'disabled' : ''}`" v-else>
@@ -25,24 +30,31 @@
                     </span>
                 </div>
             </nav>
-
         </header>
 
         <!-- content -->
-        <RouterView class="content" @navigate="x => { $router.push(x); induceCurrentTab() }" v-slot="{ Component }">
+        <RouterView
+            class="content"
+            @navigate="
+                (x) => {
+                    $router.push(x)
+                    induceCurrentTab()
+                }
+            "
+            v-slot="{ Component }"
+        >
             <transition name="fade" mode="out-in">
                 <component :is="Component" />
             </transition>
         </RouterView>
-
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent, PropType } from "vue"
 
 // Stub means it does display as title, but it is not interactive, so you can implement custom functionality
-export type Tab = { id: string, title: string, disabled?: boolean, stub?: boolean }
+export type Tab = { id: string; title: string; disabled?: boolean; stub?: boolean }
 
 export default defineComponent({
     name: "GTabs",
@@ -53,13 +65,13 @@ export default defineComponent({
             type: Array as PropType<Tab[]>,
             // Ids to be used by the tabs. Pick anything that can be used as an attribute
             default() {
-                return [{ id: 'id', title: 'You forgot the titles', disabled: true, stub: false }] as Tab[]
-            }
-        }
+                return [{ id: "id", title: "You forgot the titles", disabled: true, stub: false }] as Tab[]
+            },
+        },
     },
     data() {
         return {
-            currentTab: null // this.tabs[0].id
+            currentTab: null, // this.tabs[0].id
         }
     },
     mounted() {
@@ -68,7 +80,7 @@ export default defineComponent({
             this.induceCurrentTab()
             return
         }
-        const state = localStorage.getItem('galahad:' + this.basePath)
+        const state = localStorage.getItem("galahad:" + this.basePath)
         if (state !== null && state !== undefined) {
             // load state from local storage
             this.navigateTo(state, true)
@@ -81,27 +93,25 @@ export default defineComponent({
         _tabs(): Tab[] {
             // To allow for more flexible input, we calculate the actual tabs here
             function isObject(objValue: unknown) {
-                return objValue && typeof objValue === 'object' && objValue.constructor === Object;
+                return objValue && typeof objValue === "object" && objValue.constructor === Object
             }
             // Just assume it is either a correct object, or a string.
-            return this.tabs.map((x: Tab | string) => isObject(x) ? x : { id: x, title: x }) as Tab[]
+            return this.tabs.map((x: Tab | string) => (isObject(x) ? x : { id: x, title: x })) as Tab[]
         },
-
     },
     methods: {
         induceCurrentTab() {
-            const split = this.$route.path.split('/').reverse()
+            const split = this.$route.path.split("/").reverse()
             let induction = null // this._tabs[0].id // default
-            split.forEach(x => {
-                this._tabs.forEach(y => {
+            split.forEach((x) => {
+                this._tabs.forEach((y) => {
                     if (x === y.id) induction = y.id
                 })
             })
-            if (induction !== null)
-                this.setCurrentTab(induction) // TODO do this properly, this is bound to fail
+            if (induction !== null) this.setCurrentTab(induction) // TODO do this properly, this is bound to fail
         },
         navigateTo(tabId: string, replace = false) {
-            const path = this.basePath + '/' + tabId
+            const path = this.basePath + "/" + tabId
             if (!this.$route.path.startsWith(path)) {
                 if (replace || this.replace) {
                     this.$router.replace({ path: path, query: this.$route.query })
@@ -117,19 +127,21 @@ export default defineComponent({
         setCurrentTab(tabId: string) {
             // Since the route is not reactive, we have to update the value like this
             this.currentTab = tabId
-            if (tabId !== null && tabId !== undefined) localStorage.setItem('galahad:' + this.basePath, tabId)
+            if (tabId !== null && tabId !== undefined) localStorage.setItem("galahad:" + this.basePath, tabId)
         },
         urlForTab(tabId: string) {
-            const qs = Object.entries(this.$route.query).map(([k, v]) => `${k}=${encodeURIComponent(typeof (v) === "object" ? JSON.stringify(v) : v)}`).join('&')
-            return '/galahad' + this.basePath + '/' + tabId + '?' + qs;
-        }
+            const qs = Object.entries(this.$route.query)
+                .map(([k, v]) => `${k}=${encodeURIComponent(typeof v === "object" ? JSON.stringify(v) : v)}`)
+                .join("&")
+            return "/galahad" + this.basePath + "/" + tabId + "?" + qs
+        },
     },
     watch: {
-        '$route'() {
+        $route() {
             this.induceCurrentTab()
-        }
-    }
-});
+        },
+    },
+})
 </script>
 
 <style scoped lang="scss">
@@ -146,7 +158,7 @@ export default defineComponent({
 }
 
 // Header top
-.tabs>.header> :deep(.top) {
+.tabs > .header > :deep(.top) {
     background-color: white;
     align-items: center;
     display: flex;
@@ -219,7 +231,7 @@ export default defineComponent({
     line-height: 45px;
     background-color: var(--int-theme);
 
-    >div {
+    > div {
         flex: 1 1 auto;
     }
 
@@ -264,7 +276,7 @@ export default defineComponent({
     flex-direction: column;
     height: 100%;
 
-    >.header {
+    > .header {
         background-color: var(--int-theme);
         z-index: 1;
         top: 0;
@@ -280,17 +292,17 @@ export default defineComponent({
         }
     }
 
-    >.content {
+    > .content {
         background-color: var(--int-very-light-grey);
     }
 }
 
 /* It's nice to read with a bit more space at the bottom*/
-:deep(.tabs.level-2)>.content {
+:deep(.tabs.level-2) > .content {
     padding-bottom: 2em !important;
 }
 
-.tabs>.content {
+.tabs > .content {
     padding: 10px;
     min-height: 0;
     display: flex;
@@ -312,7 +324,6 @@ export default defineComponent({
         border-left: var(--int-light-grey) 1px solid;
         border-right: var(--int-light-grey) 1px solid;
     }
-
 }
 
 .tabs.level-2 {

@@ -71,7 +71,7 @@ table {
 
     caption {
         font-size: 1.5em;
-        margin: .5em 0 .75em;
+        margin: 0.5em 0 0.75em;
     }
 
     tr {
@@ -87,21 +87,21 @@ table {
     }
 
     thead {
-        >tr {
+        > tr {
             background-color: var(--int-theme) !important;
         }
     }
 
     th {
-        padding: .6em;
+        padding: 0.6em;
         text-align: center;
-        font-size: .85em;
-        letter-spacing: .1em;
+        font-size: 0.85em;
+        letter-spacing: 0.1em;
         text-transform: uppercase;
     }
 
     td {
-        padding: .5em;
+        padding: 0.5em;
         text-align: center;
         min-width: 60px;
     }
@@ -110,11 +110,9 @@ table {
 }
 
 table.compact {
-
     td,
     th {
-        padding: .1em 2em;
+        padding: 0.1em 2em;
     }
-
 }
 </style>
