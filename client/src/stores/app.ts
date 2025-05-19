@@ -1,10 +1,7 @@
 // Libraries & stores
 import { ref } from "vue"
 import { defineStore } from "pinia"
-import yaml from 'js-yaml'
 import { AxiosError } from "axios"
-// Types & API
-import * as API from "@/api/application"
 
 // Custom types
 type ErrorMessage = {
@@ -17,7 +14,6 @@ type ErrorMessage = {
  */
 const useApp = defineStore('app', () => {
     // Fields
-    const benchmarks = ref("" as string)
     const errors = ref([] as string[])
 
     // Methods
@@ -50,16 +46,8 @@ const useApp = defineStore('app', () => {
         }
     }
 
-    function fetchBenchmarks() {
-        API.getBenchmarks()
-            .then(response => {
-                benchmarks.value = yaml.load(response.data) as string
-            })
-            .catch(error => handleServerError("fetch benchmarks", error))
-    }
-
     // Exports
-    return { benchmarks, errors, resetErrors, fetchBenchmarks, handleServerError }
+    return { errors, resetErrors, handleServerError }
 })
 
 export default useApp
