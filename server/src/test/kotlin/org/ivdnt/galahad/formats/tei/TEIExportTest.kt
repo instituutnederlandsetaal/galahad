@@ -73,13 +73,13 @@ internal class TEIExportTest {
     fun punctuationExportTest() {
 
         val teiFile = TeiFile(TestUtil.get("tei/oneparagraph/mocktei.xml"))
-        DocTest.builder(corpus).expecting("Dit is wat oefentekst.").got(teiFile.plaintext)
+        DocTest.builder(corpus).expecting("Dit is wat oefentekst.").got(teiFile.layer.toString())
             .ignoreTrailingWhiteSpaces().result()
 
         val tagset = Tagset.readOrThrow("TDN-Core")
 
         val layer = LayerBuilder().loadLayerFromTSV(
-            "tei/export/mock-TDN-with-punctuation.tsv", teiFile.plaintext
+            "tei/export/mock-TDN-with-punctuation.tsv", teiFile.layer.toString()
         ).build()
 
         DocTest.builder(corpus).expectingFile("tei/export/mock-TDN-with-punctuation-result.xml")
@@ -92,7 +92,7 @@ internal class TEIExportTest {
     fun mergePuncutationTest() {
 
         val tagset = Tagset.readOrThrow("TDN-Core")
-        val plaintext = TeiFile(TestUtil.get("tei/dummies/punctutation-mixed-tags.xml")).plaintext
+        val plaintext = TeiFile(TestUtil.get("tei/dummies/punctutation-mixed-tags.xml")).layer.toString()
         val layer = LayerBuilder().loadLayerFromTSV("tei/dummies/punctuation-mixed-tags-sample-layer.tsv", plaintext)
             .build()
 

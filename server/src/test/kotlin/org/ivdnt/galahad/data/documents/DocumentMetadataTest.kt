@@ -36,9 +36,8 @@ class DocumentMetadataTest {
     @Test
     fun `Properties for an annotated file`() {
         val path = "all-formats/input/input.tei.xml"
-        val file = TestUtil.get(path)
         val doc = TestUtil.getDoc(path)
-        val plaintext = doc.plaintext
+        val plaintext = TestUtil.getLayer(doc).toString()
         val meta = doc.metadata
         assertEquals("input.tei.xml", meta.name)
         assertEquals(DocumentFormat.TeiP5, meta.format)

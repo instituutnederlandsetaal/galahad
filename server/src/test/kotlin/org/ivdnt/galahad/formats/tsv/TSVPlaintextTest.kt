@@ -12,6 +12,6 @@ internal class TSVPlaintextTest {
         assertEquals(1812, tsvFile.layer.terms.count())
         // Assert plaintext.
         val plainText = File("src/test/resources/tsv/plaintext/peerle.txt").readText()
-        assertEquals(plainText, tsvFile.plaintext)
+        assertEquals(plainText, tsvFile.layer.toString())
     }
 }

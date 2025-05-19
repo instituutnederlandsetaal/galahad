@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.cfg.DatatypeFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
+import org.ivdnt.galahad.annotations.Layer
+import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.corpora.Corpora
 import org.ivdnt.galahad.corpora.Corpus
@@ -29,6 +31,9 @@ object TestUtil {
         // Might already exist due to another unit test, so try to read it first.
         return corpus.documents.readOrNull(file.name) ?: corpus.documents.createOrThrow(file)
     }
+
+    fun getLayer(doc: Document, job: String = SOURCE_LAYER_NAME): Layer =
+        corpus.jobs.readOrThrow(job).getLayer(doc.name)
 
     val mapper: ObjectMapper = JsonMapper.builder()
         .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
@@ -61,7 +66,7 @@ object TestUtil {
     fun assertPlainText(folder: String, file: InternalFile) {
         // Plain text
         val plaintext = get("$folder/plaintext.txt").readText()
-        assertEquals(plaintext, file.plaintext)
+        assertEquals(plaintext, file.layer.toString())
     }
 
     fun assertPlaintextAndSourcelayer(folder: String, file: InternalFile) {

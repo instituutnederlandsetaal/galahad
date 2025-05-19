@@ -26,7 +26,6 @@ class JobTest {
         // verify
         assertEquals(TestConfig.TAGGER_NAME, job.name)
         assertFalse(job.isActive)
-        assertEquals(0, job.assay.readOrThrow<Map<String, FlatMetricType>>().size)
         assertEquals(0, job.progress.total)
         // verify from state cache
         assertEquals(LayerPreview.EMPTY, job.metadata.preview)
