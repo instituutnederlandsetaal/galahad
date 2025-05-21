@@ -10,7 +10,7 @@
 
 <script setup lang="ts">
 // library
-import { computed } from "vue"
+
 // props
 const props = defineProps<{
     error?: boolean

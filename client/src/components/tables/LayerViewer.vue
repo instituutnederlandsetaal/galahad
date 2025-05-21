@@ -7,11 +7,10 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import { computed } from "vue"
+
 // API & types
 import { LayerPreview } from "@/types/jobs"
 // Component dependencies.
-import { GTable } from "@/components"
 
 const props = defineProps({ layer: Object as () => LayerPreview })
 const layerNotEmpty = computed(() => {

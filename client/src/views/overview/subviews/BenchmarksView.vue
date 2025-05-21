@@ -56,21 +56,18 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import { computed, onMounted, ref } from "vue"
-import stores, { AssaysStore } from "@/stores"
+
+import stores from "@/stores"
 // API & Types
 import { MetricTypeAssay } from "@/types/assays"
 import { SOURCE_LAYER } from "@/types/jobs"
 import { TableData } from "@/types/table"
-// Components
-import { MailAddress, GTable, GInfo, GCard, GNav } from "@/components"
-import MetricsFilter from "@/components/tables/MetricsFilter.vue"
 
 // Types
 type AssayRow = { tagger: string; accuracy: number; precision: number; recall: number; f1: number }
 
 // Stores
-const assaysStore = stores.useAssays() as AssaysStore
+const assaysStore = stores.useAssays()
 const corporaStore = stores.useCorpora()
 
 // Fields

@@ -31,18 +31,16 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import { computed, ref, watch } from "vue"
-import stores, { CorporaStore } from "@/stores"
+
+import stores from "@/stores"
 // Types & API.
 import * as API from "@/api/evaluation"
 import * as Utils from "@/api/utils"
 import { TermComparison } from "@/types/evaluation"
 import { literalsForTermComparison } from "@/stores/evaluation"
-// Components
-import { GModal, GTable, DownloadButton, GInput } from "@/components"
 
 // Stores
-const corporaStore = stores.useCorpora() as CorporaStore
+const corporaStore = stores.useCorpora()
 
 // Props
 const props = defineProps({
@@ -147,7 +145,7 @@ p {
     justify-content: center;
 }
 
-/* 
+/*
 :deep(td):nth-child(1),
 :deep(td):nth-child(3) {
     border-right: 1px solid var(--int-very-light-grey-hover);

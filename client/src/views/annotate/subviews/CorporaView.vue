@@ -98,20 +98,14 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import { ref, onMounted } from "vue"
-import stores, { CorporaStore } from "@/stores"
+
+import stores from "@/stores"
 // Types & API
 import { CorpusMetadata } from "@/types/corpora"
 import { TableCorporaType } from "@/types/table"
-// Components
-import { CorpusTable, GNav } from "@/components"
-import CorpusForm from "@/components/modals/corpus/CorpusForm.vue"
-import DeleteModal from "@/components/modals/DeleteModal.vue"
-import CorpusFormHelp from "@/components/help/CorpusFormHelp.vue"
-import BenchmarkSetsHelp from "@/components/help/BenchmarkSetsHelp.vue"
 
 // Stores
-const corporaStore = stores.useCorpora() as CorporaStore
+const corporaStore = stores.useCorpora()
 
 // Fields
 const showNewCorpusModal = ref(false)

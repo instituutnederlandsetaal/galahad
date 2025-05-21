@@ -3,10 +3,11 @@
  */
 
 // --- libraries ---
-import axios, { type AxiosResponse } from "axios"
+import axios from "axios"
 // --- api ---
 import * as Utils from "@/api/utils"
 // --- types ---
+import type { AxiosResponse } from "axios"
 import type { ConfusionWrapper, DistributionWrapper, Metrics, TermComparison } from "@/types/evaluation"
 import type { UUID } from "@/types/corpora"
 import type { BlobResponse } from "@/api/utils"

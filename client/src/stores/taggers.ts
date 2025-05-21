@@ -1,7 +1,6 @@
 // Libraries & stores
-import { ref } from "vue"
-import { defineStore } from "pinia"
-import stores, { type AppStore } from "@/stores"
+
+import stores from "@/stores"
 // API & types
 import { type Tagger } from "@/types/taggers"
 import * as API from "@/api/taggers"
@@ -21,7 +20,7 @@ export function sort_tagger_annotations(types: string[]): string[] {
  */
 const useTaggers = defineStore("taggers", () => {
     // Stores
-    const app = stores.useApp() as AppStore
+    const app = stores.useApp()
 
     // Fields
     const loading = ref(false)

@@ -1,7 +1,6 @@
 // Libraries & stores
-import { computed, ref } from "vue"
-import { defineStore } from "pinia"
-import stores, { type AppStore, type UserStore } from "@/stores"
+
+import stores from "@/stores"
 // Types & API
 import type { CorpusMetadata, MutableCorpusMetadata, UUID } from "@/types/corpora"
 import * as API from "@/api/corpora"
@@ -11,8 +10,8 @@ import * as API from "@/api/corpora"
  */
 const useCorpora = defineStore("corpora", () => {
     // Stores
-    const userStore = stores.useUser() as UserStore
-    const app = stores.useApp() as AppStore
+    const userStore = stores.useUser()
+    const app = stores.useApp()
 
     // Fields
     const loading = ref(false)

@@ -1,6 +1,5 @@
 // Libraries & stores
-import { ref } from "vue"
-import { defineStore } from "pinia"
+
 import stores from "@/stores"
 // API & types
 import type { UUID } from "@/types/corpora"

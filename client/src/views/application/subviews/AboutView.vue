@@ -51,7 +51,6 @@
 
 <script setup lang="ts">
 import versionYaml from "@/../version.yml"
-import { GCard, KeyValues } from "@/components"
 </script>
 
 <style scoped="true">

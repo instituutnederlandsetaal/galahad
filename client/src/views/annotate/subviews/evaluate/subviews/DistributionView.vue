@@ -137,17 +137,16 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import { computed, ref, watch } from "vue"
-import stores, { DistributionStore } from "@/stores"
-import { storeToRefs } from "pinia"
+
+import stores from "@/stores"
+
 // API & types
 import { Distribution } from "@/types/evaluation"
-// Components
-import { GInput, GTable, EvaluationInfoBox, InspectButton, RightFloatCell, VariantsModal } from "@/components"
+
 import MultiSelect from "primevue/multiselect"
 
 // Stores
-const distributionStore = stores.useDistribution() as DistributionStore
+const distributionStore = stores.useDistribution()
 // Doesn't need to be ref'ed, but it's easier to read.
 const { distribution, selectedDistribution } = storeToRefs(distributionStore)
 const jobSelection = stores.useJobSelection()

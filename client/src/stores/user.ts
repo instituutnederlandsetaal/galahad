@@ -1,7 +1,6 @@
 // Libraries & stores
-import { ref, computed } from "vue"
-import { defineStore } from "pinia"
-import stores, { type CorporaStore } from "@/stores"
+
+import stores from "@/stores"
 // API & Types
 import type { CorpusMetadata } from "@/types/corpora"
 import type { User } from "@/types/user"
@@ -12,7 +11,7 @@ import * as API from "@/api/user"
  */
 const useUser = defineStore("user", () => {
     // Stores
-    const corporaStore = stores.useCorpora() as CorporaStore
+    const corporaStore = stores.useCorpora()
 
     // Fields
     const user = ref({ id: "NO USER", isAdmin: false } as User)

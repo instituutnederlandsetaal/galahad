@@ -1,64 +1,44 @@
 <template>
-    <div>
-        <transition name="fade" mode="out-in">
-            <!-- v-if instead of v-show such that elements inside a GModal can rely on onMounted()-->
-            <div v-if="show" class="bg" @click.self="$emit('hide')">
-                <GCard
-                    :showHelp="showHelp"
-                    :title="title"
-                    :class="`content ${small ? 'my-small' : ''}`"
-                    :noHelp="noHelp"
-                    :headless="headless"
-                >
-                    <template #title>
-                        <slot name="title"></slot>
-                    </template>
-                    <template #help>
-                        <slot name="help"></slot>
-                    </template>
-                    <slot> Somenone forgot to put the content </slot>
-                </GCard>
-                <div class="buttons">
-                    <GButton @click="$emit('hide')" red>Close</GButton>
-                    <slot name="buttons"></slot>
-                </div>
+    <transition name="fade" mode="out-in">
+        <!-- v-if instead of v-show such that elements inside a GModal can rely on onMounted()-->
+        <dialog v-if="show" class="dialog" @click.self="$emit('hide')" @keyup.esc="$emit('hide')">
+            <GCard class="content" :class="{ small: small }" :title>
+                <template v-if="$slots.title" #title>
+                    <slot name="title"></slot>
+                </template>
+                <template v-if="$slots.help" #help>
+                    <slot name="help"></slot>
+                </template>
+                <slot></slot>
+            </GCard>
+            <div class="buttons">
+                <GButton red @click="$emit('hide')">Close</GButton>
+                <slot name="buttons"></slot>
             </div>
-        </transition>
-    </div>
+        </dialog>
+    </transition>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue"
+<script setup lang="ts">
+// --- props ---
+const {
+    small = false,
+    show,
+    title,
+} = defineProps<{
+    small?: boolean
+    show: boolean
+    title?: string
+}>()
 
-export default defineComponent({
-    name: "GModal",
-    props: {
-        noHelp: { type: Boolean, default: false },
-        headless: { type: Boolean, default: false },
-        showHelp: { type: Boolean, default: true },
-        show: { type: Boolean },
-        small: { type: Boolean, default: false },
-        title: { type: String },
-    },
-    mounted(): void {
-        // smort
-        const alias = this.handleGlobalKeyDown
-        window.addEventListener("keyup", function (e) {
-            alias(e)
-        })
-    },
-    methods: {
-        handleGlobalKeyDown(e: KeyboardEvent): void {
-            if (e.key === "Escape") {
-                this.$emit("hide")
-            }
-        },
-    },
-})
+// --- emits ---
+defineEmits<{
+    hide: []
+}>()
 </script>
 
 <style scoped lang="scss">
-.bg {
+.dialog {
     left: 0;
     top: 0;
     background-color: var(--int-very-light-grey);
@@ -84,8 +64,7 @@ export default defineComponent({
     padding: 2em;
 }
 
-.content.my-small {
-    // 'small' collides with a name from bootstrap(?). Hope te remove it in the future.
+.content.small {
     width: fit-content;
 }
 
@@ -101,7 +80,7 @@ export default defineComponent({
 }
 
 @media (max-width: 800px) or (max-height: 700px) {
-    .bg {
+    .dialog {
         padding: 0;
         padding-bottom: 0.5em; // Override for bottom button
         gap: 0.5em;

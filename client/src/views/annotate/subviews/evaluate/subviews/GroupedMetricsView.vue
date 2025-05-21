@@ -27,17 +27,12 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import { ref, computed } from "vue"
-import { storeToRefs } from "pinia"
+
 import stores from "@/stores"
 // API & types
 import { metricsPerPosColumns } from "@/stores/evaluation/metrics"
 import * as API from "@/api/evaluation"
 import * as Utils from "@/api/utils"
-// Components
-import { EvaluationInfoBox } from "@/components"
-import MetricsTable from "@/components/tables/MetricsTable.vue"
-import MetricsFilter from "@/components/tables/MetricsFilter.vue"
 
 // Stores
 const { loading, metrics } = storeToRefs(stores.useMetrics())

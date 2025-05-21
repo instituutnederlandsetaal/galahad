@@ -30,16 +30,12 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import { storeToRefs } from "pinia"
-import { computed, ref } from "vue"
-import stores, { CorporaStore, AppStore, JobSelectionStore } from "@/stores"
+
+import stores from "@/stores"
 // API & types
 import { metricsPerPosColumns } from "@/stores/evaluation/metrics"
 import * as API from "@/api/evaluation"
 import * as Utils from "@/api/utils"
-// Components
-import MetricsTable from "@/components/tables/MetricsTable.vue"
-import { EvaluationInfoBox } from "@/components"
 
 // Types
 type GlobalMetricsRow = {
@@ -58,9 +54,9 @@ type GlobalMetricsRow = {
 
 // Stores
 const { loading, metrics } = storeToRefs(stores.useMetrics())
-const corporaStore = stores.useCorpora() as CorporaStore
-const jobSelection = stores.useJobSelection() as JobSelectionStore
-const app = stores.useApp() as AppStore
+const corporaStore = stores.useCorpora()
+const jobSelection = stores.useJobSelection()
+const app = stores.useApp()
 
 // Fields
 const downloading = ref(false)

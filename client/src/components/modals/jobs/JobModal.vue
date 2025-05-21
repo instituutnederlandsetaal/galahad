@@ -147,20 +147,16 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import { computed, ref, onMounted, onUnmounted } from "vue"
-import stores, { JobsStore, AppStore } from "@/stores"
+
+import stores from "@/stores"
 // API & types
 import { TaggerHealth } from "@/types/taggers"
 import { Job } from "@/types/jobs"
 import * as API from "@/api/taggers"
-// Components
-import { GButton, GCard, GInfo, GModal, GSpinner, DeleteModal } from "@/components"
-import LayerViewer from "@/components/tables/LayerViewer.vue"
-import ProgressSegment from "@/components/modals/jobs/ProgressSegment.vue"
 
 // Stores
-const app = stores.useApp() as AppStore
-const jobsStore = stores.useJobs() as JobsStore
+const app = stores.useApp()
+const jobsStore = stores.useJobs()
 
 // Fields
 const props = defineProps({

@@ -1,13 +1,10 @@
-// Libraries & stores
-import { ref } from "vue"
-import { defineStore } from "pinia"
-import { AxiosError } from "axios"
+// --- libraries ---
+
+// --- types ---
+import type { AxiosError } from "axios"
+import type { ErrorMessage } from "@/api/api"
 
 // Custom types
-type ErrorMessage = {
-    statusCode: string
-    message: string
-}
 
 /**
  * Mostly for global error handling.

@@ -4,7 +4,4 @@
     <ExternalLink href="https://github.com/INL/galahad-corpus-data"> galahad-corpus-data </ExternalLink>.
 </template>
 
-<script setup lang="ts">
-// Components
-import { ExternalLink } from "@/components"
-</script>
+<script setup lang="ts"></script>

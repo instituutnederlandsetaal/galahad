@@ -1,6 +1,6 @@
 <template>
     <div>
-        <GCard headless>
+        <GCard>
             <h1>Document Formats</h1>
 
             <p>

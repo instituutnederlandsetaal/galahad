@@ -3,8 +3,9 @@
  */
 
 // --- libraries ---
-import axios, { type AxiosResponse } from "axios"
+import axios from "axios"
 // --- types ---
+import type { AxiosResponse } from "axios"
 import type { UUID, CorpusMetadata, MutableCorpusMetadata } from "@/types/corpora"
 
 type CorporaResponse = AxiosResponse<CorpusMetadata[]>

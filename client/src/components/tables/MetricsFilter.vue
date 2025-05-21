@@ -19,8 +19,7 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import { ref, computed } from "vue"
-import { storeToRefs } from "pinia"
+
 import stores from "@/stores"
 
 const { metrics } = storeToRefs(stores.useMetrics())

@@ -14,15 +14,13 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import { onMounted } from "vue"
+
 import router from "@/router"
-import stores, { UserStore, CorporaStore } from "@/stores"
-// Components
-import { GTabs } from "@/components"
+import stores from "@/stores"
 
 // Stores
-const userStore = stores.useUser() as UserStore
-const corporaStore = stores.useCorpora() as CorporaStore
+const userStore = stores.useUser()
+const corporaStore = stores.useCorpora()
 
 // When reloading the page in any of the subtabs, the corpus UUID will be set,
 // but computing activeCorpus also needs the corpora to be retrieved.

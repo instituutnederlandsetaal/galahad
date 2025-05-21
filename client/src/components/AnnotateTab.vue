@@ -3,44 +3,40 @@
     <div>
         <!-- This div fills the background color. -->
         <!-- loading corpora-->
-        <GCard v-if="corporaStore.loading && !hideCorpusError" title="Loading corpora" noHelp>
+        <GCard v-if="corporaStore.loading && !hideCorpusError" title="Loading corpora">
             <GSpinner />
         </GCard>
         <!-- No corpus selected -->
-        <GCard v-else-if="!corporaStore.activeCorpus && !hideCorpusError" title="No corpus selected" noHelp>
+        <GCard v-else-if="!corporaStore.activeCorpus && !hideCorpusError" title="No corpus selected">
             <GInfo error>
                 <p>No corpus has been selected.</p>
                 <GNav :route="{ path: '/annotate/corpora' }">Select a corpus</GNav>
             </GInfo>
         </GCard>
         <!-- No write permissions on selected corpus -->
-        <GCard v-else-if="!userStore.hasWriteAccess && !hidePermissionsError" title="Insufficient permissions" noHelp>
+        <GCard v-else-if="!userStore.hasWriteAccess && !hidePermissionsError" title="Insufficient permissions">
             <GInfo error>
                 <p>You have insufficient permissions to perform this action.</p>
                 <GNav :route="{ path: '/annotate/corpora' }">Select a different corpus</GNav>
             </GInfo>
         </GCard>
         <!-- Loading documents -->
-        <GCard v-else-if="documentsStore.loading && !hideDocsError" title="Loading documents" noHelp>
+        <GCard v-else-if="documentsStore.loading && !hideDocsError" title="Loading documents">
             <GSpinner />
         </GCard>
         <!-- No documents in corpus-->
-        <GCard v-else-if="!corporaStore.hasDocs && !hideDocsError" title="Empty corpus" noHelp>
+        <GCard v-else-if="!corporaStore.hasDocs && !hideDocsError" title="Empty corpus">
             <GInfo error>
                 <p>This corpus has no documents.</p>
                 <GNav :route="{ path: '/annotate/documents' }">Upload documents to this corpus</GNav>
             </GInfo>
         </GCard>
         <!-- Loading jobs -->
-        <GCard v-else-if="jobsStore.loading && !hideAnnotationsError" title="Loading documents" noHelp>
+        <GCard v-else-if="jobsStore.loading && !hideAnnotationsError" title="Loading documents">
             <GSpinner />
         </GCard>
         <!-- No non-empty jobs-->
-        <GCard
-            v-else-if="jobSelectionStore.selectableJobs.length == 0 && !hideAnnotationsError"
-            title="No annotations"
-            noHelp
-        >
+        <GCard v-else-if="jobSelectionStore.selectableJobs.length == 0 && !hideAnnotationsError" title="No annotations">
             <GInfo error>
                 <p>None of the documents have annotations. Either:</p>
                 <ul>
@@ -61,16 +57,14 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import stores, { CorporaStore, DocumentsStore, JobSelectionStore, JobsStore, UserStore } from "@/stores"
-// Components
-import { GCard, GInfo, GNav, GSpinner } from "@/components"
+import stores from "@/stores"
 
 // Stores
-const corporaStore = stores.useCorpora() as CorporaStore
-const documentsStore = stores.useDocuments() as DocumentsStore
-const jobsStore = stores.useJobs() as JobsStore
-const jobSelectionStore = stores.useJobSelection() as JobSelectionStore
-const userStore = stores.useUser() as UserStore
+const corporaStore = stores.useCorpora()
+const documentsStore = stores.useDocuments()
+const jobsStore = stores.useJobs()
+const jobSelectionStore = stores.useJobSelection()
+const userStore = stores.useUser()
 
 // Props
 const props = defineProps({

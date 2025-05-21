@@ -1,7 +1,6 @@
 // Libraries & stores
-import { ref } from "vue"
-import { defineStore } from "pinia"
-import stores, { type AppStore } from "@/stores"
+
+import stores from "@/stores"
 // Types & API
 import type { Tagset } from "@/types/tagset"
 import * as API from "@/api/tagset"
@@ -11,7 +10,7 @@ import * as API from "@/api/tagset"
  */
 const useTagsets = defineStore("tagsets", () => {
     // Stores
-    const app = stores.useApp() as AppStore
+    const app = stores.useApp()
 
     // Fields
     const loading = ref(false)

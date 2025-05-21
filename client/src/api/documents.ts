@@ -4,10 +4,11 @@
  */
 
 // --- libraries ---
-import axios, { type AxiosResponse } from "axios"
+import axios from "axios"
 // -- api ---
 import * as Utils from "@/api/utils"
 // --- types ---
+import type { AxiosResponse } from "axios"
 import type { UUID } from "@/types/corpora"
 import type { DocumentMetadata } from "@/types/documents"
 import type { BlobResponse } from "@/api/utils"
@@ -34,7 +35,7 @@ export function getDocuments(corpus: UUID): Promise<DocumentsResponse> {
  * @param document Document name.
  * @param contentType Content type of the document. Must be explicitly set for tsv-files. Others are induced.
  */
-export function postDocument(corpus: UUID, document: FormData, contentType?: any) {
+export function postDocument(corpus: UUID, document: FormData, contentType?: Record<string, string>) {
     return axios.post(documentsPath(corpus), document, { headers: contentType })
 }
 

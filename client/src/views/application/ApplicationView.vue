@@ -14,9 +14,6 @@
 </template>
 
 <script setup lang="ts">
-// Components
-import { GTabs, ExternalLink } from "@/components"
-
 const apiURL = window.location.protocol + "//" + window.location.hostname + "/galahad/api/swagger-ui/index.html"
 </script>
 

@@ -102,11 +102,8 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import { onMounted, ref } from "vue"
+
 import stores from "@/stores"
-import { storeToRefs } from "pinia"
-// Components
-import { GButton, GInfo } from "@/components"
 
 // Stores
 const documentsStore = stores.useDocuments()

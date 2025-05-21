@@ -1,5 +1,5 @@
 <template>
-    <GCard title="Error 404" noHelp>
+    <GCard title="Error 404">
         <GInfo error>
             <p>We could not find the page you were looking for.</p>
             <GNav :route="{ path: '/' }">Go back to the homepage</GNav>
@@ -7,9 +7,7 @@
     </GCard>
 </template>
 
-<script setup lang="ts">
-import { GCard, GInfo, GNav } from "@/components"
-</script>
+<script setup lang="ts"></script>
 
 <style scoped="true" lang="scss">
 .g-card {

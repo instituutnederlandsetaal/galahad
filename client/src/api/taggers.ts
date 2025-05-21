@@ -2,36 +2,29 @@
  * API calls for fetching taggers and their health status.
  */
 
-// Libraries & stores
-import axios, { type AxiosResponse } from "axios"
-// Types & API
+// --- libraries ---
+import axios from "axios"
+// --- types ---
+import type { AxiosResponse } from "axios"
 import type { Tagger, TaggerHealth } from "@/types/taggers"
 
-// Paths
-const taggersPath = `/taggers`
-const taggerPath = (tagger: string) => `${taggersPath}/${tagger}`
-const taggerHealthPath = (tagger: string) => `${taggerPath(tagger)}/health`
-
-// Custom types
 type TaggersResponse = AxiosResponse<Tagger[]>
-type TaggerResponse = AxiosResponse<Tagger>
 type TaggerHealthResponse = AxiosResponse<TaggerHealth>
 type TaggersBusyResponse = AxiosResponse<number>
 
-// Public methods
+// --- data ---
+const taggersPath = `/taggers`
+
+// --- computed ---
+const taggerPath = (tagger: string) => `${taggersPath}/${tagger}`
+const taggerHealthPath = (tagger: string) => `${taggerPath(tagger)}/health`
+
+// --- methods --
 /**
  * Get all taggers.
  */
 export function getTaggers(): Promise<TaggersResponse> {
     return axios.get(taggersPath)
-}
-
-/**
- * Get single tagger by name.
- * @param tagger Tagger name.
- */
-export function getTagger(tagger: string): Promise<TaggerResponse> {
-    return axios.get(taggerPath(tagger))
 }
 
 /**

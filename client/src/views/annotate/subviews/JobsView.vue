@@ -153,25 +153,24 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import { computed, onMounted, ref, watch } from "vue"
+
 // import VueSlider from "vue-slider-component"
 // import "vue-slider-component/theme/default.css"
-import stores, { DocumentsStore, JobsStore, UserStore, CorporaStore } from "@/stores"
+import stores from "@/stores"
 // API & types
 import { Job, Progress, SOURCE_LAYER } from "@/types/jobs"
 import { Field } from "@/types/table"
 import { sort_tagger_annotations } from "@/stores/taggers"
-// Components
-import { GButton, GNav, GTable, GInput, GSpinner, AnnotateTab, JobModal } from "@/components"
+
 import help from "@/components/help"
 import MultiSelect from "primevue/multiselect"
-import { formatDate } from "@/types/date"
+import { formatDate } from "@/ts/utils"
 
 // Stores
-const userStore = stores.useUser() as UserStore
-const documentsStore = stores.useDocuments() as DocumentsStore
-const jobsStore = stores.useJobs() as JobsStore
-const corporaStore = stores.useCorpora() as CorporaStore
+const userStore = stores.useUser()
+const documentsStore = stores.useDocuments()
+const jobsStore = stores.useJobs()
+const corporaStore = stores.useCorpora()
 
 // Fields
 const taggerNameFilter = ref("")

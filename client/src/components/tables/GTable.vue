@@ -1,9 +1,10 @@
 <template>
-    <GCard :showHelp="showHelp" :headless="headless" :helpSubject="helpSubject" :noHelp>
+    <GCard :helpSubject>
         <template #title>
             <slot name="title">{{ title }}</slot>
         </template>
-        <template #help>
+
+        <template v-if="$slots.help" #help>
             <slot name="help"></slot>
         </template>
 
@@ -21,7 +22,7 @@
         <slot v-if="items && items.length === 0 && !loading" name="table-empty-instruction">
             Here should be an instruction how to fill the content.
         </slot>
-        <table :class="`${cssClass} ${loading ? ' loading' : ''} ${selectable ? ' selectable' : ''}`">
+        <table :class="classes">
             <thead v-if="!isEmpty">
                 <tr>
                     <th v-for="field in visibleFields" :key="field.key" style="text-align: center">
@@ -54,15 +55,7 @@
                 <template v-for="(item, i) in itemsToDisplay" :key="'row' + i">
                     <tr
                         @click="rowClicked(item)"
-                        @dblclick="
-                            () => {
-                                rowClicked(item)
-                                $emit('rowDoubleClicked')
-                            }
-                        "
-                        :class="
-                            (equal(modelValue, item) ? 'selected' : '') + ' ' + (selectable ? 'cursor-pointer' : '')
-                        "
+                        :class="(equal(model, item) ? 'selected' : '') + ' ' + (selectable ? 'cursor-pointer' : '')"
                     >
                         <td
                             v-for="field in visibleFields"
@@ -106,7 +99,7 @@
             <div
                 v-if="numPages > 1"
                 id="page-controls"
-                @click="this.$nextTick(() => this.$refs.test.scrollIntoView())"
+                @click="$nextTick(() => $refs.test.scrollIntoView())"
                 ref="test"
             >
                 <GButton plain @click="page = 1" :disabled="page == 1">1</GButton>
@@ -132,187 +125,164 @@
     </GCard>
 </template>
 
-<script lang="ts">
-// Libraries & stores
-import { defineComponent, PropType } from "vue"
-// API & types
-import { Field } from "@/types/table"
-// Components
-import help from "@/components/help"
-import GButton from "@/components/input/GButton.vue"
-import GCard from "@/components/GCard.vue"
+<script setup lang="ts">
+import type { Field } from "@/types/table"
 
 type Item = { [key: string]: unknown }
 
-export default defineComponent({
-    name: "GTable",
-    emits: ["rowClicked", "rowDoubleClicked", "update:modelValue"],
-    components: { GCard, GButton },
-    props: {
-        title: { type: String, default: "You forgot the title" },
-        displayOnEmpty: { type: Boolean, default: false },
-        columns: {
-            type: Array as PropType<Field[]>,
-            default() {
-                return []
-            },
-        },
-        fill: { type: Boolean, default: false },
-        headless: { type: Boolean, default: false },
-        loading: { type: Boolean, default: false },
-        selectable: { type: Boolean, default: false },
-        sortedByColumn: { type: String, default: null },
-        sortDesc: { type: Boolean, default: true },
-        compact: { type: Boolean, default: false },
-        showHelp: { type: Boolean, default: false },
-        items: {
-            type: Array as PropType<Item[]>,
-            default() {
-                return []
-            },
-        },
-        modelValue: { type: Object as PropType<Item>, default: null }, // use in conjunction with 'selectable' to make a v-model
-        helpSubject: { type: String as () => keyof typeof help },
-        noHelp: { type: Boolean, default: false },
-    },
-    //   model: {
-    //       prop: 'value',
-    //       event: 'valueUpdated'
-    //   },
-    data() {
-        return {
-            page: 1,
-            sortIsDesc: this.sortDesc as boolean,
-            sortedBy: this.sortedByColumn as null | string,
-        }
-    },
-    computed: {
-        cssClass() {
-            let ret = ""
-            this.compact ? (ret += "compact ") : ""
-            return ret
-        },
-        isEmpty(): boolean {
-            return !this.items || this.items.length === 0
-        },
-        itemsToDisplay(): Item[] {
-            const page = this.page
-            const pageSize = this.pageSize
-            function getPageItems(allItems: Item[]) {
-                return allItems.slice((page - 1) * pageSize, page * pageSize)
-            }
+// --- props ---
+const {
+    title,
+    displayOnEmpty,
+    columns,
+    fill,
+    loading,
+    selectable,
+    sortedByColumn,
+    sortDesc,
+    compact,
+    items,
+    helpSubject,
+} = defineProps<{
+    title: string
+    displayOnEmpty: boolean
+    columns: Field[]
+    fill: boolean
+    loading: boolean
+    selectable: boolean
+    sortedByColumn: string | null
+    sortDesc: boolean
+    compact: boolean
+    items: Item[]
+    helpSubject: string
+}>()
 
-            // only paginate
-            if (this.sortedBy === null) return getPageItems(this.items)
+// --- data ---
+const model = defineModel<Item>()
+const page = ref<number>(1)
+const sortedBy = ref<string>(sortedByColumn)
+const sortIsDesc = ref<boolean>(sortDesc)
 
-            const sortOn = this.columns.filter((field) => field.key == this.sortedBy)[0]?.sortOn //hmm
-            function mapToSortProp(x: any) {
-                return sortOn ? sortOn(x) : x
-            }
-
-            if (this.sortedBy === null) {
-                // no sort, just paginate
-                return getPageItems(this.items)
-            } else {
-                // sort and then paginate
-                const allItems = this.items
-                    .slice()
-                    .sort(
-                        (a: Item, b: Item) =>
-                            (-1) ** (+this.sortIsDesc | 0) * this.compareAny(mapToSortProp(a), mapToSortProp(b)),
-                    )
-                return getPageItems(allItems)
-            }
-        },
-        numPages(): number {
-            return Math.ceil(this.items.length / this.pageSize)
-        },
-        pageSize(): number {
-            if (!this.items) return 20
-            // We allow for some leniency since we don't want the user to go to the next page just to see one entry
-            if (this.items.length <= 50) return this.items.length
-            return this.items.length > 20 ? 20 : this.items.length
-        },
-        primaryKeyFields(): string[] {
-            return this.columns.filter((field) => field.isPrimaryField).map((field) => field.key)
-        },
-        visibleFields() {
-            return this.columns.filter((field) => !field.hidden)
-        },
-    },
-    methods: {
-        anyIncludes(whole: unknown, part: unknown): boolean {
-            if (!whole) return false
-            return (whole as Record<string, unknown> | unknown[])
-                .toString()
-                .includes((part as Record<string, unknown> | unknown[]).toString())
-        },
-        compareAny(a: unknown, b: unknown): number {
-            // null and undefined are always smaller
-            if (this.nu(a) && this.nu(b)) return 0
-            if (this.nu(a)) return -1
-            if (this.nu(b)) return 1
-
-            // Infinity is always bigger
-            if (a === Infinity) return 1
-            if (b === Infinity) return -1
-
-            if (typeof a === "number" && typeof b === "number") {
-                return a - b
-            } else if (typeof a === "string" && typeof b === "string") {
-                return a.localeCompare(b)
-            } else if (Array.isArray(a) && Array.isArray(b)) {
-                if (a.length === 0 && b.length === 0) return 0
-                if (a.length === 0) return -1
-                if (b.length === 0) return 1
-                return this.compareAny(a[0], b[0]) // Approximate
-            } else if (typeof a === "boolean" && typeof b === "boolean") {
-                if (a === b) return 0
-                if (a) return 1
-                return -1
-            } else {
-                //garbage
-                return 0
-            }
-        },
-        _field(field: Field): Field {
-            if (!field.label) {
-                field.label = field.key
-            }
-            return field
-        },
-        equal(item1: Item, item2: Item): boolean {
-            // tests for equality of two items based an the primary key fields
-            if (this.primaryKeyFields.length === 0) return item1 === item2
-            if (this.nu(item1) && this.nu(item2)) return true
-            if (this.nu(item1) || this.nu(item2)) return false
-            return this.primaryKeyFields.map((key: string) => item1[key] === item2[key]).filter((x) => !x).length === 0
-        },
-        nu(v: unknown) {
-            return v === null || v === undefined
-        }, //utility
-        rowClicked(item: Item): void {
-            if (this.selectable) {
-                this.$emit("update:modelValue", item)
-            } else {
-                this.$emit("rowClicked", item)
-            }
-        },
-        sortBy(key: string, sortIsDesc: boolean): void {
-            this.sortedBy = key
-            this.sortIsDesc = sortIsDesc
-            // Reset to first page to see the effect of sorting.
-            this.page = 1
-        },
-    },
-    watch: {
-        numPages(newVal) {
-            if (this.page > newVal && newVal > 0) {
-                this.page = newVal
-            }
-        },
-    },
+// --- computed ---
+const classes = computed(() => ({
+    compact: compact,
+    loading: loading,
+    selectable: selectable,
+}))
+const isEmpty = computed<boolean>(() => {
+    return !items || items.length === 0
 })
+const itemsToDisplay = computed<Item[]>(() => {
+    function getPageItems(allItems: Item[]) {
+        return allItems.slice((page.value - 1) * pageSize.value, page.value * pageSize.value)
+    }
+
+    // only paginate
+    if (sortedBy.value === null) return getPageItems(items)
+
+    const sortOn = columns.filter((field) => field.key == sortedBy.value)[0]?.sortOn //hmm
+    function mapToSortProp(x: any) {
+        return sortOn ? sortOn(x) : x
+    }
+
+    if (sortedBy.value === null) {
+        // no sort, just paginate
+        return getPageItems(items)
+    } else {
+        // sort and then paginate
+        const allItems = items
+            .slice()
+            .sort(
+                (a: Item, b: Item) => (-1) ** (+sortIsDesc.value | 0) * compareAny(mapToSortProp(a), mapToSortProp(b)),
+            )
+        return getPageItems(allItems)
+    }
+})
+const numPages = computed<number>(() => {
+    return Math.ceil(items.length / pageSize.value)
+})
+const pageSize = computed<number>(() => {
+    if (!items) return 20
+    // We allow for some leniency since we don't want the user to go to the next page just to see one entry
+    if (items.length <= 50) return items.length
+    return items.length > 20 ? 20 : items.length
+})
+const primaryKeyFields = computed<string[]>(() => {
+    return columns.filter((field) => field.isPrimaryField).map((field) => field.key)
+})
+const visibleFields = computed<Field[]>(() => {
+    return columns.filter((field) => !field.hidden)
+})
+
+// --- watch ---
+watch(numPages, (newVal) => {
+    if (page.value > newVal && newVal > 0) {
+        page.value = newVal
+    }
+})
+
+// --- methods ---
+function anyIncludes(whole: unknown, part: unknown): boolean {
+    if (!whole) return false
+    return (whole as Record<string, unknown> | unknown[])
+        .toString()
+        .includes((part as Record<string, unknown> | unknown[]).toString())
+}
+function compareAny(a: unknown, b: unknown): number {
+    // null and undefined are always smaller
+    if (nu(a) && nu(b)) return 0
+    if (nu(a)) return -1
+    if (nu(b)) return 1
+
+    // Infinity is always bigger
+    if (a === Infinity) return 1
+    if (b === Infinity) return -1
+
+    if (typeof a === "number" && typeof b === "number") {
+        return a - b
+    } else if (typeof a === "string" && typeof b === "string") {
+        return a.localeCompare(b)
+    } else if (Array.isArray(a) && Array.isArray(b)) {
+        if (a.length === 0 && b.length === 0) return 0
+        if (a.length === 0) return -1
+        if (b.length === 0) return 1
+        return compareAny(a[0], b[0]) // Approximate
+    } else if (typeof a === "boolean" && typeof b === "boolean") {
+        if (a === b) return 0
+        if (a) return 1
+        return -1
+    } else {
+        //garbage
+        return 0
+    }
+}
+function _field(field: Field): Field {
+    if (!field.label) {
+        field.label = field.key
+    }
+    return field
+}
+function equal(item1: Item, item2: Item): boolean {
+    // tests for equality of two items based an the primary key fields
+    if (primaryKeyFields.value.length === 0) return item1 === item2
+    if (nu(item1) && nu(item2)) return true
+    if (nu(item1) || nu(item2)) return false
+    return primaryKeyFields.value.map((key: string) => item1[key] === item2[key]).filter((x) => !x).length === 0
+}
+function nu(v: unknown) {
+    return v === null || v === undefined
+} //utility
+function rowClicked(item: Item): void {
+    if (selectable) {
+        model.value = item
+    }
+}
+function sortBy(key: string, desc: boolean): void {
+    sortedBy.value = key
+    sortIsDesc.value = desc
+    // Reset to first page to see the effect of sorting.
+    page.value = 1
+}
 </script>
 
 <style scoped lang="scss">

@@ -1,7 +1,6 @@
 // Libraries & stores
-import { ref } from "vue"
-import { defineStore } from "pinia"
-import stores, { type AppStore, type CorporaStore, type JobSelectionStore } from "@/stores"
+
+import stores from "@/stores"
 // API & types
 import * as API from "@/api/evaluation"
 import * as Utils from "@/api/utils"
@@ -33,9 +32,9 @@ export function literalsForTermComparison(termComparison: TermComparison): strin
  */
 const useEvaluation = defineStore("evaluation", () => {
     // Stores
-    const app = stores.useApp() as AppStore
-    const corporaStore = stores.useCorpora() as CorporaStore
-    const jobSelection = stores.useJobSelection() as JobSelectionStore
+    const app = stores.useApp()
+    const corporaStore = stores.useCorpora()
+    const jobSelection = stores.useJobSelection()
 
     // Fields
     const loading = ref(false)

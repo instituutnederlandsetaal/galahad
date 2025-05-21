@@ -7,9 +7,6 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import { computed } from "vue"
-// Components
-import { GSpinner } from "@/components/"
 
 const props = defineProps<{
     disabled?: boolean

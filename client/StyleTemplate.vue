@@ -10,8 +10,6 @@
 
 <script setup lang="ts">
 // -- libraries --
-import { computed, ref } from "vue"
-// --- components ---
 // --- stores ---
 // --- api ---
 // --- types ---
@@ -20,6 +18,11 @@ const { foo = "bar" } = defineProps<{
     foo?: string
 }>()
 // --- emits ---
+// Defining emits is technically optional if they are not used in <script>, but it is a good practice to do so.
+const emit = defineEmits<{
+    click: [name: string]
+    voidExample: []
+}>()
 // --- data ---
 const visible = ref<boolean>(true)
 // --- computed ---
@@ -27,6 +30,9 @@ const isVisible = computed<boolean>(() => visible.value) // arrow function where
 // --- watch ---
 // --- lifecycle (in order of execution) ---
 // --- methods ---
+function handleClick(): void {
+    // do something
+}
 </script>
 
 <style scoped lang="scss">

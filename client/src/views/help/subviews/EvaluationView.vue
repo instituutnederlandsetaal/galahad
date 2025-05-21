@@ -1,6 +1,6 @@
 <template>
     <div class="flex" style="padding: 0 !important">
-        <GCard headless noHelp class="left">
+        <GCard class="left">
             <h2>Contents</h2>
             <ul>
                 <li>
@@ -74,7 +74,7 @@
             </ul>
         </GCard>
         <div class="right">
-            <GCard headless noHelp class="right">
+            <GCard class="right">
                 <!-- H1: On Evaluation -->
                 <h1 id="evaluation">On Evaluation: A Detailed Overview</h1>
 
@@ -660,8 +660,7 @@
     </div>
 </template>
 
-<script setup>
-import { GCard } from "@/components"
+<script setup lang="ts">
 import EvaluationExampleCorpus from "./EvaluationExampleCorpus.vue"
 </script>
 

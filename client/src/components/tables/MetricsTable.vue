@@ -69,14 +69,11 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import { ref } from "vue"
-import stores, { JobSelectionStore } from "@/stores"
-// Components
-import { GTable, GButton, ComparisonModal } from "@/components"
-import DifferentTagsetsHelp from "@/components/help/DifferentTagsetsHelp.vue"
+
+import stores from "@/stores"
 
 // Stores
-const jobSelection = stores.useJobSelection() as JobSelectionStore
+const jobSelection = stores.useJobSelection()
 
 // Props
 const props = defineProps({

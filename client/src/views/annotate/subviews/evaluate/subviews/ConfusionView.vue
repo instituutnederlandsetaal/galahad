@@ -73,23 +73,20 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import { computed, ref } from "vue"
-import stores, { JobSelectionStore, CorporaStore, AppStore } from "@/stores"
-import { storeToRefs } from "pinia"
+
+import stores from "@/stores"
+
 // API & types
 import { Field } from "@/types/table"
 import { TermComparison, EvaluationEntry } from "@/types/evaluation"
 import * as API from "@/api/evaluation"
 import * as Utils from "@/api/utils"
-// Components
-import { GButton, GInfo, GTable, EvaluationInfoBox, ComparisonModal } from "@/components"
-import DifferentTagsetsHelp from "@/components/help/DifferentTagsetsHelp.vue"
 
 // Stores
 const { loading, confusion } = storeToRefs(stores.useConfusion())
-const corporaStore = stores.useCorpora() as CorporaStore
-const jobSelection = stores.useJobSelection() as JobSelectionStore
-const app = stores.useApp() as AppStore
+const corporaStore = stores.useCorpora()
+const jobSelection = stores.useJobSelection()
+const app = stores.useApp()
 
 // Custom types
 type Item = { [key: string]: EvaluationEntry } & { referenceJob: string }

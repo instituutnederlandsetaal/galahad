@@ -2,14 +2,17 @@
  * Utils for handling the blobs from some API responses.
  */
 
-// Libraries & stores
-import type { AppStore } from "@/stores"
-import axios, { type AxiosResponse, AxiosError, type AxiosRequestConfig } from "axios"
+// --- libraries ---
+import axios from "axios"
 import { parse } from "content-disposition"
+// --- types ---
+import type { AxiosResponse, AxiosError, AxiosRequestConfig } from "axios"
+import type { AppStore } from "@/stores"
+import type { ErrorMessage } from "@/api/api"
 
-// Custom types
 export type BlobResponse = AxiosResponse<Blob>
 
+// --- methods ---
 /**
  * Fetch a blob from a path.
  * @param path Request path.
@@ -45,23 +48,14 @@ export function handleBlobError(error: AxiosError<Blob>, intent: string, app: Ap
     const reader = new FileReader()
     // Setup the onload that fires after reading.
     reader.onload = () => {
-        const json = JSON.parse(reader.result as string)
+        const json = JSON.parse(reader.result as string) as ErrorMessage
         const errObj = {
             response: {
                 data: json,
             },
-        } as AxiosError
+        } as AxiosError<ErrorMessage>
         app.handleServerError(intent, errObj)
     }
     // Now, read.
     reader.readAsText(error.response?.data as Blob)
-}
-
-// https://stackoverflow.com/a/18650828
-export function formatBytes(bytes: number, decimals = 2) {
-    if (!+bytes) return "0 Bytes"
-    const dm = 0 > decimals ? 0 : decimals
-    const d = Math.floor(Math.log(bytes) / Math.log(1024))
-    const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
-    return `${parseFloat((bytes / Math.pow(1024, d)).toFixed(dm))} ${sizes[d]}`
 }

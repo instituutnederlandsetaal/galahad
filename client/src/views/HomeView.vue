@@ -1,6 +1,6 @@
 <template>
     <div>
-        <GCard noHelp>
+        <GCard>
             <template #title> Generating Linguistic Annotations for Historical Dutch </template>
 
             <hr />
@@ -77,9 +77,7 @@
     </div>
 </template>
 
-<script setup lang="ts">
-import { GCard, ExternalLink } from "@/components"
-</script>
+<script setup lang="ts"></script>
 
 <style scoped="true" lang="scss">
 :deep(h3) {

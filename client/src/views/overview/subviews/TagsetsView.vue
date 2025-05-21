@@ -21,12 +21,10 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import stores, { TagsetsStore } from "@/stores"
-// Components
-import { MailAddress, GTable } from "@/components"
+import stores from "@/stores"
 
 // Stores
-const tagsetsStore = stores.useTagsets() as TagsetsStore
+const tagsetsStore = stores.useTagsets()
 
 // Fields
 const columns = [

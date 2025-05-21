@@ -44,14 +44,12 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import { onMounted, ref } from "vue"
-import stores, { AppStore, UserStore } from "@/stores"
-// Components
-import { GInfo, GModal, GTabs, MailAddress } from "@/components"
+
+import stores from "@/stores"
 
 // Stores
-const app = stores.useApp() as AppStore
-const user = stores.useUser() as UserStore
+const app = stores.useApp()
+const user = stores.useUser()
 
 onMounted(() => {
     user.fetchUser()

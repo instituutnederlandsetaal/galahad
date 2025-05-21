@@ -41,8 +41,8 @@ export function reloadEval(
     return new Promise<void>((resolve, reject) => {
         ApiCall(corpus, hypothesis, reference)
             .then((response) => {
-                const corporaStore = stores.useCorpora() as CorporaStore
-                const jobSelection = stores.useJobSelection() as JobSelectionStore
+                const corporaStore = stores.useCorpora()
+                const jobSelection = stores.useJobSelection()
                 // Retrieve latest selections
                 const currentCorpus = corporaStore.activeUUID
                 const currentHypothesis = jobSelection.hypothesisJobId

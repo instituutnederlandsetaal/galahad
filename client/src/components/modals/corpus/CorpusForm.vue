@@ -119,19 +119,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue"
 import stores from "@/stores"
 
 import { MutableCorpusMetadata } from "@/types/corpora"
 
 // Component dependencies.
-import UserList from "@/components/modals/corpus/UserList.vue"
 
 export default defineComponent({
     name: "CorpusForm",
-    components: {
-        UserList,
-    },
     props: {
         action: { type: Function },
         cancel: { type: Function },

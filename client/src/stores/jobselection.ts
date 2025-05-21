@@ -1,7 +1,6 @@
 // Libraries & stores
-import { ref, watch, computed } from "vue"
-import { defineStore } from "pinia"
-import stores, { type CorporaStore, type JobsStore, type DocumentsStore } from "@/stores"
+
+import stores from "@/stores"
 import { type Job, SOURCE_LAYER } from "@/types/jobs"
 
 /**
@@ -9,9 +8,9 @@ import { type Job, SOURCE_LAYER } from "@/types/jobs"
  */
 const useJobSelection = defineStore("jobSelection", () => {
     // Stores
-    const jobsStore = stores.useJobs() as JobsStore
-    const corporaStore = stores.useCorpora() as CorporaStore
-    const documentsStore = stores.useDocuments() as DocumentsStore
+    const jobsStore = stores.useJobs()
+    const corporaStore = stores.useCorpora()
+    const documentsStore = stores.useDocuments()
 
     // Fields
     const hypothesisJobId = ref(null as unknown as string)

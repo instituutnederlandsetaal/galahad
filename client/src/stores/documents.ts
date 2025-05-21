@@ -1,7 +1,6 @@
 // Libraries & stores
-import { computed, ref, reactive } from "vue"
-import { defineStore } from "pinia"
-import stores, { type AppStore, type CorporaStore } from "@/stores"
+
+import stores from "@/stores"
 // Types & API
 import { type DocumentMetadata, Format } from "@/types/documents"
 import { type UUID } from "@/types/corpora"
@@ -22,8 +21,8 @@ type FileStatus = {
  */
 const documents = defineStore("documents", () => {
     // Stores
-    const app = stores.useApp() as AppStore
-    const corporaStore = stores.useCorpora() as CorporaStore
+    const app = stores.useApp()
+    const corporaStore = stores.useCorpora()
 
     // Fields
     const loading = ref(false)
@@ -37,7 +36,7 @@ const documents = defineStore("documents", () => {
     const illegalFiles = computed((): File[] => {
         return filesToUpload.value.filter((x: any) => {
             const ext = x.name.split(".").at(-1)
-            return !["xml", "tsv", "txt", "zip", "conllu", "naf"].includes(ext)
+            return !["xml", "tsv", "txt", "zip", "conllu", "naf", "pdf", "docx"].includes(ext)
         })
     })
     const tooLargeFiles = computed((): File[] => {

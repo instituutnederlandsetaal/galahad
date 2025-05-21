@@ -47,17 +47,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue"
 import stores from "@/stores"
-
-import { GInput, GButton } from "@/components"
 
 export default defineComponent({
     name: "UserList",
-    components: {
-        GInput,
-        GButton,
-    },
     props: {
         users: {
             type: Array<string>,

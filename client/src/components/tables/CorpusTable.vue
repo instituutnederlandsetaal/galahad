@@ -54,7 +54,7 @@
 
         <!-- size in bytes cell -->
         <template #cell-sizeInBytes="data">
-            <span v-if="data.value > 1023">{{ Utils.formatBytes(data.value) }}</span>
+            <span v-if="data.value > 1023">{{ formatBytes(data.value) }}</span>
             <span v-else>~ 0</span>
         </template>
 
@@ -87,16 +87,14 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import { PropType, ref, watch, computed } from "vue"
+
 import stores from "@/stores"
 // API & types
 import { CorpusMetadata } from "@/types/corpora"
 import { TableCorporaType, Field, TableData } from "@/types/table"
-import * as Utils from "@/api/utils"
-// Components
-import { ExternalLink, GButton, GTable, HelpLink } from "@/components"
+
 import help from "@/components/help"
-import { formatDate } from "@/types/date"
+import { formatDate, formatBytes } from "@/ts/utils"
 
 // Stores
 const userStore = stores.useUser()

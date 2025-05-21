@@ -1,20 +1,7 @@
-# Build stage
-FROM node:23.11.0-alpine3.21 as build
+FROM node:24.0.2-alpine3.21 AS build
 COPY . .
-# Install project dependencies (somehow Python has to be installed)
-RUN apk --no-cache add --virtual .builds-deps build-base python3
-RUN npm ci
-# Builds to dist/
-RUN npm run build
+RUN npm ci && npm run build-only
 
-# Production stage.
-FROM node:23.11.0-alpine3.21
-WORKDIR /app
-# Install dependencies of server.js
-RUN npm install express connect-history-api-fallback && npm cache clean --force
-# Copy over build & server.
-COPY --from=build /dist ./dist
-COPY . .
-
-EXPOSE 8080
-CMD [ "node", "server.js" ]
+FROM nginx:1.28.0-alpine3.21-slim
+COPY --from=build /dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/nginx.conf

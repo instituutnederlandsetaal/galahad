@@ -2,29 +2,21 @@
  * API calls for fetching tagsets.
  */
 
-// Libraries & stores
-import axios, { type AxiosResponse } from "axios"
-// Types & API
+// --- libraries ---
+import axios from "axios"
+// --- types ---
+import type { AxiosResponse } from "axios"
 import type { Tagset } from "@/types/tagset"
 
+type TagsetsResponse = AxiosResponse<Tagset[]>
+
+// --- data ---
 const tagsetsPath = `/tagsets`
 
-// Custom types
-type TagsetsResponse = AxiosResponse<Tagset[]>
-type TagsetResponse = AxiosResponse<Tagset>
-
-// Public methods
+// --- methods ---
 /**
  * Get all tagsets.
  */
 export function getTagsets(): Promise<TagsetsResponse> {
     return axios.get(tagsetsPath)
-}
-
-/**
- * Get single tagset by name.
- * @param tagset Tagset name.
- */
-export function getTagset(tagset: string): Promise<TagsetResponse> {
-    return axios.get(`${tagsetsPath}/${tagset}`)
 }

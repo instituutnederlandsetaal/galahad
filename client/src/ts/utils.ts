@@ -1,3 +1,12 @@
+// https://stackoverflow.com/a/18650828
+export function formatBytes(bytes: number, decimals = 2) {
+    if (!+bytes) return "0 Bytes"
+    const dm = 0 > decimals ? 0 : decimals
+    const d = Math.floor(Math.log(bytes) / Math.log(1024))
+    const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
+    return `${parseFloat((bytes / Math.pow(1024, d)).toFixed(dm))} ${sizes[d]}`
+}
+
 export function formatDate(unixtime: number) {
     if (unixtime <= 0) {
         return "Never"

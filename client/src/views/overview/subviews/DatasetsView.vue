@@ -16,16 +16,13 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import { onMounted } from "vue"
-import stores, { CorporaStore } from "@/stores"
+
+import stores from "@/stores"
 // API & types
 import { TableCorporaType, TableDocumentsType } from "@/types/table"
-// Components
-import { CorpusTable, DocumentsTable, GSpinner } from "@/components"
-import BenchmarkSetsHelp from "@/components/help/BenchmarkSetsHelp.vue"
 
 // Stores
-const corporaStore = stores.useCorpora() as CorporaStore
+const corporaStore = stores.useCorpora()
 
 // Watches & mounts
 // Only needs to load once.
@@ -34,7 +31,7 @@ onMounted(() => {
 })
 </script>
 
-<style>
+<style scoped lang="scss">
 .spinner {
     align-self: center;
 }

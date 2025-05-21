@@ -15,7 +15,7 @@
         <div style="display: flex; width: 100%; align-items: center; justify-content: center; flex-wrap: wrap">
             <JobSelect />
             <JobSelect :isReference="true" />
-            <GCard title="Download as CSV" noHelp>
+            <GCard title="Download as CSV">
                 <i v-if="!jobSelection.hypothesisJobId || !jobSelection.referenceJobId">Select both layers first.</i>
                 <DownloadButton v-else wide @click="evaluation.downloadCSV()" :loading="evaluation.loading" />
             </GCard>
@@ -40,7 +40,7 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import { onMounted, watch } from "vue"
+
 import stores, {
     DistributionStore,
     JobsStore,
@@ -51,20 +51,19 @@ import stores, {
     CorporaStore,
     DocumentsStore,
 } from "@/stores"
-// Components
-import { GCard, GTabs, AnnotateTab, JobSelect, DownloadButton } from "@/components"
+
 import help from "@/components/help"
 import { SOURCE_LAYER } from "@/types/jobs"
 
 // Stores
-const jobsStore = stores.useJobs() as JobsStore
-const evaluation = stores.useEvaluation() as EvaluationStore
-const confusion = stores.useConfusion() as ConfusionStore
-const distribution = stores.useDistribution() as DistributionStore
-const metrics = stores.useMetrics() as MetricsStore
-const jobSelection = stores.useJobSelection() as JobSelectionStore
-const corporaStore = stores.useCorpora() as CorporaStore
-const documentsStore = stores.useDocuments() as DocumentsStore
+const jobsStore = stores.useJobs()
+const evaluation = stores.useEvaluation()
+const confusion = stores.useConfusion()
+const distribution = stores.useDistribution()
+const metrics = stores.useMetrics()
+const jobSelection = stores.useJobSelection()
+const corporaStore = stores.useCorpora()
+const documentsStore = stores.useDocuments()
 
 // Fields
 const props = defineProps(["basePath"])

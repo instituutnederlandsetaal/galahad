@@ -5,9 +5,7 @@
                 <component :is="help.export"></component>
             </template>
             <JobSelect customTitle="Annotation layer" />
-            <GCard noHelp>
-                <template #title>Download as format</template>
-                <template #header> </template>
+            <GCard title="Download as format">
                 <div id="center">
                     <FileFormatInput v-model="exportStore.format" />
 
@@ -54,20 +52,19 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import { onMounted, ref, computed, watch } from "vue"
-import stores, { CorporaStore, JobsStore, ExportStore, DocumentsStore } from "@/stores"
+
+import stores from "@/stores"
 // Api & types
 import { Format } from "@/types/documents"
-// Components
-import { GCard, JobSelect, AnnotateTab, DownloadButton, GInfo } from "@/components"
+
 import help from "@/components/help"
 import TeiP5LegacyWarning from "@/views/help/subviews/formats/TeiP5LegacyWarning.vue"
 
 // Stores
-const corporaStore = stores.useCorpora() as CorporaStore
-const jobsStore = stores.useJobs() as JobsStore
-const exportStore = stores.useExport() as ExportStore
-const documentsStore = stores.useDocuments() as DocumentsStore
+const corporaStore = stores.useCorpora()
+const jobsStore = stores.useJobs()
+const exportStore = stores.useExport()
+const documentsStore = stores.useDocuments()
 
 // Fields
 const posHeadOnly = ref(false)

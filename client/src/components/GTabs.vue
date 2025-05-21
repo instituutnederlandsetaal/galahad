@@ -51,8 +51,6 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from "vue"
-
 // Stub means it does display as title, but it is not interactive, so you can implement custom functionality
 export type Tab = { id: string; title: string; disabled?: boolean; stub?: boolean }
 

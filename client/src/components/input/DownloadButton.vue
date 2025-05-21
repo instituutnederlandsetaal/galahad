@@ -6,9 +6,6 @@
 </template>
 
 <script setup lang="ts">
-// Components
-import { GButton } from "@/components"
-
 defineProps({
     disabled: { type: Boolean, default: false },
     loading: { type: Boolean, default: false },

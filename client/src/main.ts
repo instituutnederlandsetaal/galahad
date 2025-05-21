@@ -1,11 +1,10 @@
 import Aura from "@primeuix/themes/aura"
 import PrimeVue from "primevue/config"
-import gcomponents from "@/components"
 import App from "./App.vue"
 import router from "./router"
 import stores from "./stores"
 import { createApp, watch } from "vue/dist/vue.esm-bundler" // bug doesn't let use use 'vue' here
-import { createPinia } from "pinia"
+
 import { setAxiosBaseUrl } from "./api/api"
 setAxiosBaseUrl()
 
@@ -13,7 +12,6 @@ const pinia = createPinia()
 const app = createApp(App)
 
 app.use(pinia)
-app.use(gcomponents)
 app.use(PrimeVue, {
     theme: {
         preset: Aura,

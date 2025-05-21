@@ -1,18 +1,7 @@
 <template>
-    <GCard :title="title" :disabled="disabled" noHelp>
-        <template #help>
-            Select the result of a tagger job as a hypothesis or reference layer. It is also possible to select the
-            source annotations.
-        </template>
+    <GCard :title>
         <GSpinner v-if="jobsStore.loading" />
-        <GInput
-            v-else
-            type="select"
-            :options="jobSelectionStore.selectableJobs"
-            v-model="private_value"
-            :disabled="disabled"
-        >
-        </GInput>
+        <GInput v-else type="select" :options="jobSelectionStore.selectableJobs" v-model="private_value"> </GInput>
         <GInfo v-if="untaggedDocsExist">
             Not all documents have been tagged yet. It is still possible to select this layer, but it will be
             incomplete. <br />
@@ -31,21 +20,18 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import { computed, ref, watch } from "vue"
-import stores, { JobsStore, JobSelectionStore } from "@/stores"
+
+import stores from "@/stores"
 // API & Types
 import { SOURCE_LAYER } from "@/types/jobs"
-// Components
-import { GCard, GInput, GSpinner } from "@/components"
 
 // Stores
-const jobsStore = stores.useJobs() as JobsStore
-const jobSelectionStore = stores.useJobSelection() as JobSelectionStore
+const jobsStore = stores.useJobs()
+const jobSelectionStore = stores.useJobSelection()
 const documentsStore = stores.useDocuments()
 
 // Fields
 const props = defineProps({
-    disabled: { default: false },
     isReference: { default: false },
     customTitle: { default: null as string | null },
 })

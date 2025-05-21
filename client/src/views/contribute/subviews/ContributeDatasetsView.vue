@@ -1,6 +1,6 @@
 <template>
     <div>
-        <GCard noHelp>
+        <GCard>
             <template #title>Contribute a dataset</template>
             <p>
                 Apart from contributing new taggers to the GaLAHaD platform, you can also contribute training and
@@ -11,7 +11,4 @@
     </div>
 </template>
 
-<script setup lang="ts">
-import { GCard } from "@/components"
-import MailAddress from "@/components/links/MailAddress.vue"
-</script>
+<script setup lang="ts"></script>

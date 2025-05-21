@@ -1,6 +1,6 @@
 <template>
     <div class="flex" style="padding: 0 !important">
-        <GCard headless noHelp class="left">
+        <GCard class="left">
             <h2>Contents</h2>
             <ul>
                 <!-- H1 -->
@@ -78,7 +78,7 @@
             </ul>
         </GCard>
         <div class="right">
-            <GCard headless noHelp>
+            <GCard>
                 <!-- H1: Introduction -->
                 <h1 id="introduction">Introduction</h1>
 
@@ -559,10 +559,7 @@
     </div>
 </template>
 
-<script setup>
-import { GCard } from "@/components"
-import GNav from "@/components/links/GNav.vue"
-</script>
+<script setup lang="ts"></script>
 
 <style scoped lang="scss">
 img {

@@ -12,9 +12,6 @@
 </template>
 
 <script setup lang="ts">
-// Components
-import { GNav } from "@/components"
-
 defineProps({
     showLink: Boolean,
 })

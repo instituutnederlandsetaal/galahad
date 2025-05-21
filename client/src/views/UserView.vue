@@ -9,27 +9,15 @@
             <br /><br />
             <b v-if="user.user.isAdmin"> You are an admin.</b>
         </p>
-        <!-- <div>
-      Things that could be listed here:
-      <ul>
-        <li>last login</li>
-        <li>first login</li>
-        <li>number of corpora</li>
-        <li>used processing time</li>
-        <li>etc...</li>
-      </ul>
-    </div> -->
     </GCard>
 </template>
 
 <script setup lang="ts">
 // Libraries & stores
-import stores, { UserStore } from "@/stores"
-// Components
-import { GCard } from "@/components"
+import stores from "@/stores"
 
 // Stores
-const user = stores.useUser() as UserStore
+const user = stores.useUser()
 </script>
 
 <style scoped="true" lang="scss">

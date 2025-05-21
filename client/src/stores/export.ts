@@ -1,7 +1,6 @@
 // Libraries & stores
-import { computed, ref } from "vue"
-import { defineStore } from "pinia"
-import stores, { type AppStore, type CorporaStore, type JobSelectionStore } from "@/stores"
+
+import stores from "@/stores"
 // Types & API
 import * as API from "@/api/export"
 import { Format } from "@/types/documents"
@@ -12,9 +11,9 @@ import * as Utils from "@/api/utils"
  */
 const useExport = defineStore("exportStore", () => {
     // Stores
-    const corporaStore = stores.useCorpora() as CorporaStore
-    const app = stores.useApp() as AppStore
-    const jobSelection = stores.useJobSelection() as JobSelectionStore
+    const corporaStore = stores.useCorpora()
+    const app = stores.useApp()
+    const jobSelection = stores.useJobSelection()
 
     // Fields
     const loading = ref(false)

@@ -10,16 +10,14 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import { onMounted, watch, computed, ref, Ref } from "vue"
-import stores, { JobSelectionStore } from "@/stores"
+
+import stores from "@/stores"
 // Types & API
 import { Term } from "@/types/evaluation"
 import { Field } from "@/types/table"
-// Components
-import { GTable } from "@/components"
 
 // Stores
-const jobSelection = stores.useJobSelection() as JobSelectionStore
+const jobSelection = stores.useJobSelection()
 
 // Custom types
 type Item = Term & { layer: string }

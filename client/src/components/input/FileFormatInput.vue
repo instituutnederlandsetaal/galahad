@@ -6,15 +6,13 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import stores, { ExportStore, UserStore } from "@/stores"
+import stores from "@/stores"
 // API & types
 import { Format } from "@/types/documents"
-// Components
-import { GInput } from "@/components"
 
 // Stores
-const exportStore = stores.useExport() as ExportStore
-const userStore = stores.useUser() as UserStore
+const exportStore = stores.useExport()
+const userStore = stores.useUser()
 
 // Fields
 const options = [

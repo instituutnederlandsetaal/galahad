@@ -13,6 +13,4 @@
     </div>
 </template>
 
-<script setup lang="ts">
-import { GTabs } from "@/components"
-</script>
+<script setup lang="ts"></script>

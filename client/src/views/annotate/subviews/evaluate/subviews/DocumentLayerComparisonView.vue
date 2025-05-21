@@ -43,20 +43,18 @@
 
 <script setup lang="ts">
 // Library & API
-import { onMounted, watch, computed, ref, Ref } from "vue"
+
 import * as API from "@/api/evaluation"
 // Types & Stores
 import { TermComparison, Term } from "@/types/evaluation"
-import stores, { CorporaStore, JobsStore, ExportStore, DocumentsStore, JobSelectionStore } from "@/stores"
-// Components
-import { GInput, GCard } from "@/components"
-import SingleTermComparisonTable from "@/components/tables/SingleTermComparisonTable.vue"
+import stores from "@/stores"
+
 import Paginator from "primevue/paginator"
 
 // Stores
-const documentsStore = stores.useDocuments() as DocumentsStore
-const corporaStore = stores.useCorpora() as CorporaStore
-const jobSelection = stores.useJobSelection() as JobSelectionStore
+const documentsStore = stores.useDocuments()
+const corporaStore = stores.useCorpora()
+const jobSelection = stores.useJobSelection()
 
 // Fields
 const docNames = computed(() => documentsStore.available.map((doc) => ({ value: doc.name, text: doc.name })))

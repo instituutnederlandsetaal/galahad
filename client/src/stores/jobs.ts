@@ -1,7 +1,6 @@
 // Libraries & stores
-import { computed, ref } from "vue"
-import { defineStore } from "pinia"
-import stores, { type AppStore, type CorporaStore } from "@/stores"
+
+import stores from "@/stores"
 // API & Types
 import { type Job, SOURCE_LAYER } from "@/types/jobs"
 import * as API from "@/api/jobs"
@@ -15,8 +14,8 @@ const POLL_INTERVAL = 5000
  */
 const useJobs = defineStore("jobs", () => {
     // Stores
-    const app = stores.useApp() as AppStore
-    const corporaStore = stores.useCorpora() as CorporaStore
+    const app = stores.useApp()
+    const corporaStore = stores.useCorpora()
 
     // Fields
     // Job statuses for the taggers.

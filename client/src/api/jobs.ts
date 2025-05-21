@@ -2,24 +2,24 @@
  * API calls for getting existing jobs and job layer results, posting and cancelling jobs, and polling job progress.
  */
 
-// Libraries & stores
-import axios, { type AxiosResponse } from "axios"
-// Types & API
+// --- libraries ---
+import axios from "axios"
+// --- types ---
+import type { AxiosResponse } from "axios"
 import type { Job, Progress } from "@/types/jobs"
 import type { UUID } from "@/types/corpora"
 
-// Paths
+type JobsResponse = AxiosResponse<Job[]>
+type JobResponse = AxiosResponse<Job>
+export type ProgressResponse = AxiosResponse<Progress>
+
+// --- computed ---
 const jobsPath = (corpus: UUID) => `/corpora/${corpus}/jobs`
 const jobPath = (corpus: UUID, job: string) => `/corpora/${corpus}/jobs/${job}`
 const jobIsBusyPath = (corpus: UUID, job: string) => `/corpora/${corpus}/jobs/${job}/isBusy`
 const jobProgressPath = (corpus: UUID, job: string) => `/corpora/${corpus}/jobs/${job}/progress`
 
-// Custom types
-type JobsResponse = AxiosResponse<Job[]>
-type JobResponse = AxiosResponse<Job>
-export type ProgressResponse = AxiosResponse<Progress>
-
-// Public methods
+// --- methods ---
 /**
  * Fetch all jobs for a corpus.
  * @param corpus UUID of the corpus.

@@ -1,25 +1,24 @@
 <template>
-    <GModal small :show="show" @hide="$emit('hide')" headless>
-        <GTable compact showHelp :columns :items="items" sortedByColumn="occurrences" :sortDesc="true">
-            <template #title>
-                Types of lemma <i>{{ variantsToDisplay?.lemma }}</i> and part-of-speech
-                <i>{{ variantsToDisplay?.pos }}</i>
-            </template>
-            <template #help>
-                This is an overview of all types belonging to the chosen lemma, part-of-speech pair.
-            </template>
-        </GTable>
+    <GModal small :show @hide="$emit('hide')">
+        <template #title>
+            Types of lemma <i>{{ variantsToDisplay?.lemma }}</i> and part-of-speech
+            <i>{{ variantsToDisplay?.pos }}</i>
+        </template>
+
+        <template #help>
+            This is an overview of all types belonging to the chosen lemma, part-of-speech pair.
+        </template>
+
+        <GTable compact :columns :items sortedByColumn="occurrences" :sortDesc="true" />
     </GModal>
 </template>
 
 <script setup lang="ts">
 // Libraries & stores
-import { computed } from "vue"
+
 // Types & API
 import { Field } from "@/types/table"
 import { Distribution } from "@/types/evaluation"
-// Components
-import { GModal, GTable } from "@/components"
 
 // Custom types
 type DistEntry = { variant: string; occurrences: number }

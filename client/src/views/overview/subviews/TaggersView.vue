@@ -2,7 +2,7 @@
     <div>
         <GTable title="Taggers overview" :columns :items="taggerStore.taggers" sortedByColumn="id" :sortDesc="false">
             <template #help>
-                Here you can see an overview of all available taggers within Galahad. <br />
+                Here you can see an overview of all available taggers within GaLAHaD. <br />
                 For more information on the taggers, please visit GitHub:
                 <ExternalLink href="https://github.com/INL/galahad-taggers-dockerized/">
                     galahad-taggers-dockerized
@@ -76,14 +76,13 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import stores, { TaggersStore } from "@/stores"
-// Components
-import { MailAddress, GTable, ExternalLink } from "@/components"
+import stores from "@/stores"
+
 // API & types
 import { sort_tagger_annotations } from "@/stores/taggers"
 
 // Stores
-const taggerStore = stores.useTaggers() as TaggersStore
+const taggerStore = stores.useTaggers()
 
 // Fields
 const columns = [

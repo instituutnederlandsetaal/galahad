@@ -14,7 +14,4 @@
     </div>
 </template>
 
-<script setup lang="ts">
-// Components
-import DifferentTagsetsHelp from "@/components/help/DifferentTagsetsHelp.vue"
-</script>
+<script setup lang="ts"></script>
