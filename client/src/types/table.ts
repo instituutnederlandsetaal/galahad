@@ -1,26 +1,26 @@
 export enum TableCorporaType {
-    Dataset = "benchmark",
-    User = "user",
-    Shared = "shared",
+	Dataset = "benchmark",
+	User = "user",
+	Shared = "shared",
 }
 
 export enum TableDocumentsType {
-    Dataset = "dataset",
-    User = "user",
+	Dataset = "dataset",
+	User = "user",
 }
 
 /* sortOn defines what to sort field values on */
 export type Field = {
-    key: string
-    label?: string
-    sortOn?: (value: any) => any
-    textAlign?: string
-    isPrimaryField?: boolean
-    hidden?: boolean
+	key: string
+	label?: string
+	sortOn?: (value: any) => any
+	textAlign?: string
+	isPrimaryField?: boolean
+	hidden?: boolean
 }
 
 export type TableData<T> = {
-    field: Field
-    item: T
-    value: any
+	field: Field
+	item: T
+	value: any
 }

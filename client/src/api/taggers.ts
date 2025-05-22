@@ -24,7 +24,7 @@ const taggerHealthPath = (tagger: string) => `${taggerPath(tagger)}/health`
  * Get all taggers.
  */
 export function getTaggers(): Promise<TaggersResponse> {
-    return axios.get(taggersPath)
+	return axios.get(taggersPath)
 }
 
 /**
@@ -32,7 +32,7 @@ export function getTaggers(): Promise<TaggersResponse> {
  * @param tagger Tagger name.
  */
 export function getTaggerHealth(tagger: string): Promise<TaggerHealthResponse> {
-    return axios.get(taggerHealthPath(tagger))
+	return axios.get(taggerHealthPath(tagger))
 }
 
 /**
@@ -40,5 +40,5 @@ export function getTaggerHealth(tagger: string): Promise<TaggerHealthResponse> {
  * Summed over all taggers & corpora on the server.
  */
 export function getDocsAtTaggers(): Promise<TaggersBusyResponse> {
-    return axios.get(`${taggersPath}/active`)
+	return axios.get(`${taggersPath}/active`)
 }

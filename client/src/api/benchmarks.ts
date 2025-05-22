@@ -18,5 +18,5 @@ const benchmarksPath = "/benchmarks"
  * Fetch all benchmarks.
  */
 export function getBenchmarks(): Promise<BenchmarksResponse> {
-    return axios.get(benchmarksPath)
+	return axios.get(benchmarksPath)
 }

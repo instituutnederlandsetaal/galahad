@@ -9,7 +9,7 @@
 
 <script setup lang="ts"></script>
 
-<style scoped="true" lang="scss">
+<style scoped lang="scss">
 .g-card {
     overflow-y: auto;
 }

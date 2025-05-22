@@ -1,5 +1,5 @@
 <template>
-    <GTable :title :columns :items :loading helpSubject="evaluation" class="metricsTable" :sortedByColumn :noHelp>
+    <GTable :title :columns :items :loading helpSubject="evaluation" class="metricsTable" :sortedByColumn>
         <template #help>
             <slot name="help">
                 <p><i>PoS comparison is base on the full PoS, including features.</i></p>
@@ -36,8 +36,7 @@
                 'cell-microF1',
                 'cell-microAccuracy',
             ]"
-            #[cell]="data"
-        >
+            #[cell]="data">
             <div :key="cell">
                 {{ `${data.value ? parseFloat(data.value).toString().slice(0, 4) : 0}` }}
             </div>
@@ -45,8 +44,7 @@
 
         <template
             v-for="cell in ['cell-falsePositive', 'cell-falseNegative', 'cell-truePositive', 'cell-noMatch']"
-            #[cell]="data"
-        >
+            #[cell]="data">
             <div :key="cell">
                 <GButton :disabled="data.value.count === 0" @click="openModal(data)">
                     {{ `${((data.value.count / data.item.count) * 100).toFixed(1)}%` }}
@@ -63,8 +61,7 @@
         @download="$emit('download', modalData)"
         :referenceJob="jobSelection.referenceJobId"
         :hypothesisJob="jobSelection.hypothesisJobId"
-        :downloading
-    />
+        :downloading />
 </template>
 
 <script setup lang="ts">
@@ -77,13 +74,12 @@ const jobSelection = stores.useJobSelection()
 
 // Props
 const props = defineProps({
-    title: { type: String, default: "Metrics" },
-    columns: { type: Array, default: [] },
-    items: { type: Array, default: [] },
-    loading: { type: Boolean, default: false },
-    sortedByColumn: { type: String, default: "count" },
-    downloading: { type: Boolean, default: false },
-    noHelp: { type: Boolean, default: false },
+	title: { type: String, default: "Metrics" },
+	columns: { type: Array, default: [] },
+	items: { type: Array, default: [] },
+	loading: { type: Boolean, default: false },
+	sortedByColumn: { type: String, default: "count" },
+	downloading: { type: Boolean, default: false },
 })
 
 // Emits
@@ -91,7 +87,10 @@ defineEmits(["download"])
 
 // Fields
 const showModal = ref(false)
-const samples = ref({ title: "", samples: [] } as { title: string; samples: TermComparison[] })
+const samples = ref({ title: "", samples: [] } as {
+	title: string
+	samples: TermComparison[]
+})
 const modalData = ref({})
 
 // Methods
@@ -99,13 +98,13 @@ const modalData = ref({})
  * Open a set of samples in a modal.
  */
 function openModal(data) {
-    modalData.value = data
-    samples.value = {
-        title: `${data.field.label} ${data.item.name} samples`,
-        samples: data.value.samples,
-        annotationType: data.item.column.toLowerCase(),
-    }
-    showModal.value = true
+	modalData.value = data
+	samples.value = {
+		title: `${data.field.label} ${data.item.name} samples`,
+		samples: data.value.samples,
+		annotationType: data.item.column.toLowerCase(),
+	}
+	showModal.value = true
 }
 </script>
 

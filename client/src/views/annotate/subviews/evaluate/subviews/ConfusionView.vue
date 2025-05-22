@@ -9,8 +9,7 @@
             :loading="loading"
             sortedByColumn="referenceJob"
             :sortDesc="false"
-            hoverRow
-        >
+            hoverRow>
             <template #help>
                 In part-of-speech confusion, an overview is given of the matches (in green) and mismatches per PoS when
                 comparing the tagging of the hypothesis layer with the reference layer. Click on any frequency below to
@@ -64,8 +63,7 @@
             :downloading
             @download="(data) => download(data)"
             :referenceJob="jobSelection.referenceJobId"
-            :hypothesisJob="jobSelection.hypothesisJobId"
-        />
+            :hypothesisJob="jobSelection.hypothesisJobId" />
 
         <EvaluationInfoBox :eval="selectedConfusion" />
     </div>
@@ -94,123 +92,141 @@ type Cell = { field: Field; item: Item; value: EvaluationEntry }
 
 // Fields
 const confusionableAnnotations = computed(() =>
-    Object.keys(confusion.value || {}).map((key) => ({ value: key, text: key })),
+	Object.keys(confusion.value || {}).map((key) => ({ value: key, text: key })),
 )
 const selectedAnnotation = ref(null)
 const downloading = ref(false)
 const modalData = ref({})
-const samples = ref({ title: "", samples: [] } as { title: string; samples: TermComparison[] })
+const samples = ref({ title: "", samples: [] } as {
+	title: string
+	samples: TermComparison[]
+})
 const showModal = ref(false)
-const selectedConfusion = computed(() => confusion?.value[selectedAnnotation.value] || { table: {} })
+const selectedConfusion = computed(
+	() => confusion?.value[selectedAnnotation.value] || { table: {} },
+)
 
 const columns = computed((): Field[] => {
-    // add the entries
-    const entries = {} as { [key: string]: boolean }
-    Object.keys(selectedConfusion?.value?.table)?.map((k1) => {
-        Object.keys(selectedConfusion?.value?.table[k1])?.forEach((k2) => (entries[k2] = true))
-    })
+	// add the entries
+	const entries = {} as { [key: string]: boolean }
+	Object.keys(selectedConfusion?.value?.table)?.map((k1) => {
+		Object.keys(selectedConfusion?.value?.table[k1])?.forEach(
+			(k2) => (entries[k2] = true),
+		)
+	})
 
-    // add referenceJob, sort, map and return
-    const refJobField = {
-        key: "referenceJob",
-        sortOn: (value: Item) => {
-            const pos = value.referenceJob
-            return posToBottom(pos) ? Infinity : pos
-        },
-    }
+	// add referenceJob, sort, map and return
+	const refJobField = {
+		key: "referenceJob",
+		sortOn: (value: Item) => {
+			const pos = value.referenceJob
+			return posToBottom(pos) ? Infinity : pos
+		},
+	}
 
-    const allFields = Object.keys(entries)
-        // GTable sort also uses localeCompare. Just using sort() as is messes up the order
-        // between e.g. 'NOU' & 'NO_POS'. I don't know why, though.
-        .sort((a, b) => {
-            if (posToBottom(a)) return 1
-            if (posToBottom(b)) return -1
-            return a.localeCompare(b)
-        })
+	const allFields = Object.keys(entries)
+		// GTable sort also uses localeCompare. Just using sort() as is messes up the order
+		// between e.g. 'NOU' & 'NO_POS'. I don't know why, though.
+		.sort((a, b) => {
+			if (posToBottom(a)) return 1
+			if (posToBottom(b)) return -1
+			return a.localeCompare(b)
+		})
 
-    const returnVal = allFields.map((field) => {
-        return {
-            key: field,
-            sortOn: (value) => (field !== "referenceJob" ? value[field]?.count : value?.referenceJob),
-        }
-    })
-    returnVal.unshift(refJobField)
-    return returnVal
+	const returnVal = allFields.map((field) => {
+		return {
+			key: field,
+			sortOn: (value) =>
+				field !== "referenceJob" ? value[field]?.count : value?.referenceJob,
+		}
+	})
+	returnVal.unshift(refJobField)
+	return returnVal
 })
 
 const rows = computed((): Item[] => {
-    return Object.keys(selectedConfusion.value.table).map((k1) => {
-        const ret = { referenceJob: k1 } as { [key: string]: EvaluationEntry } & {
-            referenceJob: string
-        }
-        Object.keys(selectedConfusion.value.table[k1]).forEach(
-            (k2) => (ret[k2] = selectedConfusion.value.table[k1][k2]),
-        )
-        return ret
-    })
+	return Object.keys(selectedConfusion.value.table).map((k1) => {
+		const ret = { referenceJob: k1 } as { [key: string]: EvaluationEntry } & {
+			referenceJob: string
+		}
+		Object.keys(selectedConfusion.value.table[k1]).forEach(
+			(k2) => (ret[k2] = selectedConfusion.value.table[k1][k2]),
+		)
+		return ret
+	})
 })
 
 // Methods
 function download() {
-    const data = modalData.value
-    const hypothesisPos = data.field.key
-    const referencePos = data.item.referenceJob
-    downloading.value = true
-    API.getConfusionSamples(
-        corporaStore.activeUUID,
-        jobSelection.hypothesisJobId,
-        jobSelection.referenceJobId,
-        hypothesisPos,
-        referencePos,
-        selectedAnnotation.value,
-    )
-        .then((response) => {
-            Utils.browserDownloadResponseFile(response)
-        })
-        .catch((res) => Utils.handleBlobError(res, "download confusion samples", app))
-        .finally(() => (downloading.value = false))
+	const data = modalData.value
+	const hypothesisPos = data.field.key
+	const referencePos = data.item.referenceJob
+	downloading.value = true
+	API.getConfusionSamples(
+		corporaStore.activeUUID,
+		jobSelection.hypothesisJobId,
+		jobSelection.referenceJobId,
+		hypothesisPos,
+		referencePos,
+		selectedAnnotation.value,
+	)
+		.then((response) => {
+			Utils.browserDownloadResponseFile(response)
+		})
+		.catch((res) =>
+			Utils.handleBlobError(res, "download confusion samples", app),
+		)
+		.finally(() => (downloading.value = false))
 }
 /**
  * Case insensitive string compare.
  */
 function strEqual(a: string, b: string) {
-    return a.toUpperCase() === b.toUpperCase()
+	return a.toUpperCase() === b.toUpperCase()
 }
 
 /**
  * returns whether this pos should be sorted to the bottom.
  */
 function posToBottom(pos: string) {
-    const posses = ["NO_POS", "Missing match", "OTHER", "LET", "PUNCT", "PC", "MULTIPLE"]
-    return posses.includes(pos)
+	const posses = [
+		"NO_POS",
+		"Missing match",
+		"OTHER",
+		"LET",
+		"PUNCT",
+		"PC",
+		"MULTIPLE",
+	]
+	return posses.includes(pos)
 }
 
 function cssClass(data) {
-    const match: boolean = strEqual(data.field.key, data.item.referenceJob)
-    const warnings = ["NO_POS", "MULTIPLE", "Missing match"]
-    if (warnings.includes(data.field.key)) {
-        return {
-            orange: match,
-            plain: !match,
-        }
-    } else {
-        return {
-            green: match,
-            plain: !match,
-        }
-    }
+	const match: boolean = strEqual(data.field.key, data.item.referenceJob)
+	const warnings = ["NO_POS", "MULTIPLE", "Missing match"]
+	if (warnings.includes(data.field.key)) {
+		return {
+			orange: match,
+			plain: !match,
+		}
+	} else {
+		return {
+			green: match,
+			plain: !match,
+		}
+	}
 }
 
 function openModal(data) {
-    modalData.value = data
-    samples.value = {
-        agreement: strEqual(data.field.key, data.item.referenceJob),
-        samples: data.value.samples,
-        hypothesisPos: data.field.key,
-        referencePos: data.item.referenceJob,
-        annotationType: selectedAnnotation.value,
-    }
-    showModal.value = true
+	modalData.value = data
+	samples.value = {
+		agreement: strEqual(data.field.key, data.item.referenceJob),
+		samples: data.value.samples,
+		hypothesisPos: data.field.key,
+		referencePos: data.item.referenceJob,
+		annotationType: selectedAnnotation.value,
+	}
+	showModal.value = true
 }
 </script>
 

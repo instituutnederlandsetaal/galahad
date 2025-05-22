@@ -47,8 +47,7 @@
                     <img
                         src="@/assets/galahad-graal-klein.png"
                         title="Verbaasd laat Galahad de graal uit zijn handen vallen als hij ziet wat erin zit."
-                        alt="Verbaasd laat Galahad de graal uit zijn handen vallen als hij ziet wat erin zit."
-                    />
+                        alt="Verbaasd laat Galahad de graal uit zijn handen vallen als hij ziet wat erin zit." />
                     <figcaption>
                         <i>
                             &ldquo;Ende seget datmen daer doe wan
@@ -65,8 +64,7 @@
                         </i>
                         <small>
                             <ExternalLink
-                                href="https://galerij.kb.nl/kb.html#/nl/lancelot/page/45/zoom/5/lat/-66/lng/-107"
-                            >
+                                href="https://galerij.kb.nl/kb.html#/nl/lancelot/page/45/zoom/5/lat/-66/lng/-107">
                                 Lancelotcompilatie, fol. 41vb, vers 15.444-15449
                             </ExternalLink>
                         </small>
@@ -79,7 +77,7 @@
 
 <script setup lang="ts"></script>
 
-<style scoped="true" lang="scss">
+<style scoped lang="scss">
 :deep(h3) {
     font-size: 30px;
     margin-bottom: 0;

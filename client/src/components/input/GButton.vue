@@ -1,33 +1,31 @@
 <template>
-    <button :disabled="disabled || loading" :class="cssClass" @click="$emit('click')">
+    <button :disabled="disabled || loading" :class="classes" @click="$emit('click')">
         <GSpinner small v-if="loading" />
         <slot></slot>
     </button>
 </template>
 
 <script setup lang="ts">
-// Libraries & stores
-
-const props = defineProps<{
-    disabled?: boolean
-    red?: boolean
-    orange?: boolean
-    green?: boolean
-    plain?: boolean
-    loading?: boolean
+const { disabled, red, orange, green, plain, loading } = defineProps<{
+	disabled?: boolean
+	red?: boolean
+	orange?: boolean
+	green?: boolean
+	plain?: boolean
+	loading?: boolean
 }>()
 
-const cssClass = computed(() => {
-    return {
-        red: props.red,
-        orange: props.orange,
-        green: props.green,
-        plain: props.plain,
-        disabled: props.disabled,
-    }
-})
+const classes = computed(() => ({
+	red: red,
+	orange: orange,
+	green: green,
+	plain: plain,
+	disabled: disabled,
+}))
 
-defineEmits(["click"])
+defineEmits<{
+	click: []
+}>()
 </script>
 
 <style scoped lang="scss">

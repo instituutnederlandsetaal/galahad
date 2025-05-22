@@ -10,8 +10,7 @@
             hoverRow
             sortedByColumn="id"
             :sortDesc="false"
-            class="jobsview"
-        >
+            class="jobsview">
             <template #help>
                 <component :is="help.jobs"></component>
             </template>
@@ -24,8 +23,7 @@
             <template #cell-id="d">
                 <ExternalLink
                     v-if="d.item.tagger.id !== SOURCE_LAYER"
-                    :href="`/galahad/overview/taggers#${d.item.tagger.id}`"
-                >
+                    :href="`/galahad/overview/taggers#${d.item.tagger.id}`">
                     {{ d.item.tagger.id }}
                 </ExternalLink>
                 <div v-else>
@@ -107,8 +105,7 @@
                             v-model="requireType"
                             :options="types"
                             placeholder="Annotation"
-                            :maxSelectedLabels="5"
-                        />
+                            :maxSelectedLabels="5" />
                     </div>
 
                     <div class="table-control slider">
@@ -180,67 +177,85 @@ const eraRange = ref([500, 2050])
 const jobId = ref(null as null | string)
 
 const displayJobs = computed(() =>
-    Object.values(jobsStore.taggableJobs as Job[])
-        .filter((job) => {
-            // Case insensitive string comparison.
-            return job.tagger.id.toLowerCase().includes(taggerNameFilter.value.toLowerCase())
-        })
-        .filter((job) => {
-            return eraRange.value[0] <= job.tagger.eraTo && eraRange.value[1] >= job.tagger.eraFrom
-        })
-        .filter((job) => {
-            return includeTagset.value[job.tagger.tagset]
-        })
-        .filter((job) => {
-            for (const type of requireType.value) {
-                if (!job.tagger.annotations.includes(type)) {
-                    return false
-                }
-            }
-            return true
-        }),
+	Object.values(jobsStore.taggableJobs as Job[])
+		.filter((job) => {
+			// Case insensitive string comparison.
+			return job.tagger.id
+				.toLowerCase()
+				.includes(taggerNameFilter.value.toLowerCase())
+		})
+		.filter((job) => {
+			return (
+				eraRange.value[0] <= job.tagger.eraTo &&
+				eraRange.value[1] >= job.tagger.eraFrom
+			)
+		})
+		.filter((job) => {
+			return includeTagset.value[job.tagger.tagset]
+		})
+		.filter((job) => {
+			for (const type of requireType.value) {
+				if (!job.tagger.annotations.includes(type)) {
+					return false
+				}
+			}
+			return true
+		}),
 )
 
 const tagsets = computed(() => {
-    return Object.values(jobsStore.taggableJobs)
-        .map((x: Job) => x.tagger.tagset)
-        .filter((val, ind, arr) => arr.indexOf(val) === ind) // unique values
-        .sort()
+	return Object.values(jobsStore.taggableJobs)
+		.map((x: Job) => x.tagger.tagset)
+		.filter((val, ind, arr) => arr.indexOf(val) === ind) // unique values
+		.sort()
 })
 
 const columns = computed(() => {
-    const publicFields = [
-        { key: "id", label: "tagger", sortOn: (x) => x.tagger.id, textAlign: "left" },
-        { key: "tagset", sortOn: (x) => x.tagger.tagset },
-        { key: "annotations", label: "annotations" },
-        { key: "resultSummary", label: "tokens", sortOn: (x) => x.resultSummary.numTokens },
-        {
-            key: "era",
-            label: "period",
-            sortOn: (x) => x.tagger.eraFrom.toString() + x.tagger.eraTo.toString(),
-        },
-        { key: "lastModified", label: "last modified", sortOn: (x) => x.lastModified },
-        { key: "progress", sortOn: (x) => x.progress.finished / x.progress.total },
-    ] as Field[]
-    if (userStore.hasWriteAccess) {
-        return publicFields.concat({ key: "actions" })
-    } else {
-        return publicFields
-    }
+	const publicFields = [
+		{
+			key: "id",
+			label: "tagger",
+			sortOn: (x) => x.tagger.id,
+			textAlign: "left",
+		},
+		{ key: "tagset", sortOn: (x) => x.tagger.tagset },
+		{ key: "annotations", label: "annotations" },
+		{
+			key: "resultSummary",
+			label: "tokens",
+			sortOn: (x) => x.resultSummary.numTokens,
+		},
+		{
+			key: "era",
+			label: "period",
+			sortOn: (x) => x.tagger.eraFrom.toString() + x.tagger.eraTo.toString(),
+		},
+		{
+			key: "lastModified",
+			label: "last modified",
+			sortOn: (x) => x.lastModified,
+		},
+		{ key: "progress", sortOn: (x) => x.progress.finished / x.progress.total },
+	] as Field[]
+	if (userStore.hasWriteAccess) {
+		return publicFields.concat({ key: "actions" })
+	} else {
+		return publicFields
+	}
 })
 
 const types = computed(() => {
-    return Object.values(jobsStore.taggableJobs)
-        .flatMap((x: Job) => x.tagger.annotations)
-        .filter((val, ind, arr) => arr.indexOf(val) === ind) // unique values
-        .sort()
+	return Object.values(jobsStore.taggableJobs)
+		.flatMap((x: Job) => x.tagger.annotations)
+		.filter((val, ind, arr) => arr.indexOf(val) === ind) // unique values
+		.sort()
 })
 
 // Watches & mounts
 onMounted(() => {
-    jobsStore.reload()
-    // We also need to load the documents, because a time estimate is made based on documents.totalSizeInChars.
-    documentsStore.reloadDocumentsForCorpus(corporaStore.activeUUID)
+	jobsStore.reload()
+	// We also need to load the documents, because a time estimate is made based on documents.totalSizeInChars.
+	documentsStore.reloadDocumentsForCorpus(corporaStore.activeUUID)
 })
 watch(tagsets, enableAllTagsets)
 onMounted(enableAllTagsets)
@@ -248,11 +263,11 @@ onMounted(enableAllTagsets)
 // Methods
 // Checkmarks
 function enableAllTagsets() {
-    tagsets.value.forEach((tagset) => (includeTagset.value[tagset] = true))
+	tagsets.value.forEach((tagset) => (includeTagset.value[tagset] = true))
 }
 // Format progress with Math.floor, because e.g. toFixed(0) rounds up 99.9% to 100%, which is confusing.
 function formatProgress(progress: Progress) {
-    return `${Math.floor((100 * progress.finished) / progress.total)}%`
+	return `${Math.floor((100 * progress.finished) / progress.total)}%`
 }
 </script>
 

@@ -38,8 +38,7 @@
                     <DownloadButton
                         wide
                         @click="exportStore.convert(shouldMerge, posHeadOnly)"
-                        :disabled="exportStore.loading || !exportStore.linksAreValid"
-                    />
+                        :disabled="exportStore.loading || !exportStore.linksAreValid" />
 
                     <GInfo v-if="exportStore.loading" spinner>
                         Please wait while your export is being processed.
@@ -70,31 +69,36 @@ const documentsStore = stores.useDocuments()
 const posHeadOnly = ref(false)
 const shouldMerge = ref(true)
 const showMergeOption = computed(() => {
-    const format = exportStore.format
-    const formatIsMergeable =
-        format == Format.Tei_p5 || format == Format.Tsv || format == Format.Folia || format == Format.Conllu
-    const formatInCorpus = documentsStore.containsFormat(format)
-    return formatIsMergeable && formatInCorpus
+	const format = exportStore.format
+	const formatIsMergeable =
+		format == Format.Tei_p5 ||
+		format == Format.Tsv ||
+		format == Format.Folia ||
+		format == Format.Conllu
+	const formatInCorpus = documentsStore.containsFormat(format)
+	return formatIsMergeable && formatInCorpus
 })
-const hasTeiP5Legacy = computed(() => documentsStore.available.some((i) => i.format == Format.Tei_p5_legacy))
+const hasTeiP5Legacy = computed(() =>
+	documentsStore.available.some((i) => i.format == Format.Tei_p5_legacy),
+)
 
 // Methods
 function formatToHumanReadable(format: Format): string {
-    switch (format) {
-        case Format.Tei_p5:
-        case Format.Tei_p5_legacy:
-            return "TEI P5"
-        default:
-            return format
-    }
+	switch (format) {
+		case Format.Tei_p5:
+		case Format.Tei_p5_legacy:
+			return "TEI P5"
+		default:
+			return format
+	}
 }
 
 // Watchers
 // Load jobs list once. jobSelectionStore takes care of the selected job.
 onMounted(() => {
-    jobsStore.reload()
-    // We also need to load the documents, in order to determine the presence of TEI files.
-    documentsStore.reloadDocumentsForCorpus(corporaStore.activeUUID)
+	jobsStore.reload()
+	// We also need to load the documents, in order to determine the presence of TEI files.
+	documentsStore.reloadDocumentsForCorpus(corporaStore.activeUUID)
 })
 </script>
 

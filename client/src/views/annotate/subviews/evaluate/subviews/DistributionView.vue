@@ -8,8 +8,7 @@
             :items="itemsToDisplay"
             :loading="distributionStore.loading"
             displayOnEmpty
-            sortedByColumn="count"
-        >
+            sortedByColumn="count">
             <template #table-empty-instruction>
                 <p v-if="distribution.generated">No results for current filter settings.</p>
                 <p v-else>Select a hypothesis layer and an annotation to generate a distribution.</p>
@@ -46,8 +45,7 @@
                             v-for="(literal, index) in Object.keys(data.item.literals.literals).sort(function (a, b) {
                                 return data.item.literals.literals[b] - data.item.literals.literals[a]
                             })"
-                            :key="literal"
-                        >
+                            :key="literal">
                             {{ literal }} <b>{{ `${data.item.literals.literals[literal]}` }}</b
                             >{{ index != Object.keys(data.item.literals.literals).length - 1 ? ", " : "" }}
                         </span>
@@ -61,8 +59,7 @@
                                             return data.item.literals.literals[b] - data.item.literals.literals[a]
                                         })
                                         .slice(0, 5)"
-                                    :key="literal"
-                                >
+                                    :key="literal">
                                     {{ literal }}
                                     <b>{{ `${data.item.literals.literals[literal]}` }}</b
                                     >,
@@ -88,8 +85,7 @@
                         <GInput
                             type="select"
                             :options="distributionStore.distributionOptions"
-                            v-model="selectedDistribution"
-                        />
+                            v-model="selectedDistribution" />
                     </div>
                 </div>
                 <template v-if="distribution.generated">
@@ -116,8 +112,7 @@
                                 v-model="selectedPosses"
                                 :options="filteredPosses"
                                 placeholder="Select PoS"
-                                :maxSelectedLabels="5"
-                            />
+                                :maxSelectedLabels="5" />
                         </div>
                     </div>
                 </template>
@@ -130,8 +125,7 @@
             :variantsToDisplay="variantsToDisplay"
             :show="variantsToDisplay !== null"
             @hide="variantsToDisplay = null"
-            id="modal"
-        />
+            id="modal" />
     </div>
 </template>
 
@@ -161,52 +155,61 @@ const literalFilter = ref("")
 const variantsToDisplay = ref(null as null | Distribution)
 // Filtered table items.
 const itemsToDisplay = computed((): Distribution[] => {
-    // When distribution not yet generated.
-    if (!distribution.value?.distribution?.length) return []
+	// When distribution not yet generated.
+	if (!distribution.value?.distribution?.length) return []
 
-    return (
-        distribution.value?.distribution
-            // Case insensitive string comparison.
-            .filter((x) => x.lemma.toLowerCase().includes(lemmaFilter.value.toLowerCase()))
-            .filter((x) => selectedPosses.value.includes(x.pos))
-            // Filter by single/multiple PoS
-            .filter((x) => {
-                if (selectedSingMultiPos.value == "single") return !x.pos.includes("+")
-                if (selectedSingMultiPos.value == "multiple") return x.pos.includes("+")
-                return true
-            })
-            // Case insensitive string comparison.
-            // join on \n, as it can't be entered into a <input type=text>
-            .filter((x) =>
-                Object.keys(x.literals.literals).join("\n").toLowerCase().includes(literalFilter.value.toLowerCase()),
-            )
-    )
+	return (
+		distribution.value?.distribution
+			// Case insensitive string comparison.
+			.filter((x) =>
+				x.lemma.toLowerCase().includes(lemmaFilter.value.toLowerCase()),
+			)
+			.filter((x) => selectedPosses.value.includes(x.pos))
+			// Filter by single/multiple PoS
+			.filter((x) => {
+				if (selectedSingMultiPos.value == "single") return !x.pos.includes("+")
+				if (selectedSingMultiPos.value == "multiple") return x.pos.includes("+")
+				return true
+			})
+			// Case insensitive string comparison.
+			// join on \n, as it can't be entered into a <input type=text>
+			.filter((x) =>
+				Object.keys(x.literals.literals)
+					.join("\n")
+					.toLowerCase()
+					.includes(literalFilter.value.toLowerCase()),
+			)
+	)
 })
 const columns = [
-    { key: "lemma", label: "lemma", sortOn: (x: Distribution) => x.lemma },
-    { key: "pos", label: "PoS", sortOn: (x: Distribution) => x.pos },
-    { key: "count", label: "total\noccurrences", sortOn: (x: Distribution) => x.count },
-    {
-        key: "variantCount",
-        label: "number\nof types",
-        sortOn: (x: Distribution) => Object.keys(x.literals.literals).length,
-    },
-    { key: "variants", label: "types" },
+	{ key: "lemma", label: "lemma", sortOn: (x: Distribution) => x.lemma },
+	{ key: "pos", label: "PoS", sortOn: (x: Distribution) => x.pos },
+	{
+		key: "count",
+		label: "total\noccurrences",
+		sortOn: (x: Distribution) => x.count,
+	},
+	{
+		key: "variantCount",
+		label: "number\nof types",
+		sortOn: (x: Distribution) => Object.keys(x.literals.literals).length,
+	},
+	{ key: "variants", label: "types" },
 ]
 const singMultiPosOptions = [
-    { value: "single", text: "Single" },
-    { value: "multiple", text: "Multiple" },
-    { value: "both", text: "Both" },
+	{ value: "single", text: "Single" },
+	{ value: "multiple", text: "Multiple" },
+	{ value: "both", text: "Both" },
 ]
 const selectedSingMultiPos = ref(singMultiPosOptions[0].value)
 const filteredPosses = computed(() => {
-    if (selectedSingMultiPos.value === "single") {
-        return distributionStore.posses.filter((pos) => !pos.includes("+"))
-    } else if (selectedSingMultiPos.value === "multiple") {
-        return distributionStore.posses.filter((pos) => pos.includes("+"))
-    } else {
-        return distributionStore.posses
-    }
+	if (selectedSingMultiPos.value === "single") {
+		return distributionStore.posses.filter((pos) => !pos.includes("+"))
+	} else if (selectedSingMultiPos.value === "multiple") {
+		return distributionStore.posses.filter((pos) => pos.includes("+"))
+	} else {
+		return distributionStore.posses
+	}
 })
 
 // Watches
@@ -215,19 +218,19 @@ const filteredPosses = computed(() => {
  * jobSelection.hypothesisJobId, because of the network delay.
  */
 watch(
-    () => distributionStore.posses,
-    () => {
-        distributionStore.posses.forEach((pos) => (includePos.value[pos] = true))
-    },
-    { immediate: true },
+	() => distributionStore.posses,
+	() => {
+		distributionStore.posses.forEach((pos) => (includePos.value[pos] = true))
+	},
+	{ immediate: true },
 )
 
 watch(
-    () => filteredPosses.value,
-    () => {
-        selectedPosses.value = filteredPosses.value
-    },
-    { immediate: true },
+	() => filteredPosses.value,
+	() => {
+		selectedPosses.value = filteredPosses.value
+	},
+	{ immediate: true },
 )
 </script>
 

@@ -1,8 +1,7 @@
 <template>
     <section class="g-card">
-        <header v-if="$slots.title || title || $slots.help">
-            <!-- title -->
-            <hgroup v-if="title || $slots.title" class="title">
+        <header v-if="$slots.title || title || $slots.help" class="header">
+            <hgroup v-if="$slots.title || title" class="title">
                 <h3 class="h3">
                     <slot name="title">{{ title }}</slot>
                 </h3>
@@ -10,35 +9,28 @@
                     {{ expand ? "&times;" : "?" }}
                 </GButton>
             </hgroup>
-
-            <!-- help -->
             <GInfo v-if="expand && $slots.help">
                 <slot name="help"></slot>
                 <template v-if="helpSubject" #footer>
                     <HelpLink :subject="helpSubject" />
                 </template>
             </GInfo>
-
-            <!-- header -->
-            <i class="header">
-                <slot name="header"></slot>
-            </i>
         </header>
-
-        <!-- content -->
-        <div class="content">
+        <article v-if="article" class="content article">
+            <slot></slot>
+        </article>
+        <div v-else class="content">
             <slot></slot>
         </div>
     </section>
 </template>
 
 <script setup lang="ts">
-// --- components ---
-
 // --- props ---
 const { helpSubject, title } = defineProps<{
-    helpSubject?: string
-    title?: string
+	helpSubject?: string
+	title?: string
+	article?: boolean
 }>()
 
 // --- data ---
@@ -54,23 +46,30 @@ const expand = ref(false)
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 1rem;
 
-    .title {
-        text-align: center;
+    .header {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
 
-        .h3 {
-            display: inline-block;
-        }
+        .title {
+            text-align: center;
 
-        .help-btn.plain {
-            border: 1px solid var(--int-grey);
-            padding: 0 0.6em;
-            font-size: 1.5em;
-            cursor: help;
-            width: 28px;
-            justify-content: center;
-            font-weight: bold;
-            margin-left: 0.5em;
+            .h3 {
+                display: inline-block;
+            }
+
+            .help-btn.plain {
+                border: 1px solid var(--int-grey);
+                padding: 0 0.6em;
+                font-size: 1.5em;
+                cursor: help;
+                width: 28px;
+                justify-content: center;
+                font-weight: bold;
+                margin-left: 0.5em;
+            }
         }
     }
 
@@ -79,6 +78,12 @@ const expand = ref(false)
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        gap: 1rem;
+
+        &.article {
+            max-width: 800px;
+            align-items: start;
+        }
     }
 }
 </style>

@@ -30,7 +30,7 @@
 </template>
 <script setup lang="ts">
 defineProps({
-    showLink: Boolean,
+	showLink: Boolean,
 })
 </script>
 

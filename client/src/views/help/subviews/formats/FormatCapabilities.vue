@@ -9,9 +9,9 @@
 
 <script setup lang="ts">
 defineProps({
-    uploadable: { type: Boolean, default: false },
-    exportable: { type: Boolean, default: false },
-    mergeable: { type: Boolean, default: false },
+	uploadable: { type: Boolean, default: false },
+	exportable: { type: Boolean, default: false },
+	mergeable: { type: Boolean, default: false },
 })
 </script>
 

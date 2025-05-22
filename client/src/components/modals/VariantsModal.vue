@@ -25,20 +25,26 @@ type DistEntry = { variant: string; occurrences: number }
 
 // Props
 const props = defineProps<{
-    show: boolean
-    variantsToDisplay: Distribution
+	show: boolean
+	variantsToDisplay: Distribution
 }>()
 
 // Fields
 const columns: Field[] = [
-    { key: "variant", label: "Type", sortOn: (x: DistEntry) => x.variant },
-    { key: "occurrences", label: "Occurrences", sortOn: (x: DistEntry) => x.occurrences },
+	{ key: "variant", label: "Type", sortOn: (x: DistEntry) => x.variant },
+	{
+		key: "occurrences",
+		label: "Occurrences",
+		sortOn: (x: DistEntry) => x.occurrences,
+	},
 ]
 const items: DistEntry[] = computed(() => {
-    return Object.entries(props.variantsToDisplay.literals.literals).map(([variant, occurrences]) => ({
-        variant,
-        occurrences,
-    }))
+	return Object.entries(props.variantsToDisplay.literals.literals).map(
+		([variant, occurrences]) => ({
+			variant,
+			occurrences,
+		}),
+	)
 })
 </script>
 <style scoped lang="scss">

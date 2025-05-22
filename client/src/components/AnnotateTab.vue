@@ -68,21 +68,21 @@ const userStore = stores.useUser()
 
 // Props
 const props = defineProps({
-    hideDocsError: {
-        type: Boolean,
-        default: false,
-    },
-    hideCorpusError: {
-        type: Boolean,
-        default: false,
-    },
-    hideAnnotationsError: {
-        type: Boolean,
-        default: false,
-    },
-    hidePermissionsError: {
-        type: Boolean,
-        default: true,
-    },
+	hideDocsError: {
+		type: Boolean,
+		default: false,
+	},
+	hideCorpusError: {
+		type: Boolean,
+		default: false,
+	},
+	hideAnnotationsError: {
+		type: Boolean,
+		default: false,
+	},
+	hidePermissionsError: {
+		type: Boolean,
+		default: true,
+	},
 })
 </script>

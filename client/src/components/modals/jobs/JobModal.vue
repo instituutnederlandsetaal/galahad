@@ -1,5 +1,5 @@
 <template>
-    <GModal :show="show" :title="`Tag job ${job.tagger.id}`" @hide="$emit('hide')" :showHelp="false">
+    <GModal :show="show" :title="`Tag job ${job.tagger.id}`" @hide="$emit('hide')">
         <template #help>
             Here you can start a job to tag the documents in your corpus. This may take a while, depending on the corpus
             size. You can also stop and delete existing jobs. A preview of the resulting annotation layer is shown as
@@ -48,8 +48,7 @@
                             jobsStore.tag(job.tagger.id)
                             healthLoading = true
                         }
-                    "
-                >
+                    ">
                     Start
                 </GButton>
                 <GButton
@@ -60,55 +59,19 @@
                             jobsStore.cancel(job.tagger.id)
                             healthLoading = true
                         }
-                    "
-                >
+                    ">
                     Stop
                 </GButton>
                 <GButton
                     red
                     :disabled="job.progress.untagged === job.progress.total && !job.progress.hasError"
-                    @click="deleteJobId = job.tagger.id"
-                >
+                    @click="deleteJobId = job.tagger.id">
                     Delete
                 </GButton>
             </div>
 
             <!-- progress -->
-            <div class="progress">
-                <ProgressSegment
-                    label="failed"
-                    color="var(--int-red)"
-                    :total="job.progress.total"
-                    :value="job.progress.failed"
-                />
-                <ProgressSegment
-                    label="finished"
-                    color="var(--int-green)"
-                    :total="job.progress.total"
-                    :value="job.progress.finished"
-                />
-                <ProgressSegment
-                    label="processing"
-                    color="var(--int-light-grey)"
-                    :total="job.progress.total"
-                    :value="job.progress.processing"
-                />
-                <!-- When busy, consider untagged documents pending. -->
-                <!-- Confusingly, the API already calls them pending, though. -->
-                <ProgressSegment
-                    label="pending"
-                    color="var(--int-very-light-grey)"
-                    :total="job.progress.total"
-                    :value="job.progress.busy ? job.progress.pending : 0"
-                />
-                <!-- Otherwise, just untagged. -->
-                <ProgressSegment
-                    label="untagged"
-                    color="var(--int-very-light-grey)"
-                    :total="job.progress.total"
-                    :value="job.progress.busy ? 0 : job.progress.pending"
-                />
-            </div>
+            <JobProgress :job />
 
             <!-- Layer preview -->
             <LayerViewer :layer="job.preview" />
@@ -140,8 +103,7 @@
                     healthLoading = true
                 }
             "
-            @hide="deleteJobId = null as any"
-        />
+            @hide="deleteJobId = null as any" />
     </GModal>
 </template>
 
@@ -160,27 +122,27 @@ const jobsStore = stores.useJobs()
 
 // Fields
 const props = defineProps({
-    show: { type: Boolean, default: ref(false) },
-    jobId: { type: String, default: "" },
+	show: { type: Boolean, default: ref(false) },
+	jobId: { type: String, default: "" },
 })
 /** The job of this modal */
 const job = computed<Job>(() => {
-    return jobsStore.jobs[props.jobId]
+	return jobsStore.jobs[props.jobId]
 })
 /** Returns null while we are waiting on the first getHealth request. */
 const taggerIsAvailable = computed<boolean | null>(() => {
-    if (!health.value) return null
-    return health.value?.status === "HEALTHY"
+	if (!health.value) return null
+	return health.value?.status === "HEALTHY"
 })
 /** Opens DeleteModal when not null. */
 const deleteJobId = ref<string | null>(null)
 /** Expected job duration based on queue size at tagger and % of documents tagged in the corpus. */
 const jobIndication = computed<number | null>(() => {
-    if (jobsStore.posting || jobsStore.numActiveDocs == null) {
-        return null
-    } else {
-        return jobsStore.numActiveDocs
-    }
+	if (jobsStore.posting || jobsStore.numActiveDocs == null) {
+		return null
+	} else {
+		return jobsStore.numActiveDocs
+	}
 })
 /** Updated on an interval to keep track of the queue size. */
 const health = ref<TaggerHealth | null>(null)
@@ -194,16 +156,16 @@ let healthIntervalId = 0
  * Every time this GModal opens: One health ping now, the rest on an interval.
  */
 onMounted(() => {
-    getHealth()
-    healthIntervalId = setInterval(getHealth, 5000)
-    // Set to null to induce 'calculating' every time the modal opens.
-    jobsStore.getDocsAtTagger()
+	getHealth()
+	healthIntervalId = setInterval(getHealth, 5000)
+	// Set to null to induce 'calculating' every time the modal opens.
+	jobsStore.getDocsAtTagger()
 })
 /**
  * Stop pinging health on modal close.
  */
 onUnmounted(() => {
-    clearInterval(healthIntervalId)
+	clearInterval(healthIntervalId)
 })
 
 // Methods
@@ -212,39 +174,31 @@ onUnmounted(() => {
  * Starting and stopping sets health loading to true. getHealth sets it back to false.
  */
 function getHealth() {
-    API.getTaggerHealth(props.jobId)
-        .then((response) => {
-            health.value = response.data
-            healthLoading.value = false
-        })
-        .catch((error) => app.handleServerError("get tagger health", error))
+	API.getTaggerHealth(props.jobId)
+		.then((response) => {
+			health.value = response.data
+			healthLoading.value = false
+		})
+		.catch((error) => app.handleServerError("get tagger health", error))
 }
 
 /**
  * Return an object with only the first five keys of obj.
  */
 function firstFive(obj: Record<string, unknown>) {
-    if (!obj) {
-        return {}
-    }
-    return Object.keys(obj)
-        .slice(0, 5)
-        .reduce(function (r: Record<string, unknown>, e) {
-            r[e] = obj[e]
-            return r
-        }, {})
+	if (!obj) {
+		return {}
+	}
+	return Object.keys(obj)
+		.slice(0, 5)
+		.reduce(function (r: Record<string, unknown>, e) {
+			r[e] = obj[e]
+			return r
+		}, {})
 }
 </script>
 
 <style scoped lang="scss">
-.progress {
-    max-width: 100%;
-    margin: auto;
-    margin-top: 10px;
-    line-height: 2em;
-    width: 700px;
-}
-
 .error {
     width: fit-content;
     margin: auto;

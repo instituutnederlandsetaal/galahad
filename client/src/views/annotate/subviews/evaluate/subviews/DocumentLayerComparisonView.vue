@@ -34,8 +34,7 @@
                 v-if="termcomps.length > rowsToDisplay"
                 v-model:first="firstRecord"
                 :rows="rowsToDisplay"
-                :totalRecords="termcomps.length"
-            ></Paginator>
+                :totalRecords="termcomps.length"></Paginator>
         </div>
         <p v-else>Select a document and an annotation.</p>
     </GCard>
@@ -57,7 +56,9 @@ const corporaStore = stores.useCorpora()
 const jobSelection = stores.useJobSelection()
 
 // Fields
-const docNames = computed(() => documentsStore.available.map((doc) => ({ value: doc.name, text: doc.name })))
+const docNames = computed(() =>
+	documentsStore.available.map((doc) => ({ value: doc.name, text: doc.name })),
+)
 const selectedDoc = ref(null)
 const selectedAnnotation: Ref<string> = ref(null as any as string)
 const annotationOptions = ref(null)
@@ -69,40 +70,44 @@ const rowsToDisplay = ref(200)
 
 // Watches & mounts
 watch(selectedDoc, async (newVal) => {
-    if (newVal) {
-        loading.value = true
-        API.getDocumentLayerComparison(
-            corporaStore.activeUUID,
-            jobSelection.hypothesisJobId,
-            newVal,
-            jobSelection.referenceJobId,
-        )
-            .then((response) => {
-                termcomps.value = response.data
-            })
-            .finally(() => {
-                loading.value = false
-            })
-    }
+	if (newVal) {
+		loading.value = true
+		API.getDocumentLayerComparison(
+			corporaStore.activeUUID,
+			jobSelection.hypothesisJobId,
+			newVal,
+			jobSelection.referenceJobId,
+		)
+			.then((response) => {
+				termcomps.value = response.data
+			})
+			.finally(() => {
+				loading.value = false
+			})
+	}
 })
 
 watch(termcomps, () => {
-    if (!termcomps.value) return
-    annotationOptions.value = Object.keys(termcomps.value[0].refTerm.annotations).map((key) => ({
-        value: key,
-        text: key,
-    }))
+	if (!termcomps.value) return
+	annotationOptions.value = Object.keys(
+		termcomps.value[0].refTerm.annotations,
+	).map((key) => ({
+		value: key,
+		text: key,
+	}))
 })
 
 // Methods
 function annotationsEqual(tc: TermComparison) {
-    const refAnnot = cleanAnnotation(tc.refTerm)
-    const hypoAnnot = cleanAnnotation(tc.hypoTerm)
-    return refAnnot == hypoAnnot
+	const refAnnot = cleanAnnotation(tc.refTerm)
+	const hypoAnnot = cleanAnnotation(tc.hypoTerm)
+	return refAnnot == hypoAnnot
 }
 
 function cleanAnnotation(term: Term) {
-    return term.annotations[selectedAnnotation.value]?.toLowerCase().replace("_", "")
+	return term.annotations[selectedAnnotation.value]
+		?.toLowerCase()
+		.replace("_", "")
 }
 </script>
 

@@ -11,10 +11,20 @@ import type { UUID } from "@/types/corpora"
 import { Format } from "@/types/documents"
 
 // --- computed ---
-const convertCorpusPath = (corpus: UUID, job: string, format: Format, posHeadOnly: boolean) =>
-    `/corpora/${corpus}/jobs/${job}/export/convert?format=${format}&posHeadOnly=${posHeadOnly}`
-const mergeCorpusPath = (corpus: UUID, job: string, format: Format, posHeadOnly: boolean) =>
-    `/corpora/${corpus}/jobs/${job}/export/merge?format=${format}&posHeadOnly=${posHeadOnly}`
+const convertCorpusPath = (
+	corpus: UUID,
+	job: string,
+	format: Format,
+	posHeadOnly: boolean,
+) =>
+	`/corpora/${corpus}/jobs/${job}/export/convert?format=${format}&posHeadOnly=${posHeadOnly}`
+const mergeCorpusPath = (
+	corpus: UUID,
+	job: string,
+	format: Format,
+	posHeadOnly: boolean,
+) =>
+	`/corpora/${corpus}/jobs/${job}/export/merge?format=${format}&posHeadOnly=${posHeadOnly}`
 
 // --- methods ---
 /**
@@ -24,8 +34,13 @@ const mergeCorpusPath = (corpus: UUID, job: string, format: Format, posHeadOnly:
  * @param format Use enum here.
  * @param posHeadOnly Whether to include only the head of the POS tags in the export.
  */
-export function convertCorpus(corpus: UUID, job: string, format: Format, posHeadOnly: boolean): Promise<BlobResponse> {
-    return Utils.getBlob(convertCorpusPath(corpus, job, format, posHeadOnly))
+export function convertCorpus(
+	corpus: UUID,
+	job: string,
+	format: Format,
+	posHeadOnly: boolean,
+): Promise<BlobResponse> {
+	return Utils.getBlob(convertCorpusPath(corpus, job, format, posHeadOnly))
 }
 
 /**
@@ -35,6 +50,11 @@ export function convertCorpus(corpus: UUID, job: string, format: Format, posHead
  * @param format Use enum here.
  * @param posHeadOnly Whether to include only the head of the POS tags in the export.
  */
-export function mergeCorpus(corpus: UUID, job: string, format: Format, posHeadOnly: boolean): Promise<BlobResponse> {
-    return Utils.getBlob(mergeCorpusPath(corpus, job, format, posHeadOnly))
+export function mergeCorpus(
+	corpus: UUID,
+	job: string,
+	format: Format,
+	posHeadOnly: boolean,
+): Promise<BlobResponse> {
+	return Utils.getBlob(mergeCorpusPath(corpus, job, format, posHeadOnly))
 }

@@ -21,7 +21,7 @@
         </td>
         <td>
             <ul>
-                <li v-for="(userName, _) in users">
+                <li v-for="(userName, i) in users" :key="i">
                     <div class="users">
                         <p>{{ userName }}</p>
                         <GButton plain @click="userToDelete = userName" v-if="canDelete(userName)">
@@ -39,9 +39,7 @@
         :item="userToDelete"
         :displayname="userToDelete"
         @hide="userToDelete = null"
-        @delete="removeUser(userToDelete)"
-        :noHelp="true"
-    >
+        @delete="removeUser(userToDelete)">
         <template #action>remove access for user</template>
     </DeleteModal>
 </template>
@@ -50,50 +48,50 @@
 import stores from "@/stores"
 
 export default defineComponent({
-    name: "UserList",
-    props: {
-        users: {
-            type: Array<string>,
-            default: () => [],
-        },
-        listName: {
-            type: String,
-            default: "Users",
-        },
-        showAddDialog: {
-            type: Boolean,
-            default: true,
-        },
-    },
-    setup() {
-        const userStore = stores.useUser()
-        return { userStore: userStore }
-    },
-    data() {
-        return {
-            newUser: "",
-            userToDelete: null,
-        }
-    },
-    methods: {
-        canDelete(username: string): boolean {
-            if (!this.showAddDialog) {
-                return this.userStore.user.id == username
-            }
-            return true
-        },
-        setUser(username: string) {
-            username = username.trim()
-            if (!username) return
-            this.newUser = ""
-            if (this.users.includes(username)) return
-            this.users.push(username)
-        },
-        removeUser(username: string) {
-            const removeIndex = this.users.indexOf(username)
-            this.users.splice(removeIndex, 1)
-        },
-    },
+	name: "UserList",
+	props: {
+		users: {
+			type: Array<string>,
+			default: () => [],
+		},
+		listName: {
+			type: String,
+			default: "Users",
+		},
+		showAddDialog: {
+			type: Boolean,
+			default: true,
+		},
+	},
+	setup() {
+		const userStore = stores.useUser()
+		return { userStore: userStore }
+	},
+	data() {
+		return {
+			newUser: "",
+			userToDelete: null,
+		}
+	},
+	methods: {
+		canDelete(username: string): boolean {
+			if (!this.showAddDialog) {
+				return this.userStore.user.id == username
+			}
+			return true
+		},
+		setUser(username: string) {
+			username = username.trim()
+			if (!username) return
+			this.newUser = ""
+			if (this.users.includes(username)) return
+			this.users.push(username)
+		},
+		removeUser(username: string) {
+			const removeIndex = this.users.indexOf(username)
+			this.users.splice(removeIndex, 1)
+		},
+	},
 })
 </script>
 

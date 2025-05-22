@@ -8,7 +8,7 @@
 </template>
 <script setup lang="ts">
 defineProps({
-    href: { type: String, required: true },
+	href: { type: String, required: true },
 })
 </script>
 <style scoped lang="scss">

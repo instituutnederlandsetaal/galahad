@@ -15,7 +15,7 @@ export default defineConfig({
         vueDevTools(),
         yaml(),
         nodePolyfills({ include: ["buffer", "path"] }),
-        AutoImport({ imports: ["vue", "pinia"], dts: true }),
+        AutoImport({ imports: ["vue", "pinia", "vue-router"], dts: true }),
         Components({ dts: true }),
     ],
     server: {

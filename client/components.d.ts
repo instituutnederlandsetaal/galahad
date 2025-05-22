@@ -9,9 +9,9 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AnnotateTab: typeof import('./src/components/AnnotateTab.vue')['default']
+    AppBanner: typeof import('./src/components/AppBanner.vue')['default']
     BenchmarkSetsHelp: typeof import('./src/components/help/BenchmarkSetsHelp.vue')['default']
     ComparisonModal: typeof import('./src/components/modals/ComparisonModal.vue')['default']
-    ContributeTaggerLink: typeof import('./src/components/links/ContributeTaggerLink.vue')['default']
     CorpusForm: typeof import('./src/components/modals/corpus/CorpusForm.vue')['default']
     CorpusFormHelp: typeof import('./src/components/help/CorpusFormHelp.vue')['default']
     CorpusHelp: typeof import('./src/components/help/CorpusHelp.vue')['default']
@@ -38,6 +38,8 @@ declare module 'vue' {
     HelpLink: typeof import('./src/components/links/HelpLink.vue')['default']
     InspectButton: typeof import('./src/components/input/InspectButton.vue')['default']
     JobModal: typeof import('./src/components/modals/jobs/JobModal.vue')['default']
+    JobProgress: typeof import('./src/components/modals/jobs/JobProgress.vue')['default']
+    JobProgressSegment: typeof import('./src/components/modals/jobs/JobProgressSegment.vue')['default']
     JobSelect: typeof import('./src/components/input/JobSelect.vue')['default']
     JobsHelp: typeof import('./src/components/help/JobsHelp.vue')['default']
     KeyValues: typeof import('./src/components/KeyValues.vue')['default']
@@ -45,7 +47,6 @@ declare module 'vue' {
     MailAddress: typeof import('./src/components/links/MailAddress.vue')['default']
     MetricsFilter: typeof import('./src/components/tables/MetricsFilter.vue')['default']
     MetricsTable: typeof import('./src/components/tables/MetricsTable.vue')['default']
-    ProgressSegment: typeof import('./src/components/modals/jobs/ProgressSegment.vue')['default']
     RightFloatCell: typeof import('./src/components/tables/RightFloatCell.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

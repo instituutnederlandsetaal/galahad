@@ -13,8 +13,7 @@
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
                 height="12"
-                viewBox="0 0 20 12"
-            >
+                viewBox="0 0 20 12">
                 <polygon class="st0" points="10,4.2 2.2,12 0.1,9.9 10,0 19.9,9.9 17.8,12 "></polygon>
             </svg>
             Select file(s) or drag & drop
@@ -28,8 +27,7 @@
             id="file-upload"
             style="display: none"
             accept=".xml, .tsv, .txt, .zip, .conllu, .naf, .pdf, .docx"
-            @change="(e) => (filesToUpload = Object.values(e.target.files as FileList))"
-        />
+            @change="(e) => (filesToUpload = Object.values(e.target.files as FileList))" />
 
         <!-- List of currently selected files. -->
         <ul v-if="filesToUpload.length > 0">
@@ -51,8 +49,7 @@
                         documentsStore.uploadAll()
                         $refs.uploadInput.value = null
                     }
-                "
-            >
+                ">
                 Upload
             </GButton>
             <GButton
@@ -62,8 +59,7 @@
                         filesToUpload = []
                         $refs.uploadInput.value = null
                     }
-                "
-            >
+                ">
                 &#10006;&nbsp;clear
             </GButton>
         </template>
@@ -107,35 +103,41 @@ import stores from "@/stores"
 
 // Stores
 const documentsStore = stores.useDocuments()
-const { filesToUpload, illegalFiles, uploadBusyCount, uploadErrorCount, uploading } = storeToRefs(documentsStore)
+const {
+	filesToUpload,
+	illegalFiles,
+	uploadBusyCount,
+	uploadErrorCount,
+	uploading,
+} = storeToRefs(documentsStore)
 
 // Fields
 const dropZone = ref(null as any as HTMLElement)
 
 // Methods
 function showDropZone(e: DragEvent) {
-    if (e.dataTransfer!.types.includes("Files")) {
-        dropZone.value.style.display = "block"
-    }
+	if (e.dataTransfer!.types.includes("Files")) {
+		dropZone.value.style.display = "block"
+	}
 }
 function hideDropZone() {
-    dropZone.value.style.display = "none"
+	dropZone.value.style.display = "none"
 }
 function handleDrop(e: DragEvent) {
-    e.preventDefault()
-    hideDropZone()
-    filesToUpload.value = [...e.dataTransfer!.files]
+	e.preventDefault()
+	hideDropZone()
+	filesToUpload.value = [...e.dataTransfer!.files]
 }
 
 // Watches & mounts
 onMounted(() => {
-    dropZone.value = document.getElementById("dropZone") as HTMLElement
-    // Register drag events
-    window.addEventListener("dragenter", showDropZone)
-    dropZone.value.addEventListener("dragleave", hideDropZone)
-    dropZone.value.addEventListener("drop", handleDrop)
-    // Apparently, this is needed to prevent the browser from opening the file.
-    dropZone.value.addEventListener("dragover", (e) => e.preventDefault())
+	dropZone.value = document.getElementById("dropZone") as HTMLElement
+	// Register drag events
+	window.addEventListener("dragenter", showDropZone)
+	dropZone.value.addEventListener("dragleave", hideDropZone)
+	dropZone.value.addEventListener("drop", handleDrop)
+	// Apparently, this is needed to prevent the browser from opening the file.
+	dropZone.value.addEventListener("dragover", (e) => e.preventDefault())
 })
 </script>
 

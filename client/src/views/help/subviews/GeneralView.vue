@@ -1,5 +1,5 @@
 <template>
-    <div class="flex" style="padding: 0 !important">
+    <div class="flex">
         <GCard class="left">
             <h2>Contents</h2>
             <ul>
@@ -77,10 +77,9 @@
                 </li>
             </ul>
         </GCard>
-        <div class="right">
-            <GCard>
+            <GCard article class="right">
                 <!-- H1: Introduction -->
-                <h1 id="introduction">Introduction</h1>
+                <h2 id="introduction">Introduction</h2>
 
                 <!-- H2: Background -->
                 <h2 id="background">Background</h2>
@@ -555,7 +554,6 @@
                     <MailAddress />.
                 </p>
             </GCard>
-        </div>
     </div>
 </template>
 
@@ -575,10 +573,6 @@ p.red {
 h3,
 h4 {
     font-weight: bold;
-}
-
-.right :deep(.content-wrapper) > .content {
-    flex: 0 1 800px !important;
 }
 
 code {
@@ -605,10 +599,11 @@ a:visited {
 
 .right {
     overflow-y: auto;
+    flex: 1;
+
 }
 
 .left {
-    flex: 1;
     border-right: 1px solid var(--int-light-grey);
     padding-bottom: 0;
     overflow-y: auto;

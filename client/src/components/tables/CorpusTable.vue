@@ -8,21 +8,11 @@
         :sortDesc="false"
         :selectable="selectable"
         v-model="selectedCorpus"
-        v-if="displayCorpora.length > 0 || (type == TableCorporaType.User && !sharedWithYou)"
-    >
+        v-if="displayCorpora.length > 0 || (type == TableCorporaType.User && !sharedWithYou)">
         <template #title>
             <slot name="title">
                 {{ displayCorpora.length }} {{ type }}
                 {{ displayCorpora.length == 1 ? " corpus" : " corpora" }}
-            </slot>
-        </template>
-
-        <template #help>
-            <slot name="help">
-                <component :is="help.corpora"></component>
-                <div style="text-align: center; margin-top: 1em">
-                    <HelpLink subject="corpora" />
-                </div>
             </slot>
         </template>
 
@@ -31,10 +21,7 @@
         </template>
 
         <template #prepend>
-            <div
-                style="display: flex; align-items: center; justify-content: center; margin-bottom: 1em"
-                v-if="userStore.user.isAdmin || type != TableCorporaType.Dataset"
-            >
+            <div v-if="type != TableCorporaType.Dataset">
                 <GButton green @click="$emit('create')" v-if="type == TableCorporaType.User"> New </GButton>
                 <GButton orange :disabled="!activeCorpusInTable" @click="$emit('update', selectedCorpus)"
                     >Edit
@@ -102,78 +89,91 @@ const corporaStore = stores.useCorpora()
 
 // Props
 const props = defineProps({
-    corpora: Array<CorpusMetadata>,
-    type: String as PropType<TableCorporaType>,
-    selectable: Boolean,
+	corpora: Array<CorpusMetadata>,
+	type: String as PropType<TableCorporaType>,
+	selectable: Boolean,
 })
 
 // Fields
 const selectedCorpus = ref(corporaStore.activeCorpus)
 const editable = props.type != TableCorporaType.Dataset
 const displayCorpora = computed(() => {
-    if (props.type === TableCorporaType.User) {
-        return props.corpora.filter((i) => i.owner === userStore.user.id)
-    } else if (props.type === TableCorporaType.Shared) {
-        return props.corpora.filter(
-            (i) => i.collaborators.includes(userStore.user.id) || i.viewers.includes(userStore.user.id),
-        )
-    } else {
-        return props.corpora
-    }
+	if (props.type === TableCorporaType.User) {
+		return props.corpora.filter((i) => i.owner === userStore.user.id)
+	} else if (props.type === TableCorporaType.Shared) {
+		return props.corpora.filter(
+			(i) =>
+				i.collaborators.includes(userStore.user.id) ||
+				i.viewers.includes(userStore.user.id),
+		)
+	} else {
+		return props.corpora
+	}
 })
 // Enable edit & delete buttons only if activeCorpus is in this table.
 // (Not that CorpusForm cares, but looks nicer)
 const activeCorpusInTable = computed(() => {
-    return displayCorpora.value.map((i) => i.uuid).includes(selectedCorpus.value?.uuid)
+	return displayCorpora.value
+		.map((i) => i.uuid)
+		.includes(selectedCorpus.value?.uuid)
 })
 const columns: Field[] = [
-    { key: "uuid", isPrimaryField: true, hidden: true },
-    { key: "name", sortOn: (x) => x.name },
-    { key: "numDocs", sortOn: (x) => x.numDocs, label: "docs" },
-    { key: "sizeInBytes", label: "size", sortOn: (x) => x.sizeInBytes },
-    { key: "eraFrom", sortOn: (x) => x.eraFrom, label: "year from" },
-    { key: "eraTo", sortOn: (x) => x.eraTo, label: "year to" },
-    { key: "tagset", sortOn: (x) => x.tagset },
-    { key: "source", label: "source", sortOn: (x) => x.source },
-    { key: "lastModified", sortOn: (x) => x.lastModified, label: "last modified" },
-    {
-        key: "collaborators",
-        hidden: !editable,
-        sortOn: (x) => customSharedSort(x),
-        label: "shared with",
-    },
-    { key: "activeJobs", hidden: !editable, sortOn: (x) => x.activeJobs, label: "jobs" },
+	{ key: "uuid", isPrimaryField: true, hidden: true },
+	{ key: "name", sortOn: (x) => x.name },
+	{ key: "numDocs", sortOn: (x) => x.numDocs, label: "docs" },
+	{ key: "sizeInBytes", label: "size", sortOn: (x) => x.sizeInBytes },
+	{ key: "eraFrom", sortOn: (x) => x.eraFrom, label: "year from" },
+	{ key: "eraTo", sortOn: (x) => x.eraTo, label: "year to" },
+	{ key: "tagset", sortOn: (x) => x.tagset },
+	{ key: "source", label: "source", sortOn: (x) => x.source },
+	{
+		key: "lastModified",
+		sortOn: (x) => x.lastModified,
+		label: "last modified",
+	},
+	{
+		key: "collaborators",
+		hidden: !editable,
+		sortOn: (x) => customSharedSort(x),
+		label: "shared with",
+	},
+	{
+		key: "activeJobs",
+		hidden: !editable,
+		sortOn: (x) => x.activeJobs,
+		label: "jobs",
+	},
 ]
 
 // Watches
 // We can't use corporaStore.activeCorpus directly, because there will be multiple corpus tables on the page.
 watch(
-    () => corporaStore.activeCorpus,
-    () => {
-        return (selectedCorpus.value = corporaStore.activeCorpus)
-    },
-    { immediate: true },
+	() => corporaStore.activeCorpus,
+	() => {
+		return (selectedCorpus.value = corporaStore.activeCorpus)
+	},
+	{ immediate: true },
 )
 watch(
-    () => selectedCorpus.value,
-    () => {
-        if (selectedCorpus.value) {
-            corporaStore.activeUUID = selectedCorpus.value?.uuid
-        }
-    },
-    { immediate: true },
+	() => selectedCorpus.value,
+	() => {
+		if (selectedCorpus.value) {
+			corporaStore.activeUUID = selectedCorpus.value?.uuid
+		}
+	},
+	{ immediate: true },
 )
 
 // Methods
 function formatCollaborators(i: CorpusMetadata): string {
-    if (i.dataset) return "Dataset"
-    const numPeople = i.collaborators.length + i.viewers.length
-    if (numPeople == 0) return "No one"
-    return numPeople == 1 ? `${numPeople} person` : `${numPeople} people`
+	if (i.dataset) return "Dataset"
+	const numPeople = i.collaborators.length + i.viewers.length
+	if (numPeople == 0) return "No one"
+	return numPeople == 1 ? `${numPeople} person` : `${numPeople} people`
 }
 
 function customSharedSort(i: CorpusMetadata) {
-    if (i.dataset) return -1
-    return i.collaborators.length + i.viewers.length
+	if (i.dataset) return -1
+	return i.collaborators.length + i.viewers.length
 }
 </script>

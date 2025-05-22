@@ -1,13 +1,13 @@
 <template>
-    <GCard :title="`Logged in as ${user.user.id}`">
+    <GCard :title="`Logged in as ${userStore.user.id}`">
         <template #help>Find information about your account here</template>
         <p>
             Find information about your account here.
             <br /><br />
             Username:<br />
-            <b>{{ user.user.id }}</b>
+            <b>{{ userStore.user.id }}</b>
             <br /><br />
-            <b v-if="user.user.isAdmin"> You are an admin.</b>
+            <b v-if="userStore.user.isAdmin"> You are an admin.</b>
         </p>
     </GCard>
 </template>
@@ -17,10 +17,10 @@
 import stores from "@/stores"
 
 // Stores
-const user = stores.useUser()
+const userStore = stores.useUser()
 </script>
 
-<style scoped="true" lang="scss">
+<style scoped lang="scss">
 .center {
     text-align: center;
 }

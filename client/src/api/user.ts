@@ -17,5 +17,5 @@ const userPath = `/user`
  * Poll user account.
  */
 export function getUser(): Promise<UserResponse> {
-    return axios.get(userPath)
+	return axios.get(userPath)
 }

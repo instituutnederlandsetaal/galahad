@@ -6,7 +6,11 @@
 import axios from "axios"
 // --- types ---
 import type { AxiosResponse } from "axios"
-import type { UUID, CorpusMetadata, MutableCorpusMetadata } from "@/types/corpora"
+import type {
+	UUID,
+	CorpusMetadata,
+	MutableCorpusMetadata,
+} from "@/types/corpora"
 
 type CorporaResponse = AxiosResponse<CorpusMetadata[]>
 type CorpusResponse = AxiosResponse<CorpusMetadata>
@@ -24,7 +28,7 @@ const corpusPath = (uuid: UUID) => `${corporaPath}/${uuid}`
  * public (datasets), shared (collaborator/viewer), and owned.
  */
 export function getCorpora(): Promise<CorporaResponse> {
-    return axios.get(corporaPath)
+	return axios.get(corporaPath)
 }
 
 /**
@@ -32,22 +36,24 @@ export function getCorpora(): Promise<CorporaResponse> {
  * @param uuid UUID of corpus.
  */
 export function getCorpus(uuid: UUID): Promise<CorpusResponse> {
-    return axios.get(corpusPath(uuid))
+	return axios.get(corpusPath(uuid))
 }
 
 /**
  * Fetch all datasets. Note that all datasets are public. Cheaper than getCorpora().
  */
 export function getDatasetCorpora(): Promise<CorporaResponse> {
-    return axios.get(datasetCorporaPath)
+	return axios.get(datasetCorporaPath)
 }
 
 /**
  * Create a new corpus with the given metadata.
  * @param corpus Metadata of new corpus.
  */
-export function postCorpus(corpus: MutableCorpusMetadata): Promise<AxiosResponse<UUID>> {
-    return axios.post(corporaPath, corpus)
+export function postCorpus(
+	corpus: MutableCorpusMetadata,
+): Promise<AxiosResponse<UUID>> {
+	return axios.post(corporaPath, corpus)
 }
 
 /**
@@ -55,7 +61,7 @@ export function postCorpus(corpus: MutableCorpusMetadata): Promise<AxiosResponse
  * @param uuid UUID of corpus to delete.
  */
 export function deleteCorpus(uuid: UUID) {
-    return axios.delete(corpusPath(uuid))
+	return axios.delete(corpusPath(uuid))
 }
 
 /**
@@ -64,5 +70,5 @@ export function deleteCorpus(uuid: UUID) {
  * @param metadata New metadata.
  */
 export function patchCorpus(uuid: UUID, metadata: MutableCorpusMetadata) {
-    return axios.patch(corpusPath(uuid), metadata)
+	return axios.patch(corpusPath(uuid), metadata)
 }

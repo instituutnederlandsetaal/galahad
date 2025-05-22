@@ -1,9 +1,11 @@
 <template>
-    <div>
+    <GCard title="Datasets overview">
+        <template #help>
+            <BenchmarkSetsHelp />
+        </template>
+
         <CorpusTable :type="TableCorporaType.Dataset" :corpora="corporaStore.datasetCorpora" selectable>
-            <template #help>
-                <BenchmarkSetsHelp />
-            </template>
+            
         </CorpusTable>
         <DocumentsTable :type="TableDocumentsType.Dataset" :corpus="corporaStore.activeCorpus">
             <template #help>
@@ -11,7 +13,7 @@
             </template>
         </DocumentsTable>
         <GSpinner v-if="corporaStore.loading" class="spinner" />
-    </div>
+    </GCard>
 </template>
 
 <script setup lang="ts">
@@ -27,7 +29,7 @@ const corporaStore = stores.useCorpora()
 // Watches & mounts
 // Only needs to load once.
 onMounted(() => {
-    corporaStore.reload()
+	corporaStore.reload()
 })
 </script>
 

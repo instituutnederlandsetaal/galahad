@@ -1,7 +1,7 @@
 <template>
     <aside class="info" :class="classes">
         <GSpinner class="spinner" :error :still="!spinner" />
-        <slot>Someone forgot to put the info.</slot>
+        <slot></slot>
         <template v-if="$slots.footer">
             <footer class="footer">
                 <slot name="footer"></slot>
@@ -11,16 +11,13 @@
 </template>
 
 <script setup lang="ts">
-// library
-
-// props
 const props = defineProps<{
-    error?: boolean
-    spinner?: boolean
+	error?: boolean
+	spinner?: boolean
 }>()
-// computed
+
 const classes = computed(() => ({
-    error: props.error,
+	error: props.error,
 }))
 </script>
 
@@ -28,10 +25,13 @@ const classes = computed(() => ({
 .info {
     padding: 1rem 2rem 1rem 4rem;
     border: 1px solid var(--int-light-grey);
-    margin: 10px auto;
     max-width: 1200px;
     position: relative;
     min-height: 70px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 
     &.error {
         border: 2px solid var(--int-red);
@@ -43,12 +43,7 @@ const classes = computed(() => ({
         top: 0.8rem;
     }
 
-    :deep(h2) {
-        margin-top: 0;
-    }
-
     .footer {
-        padding-top: 0.5rem;
         text-align: center;
     }
 }

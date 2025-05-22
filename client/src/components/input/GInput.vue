@@ -3,13 +3,13 @@
         <!-- select -->
         <template v-if="type === 'select'">
             <!-- disabled does not work well with a dynamic property, therefore we have to bifurcate on the 'disabled' property -->
-            <select v-if="disabled" disabled v-model="private_value">
+            <select v-if="disabled" disabled v-model="model">
                 <option hidden disabled selected value>-- select an option --</option>
                 <option v-for="option in options" :key="option.key" :value="option.value" :disabled="option.disabled">
                     {{ option.text }}
                 </option>
             </select>
-            <select v-else v-model="private_value">
+            <select v-else v-model="model">
                 <option hidden disabled selected value="null">-- select an option --</option>
                 <option v-for="option in options" :key="option.key" :value="option.value" :disabled="option.disabled">
                     {{ option.text }}
@@ -18,14 +18,13 @@
         </template>
         <!-- select-group -->
         <template v-else-if="type === 'select-group'">
-            <select v-model="private_value">
+            <select v-model="model">
                 <optgroup v-for="optgroup in options" :key="optgroup.label" :label="optgroup.label">
                     <option
                         v-for="option in optgroup.options"
                         :key="option.key"
                         :value="option.value"
-                        :disabled="option.disabled"
-                    >
+                        :disabled="option.disabled">
                         {{ option.text }}
                     </option>
                 </optgroup>
@@ -34,21 +33,20 @@
         <!-- number -->
         <template v-else-if="type === 'number'">
             <input
-                v-model.number="private_value"
+                v-model.number="model"
                 :type="type"
                 :placeholder="placeholder"
                 @keyup.enter="$emit('enter')"
                 :min="min"
                 :max="max"
-                :step="step"
-            />
+                :step="step" />
         </template>
         <!-- checkbox -->
         <template v-else-if="type === 'checkbox'">
             <label class="clickable checkbox-container">
                 <slot></slot>
-                <input v-model="private_value" :type="type" :placeholder="placeholder" />
-                <span class="checkmark" tabindex="0" @keydown="check"></span>
+                <input v-model="model" :type="type" :placeholder="placeholder" />
+                <span class="checkmark" tabindex="0" @keypress.space.prevent="check" @keyup.enter="check"></span>
             </label>
         </template>
         <!-- other: text -->
@@ -56,33 +54,30 @@
             <!-- text with clear button-->
             <div v-if="clearBtn" class="clear">
                 <input
-                    v-model="private_value"
+                    v-model="model"
                     :type="type"
                     :placeholder="placeholder"
                     :disabled="disabled"
                     :list="list"
-                    :ref="refName"
-                    @keyup.enter="$emit('enter')"
-                />
+                    ref="inputElement"
+                    @keyup.enter="$emit('enter')" />
                 <input
                     type="reset"
                     value="&#10006;"
-                    :disabled="private_value === null || private_value.length == 0"
+                    :disabled="model === null || model.length == 0"
                     title="Clear"
-                    @click="private_value = ''"
-                />
+                    @click="model = ''" />
             </div>
             <!-- text without clear button-->
             <input
                 v-else
-                v-model="private_value"
+                v-model="model"
                 :type="type"
                 :placeholder="placeholder"
                 :disabled="disabled"
                 :list="list"
-                :ref="refName"
-                @keyup.enter="$emit('enter')"
-            />
+                ref="inputElement"
+                @keyup.enter="$emit('enter')" />
         </template>
 
         <template v-if="validator">
@@ -96,69 +91,70 @@
     </div>
 </template>
 
-<script lang="ts">
-export default defineComponent({
-    name: "GInput",
-    emits: ["update:modelValue"],
-    props: {
-        checked: { type: Boolean, default: true },
-        default: { default: "" },
-        disabled: { type: Boolean, default: false },
-        inline: { type: Boolean, default: false },
-        validityDescriptor: { type: String },
-        list: { type: String },
-        min: { type: Number },
-        max: { type: Number },
-        options: {
-            type: Array,
-            default() {
-                return []
-            },
-        }, // for select
-        placeholder: {},
-        step: { type: Number },
-        type: { type: String, default: "text" },
-        validator: { type: Function },
-        modelValue: { default: "" },
-        clearBtn: Boolean,
-        refName: { type: String, default: "" },
-    },
-    methods: {
-        check(e) {
-            // enter and space.
-            if (e.keyCode == 13 || e.keyCode == 32) {
-                this.private_value = !this.private_value
-            }
-        },
-    },
-    data() {
-        return {
-            private_value: "",
-        }
-    },
-    mounted() {
-        this.private_value = this.modelValue
-        if (this.refName) {
-            nextTick(() => {
-                this.$refs.corpusName.focus()
-            })
-        }
-    },
-    computed: {
-        isValid(): boolean {
-            // TODO: bubble up the validity
-            return this.validator(this.modelValue)
-        },
-    },
-    watch: {
-        private_value(newVal) {
-            this.$emit("update:modelValue", newVal)
-        },
-        modelValue(newVal) {
-            this.private_value = newVal
-        },
-    },
+<script setup lang="ts">
+// --- types ---
+export type SelectOption = {
+	key: string
+	value: string
+	text: string
+	disabled?: boolean
+}
+
+// --- model ---
+const model = defineModel()
+
+// --- props ---
+const {
+	checked,
+	disabled,
+	inline,
+	validityDescriptor,
+	list,
+	min,
+	max,
+	options,
+	placeholder,
+	step,
+	type,
+	validator,
+	clearBtn,
+	focus,
+} = defineProps<{
+	checked: boolean
+	disabled: boolean
+	inline: boolean
+	validityDescriptor: string
+	list: string
+	min: number
+	max: number
+	options: SelectOption[]
+	placeholder: string
+	step: number
+	type: string
+	validator: (value: any) => boolean
+	clearBtn: boolean
+	focus: boolean
+}>()
+
+// --- lifecycle ---
+onMounted(() => {
+	if (focus) {
+		nextTick(() => {
+			inputElement.value?.focus()
+		})
+	}
 })
+
+// --- data ---
+const inputElement = ref<HTMLInputElement>()
+
+// --- computed ---
+const isValid = computed(() => validator(model.value))
+
+// --- methods ---
+function check() {
+	model.value = !model.value
+}
 </script>
 
 <style scoped lang="scss">
@@ -297,14 +293,11 @@ div.clear {
     height: 39px;
     padding: 0;
     margin: 0;
-    box-sizing: border-box;
-
     &:focus-within {
         outline: var(--int-theme-active) solid 2px;
     }
 
     input {
-        box-sizing: border-box;
         vertical-align: bottom;
         height: 39px;
         margin: 0;
