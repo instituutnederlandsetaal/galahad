@@ -12,8 +12,8 @@
 </template>
 
 <script setup lang="ts">
-const { data } = defineProps<{
-	data: Record<string, string>
+const {data} = defineProps<{
+    data: Record<string, string>
 }>()
 const keys = Object.keys(data)
 </script>

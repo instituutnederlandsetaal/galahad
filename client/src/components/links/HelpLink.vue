@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-const { subject } = defineProps<{
-	subject: string
+const {subject} = defineProps<{
+    subject: string
 }>()
 </script>

@@ -1,13 +1,17 @@
 <template>
     <GModal :show="show" :title="`Tag job ${job.tagger.id}`" @hide="$emit('hide')">
         <template #help>
-            Here you can start a job to tag the documents in your corpus. This may take a while, depending on the corpus
-            size. You can also stop and delete existing jobs. A preview of the resulting annotation layer is shown as
-            well.
-            <br /><br />
-            The tagger status (pending, busy, error, finished) will be displayed in the status bar. Tagging is carried
-            out in the background. You do not need to keep the application open. The total number of documents that are
-            being processed is given so as to give an indication of how busy the server is.
+            <p>
+                Here you can start a job to tag the documents in your corpus.
+                This may take a while, depending on the corpus size.
+                You can also stop and delete existing jobs.
+                A preview of the resulting annotation layer is shown as well.
+            </p>
+            <p>
+                The tagger status (pending, busy, error, finished) will be displayed in the status bar.
+                Tagging is carried out in the background. You do not need to keep the application open.
+                There is also an indication of how busy the server is.
+            </p>
         </template>
 
         <!-- Loading screen -->
@@ -40,31 +44,23 @@
                 <GSpinner />
             </div>
             <div class="buttons" v-else-if="taggerIsAvailable">
-                <GButton
-                    green
-                    :disabled="job.progress.pending === 0 || job.progress.busy"
-                    @click="
-                        () => {
-                            jobsStore.tag(job.tagger.id)
-                            healthLoading = true
-                        }
-                    ">
+                <GButton green :disabled="job.progress.pending === 0 || job.progress.busy" @click="
+                    () => {
+                        jobsStore.tag(job.tagger.id)
+                        healthLoading = true
+                    }
+                ">
                     Start
                 </GButton>
-                <GButton
-                    orange
-                    :disabled="!job.progress.busy"
-                    @click="
-                        () => {
-                            jobsStore.cancel(job.tagger.id)
-                            healthLoading = true
-                        }
-                    ">
+                <GButton orange :disabled="!job.progress.busy" @click="
+                    () => {
+                        jobsStore.cancel(job.tagger.id)
+                        healthLoading = true
+                    }
+                ">
                     Stop
                 </GButton>
-                <GButton
-                    red
-                    :disabled="job.progress.untagged === job.progress.total && !job.progress.hasError"
+                <GButton red :disabled="job.progress.untagged === job.progress.total && !job.progress.hasError"
                     @click="deleteJobId = job.tagger.id">
                     Delete
                 </GButton>
@@ -82,8 +78,7 @@
                 {{ job.progress.failed == 1 ? "document" : "documents" }} encountered errors:<br /><br />
                 <ol>
                     <li v-for="(message, doc) in firstFive(job.progress.errors)" :key="doc">
-                        <b>{{ doc }}</b
-                        >:<br />
+                        <b>{{ doc }}</b>:<br />
                         {{ message }}
                     </li>
                 </ol>
@@ -93,28 +88,24 @@
         </template>
 
         <!-- delete job modal -->
-        <DeleteModal
-            :show="!!deleteJobId"
-            :item="deleteJobId"
-            :displayname="`the results of job ${deleteJobId}`"
+        <DeleteModal :show="!!deleteJobId" :item="deleteJobId" :displayname="`the results of job ${deleteJobId}`"
             @delete="
                 () => {
                     jobsStore.deleteJob(deleteJobId)
                     healthLoading = true
                 }
-            "
-            @hide="deleteJobId = null as any" />
+            " @hide="deleteJobId = null as any" />
     </GModal>
 </template>
 
 <script setup lang="ts">
 // Libraries & stores
 
-import stores from "@/stores"
-// API & types
-import { TaggerHealth } from "@/types/taggers"
-import { Job } from "@/types/jobs"
 import * as API from "@/api/taggers"
+import stores from "@/stores"
+import type { Job } from "@/types/jobs"
+// API & types
+import type { TaggerHealth } from "@/types/taggers"
 
 // Stores
 const app = stores.useApp()
@@ -122,27 +113,26 @@ const jobsStore = stores.useJobs()
 
 // Fields
 const props = defineProps({
-	show: { type: Boolean, default: ref(false) },
-	jobId: { type: String, default: "" },
+    show: { type: Boolean, default: ref(false) },
+    jobId: { type: String, default: "" },
 })
 /** The job of this modal */
 const job = computed<Job>(() => {
-	return jobsStore.jobs[props.jobId]
+    return jobsStore.jobs[props.jobId]
 })
 /** Returns null while we are waiting on the first getHealth request. */
 const taggerIsAvailable = computed<boolean | null>(() => {
-	if (!health.value) return null
-	return health.value?.status === "HEALTHY"
+    if (!health.value) return null
+    return health.value?.status === "HEALTHY"
 })
 /** Opens DeleteModal when not null. */
 const deleteJobId = ref<string | null>(null)
 /** Expected job duration based on queue size at tagger and % of documents tagged in the corpus. */
 const jobIndication = computed<number | null>(() => {
-	if (jobsStore.posting || jobsStore.numActiveDocs == null) {
-		return null
-	} else {
-		return jobsStore.numActiveDocs
-	}
+    if (jobsStore.posting || jobsStore.numActiveDocs == null) {
+        return null
+    }
+    return jobsStore.numActiveDocs
 })
 /** Updated on an interval to keep track of the queue size. */
 const health = ref<TaggerHealth | null>(null)
@@ -156,16 +146,16 @@ let healthIntervalId = 0
  * Every time this GModal opens: One health ping now, the rest on an interval.
  */
 onMounted(() => {
-	getHealth()
-	healthIntervalId = setInterval(getHealth, 5000)
-	// Set to null to induce 'calculating' every time the modal opens.
-	jobsStore.getDocsAtTagger()
+    getHealth()
+    healthIntervalId = setInterval(getHealth, 5000)
+    // Set to null to induce 'calculating' every time the modal opens.
+    jobsStore.getDocsAtTagger()
 })
 /**
  * Stop pinging health on modal close.
  */
 onUnmounted(() => {
-	clearInterval(healthIntervalId)
+    clearInterval(healthIntervalId)
 })
 
 // Methods
@@ -174,27 +164,27 @@ onUnmounted(() => {
  * Starting and stopping sets health loading to true. getHealth sets it back to false.
  */
 function getHealth() {
-	API.getTaggerHealth(props.jobId)
-		.then((response) => {
-			health.value = response.data
-			healthLoading.value = false
-		})
-		.catch((error) => app.handleServerError("get tagger health", error))
+    API.getTaggerHealth(props.jobId)
+        .then(response => {
+            health.value = response.data
+            healthLoading.value = false
+        })
+        .catch(error => app.handleServerError("get tagger health", error))
 }
 
 /**
  * Return an object with only the first five keys of obj.
  */
 function firstFive(obj: Record<string, unknown>) {
-	if (!obj) {
-		return {}
-	}
-	return Object.keys(obj)
-		.slice(0, 5)
-		.reduce(function (r: Record<string, unknown>, e) {
-			r[e] = obj[e]
-			return r
-		}, {})
+    if (!obj) {
+        return {}
+    }
+    return Object.keys(obj)
+        .slice(0, 5)
+        .reduce((r: Record<string, unknown>, e) => {
+            r[e] = obj[e]
+            return r
+        }, {})
 }
 </script>
 

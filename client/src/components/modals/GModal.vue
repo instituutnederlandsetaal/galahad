@@ -1,6 +1,6 @@
 <template>
     <!-- v-if instead of v-show such that elements inside a GModal can rely on onMounted()-->
-    <dialog v-if="show" ref="modal" class="dialog" @click.self="$emit('hide')" @keyup.esc="$emit('hide')">
+    <div v-if="show" ref="modal" class="modal" tabindex="0" @click.self="$emit('hide')" @keyup.esc="$emit('hide')">
         <GCard class="content" :class="{ small: small }" :title>
             <template v-if="$slots.title" #title>
                 <slot name="title"></slot>
@@ -10,27 +10,41 @@
             </template>
             <slot></slot>
         </GCard>
-        <div class="buttons">
+        <form @submit.prevent class="buttons">
             <GButton red @click="$emit('hide')">Close</GButton>
             <slot name="buttons"></slot>
-        </div>
-    </dialog>
+        </form>
+    </div>
 </template>
 
 <script setup lang="ts">
-const { show, title, small } = defineProps<{
-	show: boolean
-	title?: string
-	small?: boolean
+const { show, title, small = true } = defineProps<{
+    show: boolean
+    title?: string
+    small?: boolean
 }>()
+
+const emit = defineEmits<{
+    hide: []
+}>()
+
+onMounted(() => {
+    addEventListener("keyup", (event) => {
+        if (event.key === 'Escape') {
+            emit('hide')
+        }
+    })
+})
 </script>
 
 <style scoped lang="scss">
-.dialog {
+.modal {
     border: 0;
     left: 0;
     top: 0;
-    background-color: var(--int-very-light-grey);
+    background-color: rgba(255, 255, 255, 0.8); // var(--int-very-light-grey) with 0.8 alpha
+    backdrop-filter: blur(5px);
+
     position: fixed;
     height: 100%;
     width: 100%;
@@ -61,7 +75,7 @@ const { show, title, small } = defineProps<{
 }
 
 @media (max-width: 800px) or (max-height: 700px) {
-    .dialog {
+    .modal {
         padding: 0;
         padding-bottom: 0.5em; // Override for bottom button
         gap: 0.5em;

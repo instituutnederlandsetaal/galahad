@@ -13,20 +13,20 @@
 
 import stores from "@/stores"
 // Types & API
-import { Term } from "@/types/evaluation"
-import { Field } from "@/types/table"
+import type {Term} from "@/types/evaluation"
+import type {Field} from "@/types/table"
 
 // Stores
 const jobSelection = stores.useJobSelection()
 
 // Custom types
-type Item = Term & { layer: string }
-type Cell = { field: Field; item: Item; value: string }
+type Item = Term & {layer: string}
+type Cell = {field: Field; item: Item; value: string}
 
 // Props
 const props = defineProps<{
-	hypoTerm: Term
-	refTerm: Term
+    hypoTerm: Term
+    refTerm: Term
 }>()
 
 // Fields
@@ -34,44 +34,44 @@ const ignorableAnnotations = ["token", "id", "misc"]
 
 // Computed
 const items: Ref<Record<string, string>[]> = computed(() => {
-	return [
-		{ layer: jobSelection.hypothesisJobId, ...props.hypoTerm.annotations },
-		{ layer: jobSelection.referenceJobId, ...props.refTerm.annotations },
-	]
+    return [
+        {layer: jobSelection.hypothesisJobId, ...props.hypoTerm.annotations},
+        {layer: jobSelection.referenceJobId, ...props.refTerm.annotations},
+    ]
 })
 /** columns are simply all unique keys in term.annotations: Record<string, string> */
 const columns: Ref<Field[]> = computed(() => {
-	return items.value
-		.reduce((acc, item) => {
-			Object.keys(item).forEach((key) => {
-				if (!acc.includes(key)) acc.push(key)
-			})
-			return acc
-		}, [] as string[])
-		.filter((i) => !ignorableAnnotations.includes(i))
-		.map((key) => ({ key, label: key }))
+    return items.value
+        .reduce((acc, item) => {
+            Object.keys(item).forEach(key => {
+                if (!acc.includes(key)) acc.push(key)
+            })
+            return acc
+        }, [] as string[])
+        .filter(i => !ignorableAnnotations.includes(i))
+        .map(key => ({key, label: key}))
 })
 
 // Methods
 function itemEqual(data: Cell): bool {
-	if (
-		data.item.layer == jobSelection.referenceJobId ||
-		data.field.key == "layer"
-	)
-		return true // always true for source layer
+    if (
+        data.item.layer === jobSelection.referenceJobId ||
+        data.field.key === "layer"
+    )
+        return true // always true for source layer
 
-	const sourceItem = items.value.find(
-		(i) => i.layer == jobSelection.referenceJobId,
-	)
-	return annotationsEqual(data.value, sourceItem[data.field.key])
+    const sourceItem = items.value.find(
+        i => i.layer === jobSelection.referenceJobId,
+    )
+    return annotationsEqual(data.value, sourceItem[data.field.key])
 }
 
 function annotationsEqual(refAnnot: string, hypoAnnot: string) {
-	return cleanAnnotation(refAnnot) == cleanAnnotation(hypoAnnot)
+    return cleanAnnotation(refAnnot) === cleanAnnotation(hypoAnnot)
 }
 
 function cleanAnnotation(term) {
-	return term?.toLowerCase().replace("_", "")
+    return term?.toLowerCase().replace("_", "")
 }
 </script>
 

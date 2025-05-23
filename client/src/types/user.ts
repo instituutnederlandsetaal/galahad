@@ -1,4 +1,4 @@
 export type User = {
-	id: string
-	isAdmin: boolean
+    id: string
+    isAdmin: boolean
 }

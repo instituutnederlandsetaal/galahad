@@ -2,12 +2,12 @@
  * API calls for getting existing jobs and job layer results, posting and cancelling jobs, and polling job progress.
  */
 
+import type {UUID} from "@/types/corpora"
+import type {Job, Progress} from "@/types/jobs"
 // --- libraries ---
 import axios from "axios"
 // --- types ---
-import type { AxiosResponse } from "axios"
-import type { Job, Progress } from "@/types/jobs"
-import type { UUID } from "@/types/corpora"
+import type {AxiosResponse} from "axios"
 
 type JobsResponse = AxiosResponse<Job[]>
 type JobResponse = AxiosResponse<Job>
@@ -17,9 +17,9 @@ export type ProgressResponse = AxiosResponse<Progress>
 const jobsPath = (corpus: UUID) => `/corpora/${corpus}/jobs`
 const jobPath = (corpus: UUID, job: string) => `/corpora/${corpus}/jobs/${job}`
 const jobIsBusyPath = (corpus: UUID, job: string) =>
-	`/corpora/${corpus}/jobs/${job}/isBusy`
+    `/corpora/${corpus}/jobs/${job}/isBusy`
 const jobProgressPath = (corpus: UUID, job: string) =>
-	`/corpora/${corpus}/jobs/${job}/progress`
+    `/corpora/${corpus}/jobs/${job}/progress`
 
 // --- methods ---
 /**
@@ -27,7 +27,7 @@ const jobProgressPath = (corpus: UUID, job: string) =>
  * @param corpus UUID of the corpus.
  */
 export function getJobs(corpus: UUID): Promise<JobsResponse> {
-	return axios.get(jobsPath(corpus), { params: { hasResult: false } })
+    return axios.get(jobsPath(corpus), {params: {hasResult: false}})
 }
 
 /**
@@ -36,7 +36,7 @@ export function getJobs(corpus: UUID): Promise<JobsResponse> {
  * @param job Tagger job name.
  */
 export function getJob(corpus: UUID, job: string) {
-	return axios.get(jobPath(corpus, job)) as Promise<JobResponse>
+    return axios.get(jobPath(corpus, job)) as Promise<JobResponse>
 }
 
 /**
@@ -45,7 +45,7 @@ export function getJob(corpus: UUID, job: string) {
  * @param job Tagger job name.
  */
 export function postJob(corpus: UUID, job: string): Promise<ProgressResponse> {
-	return axios.post(jobPath(corpus, job))
+    return axios.post(jobPath(corpus, job))
 }
 
 /**
@@ -55,29 +55,29 @@ export function postJob(corpus: UUID, job: string): Promise<ProgressResponse> {
  * @param hard True to delete the job, false to cancel it.
  */
 export function cancelOrDeleteJob(
-	corpus: UUID,
-	job: string,
-	hard: boolean,
+    corpus: UUID,
+    job: string,
+    hard: boolean,
 ): Promise<ProgressResponse> {
-	return axios.delete(jobPath(corpus, job), { params: { hard: hard } })
+    return axios.delete(jobPath(corpus, job), {params: {hard: hard}})
 }
 
 /**
  * Simplified job progress poll.
  */
 export function getJobIsBusy(
-	corpus: UUID,
-	job: string,
+    corpus: UUID,
+    job: string,
 ): Promise<AxiosResponse<boolean>> {
-	return axios.get(jobIsBusyPath(corpus, job))
+    return axios.get(jobIsBusyPath(corpus, job))
 }
 
 /**
  * Poll for job progress.
  */
 export function getJobProgress(
-	corpus: UUID,
-	job: string,
+    corpus: UUID,
+    job: string,
 ): Promise<ProgressResponse> {
-	return axios.get(jobProgressPath(corpus, job))
+    return axios.get(jobProgressPath(corpus, job))
 }

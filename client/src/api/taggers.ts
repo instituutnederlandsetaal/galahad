@@ -2,18 +2,18 @@
  * API calls for fetching taggers and their health status.
  */
 
+import type {Tagger, TaggerHealth} from "@/types/taggers"
 // --- libraries ---
 import axios from "axios"
 // --- types ---
-import type { AxiosResponse } from "axios"
-import type { Tagger, TaggerHealth } from "@/types/taggers"
+import type {AxiosResponse} from "axios"
 
 type TaggersResponse = AxiosResponse<Tagger[]>
 type TaggerHealthResponse = AxiosResponse<TaggerHealth>
 type TaggersBusyResponse = AxiosResponse<number>
 
 // --- data ---
-const taggersPath = `/taggers`
+const taggersPath = "/taggers"
 
 // --- computed ---
 const taggerPath = (tagger: string) => `${taggersPath}/${tagger}`
@@ -24,7 +24,7 @@ const taggerHealthPath = (tagger: string) => `${taggerPath(tagger)}/health`
  * Get all taggers.
  */
 export function getTaggers(): Promise<TaggersResponse> {
-	return axios.get(taggersPath)
+    return axios.get(taggersPath)
 }
 
 /**
@@ -32,7 +32,7 @@ export function getTaggers(): Promise<TaggersResponse> {
  * @param tagger Tagger name.
  */
 export function getTaggerHealth(tagger: string): Promise<TaggerHealthResponse> {
-	return axios.get(taggerHealthPath(tagger))
+    return axios.get(taggerHealthPath(tagger))
 }
 
 /**
@@ -40,5 +40,5 @@ export function getTaggerHealth(tagger: string): Promise<TaggerHealthResponse> {
  * Summed over all taggers & corpora on the server.
  */
 export function getDocsAtTaggers(): Promise<TaggersBusyResponse> {
-	return axios.get(`${taggersPath}/active`)
+    return axios.get(`${taggersPath}/active`)
 }

@@ -75,7 +75,7 @@
         </GCard>
         <GCard class="right" article>
             <!-- H1: On Evaluation -->
-            <h2 id="evaluation">On Evaluation: A Detailed Overview</h2>
+            <h1 id="evaluation">On Evaluation: A Detailed Overview</h1>
 
             <!-- H2: Metrics -->
             <h2 id="metrics">Metrics</h2>
@@ -367,10 +367,8 @@
                 <li><code>P = TP / (TP+FP) = 10 / (10+1) = 90.9%</code></li>
                 <li><code>R = TP / (TP+FN) = 10 / (10+15) = 40%</code></li>
                 <li>
-                    <code
-                        ><b>F1</b> = 2 * (P * R) / (P + R) = 2 * (0.909 * 0.40) / (0.909 + 0.40) =
-                        0.553&hellip;</code
-                    >
+                    <code><b>F1</b> = 2 * (P * R) / (P + R) = 2 * (0.909 * 0.40) / (0.909 + 0.40) =
+                        0.553&hellip;</code>
                 </li>
             </ul>
             <h3 id="f1-low-precision-high-recall">Low precision, high recall</h3>
@@ -378,9 +376,7 @@
                 <li><code>P = TP / (TP+FP) = 20 / (20+30) = 40%</code></li>
                 <li><code>R = TP / (TP+FN) = 20 / (20+5) = 80%</code></li>
                 <li>
-                    <code
-                        ><b>F1</b> = 2 * (P *R) / (P + R) = 2 * (0.40 * 0.80) / (0.40 + 0.80) = 0.533&hellip;</code
-                    >
+                    <code><b>F1</b> = 2 * (P *R) / (P + R) = 2 * (0.40 * 0.80) / (0.40 + 0.80) = 0.533&hellip;</code>
                 </li>
             </ul>
             <p>
@@ -618,16 +614,12 @@
 
             <ul>
                 <li>
-                    <code
-                        ><b>P</b> = sum of all class Ps / number of classes = (1.0 + 0.6 + 1.0) / 3 =
-                        0.866&hellip;</code
-                    >
+                    <code><b>P</b> = sum of all class Ps / number of classes = (1.0 + 0.6 + 1.0) / 3 =
+                        0.866&hellip;</code>
                 </li>
                 <li>
-                    <code
-                        ><b>R</b> = sum of all class Rs / number of classes = (0.66&hellip; + 1.0 + 0.75) / 3 =
-                        0.8055&hellip;</code
-                    >
+                    <code><b>R</b> = sum of all class Rs / number of classes = (0.66&hellip; + 1.0 + 0.75) / 3 =
+                        0.8055&hellip;</code>
                 </li>
                 <li>
                     <code><b>Acc</b> = number of correct predictions / number of tokens = 8 / 10 = 0.8</code>
@@ -747,7 +739,7 @@ a:visited {
     }
 }
 
-.tabs.level-2 > .content {
+.tabs.level-2>.content {
     padding-bottom: 0em !important;
 }
 </style>

@@ -135,81 +135,83 @@
 import stores from "@/stores"
 
 // API & types
-import { Distribution } from "@/types/evaluation"
+import type {Distribution} from "@/types/evaluation"
 
 import MultiSelect from "primevue/multiselect"
 
 // Stores
 const distributionStore = stores.useDistribution()
 // Doesn't need to be ref'ed, but it's easier to read.
-const { distribution, selectedDistribution } = storeToRefs(distributionStore)
+const {distribution, selectedDistribution} = storeToRefs(distributionStore)
 const jobSelection = stores.useJobSelection()
 
 // Fields
 const selectedPosses = ref([])
 // Table controls.
-const includePos = ref({} as { [pos: string]: boolean })
+const includePos = ref({} as {[pos: string]: boolean})
 const lemmaFilter = ref("")
 const literalFilter = ref("")
 // GModal for variants
 const variantsToDisplay = ref(null as null | Distribution)
 // Filtered table items.
 const itemsToDisplay = computed((): Distribution[] => {
-	// When distribution not yet generated.
-	if (!distribution.value?.distribution?.length) return []
+    // When distribution not yet generated.
+    if (!distribution.value?.distribution?.length) return []
 
-	return (
-		distribution.value?.distribution
-			// Case insensitive string comparison.
-			.filter((x) =>
-				x.lemma.toLowerCase().includes(lemmaFilter.value.toLowerCase()),
-			)
-			.filter((x) => selectedPosses.value.includes(x.pos))
-			// Filter by single/multiple PoS
-			.filter((x) => {
-				if (selectedSingMultiPos.value == "single") return !x.pos.includes("+")
-				if (selectedSingMultiPos.value == "multiple") return x.pos.includes("+")
-				return true
-			})
-			// Case insensitive string comparison.
-			// join on \n, as it can't be entered into a <input type=text>
-			.filter((x) =>
-				Object.keys(x.literals.literals)
-					.join("\n")
-					.toLowerCase()
-					.includes(literalFilter.value.toLowerCase()),
-			)
-	)
+    return (
+        distribution.value?.distribution
+            // Case insensitive string comparison.
+            .filter(x =>
+                x.lemma.toLowerCase().includes(lemmaFilter.value.toLowerCase()),
+            )
+            .filter(x => selectedPosses.value.includes(x.pos))
+            // Filter by single/multiple PoS
+            .filter(x => {
+                if (selectedSingMultiPos.value === "single")
+                    return !x.pos.includes("+")
+                if (selectedSingMultiPos.value === "multiple")
+                    return x.pos.includes("+")
+                return true
+            })
+            // Case insensitive string comparison.
+            // join on \n, as it can't be entered into a <input type=text>
+            .filter(x =>
+                Object.keys(x.literals.literals)
+                    .join("\n")
+                    .toLowerCase()
+                    .includes(literalFilter.value.toLowerCase()),
+            )
+    )
 })
 const columns = [
-	{ key: "lemma", label: "lemma", sortOn: (x: Distribution) => x.lemma },
-	{ key: "pos", label: "PoS", sortOn: (x: Distribution) => x.pos },
-	{
-		key: "count",
-		label: "total\noccurrences",
-		sortOn: (x: Distribution) => x.count,
-	},
-	{
-		key: "variantCount",
-		label: "number\nof types",
-		sortOn: (x: Distribution) => Object.keys(x.literals.literals).length,
-	},
-	{ key: "variants", label: "types" },
+    {key: "lemma", label: "lemma", sortOn: (x: Distribution) => x.lemma},
+    {key: "pos", label: "PoS", sortOn: (x: Distribution) => x.pos},
+    {
+        key: "count",
+        label: "total\noccurrences",
+        sortOn: (x: Distribution) => x.count,
+    },
+    {
+        key: "variantCount",
+        label: "number\nof types",
+        sortOn: (x: Distribution) => Object.keys(x.literals.literals).length,
+    },
+    {key: "variants", label: "types"},
 ]
 const singMultiPosOptions = [
-	{ value: "single", text: "Single" },
-	{ value: "multiple", text: "Multiple" },
-	{ value: "both", text: "Both" },
+    {value: "single", text: "Single"},
+    {value: "multiple", text: "Multiple"},
+    {value: "both", text: "Both"},
 ]
 const selectedSingMultiPos = ref(singMultiPosOptions[0].value)
 const filteredPosses = computed(() => {
-	if (selectedSingMultiPos.value === "single") {
-		return distributionStore.posses.filter((pos) => !pos.includes("+"))
-	} else if (selectedSingMultiPos.value === "multiple") {
-		return distributionStore.posses.filter((pos) => pos.includes("+"))
-	} else {
-		return distributionStore.posses
-	}
+    if (selectedSingMultiPos.value === "single") {
+        return distributionStore.posses.filter(pos => !pos.includes("+"))
+    }
+    if (selectedSingMultiPos.value === "multiple") {
+        return distributionStore.posses.filter(pos => pos.includes("+"))
+    }
+    return distributionStore.posses
 })
 
 // Watches
@@ -218,19 +220,19 @@ const filteredPosses = computed(() => {
  * jobSelection.hypothesisJobId, because of the network delay.
  */
 watch(
-	() => distributionStore.posses,
-	() => {
-		distributionStore.posses.forEach((pos) => (includePos.value[pos] = true))
-	},
-	{ immediate: true },
+    () => distributionStore.posses,
+    () => {
+        distributionStore.posses.forEach(pos => (includePos.value[pos] = true))
+    },
+    {immediate: true},
 )
 
 watch(
-	() => filteredPosses.value,
-	() => {
-		selectedPosses.value = filteredPosses.value
-	},
-	{ immediate: true },
+    () => filteredPosses.value,
+    () => {
+        selectedPosses.value = filteredPosses.value
+    },
+    {immediate: true},
 )
 </script>
 

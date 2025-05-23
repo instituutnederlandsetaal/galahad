@@ -4,6 +4,7 @@
         <template #help>
             <slot name="help"></slot>
         </template>
+
         <table>
             <template v-if="userStore.hasWriteAccess || !item">
                 <tr>
@@ -11,55 +12,36 @@
                         <label>Name:</label> <span class="warning"><small>(Required)</small></span>
                     </td>
                     <td>
-                        <GInput
-                            v-model="name"
-                            refName="corpusName"
-                            placeholder="corpus name"
-                            :validator="validateCorpusName"
-                            validityDescriptor="3-100 characters"
-                            @enter="doAction" />
+                        <GInput v-model="name" focus refName="corpusName" placeholder="corpus name"
+                            :validator="validateCorpusName" validityDescriptor="3-100 characters" @enter="doAction" />
                     </td>
                 </tr>
                 <tr>
                     <td><label>Year from:</label></td>
                     <td>
-                        <GInput
-                            v-model.number="eraFrom"
-                            validityDescriptor="Must be before end year"
-                            :validator="
-                                (v) => {
-                                    return v <= eraTo
-                                }
-                            "
-                            :min="-10000"
-                            :max="10000"
-                            placeholder="YYYY"
-                            :step="100"
-                            @enter="doAction" />
+                        <GInput v-model.number="eraFrom" validityDescriptor="Must be before end year" :validator="(v) => {
+                            return v <= eraTo
+                        }
+                            " :min="-10000" :max="10000" placeholder="YYYY" :step="100" @enter="doAction" />
                     </td>
                 </tr>
 
                 <tr>
                     <td><label>Year to:</label></td>
                     <td>
-                        <GInput
-                            v-model.number="eraTo"
-                            validityDescriptor="Must be after start year"
-                            placeholder="YYYY"
-                            :validator="
-                                (v) => {
-                                    return v >= eraFrom
-                                }
-                            "
-                            :min="-10000"
-                            :max="10000"
-                            @enter="doAction" />
+                        <GInput v-model.number="eraTo" validityDescriptor="Must be after start year" placeholder="YYYY"
+                            :validator="(v) => {
+                                return v >= eraFrom
+                            }
+                                " :min="-10000" :max="10000" @enter="doAction" />
                     </td>
                 </tr>
 
                 <tr>
                     <td>
-                        <label> <ExternalLink href="/galahad/overview/tagsets">Tagset</ExternalLink>: </label>
+                        <label>
+                            <ExternalLink href="/galahad/overview/tagsets">Tagset</ExternalLink>:
+                        </label>
                     </td>
                     <td>
                         <GInput v-model="tagset" list="tagsets" @enter="doAction" placeholder="tagset name" />
@@ -115,142 +97,130 @@
     </GModal>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import stores from "@/stores"
+import type { MutableCorpusMetadata } from "@/types/corpora"
 
-import { MutableCorpusMetadata } from "@/types/corpora"
+const userStore = stores.useUser()
+const tagsetsStore = stores.useTagsets()
 
-// Component dependencies.
-
-export default defineComponent({
-	name: "CorpusForm",
-	props: {
-		action: { type: Function },
-		cancel: { type: Function },
-		item: { default: null },
-		update: { type: Boolean, default: false },
-		title: { type: String, default: "" },
-		show: { type: Boolean, default: true },
-	},
-	setup() {
-		const userStore = stores.useUser()
-		const tagsetsStore = stores.useTagsets()
-		return { userStore: userStore, tagsetsStore: tagsetsStore }
-	},
-	data() {
-		return {
-			dataset: false,
-			name: "",
-			eraFrom: null,
-			eraTo: null,
-			tagset: "",
-			sourceName: "",
-			sourceURL: "",
-			collaborators: [],
-			viewers: [],
-			newUser: "",
-		}
-	},
-	computed: {
-		// Only used for the viewers list for when you yourself are a viewer:
-		// You may see the name list, but not add to it.
-		showAddDialog() {
-			// Only show it when you're not editing (i.e. you pressed 'new')
-			// Or if you did press edit, only show it when you have access
-			return !this.update || this.userStore.hasDeleteAccess
-		},
-		disabled() {
-			if (!this.item && this.update) return true
-			const item = this.item as MutableCorpusMetadata
-			return (
-				!this.isValid ||
-				(this.update &&
-					this.name === item.name &&
-					this.eraFrom === item.eraFrom &&
-					this.eraTo === item.eraTo &&
-					this.tagset === item.tagset &&
-					this.collaborators.join("\n") === item.collaborators.join("\n") &&
-					this.viewers.join("\n") === item.viewers.join("\n") &&
-					this.sourceName === item.sourceName &&
-					this.sourceURL === item.sourceURL &&
-					this.dataset === item.dataset)
-			)
-		},
-		isValid() {
-			if (!this.validateCorpusName(this.name)) return false
-			// check if eras are integer values
-			if (this.eraFrom && !Number.isInteger(this.eraFrom)) return false
-			if (this.eraTo && !Number.isInteger(this.eraTo)) return false
-			if (this.eraFrom > this.eraTo) return false
-			return true
-		},
-	},
-	methods: {
-		doAction() {
-			if (!this.validateCorpusName(this.name)) return
-			const value: MutableCorpusMetadata = {
-				owner: "", // this is set by the server for security reasons
-				name: this.name,
-				eraFrom: this.eraFrom,
-				eraTo: this.eraTo,
-				tagset: this.tagset,
-				dataset: this.dataset,
-				collaborators: this.collaborators,
-				viewers: this.viewers,
-				sourceName: this.sourceName,
-				sourceURL: this.validateSourceURL(this.sourceURL),
-			}
-			this.action(value)
-			this.resetFormFields()
-		},
-		doCancel() {
-			this.resetFormFields()
-			this.cancel()
-		},
-		resetFormFields() {
-			this.collaborators = []
-			this.viewers = []
-			this.name = ""
-			this.eraFrom = null
-			this.eraTo = null
-			this.tagset = ""
-			this.sourceName = ""
-			this.sourceURL = ""
-			this.dataset = false
-		},
-		validateCorpusName(name: string) {
-			return name.toString().match(RegExp("^.{3,100}$"))
-		},
-		validateSourceURL(url: string): string {
-			if (!url) return url
-			try {
-				new URL(url)
-			} catch (error) {
-				// try to fix it by adding a protocol
-				url = "http://" + url
-			}
-			return url
-		},
-	},
-	watch: {
-		item: {
-			handler(newValue: MutableCorpusMetadata) {
-				if (!(newValue as MutableCorpusMetadata)) return
-				this.name = newValue.name
-				this.collaborators = [...newValue.collaborators]
-				this.viewers = [...newValue.viewers]
-				this.eraFrom = newValue.eraFrom
-				this.eraTo = newValue.eraTo
-				this.tagset = newValue.tagset
-				this.sourceName = newValue.sourceName
-				this.sourceURL = newValue.sourceURL
-				this.dataset = newValue.dataset
-			},
-			immediate: true,
-			deep: true,
-		},
-	},
+// --- props ---
+const { action, cancel, item, update, title, show } = defineProps({
+    action: { type: Function },
+    cancel: { type: Function },
+    item: { default: null },
+    update: { type: Boolean, default: false },
+    title: { type: String, default: "" },
+    show: { type: Boolean, default: true },
 })
+
+// --- data ---
+const dataset = ref(false)
+const name = ref("")
+const eraFrom = ref(null)
+const eraTo = ref(null)
+const tagset = ref("")
+const sourceName = ref("")
+const sourceURL = ref("")
+const collaborators = ref([])
+const viewers = ref([])
+
+// --- computed ---
+const showAddDialog = computed(() => {
+    // Only show it when you're not editing (i.e. you pressed 'new')
+    // Or if you did press edit, only show it when you have access
+    return !update || userStore.hasDeleteAccess
+})
+const disabled = computed(() => {
+    if (!item && update) return true
+    const i = item as MutableCorpusMetadata
+    return (
+        !isValid.value ||
+        (update &&
+            name.value === i.name &&
+            eraFrom.value === i.eraFrom &&
+            eraTo.value === i.eraTo &&
+            tagset.value === i.tagset &&
+            collaborators.value.join("\n") === i.collaborators.join("\n") &&
+            viewers.value.join("\n") === i.viewers.join("\n") &&
+            sourceName.value === i.sourceName &&
+            sourceURL.value === i.sourceURL &&
+            dataset.value === i.dataset)
+    )
+})
+const isValid = computed(() => {
+    if (!validateCorpusName(name.value)) return false
+    // check if eras are integer values
+    if (eraFrom.value && !Number.isInteger(eraFrom.value)) return false
+    if (eraTo.value && !Number.isInteger(eraTo.value)) return false
+    if (eraFrom.value > eraTo.value) return false
+    return true
+})
+
+// --- watch ---
+watch(
+    () => item,
+    (newValue: MutableCorpusMetadata): void => {
+        if (!newValue) return
+        name.value = newValue.name
+        eraFrom.value = newValue.eraFrom
+        eraTo.value = newValue.eraTo
+        tagset.value = newValue.tagset
+        sourceName.value = newValue.sourceName
+        sourceURL.value = newValue.sourceURL
+        dataset.value = newValue.dataset
+        collaborators.value = [...newValue.collaborators]
+        viewers.value = [...newValue.viewers]
+    },
+    { immediate: true, deep: true },
+)
+
+// --- methods ---
+function doAction(): void {
+    if (!validateCorpusName(name.value)) return
+    const value: MutableCorpusMetadata = {
+        owner: "", // this is set by the server for security reasons
+        name: name.value,
+        eraFrom: eraFrom.value,
+        eraTo: eraTo.value,
+        tagset: tagset.value,
+        dataset: dataset.value,
+        collaborators: collaborators.value,
+        viewers: viewers.value,
+        sourceName: sourceName.value,
+        sourceURL: validateSourceURL(sourceURL.value),
+    }
+    action(value)
+    resetFormFields()
+}
+function doCancel(): void {
+    resetFormFields()
+    cancel()
+}
+function resetFormFields(): void {
+    collaborators.value = []
+    viewers.value = []
+    name.value = ""
+    eraFrom.value = null
+    eraTo.value = null
+    tagset.value = ""
+    sourceName.value = ""
+    sourceURL.value = ""
+    dataset.value = false
+}
+function validateCorpusName(name: string): boolean {
+    return name.toString().match(/^.{3,100}$/)
+}
+function validateSourceURL(url: string): string {
+    if (!url) return url
+    try {
+        new URL(url)
+    } catch (error) {
+        // try to fix it by adding a protocol
+        url = `http://${url}`
+    }
+    return url
+}
 </script>
 
 <style scoped lang="scss">

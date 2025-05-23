@@ -7,9 +7,9 @@
 
 <script setup lang="ts">
 defineProps({
-	disabled: { type: Boolean, default: false },
-	loading: { type: Boolean, default: false },
-	wide: { type: Boolean, default: false },
+    disabled: {type: Boolean, default: false},
+    loading: {type: Boolean, default: false},
+    wide: {type: Boolean, default: false},
 })
 </script>
 

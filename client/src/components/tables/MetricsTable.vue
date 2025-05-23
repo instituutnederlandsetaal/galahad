@@ -74,12 +74,12 @@ const jobSelection = stores.useJobSelection()
 
 // Props
 const props = defineProps({
-	title: { type: String, default: "Metrics" },
-	columns: { type: Array, default: [] },
-	items: { type: Array, default: [] },
-	loading: { type: Boolean, default: false },
-	sortedByColumn: { type: String, default: "count" },
-	downloading: { type: Boolean, default: false },
+    title: {type: String, default: "Metrics"},
+    columns: {type: Array, default: []},
+    items: {type: Array, default: []},
+    loading: {type: Boolean, default: false},
+    sortedByColumn: {type: String, default: "count"},
+    downloading: {type: Boolean, default: false},
 })
 
 // Emits
@@ -87,9 +87,9 @@ defineEmits(["download"])
 
 // Fields
 const showModal = ref(false)
-const samples = ref({ title: "", samples: [] } as {
-	title: string
-	samples: TermComparison[]
+const samples = ref({title: "", samples: []} as {
+    title: string
+    samples: TermComparison[]
 })
 const modalData = ref({})
 
@@ -98,13 +98,13 @@ const modalData = ref({})
  * Open a set of samples in a modal.
  */
 function openModal(data) {
-	modalData.value = data
-	samples.value = {
-		title: `${data.field.label} ${data.item.name} samples`,
-		samples: data.value.samples,
-		annotationType: data.item.column.toLowerCase(),
-	}
-	showModal.value = true
+    modalData.value = data
+    samples.value = {
+        title: `${data.field.label} ${data.item.name} samples`,
+        samples: data.value.samples,
+        annotationType: data.item.column.toLowerCase(),
+    }
+    showModal.value = true
 }
 </script>
 

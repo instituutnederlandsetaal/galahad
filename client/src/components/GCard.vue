@@ -28,9 +28,9 @@
 <script setup lang="ts">
 // --- props ---
 const { helpSubject, title } = defineProps<{
-	helpSubject?: string
-	title?: string
-	article?: boolean
+    helpSubject?: string
+    title?: string
+    article?: boolean
 }>()
 
 // --- data ---
@@ -41,17 +41,22 @@ const expand = ref(false)
 .g-card {
     background-color: var(--white);
     padding: 1em;
-    padding-top: 0;
     min-width: 250px;
+    max-width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 1rem;
+
+    .g-card {
+        // Don't double up on padding
+        padding: 0;
+    }
 
     .header {
         display: flex;
         flex-direction: column;
         gap: 1rem;
+        align-items: center;
 
         .title {
             text-align: center;
@@ -77,12 +82,18 @@ const expand = ref(false)
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
         gap: 1rem;
+        max-width: 100%;
+        overflow: scroll;
 
         &.article {
             max-width: 800px;
             align-items: start;
+            align-self: center;
+
+            :deep(h1) {
+                font-size: 2em;
+            }
         }
     }
 }

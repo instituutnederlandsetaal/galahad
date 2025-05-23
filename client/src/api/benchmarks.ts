@@ -2,11 +2,11 @@
  * API for fetching benchmarks.
  */
 
+import type {Benchmarks} from "@/types/assays"
 // --- libraries ---
 import axios from "axios"
 // --- types ---
-import type { AxiosResponse } from "axios"
-import type { Benchmarks } from "@/types/assays"
+import type {AxiosResponse} from "axios"
 
 type BenchmarksResponse = AxiosResponse<Benchmarks>
 
@@ -18,5 +18,5 @@ const benchmarksPath = "/benchmarks"
  * Fetch all benchmarks.
  */
 export function getBenchmarks(): Promise<BenchmarksResponse> {
-	return axios.get(benchmarksPath)
+    return axios.get(benchmarksPath)
 }

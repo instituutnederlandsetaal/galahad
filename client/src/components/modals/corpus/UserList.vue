@@ -34,11 +34,7 @@
     </tr>
 
     <!-- delete modal -->
-    <DeleteModal
-        :show="userToDelete"
-        :item="userToDelete"
-        :displayname="userToDelete"
-        @hide="userToDelete = null"
+    <DeleteModal :show="userToDelete" :displayname="userToDelete" @hide="userToDelete = null"
         @delete="removeUser(userToDelete)">
         <template #action>remove access for user</template>
     </DeleteModal>
@@ -48,50 +44,50 @@
 import stores from "@/stores"
 
 export default defineComponent({
-	name: "UserList",
-	props: {
-		users: {
-			type: Array<string>,
-			default: () => [],
-		},
-		listName: {
-			type: String,
-			default: "Users",
-		},
-		showAddDialog: {
-			type: Boolean,
-			default: true,
-		},
-	},
-	setup() {
-		const userStore = stores.useUser()
-		return { userStore: userStore }
-	},
-	data() {
-		return {
-			newUser: "",
-			userToDelete: null,
-		}
-	},
-	methods: {
-		canDelete(username: string): boolean {
-			if (!this.showAddDialog) {
-				return this.userStore.user.id == username
-			}
-			return true
-		},
-		setUser(username: string) {
-			username = username.trim()
-			if (!username) return
-			this.newUser = ""
-			if (this.users.includes(username)) return
-			this.users.push(username)
-		},
-		removeUser(username: string) {
-			const removeIndex = this.users.indexOf(username)
-			this.users.splice(removeIndex, 1)
-		},
-	},
+    name: "UserList",
+    props: {
+        users: {
+            type: Array<string>,
+            default: () => [],
+        },
+        listName: {
+            type: String,
+            default: "Users",
+        },
+        showAddDialog: {
+            type: Boolean,
+            default: true,
+        },
+    },
+    setup() {
+        const userStore = stores.useUser()
+        return { userStore: userStore }
+    },
+    data() {
+        return {
+            newUser: "",
+            userToDelete: null,
+        }
+    },
+    methods: {
+        canDelete(username: string): boolean {
+            if (!this.showAddDialog) {
+                return this.userStore.user.id === username
+            }
+            return true
+        },
+        setUser(username: string) {
+            username = username.trim()
+            if (!username) return
+            this.newUser = ""
+            if (this.users.includes(username)) return
+            this.users.push(username)
+        },
+        removeUser(username: string) {
+            const removeIndex = this.users.indexOf(username)
+            this.users.splice(removeIndex, 1)
+        },
+    },
 })
 </script>
 
@@ -99,7 +95,7 @@ export default defineComponent({
 .users {
     display: flex;
 
-    > p {
+    >p {
         margin: 5px 0px;
         flex: 1;
     }
@@ -112,7 +108,7 @@ ul {
 .usersInput {
     display: flex;
 
-    > input {
+    >input {
         flex: 1;
     }
 }

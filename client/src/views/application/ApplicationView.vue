@@ -1,29 +1,22 @@
 <template>
-    <GTabs
-        class="level-2"
-        basePath="/application"
-        :tabs="[
-            { id: 'about', title: 'About' },
-            { id: 'api', title: 'API', stub: true },
-        ]">
+    <GTabs class="level-2" basePath="/application" :tabs="[
+        { id: 'about', title: 'About' },
+        { id: 'api', title: 'API', stub: true },
+    ]">
         <template #api-title>
-            <ExternalLink class="blockLink" :href="apiURL">API</ExternalLink>
+            <ExternalLink class="blockLink" :href="apiUrl">API</ExternalLink>
         </template>
     </GTabs>
 </template>
 
 <script setup lang="ts">
-const apiURL =
-	window.location.protocol +
-	"//" +
-	window.location.hostname +
-	"/galahad/api/swagger-ui/index.html"
+const apiUrl = `${window.location.protocol}//${window.location.hostname}/galahad/api/swagger-ui/index.html`
 </script>
 
 <style scoped lang="scss">
-:deep(.blockLink) {
+/* Makes block links full size in tab header */
+.blockLink {
     display: block;
-    /* Makes block links full size in tab header */
     margin: 0 -20px;
 }
 </style>

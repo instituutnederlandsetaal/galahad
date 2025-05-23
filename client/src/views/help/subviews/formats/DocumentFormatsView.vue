@@ -1,5 +1,6 @@
 <template>
-    <GCard article title="Document Formats">
+    <GCard article>
+        <h1>Document formats</h1>
         <p>
             The following formats are supported by GaLAHaD. At the very least, a file of the respective format can
             be uploaded. Most formats can also be used as an export format. This includes creating new files of that
@@ -209,8 +210,8 @@ word
 
 <script setup lang="ts">
 import FormatCapabilities from "@/views/help/subviews/formats/FormatCapabilities.vue"
-import FormatReference from "@/views/help/subviews/formats/FormatReference.vue"
 import FormatModeExplanation from "@/views/help/subviews/formats/FormatModeExplanation.vue"
+import FormatReference from "@/views/help/subviews/formats/FormatReference.vue"
 import TeiP5LegacyWarning from "@/views/help/subviews/formats/TeiP5LegacyWarning.vue"
 </script>
 

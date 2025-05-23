@@ -12,12 +12,12 @@
 
 <script setup lang="ts">
 const props = defineProps<{
-	error?: boolean
-	spinner?: boolean
+    error?: boolean
+    spinner?: boolean
 }>()
 
 const classes = computed(() => ({
-	error: props.error,
+    error: props.error,
 }))
 </script>
 
@@ -25,9 +25,10 @@ const classes = computed(() => ({
 .info {
     padding: 1rem 2rem 1rem 4rem;
     border: 1px solid var(--int-light-grey);
-    max-width: 1200px;
+    max-width: 800px;
     position: relative;
     min-height: 70px;
+    width: fit-content;
 
     display: flex;
     flex-direction: column;

@@ -20,10 +20,7 @@
         <template v-else-if="type === 'select-group'">
             <select v-model="model">
                 <optgroup v-for="optgroup in options" :key="optgroup.label" :label="optgroup.label">
-                    <option
-                        v-for="option in optgroup.options"
-                        :key="option.key"
-                        :value="option.value"
+                    <option v-for="option in optgroup.options" :key="option.key" :value="option.value"
                         :disabled="option.disabled">
                         {{ option.text }}
                     </option>
@@ -32,14 +29,8 @@
         </template>
         <!-- number -->
         <template v-else-if="type === 'number'">
-            <input
-                v-model.number="model"
-                :type="type"
-                :placeholder="placeholder"
-                @keyup.enter="$emit('enter')"
-                :min="min"
-                :max="max"
-                :step="step" />
+            <input v-model.number="model" :type="type" :placeholder="placeholder" @keyup.enter="$emit('enter')"
+                :min="min" :max="max" :step="step" />
         </template>
         <!-- checkbox -->
         <template v-else-if="type === 'checkbox'">
@@ -53,31 +44,14 @@
         <template v-else>
             <!-- text with clear button-->
             <div v-if="clearBtn" class="clear">
-                <input
-                    v-model="model"
-                    :type="type"
-                    :placeholder="placeholder"
-                    :disabled="disabled"
-                    :list="list"
-                    ref="inputElement"
-                    @keyup.enter="$emit('enter')" />
-                <input
-                    type="reset"
-                    value="&#10006;"
-                    :disabled="model === null || model.length == 0"
-                    title="Clear"
+                <input v-model="model" :type="type" :placeholder="placeholder" :disabled="disabled" :list="list"
+                    ref="inputElement" @keyup.enter="$emit('enter')" />
+                <input type="reset" value="&#10006;" :disabled="model === null || model.length == 0" title="Clear"
                     @click="model = ''" />
             </div>
             <!-- text without clear button-->
-            <input
-                v-else
-                v-model="model"
-                :type="type"
-                :placeholder="placeholder"
-                :disabled="disabled"
-                :list="list"
-                ref="inputElement"
-                @keyup.enter="$emit('enter')" />
+            <input v-else v-model="model" :type="type" :placeholder="placeholder" :disabled="disabled" :list="list"
+                ref="inputElement" @keyup.enter="$emit('enter')" />
         </template>
 
         <template v-if="validator">
@@ -94,10 +68,10 @@
 <script setup lang="ts">
 // --- types ---
 export type SelectOption = {
-	key: string
-	value: string
-	text: string
-	disabled?: boolean
+    key: string
+    value: string
+    text: string
+    disabled?: boolean
 }
 
 // --- model ---
@@ -105,44 +79,44 @@ const model = defineModel()
 
 // --- props ---
 const {
-	checked,
-	disabled,
-	inline,
-	validityDescriptor,
-	list,
-	min,
-	max,
-	options,
-	placeholder,
-	step,
-	type,
-	validator,
-	clearBtn,
-	focus,
+    checked,
+    disabled,
+    inline,
+    validityDescriptor,
+    list,
+    min,
+    max,
+    options,
+    placeholder,
+    step,
+    type = "text",
+    validator,
+    clearBtn,
+    focus,
 } = defineProps<{
-	checked: boolean
-	disabled: boolean
-	inline: boolean
-	validityDescriptor: string
-	list: string
-	min: number
-	max: number
-	options: SelectOption[]
-	placeholder: string
-	step: number
-	type: string
-	validator: (value: any) => boolean
-	clearBtn: boolean
-	focus: boolean
+    checked: boolean
+    disabled: boolean
+    inline: boolean
+    validityDescriptor: string
+    list: string
+    min: number
+    max: number
+    options: SelectOption[]
+    placeholder: string
+    step: number
+    type: string
+    validator: (value: any) => boolean
+    clearBtn: boolean
+    focus: boolean
 }>()
 
 // --- lifecycle ---
 onMounted(() => {
-	if (focus) {
-		nextTick(() => {
-			inputElement.value?.focus()
-		})
-	}
+    if (focus) {
+        nextTick(() => {
+            inputElement.value?.focus()
+        })
+    }
 })
 
 // --- data ---
@@ -152,8 +126,8 @@ const inputElement = ref<HTMLInputElement>()
 const isValid = computed(() => validator(model.value))
 
 // --- methods ---
-function check() {
-	model.value = !model.value
+function check(): void {
+    model.value = !model.value
 }
 </script>
 
@@ -225,24 +199,24 @@ label {
 }
 
 /* On mouse-over, add a grey background color */
-.checkbox-container:hover input ~ .checkmark {
+.checkbox-container:hover input~.checkmark {
     background-color: var(--int-very-light-grey-hover);
 }
 
-.checkbox-container:active input ~ .checkmark {
+.checkbox-container:active input~.checkmark {
     background-color: var(--int-light-grey-hover);
 }
 
 /* When the checkbox is checked, add a INT background */
-.checkbox-container input:checked ~ .checkmark {
+.checkbox-container input:checked~.checkmark {
     background-color: var(--int-theme);
 }
 
-.checkbox-container:hover input:checked ~ .checkmark {
+.checkbox-container:hover input:checked~.checkmark {
     background-color: var(--int-theme-hover);
 }
 
-.checkbox-container:active input:checked ~ .checkmark {
+.checkbox-container:active input:checked~.checkmark {
     background-color: var(--int-theme-active);
 }
 
@@ -254,7 +228,7 @@ label {
 }
 
 /* Show the checkmark when checked */
-.checkbox-container input:checked ~ .checkmark:after {
+.checkbox-container input:checked~.checkmark:after {
     display: block;
 }
 
@@ -293,6 +267,7 @@ div.clear {
     height: 39px;
     padding: 0;
     margin: 0;
+
     &:focus-within {
         outline: var(--int-theme-active) solid 2px;
     }
@@ -348,9 +323,7 @@ select {
     padding: 0.375rem 1.75rem 0.375rem 0.75rem;
     outline-width: 0;
     // Background-color is taken from the firefox default.
-    background: rgb(233, 233, 237)
-        url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5'%3E%3Cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E")
-        no-repeat right 0.75rem center/8px 10px;
+    background: rgb(233, 233, 237) url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5'%3E%3Cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E") no-repeat right 0.75rem center/8px 10px;
     font-size: 1em;
     cursor: pointer;
 

@@ -24,7 +24,7 @@ const tagsetsStore = stores.useTagsets()
 
 // Fields
 const columns = [
-	{ key: "shortName", label: "abbreviation" },
-	{ key: "longName", label: "name" },
+    {key: "shortName", label: "abbreviation"},
+    {key: "longName", label: "name"},
 ]
 </script>

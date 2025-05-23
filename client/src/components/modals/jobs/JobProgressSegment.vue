@@ -7,20 +7,20 @@
 </template>
 
 <script setup lang="ts">
-const { color, label, value, total } = defineProps<{
-	color: string
-	label: string
-	value: number
-	total: number
+const {color, label, value, total} = defineProps<{
+    color: string
+    label: string
+    value: number
+    total: number
 }>()
 
 const text = computed(
-	() => `${label}: ${value} ${value == 1 ? "document" : "documents"}`,
+    () => `${label}: ${value} ${value === 1 ? "document" : "documents"}`,
 )
 
 const style = computed(() => ({
-	width: `${(100 * value) / total}%`,
-	backgroundColor: color,
+    width: `${(100 * value) / total}%`,
+    backgroundColor: color,
 }))
 </script>
 

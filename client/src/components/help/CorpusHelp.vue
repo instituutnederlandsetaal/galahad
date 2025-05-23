@@ -9,16 +9,18 @@
 
 <style scoped lang="scss">
 code {
-    font-size: 1rem;
+    font-size: 0.8rem;
     padding: 0.2rem 0.3rem;
 
-    &.green{
+    &.green {
         background-color: var(--int-green);
     }
-    &.orange{
+
+    &.orange {
         background-color: var(--int-orange);
     }
-    &.red{
+
+    &.red {
         background-color: var(--int-red);
     }
 }

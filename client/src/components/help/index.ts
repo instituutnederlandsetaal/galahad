@@ -9,18 +9,18 @@ import exportHelp from "./ExportHelp.vue"
 import jobsHelp from "./JobsHelp.vue"
 
 const helpObject = {
-	corpora: corpusHelp,
-	documents: documentsHelp,
-	jobs: jobsHelp,
-	evaluate: evaluateHelp,
-	export: exportHelp,
+    corpora: corpusHelp,
+    documents: documentsHelp,
+    jobs: jobsHelp,
+    evaluate: evaluateHelp,
+    export: exportHelp,
 } as const
 
 export default helpObject
 export const order: Array<keyof typeof helpObject> = [
-	"corpora",
-	"documents",
-	"jobs",
-	"evaluate",
-	"export",
+    "corpora",
+    "documents",
+    "jobs",
+    "evaluate",
+    "export",
 ]

@@ -1,71 +1,71 @@
 // Libraries & stores
 
-import stores from "@/stores"
 // Types & API
 import * as API from "@/api/export"
-import { Format } from "@/types/documents"
 import * as Utils from "@/api/utils"
+import stores from "@/stores"
+import type {Format} from "@/types/documents"
 
 /**
  * Used to download exported corpora.
  */
 const useExport = defineStore("exportStore", () => {
-	// Stores
-	const corporaStore = stores.useCorpora()
-	const app = stores.useApp()
-	const jobSelection = stores.useJobSelection()
+    // Stores
+    const corporaStore = stores.useCorpora()
+    const app = stores.useApp()
+    const jobSelection = stores.useJobSelection()
 
-	// Fields
-	const loading = ref(false)
-	const format = ref(null as any as Format) // can we use this both as the export format as the 'import-to-blacklab' format?
-	const linksAreValid = computed(() => {
-		return (
-			corporaStore.activeUUID !== null &&
-			jobSelection.hypothesisJobId !== null &&
-			format.value !== null
-		)
-	})
+    // Fields
+    const loading = ref(false)
+    const format = ref(null as any as Format) // can we use this both as the export format as the 'import-to-blacklab' format?
+    const linksAreValid = computed(() => {
+        return (
+            corporaStore.activeUUID !== null &&
+            jobSelection.hypothesisJobId !== null &&
+            format.value !== null
+        )
+    })
 
-	// Methods
-	function convert(shouldMerge: boolean, posHeadOnly: boolean) {
-		if (shouldMerge) {
-			merge(posHeadOnly)
-			return
-		}
-		loading.value = true
-		API.convertCorpus(
-			corporaStore.activeUUID,
-			jobSelection.hypothesisJobId,
-			format.value,
-			posHeadOnly,
-		)
-			.then(Utils.browserDownloadResponseFile)
-			.catch((res) => Utils.handleBlobError(res, "convert corpus", app))
-			.finally(() => (loading.value = false))
-	}
+    // Methods
+    function convert(shouldMerge: boolean, posHeadOnly: boolean) {
+        if (shouldMerge) {
+            merge(posHeadOnly)
+            return
+        }
+        loading.value = true
+        API.convertCorpus(
+            corporaStore.activeUUID,
+            jobSelection.hypothesisJobId,
+            format.value,
+            posHeadOnly,
+        )
+            .then(Utils.browserDownloadResponseFile)
+            .catch(res => Utils.handleBlobError(res, "convert corpus", app))
+            .finally(() => (loading.value = false))
+    }
 
-	function merge(posHeadOnly: boolean) {
-		loading.value = true
-		API.mergeCorpus(
-			corporaStore.activeUUID,
-			jobSelection.hypothesisJobId,
-			format.value,
-			posHeadOnly,
-		)
-			.then(Utils.browserDownloadResponseFile)
-			.catch((res) => Utils.handleBlobError(res, "merge corpus", app))
-			.finally(() => (loading.value = false))
-	}
-	// Exports
-	return {
-		// Fields
-		// note: exporting the format seems necessary for reactivity
-		format,
-		linksAreValid,
-		loading,
-		// Methods
-		convert,
-	}
+    function merge(posHeadOnly: boolean) {
+        loading.value = true
+        API.mergeCorpus(
+            corporaStore.activeUUID,
+            jobSelection.hypothesisJobId,
+            format.value,
+            posHeadOnly,
+        )
+            .then(Utils.browserDownloadResponseFile)
+            .catch(res => Utils.handleBlobError(res, "merge corpus", app))
+            .finally(() => (loading.value = false))
+    }
+    // Exports
+    return {
+        // Fields
+        // note: exporting the format seems necessary for reactivity
+        format,
+        linksAreValid,
+        loading,
+        // Methods
+        convert,
+    }
 })
 
 export default useExport

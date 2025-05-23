@@ -14,7 +14,7 @@
 // --- api ---
 // --- types ---
 // --- props ---
-const { foo = "bar" } = defineProps<{
+const {foo = "bar"} = defineProps<{
     foo?: string
 }>()
 // --- emits ---

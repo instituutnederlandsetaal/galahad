@@ -1,7 +1,7 @@
 <template>
     <hgroup class="banner" role="banner">
         <div class="logo">
-            <a href="/galahad/home">
+            <a href="/galahad">
                 <img class="painting" src="@/assets/galahad-graal-klein.png" />
             </a>
         </div>
@@ -10,7 +10,7 @@
             <a href="https://ivdnt.org/" target="_blank" tabindex="-1" rel="noopener noreferrer">
                 / instituut voor de Nederlandse&nbsp;taal&nbsp;/
             </a>
-            <a href="/galahad/home" tabindex="-1">galahad</a>
+            <a href="/galahad" tabindex="-1">galahad</a>
         </div>
 
         <nav class="nav">
@@ -32,6 +32,7 @@
     align-items: center;
     display: flex;
     flex-wrap: wrap;
+    height: 70px;
 
     // header top tabs start
     .logo {
@@ -44,13 +45,14 @@
             height: 70px;
             width: 152px;
             position: relative;
-                    img {
-            position: relative;
-            left: -3px;
-            top: -1px;
-            height: 82px;
-            pointer-events: none;
-        }
+
+            img {
+                position: relative;
+                left: -3px;
+                top: -1px;
+                height: 82px;
+                pointer-events: none;
+            }
         }
     }
 
@@ -78,6 +80,7 @@
         flex: 1;
         display: flex;
         justify-content: flex-end;
+        flex-wrap: wrap;
 
         a {
             margin-right: 30px;
@@ -91,6 +94,12 @@
                 cursor: pointer;
             }
         }
+    }
+}
+
+@media (max-width: 730px) {
+    .logo {
+        display: none;
     }
 }
 </style>

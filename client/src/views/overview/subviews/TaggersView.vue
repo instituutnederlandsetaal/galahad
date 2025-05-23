@@ -60,25 +60,25 @@
 import stores from "@/stores"
 
 // API & types
-import { sort_tagger_annotations } from "@/stores/taggers"
+import {sort_tagger_annotations} from "@/stores/taggers"
 
 // Stores
 const taggerStore = stores.useTaggers()
 
 // Fields
 const columns = [
-	{ key: "id", label: "name", sortOn: (x: any) => x.id },
-	{ key: "description" },
-	{ key: "tagset", sortOn: (x: any) => x.tagset },
-	{
-		key: "era",
-		label: "period",
-		sortOn: (x: any) => x.eraFrom.toString() + x.eraTo.toString(),
-	},
-	{ key: "annotations" },
-	{ key: "model" },
-	{ key: "software" },
-	{ key: "dataset" },
+    {key: "id", label: "name", sortOn: (x: any) => x.id},
+    {key: "description"},
+    {key: "tagset", sortOn: (x: any) => x.tagset},
+    {
+        key: "era",
+        label: "period",
+        sortOn: (x: any) => x.eraFrom.toString() + x.eraTo.toString(),
+    },
+    {key: "annotations"},
+    {key: "model"},
+    {key: "software"},
+    {key: "dataset"},
 ]
 
 // Methods
@@ -86,11 +86,11 @@ const columns = [
  * Mark the active row, retrieved from the url anchor.
  */
 function markActive(id: string) {
-	const hash = window.location.hash.substring(1)
-	if (id == hash) {
-		return "active"
-	}
-	return ""
+    const hash = window.location.hash.substring(1)
+    if (id === hash) {
+        return "active"
+    }
+    return ""
 }
 </script>
 

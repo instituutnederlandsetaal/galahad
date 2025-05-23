@@ -1,7 +1,10 @@
 {
-	"explorer.fileNesting.enabled": true,
-	"explorer.fileNesting.patterns": {
-		"tsconfig.json": "tsconfig.*.json, *.d.ts, biome.json",
-		"package.json": "package-lock.json"
-	}
+    "explorer.fileNesting.enabled": true,
+    "explorer.fileNesting.patterns": {
+        "tsconfig.json": "tsconfig.*.json, *.d.ts, biome.json",
+        "package.json": "package-lock.json"
+    },
+    "[vue]": {
+        "editor.defaultFormatter": "Vue.volar"
+    }
 }

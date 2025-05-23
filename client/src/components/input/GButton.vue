@@ -6,25 +6,25 @@
 </template>
 
 <script setup lang="ts">
-const { disabled, red, orange, green, plain, loading } = defineProps<{
-	disabled?: boolean
-	red?: boolean
-	orange?: boolean
-	green?: boolean
-	plain?: boolean
-	loading?: boolean
+const {disabled, red, orange, green, plain, loading} = defineProps<{
+    disabled?: boolean
+    red?: boolean
+    orange?: boolean
+    green?: boolean
+    plain?: boolean
+    loading?: boolean
 }>()
 
 const classes = computed(() => ({
-	red: red,
-	orange: orange,
-	green: green,
-	plain: plain,
-	disabled: disabled,
+    red: red,
+    orange: orange,
+    green: green,
+    plain: plain,
+    disabled: disabled,
 }))
 
 defineEmits<{
-	click: []
+    click: []
 }>()
 </script>
 

@@ -1,19 +1,18 @@
 <template>
-    <GTabs
-        class="level-1"
-        basePath=""
-        :tabs="[
-            { id: 'annotate', title: 'Annotate & Evaluate' },
-            { id: 'overview', title: 'Taggers & Datasets' },
-            { id: 'user', title: 'User' },
-        ]">
+    <GTabs class="level-1" basePath="" :tabs="[
+        { id: 'annotate', title: 'Annotate & Evaluate' },
+        { id: 'overview', title: 'Taggers & Datasets' },
+        { id: 'user', title: 'User' },
+    ]">
         <template #banner>
             <AppBanner />
         </template>
     </GTabs>
 
     <GModal :show="appStore.errors.length > 0" title="Ocharme!" small @hide="appStore.resetErrors">
-        <p>Please try again or contact <MailAddress /> for support.</p>
+        <p>Please try again or contact
+            <MailAddress /> for support.
+        </p>
         <GInfo v-for="(error, i) in appStore.errors" :key="i" error>{{ error }}</GInfo>
     </GModal>
 </template>
@@ -26,7 +25,7 @@ const appStore = stores.useApp()
 const userStore = stores.useUser()
 
 onMounted(() => {
-	userStore.fetchUser()
+    userStore.fetchUser()
 })
 </script>
 
@@ -51,10 +50,6 @@ onMounted(() => {
 //     }
 // }
 
-// @media (max-width: 870px) {
-//     .tabs.level-1 .header .tabs-start {
-//         display: none;
-//     }
 
 //     .tabs > .content {
 //         padding: 10px 0 0 0 !important;

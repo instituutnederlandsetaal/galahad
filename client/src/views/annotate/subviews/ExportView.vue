@@ -54,7 +54,7 @@
 
 import stores from "@/stores"
 // Api & types
-import { Format } from "@/types/documents"
+import {Format} from "@/types/documents"
 
 import help from "@/components/help"
 import TeiP5LegacyWarning from "@/views/help/subviews/formats/TeiP5LegacyWarning.vue"
@@ -69,36 +69,36 @@ const documentsStore = stores.useDocuments()
 const posHeadOnly = ref(false)
 const shouldMerge = ref(true)
 const showMergeOption = computed(() => {
-	const format = exportStore.format
-	const formatIsMergeable =
-		format == Format.Tei_p5 ||
-		format == Format.Tsv ||
-		format == Format.Folia ||
-		format == Format.Conllu
-	const formatInCorpus = documentsStore.containsFormat(format)
-	return formatIsMergeable && formatInCorpus
+    const format = exportStore.format
+    const formatIsMergeable =
+        format === Format.Tei_p5 ||
+        format === Format.Tsv ||
+        format === Format.Folia ||
+        format === Format.Conllu
+    const formatInCorpus = documentsStore.containsFormat(format)
+    return formatIsMergeable && formatInCorpus
 })
 const hasTeiP5Legacy = computed(() =>
-	documentsStore.available.some((i) => i.format == Format.Tei_p5_legacy),
+    documentsStore.available.some(i => i.format === Format.Tei_p5_legacy),
 )
 
 // Methods
 function formatToHumanReadable(format: Format): string {
-	switch (format) {
-		case Format.Tei_p5:
-		case Format.Tei_p5_legacy:
-			return "TEI P5"
-		default:
-			return format
-	}
+    switch (format) {
+        case Format.Tei_p5:
+        case Format.Tei_p5_legacy:
+            return "TEI P5"
+        default:
+            return format
+    }
 }
 
 // Watchers
 // Load jobs list once. jobSelectionStore takes care of the selected job.
 onMounted(() => {
-	jobsStore.reload()
-	// We also need to load the documents, in order to determine the presence of TEI files.
-	documentsStore.reloadDocumentsForCorpus(corporaStore.activeUUID)
+    jobsStore.reload()
+    // We also need to load the documents, in order to determine the presence of TEI files.
+    documentsStore.reloadDocumentsForCorpus(corporaStore.activeUUID)
 })
 </script>
 

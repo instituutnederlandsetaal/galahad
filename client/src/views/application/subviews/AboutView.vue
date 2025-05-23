@@ -3,29 +3,25 @@
         <template #help>
             Here you can find information about the application and the exact version you are currently running.
         </template>
-        <section>
-            <p>
-                GaLAHaD is created by the
-                <ExternalLink href="https://www.ivdnt.org">Dutch Language Institute </ExternalLink>. For this work,
-                funding was received from NWO.
-                <br />
-                (Clariah Plus project 184.034.023 & SSHOC-NL 184.036.020)
-            </p>
-            <div class="logo">
-                <a href="https://www.ivdnt.org">
-                    <img
-                        src="@/assets/ivdNt-logo-3regels.svg"
-                        alt="Logo Instituut voor de Nederlandse taal"
-                        title="Instituut voor de Nederlandse taal" />
-                </a>
-                <a href="https://www.clariah.nl">
-                    <img src="@/assets/clariah.png" alt="Clariah logo" title="Clariah" />
-                </a>
-                <a href="https://www.nwo.nl/projecten/184036020">
-                    <img src="@/assets/sshoc-nl.jpg" alt="SSHOC-NL logo" title="SSHOC-NL" />
-                </a>
-            </div>
-        </section>
+        <p>
+            GaLAHaD is created by the
+            <ExternalLink href="https://www.ivdnt.org">Dutch Language Institute</ExternalLink>. For this work,
+            funding was received from NWO.
+            <br />
+            (Clariah Plus project 184.034.023 & SSHOC-NL 184.036.020)
+        </p>
+        <figure class="logo">
+            <a href="https://www.ivdnt.org">
+                <img src="@/assets/ivdNt-logo-3regels.svg" alt="Logo Instituut voor de Nederlandse taal"
+                    title="Instituut voor de Nederlandse taal" />
+            </a>
+            <a href="https://www.clariah.nl">
+                <img src="@/assets/clariah.png" alt="Clariah logo" title="Clariah" />
+            </a>
+            <a href="https://www.nwo.nl/projecten/184036020">
+                <img src="@/assets/sshoc-nl.jpg" alt="SSHOC-NL logo" title="SSHOC-NL" />
+            </a>
+        </figure>
         <section>
             <h2>Colofon</h2>
             <h3>Over het logo</h3>
@@ -53,9 +49,7 @@ import versionYaml from "@/../version.yml"
     display: flex;
     flex-direction: row;
     gap: 1em;
-    align-items: center;
     flex-wrap: wrap;
-    justify-content: center;
 
     img {
         width: 200px;

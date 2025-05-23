@@ -1,31 +1,18 @@
 <template>
-    <div>
-        <!-- Drag and drop from https://codepen.io/nekobog/pen/JjoZvBm -->
-        <div id="dropZone"></div>
+    <!-- Drag and drop from https://codepen.io/nekobog/pen/JjoZvBm -->
+    <div id="dropZone"></div>
 
+    <form class="form">
         <!-- Styled label for input -->
         <label for="file-upload" class="custom-file-upload">
-            <svg
-                class="svg-icon"
-                aria-hidden="true"
-                role="img"
-                focusable="false"
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="12"
-                viewBox="0 0 20 12">
+            <svg class="svg-icon" aria-hidden="true" role="img" focusable="false" xmlns="http://www.w3.org/2000/svg"
+                width="20" height="12" viewBox="0 0 20 12">
                 <polygon class="st0" points="10,4.2 2.2,12 0.1,9.9 10,0 19.9,9.9 17.8,12 "></polygon>
             </svg>
             Select file(s) or drag & drop
         </label>
         <!-- Actual input -->
-        <input
-            type="file"
-            ref="uploadInput"
-            name="filefield"
-            multiple
-            id="file-upload"
-            style="display: none"
+        <input type="file" ref="uploadInput" name="filefield" multiple id="file-upload" style="display: none"
             accept=".xml, .tsv, .txt, .zip, .conllu, .naf, .pdf, .docx"
             @change="(e) => (filesToUpload = Object.values(e.target.files as FileList))" />
 
@@ -41,28 +28,24 @@
         </ul>
 
         <!-- Confirmation and clear buttons after a selection has been made -->
-        <template v-if="filesToUpload.length != 0">
-            <GButton
-                green
-                @click="
-                    () => {
-                        documentsStore.uploadAll()
-                        $refs.uploadInput.value = null
-                    }
-                ">
+        <fieldset class="btns" v-if="filesToUpload.length != 0">
+            <GButton green @click="
+                () => {
+                    documentsStore.uploadAll()
+                    $refs.uploadInput.value = null
+                }
+            ">
                 Upload
             </GButton>
-            <GButton
-                plain
-                @click="
-                    () => {
-                        filesToUpload = []
-                        $refs.uploadInput.value = null
-                    }
-                ">
+            <GButton plain @click="
+                () => {
+                    filesToUpload = []
+                    $refs.uploadInput.value = null
+                }
+            ">
                 &#10006;&nbsp;clear
             </GButton>
-        </template>
+        </fieldset>
 
         <!-- Error for illegal selection -->
         <GInfo v-if="illegalFiles.length > 0" error>
@@ -90,25 +73,23 @@
         <!-- Errors for files that could not be parsed by the server (e.g. broken xml tags)-->
         <GInfo v-show="uploadErrorCount > 0" error>
             <div v-for="(value, key) in uploading" :key="key">
-                <span v-if="value.status == 'error'">{{ key }}: {{ value.message }}</span>
+                <span v-if="value.status == 'error'">{{ value.message }}</span>
             </div>
         </GInfo>
-    </div>
+    </form>
 </template>
 
 <script setup lang="ts">
-// Libraries & stores
-
 import stores from "@/stores"
 
 // Stores
 const documentsStore = stores.useDocuments()
 const {
-	filesToUpload,
-	illegalFiles,
-	uploadBusyCount,
-	uploadErrorCount,
-	uploading,
+    filesToUpload,
+    illegalFiles,
+    uploadBusyCount,
+    uploadErrorCount,
+    uploading,
 } = storeToRefs(documentsStore)
 
 // Fields
@@ -116,55 +97,66 @@ const dropZone = ref(null as any as HTMLElement)
 
 // Methods
 function showDropZone(e: DragEvent) {
-	if (e.dataTransfer!.types.includes("Files")) {
-		dropZone.value.style.display = "block"
-	}
+    if (e.dataTransfer?.types.includes("Files")) {
+        dropZone.value.style.display = "block"
+    }
 }
 function hideDropZone() {
-	dropZone.value.style.display = "none"
+    dropZone.value.style.display = "none"
 }
 function handleDrop(e: DragEvent) {
-	e.preventDefault()
-	hideDropZone()
-	filesToUpload.value = [...e.dataTransfer!.files]
+    e.preventDefault()
+    hideDropZone()
+    filesToUpload.value = [...e.dataTransfer?.files]
 }
 
 // Watches & mounts
 onMounted(() => {
-	dropZone.value = document.getElementById("dropZone") as HTMLElement
-	// Register drag events
-	window.addEventListener("dragenter", showDropZone)
-	dropZone.value.addEventListener("dragleave", hideDropZone)
-	dropZone.value.addEventListener("drop", handleDrop)
-	// Apparently, this is needed to prevent the browser from opening the file.
-	dropZone.value.addEventListener("dragover", (e) => e.preventDefault())
+    dropZone.value = document.getElementById("dropZone") as HTMLElement
+    // Register drag events
+    window.addEventListener("dragenter", showDropZone)
+    dropZone.value.addEventListener("dragleave", hideDropZone)
+    dropZone.value.addEventListener("drop", handleDrop)
+    // Apparently, this is needed to prevent the browser from opening the file.
+    dropZone.value.addEventListener("dragover", e => e.preventDefault())
 })
 </script>
 
 <style scoped lang="scss">
-.custom-file-upload {
-    border: 0px solid #ccc;
-    background-color: var(--int-theme);
-    display: inline-block;
-    padding: 10px 12px;
-    cursor: pointer;
-    margin-right: 10px;
-    font-style: normal;
+.form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
 
-    &:hover {
-        background-color: var(--int-theme-hover);
+    .custom-file-upload {
+        border: 0px solid #ccc;
+        background-color: var(--int-theme);
+        display: inline-block;
+        padding: 10px 12px;
+        cursor: pointer;
+        font-style: normal;
+
+        &:hover {
+            background-color: var(--int-theme-hover);
+        }
+
+        &:active {
+            background-color: var(--int-theme-active);
+        }
     }
 
-    &:active {
-        background-color: var(--int-theme-active);
+    ul,
+    ol {
+        width: fit-content;
+        text-align: left;
     }
-}
 
-ul,
-ol {
-    width: fit-content;
-    text-align: left;
-    margin: 1em auto;
+    .btns {
+        display: flex;
+        justify-content: center;
+    }
 }
 
 #dropZone {

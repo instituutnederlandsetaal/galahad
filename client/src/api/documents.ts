@@ -3,24 +3,24 @@
  * and downloading the uploaded source document.
  */
 
-// --- libraries ---
-import axios from "axios"
 // -- api ---
 import * as Utils from "@/api/utils"
+import type {BlobResponse} from "@/api/utils"
+import type {UUID} from "@/types/corpora"
+import type {DocumentMetadata} from "@/types/documents"
+// --- libraries ---
+import axios from "axios"
 // --- types ---
-import type { AxiosResponse } from "axios"
-import type { UUID } from "@/types/corpora"
-import type { DocumentMetadata } from "@/types/documents"
-import type { BlobResponse } from "@/api/utils"
+import type {AxiosResponse} from "axios"
 
 type DocumentsResponse = AxiosResponse<DocumentMetadata[]>
 
 // --- computed ---
 const documentsPath = (corpus: UUID) => `/corpora/${corpus}/documents`
 const documentPath = (corpus: UUID, document: string) =>
-	`${documentsPath(corpus)}/${document}`
+    `${documentsPath(corpus)}/${document}`
 const rawDocumentPath = (corpus: UUID, document: string) =>
-	`${documentPath(corpus, document)}/raw`
+    `${documentPath(corpus, document)}/raw`
 
 // --- methods ---
 /**
@@ -28,7 +28,7 @@ const rawDocumentPath = (corpus: UUID, document: string) =>
  * @param corpus UUID of the corpus.
  */
 export function getDocuments(corpus: UUID): Promise<DocumentsResponse> {
-	return axios.get(documentsPath(corpus))
+    return axios.get(documentsPath(corpus))
 }
 
 /**
@@ -38,11 +38,11 @@ export function getDocuments(corpus: UUID): Promise<DocumentsResponse> {
  * @param contentType Content type of the document. Must be explicitly set for tsv-files. Others are induced.
  */
 export function postDocument(
-	corpus: UUID,
-	document: FormData,
-	contentType?: Record<string, string>,
+    corpus: UUID,
+    document: FormData,
+    contentType?: Record<string, string>,
 ) {
-	return axios.post(documentsPath(corpus), document, { headers: contentType })
+    return axios.post(documentsPath(corpus), document, {headers: contentType})
 }
 
 /**
@@ -51,7 +51,7 @@ export function postDocument(
  * @param document Document name.
  */
 export function deleteDocument(corpus: UUID, document: string) {
-	return axios.delete(documentPath(corpus, document))
+    return axios.delete(documentPath(corpus, document))
 }
 
 /**
@@ -60,8 +60,8 @@ export function deleteDocument(corpus: UUID, document: string) {
  * @param document Document name.
  */
 export function getRawDocument(
-	corpus: UUID,
-	document: string,
+    corpus: UUID,
+    document: string,
 ): Promise<BlobResponse> {
-	return Utils.getBlob(rawDocumentPath(corpus, document))
+    return Utils.getBlob(rawDocumentPath(corpus, document))
 }

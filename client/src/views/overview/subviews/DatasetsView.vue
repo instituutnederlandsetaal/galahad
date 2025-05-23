@@ -21,7 +21,7 @@
 
 import stores from "@/stores"
 // API & types
-import { TableCorporaType, TableDocumentsType } from "@/types/table"
+import {TableCorporaType, TableDocumentsType} from "@/types/table"
 
 // Stores
 const corporaStore = stores.useCorpora()
@@ -29,7 +29,7 @@ const corporaStore = stores.useCorpora()
 // Watches & mounts
 // Only needs to load once.
 onMounted(() => {
-	corporaStore.reload()
+    corporaStore.reload()
 })
 </script>
 

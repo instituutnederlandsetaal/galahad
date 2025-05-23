@@ -1,15 +1,7 @@
 <template>
     <AnnotateTab hideAnnotationsError>
-        <GTable
-            :title="`Jobs for corpus ${corporaStore.activeCorpus?.name}`"
-            helpSubject="jobs"
-            :columns
-            :items="displayJobs"
-            :loading="jobsStore.loading"
-            fill
-            hoverRow
-            sortedByColumn="id"
-            :sortDesc="false"
+        <GTable :title="`Jobs for corpus ${corporaStore.activeCorpus?.name}`" helpSubject="jobs" :columns
+            :items="displayJobs" :loading="jobsStore.loading" fill hoverRow sortedByColumn="id" :sortDesc="false"
             class="jobsview">
             <template #help>
                 <component :is="help.jobs"></component>
@@ -21,8 +13,7 @@
 
             <!-- id cell -->
             <template #cell-id="d">
-                <ExternalLink
-                    v-if="d.item.tagger.id !== SOURCE_LAYER"
+                <ExternalLink v-if="d.item.tagger.id !== SOURCE_LAYER"
                     :href="`/galahad/overview/taggers#${d.item.tagger.id}`">
                     {{ d.item.tagger.id }}
                 </ExternalLink>
@@ -52,11 +43,11 @@
             <!-- era cell -->
             <template #cell-era="d">
                 <div style="white-space: nowrap">
-                    <b v-if="eraRange[0] <= d.item.tagger.eraFrom">{{ d.item.tagger.eraFrom }}</b
-                    ><span v-else>{{ d.item.tagger.eraFrom }}</span>
+                    <b v-if="eraRange[0] <= d.item.tagger.eraFrom">{{ d.item.tagger.eraFrom }}</b><span v-else>{{
+                        d.item.tagger.eraFrom }}</span>
                     &ndash;
-                    <b v-if="eraRange[1] >= d.item.tagger.eraTo">{{ d.item.tagger.eraTo }}</b
-                    ><span v-else>{{ d.item.tagger.eraTo }}</span>
+                    <b v-if="eraRange[1] >= d.item.tagger.eraTo">{{ d.item.tagger.eraTo }}</b><span v-else>{{
+                        d.item.tagger.eraTo }}</span>
                 </div>
             </template>
 
@@ -101,10 +92,7 @@
 
                     <div class="table-control">
                         Require annotation:
-                        <MultiSelect
-                            v-model="requireType"
-                            :options="types"
-                            placeholder="Annotation"
+                        <MultiSelect v-model="requireType" :options="types" placeholder="Annotation"
                             :maxSelectedLabels="5" />
                     </div>
 
@@ -154,18 +142,17 @@
 // import VueSlider from "vue-slider-component"
 // import "vue-slider-component/theme/default.css"
 import stores from "@/stores"
-// API & types
-import { Job, Progress, SOURCE_LAYER } from "@/types/jobs"
-import { Field } from "@/types/table"
 import { sort_tagger_annotations } from "@/stores/taggers"
+// API & types
+import { type Job, type Progress, SOURCE_LAYER } from "@/types/jobs"
+import type { Field } from "@/types/table"
 
 import help from "@/components/help"
-import MultiSelect from "primevue/multiselect"
 import { formatDate } from "@/ts/utils"
+import MultiSelect from "primevue/multiselect"
 
 // Stores
 const userStore = stores.useUser()
-const documentsStore = stores.useDocuments()
 const jobsStore = stores.useJobs()
 const corporaStore = stores.useCorpora()
 
@@ -177,85 +164,83 @@ const eraRange = ref([500, 2050])
 const jobId = ref(null as null | string)
 
 const displayJobs = computed(() =>
-	Object.values(jobsStore.taggableJobs as Job[])
-		.filter((job) => {
-			// Case insensitive string comparison.
-			return job.tagger.id
-				.toLowerCase()
-				.includes(taggerNameFilter.value.toLowerCase())
-		})
-		.filter((job) => {
-			return (
-				eraRange.value[0] <= job.tagger.eraTo &&
-				eraRange.value[1] >= job.tagger.eraFrom
-			)
-		})
-		.filter((job) => {
-			return includeTagset.value[job.tagger.tagset]
-		})
-		.filter((job) => {
-			for (const type of requireType.value) {
-				if (!job.tagger.annotations.includes(type)) {
-					return false
-				}
-			}
-			return true
-		}),
+    Object.values(jobsStore.taggableJobs as Job[])
+        .filter(job => {
+            // Case insensitive string comparison.
+            return job.tagger.id
+                .toLowerCase()
+                .includes(taggerNameFilter.value.toLowerCase())
+        })
+        .filter(job => {
+            return (
+                eraRange.value[0] <= job.tagger.eraTo &&
+                eraRange.value[1] >= job.tagger.eraFrom
+            )
+        })
+        .filter(job => {
+            return includeTagset.value[job.tagger.tagset]
+        })
+        .filter(job => {
+            for (const type of requireType.value) {
+                if (!job.tagger.annotations.includes(type)) {
+                    return false
+                }
+            }
+            return true
+        }),
 )
 
 const tagsets = computed(() => {
-	return Object.values(jobsStore.taggableJobs)
-		.map((x: Job) => x.tagger.tagset)
-		.filter((val, ind, arr) => arr.indexOf(val) === ind) // unique values
-		.sort()
+    return Object.values(jobsStore.taggableJobs)
+        .map((x: Job) => x.tagger.tagset)
+        .filter((val, ind, arr) => arr.indexOf(val) === ind) // unique values
+        .sort()
 })
 
 const columns = computed(() => {
-	const publicFields = [
-		{
-			key: "id",
-			label: "tagger",
-			sortOn: (x) => x.tagger.id,
-			textAlign: "left",
-		},
-		{ key: "tagset", sortOn: (x) => x.tagger.tagset },
-		{ key: "annotations", label: "annotations" },
-		{
-			key: "resultSummary",
-			label: "tokens",
-			sortOn: (x) => x.resultSummary.numTokens,
-		},
-		{
-			key: "era",
-			label: "period",
-			sortOn: (x) => x.tagger.eraFrom.toString() + x.tagger.eraTo.toString(),
-		},
-		{
-			key: "lastModified",
-			label: "last modified",
-			sortOn: (x) => x.lastModified,
-		},
-		{ key: "progress", sortOn: (x) => x.progress.finished / x.progress.total },
-	] as Field[]
-	if (userStore.hasWriteAccess) {
-		return publicFields.concat({ key: "actions" })
-	} else {
-		return publicFields
-	}
+    const publicFields = [
+        {
+            key: "id",
+            label: "tagger",
+            sortOn: x => x.tagger.id,
+            textAlign: "left",
+        },
+        { key: "tagset", sortOn: x => x.tagger.tagset },
+        { key: "annotations", label: "annotations" },
+        {
+            key: "resultSummary",
+            label: "tokens",
+            sortOn: x => x.resultSummary.numTokens,
+        },
+        {
+            key: "era",
+            label: "period",
+            sortOn: x =>
+                x.tagger.eraFrom.toString() + x.tagger.eraTo.toString(),
+        },
+        {
+            key: "lastModified",
+            label: "last modified",
+            sortOn: x => x.lastModified,
+        },
+        { key: "progress", sortOn: x => x.progress.finished / x.progress.total },
+    ] as Field[]
+    if (userStore.hasWriteAccess) {
+        return publicFields.concat({ key: "actions" })
+    }
+    return publicFields
 })
 
 const types = computed(() => {
-	return Object.values(jobsStore.taggableJobs)
-		.flatMap((x: Job) => x.tagger.annotations)
-		.filter((val, ind, arr) => arr.indexOf(val) === ind) // unique values
-		.sort()
+    return Object.values(jobsStore.taggableJobs)
+        .flatMap((x: Job) => x.tagger.annotations)
+        .filter((val, ind, arr) => arr.indexOf(val) === ind) // unique values
+        .sort()
 })
 
 // Watches & mounts
 onMounted(() => {
-	jobsStore.reload()
-	// We also need to load the documents, because a time estimate is made based on documents.totalSizeInChars.
-	documentsStore.reloadDocumentsForCorpus(corporaStore.activeUUID)
+    jobsStore.reload()
 })
 watch(tagsets, enableAllTagsets)
 onMounted(enableAllTagsets)
@@ -263,11 +248,11 @@ onMounted(enableAllTagsets)
 // Methods
 // Checkmarks
 function enableAllTagsets() {
-	tagsets.value.forEach((tagset) => (includeTagset.value[tagset] = true))
+    tagsets.value.forEach(tagset => (includeTagset.value[tagset] = true))
 }
 // Format progress with Math.floor, because e.g. toFixed(0) rounds up 99.9% to 100%, which is confusing.
 function formatProgress(progress: Progress) {
-	return `${Math.floor((100 * progress.finished) / progress.total)}%`
+    return `${Math.floor((100 * progress.finished) / progress.total)}%`
 }
 </script>
 

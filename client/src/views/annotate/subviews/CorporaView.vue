@@ -34,9 +34,9 @@
 
         <!-- Create modal -->
         <CorpusForm title="Create new corpus" :show="showNewCorpusModal" @hide="showNewCorpusModal = false" :action="(metadata) => {
-                corporaStore.createCorpus(metadata)
-                showNewCorpusModal = false
-            }
+            corporaStore.createCorpus(metadata)
+            showNewCorpusModal = false
+        }
             " :cancel="() => (showNewCorpusModal = false)">
             <template #help>Fill in the metadata and create a corpus.
                 <br />
@@ -45,11 +45,11 @@
         </CorpusForm>
 
         <!-- Update modal -->
-        <CorpusForm title="Update corpus metadata" :show="updateCorpusData !== null" @hide="updateCorpusData = null" update
-            :item="updateCorpusData" :action="(metadata) => {
-                    corporaStore.updateCorpus(updateCorpusData.uuid, metadata)
-                    updateCorpusData = null
-                }
+        <CorpusForm title="Update corpus metadata" :show="updateCorpusData !== null" @hide="updateCorpusData = null"
+            update :item="updateCorpusData" :action="(metadata) => {
+                corporaStore.updateCorpus(updateCorpusData.uuid, metadata)
+                updateCorpusData = null
+            }
                 " :cancel="() => (updateCorpusData = null)">
             <template #help>
                 Change the metadata of an existing corpus.
@@ -59,9 +59,9 @@
         </CorpusForm>
 
         <!-- Delete modal -->
-        <DeleteModal :show="deleteCorpusData !== null" :item="deleteCorpusData"
+        <DeleteModal :show="deleteCorpusData !== null"
             :displayname="'Corpus ' + (deleteCorpusData !== null ? deleteCorpusData.name : '[null]')"
-            @delete="corporaStore.deleteCorpus" @hide="deleteCorpusData = null" />
+            @delete="corporaStore.deleteCorpus(deleteCorpusData)" @hide="deleteCorpusData = null" />
     </GCard>
 </template>
 
@@ -70,7 +70,7 @@
 import help from "@/components/help"
 import stores from "@/stores"
 // Types & API
-import { CorpusMetadata } from "@/types/corpora"
+import type { CorpusMetadata } from "@/types/corpora"
 import { TableCorporaType } from "@/types/table"
 
 // Stores
@@ -83,8 +83,8 @@ const deleteCorpusData = ref(null as null | CorpusMetadata)
 const updateCorpusData = ref(null as null | CorpusMetadata)
 
 const editMode = (corpus: CorpusMetadata) => {
-	// Deepcopy so we can modify the object freely.
-	updateCorpusData.value = JSON.parse(JSON.stringify(corpus))
+    // Deepcopy so we can modify the object freely.
+    updateCorpusData.value = JSON.parse(JSON.stringify(corpus))
 }
 
 // Mounts & watches
@@ -93,6 +93,6 @@ const editMode = (corpus: CorpusMetadata) => {
  * the number of jobs could change when navigating between jobs and corpora, requiring a reload.
  */
 onMounted(() => {
-	corporaStore.reload()
+    corporaStore.reload()
 })
 </script>

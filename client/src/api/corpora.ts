@@ -2,22 +2,18 @@
  * API calls for creating, updating, deleting a corpus, and fetching the list of corpora.
  */
 
+import type {CorpusMetadata, MutableCorpusMetadata, UUID} from "@/types/corpora"
 // --- libraries ---
 import axios from "axios"
 // --- types ---
-import type { AxiosResponse } from "axios"
-import type {
-	UUID,
-	CorpusMetadata,
-	MutableCorpusMetadata,
-} from "@/types/corpora"
+import type {AxiosResponse} from "axios"
 
 type CorporaResponse = AxiosResponse<CorpusMetadata[]>
 type CorpusResponse = AxiosResponse<CorpusMetadata>
 
 // --- data ---
-const corporaPath = `/corpora`
-const datasetCorporaPath = `/datasets_corpora`
+const corporaPath = "/corpora"
+const datasetCorporaPath = "/datasets_corpora"
 
 // --- computed ---
 const corpusPath = (uuid: UUID) => `${corporaPath}/${uuid}`
@@ -28,7 +24,7 @@ const corpusPath = (uuid: UUID) => `${corporaPath}/${uuid}`
  * public (datasets), shared (collaborator/viewer), and owned.
  */
 export function getCorpora(): Promise<CorporaResponse> {
-	return axios.get(corporaPath)
+    return axios.get(corporaPath)
 }
 
 /**
@@ -36,14 +32,14 @@ export function getCorpora(): Promise<CorporaResponse> {
  * @param uuid UUID of corpus.
  */
 export function getCorpus(uuid: UUID): Promise<CorpusResponse> {
-	return axios.get(corpusPath(uuid))
+    return axios.get(corpusPath(uuid))
 }
 
 /**
  * Fetch all datasets. Note that all datasets are public. Cheaper than getCorpora().
  */
 export function getDatasetCorpora(): Promise<CorporaResponse> {
-	return axios.get(datasetCorporaPath)
+    return axios.get(datasetCorporaPath)
 }
 
 /**
@@ -51,9 +47,9 @@ export function getDatasetCorpora(): Promise<CorporaResponse> {
  * @param corpus Metadata of new corpus.
  */
 export function postCorpus(
-	corpus: MutableCorpusMetadata,
+    corpus: MutableCorpusMetadata,
 ): Promise<AxiosResponse<UUID>> {
-	return axios.post(corporaPath, corpus)
+    return axios.post(corporaPath, corpus)
 }
 
 /**
@@ -61,7 +57,7 @@ export function postCorpus(
  * @param uuid UUID of corpus to delete.
  */
 export function deleteCorpus(uuid: UUID) {
-	return axios.delete(corpusPath(uuid))
+    return axios.delete(corpusPath(uuid))
 }
 
 /**
@@ -70,5 +66,5 @@ export function deleteCorpus(uuid: UUID) {
  * @param metadata New metadata.
  */
 export function patchCorpus(uuid: UUID, metadata: MutableCorpusMetadata) {
-	return axios.patch(corpusPath(uuid), metadata)
+    return axios.patch(corpusPath(uuid), metadata)
 }
