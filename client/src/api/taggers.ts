@@ -2,11 +2,11 @@
  * API calls for fetching taggers and their health status.
  */
 
-import type {Tagger, TaggerHealth} from "@/types/taggers"
+import type { Tagger, TaggerHealth } from "@/types/taggers"
 // --- libraries ---
 import axios from "axios"
 // --- types ---
-import type {AxiosResponse} from "axios"
+import type { AxiosResponse } from "axios"
 
 type TaggersResponse = AxiosResponse<Tagger[]>
 type TaggerHealthResponse = AxiosResponse<TaggerHealth>

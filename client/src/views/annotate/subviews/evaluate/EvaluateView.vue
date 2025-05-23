@@ -52,7 +52,7 @@ import stores, {
 } from "@/stores"
 
 import help from "@/components/help"
-import {SOURCE_LAYER} from "@/types/jobs"
+import { SOURCE_LAYER } from "@/types/jobs"
 
 // Stores
 const jobsStore = stores.useJobs()
@@ -142,7 +142,7 @@ watch(
         // Docs needed to determine whether the sourceLayer job has annotations.
         documentsStore.reloadDocumentsForCorpus(corporaStore.activeUUID)
     },
-    {immediate: true},
+    { immediate: true },
 )
 
 // Reload data on job selection changes.
@@ -176,6 +176,6 @@ watch(
             jobSelection.referenceJobId = SOURCE_LAYER
         }
     },
-    {immediate: true},
+    { immediate: true },
 )
 </script>

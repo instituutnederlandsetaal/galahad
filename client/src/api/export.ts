@@ -6,9 +6,9 @@
 // --- api ---
 import * as Utils from "@/api/utils"
 // --- types ---
-import type {BlobResponse} from "@/api/utils"
-import type {UUID} from "@/types/corpora"
-import type {Format} from "@/types/documents"
+import type { BlobResponse } from "@/api/utils"
+import type { UUID } from "@/types/corpora"
+import type { Format } from "@/types/documents"
 
 // --- computed ---
 const convertCorpusPath = (

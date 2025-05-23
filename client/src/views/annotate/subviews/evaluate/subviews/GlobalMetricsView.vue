@@ -32,7 +32,7 @@ import * as API from "@/api/evaluation"
 import * as Utils from "@/api/utils"
 import stores from "@/stores"
 // API & types
-import {metricsPerPosColumns} from "@/stores/evaluation/metrics"
+import { metricsPerPosColumns } from "@/stores/evaluation/metrics"
 
 // Types
 type GlobalMetricsRow = {
@@ -50,7 +50,7 @@ type GlobalMetricsRow = {
 }
 
 // Stores
-const {loading, metrics} = storeToRefs(stores.useMetrics())
+const { loading, metrics } = storeToRefs(stores.useMetrics())
 const corporaStore = stores.useCorpora()
 const jobSelection = stores.useJobSelection()
 const app = stores.useApp()
@@ -65,8 +65,8 @@ const columns = computed(() => {
             ),
     )
     const addColumns = [
-        {key: "name", label: "annotation", sortOn: x => x.annotation},
-        {key: "group", label: "grouped by", sortOn: x => x.group},
+        { key: "name", label: "annotation", sortOn: x => x.annotation },
+        { key: "group", label: "grouped by", sortOn: x => x.group },
         {
             key: "macroPrecision",
             label: "macro\nprecision",
@@ -77,7 +77,7 @@ const columns = computed(() => {
             label: "macro\nrecall",
             sortOn: x => x.macroRecall,
         },
-        {key: "macroF1", label: "macro\nf1", sortOn: x => x.macroF1},
+        { key: "macroF1", label: "macro\nf1", sortOn: x => x.macroF1 },
         {
             key: "microAccuracy",
             label: "micro\naccuracy",
@@ -94,7 +94,7 @@ const items = computed(() => {
     // We want to transform this to
     // [ { name: "PoS", f1, recall, ... }, { name: "Lemma", f1, recall, ... }, { name: "Lemma & PoS", f1, recall, ... } ]
     const ret = Object.keys(metrics.value.metrics)
-        .map(key => ({name: key, ...metrics.value.metrics[key]}))
+        .map(key => ({ name: key, ...metrics.value.metrics[key] }))
         .map(i => {
             const annoAndGroup = annotationAndGroupFromName(i.name)
             return {
@@ -124,7 +124,7 @@ function annotationAndGroupFromName(name: string) {
     const names = name.split("By")
     const annotation = splitCamelCase(names[0]).toLowerCase().split(" ")
     const group = names[1].toLowerCase()
-    return {annotation: annotation, group: group}
+    return { annotation: annotation, group: group }
 }
 
 function splitCamelCase(s: string) {

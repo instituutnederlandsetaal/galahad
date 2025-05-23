@@ -2,13 +2,13 @@
  * Utils for handling the blobs from some API responses.
  */
 
-import type {ErrorMessage} from "@/api/api"
-import type {AppStore} from "@/stores"
+import type { ErrorMessage } from "@/api/api"
+import type { AppStore } from "@/stores"
 // --- libraries ---
 import axios from "axios"
 // --- types ---
-import type {AxiosError, AxiosRequestConfig, AxiosResponse} from "axios"
-import {parse} from "content-disposition"
+import type { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios"
+import { parse } from "content-disposition"
 
 export type BlobResponse = AxiosResponse<Blob>
 
@@ -21,7 +21,7 @@ export function getBlob(
     path: string,
     config?: AxiosRequestConfig,
 ): Promise<BlobResponse> {
-    return axios.get(path, {responseType: "blob", ...config})
+    return axios.get(path, { responseType: "blob", ...config })
 }
 
 /**

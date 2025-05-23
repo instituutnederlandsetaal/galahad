@@ -4,8 +4,8 @@
 import * as API from "@/api/evaluation"
 import * as Utils from "@/api/utils"
 import stores from "@/stores"
-import type {UUID} from "@/types/corpora"
-import type {Term, TermComparison} from "@/types/evaluation"
+import type { UUID } from "@/types/corpora"
+import type { Term, TermComparison } from "@/types/evaluation"
 
 // For some reason the terms are undefined sometimes
 // We handle it here
@@ -62,7 +62,7 @@ const useEvaluation = defineStore("evaluation", () => {
     }
 
     // Exports
-    return {downloadCSV, loading, hypothesis, reference, corpusUUID}
+    return { downloadCSV, loading, hypothesis, reference, corpusUUID }
 })
 
 export default useEvaluation

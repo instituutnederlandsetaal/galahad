@@ -6,6 +6,6 @@
 
 <script setup lang="ts">
 defineProps({
-    address: {type: String, default: "servicedesk@ivdnt.org"},
+    address: { type: String, default: "servicedesk@ivdnt.org" },
 })
 </script>

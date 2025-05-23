@@ -31,10 +31,10 @@ import * as API from "@/api/evaluation"
 import * as Utils from "@/api/utils"
 import stores from "@/stores"
 // API & types
-import {metricsPerPosColumns} from "@/stores/evaluation/metrics"
+import { metricsPerPosColumns } from "@/stores/evaluation/metrics"
 
 // Stores
-const {loading, metrics} = storeToRefs(stores.useMetrics())
+const { loading, metrics } = storeToRefs(stores.useMetrics())
 const corporaStore = stores.useCorpora()
 const jobSelection = stores.useJobSelection()
 

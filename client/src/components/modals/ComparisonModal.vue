@@ -35,20 +35,20 @@
 import * as API from "@/api/evaluation"
 import * as Utils from "@/api/utils"
 import stores from "@/stores"
-import {literalsForTermComparison} from "@/stores/evaluation"
-import type {TermComparison} from "@/types/evaluation"
+import { literalsForTermComparison } from "@/stores/evaluation"
+import type { TermComparison } from "@/types/evaluation"
 
 // Stores
 const corporaStore = stores.useCorpora()
 
 // Props
 const props = defineProps({
-    show: {type: Boolean},
-    samples: {type: Object},
-    referenceJob: {type: String},
-    hypothesisJob: {type: String},
-    downloading: {type: Boolean, default: false},
-    annotationType: {type: String},
+    show: { type: Boolean },
+    samples: { type: Object },
+    referenceJob: { type: String },
+    hypothesisJob: { type: String },
+    downloading: { type: Boolean, default: false },
+    annotationType: { type: String },
 })
 
 // Emits
@@ -83,7 +83,7 @@ const columns = computed(() => {
     }))
 
     return [
-        {key: "literal", label: "token"},
+        { key: "literal", label: "token" },
         ...hypothesisColumns,
         ...referenceColumns,
     ]

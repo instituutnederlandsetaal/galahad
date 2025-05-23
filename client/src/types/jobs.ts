@@ -1,5 +1,5 @@
-import type {Term, WordForm} from "@/types/evaluation"
-import type {Tagger} from "@/types/taggers"
+import type { Term, WordForm } from "@/types/evaluation"
+import type { Tagger } from "@/types/taggers"
 
 export const SOURCE_LAYER: string = "sourceLayer"
 
@@ -19,7 +19,7 @@ export type Progress = {
     untagged: number
     busy: boolean
     hasError: boolean
-    errors: {[document: string]: string}
+    errors: { [document: string]: string }
 }
 
 export type LayerPreview = {

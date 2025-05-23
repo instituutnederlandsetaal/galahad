@@ -3,9 +3,9 @@
 import * as API from "@/api/documents"
 import * as Utils from "@/api/utils"
 import stores from "@/stores"
-import type {UUID} from "@/types/corpora"
+import type { UUID } from "@/types/corpora"
 // Types & API
-import {type DocumentMetadata, Format} from "@/types/documents"
+import { type DocumentMetadata, Format } from "@/types/documents"
 
 const MAX_FILE_SIZE = 10485760 // 10 MB
 
@@ -124,7 +124,7 @@ const documents = defineStore("documents", () => {
             const file = filesToUpload.value[i]
             // if( file.size > MAX_FILE_SIZE ) continue // skip too large files
             formData.append("file", file)
-            uploading[file.name] = {status: "busy"}
+            uploading[file.name] = { status: "busy" }
             // Spread the uploads a little
             setTimeout(() => upload(formData), (i / 10) * 100)
         }
@@ -159,8 +159,8 @@ const documents = defineStore("documents", () => {
 
         if (Object.keys(exts_and_headers).includes(extension)) {
             const contentType = exts_and_headers[extension]
-            file = new File([file], file.name, {type: contentType})
-            header = {"Content-Type": contentType}
+            file = new File([file], file.name, { type: contentType })
+            header = { "Content-Type": contentType }
             fd.set("file", file)
         }
         return header
@@ -177,10 +177,10 @@ const documents = defineStore("documents", () => {
         const header = addContentTypeHeader(formData)
 
         // Update status on upload, on success and on error.
-        uploading[file?.name] = {status: "busy"}
+        uploading[file?.name] = { status: "busy" }
         API.postDocument(corporaStore.activeUUID, formData, header)
             .then(() => {
-                uploading[file?.name] = {status: "success"}
+                uploading[file?.name] = { status: "success" }
             })
             .catch(
                 error =>

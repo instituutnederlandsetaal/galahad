@@ -4,8 +4,8 @@ import * as API from "@/api/evaluation"
 import stores from "@/stores"
 import * as Utils from "@/stores/evaluation/utils"
 // API & types
-import type {UUID} from "@/types/corpora"
-import type {Metrics, MetricsRow} from "@/types/evaluation"
+import type { UUID } from "@/types/corpora"
+import type { Metrics, MetricsRow } from "@/types/evaluation"
 
 export const metricsPerPosColumns = [
     {
@@ -17,10 +17,10 @@ export const metricsPerPosColumns = [
                 : Number.parseInt(x.name),
     },
     // { key: 'accuracy', sortOn: (x: MetricsRow) => x.accuracy },
-    {key: "precision", sortOn: (x: MetricsRow) => x.precision},
-    {key: "recall", sortOn: (x: MetricsRow) => x.recall},
-    {key: "f1", sortOn: (x: MetricsRow) => x.f1},
-    {key: "count", label: "count", sortOn: (x: MetricsRow) => x.count},
+    { key: "precision", sortOn: (x: MetricsRow) => x.precision },
+    { key: "recall", sortOn: (x: MetricsRow) => x.recall },
+    { key: "f1", sortOn: (x: MetricsRow) => x.f1 },
+    { key: "count", label: "count", sortOn: (x: MetricsRow) => x.count },
     {
         key: "truePositive",
         label: "true positive",

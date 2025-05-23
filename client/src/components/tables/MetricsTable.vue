@@ -74,12 +74,12 @@ const jobSelection = stores.useJobSelection()
 
 // Props
 const props = defineProps({
-    title: {type: String, default: "Metrics"},
-    columns: {type: Array, default: []},
-    items: {type: Array, default: []},
-    loading: {type: Boolean, default: false},
-    sortedByColumn: {type: String, default: "count"},
-    downloading: {type: Boolean, default: false},
+    title: { type: String, default: "Metrics" },
+    columns: { type: Array, default: [] },
+    items: { type: Array, default: [] },
+    loading: { type: Boolean, default: false },
+    sortedByColumn: { type: String, default: "count" },
+    downloading: { type: Boolean, default: false },
 })
 
 // Emits
@@ -87,7 +87,7 @@ defineEmits(["download"])
 
 // Fields
 const showModal = ref(false)
-const samples = ref({title: "", samples: []} as {
+const samples = ref({ title: "", samples: [] } as {
     title: string
     samples: TermComparison[]
 })

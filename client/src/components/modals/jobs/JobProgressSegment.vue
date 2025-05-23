@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-const {color, label, value, total} = defineProps<{
+const { color, label, value, total } = defineProps<{
     color: string
     label: string
     value: number

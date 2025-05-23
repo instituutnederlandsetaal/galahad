@@ -1,8 +1,8 @@
 // --- libraries ---
 
-import type {ErrorMessage} from "@/api/api"
+import type { ErrorMessage } from "@/api/api"
 // --- types ---
-import type {AxiosError} from "axios"
+import type { AxiosError } from "axios"
 
 // Custom types
 
@@ -47,7 +47,7 @@ const useApp = defineStore("app", () => {
     }
 
     // Exports
-    return {errors, resetErrors, handleServerError}
+    return { errors, resetErrors, handleServerError }
 })
 
 export default useApp

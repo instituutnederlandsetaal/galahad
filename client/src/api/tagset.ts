@@ -2,11 +2,11 @@
  * API calls for fetching tagsets.
  */
 
-import type {Tagset} from "@/types/tagset"
+import type { Tagset } from "@/types/tagset"
 // --- libraries ---
 import axios from "axios"
 // --- types ---
-import type {AxiosResponse} from "axios"
+import type { AxiosResponse } from "axios"
 
 type TagsetsResponse = AxiosResponse<Tagset[]>
 

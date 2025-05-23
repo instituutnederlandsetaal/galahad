@@ -1,11 +1,11 @@
 // Libraries & stores
 
 import * as API from "@/api/jobs"
-import type {ProgressResponse} from "@/api/jobs"
-import {getDocsAtTaggers} from "@/api/taggers"
+import type { ProgressResponse } from "@/api/jobs"
+import { getDocsAtTaggers } from "@/api/taggers"
 import stores from "@/stores"
 // API & Types
-import {type Job, SOURCE_LAYER} from "@/types/jobs"
+import { type Job, SOURCE_LAYER } from "@/types/jobs"
 
 const POLL_INTERVAL = 5000
 
@@ -27,7 +27,7 @@ const useJobs = defineStore("jobs", () => {
     })
     const loading = ref(false)
     const posting = ref(false)
-    const pollers = {} as {[tagger: string]: number}
+    const pollers = {} as { [tagger: string]: number }
     const numActiveDocs = ref(null as number | null)
 
     // Methods

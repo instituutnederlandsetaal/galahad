@@ -1,9 +1,9 @@
-import type {CorporaStore, JobSelectionStore} from "@/stores"
+import type { CorporaStore, JobSelectionStore } from "@/stores"
 // API & types
-import type {UUID} from "@/types/corpora"
+import type { UUID } from "@/types/corpora"
 // Libraries & stores
-import type {AxiosResponse} from "axios"
-import type {Ref} from "vue"
+import type { AxiosResponse } from "axios"
+import type { Ref } from "vue"
 
 /**
  * Reloads the data for an evaluation store.

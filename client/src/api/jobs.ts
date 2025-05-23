@@ -2,12 +2,12 @@
  * API calls for getting existing jobs and job layer results, posting and cancelling jobs, and polling job progress.
  */
 
-import type {UUID} from "@/types/corpora"
-import type {Job, Progress} from "@/types/jobs"
+import type { UUID } from "@/types/corpora"
+import type { Job, Progress } from "@/types/jobs"
 // --- libraries ---
 import axios from "axios"
 // --- types ---
-import type {AxiosResponse} from "axios"
+import type { AxiosResponse } from "axios"
 
 type JobsResponse = AxiosResponse<Job[]>
 type JobResponse = AxiosResponse<Job>
@@ -27,7 +27,7 @@ const jobProgressPath = (corpus: UUID, job: string) =>
  * @param corpus UUID of the corpus.
  */
 export function getJobs(corpus: UUID): Promise<JobsResponse> {
-    return axios.get(jobsPath(corpus), {params: {hasResult: false}})
+    return axios.get(jobsPath(corpus), { params: { hasResult: false } })
 }
 
 /**
@@ -59,7 +59,7 @@ export function cancelOrDeleteJob(
     job: string,
     hard: boolean,
 ): Promise<ProgressResponse> {
-    return axios.delete(jobPath(corpus, job), {params: {hard: hard}})
+    return axios.delete(jobPath(corpus, job), { params: { hard: hard } })
 }
 
 /**

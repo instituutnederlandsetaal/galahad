@@ -76,39 +76,39 @@ import stores from "@/stores"
 
 import * as API from "@/api/evaluation"
 import * as Utils from "@/api/utils"
-import type {EvaluationEntry, TermComparison} from "@/types/evaluation"
+import type { EvaluationEntry, TermComparison } from "@/types/evaluation"
 // API & types
-import type {Field} from "@/types/table"
+import type { Field } from "@/types/table"
 
 // Stores
-const {loading, confusion} = storeToRefs(stores.useConfusion())
+const { loading, confusion } = storeToRefs(stores.useConfusion())
 const corporaStore = stores.useCorpora()
 const jobSelection = stores.useJobSelection()
 const app = stores.useApp()
 
 // Custom types
-type Item = {[key: string]: EvaluationEntry} & {referenceJob: string}
-type Cell = {field: Field; item: Item; value: EvaluationEntry}
+type Item = { [key: string]: EvaluationEntry } & { referenceJob: string }
+type Cell = { field: Field; item: Item; value: EvaluationEntry }
 
 // Fields
 const confusionableAnnotations = computed(() =>
-    Object.keys(confusion.value || {}).map(key => ({value: key, text: key})),
+    Object.keys(confusion.value || {}).map(key => ({ value: key, text: key })),
 )
 const selectedAnnotation = ref(null)
 const downloading = ref(false)
 const modalData = ref({})
-const samples = ref({title: "", samples: []} as {
+const samples = ref({ title: "", samples: [] } as {
     title: string
     samples: TermComparison[]
 })
 const showModal = ref(false)
 const selectedConfusion = computed(
-    () => confusion?.value[selectedAnnotation.value] || {table: {}},
+    () => confusion?.value[selectedAnnotation.value] || { table: {} },
 )
 
 const columns = computed((): Field[] => {
     // add the entries
-    const entries = {} as {[key: string]: boolean}
+    const entries = {} as { [key: string]: boolean }
     Object.keys(selectedConfusion?.value?.table)?.map(k1 => {
         Object.keys(selectedConfusion?.value?.table[k1])?.forEach(
             k2 => (entries[k2] = true),
@@ -148,7 +148,9 @@ const columns = computed((): Field[] => {
 
 const rows = computed((): Item[] => {
     return Object.keys(selectedConfusion.value.table).map(k1 => {
-        const ret = {referenceJob: k1} as {[key: string]: EvaluationEntry} & {
+        const ret = { referenceJob: k1 } as {
+            [key: string]: EvaluationEntry
+        } & {
             referenceJob: string
         }
         Object.keys(selectedConfusion.value.table[k1]).forEach(

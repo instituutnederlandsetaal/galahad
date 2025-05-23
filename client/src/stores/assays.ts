@@ -3,7 +3,7 @@
 import * as API from "@/api/benchmarks"
 import stores from "@/stores"
 // Types & API
-import type {Benchmarks} from "@/types/assays"
+import type { Benchmarks } from "@/types/assays"
 
 /**
  * Contains dataset assays.

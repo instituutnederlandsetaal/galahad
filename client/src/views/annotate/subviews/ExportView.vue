@@ -54,7 +54,7 @@
 
 import stores from "@/stores"
 // Api & types
-import {Format} from "@/types/documents"
+import { Format } from "@/types/documents"
 
 import help from "@/components/help"
 import TeiP5LegacyWarning from "@/views/help/subviews/formats/TeiP5LegacyWarning.vue"

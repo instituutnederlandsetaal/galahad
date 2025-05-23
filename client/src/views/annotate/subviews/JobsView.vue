@@ -223,7 +223,10 @@ const columns = computed(() => {
             label: "last modified",
             sortOn: x => x.lastModified,
         },
-        { key: "progress", sortOn: x => x.progress.finished / x.progress.total },
+        {
+            key: "progress",
+            sortOn: x => x.progress.finished / x.progress.total,
+        },
     ] as Field[]
     if (userStore.hasWriteAccess) {
         return publicFields.concat({ key: "actions" })

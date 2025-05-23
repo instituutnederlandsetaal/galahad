@@ -3,9 +3,9 @@
  */
 
 // --- types ---
-import type {User} from "@/types/user"
+import type { User } from "@/types/user"
 // --- libraries ---
-import axios, {type AxiosResponse} from "axios"
+import axios, { type AxiosResponse } from "axios"
 
 type UserResponse = AxiosResponse<User>
 

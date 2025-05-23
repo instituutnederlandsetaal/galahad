@@ -4,11 +4,11 @@ import * as API from "@/api/evaluation"
 import stores from "@/stores"
 import * as Utils from "@/stores/evaluation/utils"
 // API & types
-import type {UUID} from "@/types/corpora"
-import type {ConfusionWrapper} from "@/types/evaluation"
+import type { UUID } from "@/types/corpora"
+import type { ConfusionWrapper } from "@/types/evaluation"
 
 // Allows for Object.keys(confusion.table), which dislikes null.
-const defaultConfusion = () => ({table: {}}) as ConfusionWrapper
+const defaultConfusion = () => ({ table: {} }) as ConfusionWrapper
 
 /**
  * Stores and fetches the confusion matrix.

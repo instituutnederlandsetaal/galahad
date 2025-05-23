@@ -3,7 +3,11 @@
 import * as API from "@/api/corpora"
 import stores from "@/stores"
 // Types & API
-import type {CorpusMetadata, MutableCorpusMetadata, UUID} from "@/types/corpora"
+import type {
+    CorpusMetadata,
+    MutableCorpusMetadata,
+    UUID,
+} from "@/types/corpora"
 
 /**
  * Contains all corpora for which the user has read access.

@@ -32,9 +32,9 @@
 </template>
 
 <script setup lang="ts">
-import type {Job} from "@/types/jobs"
+import type { Job } from "@/types/jobs"
 
-const {job} = defineProps<{
+const { job } = defineProps<{
     job: Job
 }>()
 </script>

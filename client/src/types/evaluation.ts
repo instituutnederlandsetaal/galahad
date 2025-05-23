@@ -32,7 +32,7 @@ export type Distribution = {
     lemma: string
     pos: string
     count: number
-    literals: {[literal: string]: number}
+    literals: { [literal: string]: number }
 }
 
 // Metrics

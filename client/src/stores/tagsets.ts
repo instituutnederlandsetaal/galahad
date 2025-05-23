@@ -3,7 +3,7 @@
 import * as API from "@/api/tagset"
 import stores from "@/stores"
 // Types & API
-import type {Tagset} from "@/types/tagset"
+import type { Tagset } from "@/types/tagset"
 
 /**
  * Stores all available tagsets. Mainly informational.

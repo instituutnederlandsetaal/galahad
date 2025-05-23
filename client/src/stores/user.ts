@@ -3,8 +3,8 @@
 import * as API from "@/api/user"
 import stores from "@/stores"
 // API & Types
-import type {CorpusMetadata} from "@/types/corpora"
-import type {User} from "@/types/user"
+import type { CorpusMetadata } from "@/types/corpora"
+import type { User } from "@/types/user"
 
 /**
  * User store & permissions checks.
@@ -14,7 +14,7 @@ const useUser = defineStore("user", () => {
     const corporaStore = stores.useCorpora()
 
     // Fields
-    const user = ref({id: "NO USER", isAdmin: false} as User)
+    const user = ref({ id: "NO USER", isAdmin: false } as User)
     const hasWriteAccess = computed((): boolean => {
         return (
             corporaStore.userIsCollaborator ||

@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-const {disabled, red, orange, green, plain, loading} = defineProps<{
+const { disabled, red, orange, green, plain, loading } = defineProps<{
     disabled?: boolean
     red?: boolean
     orange?: boolean

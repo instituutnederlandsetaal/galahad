@@ -2,11 +2,15 @@
  * API calls for creating, updating, deleting a corpus, and fetching the list of corpora.
  */
 
-import type {CorpusMetadata, MutableCorpusMetadata, UUID} from "@/types/corpora"
+import type {
+    CorpusMetadata,
+    MutableCorpusMetadata,
+    UUID,
+} from "@/types/corpora"
 // --- libraries ---
 import axios from "axios"
 // --- types ---
-import type {AxiosResponse} from "axios"
+import type { AxiosResponse } from "axios"
 
 type CorporaResponse = AxiosResponse<CorpusMetadata[]>
 type CorpusResponse = AxiosResponse<CorpusMetadata>

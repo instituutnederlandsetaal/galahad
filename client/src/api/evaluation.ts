@@ -4,8 +4,8 @@
 
 // --- api ---
 import * as Utils from "@/api/utils"
-import type {BlobResponse} from "@/api/utils"
-import type {UUID} from "@/types/corpora"
+import type { BlobResponse } from "@/api/utils"
+import type { UUID } from "@/types/corpora"
 import type {
     ConfusionWrapper,
     DistributionWrapper,
@@ -15,7 +15,7 @@ import type {
 // --- libraries ---
 import axios from "axios"
 // --- types ---
-import type {AxiosResponse} from "axios"
+import type { AxiosResponse } from "axios"
 
 type ConfusionResponse = AxiosResponse<ConfusionWrapper>
 type DistributionResponse = AxiosResponse<DistributionWrapper>
@@ -67,7 +67,7 @@ export function getConfusion(
     reference: string,
 ): Promise<ConfusionResponse> {
     return axios.get(confusionPath(corpus, hypothesis), {
-        params: {reference},
+        params: { reference },
     })
 }
 
@@ -82,7 +82,7 @@ export function getMetrics(
     hypothesis: string,
     reference: string,
 ): Promise<MetricsResponse> {
-    return axios.get(metricsPath(corpus, hypothesis), {params: {reference}})
+    return axios.get(metricsPath(corpus, hypothesis), { params: { reference } })
 }
 
 /**
@@ -97,7 +97,7 @@ export function getDownloadEvaluation(
     reference: string,
 ): Promise<BlobResponse> {
     return Utils.getBlob(downloadPath(corpus, hypothesis), {
-        params: {reference},
+        params: { reference },
     })
 }
 
@@ -118,7 +118,7 @@ export function getConfusionSamples(
     annotationType: string,
 ): Promise<BlobResponse> {
     return Utils.getBlob(confusionSamplesPath(corpus, hypothesis), {
-        params: {reference, hypoFilter, refFilter, annotationType},
+        params: { reference, hypoFilter, refFilter, annotationType },
     })
 }
 
@@ -147,7 +147,7 @@ export function getMetricsSamples(
     if (group) {
         params.group = group
     }
-    return Utils.getBlob(metricsSamplesPath(corpus, hypothesis), {params})
+    return Utils.getBlob(metricsSamplesPath(corpus, hypothesis), { params })
 }
 
 /**
@@ -165,6 +165,6 @@ export function getDocumentLayerComparison(
     reference: string,
 ): Promise<AxiosResponse<TermComparison[]>> {
     return axios.get(documentLayerComparisonPath(corpus, job, document), {
-        params: {reference},
+        params: { reference },
     })
 }

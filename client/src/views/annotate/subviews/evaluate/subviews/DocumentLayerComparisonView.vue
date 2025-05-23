@@ -46,7 +46,7 @@
 import * as API from "@/api/evaluation"
 import stores from "@/stores"
 // Types & Stores
-import type {Term, TermComparison} from "@/types/evaluation"
+import type { Term, TermComparison } from "@/types/evaluation"
 
 import Paginator from "primevue/paginator"
 
@@ -57,7 +57,7 @@ const jobSelection = stores.useJobSelection()
 
 // Fields
 const docNames = computed(() =>
-    documentsStore.available.map(doc => ({value: doc.name, text: doc.name})),
+    documentsStore.available.map(doc => ({ value: doc.name, text: doc.name })),
 )
 const selectedDoc = ref(null)
 const selectedAnnotation: Ref<string> = ref(null as any as string)

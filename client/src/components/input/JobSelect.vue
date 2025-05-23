@@ -23,7 +23,7 @@
 
 import stores from "@/stores"
 // API & Types
-import {SOURCE_LAYER} from "@/types/jobs"
+import { SOURCE_LAYER } from "@/types/jobs"
 
 // Stores
 const jobsStore = stores.useJobs()
@@ -32,8 +32,8 @@ const documentsStore = stores.useDocuments()
 
 // Fields
 const props = defineProps({
-    isReference: {default: false},
-    customTitle: {default: null as string | null},
+    isReference: { default: false },
+    customTitle: { default: null as string | null },
 })
 const title = computed(
     () => props.customTitle ?? (props.isReference ? "Reference" : "Hypothesis"),
@@ -68,7 +68,7 @@ watch(
             private_value.value = jobSelectionStore.referenceJobId
         else private_value.value = jobSelectionStore.hypothesisJobId
     },
-    {immediate: true},
+    { immediate: true },
 )
 // reverse
 watch(
@@ -79,7 +79,7 @@ watch(
             jobSelectionStore.referenceJobId = private_value.value
         else jobSelectionStore.hypothesisJobId = private_value.value
     },
-    {immediate: true},
+    { immediate: true },
 )
 </script>
 

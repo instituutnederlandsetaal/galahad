@@ -2,11 +2,11 @@
  * API for fetching benchmarks.
  */
 
-import type {Benchmarks} from "@/types/assays"
+import type { Benchmarks } from "@/types/assays"
 // --- libraries ---
 import axios from "axios"
 // --- types ---
-import type {AxiosResponse} from "axios"
+import type { AxiosResponse } from "axios"
 
 type BenchmarksResponse = AxiosResponse<Benchmarks>
 

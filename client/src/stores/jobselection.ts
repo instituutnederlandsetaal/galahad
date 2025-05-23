@@ -1,7 +1,7 @@
 // Libraries & stores
 
 import stores from "@/stores"
-import {type Job, SOURCE_LAYER} from "@/types/jobs"
+import { type Job, SOURCE_LAYER } from "@/types/jobs"
 
 /**
  * Stores the current job selection from the <select>. Used in Evaluation & Export.
@@ -27,7 +27,7 @@ const useJobSelection = defineStore("jobSelection", () => {
     // Selectable jobs are jobs that have at least one finished document,
     // or have source annotations (i.e. sourceLayer).
     const selectableJobs = computed(
-        (): {key: string; value: string; text: string}[] => {
+        (): { key: string; value: string; text: string }[] => {
             const jobs = jobsStore.jobs
             if (!jobs) return []
             return (

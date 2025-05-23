@@ -135,20 +135,20 @@
 import stores from "@/stores"
 
 // API & types
-import type {Distribution} from "@/types/evaluation"
+import type { Distribution } from "@/types/evaluation"
 
 import MultiSelect from "primevue/multiselect"
 
 // Stores
 const distributionStore = stores.useDistribution()
 // Doesn't need to be ref'ed, but it's easier to read.
-const {distribution, selectedDistribution} = storeToRefs(distributionStore)
+const { distribution, selectedDistribution } = storeToRefs(distributionStore)
 const jobSelection = stores.useJobSelection()
 
 // Fields
 const selectedPosses = ref([])
 // Table controls.
-const includePos = ref({} as {[pos: string]: boolean})
+const includePos = ref({} as { [pos: string]: boolean })
 const lemmaFilter = ref("")
 const literalFilter = ref("")
 // GModal for variants
@@ -184,8 +184,8 @@ const itemsToDisplay = computed((): Distribution[] => {
     )
 })
 const columns = [
-    {key: "lemma", label: "lemma", sortOn: (x: Distribution) => x.lemma},
-    {key: "pos", label: "PoS", sortOn: (x: Distribution) => x.pos},
+    { key: "lemma", label: "lemma", sortOn: (x: Distribution) => x.lemma },
+    { key: "pos", label: "PoS", sortOn: (x: Distribution) => x.pos },
     {
         key: "count",
         label: "total\noccurrences",
@@ -196,12 +196,12 @@ const columns = [
         label: "number\nof types",
         sortOn: (x: Distribution) => Object.keys(x.literals.literals).length,
     },
-    {key: "variants", label: "types"},
+    { key: "variants", label: "types" },
 ]
 const singMultiPosOptions = [
-    {value: "single", text: "Single"},
-    {value: "multiple", text: "Multiple"},
-    {value: "both", text: "Both"},
+    { value: "single", text: "Single" },
+    { value: "multiple", text: "Multiple" },
+    { value: "both", text: "Both" },
 ]
 const selectedSingMultiPos = ref(singMultiPosOptions[0].value)
 const filteredPosses = computed(() => {
@@ -224,7 +224,7 @@ watch(
     () => {
         distributionStore.posses.forEach(pos => (includePos.value[pos] = true))
     },
-    {immediate: true},
+    { immediate: true },
 )
 
 watch(
@@ -232,7 +232,7 @@ watch(
     () => {
         selectedPosses.value = filteredPosses.value
     },
-    {immediate: true},
+    { immediate: true },
 )
 </script>
 

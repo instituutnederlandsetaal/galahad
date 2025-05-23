@@ -3,7 +3,7 @@
 import * as API from "@/api/taggers"
 import stores from "@/stores"
 // API & types
-import type {Tagger} from "@/types/taggers"
+import type { Tagger } from "@/types/taggers"
 
 /**
  * Sort the 'annotations' field of the taggers. The order is stochastic when retrieved from the API.

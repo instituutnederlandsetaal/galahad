@@ -4,7 +4,7 @@
 import * as API from "@/api/export"
 import * as Utils from "@/api/utils"
 import stores from "@/stores"
-import type {Format} from "@/types/documents"
+import type { Format } from "@/types/documents"
 
 /**
  * Used to download exported corpora.

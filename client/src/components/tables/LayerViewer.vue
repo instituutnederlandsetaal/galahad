@@ -9,10 +9,10 @@
 // Libraries & stores
 
 // API & types
-import type {LayerPreview} from "@/types/jobs"
+import type { LayerPreview } from "@/types/jobs"
 // Component dependencies.
 
-const props = defineProps({layer: Object as () => LayerPreview})
+const props = defineProps({ layer: Object as () => LayerPreview })
 const layerNotEmpty = computed(() => {
     return props.layer?.terms?.length > 0
 })
@@ -26,7 +26,7 @@ const columns = computed(() => {
         label: annotation,
     }))
     // Token always as the first column
-    columns.unshift({key: "token", label: "Token"})
+    columns.unshift({ key: "token", label: "Token" })
     return columns
 })
 

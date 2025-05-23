@@ -16,12 +16,12 @@
 <script setup lang="ts">
 // Libraries & stores
 
-import type {Distribution} from "@/types/evaluation"
+import type { Distribution } from "@/types/evaluation"
 // Types & API
-import type {Field} from "@/types/table"
+import type { Field } from "@/types/table"
 
 // Custom types
-type DistEntry = {variant: string; occurrences: number}
+type DistEntry = { variant: string; occurrences: number }
 
 // Props
 const props = defineProps<{
@@ -31,7 +31,7 @@ const props = defineProps<{
 
 // Fields
 const columns: Field[] = [
-    {key: "variant", label: "Type", sortOn: (x: DistEntry) => x.variant},
+    { key: "variant", label: "Type", sortOn: (x: DistEntry) => x.variant },
     {
         key: "occurrences",
         label: "Occurrences",

@@ -5,11 +5,11 @@ import stores from "@/stores"
 import * as Utils from "@/stores/evaluation/utils"
 // API & types
 // API & types
-import type {UUID} from "@/types/corpora"
-import type {DistributionWrapper} from "@/types/evaluation"
+import type { UUID } from "@/types/corpora"
+import type { DistributionWrapper } from "@/types/evaluation"
 
 // Allows for Object.keys(distribution.table), which dislikes null.
-const defaultDistribution = () => ({distribution: {}}) as DistributionWrapper
+const defaultDistribution = () => ({ distribution: {} }) as DistributionWrapper
 
 /**
  * Stores and fetches the term frequency distribution.
@@ -24,7 +24,7 @@ const useDistribution = defineStore("distribution", () => {
     )
     const selectedDistribution = ref(null)
     const distributionOptions = computed(() =>
-        Object.keys(distributions.value).map(x => ({value: x, text: x})),
+        Object.keys(distributions.value).map(x => ({ value: x, text: x })),
     )
     const loading = ref(false)
     const posses = computed(() => {

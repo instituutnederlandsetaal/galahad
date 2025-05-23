@@ -18,7 +18,11 @@
 </template>
 
 <script setup lang="ts">
-const { show, title, small = true } = defineProps<{
+const {
+    show,
+    title,
+    small = true,
+} = defineProps<{
     show: boolean
     title?: string
     small?: boolean
@@ -29,9 +33,9 @@ const emit = defineEmits<{
 }>()
 
 onMounted(() => {
-    addEventListener("keyup", (event) => {
-        if (event.key === 'Escape') {
-            emit('hide')
+    addEventListener("keyup", event => {
+        if (event.key === "Escape") {
+            emit("hide")
         }
     })
 })

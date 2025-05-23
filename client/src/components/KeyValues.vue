@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-const {data} = defineProps<{
+const { data } = defineProps<{
     data: Record<string, string>
 }>()
 const keys = Object.keys(data)

@@ -5,13 +5,13 @@
 
 // -- api ---
 import * as Utils from "@/api/utils"
-import type {BlobResponse} from "@/api/utils"
-import type {UUID} from "@/types/corpora"
-import type {DocumentMetadata} from "@/types/documents"
+import type { BlobResponse } from "@/api/utils"
+import type { UUID } from "@/types/corpora"
+import type { DocumentMetadata } from "@/types/documents"
 // --- libraries ---
 import axios from "axios"
 // --- types ---
-import type {AxiosResponse} from "axios"
+import type { AxiosResponse } from "axios"
 
 type DocumentsResponse = AxiosResponse<DocumentMetadata[]>
 
@@ -42,7 +42,7 @@ export function postDocument(
     document: FormData,
     contentType?: Record<string, string>,
 ) {
-    return axios.post(documentsPath(corpus), document, {headers: contentType})
+    return axios.post(documentsPath(corpus), document, { headers: contentType })
 }
 
 /**

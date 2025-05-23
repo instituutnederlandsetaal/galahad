@@ -21,7 +21,7 @@
 
 import stores from "@/stores"
 // API & types
-import {TableCorporaType, TableDocumentsType} from "@/types/table"
+import { TableCorporaType, TableDocumentsType } from "@/types/table"
 
 // Stores
 const corporaStore = stores.useCorpora()

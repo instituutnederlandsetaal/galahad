@@ -22,7 +22,7 @@
 
 import stores from "@/stores"
 
-const {metrics} = storeToRefs(stores.useMetrics())
+const { metrics } = storeToRefs(stores.useMetrics())
 const props = defineProps(["annotations"])
 
 // Fields
@@ -32,7 +32,7 @@ const metricOptions = computed(() => {
         .filter(key => !(key.startsWith("single") || key.startsWith("multi")))
         .map(key => key.split("By")[0].toLowerCase())
     const uniqueNames = [...new Set(names)]
-    return uniqueNames.map(name => ({value: name, text: name}))
+    return uniqueNames.map(name => ({ value: name, text: name }))
 })
 const groupOptions = computed(() => {
     if (props.annotations == null) return []
@@ -40,13 +40,13 @@ const groupOptions = computed(() => {
         .filter(key => !(key.startsWith("single") || key.startsWith("multi")))
         .map(key => key.split("By")[1].toLowerCase())
     const uniqueNames = [...new Set(names)]
-    return uniqueNames.map(name => ({value: name, text: name}))
+    return uniqueNames.map(name => ({ value: name, text: name }))
 })
 
 const singleOrMultipleOptions = [
-    {value: "both", text: "Both"},
-    {value: "single", text: "Single"},
-    {value: "multi", text: "Multiple"},
+    { value: "both", text: "Both" },
+    { value: "single", text: "Single" },
+    { value: "multi", text: "Multiple" },
 ]
 const selectedMetric = ref(metricOptions.value[0]?.value)
 const selectedGroup = ref(groupOptions.value[0]?.value)
