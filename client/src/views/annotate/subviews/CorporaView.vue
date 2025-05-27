@@ -1,7 +1,7 @@
 <template>
-    <GCard title="Corpora" helpSubject="corpora">
+    <GCard title="Corpora" helpLink="corpora">
         <template #help>
-            <component :is="help.corpora"></component>
+            <CorpusHelp />
         </template>
         <!-- Owner corpus table -->
         <CorpusTable :type="TableCorporaType.User" :corpora="corporaStore.allCorpora"
@@ -39,7 +39,6 @@
         }
             " :cancel="() => (showNewCorpusModal = false)">
             <template #help>Fill in the metadata and create a corpus.
-                <br />
                 <CorpusFormHelp />
             </template>
         </CorpusForm>
@@ -53,7 +52,6 @@
                 " :cancel="() => (updateCorpusData = null)">
             <template #help>
                 Change the metadata of an existing corpus.
-                <br />
                 <CorpusFormHelp />
             </template>
         </CorpusForm>
@@ -67,11 +65,10 @@
 
 <script setup lang="ts">
 // Libraries & stores
-import help from "@/components/help"
 import stores from "@/stores"
 // Types & API
 import type { CorpusMetadata } from "@/types/corpora"
-import { TableCorporaType } from "@/types/table"
+import { TableCorporaType } from "@/types/ui/table"
 
 // Stores
 const corporaStore = stores.useCorpora()

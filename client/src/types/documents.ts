@@ -1,15 +1,16 @@
-import type { LayerPreview, LayerSummary } from "./jobs"
+import type { LayerPreview, LayerSummary } from "@/types/jobs"
 
-export enum Format {
-    Tei_p4_legacy = "tei-p4-legacy",
-    Tei_p5_legacy = "tei-p5-legacy",
-    Tei_p5 = "tei-p5",
-    Naf = "naf",
-    Folia = "folia",
-    Tsv = "tsv",
-    Txt = "txt",
-    Conllu = "conllu",
-}
+export const Format = {
+    TEI_P4_LEGACY: "tei-p4-legacy",
+    TEI_P5_LEGACY: "tei-p5-legacy",
+    TEI_P5: "tei-p5",
+    NAF: "naf",
+    FOLIA: "folia",
+    TSV: "tsv",
+    TXT: "txt",
+    CONLLU: "conllu",
+} as const
+export type Format = (typeof Format)[keyof typeof Format]
 
 export type DocumentMetadata = {
     name: string

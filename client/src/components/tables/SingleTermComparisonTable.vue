@@ -14,7 +14,7 @@
 import stores from "@/stores"
 // Types & API
 import type { Term } from "@/types/evaluation"
-import type { Field } from "@/types/table"
+import type { Field } from "@/types/ui/table"
 
 // Stores
 const jobSelection = stores.useJobSelection()

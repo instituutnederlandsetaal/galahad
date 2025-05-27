@@ -12,11 +12,11 @@ const props = defineProps<{
     small?: boolean
     still?: boolean
 }>()
-const classes = computed(() => ({
+const classes = {
     error: props.error,
     small: props.small,
     still: props.still,
-}))
+}
 </script>
 
 <style scoped lang="scss">

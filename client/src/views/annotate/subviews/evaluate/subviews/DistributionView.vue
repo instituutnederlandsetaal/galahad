@@ -1,22 +1,18 @@
 <template>
     <div>
-        <GTable
-            class="right"
-            :title="'Distribution of ' + (jobSelection.hypothesisJobId || 'the hypothesis layer')"
-            helpSubject="evaluation"
-            :columns
-            :items="itemsToDisplay"
-            :loading="distributionStore.loading"
-            displayOnEmpty
+        <GTable class="right" :title="'Distribution of ' + (jobSelection.hypothesisJobId || 'the hypothesis layer')"
+            helpLink="evaluation" :columns :items="itemsToDisplay" :loading="distributionStore.loading" displayOnEmpty
             sortedByColumn="count">
             <template #table-empty-instruction>
                 <p v-if="distribution.generated">No results for current filter settings.</p>
                 <p v-else>Select a hypothesis layer and an annotation to generate a distribution.</p>
             </template>
             <template #help>
-                The distribution shows what lemma, part-of-speech pairs have been assigned to which types. When there
-                are more than five types you can click on the inspect symbol to view all types of a lemma-PoS
-                combination.
+                <p>
+                    The distribution shows what lemma, part-of-speech pairs have been assigned to which types. When
+                    there are more than five types you can click on the inspect symbol to view all types of a lemma-PoS
+                    combination.
+                </p>
             </template>
             <template #header>
                 <p>
@@ -41,34 +37,27 @@
             <template #cell-variants="data">
                 <div style="min-width: 200px">
                     <template v-if="Object.keys(data.item.literals.literals).length <= 5">
-                        <span
-                            v-for="(literal, index) in Object.keys(data.item.literals.literals).sort(function (a, b) {
-                                return data.item.literals.literals[b] - data.item.literals.literals[a]
-                            })"
-                            :key="literal">
-                            {{ literal }} <b>{{ `${data.item.literals.literals[literal]}` }}</b
-                            >{{ index != Object.keys(data.item.literals.literals).length - 1 ? ", " : "" }}
+                        <span v-for="(literal, index) in Object.keys(data.item.literals.literals).sort(function (a, b) {
+                            return data.item.literals.literals[b] - data.item.literals.literals[a]
+                        })" :key="literal">
+                            {{ literal }} <b>{{ `${data.item.literals.literals[literal]}` }}</b>{{ index !=
+                                Object.keys(data.item.literals.literals).length - 1 ? ", " : "" }}
                         </span>
                     </template>
                     <template v-else>
                         <RightFloatCell>
                             <template #left>
-                                <span
-                                    v-for="literal in Object.keys(data.item.literals.literals)
-                                        .sort(function (a, b) {
-                                            return data.item.literals.literals[b] - data.item.literals.literals[a]
-                                        })
-                                        .slice(0, 5)"
-                                    :key="literal">
+                                <span v-for="literal in Object.keys(data.item.literals.literals)
+                                    .sort(function (a, b) {
+                                        return data.item.literals.literals[b] - data.item.literals.literals[a]
+                                    })
+                                    .slice(0, 5)" :key="literal">
                                     {{ literal }}
-                                    <b>{{ `${data.item.literals.literals[literal]}` }}</b
-                                    >,
+                                    <b>{{ `${data.item.literals.literals[literal]}` }}</b>,
                                 </span>
-                                <i
-                                    >... and
+                                <i>... and
                                     {{ Object.keys(data.item.literals.literals).length - 5 }}
-                                    more</i
-                                >
+                                    more</i>
                             </template>
                             <template #right>
                                 <InspectButton @click="variantsToDisplay = data.item" />
@@ -79,16 +68,15 @@
             </template>
 
             <template #prepend>
-                <div style="display: flex; justify-content: center">
+                <div style="display: flex; justify-content: center" v-if="distributionStore.distributions">
                     <div>
-                        Annotation:
-                        <GInput
-                            type="select"
-                            :options="distributionStore.distributionOptions"
+                        <label for="annotation-select">Annotation:</label>
+                        <GSelect id="annotation-select" :options="distributionStore.distributionOptions"
                             v-model="selectedDistribution" />
                     </div>
                 </div>
                 <template v-if="distribution.generated">
+
                     <div class="table-controls">
                         <!-- search lemma-->
                         <div class="table-control" id="searchLemma">
@@ -103,15 +91,13 @@
                     </div>
                     <div class="table-controls">
                         <div class="table-control">
-                            Single/multiple PoS:
-                            <GInput type="select" :options="singMultiPosOptions" v-model="selectedSingMultiPos" />
+                            <label for="analysis-select">single/multiple PoS:</label>
+                            <GSelect id="analysis-select" :options="singMultiPosOptions"
+                                v-model="selectedSingMultiPos" />
                         </div>
                         <div class="table-control">
                             Include PoS: <br />
-                            <MultiSelect
-                                v-model="selectedPosses"
-                                :options="filteredPosses"
-                                placeholder="Select PoS"
+                            <MultiSelect v-model="selectedPosses" :options="filteredPosses" placeholder="Select PoS"
                                 :maxSelectedLabels="5" />
                         </div>
                     </div>
@@ -119,12 +105,7 @@
             </template>
         </GTable>
 
-        <EvaluationInfoBox :eval="distribution" />
-
-        <VariantsModal
-            :variantsToDisplay="variantsToDisplay"
-            :show="variantsToDisplay !== null"
-            @hide="variantsToDisplay = null"
+        <VariantsModal :variantsToDisplay :show="variantsToDisplay !== null" @hide="variantsToDisplay = null"
             id="modal" />
     </div>
 </template>
@@ -136,6 +117,7 @@ import stores from "@/stores"
 
 // API & types
 import type { Distribution } from "@/types/evaluation"
+import type { SelectOption } from "@/types/ui/select"
 
 import MultiSelect from "primevue/multiselect"
 
@@ -198,7 +180,7 @@ const columns = [
     },
     { key: "variants", label: "types" },
 ]
-const singMultiPosOptions = [
+const singMultiPosOptions: SelectOption[] = [
     { value: "single", text: "Single" },
     { value: "multiple", text: "Multiple" },
     { value: "both", text: "Both" },
@@ -272,7 +254,7 @@ div:not(#modal)::v-deep() .g-card .content-wrapper .content {
     column-gap: 0px;
 }
 
-.posGrid span > div {
+.posGrid span>div {
     width: fit-content;
 }
 

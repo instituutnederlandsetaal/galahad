@@ -1,20 +1,19 @@
 <template>
-    <GButton green :loading="loading" :disabled="disabled" title="Download">
-        <!-- Note this object syntax to add css classes with booleans. -->
+    <GButton green :loading :disabled title="Download">
         <i class="fa fa-download" :class="{ wide: wide }"></i>
     </GButton>
 </template>
 
 <script setup lang="ts">
-defineProps({
-    disabled: { type: Boolean, default: false },
-    loading: { type: Boolean, default: false },
-    wide: { type: Boolean, default: false },
-})
+const { disabled, loading, wide } = defineProps<{
+    disabled?: boolean;
+    loading?: boolean;
+    wide?: boolean;
+}>()
 </script>
 
 <style scoped lang="scss">
 .wide {
-    padding: 0 1em;
+    padding: 0 1rem;
 }
 </style>

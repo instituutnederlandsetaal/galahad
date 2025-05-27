@@ -70,8 +70,8 @@ table {
     padding: 0;
 
     caption {
-        font-size: 1.5em;
-        margin: 0.5em 0 0.75em;
+        font-size: 1.5rem;
+        margin: 0.5rem 0 0.75rem;
     }
 
     tr {
@@ -87,21 +87,21 @@ table {
     }
 
     thead {
-        > tr {
+        >tr {
             background-color: var(--int-theme) !important;
         }
     }
 
     th {
-        padding: 0.6em;
+        padding: 0.6rem;
         text-align: center;
-        font-size: 0.85em;
-        letter-spacing: 0.1em;
+        font-size: 0.85rem;
+        letter-spacing: 0.1rem;
         text-transform: uppercase;
     }
 
     td {
-        padding: 0.5em;
+        padding: 0.5rem;
         text-align: center;
         min-width: 60px;
     }
@@ -110,9 +110,10 @@ table {
 }
 
 table.compact {
+
     td,
     th {
-        padding: 0.1em 2em;
+        padding: 0.1rem 2rem;
     }
 }
 </style>

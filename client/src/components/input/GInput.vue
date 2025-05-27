@@ -1,42 +1,10 @@
 <template>
     <div :class="inline ? 'inline' : ''">
-        <!-- select -->
-        <template v-if="type === 'select'">
-            <!-- disabled does not work well with a dynamic property, therefore we have to bifurcate on the 'disabled' property -->
-            <select v-if="disabled" disabled v-model="model">
-                <option hidden disabled selected value>-- select an option --</option>
-                <option v-for="option in options" :key="option.key" :value="option.value" :disabled="option.disabled">
-                    {{ option.text }}
-                </option>
-            </select>
-            <select v-else v-model="model">
-                <option hidden disabled selected value="null">-- select an option --</option>
-                <option v-for="option in options" :key="option.key" :value="option.value" :disabled="option.disabled">
-                    {{ option.text }}
-                </option>
-            </select>
-        </template>
-        <!-- select-group -->
-        <template v-else-if="type === 'select-group'">
-            <select v-model="model">
-                <optgroup v-for="optgroup in options" :key="optgroup.label" :label="optgroup.label">
-                    <option v-for="option in optgroup.options" :key="option.key" :value="option.value"
-                        :disabled="option.disabled">
-                        {{ option.text }}
-                    </option>
-                </optgroup>
-            </select>
-        </template>
-        <!-- number -->
-        <template v-else-if="type === 'number'">
-            <input v-model.number="model" :type="type" :placeholder="placeholder" @keyup.enter="$emit('enter')"
-                :min="min" :max="max" :step="step" />
-        </template>
         <!-- checkbox -->
-        <template v-else-if="type === 'checkbox'">
+        <template v-if="type === 'checkbox'">
             <label class="clickable checkbox-container">
                 <slot></slot>
-                <input v-model="model" :type="type" :placeholder="placeholder" />
+                <input v-model="model" :type :placeholder />
                 <span class="checkmark" tabindex="0" @keypress.space.prevent="check" @keyup.enter="check"></span>
             </label>
         </template>
@@ -44,14 +12,14 @@
         <template v-else>
             <!-- text with clear button-->
             <div v-if="clearBtn" class="clear">
-                <input v-model="model" :type="type" :placeholder="placeholder" :disabled="disabled" :list="list"
-                    ref="inputElement" @keyup.enter="$emit('enter')" />
+                <input v-model="model" :type :placeholder :disabled :list ref="inputElement"
+                    @keyup.enter="$emit('enter')" />
                 <input type="reset" value="&#10006;" :disabled="model === null || model.length == 0" title="Clear"
                     @click="model = ''" />
             </div>
             <!-- text without clear button-->
-            <input v-else v-model="model" :type="type" :placeholder="placeholder" :disabled="disabled" :list="list"
-                ref="inputElement" @keyup.enter="$emit('enter')" />
+            <input v-else v-model="model" :type :placeholder :disabled :list ref="inputElement"
+                @keyup.enter="$emit('enter')" />
         </template>
 
         <template v-if="validator">
@@ -66,13 +34,7 @@
 </template>
 
 <script setup lang="ts">
-// --- types ---
-export type SelectOption = {
-    key: string
-    value: string
-    text: string
-    disabled?: boolean
-}
+import type { SelectOption } from '@/types/ui/select';
 
 // --- model ---
 const model = defineModel()
@@ -248,10 +210,9 @@ label {
 /* Inputs */
 input[type="text"],
 input[type="url"],
-input[type="number"],
 input[type="reset"] {
     height: 39px;
-    font-size: 1em;
+    font-size: 1rem;
     padding-left: 5px;
     border: 1px solid #ccc;
     width: 209px;
@@ -290,7 +251,7 @@ div.clear {
             background-color: var(--int-very-light-grey-hover);
             width: 39px;
             border-left: 0;
-            font-size: 1.2em;
+            font-size: 1.2rem;
             cursor: pointer;
 
             &:disabled {
@@ -308,38 +269,5 @@ div.clear {
             }
         }
     }
-}
-
-select {
-    border: 0px solid black;
-    height: 34px;
-    max-width: 300px;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    -moz-border-radius: 0px;
-    -webkit-border-radius: 0px;
-    border-radius: 0px;
-    padding: 0.375rem 1.75rem 0.375rem 0.75rem;
-    outline-width: 0;
-    // Background-color is taken from the firefox default.
-    background: rgb(233, 233, 237) url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5'%3E%3Cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E") no-repeat right 0.75rem center/8px 10px;
-    font-size: 1em;
-    cursor: pointer;
-
-    &:hover {
-        background-color: var(--int-very-light-grey-hover);
-    }
-
-    &:active {
-        background-color: var(--int-light-grey);
-    }
-}
-
-option:hover,
-option:checked,
-select:focus option:checked {
-    background-color: var(--int-theme-hover) !important;
-    box-shadow: 0 0 10px 100px var(--int-theme-hover) inset;
 }
 </style>

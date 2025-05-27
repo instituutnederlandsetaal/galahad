@@ -7,6 +7,7 @@ import * as Utils from "@/stores/evaluation/utils"
 // API & types
 import type { UUID } from "@/types/corpora"
 import type { DistributionWrapper } from "@/types/evaluation"
+import type { SelectOption } from "@/types/ui/select"
 
 // Allows for Object.keys(distribution.table), which dislikes null.
 const defaultDistribution = () => ({ distribution: {} }) as DistributionWrapper
@@ -16,15 +17,24 @@ const defaultDistribution = () => ({ distribution: {} }) as DistributionWrapper
  */
 const useDistribution = defineStore("distribution", () => {
     // Fields
-    const distributions = ref({} as Record<string, DistributionWrapper>)
+    const distributions = ref<Record<string, DistributionWrapper>>()
     const distribution = computed(
         () =>
-            distributions.value[selectedDistribution.value] ??
+            distributions.value?.[selectedDistribution.value] ??
             defaultDistribution(),
     )
-    const selectedDistribution = ref(null)
-    const distributionOptions = computed(() =>
-        Object.keys(distributions.value).map(x => ({ value: x, text: x })),
+    const selectedDistribution = ref<string>()
+    const distributionOptions = computed<SelectOption[]>(
+        () => {
+            if (!distributions.value) {
+                return []
+            }
+            return Object.keys(distributions.value).map(x => ({
+                value: x,
+                text: x,
+            }))
+        },
+        { immediate: true },
     )
     const loading = ref(false)
     const posses = computed(() => {
@@ -39,8 +49,8 @@ const useDistribution = defineStore("distribution", () => {
     /**
      * Reset it when e.g. the hypothesis or reference is changed.
      */
-    function reset() {
-        distribution.value = defaultDistribution()
+    function reset(): void {
+        distributions.value = undefined
     }
 
     /**
@@ -48,7 +58,7 @@ const useDistribution = defineStore("distribution", () => {
      * @param corpus The UUID of the corpus.
      * @param hypothesis The hypothesis job ID.
      */
-    function reloadForUUIDHypothesis(corpus: UUID, hypothesis: string) {
+    function reloadForUUIDHypothesis(corpus: UUID, hypothesis: string): void {
         Utils.reloadEval(
             API.getDistribution,
             reset,
@@ -60,7 +70,6 @@ const useDistribution = defineStore("distribution", () => {
             hypothesis,
             "",
         )
-        selectedDistribution.value = null
     }
 
     // Exports
@@ -71,6 +80,7 @@ const useDistribution = defineStore("distribution", () => {
         posses,
         selectedDistribution,
         distributionOptions,
+        distributions,
         // Methods
         reloadForUUIDHypothesis,
         reset,

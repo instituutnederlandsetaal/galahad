@@ -1,12 +1,7 @@
 <template>
-    <GTable :title :columns :items :loading helpSubject="evaluation" class="metricsTable" :sortedByColumn>
-        <template #help>
-            <slot name="help">
-                <p><i>PoS comparison is base on the full PoS, including features.</i></p>
-                <p>Click on a entry to view samples.</p>
-            </slot>
-            <br />
-            <br />
+    <GTable :title :columns :items :loading helpLink="evaluation" class="metricsTable" :sortedByColumn>
+        <template v-if="$slots.help" #help>
+            <slot name="help"></slot>
             <DifferentTagsetsHelp />
         </template>
 
@@ -22,28 +17,25 @@
             <slot name="prepend"></slot>
         </template>
 
-        <template
-            v-for="cell in [
-                'cell-accuracy',
-                'cell-precision',
-                'cell-recall',
-                'cell-f1',
-                'cell-macroPrecision',
-                'cell-microPrecision',
-                'cell-macroRecall',
-                'cell-microRecall',
-                'cell-macroF1',
-                'cell-microF1',
-                'cell-microAccuracy',
-            ]"
-            #[cell]="data">
+        <template v-for="cell in [
+            'cell-accuracy',
+            'cell-precision',
+            'cell-recall',
+            'cell-f1',
+            'cell-macroPrecision',
+            'cell-microPrecision',
+            'cell-macroRecall',
+            'cell-microRecall',
+            'cell-macroF1',
+            'cell-microF1',
+            'cell-microAccuracy',
+        ]" #[cell]="data">
             <div :key="cell">
                 {{ `${data.value ? parseFloat(data.value).toString().slice(0, 4) : 0}` }}
             </div>
         </template>
 
-        <template
-            v-for="cell in ['cell-falsePositive', 'cell-falseNegative', 'cell-truePositive', 'cell-noMatch']"
+        <template v-for="cell in ['cell-falsePositive', 'cell-falseNegative', 'cell-truePositive', 'cell-noMatch']"
             #[cell]="data">
             <div :key="cell">
                 <GButton :disabled="data.value.count === 0" @click="openModal(data)">
@@ -54,14 +46,8 @@
         </template>
     </GTable>
 
-    <ComparisonModal
-        :show="showModal"
-        @hide="showModal = false"
-        :samples="samples"
-        @download="$emit('download', modalData)"
-        :referenceJob="jobSelection.referenceJobId"
-        :hypothesisJob="jobSelection.hypothesisJobId"
-        :downloading />
+    <ComparisonModal :show="showModal" @hide="showModal = false" :samples @download="$emit('download', modalData)"
+        :referenceJob="jobSelection.referenceJobId" :hypothesisJob="jobSelection.hypothesisJobId" :downloading />
 </template>
 
 <script setup lang="ts">

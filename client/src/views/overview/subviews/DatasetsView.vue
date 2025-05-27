@@ -5,7 +5,7 @@
         </template>
 
         <CorpusTable :type="TableCorporaType.Dataset" :corpora="corporaStore.datasetCorpora" selectable>
-            
+
         </CorpusTable>
         <DocumentsTable :type="TableDocumentsType.Dataset" :corpus="corporaStore.activeCorpus">
             <template #help>
@@ -21,7 +21,7 @@
 
 import stores from "@/stores"
 // API & types
-import { TableCorporaType, TableDocumentsType } from "@/types/table"
+import { TableCorporaType, TableDocumentsType } from "@/types/ui/table"
 
 // Stores
 const corporaStore = stores.useCorpora()

@@ -2,6 +2,7 @@
 
 import stores from "@/stores"
 import { type Job, SOURCE_LAYER } from "@/types/jobs"
+import type { SelectOption } from "@/types/ui/select"
 
 /**
  * Stores the current job selection from the <select>. Used in Evaluation & Export.
@@ -13,8 +14,8 @@ const useJobSelection = defineStore("jobSelection", () => {
     const documentsStore = stores.useDocuments()
 
     // Fields
-    const hypothesisJobId = ref(null as unknown as string)
-    const referenceJobId = ref(null as unknown as string)
+    const hypothesisJobId = ref<string>()
+    const referenceJobId = ref<string>()
     // Set to true once we know the jobs exist in selectableJobs.
     // (which requires waiting on jobs & docs to load)
     const selectionsValid = ref(false)
@@ -26,42 +27,39 @@ const useJobSelection = defineStore("jobSelection", () => {
     })
     // Selectable jobs are jobs that have at least one finished document,
     // or have source annotations (i.e. sourceLayer).
-    const selectableJobs = computed(
-        (): { key: string; value: string; text: string }[] => {
-            const jobs = jobsStore.jobs
-            if (!jobs) return []
-            return (
-                Object.keys(jobs)
-                    ?.filter(job => jobs[job].progress.finished > 0)
-                    // Filter out sourceLayer if no documents have source annotations.
-                    .filter(
-                        (job: string) =>
-                            !(
-                                job === SOURCE_LAYER &&
-                                !documentsStore.numSourceAnnotations
-                            ),
-                    )
-                    ?.map(job => {
-                        return {
-                            key: job,
-                            value: job,
-                            text: formatJobString(jobs[job]),
-                        }
-                    })
-            )
-        },
-    )
+    const selectableJobs = computed<SelectOption[]>(() => {
+        const jobs = jobsStore.jobs
+        if (!jobs) return []
+        return (
+            Object.keys(jobs)
+                ?.filter(job => jobs[job].progress.finished > 0)
+                // Filter out sourceLayer if no documents have source annotations.
+                .filter(
+                    (job: string) =>
+                        !(
+                            job === SOURCE_LAYER &&
+                            !documentsStore.numSourceAnnotations
+                        ),
+                )
+                ?.map(job => {
+                    return {
+                        value: job,
+                        text: formatJobString(jobs[job]),
+                    }
+                })
+        )
+    })
 
     // Private Fields
-    const referenceJob = computed((): Job | null => {
+    const referenceJob = computed<Job | undefined>(() => {
         return referenceJobId.value
             ? jobsStore.jobs[referenceJobId.value]
-            : null
+            : undefined
     })
-    const hypothesisJob = computed((): Job | null => {
+    const hypothesisJob = computed<Job | undefined>(() => {
         return hypothesisJobId.value
             ? jobsStore.jobs[hypothesisJobId.value]
-            : null
+            : undefined
     })
 
     // Watches
@@ -69,8 +67,8 @@ const useJobSelection = defineStore("jobSelection", () => {
         () => corporaStore.activeUUID,
         (newValue, oldValue) => {
             if (oldValue !== newValue && oldValue) {
-                hypothesisJobId.value = null as any
-                referenceJobId.value = null as any
+                hypothesisJobId.value = undefined
+                referenceJobId.value = undefined
             }
         },
     )
@@ -92,14 +90,14 @@ const useJobSelection = defineStore("jobSelection", () => {
                     .map(job => job.key)
                     .includes(hypothesisJobId.value)
             ) {
-                hypothesisJobId.value = null as any
+                hypothesisJobId.value = undefined
             }
             if (
                 !selectableJobs.value
                     .map(job => job.key)
                     .includes(referenceJobId.value)
             ) {
-                referenceJobId.value = null as any
+                referenceJobId.value = undefined
             }
             selectionsValid.value = true
         }

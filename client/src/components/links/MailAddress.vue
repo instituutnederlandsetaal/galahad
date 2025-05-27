@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-defineProps({
-    address: { type: String, default: "servicedesk@ivdnt.org" },
-})
+const { address = "servicedesk@ivdnt.org" } = defineProps<{
+    address: string
+}>()
 </script>

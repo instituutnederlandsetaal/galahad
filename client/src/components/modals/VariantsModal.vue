@@ -18,7 +18,7 @@
 
 import type { Distribution } from "@/types/evaluation"
 // Types & API
-import type { Field } from "@/types/table"
+import type { Field } from "@/types/ui/table"
 
 // Custom types
 type DistEntry = { variant: string; occurrences: number }
@@ -49,6 +49,6 @@ const items: DistEntry[] = computed(() => {
 </script>
 <style scoped lang="scss">
 :deep(.my-small) {
-    padding: 1em;
+    padding: 1rem;
 }
 </style>

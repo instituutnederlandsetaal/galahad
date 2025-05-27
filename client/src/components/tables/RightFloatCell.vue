@@ -13,7 +13,7 @@
 .flex {
     display: flex;
     align-items: center;
-    gap: 1em;
+    gap: 1rem;
 }
 
 .left {

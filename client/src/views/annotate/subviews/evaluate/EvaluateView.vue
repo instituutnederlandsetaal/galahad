@@ -4,35 +4,32 @@
 <template>
     <AnnotateTab>
         <!-- title-only card -->
-        <GCard :title="`Evaluate corpus ${corporaStore.activeCorpus?.name}`" helpSubject="evaluation">
+        <GCard :title="`Evaluate corpus ${corporaStore.activeCorpus?.name}`" helpLink="evaluation">
             <template #help>
-                <component :is="help.evaluate"></component>
+                <EvaluateHelp />
             </template>
-            <!-- Explicitly empty body-->
-            <template></template>
+
+            <!-- Choose hypothesis and reference -->
+            <form @submit.prevent class="form">
+                <JobSelect />
+                <JobSelect :isReference="true" />
+                <GCard title="Download as CSV">
+                    <i v-if="!jobSelection.hypothesisJobId || !jobSelection.referenceJobId">
+                        Select both layers first.
+                    </i>
+                    <DownloadButton v-else wide :loading="evaluation.loading" @click="evaluation.downloadCSV()" />
+                </GCard>
+            </form>
         </GCard>
-        <!-- Choose hypothesis and reference -->
-        <div style="display: flex; width: 100%; align-items: center; justify-content: center; flex-wrap: wrap">
-            <JobSelect />
-            <JobSelect :isReference="true" />
-            <GCard title="Download as CSV">
-                <i v-if="!jobSelection.hypothesisJobId || !jobSelection.referenceJobId">Select both layers first.</i>
-                <DownloadButton v-else wide @click="evaluation.downloadCSV()" :loading="evaluation.loading" />
-            </GCard>
-        </div>
 
         <!-- Table tabs -->
-        <GTabs
-            ref="tabs"
-            class="level-3"
-            :basePath="basePath"
-            :tabs="[
-                { id: 'distribution', title: 'Distribution' },
-                { id: 'global_metrics', title: 'Global Metrics' },
-                { id: 'grouped_metrics', title: 'Grouped Metrics' },
-                { id: 'confusion', title: 'Pos Confusion' },
-                { id: 'document_layer_comparison', title: 'Document View' },
-            ]">
+        <GTabs ref="tabs" class="level-3" :basePath :tabs="[
+            { id: 'distribution', title: 'Distribution' },
+            { id: 'global_metrics', title: 'Global Metrics' },
+            { id: 'grouped_metrics', title: 'Grouped Metrics' },
+            { id: 'confusion', title: 'Pos Confusion' },
+            { id: 'document_layer_comparison', title: 'Document View' },
+        ]">
         </GTabs>
     </AnnotateTab>
 </template>
@@ -40,18 +37,8 @@
 <script setup lang="ts">
 // Libraries & stores
 
-import stores, {
-    DistributionStore,
-    JobsStore,
-    MetricsStore,
-    EvaluationStore,
-    JobSelectionStore,
-    ConfusionStore,
-    CorporaStore,
-    DocumentsStore,
-} from "@/stores"
+import stores from "@/stores"
 
-import help from "@/components/help"
 import { SOURCE_LAYER } from "@/types/jobs"
 
 // Stores
@@ -85,7 +72,7 @@ function evaluationRequestHasChanged(): boolean {
  * Check whether the hypothesis has changed yourself.
  * @param reloadDistribution Whether to reload the distribution as well.
  */
-function reloadEvaluationData(reloadDistribution = false) {
+function reloadEvaluationData(reloadDistribution = false): void {
     if (!corporaStore.activeCorpus) return
     if (!jobSelection.selectionsValid) return
     const hypothesis = jobSelection.hypothesisJobId
@@ -179,3 +166,13 @@ watch(
     { immediate: true },
 )
 </script>
+
+<style scoped lang="scss">
+.form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+</style>

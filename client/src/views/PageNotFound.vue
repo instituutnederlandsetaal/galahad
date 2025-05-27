@@ -6,11 +6,3 @@
         </GInfo>
     </GCard>
 </template>
-
-<script setup lang="ts"></script>
-
-<style scoped lang="scss">
-.g-card {
-    overflow-y: auto;
-}
-</style>

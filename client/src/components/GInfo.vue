@@ -1,5 +1,5 @@
 <template>
-    <aside class="info" :class="classes">
+    <aside class="info" :class="{ error: error }">
         <GSpinner class="spinner" :error :still="!spinner" />
         <slot></slot>
         <template v-if="$slots.footer">
@@ -11,14 +11,10 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{
+const { error, spinner } = defineProps<{
     error?: boolean
     spinner?: boolean
 }>()
-
-const classes = computed(() => ({
-    error: props.error,
-}))
 </script>
 
 <style scoped lang="scss">

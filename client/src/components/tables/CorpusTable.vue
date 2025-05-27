@@ -1,6 +1,6 @@
 <template>
     <GTable title="Corpora" :columns :items="displayCorpora" :loading="corporaStore.loading" sortedByColumn="name"
-        :sortDesc="false" :selectable="selectable" v-model="selectedCorpus"
+        :sortDesc="false" :selectable v-model="selectedCorpus"
         v-if="displayCorpora.length > 0 || (type == TableCorporaType.User && !sharedWithYou)">
         <template #title>
             <slot name="title">
@@ -63,9 +63,8 @@
 import stores from "@/stores"
 // API & types
 import type { CorpusMetadata } from "@/types/corpora"
-import { type Field, TableCorporaType, TableData } from "@/types/table"
+import { type Field, TableCorporaType, TableData } from "@/types/ui/table"
 
-import help from "@/components/help"
 import { formatBytes, formatDate } from "@/ts/utils"
 
 // Stores

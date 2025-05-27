@@ -1,7 +1,7 @@
 <template>
     <table class="key-values">
         <tbody>
-            <tr v-for="key in keys" :key="key">
+            <tr v-for="key in keys" :key>
                 <td class="key">{{ key }}</td>
                 <td>
                     {{ data[key] }}
@@ -21,8 +21,9 @@ const keys = Object.keys(data)
 <style scoped lang="scss">
 .key-values {
     font-family: monospace;
+
     .key {
-        padding-right: 2em;
+        padding-right: 2rem;
     }
 }
 </style>

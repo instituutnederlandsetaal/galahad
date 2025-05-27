@@ -48,7 +48,7 @@ import versionYaml from "@/../version.yml"
 .logo {
     display: flex;
     flex-direction: row;
-    gap: 1em;
+    gap: 1rem;
     flex-wrap: wrap;
 
     img {

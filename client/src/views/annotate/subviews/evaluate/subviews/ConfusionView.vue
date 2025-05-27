@@ -1,39 +1,36 @@
 <template>
-    <div>
-        <GTable
-            title="Part-of-speech confusion"
-            helpSubject="evaluation"
-            :columns
-            :items="rows"
-            id="confusionTable"
-            :loading="loading"
-            sortedByColumn="referenceJob"
-            :sortDesc="false"
-            hoverRow>
+    <GCard>
+        <GTable title="Part-of-speech confusion" helpLink="evaluation" :columns :items="rows" id="confusionTable"
+            :loading sortedByColumn="referenceJob" :sortDesc="false" hoverRow>
             <template #help>
-                In part-of-speech confusion, an overview is given of the matches (in green) and mismatches per PoS when
-                comparing the tagging of the hypothesis layer with the reference layer. Click on any frequency below to
-                show a data sample.
-                <br /><br />
-                The category "MULTIPLE" contains combined tags like "ADP+NOU" or "VRB+PD+PD". These are shown in one
-                cell, but this does not mean that the taggers agree on the exact tags. Click on the cell or look at the
-                Global Metrics for more details.
-                <br /><br />
+                <p>
+                    In part-of-speech confusion, an overview is given of the matches (in green) and mismatches per PoS
+                    when
+                    comparing the tagging of the hypothesis layer with the reference layer. Click on any frequency below
+                    to
+                    show a data sample.
+                </p>
+                <p>
+                    The category "MULTIPLE" contains combined tags like "ADP+NOU" or "VRB+PD+PD". These are shown in one
+                    cell, but this does not mean that the taggers agree on the exact tags. Click on the cell or look at
+                    the
+                    Global Metrics for more details.
+                </p>
                 <DifferentTagsetsHelp />
             </template>
 
             <template #prepend>
-                <div class="table-controls">
+                <div class="table-controls" v-if="bothJobsSelected">
                     <div class="table-control">
-                        Annotation:
-                        <GInput type="select" :options="confusionableAnnotations" v-model="selectedAnnotation" />
+                        <label for="annotation-select">Annotation:</label>
+                        <GSelect id="annotation-select" :options="confusionableAnnotations"
+                            v-model="selectedAnnotation" />
                     </div>
                 </div>
             </template>
 
-            <template #table-empty-instruction
-                >Select a reference layer, a hypothesis layer and an annotation to generate a confusion table.</template
-            >
+            <template #table-empty-instruction>Select a reference layer, a hypothesis layer and an annotation to
+                generate a confusion table.</template>
 
             <!-- top left header -->
             <template #head-referenceJob>
@@ -56,17 +53,10 @@
             </template>
         </GTable>
 
-        <ComparisonModal
-            :show="showModal"
-            @hide="showModal = false"
-            :samples="samples"
-            :downloading
-            @download="(data) => download(data)"
-            :referenceJob="jobSelection.referenceJobId"
+        <ComparisonModal :show="showModal" @hide="showModal = false" :samples :downloading
+            @download="(data) => download(data)" :referenceJob="jobSelection.referenceJobId"
             :hypothesisJob="jobSelection.hypothesisJobId" />
-
-        <EvaluationInfoBox :eval="selectedConfusion" />
-    </div>
+    </GCard>
 </template>
 
 <script setup lang="ts">
@@ -78,7 +68,7 @@ import * as API from "@/api/evaluation"
 import * as Utils from "@/api/utils"
 import type { EvaluationEntry, TermComparison } from "@/types/evaluation"
 // API & types
-import type { Field } from "@/types/table"
+import type { Field } from "@/types/ui/table"
 
 // Stores
 const { loading, confusion } = storeToRefs(stores.useConfusion())
@@ -94,7 +84,7 @@ type Cell = { field: Field; item: Item; value: EvaluationEntry }
 const confusionableAnnotations = computed(() =>
     Object.keys(confusion.value || {}).map(key => ({ value: key, text: key })),
 )
-const selectedAnnotation = ref(null)
+const selectedAnnotation = ref()
 const downloading = ref(false)
 const modalData = ref({})
 const samples = ref({ title: "", samples: [] } as {
@@ -105,6 +95,9 @@ const showModal = ref(false)
 const selectedConfusion = computed(
     () => confusion?.value[selectedAnnotation.value] || { table: {} },
 )
+const bothJobsSelected = computed(() => {
+    return jobSelection.hypothesisJobId && jobSelection.referenceJobId
+})
 
 const columns = computed((): Field[] => {
     // add the entries

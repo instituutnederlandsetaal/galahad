@@ -1,10 +1,10 @@
 <template>
     <AnnotateTab hideAnnotationsError>
-        <GTable :title="`Jobs for corpus ${corporaStore.activeCorpus?.name}`" helpSubject="jobs" :columns
+        <GTable :title="`Jobs for corpus ${corporaStore.activeCorpus?.name}`" helpLink="jobs" :columns
             :items="displayJobs" :loading="jobsStore.loading" fill hoverRow sortedByColumn="id" :sortDesc="false"
             class="jobsview">
             <template #help>
-                <component :is="help.jobs"></component>
+                <JobsHelp />
             </template>
             <template #table-empty-instruction>
                 <p v-if="Object.keys(jobsStore.taggableJobs).length">No results for current filter settings</p>
@@ -36,7 +36,7 @@
 
             <!-- result summary cell -->
             <template #cell-resultSummary="d">
-                <!-- <span v-for="key in Object.keys(d.value)" :key="key"><span :key="key" v-if="d.value[key] > 0">{{ key }}: {{ d.value[key] }}, </span></span> -->
+                <!-- <span v-for="key in Object.keys(d.value)" :key><span :key v-if="d.value[key] > 0">{{ key }}: {{ d.value[key] }}, </span></span> -->
                 {{ d.value.tokens }}
             </template>
 
@@ -95,32 +95,6 @@
                         <MultiSelect v-model="requireType" :options="types" placeholder="Annotation"
                             :maxSelectedLabels="5" />
                     </div>
-
-                    <div class="table-control slider">
-                        Era range: {{ eraRange[0] }} &ndash; {{ eraRange[1] }}
-                        <!-- <vue-slider
-                            ref="slider"
-                            class="vue-slider"
-                            v-model="eraRange"
-                            :interval="50"
-                            :min="500"
-                            :max="2050"
-                            :min-range="1"
-                            lazy
-                            :marks="{
-                                '500': '500',
-                                '1000': '1000',
-                                '1500': '1500',
-                                '2000': '2000',
-                            }"
-                            piecewise
-                            :piecewise-filter="(x) => x.label % 250 === 0"
-                            piecewise-label
-                            process-dragable
-                            :tooltip-dir="['bottom', 'top']"
-                        >
-                        </vue-slider> -->
-                    </div>
                 </div>
 
                 <p>
@@ -132,7 +106,7 @@
         </GTable>
 
         <!-- job modal -->
-        <JobModal :show="!!jobId" v-if="jobId" :jobId="jobId" @hide="jobId = null" />
+        <JobModal :show="!!jobId" v-if="jobId" :jobId @hide="jobId = null" />
     </AnnotateTab>
 </template>
 
@@ -145,9 +119,8 @@ import stores from "@/stores"
 import { sort_tagger_annotations } from "@/stores/taggers"
 // API & types
 import { type Job, type Progress, SOURCE_LAYER } from "@/types/jobs"
-import type { Field } from "@/types/table"
+import type { Field } from "@/types/ui/table"
 
-import help from "@/components/help"
 import { formatDate } from "@/ts/utils"
 import MultiSelect from "primevue/multiselect"
 

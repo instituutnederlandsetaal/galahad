@@ -1,30 +1,27 @@
 <template>
-    <div>
-        <GInput type="select" :options="options" v-model="exportStore.format" />
-    </div>
+    <label for="format-select">Format:</label>
+    <GSelect id="format-select" v-model="exportStore.format" :options />
 </template>
 
 <script setup lang="ts">
-// Libraries & stores
 import stores from "@/stores"
-// API & types
 import { Format } from "@/types/documents"
+import type { SelectOption } from "@/types/ui/select"
 
 // Stores
 const exportStore = stores.useExport()
 const userStore = stores.useUser()
 
 // Fields
-const options = [
-    { value: Format.Conllu, text: "CoNLL-U (Universal Dependencies)" },
-    { value: Format.Folia, text: "FoLiA (Format for Linguistic Annotation)" },
-    { value: Format.Naf, text: "NAF (NLP Annotation Format) " },
-    { value: Format.Tei_p5, text: "TEI P5 (Text Encoding Initiative)" },
-    { value: Format.Tsv, text: "TSV (Tab-separated values)" },
+const options: SelectOption[] = [
+    { value: Format.CONLLU, text: "CoNLL-U (Universal Dependencies)" },
+    { value: Format.FOLIA, text: "FoLiA (Format for Linguistic Annotation)" },
+    { value: Format.NAF, text: "NAF (NLP Annotation Format) " },
+    { value: Format.TEI_P5, text: "TEI P5 (Text Encoding Initiative)" },
+    { value: Format.TSV, text: "TSV (Tab-separated values)" },
 ]
 // Admins can also export txt.
 if (userStore.user.isAdmin) {
-    // This exports the plain text, not the annotations.
-    options.push({ value: Format.Txt, text: "TXT (Plain text)" })
+    options.push({ value: Format.TXT, text: "TXT (Plain text)" })
 }
 </script>

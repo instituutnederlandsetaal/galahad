@@ -17,7 +17,7 @@ const useExport = defineStore("exportStore", () => {
 
     // Fields
     const loading = ref(false)
-    const format = ref(null as any as Format) // can we use this both as the export format as the 'import-to-blacklab' format?
+    const format = ref<Format>() // can we use this both as the export format as the 'import-to-blacklab' format?
     const linksAreValid = computed(() => {
         return (
             corporaStore.activeUUID !== null &&

@@ -72,7 +72,7 @@
 
         <!-- Errors for files that could not be parsed by the server (e.g. broken xml tags)-->
         <GInfo v-show="uploadErrorCount > 0" error>
-            <div v-for="(value, key) in uploading" :key="key">
+            <div v-for="(value, key) in uploading" :key>
                 <span v-if="value.status == 'error'">{{ value.message }}</span>
             </div>
         </GInfo>

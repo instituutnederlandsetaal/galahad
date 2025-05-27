@@ -5,16 +5,19 @@
     - https://vuejs.org/guide/typescript/composition-api.html -->
 
     <!-- Attribute order: v-for/v-if; id; ref/key; v-model; others...; @click/@etc. -->
-    <button v-if="visible" class="btn" @click="handleClick">Button</button>
+    <button v-if="visible" v-model="foo" class="btn" @click="handleClick">Button</button>
 </template>
 
 <script setup lang="ts">
 // -- libraries --
 // --- stores ---
 // --- api ---
+// --- views ---
 // --- types ---
+// --- model ---
+const model = defineModel<string>()
 // --- props ---
-const {foo = "bar"} = defineProps<{
+const { foo = "bar" } = defineProps<{
     foo?: string
 }>()
 // --- emits ---

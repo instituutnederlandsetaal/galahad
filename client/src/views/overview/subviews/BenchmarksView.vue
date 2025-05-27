@@ -1,14 +1,16 @@
 <template>
-    <GCard title="Benchmarks" helpSubject="benchmarks">
+    <GCard title="Benchmarks" helpLink="benchmarks">
         <template #help>
             <p>
                 Benchmarks show the performance of taggers on the default datasets. The accuracy scores are given for
-                lemma, PoS, and both.
-                <br />
-                For more details on the datasets, see the
-                <GNav :route="{ path: '/overview/datasets' }"> datasets overview </GNav>. <br />
-                <br />
-                <b>*</b>: when taggers use a different tagset than the reference tagset, the score can be very low.
+                lemma, PoS, and both. For more details on the datasets, see the
+                <GNav :route="{ path: '/overview/datasets' }">datasets overview</GNav>.
+            </p>
+            <p>
+                <i>
+                    <b>Note:</b>
+                    When taggers use a different tagset than the reference tagset, the score can be very low.
+                </i>
             </p>
         </template>
 
@@ -18,8 +20,7 @@
             <!-- tagger name -->
 
             <template #cell-tagger="d">
-                <ExternalLink
-                    v-if="d.item.tagger !== SOURCE_LAYER"
+                <ExternalLink v-if="d.item.tagger !== SOURCE_LAYER"
                     :href="`/galahad/overview/taggers#${d.item.tagger}`">
                     {{ d.item.tagger }}
                 </ExternalLink>
@@ -42,8 +43,8 @@
             <template #prepend>
                 <div class="table-controls">
                     <div class="table-control">
-                        Dataset:
-                        <GInput type="select" :options="datasetOptions" v-model="selectedDatasetUuid" />
+                        <label for="dataset-select">Dataset:</label>
+                        <GSelect id="dataset-select" :options="datasetOptions" v-model="selectedDatasetUuid" />
                     </div>
                 </div>
                 <MetricsFilter ref="metricsFilter" v-if="selectedDatasetUuid" :annotations="selectedAssay" />
@@ -55,11 +56,12 @@
 <script setup lang="ts">
 // Libraries & stores
 
+import type { SelectOption } from '@/types/ui/select';
 import stores from "@/stores"
 // API & Types
 import type { MetricTypeAssay } from "@/types/assays"
 import { SOURCE_LAYER } from "@/types/jobs"
-import type { TableData } from "@/types/table"
+import type { TableData } from "@/types/ui/table"
 
 // Types
 type AssayRow = {
@@ -75,12 +77,12 @@ const assaysStore = stores.useAssays()
 const corporaStore = stores.useCorpora()
 
 // Fields
-const datasetOptions = computed(() =>
+const datasetOptions = computed<SelectOption[]>(() =>
     corporaStore.datasetCorpora
         .map(d => ({ value: d.uuid, text: d.name }))
         .sort((a, b) => a.text.localeCompare(b.text)),
 )
-const selectedDatasetUuid = ref(null)
+const selectedDatasetUuid = ref<string>()
 const selectedDatasetName = computed(
     () =>
         corporaStore.datasetCorpora.find(

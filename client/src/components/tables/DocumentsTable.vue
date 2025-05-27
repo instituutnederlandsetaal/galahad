@@ -19,7 +19,7 @@
 
         <!-- name cell -->
         <template #cell-name="data">
-            <div style="max-height: 3em; line-break: anywhere; overflow: hidden; min-width: 80px">
+            <div style="max-height: 3rem; line-break: anywhere; overflow: hidden; min-width: 80px">
                 {{ data.value }}
             </div>
         </template>
@@ -48,7 +48,7 @@
 
         <!-- plain text preview cell -->
         <template #cell-preview="data">
-            <div style="min-width: 200px; max-height: 3em; overflow: hidden">
+            <div style="min-width: 200px; max-height: 3rem; overflow: hidden">
                 {{ data.value }}
             </div>
         </template>
@@ -98,7 +98,7 @@ import type { CorpusMetadata } from "@/types/corpora"
 import type { DocumentMetadata } from "@/types/documents"
 import type { LayerPreview } from "@/types/jobs"
 // API & types
-import { type Field, TableDocumentsType } from "@/types/table"
+import { type Field, TableDocumentsType } from "@/types/ui/table"
 
 // Stores
 const documentsStore = stores.useDocuments()

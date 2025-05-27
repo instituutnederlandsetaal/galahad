@@ -1,10 +1,7 @@
 <template>
-    <GCard title="Generating Linguistic Annotations for Historical Dutch">
-
-        <hr class="hr" />
-
+    <GCard>
+        <h1 class="h1">Generating Linguistic Annotations for Historical Dutch</h1>
         <article class="flex">
-
             <section class="left">
                 <p>
                     Historical texts are essential source material for both linguistic and digital humanities
@@ -39,23 +36,17 @@
                     <ExternalLink href="https://github.com/INL/galahad">GitHub</ExternalLink>.
                 </p>
             </section>
-
             <figure class="right">
                 <img src="@/assets/galahad-graal-klein.png"
                     title="Verbaasd laat Galahad de graal uit zijn handen vallen als hij ziet wat erin zit."
                     alt="Verbaasd laat Galahad de graal uit zijn handen vallen als hij ziet wat erin zit." />
                 <figcaption>
                     <i>
-                        &ldquo;Ende seget datmen daer doe wan
-                        <br />
-                        Galaadten, den goeden man,
-                        <br />
-                        ja Den besten riddre die wesen mochte
-                        <br />
-                        Ende die ten inde brochte
-                        <br />
-                        Nader historien tale
-                        <br />
+                        &ldquo;Ende seget datmen daer doe wan <br />
+                        Galaadten, den goeden man, <br />
+                        ja Den besten riddre die wesen mochte <br />
+                        Ende die ten inde brochte <br />
+                        Nader historien tale <br />
                         Davonturen vanden Grale,&rdquo;
                     </i>
                     <small>
@@ -70,7 +61,7 @@
 </template>
 
 <style scoped lang="scss">
-:deep(.h3) {
+h1 {
     font-size: 30px;
 }
 
@@ -107,7 +98,7 @@
 
         figcaption small {
             display: block;
-            margin-top: 0.8em;
+            margin-top: 0.8rem;
         }
     }
 }

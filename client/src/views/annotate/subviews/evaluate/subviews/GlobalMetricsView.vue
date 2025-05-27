@@ -1,27 +1,17 @@
 <template>
     <div>
-        <MetricsTable
-            title="Basic Global Metrics"
-            :loading
-            :columns
-            :items="basicItems"
-            @download="(data) => download(data)"
-            :downloading>
+        <MetricsTable title="Basic Global Metrics" :loading :columns :items="basicItems"
+            @download="(data) => download(data)" :downloading>
             <template #help>
-                In Global Metrics an overview is given of the (dis)agreement between the two layers that have been
-                selected for lemma and PoS comparison. By clicking on the percentage, a data sample is shown.
+                <p>
+                    In Global Metrics an overview is given of the (dis)agreement between the two layers that have been
+                    selected for lemma and PoS comparison. By clicking on the percentage, a data sample is shown.
+                </p>
             </template>
         </MetricsTable>
 
-        <MetricsTable
-            title="Extended Global Metrics"
-            :loading
-            :columns
-            :items="complexItems"
-            @download="(data) => download(data)"
-            :downloading />
-
-        <EvaluationInfoBox :eval="metrics" />
+        <MetricsTable title="Extended Global Metrics" :loading :columns :items="complexItems"
+            @download="(data) => download(data)" :downloading />
     </div>
 </template>
 

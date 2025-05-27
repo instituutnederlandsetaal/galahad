@@ -1,16 +1,13 @@
 <template>
     <div>
-        <MetricsTable
-            title="Grouped Metrics"
-            :loading
-            :columns
-            :items
-            @download="(data) => download(data)"
+        <MetricsTable title="Grouped Metrics" :loading :columns :items @download="(data) => download(data)"
             :downloading>
             <template #help>
-                In Grouped Metrics an overview is given of the (dis)agreement for lemma and PoS per part-of-speech. For
-                each PoS, different metrics are given by choosing the annotation and the grouping. By clicking on a
-                percentage, a data sample is shown.
+                <p>
+                    In Grouped Metrics an overview is given of the (dis)agreement for lemma and PoS per part-of-speech.
+                    For each PoS, different metrics are given by choosing the annotation and the grouping.
+                    By clicking on a percentage, a data sample is shown.
+                </p>
             </template>
             <template #prepend v-if="metrics.metrics != null">
                 <p style="text-align: center">
@@ -19,8 +16,6 @@
                 <MetricsFilter ref="metricsFilter" :annotations="metrics.metrics" />
             </template>
         </MetricsTable>
-
-        <EvaluationInfoBox :eval="metrics" />
     </div>
 </template>
 

@@ -1,13 +1,14 @@
 <template>
     <AnnotateTab hideDocsError hideAnnotationsError>
-        <template #title>Documents</template>
-        <template #help>
-            <slot name="help">
-                <component :is="help.documents"></component>
-            </slot>
-        </template>
-        <UploadDocuments v-if="userStore.hasWriteAccess" />
-        <DocumentsTable headless :type="TableDocumentsType.User" :corpus="corporaStore.activeCorpus" />
+        <GCard title="Documents" :helpLink="{ href: '/galahad/help/formats', subject: 'formats' }">
+            <template #help>
+                <slot name="help">
+                    <DocumentsHelp />
+                </slot>
+            </template>
+            <UploadDocuments v-if="userStore.hasWriteAccess" />
+            <DocumentsTable headless :type="TableDocumentsType.User" :corpus="corporaStore.activeCorpus" />
+        </GCard>
     </AnnotateTab>
 </template>
 
@@ -15,9 +16,7 @@
 // Libraries & stores
 import stores from "@/stores"
 // API & types
-import { TableDocumentsType } from "@/types/table"
-
-import help from "@/components/help"
+import { TableDocumentsType } from "@/types/ui/table"
 
 // --- computed ---
 const title = computed<string>(() => {

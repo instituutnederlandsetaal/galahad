@@ -30,19 +30,21 @@ defineEmits<{
 
 <style scoped lang="scss">
 button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     background-color: var(--int-theme);
     font-size: inherit;
     font-family: inherit;
     padding: 10px;
-    font-size: 1em;
+    font-size: 1rem;
     border: none;
     word-break: keep-all;
     white-space: nowrap;
     width: max-content;
     margin: 0px 2px;
     cursor: pointer;
-    line-height: 1.2em;
-    display: inline-flex;
+    line-height: 1.2rem;
     gap: 5px;
 
     // Align holy grail.

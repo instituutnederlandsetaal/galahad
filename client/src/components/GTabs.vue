@@ -6,7 +6,7 @@
                 <slot name="banner"></slot>
             </template>
             <nav class="nav">
-                <div v-for="tab in tabs" :key="tab.id">
+                <template v-for="tab in tabs" :key="tab.id">
                     <a v-if="!tab.disabled && !tab.stub" :href="urlForTab(tab.id)"
                         :class="'textcolor ' + navLinkClass(tab.id)" @click.prevent="navigateTo(tab.id)">
                         <slot :name="`${tab.id}-title`" :isActive="currentTab == tab.id">{{ tab.title || tab.id }}
@@ -15,7 +15,7 @@
                     <span :class="`nav-link ${tab.disabled ? 'disabled' : ''}`" v-else>
                         <slot :name="`${tab.id}-title`">{{ tab.title || tab.id }}</slot>
                     </span>
-                </div>
+                </template>
             </nav>
         </header>
 
@@ -110,7 +110,6 @@ function urlForTab(tabId: string) {
 
         .nav {
             display: inline-flex;
-            flex-wrap: wrap;
             line-height: 45px;
             background-color: var(--int-theme);
 
@@ -168,6 +167,10 @@ function urlForTab(tabId: string) {
             border: var(--int-light-grey) 1px solid;
         }
     }
+
+    &.level-3 {
+        flex: 1;
+    }
 }
 
 @media (max-width: 730px) {
@@ -178,59 +181,4 @@ function urlForTab(tabId: string) {
         }
     }
 }
-
-
-// // Header nav for all tabs
-
-
-// // tabs level 1
-// .tabs.level-1 {
-//     display: flex;
-//     flex-direction: column;
-//     height: 100%;
-
-//     > .header {
-//         background-color: var(--int-theme);
-//         z-index: 1;
-//         top: 0;
-//         box-shadow: 0px 4px 5px 1px #ccc;
-
-//         .top {
-//             height: 70px;
-//         }
-
-//         .nav {
-//             line-height: 52px;
-//             font-size: 18px;
-//         }
-//     }
-// }
-
-// /* It's nice to read with a bit more space at the bottom*/
-// :deep(.tabs.level-2) > .content {
-//     padding-bottom: 2em !important;
-// }
-
-// .tabs.level-2,
-// .tabs.level-3 {
-//     .content {
-//         background-color: white;
-//         border: var(--int-light-grey) 1px solid;
-//     }
-
-//     .nav {
-//         border-top: var(--int-light-grey) 1px solid;
-//         border-left: var(--int-light-grey) 1px solid;
-//         border-right: var(--int-light-grey) 1px solid;
-//     }
-// }
-
-// .tabs.level-2 {
-//     display: flex;
-//     flex-direction: column;
-
-//     .content {
-//         overflow-y: auto;
-//     }
-// }
 </style>

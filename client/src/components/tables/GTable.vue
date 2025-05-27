@@ -1,5 +1,5 @@
 <template>
-    <GCard :title :helpSubject>
+    <GCard :title :helpLink>
         <template v-if="$slots.title" #title>
             <slot name="title"></slot>
         </template>
@@ -26,9 +26,9 @@
 
                             <div style="white-space: pre-line">
                                 <!-- specific head -->
-                                <slot :name="'head-' + field.key" :field="field">
+                                <slot :name="'head-' + field.key" :field>
                                     <!-- generic head -->
-                                    <slot name="head" :field="field">{{ field.label || field.key }}</slot>
+                                    <slot name="head" :field>{{ field.label || field.key }}</slot>
                                 </slot>
                             </div>
 
@@ -53,11 +53,10 @@
                             <td v-for="field in visibleFields" :key="field.key"
                                 :style="`text-align: ${field.textAlign || 'center'};`">
                                 <!-- specific cell rendering -->
-                                <slot :name="'cell-' + field.key" :field="_field(field)" :item="item"
+                                <slot :name="'cell-' + field.key" :field="_field(field)" :item
                                     :value="item[field.key] || ''">
                                     <!-- generic cell rendering -->
-                                    <slot name="cell" :field="_field(field)" :item="item"
-                                        :value="item[field.key] || ''">
+                                    <slot name="cell" :field="_field(field)" :item :value="item[field.key] || ''">
                                         {{ item[field.key] }}</slot>
                                 </slot>
                             </td>
@@ -65,7 +64,7 @@
                         <!-- details -->
                         <tr :key="'_details' + i" v-if="item._showDetails" class="details">
                             <td :colspan="visibleFields.length">
-                                <slot name="_details" :item="item"></slot>
+                                <slot name="_details" :item></slot>
                             </td>
                         </tr>
                     </template>
@@ -96,14 +95,15 @@
 </template>
 
 <script setup lang="ts">
-import type { Field } from "@/types/table"
+import type { Field } from "@/types/ui/table"
+import type { HelpLink } from "@/components/help";
 
 type Item = { [key: string]: unknown }
 
 // --- props ---
 const {
     title,
-    helpSubject,
+    helpLink,
     loading,
     displayOnEmpty,
     columns,
@@ -114,7 +114,7 @@ const {
     items,
 } = defineProps<{
     title?: string
-    helpSubject?: string
+    helpLink?: HelpLink | string
     loading: boolean
     displayOnEmpty?: boolean
     columns: Field[]
@@ -363,8 +363,8 @@ table {
     padding: 0;
 
     caption {
-        font-size: 1.5em;
-        margin: 0.5em 0 0.75em;
+        font-size: 1.5rem;
+        margin: 0.5rem 0 0.75rem;
     }
 
     tr {
@@ -386,15 +386,15 @@ table {
     }
 
     th {
-        padding: 0.6em;
+        padding: 0.6rem;
         text-align: center;
-        font-size: 0.85em;
-        letter-spacing: 0.1em;
+        font-size: 0.85rem;
+        letter-spacing: 0.1rem;
         text-transform: uppercase;
     }
 
     td {
-        padding: 0.5em;
+        padding: 0.5rem;
         text-align: center;
         min-width: 60px;
     }
@@ -406,7 +406,7 @@ table.compact {
 
     td,
     th {
-        padding: 0.1em 2em;
+        padding: 0.1rem 2rem;
     }
 
     margin: 0 auto;

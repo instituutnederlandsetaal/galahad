@@ -8,14 +8,14 @@
 
         <p v-if="loading">Loading...</p>
 
-        <div class="table-controls">
+        <div class="table-controls" v-if="bothJobsSelected">
             <div class="table-control">
-                Document:
-                <GInput type="select" :options="docNames" v-model="selectedDoc" />
+                <label for="document-select">Document:</label>
+                <GSelect id="document-select" :options="docNames" v-model="selectedDoc" />
             </div>
-            <div class="table-control">
-                Annotation:
-                <GInput type="select" :options="annotationOptions" v-model="selectedAnnotation" />
+            <div v-if="annotationOptions" class="table-control">
+                <label for="annotation-select">Annotation:</label>
+                <GSelect id="annotation-select" :options="annotationOptions" v-model="selectedAnnotation" />
             </div>
         </div>
 
@@ -30,13 +30,10 @@
                 <br v-if="tc.refTerm.annotations['token'] == '.'" />
             </template>
 
-            <Paginator
-                v-if="termcomps.length > rowsToDisplay"
-                v-model:first="firstRecord"
-                :rows="rowsToDisplay"
+            <Paginator v-if="termcomps.length > rowsToDisplay" v-model:first="firstRecord" :rows="rowsToDisplay"
                 :totalRecords="termcomps.length"></Paginator>
         </div>
-        <p v-else>Select a document and an annotation.</p>
+        <p v-else>Select a reference layer, a hypothesis layer. Then, select a document and an annotation.</p>
     </GCard>
 </template>
 
@@ -47,6 +44,7 @@ import * as API from "@/api/evaluation"
 import stores from "@/stores"
 // Types & Stores
 import type { Term, TermComparison } from "@/types/evaluation"
+import type { SelectOption } from "@/types/ui/select"
 
 import Paginator from "primevue/paginator"
 
@@ -56,17 +54,20 @@ const corporaStore = stores.useCorpora()
 const jobSelection = stores.useJobSelection()
 
 // Fields
-const docNames = computed(() =>
+const docNames = computed<SelectOption[]>(() =>
     documentsStore.available.map(doc => ({ value: doc.name, text: doc.name })),
 )
-const selectedDoc = ref(null)
-const selectedAnnotation: Ref<string> = ref(null as any as string)
-const annotationOptions = ref(null)
+const selectedDoc = ref<string>()
+const selectedAnnotation = ref<string>()
+const annotationOptions = ref<SelectOption[]>()
 const termcomps = ref<TermComparison[]>(null)
 const loading = ref(false)
 /** Paginator */
 const firstRecord = ref(0)
 const rowsToDisplay = ref(200)
+const bothJobsSelected = computed(() => {
+    return jobSelection.hypothesisJobId && jobSelection.referenceJobId
+})
 
 // Watches & mounts
 watch(selectedDoc, async newVal => {

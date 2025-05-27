@@ -11,8 +11,8 @@
             </hgroup>
             <GInfo v-if="expand && $slots.help">
                 <slot name="help"></slot>
-                <template v-if="helpSubject" #footer>
-                    <HelpLink :subject="helpSubject" />
+                <template v-if="helpLink" #footer>
+                    <HelpLink :helpLink />
                 </template>
             </GInfo>
         </header>
@@ -26,9 +26,11 @@
 </template>
 
 <script setup lang="ts">
+import type { HelpLink } from '@/types/ui/help';
+
 // --- props ---
-const { helpSubject, title } = defineProps<{
-    helpSubject?: string
+const { helpLink, title } = defineProps<{
+    helpLink?: HelpLink | string
     title?: string
     article?: boolean
 }>()
@@ -38,19 +40,24 @@ const expand = ref(false)
 </script>
 
 <style scoped lang="scss">
+.view>.g-card,
+.view.g-card,
+.modal .g-card {
+    padding: 1rem;
+}
+
+.view.g-card>.content,
+{
+flex: 1;
+}
+
 .g-card {
     background-color: var(--white);
-    padding: 1em;
-    min-width: 250px;
     max-width: 100%;
     display: flex;
     flex-direction: column;
     gap: 1rem;
-
-    .g-card {
-        // Don't double up on padding
-        padding: 0;
-    }
+    align-items: stretch !important;
 
     .header {
         display: flex;
@@ -59,21 +66,17 @@ const expand = ref(false)
         align-items: center;
 
         .title {
-            text-align: center;
-
-            .h3 {
-                display: inline-block;
-            }
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
 
             .help-btn.plain {
                 border: 1px solid var(--int-grey);
-                padding: 0 0.6em;
-                font-size: 1.5em;
-                cursor: help;
-                width: 28px;
-                justify-content: center;
                 font-weight: bold;
-                margin-left: 0.5em;
+                cursor: help;
+                font-size: 1.5rem;
+                width: 2rem;
+                height: 2rem;
             }
         }
     }
@@ -81,10 +84,10 @@ const expand = ref(false)
     .content {
         display: flex;
         flex-direction: column;
-        align-items: center;
+        align-items: safe center;
         gap: 1rem;
         max-width: 100%;
-        overflow: scroll;
+        overflow-x: auto;
 
         &.article {
             max-width: 800px;
@@ -92,7 +95,7 @@ const expand = ref(false)
             align-self: center;
 
             :deep(h1) {
-                font-size: 2em;
+                font-size: 2rem;
             }
         }
     }

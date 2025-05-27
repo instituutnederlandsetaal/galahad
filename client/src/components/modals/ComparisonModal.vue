@@ -1,30 +1,28 @@
 <!-- A modal used by PoS confusion & metrics. -->
 <template>
-    <GModal :show="show" @hide="$emit('hide')" :title="title">
+    <GModal :show @hide="$emit('hide')" :title>
         <template #help>
-            Here you can see a sample of how a token was tagged by <i>{{ hypothesisJob }}</i> and
-            <i>{{ referenceJob }}</i
-            >. The samples are a random selection of all tokens in this category.
+            <p>
+                Here you can see a sample of how a token was tagged by <i>{{ hypothesisJob }}</i> and
+                <i>{{ referenceJob }}</i>. The samples are a random selection of all tokens in this category.
+            </p>
         </template>
 
         <p>Columns to display:</p>
-        <div class="columnSelector">
-            <GInput
-                type="checkbox"
-                v-for="annotation in annotations"
-                :key="annotation"
+        <form @submit.prevent class="columnSelector">
+            <GInput type="checkbox" v-for="annotation in annotations" :key="annotation"
                 v-model="visibleColumns[annotation]">
                 {{ annotation }}
             </GInput>
-        </div>
+        </form>
 
-        <GTable :columns="filteredColumns" :items="items" headless>
+        <GTable :columns="filteredColumns" :items headless>
             <template #head="data">{{ data.field.label || data.field.key }}</template>
             <template #cell="data">{{ data.value }}</template>
         </GTable>
         <!--Download-->
         <p>Download all samples for this category.</p>
-        <DownloadButton wide @click="$emit('download')" :loading="downloading" />
+        <DownloadButton wide :loading="downloading" @click="$emit('download')" />
     </GModal>
 </template>
 
@@ -147,7 +145,7 @@ p {
 }
 
 .fa-download {
-    padding: 0 1em;
+    padding: 0 1rem;
 }
 
 .columnSelector {

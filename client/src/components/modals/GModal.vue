@@ -1,6 +1,7 @@
 <template>
     <!-- v-if instead of v-show such that elements inside a GModal can rely on onMounted()-->
-    <div v-if="show" ref="modal" class="modal" tabindex="0" @click.self="$emit('hide')" @keyup.esc="$emit('hide')">
+    <dialog v-if="show" ref="modal" class="modal view" tabindex="0" @click.self="$emit('hide')"
+        @keyup.esc="$emit('hide')">
         <GCard class="content" :class="{ small: small }" :title>
             <template v-if="$slots.title" #title>
                 <slot name="title"></slot>
@@ -14,7 +15,7 @@
             <GButton red @click="$emit('hide')">Close</GButton>
             <slot name="buttons"></slot>
         </form>
-    </div>
+    </dialog>
 </template>
 
 <script setup lang="ts">
@@ -61,10 +62,8 @@ onMounted(() => {
     padding: 1rem;
 
     .content {
-        overflow: auto;
         border: 1px solid var(--int-light-grey);
         width: 100%;
-        padding: 2rem;
 
         &.small {
             width: fit-content;
@@ -81,8 +80,8 @@ onMounted(() => {
 @media (max-width: 800px) or (max-height: 700px) {
     .modal {
         padding: 0;
-        padding-bottom: 0.5em; // Override for bottom button
-        gap: 0.5em;
+        padding-bottom: 0.5rem; // Override for bottom button
+        gap: 0.5rem;
     }
 }
 </style>

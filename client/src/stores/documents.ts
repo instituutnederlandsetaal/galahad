@@ -201,8 +201,8 @@ const documents = defineStore("documents", () => {
         return available.value.some(i => {
             // Overwrite the format for legacy formats.
             let otherFormat = i.format
-            if (otherFormat === Format.Tei_p5_legacy) {
-                otherFormat = Format.Tei_p5
+            if (otherFormat === Format.TEI_P5_LEGACY) {
+                otherFormat = Format.TEI_P5
             }
             return otherFormat === format
         })

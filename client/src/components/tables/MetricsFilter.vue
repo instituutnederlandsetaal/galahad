@@ -1,18 +1,18 @@
 <template>
     <div class="table-controls">
         <div class="table-control">
-            Annotation:
-            <GInput type="select" :options="metricOptions" v-model="selectedMetric" />
+            <label for="metric-select">Annotation:</label>
+            <GSelect id="metric-select" :options="metricOptions" v-model="selectedMetric" />
         </div>
 
         <div class="table-control">
-            Group by:
-            <GInput type="select" :options="groupOptions" v-model="selectedGroup" />
+            <label for="group-select">Group by:</label>
+            <GSelect id="group-select" :options="groupOptions" v-model="selectedGroup" />
         </div>
 
         <div class="table-control" v-if="selectedMetric == selectedGroup">
-            Single/multiple analysis:
-            <GInput type="select" :options="singleOrMultipleOptions" v-model="selectedSingleOrMultiple" />
+            <label for="analysis-select">Single/multiple analysis:</label>
+            <GSelect id="analysis-select" :options="singleOrMultipleOptions" v-model="selectedSingleOrMultiple" />
         </div>
     </div>
 </template>

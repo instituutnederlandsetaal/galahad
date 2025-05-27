@@ -1,6 +1,6 @@
 <!-- create or update a corpus -->
 <template>
-    <GModal :title="title" :show="show" @hide="$emit('hide')">
+    <GModal :title :show @hide="$emit('hide')">
         <template #help>
             <slot name="help"></slot>
         </template>
@@ -86,13 +86,13 @@
                     </td>
                 </tr>
 
-                <UserList :users="collaborators" listName="Collaborators" :showAddDialog="showAddDialog" />
+                <UserList :users="collaborators" listName="Collaborators" :showAddDialog />
             </template>
-            <UserList :users="viewers" listName="Viewers" :showAddDialog="showAddDialog" />
+            <UserList :users="viewers" listName="Viewers" :showAddDialog />
         </table>
 
         <template #buttons>
-            <GButton green @click="doAction" :disabled="disabled">{{ update ? "Update" : "Create" }}</GButton>
+            <GButton green @click="doAction" :disabled>{{ update ? "Update" : "Create" }}</GButton>
         </template>
     </GModal>
 </template>

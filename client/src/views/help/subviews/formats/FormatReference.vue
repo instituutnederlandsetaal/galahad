@@ -1,7 +1,7 @@
 <template>
     <div>
         <h4>Reference:</h4>
-        <ExternalLink :href="href">
+        <ExternalLink :href>
             <slot></slot>
         </ExternalLink>
     </div>

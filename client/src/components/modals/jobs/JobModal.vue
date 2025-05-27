@@ -1,5 +1,5 @@
 <template>
-    <GModal :show="show" :title="`Tag job ${job.tagger.id}`" @hide="$emit('hide')">
+    <GModal :show :title="`Tag job ${job.tagger.id}`" @hide="$emit('hide')">
         <template #help>
             <p>
                 Here you can start a job to tag the documents in your corpus.

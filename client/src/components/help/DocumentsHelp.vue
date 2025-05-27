@@ -1,7 +1,7 @@
 <template>
     <h2>Step 2: Documents</h2>
-    Upload documents to a corpus.
-    <p>The platform accepts the following formats:</p>
+    <p>Upload documents to a corpus. Documents can be previewed, downloaded or deleted. The platform accepts the
+        following formats:</p>
     <ul>
         <li>(Text-like formats) Plain text, Tab separated Values (TSV), CoNLL-U</li>
         <li>
@@ -18,24 +18,4 @@
         </li>
         <li>After uploading, your documents are shown below.</li>
     </ol>
-    Individual documents can be previewed, downloaded or deleted.
-    <GNav v-if="showLink" :route="{ path: '/annotate/documents' }"> Go to <i>Annotate &gt; Documents</i> </GNav>
-
-    <!-- Mimic <HelpLink/>. HelpLin always points to help/general, but formats is a separate page. -->
-    <template v-if="!showLink">
-        <div style="text-align: center; margin-top: 1em">
-            <a href="/galahad/help/formats" target="_blank" rel="noopener noreferrer"> read more on formats </a>
-        </div>
-    </template>
 </template>
-<script setup lang="ts">
-defineProps({
-    showLink: Boolean,
-})
-</script>
-
-<style scoped lang="scss">
-a:visited {
-    color: black;
-}
-</style>
