@@ -1,12 +1,11 @@
 <template>
     <!-- with clear button-->
     <fieldset class="clear" v-if="clearBtn">
-        <input v-model="model" :type :placeholder :list ref="inputElement" @keyup.enter="$emit('enter')" />
-        <input type="reset" value="&#10006;" :disabled="model === null || model.length == 0" title="Clear"
-            @click="model = ''" />
+        <input v-model="model" :type :placeholder :list ref="inputElement" />
+        <input type="reset" value="&#10006;" :disabled="model?.length == 0" title="Clear" @click="model = ''" />
     </fieldset>
     <!-- without clear button -->
-    <input v-else v-model="model" :type :placeholder :list ref="inputElement" @keyup.enter="$emit('enter')" />
+    <input v-else v-model="model" :type :placeholder :list ref="inputElement" />
     <GValidator v-if="validator && validityDescriptor" :model :validator :validityDescriptor />
 </template>
 

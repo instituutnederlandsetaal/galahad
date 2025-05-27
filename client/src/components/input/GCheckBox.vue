@@ -27,6 +27,7 @@ function check(): void {
     -ms-user-select: none;
     user-select: none;
     width: fit-content;
+    white-space: nowrap;
 
     /* Hide the browser's default checkbox */
     .checkbox {

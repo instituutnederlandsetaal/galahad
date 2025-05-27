@@ -1,7 +1,7 @@
 <template>
     <GTable class="termCompTable" :items :columns headless>
         <template #cell="data: Cell">
-            <div :class="{ incorrect: !itemEqual(data) }" style="padding: 0.5rem">
+            <div :class="{ incorrect: !itemEqual(data) }">
                 {{ data.value }}
             </div>
         </template>

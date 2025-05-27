@@ -10,7 +10,7 @@
                 </p>
             </template>
             <template #prepend v-if="metrics.metrics != null">
-                <p style="text-align: center">
+                <p>
                     <b> Only the 100 most frequent groups are shown. </b>
                 </p>
                 <MetricsFilter ref="metricsFilter" :annotations="metrics.metrics" />

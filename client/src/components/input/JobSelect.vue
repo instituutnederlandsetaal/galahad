@@ -35,7 +35,23 @@ const props = defineProps({
 const title = computed<string>(
     () => props.customTitle ?? (props.isReference ? "Reference" : "Hypothesis"),
 )
-const selectedJob = ref<string>()
+const selectedJob = computed({
+    // getter
+    get() {
+        return props.isReference ? jobSelectionStore.referenceJobId : jobSelectionStore.hypothesisJobId
+    },
+    // setter
+    set(newValue) {
+        // Note: we are using destructuring assignment syntax here.
+        if (props.isReference) {
+            jobSelectionStore.referenceJobId = newValue
+        } else {
+            jobSelectionStore.hypothesisJobId = newValue
+        }
+    }
+})
+
+
 // Whether there are documents that have not been tagged yet.
 // Not relevant for source layer.
 const untaggedDocsExist = computed(() => {
@@ -55,27 +71,4 @@ const sourceLayerHasMissingAnnotations = computed(() => {
     if (job.tagger.id !== SOURCE_LAYER) return false
     return job.progress.finished !== documentsStore.numSourceAnnotations
 })
-
-// Watches & mounts
-// watch both referenceJobId and hypothesisJobId
-watch(
-    () => [jobSelectionStore.referenceJobId, jobSelectionStore.hypothesisJobId],
-    () => {
-        if (props.isReference)
-            selectedJob.value = jobSelectionStore.referenceJobId
-        else selectedJob.value = jobSelectionStore.hypothesisJobId
-    },
-    { immediate: true },
-)
-// reverse
-watch(
-    selectedJob,
-    () => {
-        if (!selectedJob.value) return
-        if (props.isReference)
-            jobSelectionStore.referenceJobId = selectedJob.value
-        else jobSelectionStore.hypothesisJobId = selectedJob.value
-    },
-    { immediate: true },
-)
 </script>

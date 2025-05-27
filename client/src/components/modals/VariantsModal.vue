@@ -1,5 +1,5 @@
 <template>
-    <GModal small :show @hide="$emit('hide')">
+    <GModal :show @hide="$emit('hide')">
         <template #title>
             Types of lemma <i>{{ variantsToDisplay?.lemma }}</i> and part-of-speech
             <i>{{ variantsToDisplay?.pos }}</i>

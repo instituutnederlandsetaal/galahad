@@ -44,8 +44,8 @@
                     </p>
                 </GInfo>
 
-                <GInfo v-if="hasTeiP5Legacy && shouldMerge" style="max-width: 850px">
-                    <h4 style="margin-top: 0">Special notice for <b>TEI P5 legacy</b></h4>
+                <GInfo v-if="hasTeiP5Legacy && shouldMerge">
+                    <h4>Special notice for <b>TEI P5 legacy</b></h4>
                     <TeiP5LegacyWarning />
                 </GInfo>
             </template>

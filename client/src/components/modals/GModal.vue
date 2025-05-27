@@ -2,7 +2,7 @@
     <!-- v-if instead of v-show such that elements inside a GModal can rely on onMounted()-->
     <dialog v-if="show" ref="modal" class="modal view" tabindex="0" @click.self="$emit('hide')"
         @keyup.esc="$emit('hide')">
-        <GCard class="content" :class="{ small: small }" :title>
+        <GCard class="content" :title>
             <template v-if="$slots.title" #title>
                 <slot name="title"></slot>
             </template>
@@ -22,11 +22,9 @@
 const {
     show,
     title,
-    small = true,
 } = defineProps<{
     show: boolean
     title?: string
-    small?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -63,11 +61,7 @@ onMounted(() => {
 
     .content {
         border: 1px solid var(--int-light-grey);
-        width: 100%;
-
-        &.small {
-            width: fit-content;
-        }
+        width: fit-content;
     }
 
     .buttons {

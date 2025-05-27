@@ -1,5 +1,5 @@
 <template>
-    <GModal small title="Are you sure?" :show @hide="$emit('hide')">
+    <GModal title="Are you sure?" :show @hide="$emit('hide')">
         <p>
             You will <slot name="action">delete</slot> <b>{{ displayname }}</b>. This can not be undone.
         </p>

@@ -8,6 +8,7 @@ import type {
     MutableCorpusMetadata,
     UUID,
 } from "@/types/corpora"
+import { useRouteQuery } from "@vueuse/router"
 
 /**
  * Contains all corpora for which the user has read access.
@@ -19,7 +20,7 @@ const useCorpora = defineStore("corpora", () => {
 
     // Fields
     const loading = ref(false)
-    const activeUUID = ref(null as unknown as UUID) // has to be null for <select> to show its default value
+    const activeUUID = useRouteQuery("corpus") // has to be null for <select> to show its default value
     const allCorpora = ref([] as CorpusMetadata[])
     const datasetCorpora = computed((): CorpusMetadata[] =>
         allCorpora.value.filter(i => i.dataset),

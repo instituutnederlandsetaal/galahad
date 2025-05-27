@@ -83,7 +83,7 @@
 
                     <div class="table-control">
                         Tagset, any of:
-                        <div v-for="tagset in tagsets" :key="tagset" style="white-space: nowrap">
+                        <div v-for="tagset in tagsets" :key="tagset">
                             <GCheckBox v-model="includeTagset[tagset]">
                                 {{ tagset || "Unknown" }}
                             </GCheckBox>

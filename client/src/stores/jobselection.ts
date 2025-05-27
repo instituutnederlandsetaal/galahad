@@ -3,6 +3,8 @@
 import stores from "@/stores"
 import { type Job, SOURCE_LAYER } from "@/types/jobs"
 import type { SelectOption } from "@/types/ui/select"
+import { useRouteQuery } from "@vueuse/router"
+
 
 /**
  * Stores the current job selection from the <select>. Used in Evaluation & Export.
@@ -14,8 +16,8 @@ const useJobSelection = defineStore("jobSelection", () => {
     const documentsStore = stores.useDocuments()
 
     // Fields
-    const hypothesisJobId = ref<string>()
-    const referenceJobId = ref<string>()
+    const hypothesisJobId = useRouteQuery("hypothesis")
+    const referenceJobId = useRouteQuery("reference")
     // Set to true once we know the jobs exist in selectableJobs.
     // (which requires waiting on jobs & docs to load)
     const selectionsValid = ref(false)
@@ -62,7 +64,7 @@ const useJobSelection = defineStore("jobSelection", () => {
             : undefined
     })
 
-    // Watches
+    // // Watches
     watch(
         () => corporaStore.activeUUID,
         (newValue, oldValue) => {
@@ -72,10 +74,10 @@ const useJobSelection = defineStore("jobSelection", () => {
             }
         },
     )
-    /** Remove invalid job selections on loading jobs & loading docs (the latter for sourceLayer annotations).*/
-    watch([() => jobsStore.loading, () => documentsStore.loading], () => {
-        validateJobSelections()
-    })
+    // /** Remove invalid job selections on loading jobs & loading docs (the latter for sourceLayer annotations).*/
+    // watch([() => jobsStore.loading, () => documentsStore.loading], () => {
+    //     validateJobSelections()
+    // })
 
     // Methods
     /** Remove any invalid job selections, either non-existing names or jobs that have no layer  */

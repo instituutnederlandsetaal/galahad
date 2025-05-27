@@ -77,7 +77,7 @@
 
     <!-- preview modal -->
     <GModal :show="previewDocument != null" @hide="previewDocument = null"
-        :title="`Preview of document ${previewDocument?.name}`" style="text-align: center">
+        :title="`Preview of document ${previewDocument?.name}`">
         <template #title>Source layer preview of document {{ previewDocument?.name }}</template>
         <template #help> Here you can inspect a small part of the source layer of the document. </template>
         <LayerViewer :layer="previewDocument?.layerPreview" />

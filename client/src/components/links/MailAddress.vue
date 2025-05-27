@@ -6,6 +6,6 @@
 
 <script setup lang="ts">
 const { address = "servicedesk@ivdnt.org" } = defineProps<{
-    address: string
+    address?: string
 }>()
 </script>
