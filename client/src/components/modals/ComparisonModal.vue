@@ -10,10 +10,9 @@
 
         <p>Columns to display:</p>
         <form @submit.prevent class="columnSelector">
-            <GInput type="checkbox" v-for="annotation in annotations" :key="annotation"
-                v-model="visibleColumns[annotation]">
+            <GCheckBox v-for="annotation in annotations" :key="annotation" v-model="visibleColumns[annotation]">
                 {{ annotation }}
-            </GInput>
+            </GCheckBox>
         </form>
 
         <GTable :columns="filteredColumns" :items headless>

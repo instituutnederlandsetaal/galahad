@@ -10,13 +10,13 @@
 
                 <FileFormatInput />
 
-                <GInput type="checkbox" v-model="posHeadOnly">
+                <GCheckBox v-model="posHeadOnly">
                     Export part of speech without features
-                </GInput>
+                </GCheckBox>
 
-                <GInput type="checkbox" v-if="showMergeOption" v-model="shouldMerge">
+                <GCheckBox v-if="showMergeOption" v-model="shouldMerge">
                     Merge encoding
-                </GInput>
+                </GCheckBox>
 
                 <DownloadButton class="download" wide :disabled="exportStore.loading || !exportStore.linksAreValid"
                     @click="exportStore.convert(shouldMerge, posHeadOnly)" />

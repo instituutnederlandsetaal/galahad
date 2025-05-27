@@ -6,9 +6,9 @@
 
 <script setup lang="ts">
 const { disabled, loading, wide } = defineProps<{
-    disabled?: boolean;
-    loading?: boolean;
-    wide?: boolean;
+    disabled?: boolean
+    loading?: boolean
+    wide?: boolean
 }>()
 </script>
 

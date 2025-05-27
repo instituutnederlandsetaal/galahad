@@ -15,7 +15,7 @@
             <slot v-if="items && items.length === 0 && !loading" name="table-empty-instruction">
             </slot>
 
-            <p v-if="selectable">
+            <p v-if="selectable && !isEmpty">
                 Click on a row to select an item.
             </p>
 
@@ -96,7 +96,7 @@
 
 <script setup lang="ts">
 import type { Field } from "@/types/ui/table"
-import type { HelpLink } from "@/components/help";
+import type { HelpLink } from "@/components/help"
 
 type Item = { [key: string]: unknown }
 

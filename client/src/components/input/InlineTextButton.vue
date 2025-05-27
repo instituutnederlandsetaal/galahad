@@ -3,15 +3,17 @@
 </template>
 
 <script setup lang="ts">
-const { green, orange, red } = defineProps<{
-    green?: boolean;
-    orange?: boolean;
-    red?: boolean;
+const { green, orange, red, plain } = defineProps<{
+    green?: boolean
+    orange?: boolean
+    red?: boolean
+    plain?: boolean
 }>()
 const classes = {
     green: green,
     orange: orange,
     red: red,
+    plain: plain,
 }
 </script>
 
@@ -30,6 +32,10 @@ code {
 
     &.red {
         background-color: var(--int-red);
+    }
+
+    &.plain {
+        border: 1px solid var(--int-light-grey);
     }
 }
 </style>

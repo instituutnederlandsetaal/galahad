@@ -4,54 +4,64 @@
         <template #help>
             <slot name="help"></slot>
         </template>
+        <form @submit.prevent @keyup.enter="doAction">
+            <table>
+                <template v-if="userStore.hasWriteAccess || !item">
+                    <tr>
+                        <td>
+                            <label>Name:</label> <span class="warning"><small>(Required)</small></span>
+                        </td>
+                        <td>
+                            <GInput v-model="name" focus placeholder="corpus name" :validator="validateCorpusName"
+                                validityDescriptor="3-100 characters" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label>Year from:</label></td>
+                        <td>
+                            <GNumber v-model="eraFrom" validityDescriptor="Must be before end year" placeholder="YYYY"
+                                :min="-10000" :max="2100" :step="50"
+                                :validator="(v) => { console.log(v); return v <= eraTo }" />
+                        </td>
+                    </tr>
 
-        <table>
-            <template v-if="userStore.hasWriteAccess || !item">
-                <tr>
-                    <td>
-                        <label>Name:</label> <span class="warning"><small>(Required)</small></span>
-                    </td>
-                    <td>
-                        <GInput v-model="name" focus refName="corpusName" placeholder="corpus name"
-                            :validator="validateCorpusName" validityDescriptor="3-100 characters" @enter="doAction" />
-                    </td>
-                </tr>
-                <tr>
-                    <td><label>Year from:</label></td>
-                    <td>
-                        <GInput v-model.number="eraFrom" validityDescriptor="Must be before end year" :validator="(v) => {
-                            return v <= eraTo
-                        }
-                            " :min="-10000" :max="10000" placeholder="YYYY" :step="100" @enter="doAction" />
-                    </td>
-                </tr>
+                    <tr>
+                        <td><label>Year to:</label></td>
+                        <td>
+                            <GNumber v-model="eraTo" validityDescriptor="Must be after start year" placeholder="YYYY"
+                                :min="-10000" :max="2100" :step="50" :validator="(v) => { return v >= eraFrom }" />
+                        </td>
+                    </tr>
 
-                <tr>
-                    <td><label>Year to:</label></td>
-                    <td>
-                        <GInput v-model.number="eraTo" validityDescriptor="Must be after start year" placeholder="YYYY"
-                            :validator="(v) => {
-                                return v >= eraFrom
-                            }
-                                " :min="-10000" :max="10000" @enter="doAction" />
-                    </td>
-                </tr>
+                    <tr>
+                        <td>
+                            <label>
+                                <ExternalLink href="/galahad/overview/tagsets">Tagset</ExternalLink>:
+                            </label>
+                        </td>
+                        <td>
+                            <GInput v-model="tagset" list="tagsets" placeholder="tagset name" />
+                            <datalist id="tagsets">
+                                <option v-for="(tagset, _) in tagsetsStore.tagsets" :value="tagset.shortName"></option>
+                            </datalist>
+                        </td>
+                    </tr>
 
-                <tr>
-                    <td>
-                        <label>
-                            <ExternalLink href="/galahad/overview/tagsets">Tagset</ExternalLink>:
-                        </label>
-                    </td>
-                    <td>
-                        <GInput v-model="tagset" list="tagsets" @enter="doAction" placeholder="tagset name" />
-                        <datalist id="tagsets">
-                            <option v-for="(tagset, _) in tagsetsStore.tagsets" :value="tagset.shortName"></option>
-                        </datalist>
-                    </td>
-                </tr>
+                    <template v-if="userStore.user.isAdmin">
+                        <tr>
+                            <td colspan="2">
+                                <hr />
+                            </td>
+                        </tr>
 
-                <template v-if="userStore.user.isAdmin">
+                        <tr>
+                            <td>Benchmark set:</td>
+                            <td>
+                                <GCheckBox v-model="dataset">Benchmark</GCheckBox>
+                            </td>
+                        </tr>
+                    </template>
+
                     <tr>
                         <td colspan="2">
                             <hr />
@@ -59,37 +69,24 @@
                     </tr>
 
                     <tr>
-                        <td>Benchmark set:</td>
+                        <td><label>Source name:</label></td>
                         <td>
-                            <GInput type="checkbox" v-model="dataset">Benchmark</GInput>
+                            <GInput v-model="sourceName" placeholder="source name" />
                         </td>
                     </tr>
+
+                    <tr>
+                        <td><label>Source url:</label></td>
+                        <td>
+                            <GInput v-model="sourceURL" type="url" placeholder="source url" />
+                        </td>
+                    </tr>
+
+                    <UserList :users="collaborators" listName="Collaborators" :showAddDialog />
                 </template>
-
-                <tr>
-                    <td colspan="2">
-                        <hr />
-                    </td>
-                </tr>
-
-                <tr>
-                    <td><label>Source name:</label></td>
-                    <td>
-                        <GInput v-model="sourceName" placeholder="source name" @enter="doAction" />
-                    </td>
-                </tr>
-
-                <tr>
-                    <td><label>Source url:</label></td>
-                    <td>
-                        <GInput v-model="sourceURL" type="url" placeholder="source url" @enter="doAction" />
-                    </td>
-                </tr>
-
-                <UserList :users="collaborators" listName="Collaborators" :showAddDialog />
-            </template>
-            <UserList :users="viewers" listName="Viewers" :showAddDialog />
-        </table>
+                <UserList :users="viewers" listName="Viewers" :showAddDialog />
+            </table>
+        </form>
 
         <template #buttons>
             <GButton green @click="doAction" :disabled>{{ update ? "Update" : "Create" }}</GButton>
@@ -117,8 +114,8 @@ const { action, cancel, item, update, title, show } = defineProps({
 // --- data ---
 const dataset = ref(false)
 const name = ref("")
-const eraFrom = ref(null)
-const eraTo = ref(null)
+const eraFrom = ref<number>()
+const eraTo = ref<number>()
 const tagset = ref("")
 const sourceName = ref("")
 const sourceURL = ref("")

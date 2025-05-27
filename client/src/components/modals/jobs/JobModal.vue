@@ -15,10 +15,10 @@
         </template>
 
         <!-- Loading screen -->
-        <div v-if="taggerIsAvailable == null" class="centerText">
-            <h3>Connecting to tagger...</h3>
+        <template v-if="taggerIsAvailable == null">
             <GSpinner />
-        </div>
+            <p>Connecting to tagger...</p>
+        </template>
 
         <!-- Content -->
 

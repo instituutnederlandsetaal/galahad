@@ -56,7 +56,7 @@
 <script setup lang="ts">
 // Libraries & stores
 
-import type { SelectOption } from '@/types/ui/select';
+import type { SelectOption } from "@/types/ui/select"
 import stores from "@/stores"
 // API & Types
 import type { MetricTypeAssay } from "@/types/assays"

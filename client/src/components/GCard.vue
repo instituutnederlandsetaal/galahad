@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import type { HelpLink } from '@/types/ui/help';
+import type { HelpLink } from "@/types/ui/help"
 
 // --- props ---
 const { helpLink, title } = defineProps<{

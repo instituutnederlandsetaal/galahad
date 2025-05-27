@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import type { SelectOption } from '@/types/ui/select';
+import type { SelectOption } from "@/types/ui/select"
 
 const model = defineModel<string>()
 
