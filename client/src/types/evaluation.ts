@@ -71,8 +71,11 @@ export type TermComparison = {
     partialOverlap: boolean
 }
 
-export interface Term {
+export type Term = {
+    id: string
+    offset: number
     annotations: Record<string, string>
+    spaceAfter?: boolean
 }
 
 export type WordForm = {
@@ -85,4 +88,9 @@ export type WordForm = {
 export type EvaluationEntry = {
     count: number
     samples: TermComparison[]
+}
+
+export type Entity = {
+    first: string
+    second: Term[]
 }

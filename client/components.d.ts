@@ -18,6 +18,7 @@ declare module 'vue' {
     CorpusTable: typeof import('./src/components/tables/CorpusTable.vue')['default']
     DeleteModal: typeof import('./src/components/modals/DeleteModal.vue')['default']
     DifferentTagsetsHelp: typeof import('./src/components/help/DifferentTagsetsHelp.vue')['default']
+    DocumentSelect: typeof import('./src/components/input/DocumentSelect.vue')['default']
     DocumentsHelp: typeof import('./src/components/help/DocumentsHelp.vue')['default']
     DocumentsTable: typeof import('./src/components/tables/DocumentsTable.vue')['default']
     DownloadButton: typeof import('./src/components/input/DownloadButton.vue')['default']

@@ -278,7 +278,7 @@ class EvaluationService(val corpora: CorporaService) {
         return cm
     }
 
-    fun getEntities(corpus: UUID, document: String, job: String): List<Pair<String, List<Term>>> {
+    fun getEntities(corpus: UUID, document: String, job: String): List<Triple<String, List<Term>, Int>> {
         val layer = corpora.readAsReaderOrThrow(corpus, user).jobs.readOrThrow(job).getLayer(document)
         return layer.documents.flatMap {
             it.paragraphs.flatMap {
@@ -287,6 +287,8 @@ class EvaluationService(val corpora: CorporaService) {
                         ?.map { span -> span.value to span.indices.map { sent.terms[it] } } ?: emptyList()
                 }
             }
-        }
+        }.groupBy { it }.mapValues { it.value.size }.map { (key, value) ->
+            Triple(key.first, key.second, value)
+        }.sortedByDescending { it.third }
     }
 }

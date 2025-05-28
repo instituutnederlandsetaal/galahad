@@ -49,21 +49,25 @@ const selectedJob = computed<string>({
 
 // Whether there are documents that have not been tagged yet.
 // Not relevant for source layer.
-const untaggedDocsExist = computed(() => {
-    if (!selectedJob.value) return false
-    if (!jobsStore.jobs) return false
-    const job = jobsStore.jobs[selectedJob.value]
-    if (!job) return false
-    if (job.tagger.id === SOURCE_LAYER) return false
-    return job.progress.finished < job.progress.total
+const untaggedDocsExist = computed<boolean>(() => {
+    if (!job.value) return false
+    return job.value.progress.finished < job.value.progress.total
 })
 // Whether the selected layer is sourceLayer and has missing annotations.
-const sourceLayerHasMissingAnnotations = computed(() => {
-    if (!selectedJob.value) return false
-    if (!jobsStore.jobs) return false
-    const job = jobsStore.jobs[selectedJob.value]
-    if (!job) return false
-    if (job.tagger.id !== SOURCE_LAYER) return false
-    return job.progress.finished !== documentsStore.numSourceAnnotations
+const sourceLayerHasMissingAnnotations = computed<boolean>(() => {
+    if (!job.value) return false
+    return job.value.progress.finished !== documentsStore.numSourceAnnotations
+})
+
+const job = computed<Job | undefined>(() => {
+    if (!selectedJob.value) return undefined
+    if (!jobsStore.jobs) return undefined
+    // any job could be any job, even the source layer
+    const anyJob = jobsStore.jobs[selectedJob.value]
+    if (!anyJob) return undefined
+    // if the job is not source layer, return it
+    if (anyJob.tagger.id !== SOURCE_LAYER) return anyJob
+    // if the job is source layer, return undefined
+    return undefined
 })
 </script>

@@ -8,6 +8,7 @@ import type { UUID } from "@/types/corpora"
 import type {
     ConfusionWrapper,
     DistributionWrapper,
+    Entity,
     Metrics,
     TermComparison,
 } from "@/types/evaluation"
@@ -15,6 +16,7 @@ import type {
 type ConfusionResponse = AxiosResponse<ConfusionWrapper>
 type DistributionResponse = AxiosResponse<DistributionWrapper>
 type MetricsResponse = AxiosResponse<Metrics>
+type EntitiesResponse = AxiosResponse<Entity[]>
 
 const evaluationPath = (corpus: UUID, hypothesis: string): string =>
     `/corpora/${corpus}/jobs/${hypothesis}/evaluation`
@@ -35,6 +37,8 @@ const documentLayerComparisonPath = (
     job: string,
     document: string,
 ): string => `/corpora/${corpus}/jobs/${job}/documents/${document}/evaluation`
+const entitiesPath = (corpus: UUID, job: string, document: string): string =>
+    `/corpora/${corpus}/jobs/${job}/documents/${document}/entities`
 
 /**
  * Fetch term frequency distribution.
@@ -160,4 +164,12 @@ export function getDocumentLayerComparison(
     return axios.get(documentLayerComparisonPath(corpus, job, document), {
         params: { reference },
     })
+}
+
+export function getEntities(
+    corpus: UUID,
+    job: string,
+    document: string,
+): Promise<EntitiesResponse> {
+    return axios.get(entitiesPath(corpus, job, document))
 }

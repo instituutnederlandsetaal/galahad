@@ -9,6 +9,7 @@ import EvaluateView from "@/views/annotate/subviews/evaluate/EvaluateView.vue"
 import ConfusionView from "@/views/annotate/subviews/evaluate/subviews/ConfusionView.vue"
 import DistributionView from "@/views/annotate/subviews/evaluate/subviews/DistributionView.vue"
 import DocumentLayerComparisonView from "@/views/annotate/subviews/evaluate/subviews/DocumentLayerComparisonView.vue"
+import EntitiesView from "@/views/annotate/subviews/evaluate/subviews/EntitiesView.vue"
 import GlobalMetricsView from "@/views/annotate/subviews/evaluate/subviews/GlobalMetricsView.vue"
 import GroupedMetricsView from "@/views/annotate/subviews/evaluate/subviews/GroupedMetricsView.vue"
 import ExportView from "@/views/annotate/subviews/ExportView.vue"
@@ -93,6 +94,11 @@ const routes = [
                         meta: { title: "Evaluate" },
                         path: "document_layer_comparison",
                         component: DocumentLayerComparisonView,
+                    },
+                    {
+                        meta: { title: "Evaluate" },
+                        path: "entities",
+                        component: EntitiesView,
                     },
                 ],
             },

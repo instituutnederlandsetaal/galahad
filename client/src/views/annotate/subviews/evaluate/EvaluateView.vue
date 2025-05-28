@@ -27,6 +27,7 @@
             { id: 'grouped_metrics', title: 'Grouped Metrics' },
             { id: 'confusion', title: 'Pos Confusion' },
             { id: 'document_layer_comparison', title: 'Document View' },
+            { id: 'entities', title: 'Entities View' },
         ]">
         </GTabs>
     </AnnotateTab>
