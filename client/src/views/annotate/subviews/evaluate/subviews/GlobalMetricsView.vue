@@ -43,7 +43,7 @@ type GlobalMetricsRow = {
 const { loading, metrics } = storeToRefs(stores.useMetrics())
 const corporaStore = stores.useCorpora()
 const jobSelection = stores.useJobSelection()
-const app = stores.useApp()
+const errorsStore = stores.useErrors()
 
 // Fields
 const downloading = ref(false)
@@ -137,7 +137,7 @@ function download(data: Any) {
             Utils.browserDownloadResponseFile(response)
         })
         .catch(res =>
-            Utils.handleBlobError(res, "download global metrics samples", app),
+            Utils.handleBlobError(res, "download global metrics samples", errorsStore),
         )
         .finally(() => (downloading.value = false))
 }

@@ -5,5 +5,8 @@
         annotation layer. Use the filters to find a tagger that works well for you or take a look at the
         <GNav :route="{ path: '/overview/benchmarks' }">benchmark results</GNav>.
     </p>
-    <p>To start a tagging job, select one of the taggers and click on <InlineTextButton plain>View & Tag</InlineTextButton>.</p>
+    <p>
+        To start a tagging job, select one of the taggers and click on
+        <InlineTextButton plain>View & Tag</InlineTextButton>.
+    </p>
 </template>

@@ -35,7 +35,7 @@ export function literalsForTermComparison(
  */
 const useEvaluation = defineStore("evaluation", () => {
     // Stores
-    const app = stores.useApp()
+    const errorsStore = stores.useErrors()
     const corporaStore = stores.useCorpora()
     const jobSelection = stores.useJobSelection()
 
@@ -56,7 +56,11 @@ const useEvaluation = defineStore("evaluation", () => {
         )
             .then(Utils.browserDownloadResponseFile)
             .catch(error =>
-                Utils.handleBlobError(error, "download evaluation", app),
+                Utils.handleBlobError(
+                    error,
+                    "download evaluation",
+                    errorsStore,
+                ),
             )
             .finally(() => (loading.value = false))
     }

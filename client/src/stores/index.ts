@@ -1,20 +1,20 @@
-import useApp from "./app"
-import useAssays from "./assays"
-import useCorpora from "./corpora"
-import useDocuments from "./documents"
-import useEvaluation from "./evaluation"
-import useConfusion from "./evaluation/confusion"
-import useDistribution from "./evaluation/distribution"
-import useMetrics from "./evaluation/metrics"
-import useExport from "./export"
-import useJobs from "./jobs"
-import useJobSelection from "./jobselection"
-import useTaggers from "./taggers"
-import useTagsets from "./tagsets"
-import useUser from "./user"
+import useErrors from "@/stores/errors"
+import useAssays from "@/stores/assays"
+import useCorpora from "@/stores/corpora"
+import useDocuments from "@/stores/documents"
+import useEvaluation from "@/stores/evaluation"
+import useConfusion from "@/stores/evaluation/confusion"
+import useDistribution from "@/stores/evaluation/distribution"
+import useMetrics from "@/stores/evaluation/metrics"
+import useExport from "@/stores/export"
+import useJobs from "@/stores/jobs"
+import useJobSelection from "@/stores/jobselection"
+import useTaggers from "@/stores/taggers"
+import useTagsets from "@/stores/tagsets"
+import useUser from "@/stores/user"
 
 export default {
-    useApp,
+    useErrors,
     useAssays,
     useConfusion,
     useCorpora,

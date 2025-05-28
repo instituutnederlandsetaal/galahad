@@ -16,7 +16,7 @@ import { useRouteQuery } from "@vueuse/router"
 const useCorpora = defineStore("corpora", () => {
     // Stores
     const userStore = stores.useUser()
-    const app = stores.useApp()
+    const errorsStore = stores.useErrors()
 
     // Fields
     const loading = ref(false)
@@ -69,7 +69,7 @@ const useCorpora = defineStore("corpora", () => {
             .then(response => (allCorpora.value = response.data || []))
             .catch(error => {
                 allCorpora.value = []
-                app.handleServerError("get corpora", error)
+                errorsStore.handleServerError("get corpora", error)
             })
             .finally(() => (loading.value = false))
     }
@@ -83,7 +83,9 @@ const useCorpora = defineStore("corpora", () => {
         API.postCorpus(metadata)
             // Automatically set the new corpus as active.
             .then(response => (activeUUID.value = response.data))
-            .catch(error => app.handleServerError("create corpus", error))
+            .catch(error =>
+                errorsStore.handleServerError("create corpus", error),
+            )
             .finally(reload)
     }
 
@@ -100,7 +102,9 @@ const useCorpora = defineStore("corpora", () => {
                     activeUUID.value = null as unknown as UUID
                 }
             })
-            .catch(error => app.handleServerError("delete corpus", error))
+            .catch(error =>
+                errorsStore.handleServerError("delete corpus", error),
+            )
             .finally(reload)
     }
 
@@ -112,7 +116,9 @@ const useCorpora = defineStore("corpora", () => {
     function updateCorpus(uuid: UUID, metadata: MutableCorpusMetadata) {
         if (corpusOperationLock()) return
         API.patchCorpus(uuid, metadata)
-            .catch(error => app.handleServerError("update corpus", error))
+            .catch(error =>
+                errorsStore.handleServerError("update corpus", error),
+            )
             .finally(reload)
     }
 

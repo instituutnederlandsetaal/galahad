@@ -3,30 +3,25 @@
  * Either converted to a certain format or merged with their original file if the format supports it.
  */
 
-// --- api ---
-import * as Utils from "@/api/utils"
-// --- types ---
-import type { BlobResponse } from "@/api/utils"
+import { getBlob, type BlobResponse } from "@/api/utils"
 import type { UUID } from "@/types/corpora"
 import type { Format } from "@/types/documents"
 
-// --- computed ---
 const convertCorpusPath = (
     corpus: UUID,
     job: string,
     format: Format,
     posHeadOnly: boolean,
-) =>
+): string =>
     `/corpora/${corpus}/jobs/${job}/export/convert?format=${format}&posHeadOnly=${posHeadOnly}`
 const mergeCorpusPath = (
     corpus: UUID,
     job: string,
     format: Format,
     posHeadOnly: boolean,
-) =>
+): string =>
     `/corpora/${corpus}/jobs/${job}/export/merge?format=${format}&posHeadOnly=${posHeadOnly}`
 
-// --- methods ---
 /**
  * Download a corpus converted to the desired format.
  * @param corpus UUID of the corpus.
@@ -40,7 +35,7 @@ export function convertCorpus(
     format: Format,
     posHeadOnly: boolean,
 ): Promise<BlobResponse> {
-    return Utils.getBlob(convertCorpusPath(corpus, job, format, posHeadOnly))
+    return getBlob(convertCorpusPath(corpus, job, format, posHeadOnly))
 }
 
 /**
@@ -56,5 +51,5 @@ export function mergeCorpus(
     format: Format,
     posHeadOnly: boolean,
 ): Promise<BlobResponse> {
-    return Utils.getBlob(mergeCorpusPath(corpus, job, format, posHeadOnly))
+    return getBlob(mergeCorpusPath(corpus, job, format, posHeadOnly))
 }

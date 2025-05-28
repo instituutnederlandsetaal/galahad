@@ -1,56 +1,51 @@
 <template>
-    <label for="job-select">{{ title }}</label>
+    <label for="job-select">{{ label }}</label>
     <GSpinner v-if="jobsStore.loading" />
-    <GSelect v-else id="job-select" :options="jobSelectionStore.selectableJobs" v-model="selectedJob" />
+    <GSelect v-else id="job-select" title="Select an annotation layer" :options="jobSelectionStore.selectableJobs"
+        v-model="selectedJob" />
     <GInfo v-if="untaggedDocsExist">
-        Not all documents have been tagged yet. It is still possible to select this layer, but it will be
-        incomplete. <br />
-        Alternatively,
-        <GNav :route="{ path: '/annotate/jobs' }">start a new tagger job</GNav> or wait for the current job to
-        finish.
+        <p>
+            Not all documents have been tagged yet. It is still possible to select this layer, but it will be
+            incomplete. Alternatively, <GNav :route="{ path: '/annotate/jobs' }">start a new tagger job</GNav> or wait
+            for the current job to finish.
+        </p>
     </GInfo>
     <GInfo v-if="sourceLayerHasMissingAnnotations">
-        Some documents in this corpus have no source annotations. It is still possible to select this layer, but it
-        will be incomplete. <br />
-        Alternatively, <GNav :route="{ path: '/annotate/documents' }">go to documents</GNav> and remove or add
-        documents.
+        <p>
+            Some documents in this corpus have no source annotations. It is still possible to select this layer, but it
+            will be incomplete. Alternatively, <GNav :route="{ path: '/annotate/documents' }">go to documents</GNav> and
+            add or remove documents.
+        </p>
     </GInfo>
 </template>
 
 <script setup lang="ts">
 import stores from "@/stores"
-// API & Types
 import { SOURCE_LAYER } from "@/types/jobs"
 
-// Stores
 const jobsStore = stores.useJobs()
 const jobSelectionStore = stores.useJobSelection()
 const documentsStore = stores.useDocuments()
 
-// Fields
-const props = defineProps({
-    isReference: { default: false },
-    customTitle: { default: null as string | null },
-})
-const title = computed<string>(
-    () => props.customTitle ?? (props.isReference ? "Reference" : "Hypothesis"),
-)
-const selectedJob = computed({
-    // getter
-    get() {
-        return props.isReference ? jobSelectionStore.referenceJobId : jobSelectionStore.hypothesisJobId
+const { isReference = false, displayName } = defineProps<{
+    isReference?: boolean
+    displayName?: string
+}>()
+const label = computed<string>(() => displayName ?? (isReference ? "Reference" : "Hypothesis"))
+const selectedJob = computed<string>({
+    get(): string {
+        return isReference
+            ? jobSelectionStore.referenceJobId
+            : jobSelectionStore.hypothesisJobId
     },
-    // setter
-    set(newValue) {
-        // Note: we are using destructuring assignment syntax here.
-        if (props.isReference) {
+    set(newValue: string): void {
+        if (isReference) {
             jobSelectionStore.referenceJobId = newValue
         } else {
             jobSelectionStore.hypothesisJobId = newValue
         }
-    }
+    },
 })
-
 
 // Whether there are documents that have not been tagged yet.
 // Not relevant for source layer.

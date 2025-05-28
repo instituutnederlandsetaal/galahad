@@ -1,6 +1,6 @@
 FROM node:24.0.2-alpine3.21 AS build
 COPY . .
-RUN npm ci && npm run build-only
+RUN npm ci && npm run build
 
 FROM nginx:1.28.0-alpine3.21-slim
 COPY --from=build /dist /usr/share/nginx/html

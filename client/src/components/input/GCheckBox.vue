@@ -15,7 +15,6 @@ function check(): void {
 </script>
 
 <style scoped lang="scss">
-/* checkbox */
 .checkbox-container {
     display: block;
     position: relative;

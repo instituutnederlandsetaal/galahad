@@ -1,28 +1,26 @@
-<!-- Do not put a comment between <template> and <AnnotateTab>
-    It breaks vue... https://github.com/vuejs/vue/issues/2253 -->
-
 <template>
     <AnnotateTab>
-        <!-- title-only card -->
         <GCard :title="`Evaluate corpus ${corporaStore.activeCorpus?.name}`" helpLink="evaluation">
             <template #help>
                 <EvaluateHelp />
             </template>
-
-            <!-- Choose hypothesis and reference -->
             <form @submit.prevent class="form">
-                <JobSelect />
-                <JobSelect :isReference="true" />
-                <GCard title="Download as CSV">
+                <fieldset class="fieldset">
+                    <JobSelect />
+                </fieldset>
+                <fieldset class="fieldset">
+                    <JobSelect :isReference="true" />
+                </fieldset>
+                <fieldset class="fieldset">
+                    <label for="csv-download">Download as CSV</label>
                     <i v-if="!jobSelection.hypothesisJobId || !jobSelection.referenceJobId">
                         Select both layers first.
                     </i>
-                    <DownloadButton v-else wide :loading="evaluation.loading" @click="evaluation.downloadCSV()" />
-                </GCard>
+                    <DownloadButton v-else id="csv-download" wide :loading="evaluation.loading"
+                        @click="evaluation.downloadCSV()" />
+                </fieldset>
             </form>
         </GCard>
-
-        <!-- Table tabs -->
         <GTabs ref="tabs" class="level-3" :basePath :tabs="[
             { id: 'distribution', title: 'Distribution' },
             { id: 'global_metrics', title: 'Global Metrics' },
@@ -35,10 +33,7 @@
 </template>
 
 <script setup lang="ts">
-// Libraries & stores
-
 import stores from "@/stores"
-
 import { SOURCE_LAYER } from "@/types/jobs"
 
 // Stores
@@ -51,10 +46,10 @@ const jobSelection = stores.useJobSelection()
 const corporaStore = stores.useCorpora()
 const documentsStore = stores.useDocuments()
 
-// Fields
-const props = defineProps(["basePath"])
+const { basePath } = defineProps<{
+    basePath: string
+}>()
 
-// Methods
 /**
  * Whether the corpusUUID or the hypothesis/reference has changed since the last generated evaluation.
  */
@@ -74,7 +69,6 @@ function evaluationRequestHasChanged(): boolean {
  */
 function reloadEvaluationData(reloadDistribution = false): void {
     if (!corporaStore.activeCorpus) return
-    if (!jobSelection.selectionsValid) return
     const hypothesis = jobSelection.hypothesisJobId
     const reference = jobSelection.referenceJobId
 
@@ -109,70 +103,83 @@ function reloadEvaluationData(reloadDistribution = false): void {
     evaluation.corpusUUID = corporaStore.activeUUID
 }
 
-// Watches & mounts
 onMounted(() => {
-    // Always reset, because e.g. the selected corpus might have changed
-    if (!evaluationRequestHasChanged()) {
-        return
-    }
-    confusion.reset()
-    metrics.reset()
-    distribution.reset()
+    // Docs needed to determine whether the sourceLayer job has annotations.
+    documentsStore.reloadDocumentsForCorpus(corporaStore.activeUUID)
+    jobsStore.reload()
 })
 
-// On corpus (=dataset) selection, reload jobs & docs for that corpus
-watch(
-    () => corporaStore.activeCorpus,
-    () => {
-        // Jobs needed for jobs <select>.
-        jobsStore.reload()
-        // Docs needed to determine whether the sourceLayer job has annotations.
-        documentsStore.reloadDocumentsForCorpus(corporaStore.activeUUID)
-    },
-    { immediate: true },
-)
+// // Watches & mounts
+// onMounted(() => {
+//     // Always reset, because e.g. the selected corpus might have changed
+//     if (!evaluationRequestHasChanged()) {
+//         return
+//     }
+//     confusion.reset()
+//     metrics.reset()
+//     distribution.reset()
+// })
 
-// Reload data on job selection changes.
+// // On corpus (=dataset) selection, reload jobs & docs for that corpus
+// watch(
+//     () => corporaStore.activeCorpus,
+//     () => {
+//         // Jobs needed for jobs <select>.
+//         jobsStore.reload()
+//         // Docs needed to determine whether the sourceLayer job has annotations.
+//         documentsStore.reloadDocumentsForCorpus(corporaStore.activeUUID)
+//     },
+//     { immediate: true },
+// )
+
+// // Reload data on job selection changes.
 watch(
     () => jobSelection.hypothesisJobId,
     () => {
-        if (!jobSelection.selectionsValid) return
         reloadEvaluationData(true)
     },
 )
-watch(
-    () => jobSelection.referenceJobId,
-    () => {
-        if (!jobSelection.selectionsValid) return
-        reloadEvaluationData()
-    },
-)
-// OnLoad, we also have to wait on validation.
-watch(
-    () => jobSelection.selectionsValid,
-    () => {
-        if (jobSelection.selectionsValid) {
-            reloadEvaluationData(true)
-        }
-        // At this point, invalid selections are set to null.
-        // So we can override the reference to the sourceLayer as a default (if it exists).
-        if (
-            jobSelection.referenceJobId == null &&
-            documentsStore.numSourceAnnotations > 0
-        ) {
-            jobSelection.referenceJobId = SOURCE_LAYER
-        }
-    },
-    { immediate: true },
-)
+// watch(
+//     () => jobSelection.referenceJobId,
+//     () => {
+//         if (!jobSelection.selectionsValid) return
+//         reloadEvaluationData()
+//     },
+// )
+// // OnLoad, we also have to wait on validation.
+// watch(
+//     () => jobSelection.selectionsValid,
+//     () => {
+//         if (jobSelection.selectionsValid) {
+//             reloadEvaluationData(true)
+//         }
+//         // At this point, invalid selections are set to null.
+//         // So we can override the reference to the sourceLayer as a default (if it exists).
+//         if (
+//             jobSelection.referenceJobId == null &&
+//             documentsStore.numSourceAnnotations > 0
+//         ) {
+//             jobSelection.referenceJobId = SOURCE_LAYER
+//         }
+//     },
+//     { immediate: true },
+// )
 </script>
 
 <style scoped lang="scss">
 .form {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: start;
     flex-wrap: wrap;
     gap: 2rem;
+
+    .fieldset {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        max-width: 500px;
+    }
 }
 </style>

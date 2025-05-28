@@ -74,7 +74,7 @@ import type { Field } from "@/types/ui/table"
 const { loading, confusion } = storeToRefs(stores.useConfusion())
 const corporaStore = stores.useCorpora()
 const jobSelection = stores.useJobSelection()
-const app = stores.useApp()
+const errorsStore = stores.useErrors()
 
 // Custom types
 type Item = { [key: string]: EvaluationEntry } & { referenceJob: string }
@@ -171,7 +171,7 @@ function download() {
             Utils.browserDownloadResponseFile(response)
         })
         .catch(res =>
-            Utils.handleBlobError(res, "download confusion samples", app),
+            Utils.handleBlobError(res, "download confusion samples", errorsStore),
         )
         .finally(() => (downloading.value = false))
 }

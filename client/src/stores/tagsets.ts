@@ -10,7 +10,7 @@ import type { Tagset } from "@/types/tagset"
  */
 const useTagsets = defineStore("tagsets", () => {
     // Stores
-    const app = stores.useApp()
+    const errorsStore = stores.useErrors()
 
     // Fields
     const loading = ref(false)
@@ -21,7 +21,9 @@ const useTagsets = defineStore("tagsets", () => {
         loading.value = true
         API.getTagsets()
             .then(response => (tagsets.value = response.data))
-            .catch(error => app.handleServerError("fetch tagsets", error))
+            .catch(error =>
+                errorsStore.handleServerError("fetch tagsets", error),
+            )
             .finally(() => (loading.value = false))
     }
 

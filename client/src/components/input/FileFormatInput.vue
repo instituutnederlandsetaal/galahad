@@ -1,6 +1,6 @@
 <template>
     <label for="format-select">Format:</label>
-    <GSelect id="format-select" v-model="exportStore.format" :options />
+    <GSelect title="Select a format" id="format-select" v-model="exportStore.format" :options />
 </template>
 
 <script setup lang="ts">
@@ -8,11 +8,9 @@ import stores from "@/stores"
 import { Format } from "@/types/documents"
 import type { SelectOption } from "@/types/ui/select"
 
-// Stores
 const exportStore = stores.useExport()
 const userStore = stores.useUser()
 
-// Fields
 const options: SelectOption[] = [
     { value: Format.CONLLU, text: "CoNLL-U (Universal Dependencies)" },
     { value: Format.FOLIA, text: "FoLiA (Format for Linguistic Annotation)" },

@@ -19,10 +19,7 @@
 </template>
 
 <script setup lang="ts">
-const {
-    show,
-    title,
-} = defineProps<{
+const { show, title } = defineProps<{
     show: boolean
     title?: string
 }>()

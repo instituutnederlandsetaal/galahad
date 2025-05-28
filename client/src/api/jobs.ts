@@ -2,26 +2,22 @@
  * API calls for getting existing jobs and job layer results, posting and cancelling jobs, and polling job progress.
  */
 
+import axios, { type AxiosResponse } from "axios"
 import type { UUID } from "@/types/corpora"
 import type { Job, Progress } from "@/types/jobs"
-// --- libraries ---
-import axios from "axios"
-// --- types ---
-import type { AxiosResponse } from "axios"
 
 type JobsResponse = AxiosResponse<Job[]>
 type JobResponse = AxiosResponse<Job>
 export type ProgressResponse = AxiosResponse<Progress>
 
-// --- computed ---
-const jobsPath = (corpus: UUID) => `/corpora/${corpus}/jobs`
-const jobPath = (corpus: UUID, job: string) => `/corpora/${corpus}/jobs/${job}`
-const jobIsBusyPath = (corpus: UUID, job: string) =>
+const jobsPath = (corpus: UUID): string => `/corpora/${corpus}/jobs`
+const jobPath = (corpus: UUID, job: string): string =>
+    `/corpora/${corpus}/jobs/${job}`
+const jobIsBusyPath = (corpus: UUID, job: string): string =>
     `/corpora/${corpus}/jobs/${job}/isBusy`
-const jobProgressPath = (corpus: UUID, job: string) =>
+const jobProgressPath = (corpus: UUID, job: string): string =>
     `/corpora/${corpus}/jobs/${job}/progress`
 
-// --- methods ---
 /**
  * Fetch all jobs for a corpus.
  * @param corpus UUID of the corpus.
@@ -35,8 +31,8 @@ export function getJobs(corpus: UUID): Promise<JobsResponse> {
  * @param corpus UUID of the corpus.
  * @param job Tagger job name.
  */
-export function getJob(corpus: UUID, job: string) {
-    return axios.get(jobPath(corpus, job)) as Promise<JobResponse>
+export function getJob(corpus: UUID, job: string): Promise<JobResponse> {
+    return axios.get(jobPath(corpus, job))
 }
 
 /**

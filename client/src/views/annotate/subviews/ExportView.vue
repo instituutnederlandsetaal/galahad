@@ -6,7 +6,7 @@
             </template>
 
             <form @submit.prevent class="form">
-                <JobSelect customTitle="Annotation layer" />
+                <JobSelect displayName="Annotation layer" />
 
                 <FileFormatInput />
 
@@ -110,7 +110,7 @@ onMounted(() => {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    align-items: start;
+    align-items: center;
 
     .download {
         align-self: center;

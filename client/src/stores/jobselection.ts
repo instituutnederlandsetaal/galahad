@@ -1,10 +1,7 @@
-// Libraries & stores
-
 import stores from "@/stores"
 import { type Job, SOURCE_LAYER } from "@/types/jobs"
 import type { SelectOption } from "@/types/ui/select"
 import { useRouteQuery } from "@vueuse/router"
-
 
 /**
  * Stores the current job selection from the <select>. Used in Evaluation & Export.

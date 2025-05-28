@@ -1,7 +1,9 @@
 <template>
     <h2>Step 2: Documents</h2>
-    <p>Upload documents to a corpus. Documents can be previewed, downloaded or deleted. The platform accepts the
-        following formats:</p>
+    <p>
+        Upload documents to a corpus. Documents can be previewed, downloaded or deleted. The platform accepts the
+        following formats:
+    </p>
     <ul>
         <li>(Text-like formats) Plain text, Tab separated Values (TSV), CoNLL-U</li>
         <li>

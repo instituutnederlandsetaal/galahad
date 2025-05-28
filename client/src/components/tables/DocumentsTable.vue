@@ -2,7 +2,7 @@
     <GTable :columns :headless :items="documentsStore.available" :loading="documentsStore.loading"
         :displayOnEmpty="false" sortedByColumn="name" :sortDesc="false" hoverRow>
         <template #title>
-            <span v-if="!corpus || (type == TableDocumentsType.Dataset && !corpus.dataset)"> No documents </span>
+            <span v-if="!corpus || (type == TableDocumentsType.Dataset && !corpus.dataset)">No documents</span>
             <span v-else>
                 {{ documentsStore.available.length }}
                 {{ documentsStore.available.length === 1 ? "document" : "documents" }}

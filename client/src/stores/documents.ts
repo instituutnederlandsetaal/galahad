@@ -21,7 +21,7 @@ type FileStatus = {
  */
 const documents = defineStore("documents", () => {
     // Stores
-    const app = stores.useApp()
+    const errorsStore = stores.useErrors()
     const corporaStore = stores.useCorpora()
 
     // Fields
@@ -78,7 +78,7 @@ const documents = defineStore("documents", () => {
                 }
             })
             .catch(error => {
-                app.handleServerError("fetch documents", error)
+                errorsStore.handleServerError("fetch documents", error)
             })
             .finally(() => (loading.value = false))
     }
@@ -98,7 +98,9 @@ const documents = defineStore("documents", () => {
      */
     function deleteDocument(documentName: string) {
         API.deleteDocument(corporaStore.activeUUID, documentName)
-            .catch(error => app.handleServerError("delete document", error))
+            .catch(error =>
+                errorsStore.handleServerError("delete document", error),
+            )
             .finally(reloadForActiveUserCorpus)
     }
 
@@ -110,7 +112,11 @@ const documents = defineStore("documents", () => {
         API.getRawDocument(corporaStore.activeUUID, documentName)
             .then(Utils.browserDownloadResponseFile)
             .catch(res =>
-                Utils.handleBlobError(res, "download raw document", app),
+                Utils.handleBlobError(
+                    res,
+                    "download raw document",
+                    errorsStore,
+                ),
             )
     }
 

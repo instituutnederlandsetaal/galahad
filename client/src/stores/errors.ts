@@ -1,24 +1,17 @@
-// --- libraries ---
-
-import type { ErrorMessage } from "@/api/api"
-// --- types ---
+import type { ErrorMessage } from "@/api"
 import type { AxiosError } from "axios"
-
-// Custom types
 
 /**
  * Mostly for global error handling.
  */
-const useApp = defineStore("app", () => {
-    // Fields
-    const errors = ref([] as string[])
+const useErrors = defineStore("errors", () => {
+    const errors = ref<string[]>([])
 
-    // Methods
-    function addError(message: string) {
+    function addError(message: string): void {
         errors.value.push(message)
     }
 
-    function resetErrors() {
+    function resetErrors(): void {
         errors.value = []
     }
 
@@ -30,7 +23,7 @@ const useApp = defineStore("app", () => {
     function handleServerError(
         intent: string,
         error: AxiosError<ErrorMessage>,
-    ) {
+    ): void {
         if (error.response) {
             // The request was made and the server responded with a status code
             // that falls out of the range of 2xx
@@ -50,4 +43,4 @@ const useApp = defineStore("app", () => {
     return { errors, resetErrors, handleServerError }
 })
 
-export default useApp
+export default useErrors

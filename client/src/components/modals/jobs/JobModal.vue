@@ -34,7 +34,7 @@
                         GaLAHaD is currently processing <b>{{ jobIndication }}</b>
                         {{ jobIndication == 1 ? "job" : "jobs" }}
                     </template>
-                    <template v-else> Calculating current server load... </template>
+                    <template v-else>Calculating current server load...</template>
                 </p>
             </template>
 
@@ -108,7 +108,7 @@ import type { Job } from "@/types/jobs"
 import type { TaggerHealth } from "@/types/taggers"
 
 // Stores
-const app = stores.useApp()
+const errorsStore = stores.useErrors()
 const jobsStore = stores.useJobs()
 
 // Fields
@@ -169,7 +169,7 @@ function getHealth() {
             health.value = response.data
             healthLoading.value = false
         })
-        .catch(error => app.handleServerError("get tagger health", error))
+        .catch(error => errorsStore.handleServerError("get tagger health", error))
 }
 
 /**

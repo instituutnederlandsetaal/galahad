@@ -2,9 +2,8 @@
  * API calls for fetching evaluation metrics and downloading them as a zip report.
  */
 
-// --- api ---
-import * as Utils from "@/api/utils"
-import type { BlobResponse } from "@/api/utils"
+import axios, { type AxiosResponse } from "axios"
+import { getBlob, type BlobResponse } from "@/api/utils"
 import type { UUID } from "@/types/corpora"
 import type {
     ConfusionWrapper,
@@ -12,37 +11,31 @@ import type {
     Metrics,
     TermComparison,
 } from "@/types/evaluation"
-// --- libraries ---
-import axios from "axios"
-// --- types ---
-import type { AxiosResponse } from "axios"
 
 type ConfusionResponse = AxiosResponse<ConfusionWrapper>
 type DistributionResponse = AxiosResponse<DistributionWrapper>
 type MetricsResponse = AxiosResponse<Metrics>
 
-// --- computed ---
-const evaluationPath = (corpus: UUID, hypothesis: string) =>
+const evaluationPath = (corpus: UUID, hypothesis: string): string =>
     `/corpora/${corpus}/jobs/${hypothesis}/evaluation`
-const confusionPath = (corpus: UUID, hypothesis: string) =>
+const confusionPath = (corpus: UUID, hypothesis: string): string =>
     `${evaluationPath(corpus, hypothesis)}/confusion`
-const confusionSamplesPath = (corpus: UUID, hypo: string) =>
-    `${evaluationPath(corpus, hypo)}/confusion/download`
-const distributionPath = (corpus: UUID, hypothesis: string) =>
+const confusionSamplesPath = (corpus: UUID, hypo: string): string =>
+    `${confusionPath(corpus, hypo)}/download`
+const distributionPath = (corpus: UUID, hypothesis: string): string =>
     `${evaluationPath(corpus, hypothesis)}/distribution`
-const metricsPath = (corpus: UUID, hypothesis: string) =>
+const metricsPath = (corpus: UUID, hypothesis: string): string =>
     `${evaluationPath(corpus, hypothesis)}/metrics`
-const metricsSamplesPath = (corpus: UUID, hypo: string) =>
-    `${evaluationPath(corpus, hypo)}/metrics/download`
-const downloadPath = (corpus: UUID, hypothesis: string) =>
+const metricsSamplesPath = (corpus: UUID, hypo: string): string =>
+    `${metricsPath(corpus, hypo)}/download`
+const downloadPath = (corpus: UUID, hypothesis: string): string =>
     `${evaluationPath(corpus, hypothesis)}/download`
 const documentLayerComparisonPath = (
     corpus: UUID,
     job: string,
     document: string,
-) => `/corpora/${corpus}/jobs/${job}/documents/${document}/evaluation`
+): string => `/corpora/${corpus}/jobs/${job}/documents/${document}/evaluation`
 
-// --- methods ---
 /**
  * Fetch term frequency distribution.
  * @param corpus UUID of the corpus.
@@ -96,7 +89,7 @@ export function getDownloadEvaluation(
     hypothesis: string,
     reference: string,
 ): Promise<BlobResponse> {
-    return Utils.getBlob(downloadPath(corpus, hypothesis), {
+    return getBlob(downloadPath(corpus, hypothesis), {
         params: { reference },
     })
 }
@@ -117,7 +110,7 @@ export function getConfusionSamples(
     refFilter: string,
     annotationType: string,
 ): Promise<BlobResponse> {
-    return Utils.getBlob(confusionSamplesPath(corpus, hypothesis), {
+    return getBlob(confusionSamplesPath(corpus, hypothesis), {
         params: { reference, hypoFilter, refFilter, annotationType },
     })
 }
@@ -147,7 +140,7 @@ export function getMetricsSamples(
     if (group) {
         params.group = group
     }
-    return Utils.getBlob(metricsSamplesPath(corpus, hypothesis), { params })
+    return getBlob(metricsSamplesPath(corpus, hypothesis), { params })
 }
 
 /**

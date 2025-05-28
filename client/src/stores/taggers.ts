@@ -20,7 +20,7 @@ export function sort_tagger_annotations(types: string[]): string[] {
  */
 const useTaggers = defineStore("taggers", () => {
     // Stores
-    const app = stores.useApp()
+    const errorsStore = stores.useErrors()
 
     // Fields
     const loading = ref(false)
@@ -32,7 +32,7 @@ const useTaggers = defineStore("taggers", () => {
         API.getTaggers()
             .then(response => (taggers.value = response.data))
             .catch(error => {
-                app.handleServerError("fetch taggers", error)
+                errorsStore.handleServerError("fetch taggers", error)
             })
             .finally(() => (loading.value = false))
     }

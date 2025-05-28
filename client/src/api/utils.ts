@@ -2,17 +2,14 @@
  * Utils for handling the blobs from some API responses.
  */
 
-import type { ErrorMessage } from "@/api/api"
-import type { AppStore } from "@/stores"
-// --- libraries ---
 import axios from "axios"
-// --- types ---
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios"
 import { parse } from "content-disposition"
+import type { ErrorMessage } from "@/api"
+import type stores from "@/stores"
 
 export type BlobResponse = AxiosResponse<Blob>
 
-// --- methods ---
 /**
  * Fetch a blob from a path.
  * @param path Request path.
@@ -28,7 +25,7 @@ export function getBlob(
  * Downloads a file from a response object.
  * @param response Response with blob data.
  */
-export function browserDownloadResponseFile(response: BlobResponse) {
+export function browserDownloadResponseFile(response: BlobResponse): void {
     // Parse potential UTF8 filename.
     const filename = parse(response.headers["content-disposition"]).parameters
         .filename
@@ -51,11 +48,11 @@ export function browserDownloadResponseFile(response: BlobResponse) {
 export function handleBlobError(
     error: AxiosError<Blob>,
     intent: string,
-    app: AppStore,
-) {
+    app: any,
+): void {
     const reader = new FileReader()
     // Setup the onload that fires after reading.
-    reader.onload = () => {
+    reader.onload = (): void => {
         const json = JSON.parse(reader.result as string) as ErrorMessage
         const errObj = {
             response: {

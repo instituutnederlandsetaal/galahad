@@ -12,7 +12,7 @@ import type { Format } from "@/types/documents"
 const useExport = defineStore("exportStore", () => {
     // Stores
     const corporaStore = stores.useCorpora()
-    const app = stores.useApp()
+    const errorsStore = stores.useErrors()
     const jobSelection = stores.useJobSelection()
 
     // Fields
@@ -40,7 +40,9 @@ const useExport = defineStore("exportStore", () => {
             posHeadOnly,
         )
             .then(Utils.browserDownloadResponseFile)
-            .catch(res => Utils.handleBlobError(res, "convert corpus", app))
+            .catch(res =>
+                Utils.handleBlobError(res, "convert corpus", errorsStore),
+            )
             .finally(() => (loading.value = false))
     }
 
@@ -53,7 +55,9 @@ const useExport = defineStore("exportStore", () => {
             posHeadOnly,
         )
             .then(Utils.browserDownloadResponseFile)
-            .catch(res => Utils.handleBlobError(res, "merge corpus", app))
+            .catch(res =>
+                Utils.handleBlobError(res, "merge corpus", errorsStore),
+            )
             .finally(() => (loading.value = false))
     }
     // Exports

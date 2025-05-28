@@ -69,7 +69,7 @@ export function reloadEval(
                 }
             })
             .catch(error => {
-                stores.useApp().handleServerError(intent, error)
+                stores.useErrors().handleServerError(intent, error)
                 reject()
             })
             .finally(() => (loading.value = false))

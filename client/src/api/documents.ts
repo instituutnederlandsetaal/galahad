@@ -3,26 +3,19 @@
  * and downloading the uploaded source document.
  */
 
-// -- api ---
-import * as Utils from "@/api/utils"
-import type { BlobResponse } from "@/api/utils"
+import axios, { type AxiosResponse } from "axios"
+import { getBlob, type BlobResponse } from "@/api/utils"
 import type { UUID } from "@/types/corpora"
 import type { DocumentMetadata } from "@/types/documents"
-// --- libraries ---
-import axios from "axios"
-// --- types ---
-import type { AxiosResponse } from "axios"
 
 type DocumentsResponse = AxiosResponse<DocumentMetadata[]>
 
-// --- computed ---
-const documentsPath = (corpus: UUID) => `/corpora/${corpus}/documents`
-const documentPath = (corpus: UUID, document: string) =>
+const documentsPath = (corpus: UUID): string => `/corpora/${corpus}/documents`
+const documentPath = (corpus: UUID, document: string): string =>
     `${documentsPath(corpus)}/${document}`
-const rawDocumentPath = (corpus: UUID, document: string) =>
+const rawDocumentPath = (corpus: UUID, document: string): string =>
     `${documentPath(corpus, document)}/raw`
 
-// --- methods ---
 /**
  * Fetch all documents for a corpus.
  * @param corpus UUID of the corpus.
@@ -41,7 +34,7 @@ export function postDocument(
     corpus: UUID,
     document: FormData,
     contentType?: Record<string, string>,
-) {
+): Promise<AxiosResponse> {
     return axios.post(documentsPath(corpus), document, { headers: contentType })
 }
 
@@ -50,7 +43,10 @@ export function postDocument(
  * @param corpus UUID of the corpus.
  * @param document Document name.
  */
-export function deleteDocument(corpus: UUID, document: string) {
+export function deleteDocument(
+    corpus: UUID,
+    document: string,
+): Promise<AxiosResponse> {
     return axios.delete(documentPath(corpus, document))
 }
 
@@ -63,5 +59,5 @@ export function getRawDocument(
     corpus: UUID,
     document: string,
 ): Promise<BlobResponse> {
-    return Utils.getBlob(rawDocumentPath(corpus, document))
+    return getBlob(rawDocumentPath(corpus, document))
 }

@@ -5,7 +5,7 @@
             sortedByColumn="count">
             <template #table-empty-instruction>
                 <p v-if="distribution.generated">No results for current filter settings.</p>
-                <p v-else>Select a hypothesis layer and an annotation to generate a distribution.</p>
+                <p v-else>Select a hypothesis layer and an annotation to view a distribution.</p>
             </template>
             <template #help>
                 <p>
