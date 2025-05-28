@@ -1,4 +1,4 @@
-FROM node:24.0.2-alpine3.21 AS build
+FROM node:24.1.0-bookworm-slim AS build
 COPY . .
 RUN npm ci && npm run build
 

@@ -10,6 +10,9 @@
                 "noUndeclaredVariables": "off",
                 "noUnusedVariables": "off",
                 "useHookAtTopLevel": "off"
+            },
+            "style": {
+                "useBlockStatements": "off"
             }
         }
     },
