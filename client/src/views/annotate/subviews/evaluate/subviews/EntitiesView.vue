@@ -9,7 +9,7 @@
         <p v-else>
             Please select a hypothesis job first.
         </p>
-        <GTable compact v-if="items" :title :loading :items :columns>
+        <GTable v-if="items" :title :loading :items :columns sortedByColumn="count" compact>
             <template #table-empty-instruction>
                 No entities found in this document.
             </template>
@@ -32,9 +32,9 @@ const selectedDoc = ref<string>()
 const loading = ref<boolean>(false)
 const items = ref<Entity[]>()
 const columns = ref<Field[]>([
-    { key: "first", label: "label", sortOn: (i) => i.first },
-    { key: "second", label: "entity", sortOn: (i) => i.second },
-    { key: "third", label: "count", sortOn: (i) => i.third }
+    { key: "label", sortOn: (i) => i.label },
+    { key: "form", sortOn: (i) => i.form },
+    { key: "count", sortOn: (i) => i.count }
 ])
 
 // --- computed ---

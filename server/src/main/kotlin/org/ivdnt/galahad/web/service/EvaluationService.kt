@@ -4,15 +4,14 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
-import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.corpora.CorpusMetadata
-import org.ivdnt.galahad.evaluation.CorpusEvaluations
 import org.ivdnt.galahad.evaluation.JobPair
 import org.ivdnt.galahad.evaluation.comparison.*
 import org.ivdnt.galahad.evaluation.confusion.CONFUSION_TYPES
 import org.ivdnt.galahad.evaluation.confusion.CorpusConfusion
 import org.ivdnt.galahad.evaluation.distribution.CorpusDistribution
+import org.ivdnt.galahad.evaluation.entities.DocumentEntities
 import org.ivdnt.galahad.evaluation.frequency.TokenFrequency
 import org.ivdnt.galahad.evaluation.metrics.*
 import org.ivdnt.galahad.exceptions.AnnotationNotSupported
@@ -21,7 +20,6 @@ import org.ivdnt.galahad.export.csv.CSVFile
 import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.util.setContentDisposition
 import org.ivdnt.galahad.util.toValidFileName
-import org.ivdnt.galahad.web.controller.DISTRIBUTION_MAX_SIZE
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.io.File
@@ -283,17 +281,10 @@ class EvaluationService(val corpora: CorporaService) {
         return cm
     }
 
-    fun getEntities(corpus: UUID, document: String, job: String): List<Triple<String, String, Int>> {
-        val layer = corpora.readAsReaderOrThrow(corpus, user).jobs.readOrThrow(job).getLayer(document)
-        return layer.documents.flatMap {
-            it.paragraphs.flatMap {
-                it.sentences.flatMap { sent ->
-                    sent.spans?.get(Annotation.NER)
-                        ?.map { span -> span.value to span.indices.map { sent.terms[it] } } ?: emptyList()
-                }
-            }
-        }.groupBy { Pair(it.first, it.second.joinToString("") { it.token + it.space }) }.mapValues { it.value.size }.map { (key, value) ->
-            Triple(key.first, key.second, value)
-        }.sortedByDescending { it.third }
+    fun getEntities(corpus: UUID, document: String, job: String): List<DocumentEntities.Entity> {
+        val corpus = corpora.readAsReaderOrThrow(corpus, user)
+        val jobEval = corpus.evaluation.createOrThrow(JobPair(job))
+        val docEval = jobEval.documents.createOrThrow(document)
+        return docEval.entities
     }
 }

@@ -109,7 +109,7 @@ const {
     columns,
     selectable,
     sortedByColumn,
-    sortDesc,
+    sortDesc = true,
     compact,
     items,
 } = defineProps<{

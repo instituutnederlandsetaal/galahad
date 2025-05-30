@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.corpora
 
 import org.ivdnt.galahad.documents.Documents
-import org.ivdnt.galahad.evaluation.CorpusEvaluations
+import org.ivdnt.galahad.evaluation.JobsEvaluations
 import org.ivdnt.galahad.files.DiskValue
 import org.ivdnt.galahad.files.GalahadFolder
 import org.ivdnt.galahad.files.ValidatedDiskValue
@@ -28,7 +28,7 @@ class Corpus(
 
     val documents: Documents = Documents(dir.resolve(DOCS_FOLDER), this)
     val jobs: Jobs = Jobs(dir.resolve(JOBS_FOLDER), this)
-    val evaluation: CorpusEvaluations = CorpusEvaluations(dir.resolve(EVALUATION_FOLDER), this)
+    val evaluation: JobsEvaluations = JobsEvaluations(dir.resolve(EVALUATIONS_FOLDER), this)
 
     // Files in the corpus folder.
     private val mutableMetadataFile = dir.resolve(MUTABLE_METADATA_FILE)
@@ -59,7 +59,7 @@ class Corpus(
 
         private const val JOBS_FOLDER = "jobs"
         private const val DOCS_FOLDER = "documents"
-        private const val EVALUATION_FOLDER = "evaluation"
+        private const val EVALUATIONS_FOLDER = "evaluations"
 
         fun create(dir: File, metadata: MutableCorpusMetadata): Corpus {
             // dummy corpus to access the paths

@@ -5,23 +5,19 @@ import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.evaluation.confusion.CONFUSION_TYPES
 import org.ivdnt.galahad.evaluation.distribution.CorpusDistribution
 import org.ivdnt.galahad.exceptions.DocumentNotFoundException
+import org.ivdnt.galahad.files.GalahadFolder
 import org.ivdnt.galahad.files.GalahadFolderManager
 import org.ivdnt.galahad.files.ValidatedDiskValue
 import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.web.controller.DISTRIBUTION_MAX_SIZE
 import java.io.File
 
-class JobEvaluations(
+class JobEvaluation(
     dir: File,
     private val corpus: Corpus,
     private val jobs: JobPair,
-) : GalahadFolderManager<DocumentEvaluations, String>(dir) {
-    override fun ctor(key: String): DocumentEvaluations {
-        TODO("Not yet implemented")
-    }
-
-    override fun throwNotFound(key: String): Nothing = throw DocumentNotFoundException(key)
-
+) : GalahadFolder(dir) {
+    val documents: DocumentEvaluations = DocumentEvaluations(dir.resolve(DOCUMENTS_FOLDER), corpus, jobs)
 
     val distribution: Map<Annotation, CorpusDistribution> get() = distributionCache.readOrCreate()
     private val distributionFile = dir.resolve(DISTRIBUTION_FILE)
@@ -46,6 +42,6 @@ class JobEvaluations(
 
     companion object {
         private const val DISTRIBUTION_FILE = "distribution.json"
+        const val DOCUMENTS_FOLDER = "documents"
     }
-
 }

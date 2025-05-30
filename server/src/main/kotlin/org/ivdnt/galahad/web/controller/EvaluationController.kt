@@ -14,6 +14,7 @@ import org.ivdnt.galahad.app.*
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
 import org.ivdnt.galahad.evaluation.confusion.Confusion
 import org.ivdnt.galahad.evaluation.distribution.CorpusDistribution
+import org.ivdnt.galahad.evaluation.entities.DocumentEntities
 import org.ivdnt.galahad.evaluation.metrics.CorpusMetrics
 import org.ivdnt.galahad.exceptions.ErrorResponse
 import org.ivdnt.galahad.web.service.EvaluationService
@@ -198,5 +199,5 @@ class EvaluationController(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Document name") document: String,
         @PathVariable @Parameter(description = "Tagger name or sourceLayer") job: String,
-    ): List<Triple<String, String, Int>> = evaluationService.getEntities(corpus, document, job)
+    ): List<DocumentEntities.Entity> = evaluationService.getEntities(corpus, document, job)
 }
