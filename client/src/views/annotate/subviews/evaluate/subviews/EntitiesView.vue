@@ -13,41 +13,40 @@
             <template #table-empty-instruction>
                 No entities found in this document.
             </template>
-
-            <template #cell-second="data: TableData<Term>">
-                {{ displayEntity(data.value) }}
-            </template>
         </GTable>
     </GCard>
 </template>
 
 <script setup lang="ts">
 import stores from '@/stores'
+import * as API from '@/api/evaluation'
 import type { Entity, Term } from '@/types/evaluation'
 import type { Field, TableData } from '@/types/ui/table'
-import * as API from '@/api/evaluation'
 
+// --- stores ---
 const jobSelection = stores.useJobSelection()
-const corporaStore = stores.useCorpora()
+const corpora = stores.useCorpora()
 
+// --- data ---
 const selectedDoc = ref<string>()
-
+const loading = ref<boolean>(false)
 const items = ref<Entity[]>()
+const columns = ref<Field[]>([
+    { key: "first", label: "label", sortOn: (i) => i.first },
+    { key: "second", label: "entity", sortOn: (i) => i.second },
+    { key: "third", label: "count", sortOn: (i) => i.third }
+])
+
+// --- computed ---
 const title = computed<string>(() => {
     return `Entities in ${selectedDoc.value}`
 })
-const columns = ref<Field[]>([
-    { key: "first", label: "NER" },
-    { key: "second" },
-    { key: "third", label: "Count" }
-])
 
-const loading = ref<boolean>(false)
 
 watch(() => selectedDoc.value, () => {
     loading.value = true
     API.getEntities(
-        corporaStore.activeUUID,
+        corpora.activeUUID,
         jobSelection.hypothesisJobId,
         selectedDoc.value
     ).then(res => {
@@ -56,8 +55,4 @@ watch(() => selectedDoc.value, () => {
         loading.value = false
     })
 })
-
-function displayEntity(terms: Term[]): string {
-    return terms.map(term => term.annotations["token"]).join(' ')
-}
 </script>

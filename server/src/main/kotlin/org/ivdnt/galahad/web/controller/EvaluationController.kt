@@ -198,5 +198,5 @@ class EvaluationController(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Document name") document: String,
         @PathVariable @Parameter(description = "Tagger name or sourceLayer") job: String,
-    ): List<Triple<String, List<Term>, Int>> = evaluationService.getEntities(corpus, document, job)
+    ): List<Triple<String, String, Int>> = evaluationService.getEntities(corpus, document, job)
 }

@@ -7,6 +7,8 @@ import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.corpora.CorpusMetadata
+import org.ivdnt.galahad.evaluation.CorpusEvaluations
+import org.ivdnt.galahad.evaluation.JobPair
 import org.ivdnt.galahad.evaluation.comparison.*
 import org.ivdnt.galahad.evaluation.confusion.CONFUSION_TYPES
 import org.ivdnt.galahad.evaluation.confusion.CorpusConfusion
@@ -42,19 +44,22 @@ class EvaluationService(val corpora: CorporaService) {
         corpus: UUID,
         job: String,
     ): Map<Annotation, CorpusDistribution> {
-        val allAnnots = annotationTypesForTagger(job, corpus)
-        if (Annotation.LEMMA !in allAnnots) {
-            return emptyMap()
-        }
-        val annotationTypes = CONFUSION_TYPES.filter { it in allAnnots }
-        val distributions = annotationTypes.associateWith {
-            CorpusDistribution(
-                corpora.readAsReaderOrThrow(corpus, user),
-                job,
-                it
-            ).trim(DISTRIBUTION_MAX_SIZE) as CorpusDistribution
-        }
-        return distributions
+        val corpus = corpora.readAsReaderOrThrow(corpus, user)
+        val jobEval = corpus.evaluation.createOrThrow(JobPair(job))
+        return jobEval.distribution
+        // val allAnnots = annotationTypesForTagger(job, corpus)
+        // if (Annotation.LEMMA !in allAnnots) {
+        //     return emptyMap()
+        // }
+        // val annotationTypes = CONFUSION_TYPES.filter { it in allAnnots }
+        // val distributions = annotationTypes.associateWith {
+        //     CorpusDistribution(
+        //         corpora.readAsReaderOrThrow(corpus, user),
+        //         job,
+        //         it
+        //     ).trim(DISTRIBUTION_MAX_SIZE) as CorpusDistribution
+        // }
+        // return distributions
     }
 
     fun getConfusion(
@@ -278,7 +283,7 @@ class EvaluationService(val corpora: CorporaService) {
         return cm
     }
 
-    fun getEntities(corpus: UUID, document: String, job: String): List<Triple<String, List<Term>, Int>> {
+    fun getEntities(corpus: UUID, document: String, job: String): List<Triple<String, String, Int>> {
         val layer = corpora.readAsReaderOrThrow(corpus, user).jobs.readOrThrow(job).getLayer(document)
         return layer.documents.flatMap {
             it.paragraphs.flatMap {
@@ -287,7 +292,7 @@ class EvaluationService(val corpora: CorporaService) {
                         ?.map { span -> span.value to span.indices.map { sent.terms[it] } } ?: emptyList()
                 }
             }
-        }.groupBy { it }.mapValues { it.value.size }.map { (key, value) ->
+        }.groupBy { Pair(it.first, it.second.joinToString("") { it.token + it.space }) }.mapValues { it.value.size }.map { (key, value) ->
             Triple(key.first, key.second, value)
         }.sortedByDescending { it.third }
     }
