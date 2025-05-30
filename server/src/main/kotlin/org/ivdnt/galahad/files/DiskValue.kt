@@ -17,11 +17,7 @@ open class DiskValue<T>(
     inline fun <reified T> readOrNull(): T? {
         if (file.length() == 0L) return null
 
-        cache.getIfPresent(file.absolutePath)?.let {
-            println("Cache hit for ${file.absolutePath}")
-            return it as T
-        }
-        println("Cache miss for ${file.absolutePath}, reading from disk...")
+        cache.getIfPresent(file.absolutePath)?.let { return it as T }
 
         return JsonUtil.mapper.readValue(file.readBytes(), object : TypeReference<T>() {})
             .also { ThreadPoolUtil.pool.execute { cache.put(file.absolutePath, it as Any) } }

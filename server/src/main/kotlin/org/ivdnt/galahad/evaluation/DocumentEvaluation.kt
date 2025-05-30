@@ -11,11 +11,11 @@ class DocumentEvaluation(
     private val corpus: Corpus,
     private val jobs: JobPair,
 ) : GalahadFolder(dir) {
-    val entities: List<DocumentEntities.Entity> get() = entitiesCache.readOrCreate()
+    val entities: DocumentEntities get() = entitiesCache.readOrCreate()
     private val entitiesFile = dir.resolve(ENTITIES_FILE)
-    private val entitiesCache = object : ValidatedDiskValue<List<DocumentEntities.Entity>>(entitiesFile) {
+    private val entitiesCache = object : ValidatedDiskValue<DocumentEntities>(entitiesFile) {
         override fun isValid(lastModified: Long) = lastModified >= corpus.lastModified
-        override fun set(): List<DocumentEntities.Entity> = DocumentEntities.fromLayer(corpus.jobs.readOrThrow(jobs.reference).getLayer(name))
+        override fun set(): DocumentEntities = DocumentEntities.create(corpus.jobs.readOrThrow(jobs.reference).getLayer(name))
     }
     companion object {
         const val ENTITIES_FILE = "entities.json"

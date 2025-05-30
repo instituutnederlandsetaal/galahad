@@ -8,15 +8,16 @@ import type { UUID } from "@/types/corpora"
 import type {
     ConfusionWrapper,
     DistributionWrapper,
-    Entity,
     Metrics,
     TermComparison,
 } from "@/types/evaluation"
+import type { DocumentEntities, JobEntities } from "@/types/evaluation/entities"
 
 type ConfusionResponse = AxiosResponse<ConfusionWrapper>
 type DistributionResponse = AxiosResponse<DistributionWrapper>
 type MetricsResponse = AxiosResponse<Metrics>
-type EntitiesResponse = AxiosResponse<Entity[]>
+type DocumentEntitiesResponse = AxiosResponse<DocumentEntities>
+type JobEntitiesResponse = AxiosResponse<JobEntities>
 
 const evaluationPath = (corpus: UUID, hypothesis: string): string =>
     `/corpora/${corpus}/jobs/${hypothesis}/evaluation`
@@ -37,9 +38,10 @@ const documentLayerComparisonPath = (
     job: string,
     document: string,
 ): string => `/corpora/${corpus}/jobs/${job}/documents/${document}/evaluation`
-const entitiesPath = (corpus: UUID, job: string, document: string): string =>
+const documentEntitiesPath = (corpus: UUID, job: string, document: string): string =>
     `/corpora/${corpus}/jobs/${job}/documents/${document}/entities`
-
+const jobEntitiesPath = (corpus: UUID, job: string): string =>
+    `${evaluationPath(corpus, job)}/entities`
 /**
  * Fetch term frequency distribution.
  * @param corpus UUID of the corpus.
@@ -166,10 +168,17 @@ export function getDocumentLayerComparison(
     })
 }
 
-export function getEntities(
+export function getDocumentEntities(
     corpus: UUID,
     job: string,
     document: string,
-): Promise<EntitiesResponse> {
-    return axios.get(entitiesPath(corpus, job, document))
+): Promise<DocumentEntitiesResponse> {
+    return axios.get(documentEntitiesPath(corpus, job, document))
+}
+
+export function getJobEntities(
+    corpus: UUID,
+    job: string,
+): Promise<JobEntitiesResponse> {
+    return axios.get(jobEntitiesPath(corpus, job))
 }

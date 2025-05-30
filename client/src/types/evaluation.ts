@@ -89,8 +89,3 @@ export type EvaluationEntry = {
     count: number
     samples: TermComparison[]
 }
-
-export type Entity = {
-    first: string
-    second: Term[]
-}

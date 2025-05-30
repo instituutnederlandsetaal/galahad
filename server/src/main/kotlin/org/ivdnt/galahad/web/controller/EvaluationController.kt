@@ -9,12 +9,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
-import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.app.*
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
 import org.ivdnt.galahad.evaluation.confusion.Confusion
 import org.ivdnt.galahad.evaluation.distribution.CorpusDistribution
 import org.ivdnt.galahad.evaluation.entities.DocumentEntities
+import org.ivdnt.galahad.evaluation.entities.JobEntities
 import org.ivdnt.galahad.evaluation.metrics.CorpusMetrics
 import org.ivdnt.galahad.exceptions.ErrorResponse
 import org.ivdnt.galahad.web.service.EvaluationService
@@ -194,10 +194,17 @@ class EvaluationController(
     ): CorpusMetrics = evaluationService.getTokenFrequency(corpus, job, reference)
 
     @CrossOrigin
-    @GetMapping(ENTITIES_URL)
+    @GetMapping(DOCUMENT_ENTITIES_URL)
     fun getEntities(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Document name") document: String,
         @PathVariable @Parameter(description = "Tagger name or sourceLayer") job: String,
-    ): List<DocumentEntities.Entity> = evaluationService.getEntities(corpus, document, job)
+    ): DocumentEntities = evaluationService.getEntities(corpus, document, job)
+
+    @CrossOrigin
+    @GetMapping(JOB_ENTITIES_URL)
+    fun getJobEntities(
+        @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
+        @PathVariable @Parameter(description = "Tagger name or sourceLayer") job: String,
+    ): JobEntities = evaluationService.getJobEntities(corpus, job)
 }

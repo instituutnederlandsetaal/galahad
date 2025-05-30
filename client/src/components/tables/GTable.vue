@@ -115,7 +115,7 @@ const {
 } = defineProps<{
     title?: string
     helpLink?: HelpLink | string
-    loading: boolean
+    loading?: boolean
     displayOnEmpty?: boolean
     columns: Field[]
     selectable?: boolean
