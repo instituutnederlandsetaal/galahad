@@ -90,9 +90,7 @@ watch(selectedDoc, async newVal => {
 
 watch(termcomps, () => {
     if (!termcomps.value) return
-    annotationOptions.value = Object.keys(
-        termcomps.value[0].refTerm.annotations,
-    ).map(key => ({
+    annotationOptions.value = documentsStore.available.find(doc => doc.name === selectedDoc.value)?.annotations.map(key => ({
         value: key,
         text: key,
     }))
@@ -115,6 +113,11 @@ function cleanAnnotation(term: Term) {
 <style scoped lang="scss">
 .document {
     padding: 2rem;
+}
+
+.tooltip {
+    min-width: fit-content;
+    min-height: fit-content;
 }
 
 .wordComparison {

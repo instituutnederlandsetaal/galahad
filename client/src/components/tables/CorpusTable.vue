@@ -10,17 +10,22 @@
         </template>
 
         <template #table-empty-instruction>
-            <slot name="tableEmpty"> First, create a new corpus. </slot>
+            <slot name="tableEmpty">First, create a new corpus.</slot>
         </template>
 
         <template #prepend>
-            <form v-if="type != TableCorporaType.Dataset" @submit.prevent>
-                <GButton green @click="$emit('create')" v-if="type == TableCorporaType.User"> New </GButton>
-                <GButton orange :disabled="!activeCorpusInTable" @click="$emit('update', selectedCorpus)">Edit
+            <form v-if="type != TableCorporaType.Dataset" class="buttons" @submit.prevent>
+                <GButton green @click="$emit('create')" v-if="type == TableCorporaType.User">
+                    New
+                </GButton>
+                <GButton orange :disabled="!activeCorpusInTable" @click="$emit('update', selectedCorpus)">
+                    Edit
                 </GButton>
                 <GButton v-if="type == TableCorporaType.User"
                     :disabled="!userStore.canDelete(selectedCorpus) || !activeCorpusInTable" red
-                    @click="$emit('delete', selectedCorpus)">Delete</GButton>
+                    @click="$emit('delete', selectedCorpus)">
+                    Delete
+                </GButton>
             </form>
         </template>
 
@@ -161,3 +166,10 @@ function customSharedSort(i: CorpusMetadata) {
     return i.collaborators.length + i.viewers.length
 }
 </script>
+
+<style scoped lang="scss">
+.buttons {
+    display: flex;
+    gap: 0.25rem;
+}
+</style>

@@ -43,7 +43,7 @@
                 <!-- Show load icon while posting an action-->
                 <GSpinner />
             </div>
-            <div class="buttons" v-else-if="taggerIsAvailable">
+            <form v-else-if="taggerIsAvailable" @submit.prevent class="buttons">
                 <GButton green :disabled="job.progress.pending === 0 || job.progress.busy" @click="
                     () => {
                         jobsStore.tag(job.tagger.id)
@@ -64,13 +64,13 @@
                     @click="deleteJobId = job.tagger.id">
                     Delete
                 </GButton>
-            </div>
+            </form>
 
             <!-- progress -->
             <JobProgress :job />
 
             <!-- Layer preview -->
-            <LayerViewer :layer="job.preview" />
+            <LayerViewer v-if="job.resultSummary.tokens > 0" :job />
 
             <!-- errors -->
             <GInfo v-if="job.progress.failed > 0" error>
@@ -189,30 +189,8 @@ function firstFive(obj: Record<string, unknown>) {
 </script>
 
 <style scoped lang="scss">
-.error {
-    width: fit-content;
-    margin: auto;
-}
-
 .buttons {
-    height: 100%;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 10px;
-}
-
-.centerText {
-    text-align: center;
-}
-
-.healthy {
-    background-color: var(--gold);
-    color: black;
-}
-
-.unhealthy {
-    background-color: var(--int-red);
-    color: white;
+    gap: 0.25rem;
 }
 </style>

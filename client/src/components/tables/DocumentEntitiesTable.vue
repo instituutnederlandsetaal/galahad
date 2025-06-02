@@ -16,10 +16,10 @@ const {
     filter,
 } = defineProps<{
     entities: Entity[]
-    filter: string
+    filter?: string
 }>()
 
-const items = computed(() => entities.filter((i) => i.label === filter || filter === "total"))
+const items = computed(() => entities.filter((i) => i.label === filter || filter === undefined))
 const columns = ref<Field[]>([
     { key: "label", sortOn: (i) => i.label },
     { key: "form", sortOn: (i) => i.form },

@@ -41,7 +41,7 @@ class JobsControllerTest(
         val doc = corpus.documents.createOrThrow(TestUtil.get("all-formats/input/input.tei.xml"))
         val uuid = corpus.immutableMetadata.uuid
 
-        assertEquals(taggers.getTaggers().size + 1, getJobs(uuid).size) // +1 for the sourceLayer
+        assertEquals(taggers.getTaggers().count() + 1, getJobs(uuid).size) // +1 for the sourceLayer
         var progress: Progress =
             rest.postForEntity("/corpora/$uuid/jobs/pie-tdn", getHeaders(), Progress::class.java).body!!
         assertEquals(1, progress.total)

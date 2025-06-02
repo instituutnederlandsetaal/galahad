@@ -2,31 +2,24 @@
     <GCard title="Entities View">
         <template #help>
             <p>
-                Here you can see all the named entities in the selected hypothesis job.
+                Here you can see all the named entities in all jobs.
             </p>
         </template>
 
-        <GTable v-if="items" class="table" :title="`Entities in ${jobSelection.hypothesisJobId}`" :loading :items
-            :columns compact>
-            <template #table-empty-instruction>
-                Select a hypothesis layer.
-            </template>
-
+        <GTable class="table" :loading :items :columns compact>
             <template #cell="data: TableData<DocumentEntities>">
-                <GButton v-if="data.item.document != 'total' && data.field.key != 'document'" class="button"
-                    @click="selectedItem = data">
+                <GButton class="button" @click="selectedItem = data">
                     {{ data.value }}
                 </GButton>
             </template>
         </GTable>
 
-        <GModal :show="selectedItem" @hide="selectedItem = undefined"
+        <GModal :show="selectedItem !== undefined" @hide="selectedItem = undefined"
             :title="`Entities in ${selectedItem?.item?.document}`">
             <template #help>
                 Here you can view all the entities in the selected document.
             </template>
-            <DocumentEntitiesTable :filter="selectedItem?.field?.key" :entities="selectedItem?.item?.entities">
-            </DocumentEntitiesTable>
+            <DocumentEntitiesTable :filter :entities="selectedItem?.item?.entities" />
         </GModal>
     </GCard>
 </template>
@@ -35,33 +28,77 @@
 import stores from '@/stores'
 import * as API from '@/api/evaluation'
 import type { Field, TableData } from '@/types/ui/table'
-import { Entity, type DocumentEntities } from '@/types/evaluation/entities'
+import type { DocumentEntities, JobEntities, JobsEntities } from '@/types/evaluation/entities'
 
 // --- stores ---
-const jobSelection = stores.useJobSelection()
 const corpora = stores.useCorpora()
 
 // --- data ---
 const loading = ref<boolean>(false)
-const items = ref<DocumentEntities[]>()
-const selectedItem = ref<TableData<DocumentEntities>>()
+const items = ref<any>([])
+const selectedItem = ref<TableData<any>>()
 
 // --- computed ---
-const columns = computed<Field[]>(() => Object.keys(items.value[0]).map((i) => ({ key: i })))
+const columns = computed<Field[]>(() => Object.keys(items.value[0] || {}).map((i) => ({ key: i })))
+const filter = computed(() => {
+    if (["document", "total"].includes(selectedItem.value?.field.key)) {
+        return undefined
+    }
+    return selectedItem.value?.field?.key
+})
 
-watch(() => jobSelection.hypothesisJobId, () => {
-    if (!jobSelection.hypothesisJobId) return
+// --- watch ---
+watchEffect(() => {
     loading.value = true
-    API.getJobEntities(
+    API.getJobsEntities(
         corpora.activeUUID,
-        jobSelection.hypothesisJobId,
     ).then(res => {
-        items.value = Object.entries(res.data.documents).map(([key, value]) => ({ document: key, ...value.summary, total: value.total, entities: value.entities }))
-        items.value.unshift({ document: "total", ...res.data.summary, total: res.data.total })
+        items.value = convertJobsEntities(res.data)
     }).finally(() => {
         loading.value = false
     })
-}, { immediate: true })
+})
+
+// --- methods ---
+function convertJobsEntities(jobsEntities: JobsEntities): { document: string;[key: string]: number | string }[] {
+    const result: Record<string, { [key: string]: number | string }> = {};
+
+    // rest of the documents
+    for (const [jobName, jobData] of Object.entries(jobsEntities.jobs)) {
+        for (const [docName, docData] of Object.entries(jobData.documents)) {
+            for (const [eLabel, eCount] of Object.entries(docData.summary)) {
+                if (!result[docName]) {
+                    result[docName] = { document: docName };
+                }
+                result[docName][`${jobName}-${eLabel}`] = eCount;
+            }
+            result[docName][`${jobName}-total`] = docData.total;
+        }
+    }
+
+    for (const [docName, doc] of Object.entries(jobsEntities.stddev.documents)) {
+        for (const [eLabel, stddev] of Object.entries(doc.stddev)) {
+            result[docName][`${eLabel}-std`] = stddev.toFixed(2);
+        }
+        result[docName].stdavg = doc.average.toFixed(2);
+    }
+
+    // document total
+    result["total"] = { document: "total" };
+    for (const [jobName, jobData] of Object.entries(jobsEntities.jobs)) {
+        result["total"][`${jobName}-total`] = jobData.total;
+        for (const [eLabel, eCount] of Object.entries(jobData.summary)) {
+            result["total"][`${jobName}-${eLabel}`] = eCount;
+        }
+    }
+
+    result["total"].stdavg = jobsEntities.stddev.average.toFixed(2);
+    for (const [eLabel, stddev] of Object.entries(jobsEntities.stddev.stddev)) {
+        result["total"][`${eLabel}-std`] = stddev.toFixed(2);
+    }
+
+    return Object.values(result);
+}
 </script>
 
 <style scoped lang="scss">

@@ -50,6 +50,7 @@ const val JOB_URL: String = "$JOBS_URL/{job}"
 const val JOB_DOCUMENT_URL: String = "$JOB_URL/documents/{document}"
 
 // TODO refactor to remove {job} path param, instead using ?hypothesis and ?reference query params
+const val CORPUS_ENTITIES_URL: String = "$CORPUS_URL/evaluation/entities"
 const val EVALUATION_URL: String = "$JOB_URL/evaluation"
 const val JOB_ENTITIES_URL: String = "$EVALUATION_URL/entities"
 const val DISTRIBUTION_URL: String = "$EVALUATION_URL/distribution"

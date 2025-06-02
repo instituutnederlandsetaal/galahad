@@ -1,7 +1,7 @@
 <template>
-    <label for="job-select">{{ label }}</label>
+    <label>{{ label }}</label>
     <GSpinner v-if="jobsStore.loading" />
-    <GSelect v-else id="job-select" title="Select an annotation layer" :options="jobSelectionStore.selectableJobs"
+    <GSelect v-else title="Select an annotation layer" :options="jobSelectionStore.selectableJobs"
         v-model="selectedJob" />
     <GInfo v-if="untaggedDocsExist">
         <p>

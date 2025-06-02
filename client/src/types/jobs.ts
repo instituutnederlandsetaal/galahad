@@ -1,4 +1,4 @@
-import type { Term, WordForm } from "@/types/evaluation"
+import type { Term } from "@/types/evaluation"
 import type { Tagger } from "@/types/taggers"
 
 export const SOURCE_LAYER: string = "sourceLayer"
@@ -23,7 +23,6 @@ export type Progress = {
 }
 
 export type LayerPreview = {
-    wordforms: WordForm[]
     terms: Term[]
 }
 

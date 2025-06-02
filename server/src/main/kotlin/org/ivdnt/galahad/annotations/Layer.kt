@@ -71,10 +71,5 @@ class SentenceLayer(
 ) {
     val spans: Map<Annotation, Array<TermSpan>>? = spans?.ifEmpty { null }
 
-    override fun toString(): String = buildString {
-        terms.forEachIndexed { i, t ->
-            append(t.token)
-            if (i != terms.lastIndex) append(t.space)
-        }
-    }
+    override fun toString(): String = terms.toSpacedString()
 }

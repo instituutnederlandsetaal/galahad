@@ -11,7 +11,7 @@
             </template>
             <slot></slot>
         </GCard>
-        <form @submit.prevent class="buttons">
+        <form class="buttons" @submit.prevent>
             <GButton red @click="$emit('hide')">Close</GButton>
             <slot name="buttons"></slot>
         </form>

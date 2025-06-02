@@ -42,7 +42,6 @@ button {
     word-break: keep-all;
     white-space: nowrap;
     width: max-content;
-    margin: 0px 2px;
     cursor: pointer;
     line-height: 1.2rem;
     gap: 5px;

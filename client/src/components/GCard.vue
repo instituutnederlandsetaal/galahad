@@ -88,7 +88,6 @@ flex: 1;
         gap: 1rem;
         max-width: 100%;
         overflow-x: auto;
-        overflow-y: clip;
 
         &.article {
             max-width: 800px;

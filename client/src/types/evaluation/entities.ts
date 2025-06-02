@@ -13,5 +13,20 @@ export type DocumentEntities = {
 export type JobEntities = {
     documents: Record<string, DocumentEntities>
     summary: Record<string, number>
-    total: number  
+    total: number
+}
+
+export type JobsEntitiesStddev = {
+    documents: Record<string, DocumentEntitiesStddev>
+    stddev: Record<string, number>
+    average: number
+}
+export type DocumentEntitiesStddev = {
+    stddev: Record<string, number>
+    average: number
+}
+
+export type JobsEntities = {
+    jobs: Record<string, JobEntities>
+    stddev: JobsEntitiesStddev
 }

@@ -30,9 +30,6 @@ const documents = defineStore("documents", () => {
     const numSourceAnnotations = computed(
         () => available.value.filter(i => i.layerSummary?.tokens > 0).length,
     )
-    const totalSizeInChars = computed(() =>
-        available.value.reduce((x, y) => x + y.numChars, 0),
-    )
     const uploading: Record<string, FileStatus> = reactive({})
     const uploadBusyCount = computed(
         () => Object.values(uploading).filter(i => i.status === "busy").length,
@@ -225,7 +222,6 @@ const documents = defineStore("documents", () => {
         uploading,
         uploadBusyCount,
         uploadErrorCount,
-        totalSizeInChars,
         numSourceAnnotations,
         // Methods
         reloadDocumentsForCorpus,

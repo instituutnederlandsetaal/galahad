@@ -2,6 +2,20 @@ package org.ivdnt.galahad.annotations
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 
+fun Array<Term>.toSpacedString(): String = buildString {
+    this@toSpacedString.forEachIndexed { i, t ->
+        append(t.token)
+        if (i != this@toSpacedString.lastIndex) append(t.space)
+    }
+}
+
+fun List<Term>.toSpacedString(): String = buildString {
+    this@toSpacedString.forEachIndexed { i, t ->
+        append(t.token)
+        if (i != this@toSpacedString.lastIndex) append(t.space)
+    }
+}
+
 class Term(
     val id: String,
     val offset: Int,

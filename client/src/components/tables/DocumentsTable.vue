@@ -36,12 +36,7 @@
                     {{ data.value.tokens }}
                 </template>
                 <template #right>
-                    <InspectButton v-if="data.value.tokens > 0" @click="
-                        () => {
-                            preview = data.value.layerPreview
-                            previewDocument = data.item
-                        }
-                    " />
+                    <InspectButton v-if="data.value.tokens > 0" @click="previewDocument = data.item" />
                 </template>
             </RightFloatCell>
         </template>
@@ -76,11 +71,10 @@
     </GTable>
 
     <!-- preview modal -->
-    <GModal :show="previewDocument != null" @hide="previewDocument = null"
-        :title="`Preview of document ${previewDocument?.name}`">
-        <template #title>Source layer preview of document {{ previewDocument?.name }}</template>
+    <GModal :show="previewDocument !== undefined" @hide="previewDocument = undefined">
+        <template #title>Annotations of {{ previewDocument?.name }}</template>
         <template #help> Here you can inspect a small part of the source layer of the document. </template>
-        <LayerViewer :layer="previewDocument?.layerPreview" />
+        <LayerViewer :document="previewDocument" />
     </GModal>
 
     <!-- delete modal -->
@@ -96,7 +90,6 @@ import stores from "@/stores"
 import { formatDate } from "@/ts/utils"
 import type { CorpusMetadata } from "@/types/corpora"
 import type { DocumentMetadata } from "@/types/documents"
-import type { LayerPreview } from "@/types/jobs"
 // API & types
 import { type Field, TableDocumentsType } from "@/types/ui/table"
 
@@ -113,8 +106,7 @@ const props = defineProps({
 
 // Fields
 const deleteDocumentData = ref(null as null | DocumentMetadata)
-const previewDocument = ref(null as null | DocumentMetadata)
-const preview = ref(null as null | LayerPreview)
+const previewDocument = ref<DocumentMetadata>()
 const showDeleteModal = ref(false)
 
 const columns = computed<Field[]>(() => {

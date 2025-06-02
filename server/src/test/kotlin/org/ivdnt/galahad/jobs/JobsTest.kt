@@ -23,7 +23,7 @@ class JobsTest {
         // Check if empty
         assertEquals(0, corpus.jobs.readAll().size)
         val numTaggers = Tagger.taggers.size + 1 // +1 for source layer
-        assertEquals(numTaggers, corpus.jobs.readAllJobStatesIncludingPotentialJobs().size)
+        assertEquals(numTaggers, corpus.jobs.readAllMetadata().size)
         assertNull(corpus.jobs.readOrNull(name))
         assertThrows(Exception::class.java) { corpus.jobs.readOrThrow(name) }
         // Create
@@ -31,7 +31,7 @@ class JobsTest {
         // Check if created
         assertNotNull(job)
         assertEquals(1, corpus.jobs.readAll().size)
-        assertEquals(numTaggers, corpus.jobs.readAllJobStatesIncludingPotentialJobs().size)
+        assertEquals(numTaggers, corpus.jobs.readAllMetadata().size)
         assertNotNull(corpus.jobs.readOrNull(name))
         assertNotNull(corpus.jobs.readOrThrow(name))
         // delete

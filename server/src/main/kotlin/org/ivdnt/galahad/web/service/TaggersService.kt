@@ -18,7 +18,7 @@ import java.net.http.HttpResponse
 @Service
 class TaggersService : Logging {
 
-    fun readAll(): Iterable<Tagger> = Tagger.taggers.values
+    fun readAll(): Collection<Tagger> = Tagger.taggers.values
     fun read(tagger: String): Tagger? = Tagger.readOrThrow(tagger)
     fun taggerHealth(tagger: String): TaggerHealth {
         // If there are multiple replicas for the same service, we only get health check response from one replica.

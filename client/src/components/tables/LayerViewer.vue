@@ -1,48 +1,18 @@
 <template>
-    <div class="layerpreview">
-        <GTable v-if="layerNotEmpty" compact :columns :items noHelp title="Preview" />
-        <p v-else><i>No layer found</i></p>
-    </div>
+    <GTable :columns :items="items" />
 </template>
 
 <script setup lang="ts">
-// Libraries & stores
+import type { DocumentMetadata } from '@/types/documents'
+import type { Job } from '@/types/jobs'
 
-// API & types
-import type { LayerPreview } from "@/types/jobs"
-// Component dependencies.
+const { document, job } = defineProps<{
+    document?: DocumentMetadata
+    job?: Job
+}>()
 
-const props = defineProps({ layer: Object as () => LayerPreview })
-const layerNotEmpty = computed(() => {
-    return props.layer?.terms?.length > 0
-})
-
-const columns = computed(() => {
-    const annotations = Object.keys(props.layer?.terms[0].annotations).filter(
-        i => i !== "token",
-    )
-    const columns = annotations.map(annotation => ({
-        key: annotation,
-        label: annotation,
-    }))
-    // Token always as the first column
-    columns.unshift({ key: "token", label: "Token" })
-    return columns
-})
-
-const items = computed(() => {
-    return props.layer?.terms.map(term => {
-        return term.annotations
-    })
-})
+const annotations = computed(() => document ? document.annotations : job.tagger.annotations)
+const columns = computed(() => annotations.value.map(i => ({ key: i, label: i })))
+const terms = computed(() => document ? document.layerPreview.terms : job.preview.terms)
+const items = computed(() => terms.value.map(t => t.annotations))
 </script>
-
-<style scoped lang="scss">
-:deep(h3) {
-    margin: 0;
-}
-
-p {
-    text-align: center;
-}
-</style>

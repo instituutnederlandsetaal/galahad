@@ -2,6 +2,7 @@ package org.ivdnt.galahad.evaluation.entities
 
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Layer
+import org.ivdnt.galahad.annotations.toSpacedString
 import kotlin.collections.map
 
 class DocumentEntities(
@@ -21,7 +22,7 @@ class DocumentEntities(
                 layer.documents.flatMap {
                     it.paragraphs.flatMap {
                         it.sentences.flatMap { sent ->
-                            sent.spans?.get(Annotation.NER)?.map { span -> span.value to span.indices.map { sent.terms[it] }.joinToString("") { it.token + it.space } } ?: emptyList()
+                            sent.spans?.get(Annotation.NER)?.map { span -> span.value to (span.indices.map { sent.terms[it] }).toSpacedString() } ?: emptyList()
                         }
                     }
                 }.groupBy{ it }.mapValues { it.value.size }.map{

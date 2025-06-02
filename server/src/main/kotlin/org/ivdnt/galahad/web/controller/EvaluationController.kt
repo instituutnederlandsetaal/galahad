@@ -15,6 +15,7 @@ import org.ivdnt.galahad.evaluation.confusion.Confusion
 import org.ivdnt.galahad.evaluation.distribution.CorpusDistribution
 import org.ivdnt.galahad.evaluation.entities.DocumentEntities
 import org.ivdnt.galahad.evaluation.entities.JobEntities
+import org.ivdnt.galahad.evaluation.entities.JobsEntities
 import org.ivdnt.galahad.evaluation.metrics.CorpusMetrics
 import org.ivdnt.galahad.exceptions.ErrorResponse
 import org.ivdnt.galahad.web.service.EvaluationService
@@ -207,4 +208,10 @@ class EvaluationController(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name or sourceLayer") job: String,
     ): JobEntities = evaluationService.getJobEntities(corpus, job)
+
+    @CrossOrigin
+    @GetMapping(CORPUS_ENTITIES_URL)
+    fun getJobEntities(
+        @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
+    ): JobsEntities = evaluationService.getJobsEntities(corpus)
 }
