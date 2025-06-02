@@ -18,4 +18,10 @@ class ConlluReaderTest {
         val text = "Gas dalla statua.\nTer hoogte van.\n" // LF because reader.layer produces a valid unix file.
         assertEquals(text, reader.layer.toString())
     }
+
+    @Test
+    fun `Read underscore in TOKEN`() {
+        val reader = ConlluReader(TestUtil.get("formats/conllu/underscore.conllu"))
+        assertEquals("_\n", reader.layer.toString())  // LF because reader.layer produces a valid unix file.
+    }
 }
