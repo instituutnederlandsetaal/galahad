@@ -76,6 +76,7 @@ class ConlluReader(
     private fun getColumn(annotation: Annotation, fields: List<String>): String? {
         if (annotation == Annotation.UPOS) return getUpos(fields)
         if (annotation == Annotation.NER) return getNER(fields)
+        if (annotation == Annotation.TOKEN) return getColumnRaw(indices[Annotation.TOKEN]!!, fields)
         return getColumn(indices[annotation]!!, fields)
     }
 
@@ -100,8 +101,10 @@ class ConlluReader(
         return nerIOB
     }
 
-    // returns null on _
-    private fun getColumn(i: Int, fields: List<String>): String? = fields.getOrNull(i)?.takeIf { it != "_" }
+    /** returns null on _ */
+    private fun getColumn(i: Int, fields: List<String>): String? = getColumnRaw(i, fields)?.takeIf { it != "_" }
+    /** returns the raw value, even if it is "_" */
+    private fun getColumnRaw(i: Int, fields: List<String>): String? = fields.getOrNull(i)
 
     private fun getUpos(fields: List<String>): String? {
         val head: String = getColumn(3, fields) ?: return null // if no head, ignore features and return
