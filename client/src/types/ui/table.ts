@@ -10,17 +10,17 @@ export enum TableDocumentsType {
 }
 
 /* sortOn defines what to sort field values on */
-export type Field = {
+export type Column = {
     key: string
     label?: string
     sortOn?: (value: any) => any
-    textAlign?: string
-    isPrimaryField?: boolean
+    align?: string
     hidden?: boolean
+    format?: (data: TableData<any>) => string
 }
 
 export type TableData<T> = {
-    field: Field
+    field: Column
     item: T
     value: any
 }

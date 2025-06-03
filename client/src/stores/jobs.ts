@@ -38,9 +38,7 @@ const useJobs = defineStore("jobs", () => {
     function getProgress(job: string, corpus: string) {
         API.getJobProgress(corpus, job)
             .then(response => setProgress(job, response))
-            .catch(error =>
-                errorsStore.handleServerError("fetch job progress", error),
-            )
+            .catch(error => errorsStore.handle("fetch job progress", error))
     }
 
     /**
@@ -120,7 +118,7 @@ const useJobs = defineStore("jobs", () => {
             })
             .catch(error => {
                 jobs.value = {}
-                errorsStore.handleServerError("fetch jobs", error)
+                errorsStore.handle("fetch jobs", error)
             })
             .finally(() => (loading.value = false))
     }
@@ -138,7 +136,7 @@ const useJobs = defineStore("jobs", () => {
                 startPolling(job, corporaStore.activeUUID) // TODO: this is a problem, because if the state doesn't change, the polling isn't stopped.
                 getDocsAtTagger()
             })
-            .catch(error => errorsStore.handleServerError("post job", error))
+            .catch(error => errorsStore.handle("post job", error))
     }
 
     function cancel(job: string) {
@@ -149,7 +147,7 @@ const useJobs = defineStore("jobs", () => {
                 setProgress(job, response)
                 getDocsAtTagger()
             })
-            .catch(error => errorsStore.handleServerError("cancel job", error))
+            .catch(error => errorsStore.handle("cancel job", error))
     }
 
     // 'delete' is a reserved keyword
@@ -161,7 +159,7 @@ const useJobs = defineStore("jobs", () => {
                 setProgress(job, response)
                 getDocsAtTagger()
             })
-            .catch(error => errorsStore.handleServerError("delete job", error))
+            .catch(error => errorsStore.handle("delete job", error))
     }
 
     /**

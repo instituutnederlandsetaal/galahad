@@ -31,7 +31,9 @@ const { isReference = false, displayName } = defineProps<{
     isReference?: boolean
     displayName?: string
 }>()
-const label = computed<string>(() => displayName ?? (isReference ? "Reference" : "Hypothesis"))
+const label = computed<string>(
+    () => displayName ?? (isReference ? "Reference" : "Hypothesis"),
+)
 const selectedJob = computed<string>({
     get(): string {
         return isReference

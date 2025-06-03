@@ -1,7 +1,7 @@
 <template>
     <GCard>
         <GTable title="Part-of-speech confusion" helpLink="evaluation" :columns :items="rows" id="confusionTable"
-            :loading sortedByColumn="referenceJob" :sortDesc="false" hoverRow>
+            :loading sortColumn="referenceJob" :sortDesc="false" hoverRow>
             <template #help>
                 <p>
                     In part-of-speech confusion, an overview is given of the matches (in green) and mismatches per PoS
@@ -19,7 +19,7 @@
                 <DifferentTagsetsHelp />
             </template>
 
-            <template #prepend>
+            <template #header>
                 <div class="table-controls" v-if="bothJobsSelected">
                     <div class="table-control">
                         <label for="annotation-select">Annotation:</label>
@@ -68,7 +68,7 @@ import * as API from "@/api/evaluation"
 import * as Utils from "@/api/utils"
 import type { EvaluationEntry, TermComparison } from "@/types/evaluation"
 // API & types
-import type { Field } from "@/types/ui/table"
+import type { Column } from "@/types/ui/table"
 
 // Stores
 const { loading, confusion } = storeToRefs(stores.useConfusion())
@@ -78,7 +78,7 @@ const errorsStore = stores.useErrors()
 
 // Custom types
 type Item = { [key: string]: EvaluationEntry } & { referenceJob: string }
-type Cell = { field: Field; item: Item; value: EvaluationEntry }
+type Cell = { field: Column; item: Item; value: EvaluationEntry }
 
 // Fields
 const confusionableAnnotations = computed(() =>
@@ -99,7 +99,7 @@ const bothJobsSelected = computed(() => {
     return jobSelection.hypothesisJobId && jobSelection.referenceJobId
 })
 
-const columns = computed((): Field[] => {
+const columns = computed((): Column[] => {
     // add the entries
     const entries = {} as { [key: string]: boolean }
     Object.keys(selectedConfusion?.value?.table)?.map(k1 => {
@@ -171,7 +171,11 @@ function download() {
             Utils.browserDownloadResponseFile(response)
         })
         .catch(res =>
-            Utils.handleBlobError(res, "download confusion samples", errorsStore),
+            Utils.handleBlobError(
+                res,
+                "download confusion samples",
+                errorsStore,
+            ),
         )
         .finally(() => (downloading.value = false))
 }

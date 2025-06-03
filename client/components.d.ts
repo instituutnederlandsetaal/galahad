@@ -38,6 +38,7 @@ declare module 'vue' {
     GSelect: typeof import('./src/components/input/GSelect.vue')['default']
     GSpinner: typeof import('./src/components/GSpinner.vue')['default']
     GTable: typeof import('./src/components/tables/GTable.vue')['default']
+    GTablePaginator: typeof import('./src/components/tables/GTablePaginator.vue')['default']
     GTabs: typeof import('./src/components/GTabs.vue')['default']
     GValidator: typeof import('./src/components/input/GValidator.vue')['default']
     HelpLink: typeof import('./src/components/links/HelpLink.vue')['default']

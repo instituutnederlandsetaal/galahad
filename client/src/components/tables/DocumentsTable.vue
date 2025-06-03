@@ -1,6 +1,6 @@
 <template>
     <GTable :columns :headless :items="documentsStore.available" :loading="documentsStore.loading"
-        :displayOnEmpty="false" sortedByColumn="name" :sortDesc="false" hoverRow>
+        :displayOnEmpty="false" sortColumn="name" :sortDesc="false" hoverRow>
         <template #title>
             <span v-if="!corpus || (type == TableDocumentsType.Dataset && !corpus.dataset)">No documents</span>
             <span v-else>
@@ -12,7 +12,7 @@
 
         <template #table-empty-instruction>
             <span v-if="!corpus || (type == TableDocumentsType.Dataset && !corpus?.dataset)">No corpus selected.</span>
-            <span v-else-if="corpus?.uuid && type != TableDocumentsType.Dataset" style="margin-top: 10px">
+            <span v-else-if="corpus?.uuid && type != TableDocumentsType.Dataset">
                 This corpus is empty. Upload documents to the corpus.
             </span>
         </template>
@@ -50,7 +50,7 @@
 
         <!-- last modified cell -->
         <template #cell-lastModified="data">
-            <span style="white-space: nowrap">{{ formatDate(data.value) }}</span>
+            {{ formatDate(data.value) }}
         </template>
 
         <!-- actions cell -->
@@ -91,7 +91,7 @@ import { formatDate } from "@/ts/utils"
 import type { CorpusMetadata } from "@/types/corpora"
 import type { DocumentMetadata } from "@/types/documents"
 // API & types
-import { type Field, TableDocumentsType } from "@/types/ui/table"
+import { type Column, TableDocumentsType } from "@/types/ui/table"
 
 // Stores
 const documentsStore = stores.useDocuments()
@@ -109,15 +109,15 @@ const deleteDocumentData = ref(null as null | DocumentMetadata)
 const previewDocument = ref<DocumentMetadata>()
 const showDeleteModal = ref(false)
 
-const columns = computed<Field[]>(() => {
+const columns = computed<Column[]>(() => {
     const publicFields = [
         {
             key: "name",
             sortOn: (x: DocumentMetadata) => x.name,
-            textAlign: "left",
+            align: "left",
         },
         { key: "format", sortOn: (x: DocumentMetadata) => x.format },
-        { key: "preview", textAlign: "left" },
+        { key: "preview", align: "left" },
         {
             key: "layerSummary",
             label: "tokens",
@@ -128,7 +128,7 @@ const columns = computed<Field[]>(() => {
             label: "last modified",
             sortOn: (x: DocumentMetadata) => x.lastModified,
         },
-    ] as Field[]
+    ] as Column[]
     if (userStore.hasWriteAccess && props.type === TableDocumentsType.User) {
         return publicFields.concat({ key: "actions" })
     }

@@ -76,6 +76,7 @@ button {
 
     &.plain {
         background-color: var(--white);
+        border: 1px solid var(--int-grey);
     }
 
     // Only use hover & active when not disabled.

@@ -14,7 +14,7 @@
             </p>
         </template>
 
-        <GTable headless :columns :items :loading="assaysStore.loading" sortedByColumn="accuracy">
+        <GTable headless :columns :items :loading="assaysStore.loading" sortColumn="accuracy">
             <template #table-empty-instruction> Select a dataset to view benchmarks. </template>
 
             <!-- tagger name -->
@@ -40,7 +40,7 @@
                 </ExternalLink>
             </template>
 
-            <template #prepend>
+            <template #header>
                 <div class="table-controls">
                     <div class="table-control">
                         <label for="dataset-select">Dataset:</label>

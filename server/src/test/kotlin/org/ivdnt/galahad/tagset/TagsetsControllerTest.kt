@@ -31,6 +31,6 @@ class TagsetsControllerTest(
     @Test
     fun `Get tagsets`() {
         val tagsets = ctrl.getTagsets()
-        assertEquals(1, tagsets.count { it.identifier == "TDN-Core" })
+        assertEquals(1, tagsets.count { it.id == "TDN-Core" })
     }
 }

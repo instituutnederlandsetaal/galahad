@@ -9,7 +9,7 @@
             This is an overview of all types belonging to the chosen lemma, part-of-speech pair.
         </template>
 
-        <GTable compact :columns :items sortedByColumn="occurrences" :sortDesc="true" />
+        <GTable compact :columns :items sortColumn="occurrences" :sortDesc="true" />
     </GModal>
 </template>
 
@@ -18,7 +18,7 @@
 
 import type { Distribution } from "@/types/evaluation"
 // Types & API
-import type { Field } from "@/types/ui/table"
+import type { Column } from "@/types/ui/table"
 
 // Custom types
 type DistEntry = { variant: string; occurrences: number }
@@ -30,7 +30,7 @@ const props = defineProps<{
 }>()
 
 // Fields
-const columns: Field[] = [
+const columns: Column[] = [
     { key: "variant", label: "Type", sortOn: (x: DistEntry) => x.variant },
     {
         key: "occurrences",

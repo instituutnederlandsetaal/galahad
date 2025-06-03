@@ -24,9 +24,7 @@ const useAssays = defineStore("assays", () => {
         loading.value = true
         API.getBenchmarks()
             .then(response => (assays.value = response.data))
-            .catch(error =>
-                errorsStore.handleServerError("fetch assays", error),
-            )
+            .catch(error => errorsStore.handle("fetch assays", error))
             .finally(() => (loading.value = false))
     }
 

@@ -10,7 +10,7 @@
             </p>
         </template>
 
-        <GTable :loading="taggerStore.loading"  :columns :items="taggerStore.taggers" sortedByColumn="id">
+        <GTable :loading="taggers.loading" :columns :items="taggers.taggers" sortColumn="id">
             <template #table-empty-instruction>
                 No taggers appeared? That is not right! Please contact the INT at
                 <MailAddress />
@@ -18,54 +18,36 @@
 
             <!-- id -->
             <template #cell-id="d">
-                <span :class="markActive(d.item.id)">{{ d.value }}</span>
-            </template>
-
-            <!-- tagset -->
-            <template #cell-tagset="d">
-                <span v-if="d.value">{{ d.value }}</span>
-                <i v-else>Unknown</i><br />
+                <span :id="d.value" :class="markActive(d.value)">{{ d.value }}</span>
             </template>
 
             <!-- era -->
-            <template #cell-era="d"> {{ d.item.eraFrom }} - {{ d.item.eraTo }} </template>
+            <template #cell-era="d">
+                {{ d.item.eraFrom }} - {{ d.item.eraTo }}
+            </template>
 
             <!-- annotations -->
             <template #cell-annotations="d">
-                {{ sort_tagger_annotations(d.value).join(", ") }}
+                {{ d.value.join(", ") }}
             </template>
 
             <!-- links -->
-            <template #cell-model="d">
-                <ExternalLink :href="d.value.href">
-                    {{ d.value.name }}
-                </ExternalLink>
-            </template>
-            <template #cell-software="d">
-                <ExternalLink :href="d.value.href">
-                    {{ d.value.name }}
-                </ExternalLink>
-            </template>
-            <template #cell-dataset="d">
-                <ExternalLink :href="d.value.href">
-                    {{ d.value.name }}
-                </ExternalLink>
+            <template v-for="cell in ['cell-model', 'cell-software', 'cell-dataset']" #[cell]="d">
+                <div :key="cell">
+                    <ExternalLink :href="d.value.href">
+                        {{ d.value.name }}
+                    </ExternalLink>
+                </div>
             </template>
         </GTable>
     </GCard>
 </template>
 
 <script setup lang="ts">
-// Libraries & stores
 import stores from "@/stores"
 
-// API & types
-import { sort_tagger_annotations } from "@/stores/taggers"
+const taggers = stores.useTaggers()
 
-// Stores
-const taggerStore = stores.useTaggers()
-
-// Fields
 const columns = [
     { key: "id", label: "name", sortOn: (x: any) => x.id },
     { key: "description" },
@@ -81,16 +63,12 @@ const columns = [
     { key: "dataset" },
 ]
 
-// Methods
 /**
  * Mark the active row, retrieved from the url anchor.
  */
-function markActive(id: string) {
+function markActive(id: string): string {
     const hash = window.location.hash.substring(1)
-    if (id === hash) {
-        return "active"
-    }
-    return ""
+    return id === hash ? "active" : ""
 }
 </script>
 

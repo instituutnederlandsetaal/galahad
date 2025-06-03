@@ -9,20 +9,23 @@
         </template>
 
         <GSpinner v-if="loading" />
+
+        <slot v-else-if="isEmpty" name="table-empty"></slot>
+
         <template v-else>
-            <slot name="prepend"></slot>
 
-            <slot v-if="items && items.length === 0 && !loading" name="table-empty-instruction">
-            </slot>
+            <slot v-if="$slots.header" name="header"></slot>
 
-            <p v-if="selectable && !isEmpty">
+            <p v-if="selectable">
                 Click on a row to select an item.
             </p>
+
+            <GTablePaginator v-if="numPages > 1" v-model="page" :numPages />
 
             <table :class="classes">
                 <thead v-if="!isEmpty">
                     <tr>
-                        <th v-for="field in visibleFields" :key="field.key" style="text-align: center">
+                        <th v-for="field in visibleFields" :key="field.key">
 
                             <div style="white-space: pre-line">
                                 <!-- specific head -->
@@ -35,13 +38,12 @@
                             <template v-if="field.sortOn">
                                 <span class="sort-control">
                                     <span @click="sortBy(field.key, true)"
-                                        :class="{ active: sortIsDesc && sortedBy == field.key }">▼</span>
+                                        :class="{ active: sortDesc && sortColumn == field.key }">▼</span>
                                     |
                                     <span @click="sortBy(field.key, false)"
-                                        :class="{ active: !sortIsDesc && sortedBy == field.key }">▲</span>
+                                        :class="{ active: !sortDesc && sortColumn == field.key }">▲</span>
                                 </span>
                             </template>
-
                         </th>
                     </tr>
                 </thead>
@@ -50,86 +52,68 @@
                     <template v-for="(item, i) in itemsToDisplay" :key="'row' + i">
                         <tr @click="rowClicked(item)"
                             :class="(equal(model, item) ? 'selected' : '') + ' ' + (selectable ? 'cursor-pointer' : '')">
-                            <td v-for="field in visibleFields" :key="field.key"
-                                :style="`text-align: ${field.textAlign || 'center'};`">
+                            <td v-for="field in visibleFields" :key="field.key" :style="{ textAlign: field.align }">
                                 <!-- specific cell rendering -->
                                 <slot :name="'cell-' + field.key" :field="_field(field)" :item
                                     :value="item[field.key] || ''">
                                     <!-- generic cell rendering -->
                                     <slot name="cell" :field="_field(field)" :item :value="item[field.key] || ''">
-                                        {{ item[field.key] }}</slot>
+                                        <!-- formatted -->
+                                        <template v-if="field.format">
+                                            {{ field.format({ value: item[field.key], item, field }) }}
+                                        </template>
+                                        <!-- default rendering -->
+                                        <template v-else>
+                                            {{ item[field.key] }}
+                                        </template>
+                                    </slot>
                                 </slot>
-                            </td>
-                        </tr>
-                        <!-- details -->
-                        <tr :key="'_details' + i" v-if="item._showDetails" class="details">
-                            <td :colspan="visibleFields.length">
-                                <slot name="_details" :item></slot>
                             </td>
                         </tr>
                     </template>
                 </tbody>
             </table>
 
-            <footer v-if="numPages > 1" class="footer">
-                <form id="page-controls" ref="pageControls" @submit.prevent>
-                    <GButton plain @click="page = 1" :disabled="page == 1">1</GButton>
-                    <GButton plain @click="page > 1 ? (page -= 1) : null" :disabled="page == 1" title="Previous">
-                        <i class="fa fa-arrow-left"></i>
-                    </GButton>
-                    <select class="page-select" v-model="page">
-                        <option v-for="pageNumber in numPages" :key="pageNumber" :value="pageNumber">
-                            {{ pageNumber }}
-                        </option>
-                    </select>
-                    <GButton plain @click="page < numPages ? (page += 1) : null" :disabled="page == numPages"
-                        title="Next">
-                        <i class="fa fa-arrow-right"></i>
-                    </GButton>
-                    <GButton plain @click="page = numPages" :disabled="page == numPages">{{ numPages }}</GButton>
-                </form>
-            </footer>
+            <GTablePaginator v-if="numPages > 1" v-model="page" :numPages />
 
         </template>
     </GCard>
 </template>
 
 <script setup lang="ts">
-import type { Field } from "@/types/ui/table"
-import type { HelpLink } from "@/components/help"
+import type { Column } from "@/types/ui/table"
+import type { HelpLink } from "@/types/ui/help"
 
 type Item = { [key: string]: unknown }
 
 // --- props ---
 const {
+    items,
+    columns,
     title,
     helpLink,
     loading,
-    displayOnEmpty,
-    columns,
     selectable,
-    sortedByColumn,
-    sortDesc = true,
+    sortColumn: initSortColumn,
+    sortDesc: initSortDesc = true,
     compact,
-    items,
 } = defineProps<{
+    items?: Item[]
+    columns: Column[]
     title?: string
     helpLink?: HelpLink | string
     loading?: boolean
-    displayOnEmpty?: boolean
-    columns: Field[]
     selectable?: boolean
-    sortedByColumn?: string
+    sortColumn?: string
     sortDesc?: boolean
     compact?: boolean
-    items: Item[]
 }>()
 
 // --- data ---
 const model = defineModel<Item>()
 const page = ref<number>(1)
-const sortedBy = ref<string>(sortedByColumn)
-const sortIsDesc = ref<boolean>(sortDesc)
+const sortColumn = ref<string>(initSortColumn)
+const sortDesc = ref<boolean>(initSortDesc)
 
 // --- computed ---
 const classes = computed(() => ({
@@ -137,27 +121,27 @@ const classes = computed(() => ({
     loading: loading,
     selectable: selectable,
 }))
-const isEmpty = computed<boolean>(() => {
-    return !items || items.length === 0
-})
+const isEmpty = computed<boolean>(() => items?.length === 0)
 const itemsToDisplay = computed<Item[]>(() => {
+    if (items === undefined) return []
+
     function getPageItems(allItems: Item[]) {
         return allItems.slice(
-            (page.value - 1) * pageSize.value,
-            page.value * pageSize.value,
+            (page.value - 1) * pageSize,
+            page.value * pageSize,
         )
     }
 
     // only paginate
-    if (sortedBy.value === null) return getPageItems(items)
+    if (sortColumn.value === null) return getPageItems(items)
 
-    const sortOn = columns.filter(field => field.key === sortedBy.value)[0]
+    const sortOn = columns.filter(field => field.key === sortColumn.value)[0]
         ?.sortOn //hmm
     function mapToSortProp(x: any) {
         return sortOn ? sortOn(x) : x
     }
 
-    if (sortedBy.value === null) {
+    if (sortColumn.value === null) {
         // no sort, just paginate
         return getPageItems(items)
     }
@@ -166,23 +150,19 @@ const itemsToDisplay = computed<Item[]>(() => {
         .slice()
         .sort(
             (a: Item, b: Item) =>
-                (-1) ** (+sortIsDesc.value | 0) *
+                (-1) ** (+sortDesc.value | 0) *
                 compareAny(mapToSortProp(a), mapToSortProp(b)),
         )
     return getPageItems(allItems)
 })
 const numPages = computed<number>(() => {
-    return Math.ceil(items.length / pageSize.value)
+    return Math.ceil((items?.length ?? 0) / pageSize)
 })
-const pageSize = computed<number>(() => {
-    if (!items) return 20
-    // We allow for some leniency since we don't want the user to go to the next page just to see one entry
-    return items.length > 20 ? 20 : items.length
-})
+const pageSize = 20
 const primaryKeyFields = computed<string[]>(() => {
     return columns.filter(field => field.isPrimaryField).map(field => field.key)
 })
-const visibleFields = computed<Field[]>(() => {
+const visibleFields = computed<Column[]>(() => {
     return columns.filter(field => !field.hidden)
 })
 
@@ -230,7 +210,7 @@ function compareAny(a: unknown, b: unknown): number {
     //garbage
     return 0
 }
-function _field(field: Field): Field {
+function _field(field: Column): Column {
     if (!field.label) {
         field.label = field.key
     }
@@ -256,8 +236,8 @@ function rowClicked(item: Item): void {
     }
 }
 function sortBy(key: string, desc: boolean): void {
-    sortedBy.value = key
-    sortIsDesc.value = desc
+    sortColumn.value = key
+    sortDesc.value = desc
     // Reset to first page to see the effect of sorting.
     page.value = 1
 }
@@ -287,36 +267,6 @@ function sortBy(key: string, desc: boolean): void {
 
 .cursor-pointer {
     cursor: pointer;
-}
-
-.footer {
-    .page-select {
-        background-color: var(--int-very-light-grey);
-
-        &:hover {
-            background-color: var(--int-light-grey);
-        }
-    }
-}
-
-#page-controls {
-    background-color: var(--white);
-    border: 1px solid none;
-    color: var(--black);
-    float: right;
-    padding: 10px;
-}
-
-#page-controls select {
-    margin: 5px;
-}
-
-#page-controls span {
-    margin: 5px;
-}
-
-#page-controls .inactive {
-    color: var(--int-light-grey);
 }
 
 .sort-control {
@@ -387,7 +337,6 @@ table {
 
     th {
         padding: 0.6rem;
-        text-align: center;
         font-size: 0.85rem;
         letter-spacing: 0.1rem;
         text-transform: uppercase;
@@ -395,7 +344,6 @@ table {
 
     td {
         padding: 0.5rem;
-        text-align: center;
         min-width: 60px;
     }
 

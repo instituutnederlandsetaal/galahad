@@ -169,7 +169,9 @@ function getHealth() {
             health.value = response.data
             healthLoading.value = false
         })
-        .catch(error => errorsStore.handleServerError("get tagger health", error))
+        .catch(error =>
+            errorsStore.handle("get tagger health", error),
+        )
 }
 
 /**

@@ -11,7 +11,7 @@ const useErrors = defineStore("errors", () => {
         errors.value.push(message)
     }
 
-    function resetErrors(): void {
+    function reset(): void {
         errors.value = []
     }
 
@@ -20,10 +20,7 @@ const useErrors = defineStore("errors", () => {
      * @param intent Human readable explanation.
      * @param error Axios error.
      */
-    function handleServerError(
-        intent: string,
-        error: AxiosError<ErrorMessage>,
-    ): void {
+    function handle(intent: string, error: AxiosError<ErrorMessage>): void {
         if (error.response) {
             // The request was made and the server responded with a status code
             // that falls out of the range of 2xx
@@ -40,7 +37,7 @@ const useErrors = defineStore("errors", () => {
     }
 
     // Exports
-    return { errors, resetErrors, handleServerError }
+    return { errors, reset, handle }
 })
 
 export default useErrors

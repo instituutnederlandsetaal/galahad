@@ -1,6 +1,6 @@
 // https://stackoverflow.com/a/18650828
-export function formatBytes(bytes: number, decimals = 2) {
-    if (!+bytes) return "0 B"
+export function formatBytes(bytes: number, decimals = 0) {
+    if (!+bytes || bytes < 1023) return "> 1 kB"
     const dm = 0 > decimals ? 0 : decimals
     const d = Math.floor(Math.log(bytes) / Math.log(1024))
     const sizes = ["B", "kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]

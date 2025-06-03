@@ -1,7 +1,7 @@
 <template>
     <AnnotateTab hideAnnotationsError>
         <GTable :title="`Jobs for corpus ${corporaStore.activeCorpus?.name}`" helpLink="jobs" :columns
-            :items="displayJobs" :loading="jobsStore.loading" fill hoverRow sortedByColumn="id" :sortDesc="false"
+            :items="displayJobs" :loading="jobsStore.loading" fill hoverRow sortColumn="id" :sortDesc="false"
             class="jobsview">
             <template #help>
                 <JobsHelp />
@@ -30,7 +30,7 @@
 
             <!-- annotations cell -->
             <template #cell-annotations="d">
-                {{ sort_tagger_annotations(d.item.tagger.annotations).join(", ") }}
+                {{ d.item.tagger.annotations.join(", ") }}
                 <i v-if="d.item.tagger.annotations.length === 0">None</i>
             </template>
 
@@ -74,7 +74,7 @@
                 <GButton v-else @click="jobId = d.item.tagger.id"> View &amp; Tag </GButton>
             </template>
 
-            <template #prepend>
+            <template #header>
                 <div class="table-controls">
                     <div class="table-control">
                         Search tagger name:
@@ -116,10 +116,9 @@
 // import VueSlider from "vue-slider-component"
 // import "vue-slider-component/theme/default.css"
 import stores from "@/stores"
-import { sort_tagger_annotations } from "@/stores/taggers"
 // API & types
 import { type Job, type Progress, SOURCE_LAYER } from "@/types/jobs"
-import type { Field } from "@/types/ui/table"
+import type { Column } from "@/types/ui/table"
 
 import { formatDate } from "@/ts/utils"
 import MultiSelect from "primevue/multiselect"
@@ -176,7 +175,7 @@ const columns = computed(() => {
             key: "id",
             label: "tagger",
             sortOn: x => x.tagger.id,
-            textAlign: "left",
+            align: "left",
         },
         { key: "tagset", sortOn: x => x.tagger.tagset },
         { key: "annotations", label: "annotations" },
@@ -200,7 +199,7 @@ const columns = computed(() => {
             key: "progress",
             sortOn: x => x.progress.finished / x.progress.total,
         },
-    ] as Field[]
+    ] as Column[]
     if (userStore.hasWriteAccess) {
         return publicFields.concat({ key: "actions" })
     }
@@ -239,7 +238,7 @@ function formatProgress(progress: Progress) {
 }
 
 /* Set a width even when there are no results after filtering.*/
-:deep(#prepend) {
+:deep(#header) {
     max-width: 100%;
 }
 

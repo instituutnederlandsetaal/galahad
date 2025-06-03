@@ -14,14 +14,14 @@
 import stores from "@/stores"
 // Types & API
 import type { Term } from "@/types/evaluation"
-import type { Field } from "@/types/ui/table"
+import type { Column } from "@/types/ui/table"
 
 // Stores
 const jobSelection = stores.useJobSelection()
 
 // Custom types
 type Item = Term & { layer: string }
-type Cell = { field: Field; item: Item; value: string }
+type Cell = { field: Column; item: Item; value: string }
 
 // Props
 const props = defineProps<{
@@ -40,7 +40,7 @@ const items: Ref<Record<string, string>[]> = computed(() => {
     ]
 })
 /** columns are simply all unique keys in term.annotations: Record<string, string> */
-const columns: Ref<Field[]> = computed(() => {
+const columns: Ref<Column[]> = computed(() => {
     return items.value
         .reduce((acc, item) => {
             Object.keys(item).forEach(key => {

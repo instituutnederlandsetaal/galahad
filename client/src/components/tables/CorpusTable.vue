@@ -1,5 +1,5 @@
 <template>
-    <GTable title="Corpora" :columns :items="displayCorpora" :loading="corporaStore.loading" sortedByColumn="name"
+    <GTable title="Corpora" :columns :items="displayCorpora" :loading="corporaStore.loading" sortColumn="name"
         :sortDesc="false" :selectable v-model="selectedCorpus"
         v-if="displayCorpora.length > 0 || (type == TableCorporaType.User && !sharedWithYou)">
         <template #title>
@@ -13,7 +13,7 @@
             <slot name="tableEmpty">First, create a new corpus.</slot>
         </template>
 
-        <template #prepend>
+        <template #header>
             <form v-if="type != TableCorporaType.Dataset" class="buttons" @submit.prevent>
                 <GButton green @click="$emit('create')" v-if="type == TableCorporaType.User">
                     New
@@ -29,35 +29,23 @@
             </form>
         </template>
 
-        <!-- size in bytes cell -->
-        <template #cell-sizeInBytes="data">
-            <span v-if="data.value > 1023">{{ formatBytes(data.value) }}</span>
-            <span v-else>~ 0</span>
-        </template>
-
-        <!-- last modified cell -->
-        <template #cell-lastModified="data">
-            <span style="white-space: nowrap">{{ formatDate(data.value) }}</span>
-        </template>
-
-        <!-- collaborators cell -->
-        <template #cell-collaborators="data">
-            {{ formatCollaborators(data.item) }}
-        </template>
-
         <!-- source cell -->
         <template #cell-source="data">
             <ExternalLink v-if="data.item.sourceURL" :href="data.item.sourceURL">
                 {{ data.item.sourceName ? data.item.sourceName : data.item.sourceURL }}
             </ExternalLink>
-            <span v-else-if="data.item.sourceName">{{ data.item.sourceName }}</span>
-            <i v-else>Not declared</i>
+            <template v-else>{{ data.item.sourceName }}</template>
+        </template>
+
+        <!-- era -->
+        <template #cell-period="d">
+            {{ d.item.eraFrom }} - {{ d.item.eraTo }}
         </template>
 
         <!-- jobs cell -->
         <template #cell-activeJobs="data: TableData<CorpusMetadata>">
-            <span>{{ data.item.numResults }}</span>
-            <GSpinner small v-if="data.item.activeJobs > 0" style="vertical-align: sub; margin-left: 0.2rem" />
+            {{ data.item.numResults }}
+            <GSpinner small v-if="data.item.activeJobs > 0" />
         </template>
     </GTable>
 </template>
@@ -68,7 +56,7 @@
 import stores from "@/stores"
 // API & types
 import type { CorpusMetadata } from "@/types/corpora"
-import { type Field, TableCorporaType, TableData } from "@/types/ui/table"
+import { type Column, TableCorporaType, TableData } from "@/types/ui/table"
 
 import { formatBytes, formatDate } from "@/ts/utils"
 
@@ -106,31 +94,38 @@ const activeCorpusInTable = computed(() => {
         .map(i => i.uuid)
         .includes(selectedCorpus.value?.uuid)
 })
-const columns: Field[] = [
+const columns: Column[] = [
     { key: "uuid", isPrimaryField: true, hidden: true },
     { key: "name", sortOn: x => x.name },
-    { key: "numDocs", sortOn: x => x.numDocs, label: "docs" },
-    { key: "sizeInBytes", label: "size", sortOn: x => x.sizeInBytes },
-    { key: "eraFrom", sortOn: x => x.eraFrom, label: "year from" },
-    { key: "eraTo", sortOn: x => x.eraTo, label: "year to" },
+    { key: "numDocs", sortOn: x => x.numDocs, label: "docs", align: "right" },
+    { key: "sizeInBytes", label: "size", sortOn: x => x.sizeInBytes, align: "right", format: (d) => formatBytes(d.value) },
+    {
+        key: "period",
+        sortOn: (x: any) => x.eraFrom.toString() + x.eraTo.toString(),
+        align: "center",
+    },
     { key: "tagset", sortOn: x => x.tagset },
     { key: "source", label: "source", sortOn: x => x.source },
     {
         key: "lastModified",
         sortOn: x => x.lastModified,
         label: "last modified",
+        format: (d) => formatDate(d.value),
     },
     {
         key: "collaborators",
         hidden: !editable,
         sortOn: x => customSharedSort(x),
         label: "shared with",
+        align: "center",
+        format: (d) => formatCollaborators(d.item),
     },
     {
         key: "activeJobs",
         hidden: !editable,
         sortOn: x => x.activeJobs,
         label: "jobs",
+        align: "center",
     },
 ]
 

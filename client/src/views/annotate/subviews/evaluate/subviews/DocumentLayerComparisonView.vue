@@ -90,10 +90,12 @@ watch(selectedDoc, async newVal => {
 
 watch(termcomps, () => {
     if (!termcomps.value) return
-    annotationOptions.value = documentsStore.available.find(doc => doc.name === selectedDoc.value)?.annotations.map(key => ({
-        value: key,
-        text: key,
-    }))
+    annotationOptions.value = documentsStore.available
+        .find(doc => doc.name === selectedDoc.value)
+        ?.annotations.map(key => ({
+            value: key,
+            text: key,
+        }))
 })
 
 // Methods

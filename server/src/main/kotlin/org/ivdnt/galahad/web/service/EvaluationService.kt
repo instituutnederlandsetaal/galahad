@@ -243,7 +243,7 @@ class EvaluationService(val corpora: CorporaService) {
         return metadata
     }
 
-    private fun annotationTypesForTagger(job: String, corpus: UUID): Set<Annotation> {
+    private fun annotationTypesForTagger(job: String, corpus: UUID): Array<Annotation> {
         val corpusObj = corpora.readAsReaderOrThrow(corpus, user)
         return Tagger.readOrThrow(job, corpusObj).annotations
     }

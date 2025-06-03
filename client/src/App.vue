@@ -9,19 +9,19 @@
         </template>
     </GTabs>
 
-    <GModal :show="errorsStore.errors.length > 0" title="Ocharme!" @hide="errorsStore.resetErrors">
+    <GModal :show="errors.errors.length > 0" title="Ocharme!" @hide="errors.reset">
         <p>
             Please try again or contact
             <MailAddress /> for support.
         </p>
-        <GInfo v-for="(error, i) in errorsStore.errors" :key="i" error>{{ error }}</GInfo>
+        <GInfo v-for="(error, i) in errors.errors" :key="i" error>{{ error }}</GInfo>
     </GModal>
 </template>
 
 <script setup lang="ts">
 import stores from "@/stores"
 
-const errorsStore = stores.useErrors()
+const errors = stores.useErrors()
 const userStore = stores.useUser()
 
 onMounted(() => {

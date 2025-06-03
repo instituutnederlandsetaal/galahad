@@ -75,7 +75,7 @@ const documents = defineStore("documents", () => {
                 }
             })
             .catch(error => {
-                errorsStore.handleServerError("fetch documents", error)
+                errorsStore.handle("fetch documents", error)
             })
             .finally(() => (loading.value = false))
     }
@@ -95,9 +95,7 @@ const documents = defineStore("documents", () => {
      */
     function deleteDocument(documentName: string) {
         API.deleteDocument(corporaStore.activeUUID, documentName)
-            .catch(error =>
-                errorsStore.handleServerError("delete document", error),
-            )
+            .catch(error => errorsStore.handle("delete document", error))
             .finally(reloadForActiveUserCorpus)
     }
 

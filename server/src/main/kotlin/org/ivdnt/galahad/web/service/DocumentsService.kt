@@ -38,7 +38,7 @@ class DocumentsService(val corpora: CorporaService) : Logging {
 
     fun read(corpus: UUID, document: String): Document = corpus.readDocs().readOrThrow(document)
 
-    fun readAll(corpus: UUID): Set<DocumentMetadata> = corpus.readDocs().readAll().map { it.metadata }.toSet()
+    fun readAll(corpus: UUID): List<DocumentMetadata> = corpus.readDocs().readAll().map { it.metadata }
 
     // TODO: check if we still need to delete lost causes
 

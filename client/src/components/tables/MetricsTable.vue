@@ -1,5 +1,5 @@
 <template>
-    <GTable :title :columns :items :loading helpLink="evaluation" class="metricsTable" :sortedByColumn>
+    <GTable :title :columns :items :loading helpLink="evaluation" class="metricsTable" :sortColumn>
         <template v-if="$slots.help" #help>
             <slot name="help"></slot>
             <DifferentTagsetsHelp />
@@ -13,7 +13,7 @@
             <p>Generating metrics for large corpora may take a while...</p>
         </template>
 
-        <template #prepend>
+        <template #header>
             <slot name="prepend"></slot>
         </template>
 

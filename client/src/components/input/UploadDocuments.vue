@@ -12,7 +12,7 @@
             Select file(s) or drag & drop
         </label>
         <!-- Actual input -->
-        <input type="file" ref="uploadInput" name="filefield" multiple id="file-upload" style="display: none"
+        <input type="file" ref="uploadInput" name="filefield" multiple id="file-upload"
             accept=".xml, .tsv, .txt, .zip, .conllu, .naf, .pdf, .docx"
             @change="(e) => (filesToUpload = Object.values(e.target.files as FileList))" />
 
@@ -157,6 +157,10 @@ onMounted(() => {
         display: flex;
         justify-content: center;
     }
+}
+
+#file-upload {
+    display: none;
 }
 
 #dropZone {

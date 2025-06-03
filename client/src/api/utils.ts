@@ -43,12 +43,12 @@ export function browserDownloadResponseFile(response: BlobResponse): void {
  * https://medium.com/@fakiolinho/handle-blobs-requests-with-axios-the-right-way-bb905bdb1c04
  * @param error Axios error.
  * @param intent Human readable explanation.
- * @param app appStore.
+ * @param errors errorStore.
  */
 export function handleBlobError(
     error: AxiosError<Blob>,
     intent: string,
-    app: any,
+    errors: any,
 ): void {
     const reader = new FileReader()
     // Setup the onload that fires after reading.
@@ -59,7 +59,7 @@ export function handleBlobError(
                 data: json,
             },
         } as AxiosError<ErrorMessage>
-        app.handleServerError(intent, errObj)
+        errors.handle(intent, errObj)
     }
     // Now, read.
     reader.readAsText(error.response?.data as Blob)

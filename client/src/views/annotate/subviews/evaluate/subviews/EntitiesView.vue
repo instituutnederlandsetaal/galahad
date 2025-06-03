@@ -25,10 +25,14 @@
 </template>
 
 <script setup lang="ts">
-import stores from '@/stores'
-import * as API from '@/api/evaluation'
-import type { Field, TableData } from '@/types/ui/table'
-import type { DocumentEntities, JobEntities, JobsEntities } from '@/types/evaluation/entities'
+import stores from "@/stores"
+import * as API from "@/api/evaluation"
+import type { Column, TableData } from "@/types/ui/table"
+import type {
+    DocumentEntities,
+    JobEntities,
+    JobsEntities,
+} from "@/types/evaluation/entities"
 
 // --- stores ---
 const corpora = stores.useCorpora()
@@ -39,7 +43,9 @@ const items = ref<any>([])
 const selectedItem = ref<TableData<any>>()
 
 // --- computed ---
-const columns = computed<Field[]>(() => Object.keys(items.value[0] || {}).map((i) => ({ key: i })))
+const columns = computed<Column[]>(() =>
+    Object.keys(items.value[0] || {}).map(i => ({ key: i })),
+)
 const filter = computed(() => {
     if (["document", "total"].includes(selectedItem.value?.field.key)) {
         return undefined
@@ -50,54 +56,58 @@ const filter = computed(() => {
 // --- watch ---
 watchEffect(() => {
     loading.value = true
-    API.getJobsEntities(
-        corpora.activeUUID,
-    ).then(res => {
-        items.value = convertJobsEntities(res.data)
-    }).finally(() => {
-        loading.value = false
-    })
+    API.getJobsEntities(corpora.activeUUID)
+        .then(res => {
+            items.value = convertJobsEntities(res.data)
+        })
+        .finally(() => {
+            loading.value = false
+        })
 })
 
 // --- methods ---
-function convertJobsEntities(jobsEntities: JobsEntities): { document: string;[key: string]: number | string }[] {
-    const result: Record<string, { [key: string]: number | string }> = {};
+function convertJobsEntities(
+    jobsEntities: JobsEntities,
+): { document: string;[key: string]: number | string }[] {
+    const result: Record<string, { [key: string]: number | string }> = {}
 
     // rest of the documents
     for (const [jobName, jobData] of Object.entries(jobsEntities.jobs)) {
         for (const [docName, docData] of Object.entries(jobData.documents)) {
             for (const [eLabel, eCount] of Object.entries(docData.summary)) {
                 if (!result[docName]) {
-                    result[docName] = { document: docName };
+                    result[docName] = { document: docName }
                 }
-                result[docName][`${jobName}-${eLabel}`] = eCount;
+                result[docName][`${jobName}-${eLabel}`] = eCount
             }
-            result[docName][`${jobName}-total`] = docData.total;
+            result[docName][`${jobName}-total`] = docData.total
         }
     }
 
-    for (const [docName, doc] of Object.entries(jobsEntities.stddev.documents)) {
+    for (const [docName, doc] of Object.entries(
+        jobsEntities.stddev.documents,
+    )) {
         for (const [eLabel, stddev] of Object.entries(doc.stddev)) {
-            result[docName][`${eLabel}-std`] = stddev.toFixed(2);
+            result[docName][`${eLabel}-std`] = stddev.toFixed(2)
         }
-        result[docName].stdavg = doc.average.toFixed(2);
+        result[docName].stdavg = doc.average.toFixed(2)
     }
 
     // document total
-    result["total"] = { document: "total" };
+    result["total"] = { document: "total" }
     for (const [jobName, jobData] of Object.entries(jobsEntities.jobs)) {
-        result["total"][`${jobName}-total`] = jobData.total;
+        result["total"][`${jobName}-total`] = jobData.total
         for (const [eLabel, eCount] of Object.entries(jobData.summary)) {
-            result["total"][`${jobName}-${eLabel}`] = eCount;
+            result["total"][`${jobName}-${eLabel}`] = eCount
         }
     }
 
-    result["total"].stdavg = jobsEntities.stddev.average.toFixed(2);
+    result["total"].stdavg = jobsEntities.stddev.average.toFixed(2)
     for (const [eLabel, stddev] of Object.entries(jobsEntities.stddev.stddev)) {
-        result["total"][`${eLabel}-std`] = stddev.toFixed(2);
+        result["total"][`${eLabel}-std`] = stddev.toFixed(2)
     }
 
-    return Object.values(result);
+    return Object.values(result)
 }
 </script>
 

@@ -2,7 +2,7 @@
     <div>
         <GTable class="right" :title="'Distribution of ' + (jobSelection.hypothesisJobId || 'the hypothesis layer')"
             helpLink="evaluation" :columns :items="itemsToDisplay" :loading="distributionStore.loading" displayOnEmpty
-            sortedByColumn="count">
+            sortColumn="count">
             <template #table-empty-instruction>
                 <p v-if="distribution.generated">No results for current filter settings.</p>
                 <p v-else>Select a hypothesis layer and an annotation to view a distribution.</p>
@@ -12,14 +12,6 @@
                     The distribution shows what lemma, part-of-speech pairs have been assigned to which types. When
                     there are more than five types you can click on the inspect symbol to view all types of a lemma-PoS
                     combination.
-                </p>
-            </template>
-            <template #header>
-                <p>
-                    <b v-if="distribution.trimmed">
-                        Because of the large corpus size only the 1000 most frequent lemma, part-of-speech pairs are
-                        shown.
-                    </b>
                 </p>
             </template>
 
@@ -67,7 +59,13 @@
                 </div>
             </template>
 
-            <template #prepend>
+            <template #header>
+                <p>
+                    <b v-if="distribution.trimmed">
+                        Because of the large corpus size only the 1000 most frequent lemma, part-of-speech pairs are
+                        shown.
+                    </b>
+                </p>
                 <div style="display: flex; justify-content: center" v-if="distributionStore.distributions">
                     <div>
                         <label for="annotation-select">Annotation:</label>
@@ -258,7 +256,7 @@ div:not(#modal)::v-deep() .g-card .content-wrapper .content {
     width: fit-content;
 }
 
-:deep(#prepend) {
+:deep(#header) {
     display: flex;
     flex-direction: column;
     width: 100%;

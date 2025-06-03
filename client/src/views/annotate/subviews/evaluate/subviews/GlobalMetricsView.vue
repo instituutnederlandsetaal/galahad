@@ -137,7 +137,11 @@ function download(data: Any) {
             Utils.browserDownloadResponseFile(response)
         })
         .catch(res =>
-            Utils.handleBlobError(res, "download global metrics samples", errorsStore),
+            Utils.handleBlobError(
+                res,
+                "download global metrics samples",
+                errorsStore,
+            ),
         )
         .finally(() => (downloading.value = false))
 }

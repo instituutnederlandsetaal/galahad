@@ -1,12 +1,15 @@
 <template>
     <GCard title="Tagsets overview">
         <template #help>
-            Here you can see an overview of possible tagsets to annotate Dutch.
-            <br />
-            Currently only TDN-Core is used in the platform.
+            <p>
+                Here you can see an overview of possible tagsets to annotate Dutch.
+            </p>
+            <p>
+                <i>Currently only TDN-Core is used in the platform.</i>
+            </p>
         </template>
 
-        <GTable :columns :items="tagsetsStore.tagsets" :loading="tagsetsStore.loading">
+        <GTable :columns :items="tagsets.tagsets" :loading="tagsets.loading">
             <template #table-empty-instruction>
                 No tagsets appeared? That is not right! Please contact the INT at
                 <MailAddress />
@@ -16,13 +19,10 @@
 </template>
 
 <script setup lang="ts">
-// Libraries & stores
 import stores from "@/stores"
 
-// Stores
-const tagsetsStore = stores.useTagsets()
+const tagsets = stores.useTagsets()
 
-// Fields
 const columns = [
     { key: "shortName", label: "abbreviation" },
     { key: "longName", label: "name" },

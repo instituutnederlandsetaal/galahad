@@ -69,7 +69,7 @@ const useCorpora = defineStore("corpora", () => {
             .then(response => (allCorpora.value = response.data || []))
             .catch(error => {
                 allCorpora.value = []
-                errorsStore.handleServerError("get corpora", error)
+                errorsStore.handle("get corpora", error)
             })
             .finally(() => (loading.value = false))
     }
@@ -83,9 +83,7 @@ const useCorpora = defineStore("corpora", () => {
         API.postCorpus(metadata)
             // Automatically set the new corpus as active.
             .then(response => (activeUUID.value = response.data))
-            .catch(error =>
-                errorsStore.handleServerError("create corpus", error),
-            )
+            .catch(error => errorsStore.handle("create corpus", error))
             .finally(reload)
     }
 
@@ -102,9 +100,7 @@ const useCorpora = defineStore("corpora", () => {
                     activeUUID.value = null as unknown as UUID
                 }
             })
-            .catch(error =>
-                errorsStore.handleServerError("delete corpus", error),
-            )
+            .catch(error => errorsStore.handle("delete corpus", error))
             .finally(reload)
     }
 
@@ -116,9 +112,7 @@ const useCorpora = defineStore("corpora", () => {
     function updateCorpus(uuid: UUID, metadata: MutableCorpusMetadata) {
         if (corpusOperationLock()) return
         API.patchCorpus(uuid, metadata)
-            .catch(error =>
-                errorsStore.handleServerError("update corpus", error),
-            )
+            .catch(error => errorsStore.handle("update corpus", error))
             .finally(reload)
     }
 

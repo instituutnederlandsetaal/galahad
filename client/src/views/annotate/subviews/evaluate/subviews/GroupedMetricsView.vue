@@ -9,7 +9,7 @@
                     By clicking on a percentage, a data sample is shown.
                 </p>
             </template>
-            <template #prepend v-if="metrics.metrics != null">
+            <template #header v-if="metrics.metrics != null">
                 <p>
                     <b> Only the 100 most frequent groups are shown. </b>
                 </p>
