@@ -13,7 +13,7 @@
         "@vueuse/router": "^13.3.0",
         "axios": "^1.9.0",
         "content-disposition": "^0.5.4",
-        "pinia": "^3.0.2",
+        "pinia": "^3.0.3",
         "primevue": "^4.3.4",
         "safe-buffer": "^5.2.1",
         "vue": "^3.5.15",
