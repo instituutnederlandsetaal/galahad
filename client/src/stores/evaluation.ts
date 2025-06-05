@@ -14,7 +14,7 @@ export function literalsForTerm(term: Term): string {
 }
 
 export function literalsForTermComparison(
-    termComparison: TermComparison,
+    termComparison: TermComparison
 ): string {
     // the literals could be different for term1 and term2
     if (
@@ -35,7 +35,7 @@ export function literalsForTermComparison(
  */
 const useEvaluation = defineStore("evaluation", () => {
     // Stores
-    const errorsStore = stores.useErrors()
+    const errors = stores.useErrors()
     const corporaStore = stores.useCorpora()
     const jobSelection = stores.useJobSelection()
 
@@ -52,15 +52,11 @@ const useEvaluation = defineStore("evaluation", () => {
         API.getDownloadEvaluation(
             corporaStore.activeUUID,
             jobSelection.hypothesisJobId,
-            jobSelection.referenceJobId,
+            jobSelection.referenceJobId
         )
             .then(Utils.browserDownloadResponseFile)
             .catch(error =>
-                Utils.handleBlobError(
-                    error,
-                    "download evaluation",
-                    errorsStore,
-                ),
+                Utils.handleBlobError(error, "download evaluation", errors)
             )
             .finally(() => (loading.value = false))
     }

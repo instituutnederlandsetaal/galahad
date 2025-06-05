@@ -1,20 +1,21 @@
 <template>
-    <GCard article :title="`Logged in as ${userStore.user.id}`">
+    <GCard article :title="`Logged in as ${user.id}`">
         <p>
             Find information about your account here.
         </p>
         <dl>
             <dt>Username:</dt>
-            <dd><b>{{ userStore.user.id }}</b></dd>
+            <dd><b>{{ user.id }}</b></dd>
+            <template v-if="user.isAdmin">
+                <dt>Admin:</dt>
+                <dd><b>true</b></dd>
+            </template>
         </dl>
-        <p v-if="userStore.user.isAdmin">
-            <b>You are an admin.</b>
-        </p>
     </GCard>
 </template>
 
 <script setup lang="ts">
 import stores from "@/stores"
 
-const userStore = stores.useUser()
+const { user } = storeToRefs(stores.useUser())
 </script>

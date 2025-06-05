@@ -15,12 +15,12 @@ const { color, label, value, total } = defineProps<{
 }>()
 
 const text = computed(
-    () => `${label}: ${value} ${value === 1 ? "document" : "documents"}`,
+    () => `${label}: ${value} ${value === 1 ? "document" : "documents"}`
 )
 
 const style = computed(() => ({
     width: `${(100 * value) / total}%`,
-    backgroundColor: color,
+    backgroundColor: color
 }))
 </script>
 

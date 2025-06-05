@@ -40,7 +40,7 @@ const routes = [
     { path: "/:pathMatch(.*)*", component: PageNotFound },
     {
         path: "/",
-        component: HomeView,
+        component: HomeView
     },
     {
         path: "/annotate",
@@ -50,17 +50,17 @@ const routes = [
             {
                 meta: { title: "Corpora" },
                 path: "corpora",
-                component: CorporaView,
+                component: CorporaView
             },
             {
                 meta: { title: "Documents" },
                 path: "documents",
-                component: DocumentsView,
+                component: DocumentsView
             },
             {
                 meta: { title: "Jobs" },
                 path: "jobs",
-                component: JobsView,
+                component: JobsView
             },
             {
                 path: "evaluate",
@@ -72,42 +72,42 @@ const routes = [
                         meta: { title: "Evaluate" },
                         title: "Distribution",
                         path: "distribution",
-                        component: DistributionView,
+                        component: DistributionView
                     },
                     {
                         meta: { title: "Evaluate" },
                         title: "Distribution",
                         path: "global_metrics",
-                        component: GlobalMetricsView,
+                        component: GlobalMetricsView
                     },
                     {
                         meta: { title: "Evaluate" },
                         path: "grouped_metrics",
-                        component: GroupedMetricsView,
+                        component: GroupedMetricsView
                     },
                     {
                         meta: { title: "Evaluate" },
                         path: "confusion",
-                        component: ConfusionView,
+                        component: ConfusionView
                     },
                     {
                         meta: { title: "Evaluate" },
                         path: "document_layer_comparison",
-                        component: DocumentLayerComparisonView,
+                        component: DocumentLayerComparisonView
                     },
                     {
                         meta: { title: "Evaluate" },
                         path: "entities",
-                        component: EntitiesView,
-                    },
-                ],
+                        component: EntitiesView
+                    }
+                ]
             },
             {
                 meta: { title: "Export" },
                 path: "export",
-                component: ExportView,
-            },
-        ],
+                component: ExportView
+            }
+        ]
     },
     {
         path: "/application",
@@ -117,9 +117,9 @@ const routes = [
             {
                 meta: { title: "About" },
                 path: "about",
-                component: AboutView,
-            },
-        ],
+                component: AboutView
+            }
+        ]
     },
     {
         path: "/overview",
@@ -130,24 +130,24 @@ const routes = [
             {
                 meta: { title: "Taggers" },
                 path: "taggers",
-                component: TaggersView,
+                component: TaggersView
             },
             {
                 meta: { title: "Tagsets" },
                 path: "tagsets",
-                component: TagsetsView,
+                component: TagsetsView
             },
             {
                 meta: { title: "Datasets" },
                 path: "datasets",
-                component: DatasetsView,
+                component: DatasetsView
             },
             {
                 meta: { title: "Benchmarks" },
                 path: "benchmarks",
-                component: BenchmarksView,
-            },
-        ],
+                component: BenchmarksView
+            }
+        ]
     },
     {
         path: "/contribute",
@@ -156,14 +156,14 @@ const routes = [
             {
                 meta: { title: "Contribute" },
                 path: "taggers",
-                component: ContributeTaggersView,
+                component: ContributeTaggersView
             },
             {
                 meta: { title: "Contribute" },
                 path: "datasets",
-                component: ContributeDatasetsView,
-            },
-        ],
+                component: ContributeDatasetsView
+            }
+        ]
     },
     {
         path: "/help",
@@ -174,25 +174,25 @@ const routes = [
             {
                 meta: { title: "Help - General" },
                 path: "general",
-                component: GeneralView,
+                component: GeneralView
             },
             {
                 meta: { title: "Help - Formats" },
                 path: "formats",
-                component: DocumentFormatsView,
+                component: DocumentFormatsView
             },
             {
                 meta: { title: "Help - Evaluation" },
                 path: "evaluation",
-                component: EvaluationView,
-            },
-        ],
+                component: EvaluationView
+            }
+        ]
     },
     {
         meta: { title: "User" },
         path: "/user",
-        component: UserView,
-    },
+        component: UserView
+    }
 ]
 
 const router = createRouter({
@@ -202,7 +202,7 @@ const router = createRouter({
         if (to?.hash) {
             return {
                 el: to.hash,
-                top: 10, // avoid the top bar
+                top: 10 // avoid the top bar
             }
         }
         if (savedPosition) {
@@ -212,7 +212,7 @@ const router = createRouter({
             return // since we're on the same page, don't scroll to top
         }
         return { top: 0 }
-    },
+    }
 })
 
 // Whenever we navigate, change the document title to the name of the route

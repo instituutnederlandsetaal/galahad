@@ -3,53 +3,66 @@
         <template #help>
             <CorpusHelp />
         </template>
+
+        <form class="buttons" @submit.prevent>
+            <GButton green @click="newCorpus = true">
+                New
+            </GButton>
+            <GButton orange :disabled="!user.canWrite" @click="editCorpus = copy(activeCorpus)">
+                Edit
+            </GButton>
+            <GButton red :disabled="!user.canDelete" @click="deleteCorpus = activeCorpus">
+                Delete
+            </GButton>
+        </form>
+
         <!-- Owner corpus table -->
-        <CorpusTable :type="TableCorporaType.User" :corpora="corporaStore.allCorpora"
-            @delete="(corpus) => (deleteCorpusData = corpus)" @update="(corpus) => editMode(corpus)" selectable
-            @create="showNewCorpusModal = true">
+        <CorpusTable :type="TableCorporaType.User" :corpora="allCorpora">
             <template #title>Your corpora</template>
         </CorpusTable>
 
         <!-- Shared corpus table -->
-        <CorpusTable :type="TableCorporaType.Shared" :corpora="corporaStore.sharedCorpora"
-            @delete="(corpus) => (deleteCorpusData = corpus)" @update="(corpus) => editMode(corpus)" selectable>
+        <CorpusTable :type="TableCorporaType.Shared" :corpora="sharedCorpora">
             <template #title>Shared with you</template>
             <template #help>
-                Here you can see the corpora that have been shared with you. <br />
-                If a corpus has been shared with you as a collaborator, you can make modifications.
-                <br />
-                If it has been shared with you as a viewer, you can only inspect and evaluate it.
+                <p>
+                    Here you can see the corpora that have been shared with you.
+                    If a corpus has been shared with you as a collaborator, you can make modifications.
+                    If it has been shared with you as a viewer, you can only inspect and evaluate it.
+                </p>
+            </template>
+            <template #table-empty>
+                No corpora have been shared with you.
             </template>
         </CorpusTable>
 
         <!-- Benchmark corpus table -->
-        <CorpusTable :type="TableCorporaType.Dataset" :corpora="corporaStore.datasetCorpora"
-            @update="(corpus) => editMode(corpus)" selectable>
+        <CorpusTable :type="TableCorporaType.Dataset" :corpora="datasets">
+            <template #title>Benchmark corpora</template>
             <template #help>
-                <BenchmarkSetsHelp /><br />
-                You can inspect them in further detail on the
-                <GNav :route="{ path: '/annotate/evaluate' }">Evaluate tab</GNav>.
+                <BenchmarkSetsHelp />
+                <p>
+                    You can inspect them in further detail on the
+                    <GNav :route="{ path: '/annotate/evaluate' }">Evaluate tab</GNav>.
+                </p>
+            </template>
+            <template #table-empty>
+                No benchmark corpora available.
             </template>
         </CorpusTable>
 
         <!-- Create modal -->
-        <CorpusForm title="Create new corpus" :show="showNewCorpusModal" @hide="showNewCorpusModal = false" :action="(metadata) => {
-            corporaStore.createCorpus(metadata)
-            showNewCorpusModal = false
-        }
-            " :cancel="() => (showNewCorpusModal = false)">
-            <template #help>Fill in the metadata and create a corpus.
+        <CorpusForm v-if="newCorpus" title="New corpus" @hide="newCorpus = false"
+            :action="(metadata) => { create(metadata) }">
+            <template #help>
+                Fill in the metadata and create a corpus.
                 <CorpusFormHelp />
             </template>
         </CorpusForm>
 
         <!-- Update modal -->
-        <CorpusForm title="Update corpus metadata" :show="updateCorpusData !== null" @hide="updateCorpusData = null"
-            update :item="updateCorpusData" :action="(metadata) => {
-                corporaStore.updateCorpus(updateCorpusData.uuid, metadata)
-                updateCorpusData = null
-            }
-                " :cancel="() => (updateCorpusData = null)">
+        <CorpusForm v-if="editCorpus" title="Edit corpus" :item="editCorpus" @hide="editCorpus = null" update
+            :action="(metadata) => { update(editCorpus.uuid, metadata) }">
             <template #help>
                 Change the metadata of an existing corpus.
                 <CorpusFormHelp />
@@ -57,39 +70,38 @@
         </CorpusForm>
 
         <!-- Delete modal -->
-        <DeleteModal :show="deleteCorpusData !== null"
-            :displayname="'Corpus ' + (deleteCorpusData !== null ? deleteCorpusData.name : '[null]')"
-            @delete="corporaStore.deleteCorpus(deleteCorpusData)" @hide="deleteCorpusData = null" />
+        <DeleteModal v-if="deleteCorpus" :itemName="deleteCorpus.name" @delete="remove(deleteCorpus)"
+            @hide="deleteCorpus = undefined" />
     </GCard>
 </template>
 
 <script setup lang="ts">
-// Libraries & stores
 import stores from "@/stores"
-// Types & API
 import type { CorpusMetadata } from "@/types/corpora"
 import { TableCorporaType } from "@/types/ui/table"
 
 // Stores
 const corporaStore = stores.useCorpora()
+const { create, remove, update } = corporaStore
+const { allCorpora, sharedCorpora, datasets, activeCorpus } =
+    storeToRefs(corporaStore)
+const user = stores.useUser()
 
 // Fields
-const showNewCorpusModal = ref(false)
-// Once not null, respective modal is shown.
-const deleteCorpusData = ref(null as null | CorpusMetadata)
-const updateCorpusData = ref(null as null | CorpusMetadata)
+// Once not falsy, respective modal is shown.
+const newCorpus = ref<boolean>()
+const deleteCorpus = ref<CorpusMetadata>()
+const editCorpus = ref<CorpusMetadata>()
 
-const editMode = (corpus: CorpusMetadata) => {
-    // Deepcopy so we can modify the object freely.
-    updateCorpusData.value = JSON.parse(JSON.stringify(corpus))
+// Deepcopy so we can modify the object freely.
+function copy(corpus: CorpusMetadata): CorpusMetadata {
+    return JSON.parse(JSON.stringify(corpus)) as CorpusMetadata
 }
-
-// Mounts & watches
-/**
- * Although CorporaView lives in AnnotateView, which reloads corpora,
- * the number of jobs could change when navigating between jobs and corpora, requiring a reload.
- */
-onMounted(() => {
-    corporaStore.reload()
-})
 </script>
+
+<style scoped lang="scss">
+.buttons {
+    display: flex;
+    gap: 0.25rem;
+}
+</style>

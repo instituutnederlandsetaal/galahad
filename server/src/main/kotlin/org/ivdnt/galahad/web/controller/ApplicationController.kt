@@ -5,7 +5,8 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import jakarta.servlet.http.HttpServletRequest
 import org.apache.logging.log4j.kotlin.Logging
-import org.ivdnt.galahad.app.*
+import org.ivdnt.galahad.app.Config
+import org.ivdnt.galahad.app.User
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -22,36 +23,28 @@ class ApplicationController : Logging {
     @Operation(
         summary = "Get version information",
         description = "Get version information and GitHub build information and commit version.",
-        responses = [
-            ApiResponse(
-                description = "Version information."
-            )
-        ]
+        responses = [ApiResponse(description = "Version information.")]
     )
     @CrossOrigin
-    @GetMapping(VERSION_URL)
+    @GetMapping(Endpoints.VERSION)
     fun getVersion(): Map<String, String> =
         Config.galahadVersionYaml.entries.associate { it.key.toString() to it.value.toString() }
 
     @Hidden
     @CrossOrigin
-    @GetMapping(BASE_URL)
+    @GetMapping(Endpoints.BASE)
     fun getApplication(): ResponseEntity<Void> {
         // Since we have nothing to show at this URL, we redirect to the API UI instead
-        return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(request?.contextPath + SWAGGER_API_URL))
+        return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(request?.contextPath + Endpoints.SWAGGER))
             .build()
     }
 
     @Operation(
         summary = "Get user information",
         description = "Get the username and whether the user is an admin.",
-        responses = [
-            ApiResponse(
-                description = "User information."
-            )
-        ]
+        responses = [ApiResponse(description = "User information.")]
     )
     @CrossOrigin
-    @GetMapping("/user")
+    @GetMapping(Endpoints.USER)
     fun getUser(): User = User.fromRequest(request)
 }

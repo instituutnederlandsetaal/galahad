@@ -14,7 +14,7 @@ const POLL_INTERVAL = 5000
  */
 const useJobs = defineStore("jobs", () => {
     // Stores
-    const errorsStore = stores.useErrors()
+    const errors = stores.useErrors()
     const corporaStore = stores.useCorpora()
 
     // Fields
@@ -38,7 +38,7 @@ const useJobs = defineStore("jobs", () => {
     function getProgress(job: string, corpus: string) {
         API.getJobProgress(corpus, job)
             .then(response => setProgress(job, response))
-            .catch(error => errorsStore.handle("fetch job progress", error))
+            .catch(error => errors.handle(error))
     }
 
     /**
@@ -73,7 +73,7 @@ const useJobs = defineStore("jobs", () => {
                     getProgress(job, corpus)
                 },
                 POLL_INTERVAL,
-                job,
+                job
             )
         }
     }
@@ -118,7 +118,7 @@ const useJobs = defineStore("jobs", () => {
             })
             .catch(error => {
                 jobs.value = {}
-                errorsStore.handle("fetch jobs", error)
+                errors.handle(error)
             })
             .finally(() => (loading.value = false))
     }
@@ -136,7 +136,7 @@ const useJobs = defineStore("jobs", () => {
                 startPolling(job, corporaStore.activeUUID) // TODO: this is a problem, because if the state doesn't change, the polling isn't stopped.
                 getDocsAtTagger()
             })
-            .catch(error => errorsStore.handle("post job", error))
+            .catch(error => errors.handle(error))
     }
 
     function cancel(job: string) {
@@ -147,7 +147,7 @@ const useJobs = defineStore("jobs", () => {
                 setProgress(job, response)
                 getDocsAtTagger()
             })
-            .catch(error => errorsStore.handle("cancel job", error))
+            .catch(error => errors.handle(error))
     }
 
     // 'delete' is a reserved keyword
@@ -159,7 +159,7 @@ const useJobs = defineStore("jobs", () => {
                 setProgress(job, response)
                 getDocsAtTagger()
             })
-            .catch(error => errorsStore.handle("delete job", error))
+            .catch(error => errors.handle(error))
     }
 
     /**
@@ -190,7 +190,7 @@ const useJobs = defineStore("jobs", () => {
         deleteJob,
         reload,
         reset,
-        getDocsAtTagger,
+        getDocsAtTagger
     }
 })
 

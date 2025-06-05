@@ -38,12 +38,12 @@ const useJobSelection = defineStore("jobSelection", () => {
                         !(
                             job === SOURCE_LAYER &&
                             !documentsStore.numSourceAnnotations
-                        ),
+                        )
                 )
                 ?.map(job => {
                     return {
                         value: job,
-                        text: formatJobString(jobs[job]),
+                        text: formatJobString(jobs[job])
                     }
                 })
         )
@@ -69,7 +69,7 @@ const useJobSelection = defineStore("jobSelection", () => {
                 hypothesisJobId.value = undefined
                 referenceJobId.value = undefined
             }
-        },
+        }
     )
     // /** Remove invalid job selections on loading jobs & loading docs (the latter for sourceLayer annotations).*/
     // watch([() => jobsStore.loading, () => documentsStore.loading], () => {
@@ -82,7 +82,7 @@ const useJobSelection = defineStore("jobSelection", () => {
         const jobsExist: boolean =
             !jobsStore.loading && Object.keys(jobsStore.jobs).length > 0
         const docsExist: boolean =
-            !documentsStore.loading && documentsStore.available.length > 0
+            !documentsStore.loading && documentsStore.documents.length > 0
         if (jobsExist && docsExist) {
             if (
                 !selectableJobs.value
@@ -128,7 +128,7 @@ const useJobSelection = defineStore("jobSelection", () => {
         selectionsValid,
         // Methods
         setHypothesisJobId,
-        setReferenceJobId,
+        setReferenceJobId
     }
 })
 

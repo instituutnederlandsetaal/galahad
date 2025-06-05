@@ -8,7 +8,7 @@ export const Format = {
     FOLIA: "folia",
     TSV: "tsv",
     TXT: "txt",
-    CONLLU: "conllu",
+    CONLLU: "conllu"
 } as const
 export type Format = (typeof Format)[keyof typeof Format]
 

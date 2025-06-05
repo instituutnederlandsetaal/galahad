@@ -7,7 +7,7 @@ import type { User } from "@/types/user"
 
 type UserResponse = AxiosResponse<User>
 
-const userPath = "/user"
+export const userPath = "/user"
 
 /**
  * Poll user account.

@@ -18,7 +18,7 @@
                     Merge encoding
                 </GCheckBox>
 
-                <DownloadButton class="download" wide :disabled="exportStore.loading || !exportStore.linksAreValid"
+                <DownloadButton class="download" wide :disabled
                     @click="exportStore.convert(shouldMerge, posHeadOnly)" />
             </form>
 
@@ -65,6 +65,7 @@ import TeiP5LegacyWarning from "@/views/help/subviews/formats/TeiP5LegacyWarning
 // Stores
 const corporaStore = stores.useCorpora()
 const jobsStore = stores.useJobs()
+const jobSelection = stores.useJobSelection()
 const exportStore = stores.useExport()
 const documentsStore = stores.useDocuments()
 
@@ -82,7 +83,13 @@ const showMergeOption = computed(() => {
     return formatIsMergeable && formatInCorpus
 })
 const hasTeiP5Legacy = computed(() =>
-    documentsStore.available.some(i => i.format === Format.TEI_P5_LEGACY),
+    documentsStore.documents.some(i => i.format === Format.TEI_P5_LEGACY)
+)
+const disabled = computed(
+    () =>
+        exportStore.format === undefined ||
+        jobSelection.hypothesisJobId === undefined ||
+        exportStore.loading
 )
 
 // Methods
@@ -100,8 +107,6 @@ function formatToHumanReadable(format: Format): string {
 // Load jobs list once. jobSelectionStore takes care of the selected job.
 onMounted(() => {
     jobsStore.reload()
-    // We also need to load the documents, in order to determine the presence of TEI files.
-    documentsStore.reloadDocumentsForCorpus(corporaStore.activeUUID)
 })
 </script>
 

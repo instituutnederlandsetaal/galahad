@@ -1,32 +1,19 @@
 <template>
-    <GTable title="Corpora" :columns :items="displayCorpora" :loading="corporaStore.loading" sortColumn="name"
-        :sortDesc="false" :selectable v-model="selectedCorpus"
-        v-if="displayCorpora.length > 0 || (type == TableCorporaType.User && !sharedWithYou)">
+    <GTable :columns :items="displayCorpora" :loading="corporaStore.loading" sortColumn="name" selectable
+        v-model="selectedCorpus">
+
         <template #title>
             <slot name="title">
-                {{ displayCorpora.length }} {{ type }}
-                {{ displayCorpora.length == 1 ? " corpus" : " corpora" }}
+                {{ type }} corpora
             </slot>
         </template>
 
-        <template #table-empty-instruction>
-            <slot name="tableEmpty">First, create a new corpus.</slot>
+        <template #help v-if="$slots.help">
+            <slot name="help"></slot>
         </template>
 
-        <template #header>
-            <form v-if="type != TableCorporaType.Dataset" class="buttons" @submit.prevent>
-                <GButton green @click="$emit('create')" v-if="type == TableCorporaType.User">
-                    New
-                </GButton>
-                <GButton orange :disabled="!activeCorpusInTable" @click="$emit('update', selectedCorpus)">
-                    Edit
-                </GButton>
-                <GButton v-if="type == TableCorporaType.User"
-                    :disabled="!userStore.canDelete(selectedCorpus) || !activeCorpusInTable" red
-                    @click="$emit('delete', selectedCorpus)">
-                    Delete
-                </GButton>
-            </form>
+        <template #table-empty>
+            <slot name="table-empty">First, create a new corpus.</slot>
         </template>
 
         <!-- source cell -->
@@ -51,13 +38,9 @@
 </template>
 
 <script setup lang="ts">
-// Libraries & stores
-
 import stores from "@/stores"
-// API & types
 import type { CorpusMetadata } from "@/types/corpora"
 import { type Column, TableCorporaType, TableData } from "@/types/ui/table"
-
 import { formatBytes, formatDate } from "@/ts/utils"
 
 // Stores
@@ -68,7 +51,7 @@ const corporaStore = stores.useCorpora()
 const props = defineProps({
     corpora: Array<CorpusMetadata>,
     type: String as PropType<TableCorporaType>,
-    selectable: Boolean,
+    selectable: Boolean
 })
 
 // Fields
@@ -82,7 +65,7 @@ const displayCorpora = computed(() => {
         return props.corpora.filter(
             i =>
                 i.collaborators.includes(userStore.user.id) ||
-                i.viewers.includes(userStore.user.id),
+                i.viewers.includes(userStore.user.id)
         )
     }
     return props.corpora
@@ -98,11 +81,17 @@ const columns: Column[] = [
     { key: "uuid", isPrimaryField: true, hidden: true },
     { key: "name", sortOn: x => x.name },
     { key: "numDocs", sortOn: x => x.numDocs, label: "docs", align: "right" },
-    { key: "sizeInBytes", label: "size", sortOn: x => x.sizeInBytes, align: "right", format: (d) => formatBytes(d.value) },
+    {
+        key: "sizeInBytes",
+        label: "size",
+        sortOn: x => x.sizeInBytes,
+        align: "right",
+        format: d => formatBytes(d.value)
+    },
     {
         key: "period",
         sortOn: (x: any) => x.eraFrom.toString() + x.eraTo.toString(),
-        align: "center",
+        align: "center"
     },
     { key: "tagset", sortOn: x => x.tagset },
     { key: "source", label: "source", sortOn: x => x.source },
@@ -110,7 +99,7 @@ const columns: Column[] = [
         key: "lastModified",
         sortOn: x => x.lastModified,
         label: "last modified",
-        format: (d) => formatDate(d.value),
+        format: d => formatDate(d.value)
     },
     {
         key: "collaborators",
@@ -118,15 +107,15 @@ const columns: Column[] = [
         sortOn: x => customSharedSort(x),
         label: "shared with",
         align: "center",
-        format: (d) => formatCollaborators(d.item),
+        format: d => formatCollaborators(d.item)
     },
     {
         key: "activeJobs",
         hidden: !editable,
         sortOn: x => x.activeJobs,
         label: "jobs",
-        align: "center",
-    },
+        align: "center"
+    }
 ]
 
 // Watches
@@ -136,7 +125,7 @@ watch(
     () => {
         return (selectedCorpus.value = corporaStore.activeCorpus)
     },
-    { immediate: true },
+    { immediate: true }
 )
 watch(
     () => selectedCorpus.value,
@@ -145,7 +134,7 @@ watch(
             corporaStore.activeUUID = selectedCorpus.value?.uuid
         }
     },
-    { immediate: true },
+    { immediate: true }
 )
 
 // Methods
@@ -161,10 +150,3 @@ function customSharedSort(i: CorpusMetadata) {
     return i.collaborators.length + i.viewers.length
 }
 </script>
-
-<style scoped lang="scss">
-.buttons {
-    display: flex;
-    gap: 0.25rem;
-}
-</style>

@@ -1,6 +1,6 @@
 <template>
     <GTable :items :columns sortColumn="count" compact>
-        <template #table-empty-instruction>
+        <template #table-empty>
             No entities found in this document.
         </template>
     </GTable>
@@ -17,11 +17,16 @@ const { entities, filter } = defineProps<{
 }>()
 
 const items = computed(() =>
-    entities.filter(i => i.label === filter || filter === undefined),
+    // entities is in the form: { job1: Entity[], job2: Entity[], ... }
+    // We are going to expand it to a flat array of entities, with an extra property 'job'
+    Object.entries(entities).flatMap(([jobName, jobEntities]) =>
+        jobEntities.map(entity => ({ ...entity, job: jobName }))
+    )
 )
 const columns = ref<Column[]>([
     { key: "label", sortOn: i => i.label },
     { key: "form", sortOn: i => i.form },
     { key: "count", sortOn: i => i.count },
+    { key: "job", sortOn: i => i.job }
 ])
 </script>

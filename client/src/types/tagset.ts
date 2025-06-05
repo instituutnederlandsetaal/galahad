@@ -1,5 +1,5 @@
 export type Tagset = {
-    identifier: string
-    longName: string
-    punctuationTags: string[]
+    name: string
+    description: string
+    punctuation: string[]
 }

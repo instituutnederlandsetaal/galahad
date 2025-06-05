@@ -26,8 +26,7 @@
                 <thead v-if="!isEmpty">
                     <tr>
                         <th v-for="field in visibleFields" :key="field.key">
-
-                            <div style="white-space: pre-line">
+                            <div>
                                 <!-- specific head -->
                                 <slot :name="'head-' + field.key" :field>
                                     <!-- generic head -->
@@ -35,23 +34,20 @@
                                 </slot>
                             </div>
 
-                            <template v-if="field.sortOn">
-                                <span class="sort-control">
-                                    <span @click="sortBy(field.key, true)"
-                                        :class="{ active: sortDesc && sortColumn == field.key }">▼</span>
-                                    |
-                                    <span @click="sortBy(field.key, false)"
-                                        :class="{ active: !sortDesc && sortColumn == field.key }">▲</span>
-                                </span>
-                            </template>
+                            <span class="sort-control" v-if="field.sortOn">
+                                <span @click="sortBy(field.key, true)"
+                                    :class="{ active: sortDesc && sortColumn == field.key }">▼</span>
+                                |
+                                <span @click="sortBy(field.key, false)"
+                                    :class="{ active: !sortDesc && sortColumn == field.key }">▲</span>
+                            </span>
                         </th>
                     </tr>
                 </thead>
                 <tbody>
                     <!-- the rows -->
                     <template v-for="(item, i) in itemsToDisplay" :key="'row' + i">
-                        <tr @click="rowClicked(item)"
-                            :class="(equal(model, item) ? 'selected' : '') + ' ' + (selectable ? 'cursor-pointer' : '')">
+                        <tr @click="rowClicked(item)" :class="(equal(model, item) ? 'selected' : '')">
                             <td v-for="field in visibleFields" :key="field.key" :style="{ textAlign: field.align }">
                                 <!-- specific cell rendering -->
                                 <slot :name="'cell-' + field.key" :field="_field(field)" :item
@@ -96,7 +92,7 @@ const {
     selectable,
     sortColumn: initSortColumn,
     sortDesc: initSortDesc = true,
-    compact,
+    compact
 } = defineProps<{
     items?: Item[]
     columns: Column[]
@@ -119,7 +115,7 @@ const sortDesc = ref<boolean>(initSortDesc)
 const classes = computed(() => ({
     compact: compact,
     loading: loading,
-    selectable: selectable,
+    selectable: selectable
 }))
 const isEmpty = computed<boolean>(() => items?.length === 0)
 const itemsToDisplay = computed<Item[]>(() => {
@@ -128,7 +124,7 @@ const itemsToDisplay = computed<Item[]>(() => {
     function getPageItems(allItems: Item[]) {
         return allItems.slice(
             (page.value - 1) * pageSize,
-            page.value * pageSize,
+            page.value * pageSize
         )
     }
 
@@ -151,14 +147,14 @@ const itemsToDisplay = computed<Item[]>(() => {
         .sort(
             (a: Item, b: Item) =>
                 (-1) ** (+sortDesc.value | 0) *
-                compareAny(mapToSortProp(a), mapToSortProp(b)),
+                compareAny(mapToSortProp(a), mapToSortProp(b))
         )
     return getPageItems(allItems)
 })
 const numPages = computed<number>(() => {
     return Math.ceil((items?.length ?? 0) / pageSize)
 })
-const pageSize = 20
+const pageSize = 15
 const primaryKeyFields = computed<string[]>(() => {
     return columns.filter(field => field.isPrimaryField).map(field => field.key)
 })
@@ -173,13 +169,6 @@ watch(numPages, newVal => {
     }
 })
 
-// --- methods ---
-function anyIncludes(whole: unknown, part: unknown): boolean {
-    if (!whole) return false
-    return (whole as Record<string, unknown> | unknown[])
-        .toString()
-        .includes((part as Record<string, unknown> | unknown[]).toString())
-}
 function compareAny(a: unknown, b: unknown): number {
     // null and undefined are always smaller
     if (nu(a) && nu(b)) return 0
@@ -265,108 +254,70 @@ function sortBy(key: string, desc: boolean): void {
     }
 }
 
-.cursor-pointer {
-    cursor: pointer;
-}
-
-.sort-control {
-    white-space: nowrap;
-    color: var(--white);
-    user-select: none;
-
-    /* Standard */
-    span {
-        cursor: pointer;
-    }
-
-    .active {
-        color: black;
-    }
-}
-
-table.loading {
-    filter: blur(5px);
-}
-
-table.loading .loading-symbol {
-    opacity: 1;
-    visibility: visible;
-}
-
-table .loading-symbol {
-    transition:
-        opacity 2s ease,
-        visibility 2s ease;
-    opacity: 0;
-    z-index: 1;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    visibility: hidden;
-}
-
 table {
     border-collapse: collapse;
-    margin: 0 auto;
-    // margin-top: 5px;
-    padding: 0;
 
-    caption {
-        font-size: 1.5rem;
-        margin: 0.5rem 0 0.75rem;
-    }
-
-    tr {
-        border: 1px solid var(--int-very-light-grey-hover);
-
-        &:nth-child(even) {
-            background: #fff;
-        }
-
-        &:nth-child(odd) {
-            background: var(--int-very-light-grey);
-        }
+    &.loading {
+        filter: blur(5px);
     }
 
     thead {
-        >tr {
-            background-color: var(--int-theme) !important;
+        tr {
+            background-color: var(--int-theme);
+
+            th {
+                font-size: 0.85rem;
+                letter-spacing: 0.1rem;
+                text-transform: uppercase;
+                padding: 0.25rem 0.5rem;
+
+                .sort-control {
+                    white-space: nowrap;
+                    color: var(--white);
+                    user-select: none;
+
+                    span {
+                        cursor: pointer;
+
+                        &.active {
+                            color: black;
+                        }
+                    }
+                }
+            }
         }
     }
 
-    th {
-        padding: 0.6rem;
-        font-size: 0.85rem;
-        letter-spacing: 0.1rem;
-        text-transform: uppercase;
+    tbody {
+        tr {
+            border: 1px solid var(--int-very-light-grey-hover);
+
+            &:nth-child(even) {
+                background: #fff;
+            }
+
+            &:nth-child(odd) {
+                background: var(--int-very-light-grey);
+            }
+
+            td {
+                padding: 0.4rem;
+            }
+        }
     }
 
-    td {
-        padding: 0.5rem;
-        min-width: 60px;
+    &.selectable {
+        tbody tr {
+            cursor: pointer;
+
+            &.selected {
+                background-color: var(--int-theme-lighter);
+            }
+
+            &:hover:not(.selected) {
+                background: var(--int-very-light-grey-hover);
+            }
+        }
     }
-
-    overflow-x: auto;
-}
-
-table.compact {
-
-    td,
-    th {
-        padding: 0.1rem 2rem;
-    }
-
-    margin: 0 auto;
-}
-
-table.selectable {
-    tr:hover:not(.selected) {
-        background: var(--int-very-light-grey-hover);
-    }
-}
-
-table tr.selected {
-    background-color: var(--int-theme-lighter);
 }
 </style>

@@ -11,7 +11,7 @@
         </template>
 
         <GTable :loading="taggers.loading" :columns :items="taggers.taggers" sortColumn="id">
-            <template #table-empty-instruction>
+            <template #table-empty>
                 No taggers appeared? That is not right! Please contact the INT at
                 <MailAddress />
             </template>
@@ -55,12 +55,12 @@ const columns = [
     {
         key: "era",
         label: "period",
-        sortOn: (x: any) => x.eraFrom.toString() + x.eraTo.toString(),
+        sortOn: (x: any) => x.eraFrom.toString() + x.eraTo.toString()
     },
     { key: "annotations" },
     { key: "model" },
     { key: "software" },
-    { key: "dataset" },
+    { key: "dataset" }
 ]
 
 /**

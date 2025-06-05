@@ -1,42 +1,27 @@
 import type { ErrorMessage } from "@/api"
 import type { AxiosError } from "axios"
 
-/**
- * Mostly for global error handling.
- */
+/** API error handling. */
 const useErrors = defineStore("errors", () => {
+    /** API errors */
     const errors = ref<string[]>([])
 
-    function addError(message: string): void {
-        errors.value.push(message)
-    }
-
+    /** Empty errors list */
     function reset(): void {
         errors.value = []
     }
 
-    /**
-     * Display error in modal.
-     * @param intent Human readable explanation.
-     * @param error Axios error.
-     */
-    function handle(intent: string, error: AxiosError<ErrorMessage>): void {
+    /** Adds to errors list. Should display error modal. */
+    function handle(error: AxiosError<ErrorMessage>): void {
         if (error.response) {
-            // The request was made and the server responded with a status code
-            // that falls out of the range of 2xx
-            addError(`Failed to ${intent}:\n${error?.response?.data?.message}`)
-        } else if (error.request) {
-            // The request was made but no response was received
-            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-            // http.ClientRequest in node.js
-            // this is a disconnect, it is handled by the user store
+            // Request was made and server responded with status code outside of 2xx.
+            errors.value.push(error?.response?.data?.message)
         } else {
-            // Something happened in setting up the request that triggered an Error
-            addError(`Failed to ${intent}:\n${error.message}`)
+            // No response received. Request error.
+            errors.value.push(error.message)
         }
     }
 
-    // Exports
     return { errors, reset, handle }
 })
 

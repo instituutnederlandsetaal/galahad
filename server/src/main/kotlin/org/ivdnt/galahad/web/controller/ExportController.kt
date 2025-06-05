@@ -8,8 +8,6 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import jakarta.servlet.http.HttpServletResponse
 import org.apache.logging.log4j.kotlin.Logging
-import org.ivdnt.galahad.app.JOB_DOCUMENT_URL
-import org.ivdnt.galahad.app.JOB_URL
 import org.ivdnt.galahad.documents.DocumentFormat
 import org.ivdnt.galahad.exceptions.ErrorResponse
 import org.ivdnt.galahad.util.setContentDisposition
@@ -29,7 +27,7 @@ class ExportController(
     private val response: HttpServletResponse? = null
 
     private fun setZipResponseHeader(corpus: UUID) {
-        response!!.contentType = "application/zip"
+        response!!.contentType = "application/json; application/zip"
         val corpusName = exportService.getCorpusName(corpus)
         response.setContentDisposition("$corpusName.zip")
     }
@@ -60,7 +58,7 @@ class ExportController(
     )
     @CrossOrigin
     @ResponseBody
-    @GetMapping("$JOB_URL/export/convert")
+    @GetMapping(Endpoints.Export.CONVERT)
     fun convertAndExportJob(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,
@@ -97,7 +95,7 @@ class ExportController(
     )
     @CrossOrigin
     @ResponseBody
-    @GetMapping("$JOB_URL/export/merge")
+    @GetMapping(Endpoints.Export.MERGE)
     fun mergeAndExportJob(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,
@@ -133,7 +131,7 @@ class ExportController(
         content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
     )
     @CrossOrigin
-    @GetMapping("$JOB_DOCUMENT_URL/export/convert")
+    @GetMapping(Endpoints.Export.Documents.CONVERT)
     fun convertAndExportDocument(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,
@@ -170,7 +168,7 @@ class ExportController(
         content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
     )
     @CrossOrigin
-    @GetMapping("$JOB_DOCUMENT_URL/export/merge")
+    @GetMapping(Endpoints.Export.Documents.MERGE)
     fun mergeAndExportDocument(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,

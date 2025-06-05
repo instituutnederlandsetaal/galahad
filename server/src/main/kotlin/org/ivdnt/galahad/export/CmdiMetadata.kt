@@ -31,7 +31,7 @@ class CmdiMetadata(val export: DocumentExport) {
     private val day = SimpleDateFormat("dd").format(now)
     private val date = "$year-$month-$day"
     private val uuid = export.layer.id
-    private val tagset = Tagset.readOrNull(export.tagger)?.longName.ifNullOrBlank { "!No tagset defined!" }
+    private val tagset = Tagset.readOrNull(export.tagger.tagset)?.description.ifNullOrBlank { "!No tagset defined!" }
     private val tagger = export.tagger
     private val language = corpus.language.ifNullOrBlank { "Dutch" }
     private val sourceName = corpus.sourceName.ifNullOrBlank { "!No source name defined!" }

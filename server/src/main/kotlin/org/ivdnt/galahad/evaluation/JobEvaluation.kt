@@ -11,7 +11,6 @@ import org.ivdnt.galahad.files.GalahadFolder
 import org.ivdnt.galahad.files.GalahadFolderManager
 import org.ivdnt.galahad.files.ValidatedDiskValue
 import org.ivdnt.galahad.taggers.Tagger
-import org.ivdnt.galahad.web.controller.DISTRIBUTION_MAX_SIZE
 import java.io.File
 
 class JobEvaluation(
@@ -53,5 +52,6 @@ class JobEvaluation(
         private const val DISTRIBUTION_FILE = "distribution.json"
         private const val ENTITIES_FILE = "entities.json"
         const val DOCUMENTS_FOLDER = "documents"
+        const val DISTRIBUTION_MAX_SIZE: Int = 1000
     }
 }

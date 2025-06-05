@@ -35,7 +35,7 @@ const useConfusion = defineStore("confusion", () => {
     function reloadForUUIDHypothesisReference(
         corpus: UUID,
         hypothesis: string,
-        reference: string,
+        reference: string
     ) {
         Utils.reloadEval(
             API.getConfusion,
@@ -46,7 +46,7 @@ const useConfusion = defineStore("confusion", () => {
             stores,
             corpus,
             hypothesis,
-            reference,
+            reference
         )
     }
 
@@ -57,7 +57,7 @@ const useConfusion = defineStore("confusion", () => {
         loading,
         // Methods
         reloadForUUIDHypothesisReference,
-        reset,
+        reset
     }
 })
 

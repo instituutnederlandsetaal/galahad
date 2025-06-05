@@ -8,9 +8,6 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import jakarta.servlet.http.HttpServletResponse
 import org.apache.logging.log4j.kotlin.Logging
-import org.ivdnt.galahad.app.DOCUMENTS_URL
-import org.ivdnt.galahad.app.DOCUMENT_RAW_FILE_URL
-import org.ivdnt.galahad.app.DOCUMENT_URL
 import org.ivdnt.galahad.documents.DocumentMetadata
 import org.ivdnt.galahad.exceptions.ErrorResponse
 import org.ivdnt.galahad.util.setContentDisposition
@@ -47,28 +44,9 @@ class DocumentsController(
         content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
     @CrossOrigin
-    @GetMapping(DOCUMENTS_URL)
-    fun getAllDocuments(@PathVariable @Parameter(description = "Corpus UUID") corpus: UUID): List<DocumentMetadata> =
+    @GetMapping(Endpoints.Documents.BASE)
+    fun getDocuments(@PathVariable @Parameter(description = "Corpus UUID") corpus: UUID): List<DocumentMetadata> =
         documentsService.readAll(corpus)
-
-    @Operation(
-        summary = "Get single document metadata",
-        description = "Get the metadata of a single document.",
-    )
-    @ApiResponse(
-        responseCode = "404",
-        description = "Corpus or document not found.",
-        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
-    )
-    @ApiResponse(
-        responseCode = "200", description = "DocumentMetadata of the requested document."
-    )
-    @CrossOrigin
-    @GetMapping(DOCUMENT_URL)
-    fun getDocument(
-        @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
-        @PathVariable @Parameter(description = "Document name") document: String,
-    ): DocumentMetadata? = documentsService.read(corpus, document).metadata
 
     @Operation(
         summary = "Upload document or zip file",
@@ -94,8 +72,8 @@ class DocumentsController(
         description = "Document/zip uploaded.",
     )
     @CrossOrigin
-    @PostMapping(value = [DOCUMENTS_URL], consumes = ["multipart/form-data"])
-    fun uploadFile(
+    @PostMapping(Endpoints.Documents.BASE, consumes = ["multipart/form-data"])
+    fun postDocument(
         @RequestBody @SwaggerRequestBody(description = "Document or zip file to upload. See the GaLAHaD Help for the supported formats.") file: MultipartFile,
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
     ) {
@@ -123,15 +101,15 @@ class DocumentsController(
         content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
     )
     @CrossOrigin
-    @GetMapping(DOCUMENT_RAW_FILE_URL)
-    fun getRawFile(
+    @GetMapping(Endpoints.Documents.DOWNLOAD)
+    fun getDownload(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Document name") document: String,
     ): ByteArray {
-        val rawFile = documentsService.read(corpus, document).uploadedFile
+        val file = documentsService.read(corpus, document).uploadedFile
         response?.contentType = "text/plain" // Default for text files. Even if it really means "unknown text file"
-        response?.setContentDisposition(rawFile.name)
-        return rawFile.readBytes()
+        response?.setContentDisposition(file.name)
+        return file.readBytes()
     }
 
     @Operation(
@@ -153,7 +131,7 @@ class DocumentsController(
         content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
     )
     @CrossOrigin
-    @DeleteMapping(DOCUMENT_URL)
+    @DeleteMapping(Endpoints.Documents.DOCUMENT)
     fun deleteDocument(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Document name") document: String,

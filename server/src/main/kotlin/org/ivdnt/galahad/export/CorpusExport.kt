@@ -57,7 +57,7 @@ class CorpusExport private constructor(
         val docs = corpus.documents.readAll().filter { DocumentExport.create(this, it).layer != Layer.EMPTY }
         val seq: Sequence<FileMapper> = docs.asSequence().map { doc -> doc.name to { out -> formatMapper(doc, out) } }
         val seqCmdi: Sequence<FileMapper> = docs.asSequence().map { doc ->
-            "metadata/CMDI-${doc.uploadedFile.nameWithoutExtension}.xml" to { out ->
+            "metadata/CMDI-${doc.uploadedFile}.xml" to { out ->
                 DocumentExport.create(
                     this, doc
                 ).cmdi(out)

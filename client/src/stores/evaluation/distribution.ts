@@ -21,7 +21,7 @@ const useDistribution = defineStore("distribution", () => {
     const distribution = computed(
         () =>
             distributions.value?.[selectedDistribution.value] ??
-            defaultDistribution(),
+            defaultDistribution()
     )
     const selectedDistribution = ref<string>()
     const distributionOptions = computed<SelectOption[]>(
@@ -31,10 +31,10 @@ const useDistribution = defineStore("distribution", () => {
             }
             return Object.keys(distributions.value).map(x => ({
                 value: x,
-                text: x,
+                text: x
             }))
         },
-        { immediate: true },
+        { immediate: true }
     )
     const loading = ref(false)
     const posses = computed(() => {
@@ -68,7 +68,7 @@ const useDistribution = defineStore("distribution", () => {
             stores,
             corpus,
             hypothesis,
-            "",
+            ""
         )
     }
 
@@ -83,7 +83,7 @@ const useDistribution = defineStore("distribution", () => {
         distributions,
         // Methods
         reloadForUUIDHypothesis,
-        reset,
+        reset
     }
 })
 

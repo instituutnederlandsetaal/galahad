@@ -1,16 +1,16 @@
 <template>
     <hgroup class="banner" role="banner">
         <div class="logo">
-            <a href="/galahad">
+            <GNav :route="{ path: '/' }">
                 <img class="painting" src="@/assets/galahad-graal-klein.png" />
-            </a>
+            </GNav>
         </div>
 
         <div class="title">
             <a href="https://ivdnt.org/" target="_blank" tabindex="-1" rel="noopener noreferrer">
                 / instituut voor de Nederlandse&nbsp;taal&nbsp;/
             </a>
-            <a href="/galahad" tabindex="-1">galahad</a>
+            <GNav :route="{ path: '/' }">galahad</GNav>
         </div>
 
         <nav class="nav">

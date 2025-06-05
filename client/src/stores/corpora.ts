@@ -1,89 +1,67 @@
 // Libraries & stores
 
 import * as API from "@/api/corpora"
+import { plausible } from "@/ts/plausible"
 import stores from "@/stores"
 // Types & API
 import type {
     CorpusMetadata,
     MutableCorpusMetadata,
-    UUID,
+    UUID
 } from "@/types/corpora"
 import { useRouteQuery } from "@vueuse/router"
+import { useAxios } from "@/api/useAxios"
 
 /**
  * Contains all corpora for which the user has read access.
  */
 const useCorpora = defineStore("corpora", () => {
     // Stores
-    const userStore = stores.useUser()
-    const errorsStore = stores.useErrors()
+    const user = stores.useUser()
+    const errors = stores.useErrors()
 
     // Fields
-    const loading = ref(false)
-    const activeUUID = useRouteQuery("corpus") // has to be null for <select> to show its default value
-    const allCorpora = ref([] as CorpusMetadata[])
-    const datasetCorpora = computed((): CorpusMetadata[] =>
-        allCorpora.value.filter(i => i.dataset),
+    const activeUUID = useRouteQuery("corpus")
+    const {
+        data: allCorpora,
+        loading,
+        reload
+    } = useAxios<CorpusMetadata[]>(API.corporaPath, [])
+    const datasets = computed<CorpusMetadata[]>(
+        (): CorpusMetadata[] => allCorpora.value?.filter(i => i.dataset) ?? []
     )
-    const sharedCorpora = computed((): CorpusMetadata[] =>
-        allCorpora.value.filter(
-            i => !i.dataset && i.owner !== userStore.user.id,
-        ),
+    const sharedCorpora = computed<CorpusMetadata[]>(
+        (): CorpusMetadata[] =>
+            allCorpora.value?.filter(
+                i => !i.dataset && i.owner !== user.user?.id
+            ) ?? []
     )
-    const activeCorpus = computed((): CorpusMetadata | null => {
-        const candidates = allCorpora.value.filter(
-            x => x.uuid === activeUUID.value,
-        )
-        return candidates.length === 1 ? candidates[0] : null
-    })
-    const hasDocs = computed((): boolean => {
-        return (activeCorpus.value?.numDocs ?? 0) > 0
-    })
-    const userIsCollaborator = computed((): boolean => {
-        return (
-            activeCorpus.value?.collaborators.includes(userStore.user.id) ??
-            false
-        )
-    })
-
-    // Methods
-    /**
-     * Only one corpus operation is allowed to run at a time
-     * Is a corpus operation running? If, not request to start a new operation
-     * It is the responsibility of the operation to call reload which will release loading.value after finishing
-     */
-    function corpusOperationLock(): boolean {
-        if (loading.value) {
-            return true
-        }
-        loading.value = true
-        return false
-    }
-
-    /**
-     * Fetch all corpora for which the user has read access.
-     */
-    function reload() {
-        loading.value = true // this will block any other operations
-        API.getCorpora()
-            .then(response => (allCorpora.value = response.data || []))
-            .catch(error => {
-                allCorpora.value = []
-                errorsStore.handle("get corpora", error)
-            })
-            .finally(() => (loading.value = false))
-    }
+    const activeCorpus = computed((): CorpusMetadata | undefined =>
+        allCorpora.value?.find(i => i.uuid === activeUUID.value)
+    )
+    const hasDocs = computed((): boolean =>
+        Boolean(activeCorpus.value?.numDocs)
+    )
+    const isCollaborator = computed(
+        (): boolean =>
+            activeCorpus.value?.collaborators.includes(user.user?.id) ?? false
+    )
+    const isOwner = computed<boolean>(
+        (): boolean => activeCorpus.value?.owner === user.user?.id
+    )
 
     /**
      * Create a new corpus with the given metadata and set it as active.
      * @param metadata Metadata of the new corpus.
      */
-    function createCorpus(metadata: MutableCorpusMetadata) {
-        if (corpusOperationLock()) return
+    function create(metadata: MutableCorpusMetadata): void {
+        plausible.newCorpus(metadata)
         API.postCorpus(metadata)
             // Automatically set the new corpus as active.
-            .then(response => (activeUUID.value = response.data))
-            .catch(error => errorsStore.handle("create corpus", error))
+            .then(response => {
+                activeUUID.value = response.data
+            })
+            .catch(error => errors.handle(error))
             .finally(reload)
     }
 
@@ -91,16 +69,16 @@ const useCorpora = defineStore("corpora", () => {
      * Delete and unselect corpus.
      * @param metadata Corpus to delete.
      */
-    function deleteCorpus(metadata: CorpusMetadata) {
-        if (corpusOperationLock()) return
+    function remove(metadata: CorpusMetadata): void {
+        plausible.corpusDeleted()
         API.deleteCorpus(metadata.uuid)
             .then(() => {
                 // Deselect now deleted corpus
                 if (metadata.uuid === activeUUID.value) {
-                    activeUUID.value = null as unknown as UUID
+                    activeUUID.value = undefined
                 }
             })
-            .catch(error => errorsStore.handle("delete corpus", error))
+            .catch(error => errors.handle(error))
             .finally(reload)
     }
 
@@ -109,10 +87,10 @@ const useCorpora = defineStore("corpora", () => {
      * @param uuid UUID of corpus to update.
      * @param metadata Updated metadata.
      */
-    function updateCorpus(uuid: UUID, metadata: MutableCorpusMetadata) {
-        if (corpusOperationLock()) return
+    function update(uuid: UUID, metadata: MutableCorpusMetadata): void {
+        plausible.corpusUpdated(metadata)
         API.patchCorpus(uuid, metadata)
-            .catch(error => errorsStore.handle("update corpus", error))
+            .catch(error => errors.handle(error))
             .finally(reload)
     }
 
@@ -121,17 +99,18 @@ const useCorpora = defineStore("corpora", () => {
         // Fields
         allCorpora,
         loading,
-        datasetCorpora,
+        datasets,
         sharedCorpora,
         activeCorpus,
         hasDocs,
         activeUUID,
-        userIsCollaborator,
+        isCollaborator,
+        isOwner,
         // Methods
-        createCorpus,
-        deleteCorpus,
-        updateCorpus,
         reload,
+        create,
+        remove,
+        update
     }
 })
 

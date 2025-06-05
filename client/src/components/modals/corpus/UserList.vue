@@ -34,7 +34,7 @@
     </tr>
 
     <!-- delete modal -->
-    <DeleteModal :show="userToDelete" :displayname="userToDelete" @hide="userToDelete = null"
+    <DeleteModal v-if="userToDelete" :itemName="userToDelete" @hide="userToDelete = null"
         @delete="removeUser(userToDelete)">
         <template #action>remove access for user</template>
     </DeleteModal>
@@ -48,16 +48,16 @@ export default defineComponent({
     props: {
         users: {
             type: Array<string>,
-            default: () => [],
+            default: () => []
         },
         listName: {
             type: String,
-            default: "Users",
+            default: "Users"
         },
         showAddDialog: {
             type: Boolean,
-            default: true,
-        },
+            default: true
+        }
     },
     setup() {
         const userStore = stores.useUser()
@@ -66,7 +66,7 @@ export default defineComponent({
     data() {
         return {
             newUser: "",
-            userToDelete: null,
+            userToDelete: null
         }
     },
     methods: {
@@ -86,8 +86,8 @@ export default defineComponent({
         removeUser(username: string) {
             const removeIndex = this.users.indexOf(username)
             this.users.splice(removeIndex, 1)
-        },
-    },
+        }
+    }
 })
 </script>
 

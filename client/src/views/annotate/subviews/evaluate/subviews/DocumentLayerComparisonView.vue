@@ -55,7 +55,7 @@ const jobSelection = stores.useJobSelection()
 
 // Fields
 const docNames = computed<SelectOption[]>(() =>
-    documentsStore.available.map(doc => ({ value: doc.name, text: doc.name })),
+    documentsStore.documents.map(doc => ({ value: doc.name, text: doc.name }))
 )
 const selectedDoc = ref<string>()
 const selectedAnnotation = ref<string>()
@@ -77,7 +77,7 @@ watch(selectedDoc, async newVal => {
             corporaStore.activeUUID,
             jobSelection.hypothesisJobId,
             newVal,
-            jobSelection.referenceJobId,
+            jobSelection.referenceJobId
         )
             .then(response => {
                 termcomps.value = response.data
@@ -90,11 +90,11 @@ watch(selectedDoc, async newVal => {
 
 watch(termcomps, () => {
     if (!termcomps.value) return
-    annotationOptions.value = documentsStore.available
+    annotationOptions.value = documentsStore.documents
         .find(doc => doc.name === selectedDoc.value)
         ?.annotations.map(key => ({
             value: key,
-            text: key,
+            text: key
         }))
 })
 

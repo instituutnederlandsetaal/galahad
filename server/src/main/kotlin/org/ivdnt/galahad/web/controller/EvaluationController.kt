@@ -22,8 +22,6 @@ import org.ivdnt.galahad.web.service.EvaluationService
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
-const val DISTRIBUTION_MAX_SIZE: Int = 1000
-
 @RestController
 class EvaluationController(
     val evaluationService: EvaluationService,
@@ -43,24 +41,24 @@ class EvaluationController(
         content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
     )
     @CrossOrigin
-    @GetMapping(DISTRIBUTION_URL)
+    @GetMapping(Endpoints.Evaluation.DISTRIBUTION)
     fun getDistribution(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
-        @PathVariable @Parameter(description = "Tagger name or sourceLayer") job: String,
-    ): Map<Annotation, CorpusDistribution> = evaluationService.getDistribution(corpus, job)
+        @RequestParam @Parameter(description = "Tagger name or sourceLayer") reference: String,
+    ): Map<Annotation, CorpusDistribution> = evaluationService.getDistribution(corpus, reference)
 
     @Operation(
         summary = "Get document layer comparison",
         description = "A comparison between two tagger jobs on document level. Sequential tokens."
     )
     @CrossOrigin
-    @GetMapping(DOCUMENT_EVALUATION_URL)
-    fun getDocumentLevelLayerVisualisation(
+    @GetMapping(Endpoints.Evaluation.Document.COMPARISON)
+    fun getLayerComparison(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Document name") document: String,
         @PathVariable @Parameter(description = "Tagger name or sourceLayer") job: String,
         @RequestParam(defaultValue = SOURCE_LAYER_NAME) @Parameter(description = "Tagger name or sourceLayer") reference: String? = SOURCE_LAYER_NAME,
-    ): List<TermComparison> = evaluationService.getDocumentLevelLayerVisualisation(corpus, document, job, reference)
+    ): List<TermComparison> = evaluationService.getLayerComparison(corpus, document, job, reference)
 
     @Operation(
         summary = "Get confusion",
@@ -76,7 +74,7 @@ class EvaluationController(
         content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
     )
     @CrossOrigin
-    @GetMapping(CONFUSION_URL)
+    @GetMapping(Endpoints.Evaluation.CONFUSION)
     fun getConfusion(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name or sourceLayer") job: String,
@@ -103,7 +101,7 @@ class EvaluationController(
         content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
     )
     @CrossOrigin
-    @GetMapping(CONFUSION_SAMPLES_URL)
+    @GetMapping(Endpoints.Evaluation.CONFUSION_SAMPLES)
     fun getConfusionSamples(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name or sourceLayer") job: String,
@@ -127,7 +125,7 @@ class EvaluationController(
         content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
     )
     @CrossOrigin
-    @GetMapping(METRICS_URL)
+    @GetMapping(Endpoints.Evaluation.METRICS)
     fun getMetrics(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name or sourceLayer") job: String,
@@ -154,7 +152,7 @@ class EvaluationController(
         content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
     )
     @CrossOrigin
-    @GetMapping(METRICS_SAMPLES_URL)
+    @GetMapping(Endpoints.Evaluation.METRICS_SAMPLES)
     fun getMetricsSamples(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name or sourceLayer") job: String,
@@ -179,38 +177,23 @@ class EvaluationController(
         content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
     )
     @CrossOrigin
-    @GetMapping(EVALUATION_CSV_URL)
+    @GetMapping(Endpoints.Evaluation.DOWNLOAD)
     fun download(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name or sourceLayer") job: String,
         @RequestParam(defaultValue = SOURCE_LAYER_NAME) @Parameter(description = "Tagger name or sourceLayer") reference: String? = SOURCE_LAYER_NAME,
     ): ByteArray = evaluationService.getEvaluation(corpus, job, reference)
 
+//    @CrossOrigin
+//    @GetMapping(TOKEN_FREQUENCY_URL)
+//    fun getTokenFrequency(
+//        @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
+//        @PathVariable @Parameter(description = "Tagger name or sourceLayer") job: String,
+//        @RequestParam(defaultValue = SOURCE_LAYER_NAME) @Parameter(description = "Tagger name or sourceLayer") reference: String? = SOURCE_LAYER_NAME,
+//    ): CorpusMetrics = evaluationService.getTokenFrequency(corpus, job, reference)
+//
     @CrossOrigin
-    @GetMapping(TOKEN_FREQUENCY_URL)
-    fun getTokenFrequency(
-        @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
-        @PathVariable @Parameter(description = "Tagger name or sourceLayer") job: String,
-        @RequestParam(defaultValue = SOURCE_LAYER_NAME) @Parameter(description = "Tagger name or sourceLayer") reference: String? = SOURCE_LAYER_NAME,
-    ): CorpusMetrics = evaluationService.getTokenFrequency(corpus, job, reference)
-
-    @CrossOrigin
-    @GetMapping(DOCUMENT_ENTITIES_URL)
-    fun getEntities(
-        @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
-        @PathVariable @Parameter(description = "Document name") document: String,
-        @PathVariable @Parameter(description = "Tagger name or sourceLayer") job: String,
-    ): DocumentEntities = evaluationService.getEntities(corpus, document, job)
-
-    @CrossOrigin
-    @GetMapping(JOB_ENTITIES_URL)
-    fun getJobEntities(
-        @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
-        @PathVariable @Parameter(description = "Tagger name or sourceLayer") job: String,
-    ): JobEntities = evaluationService.getJobEntities(corpus, job)
-
-    @CrossOrigin
-    @GetMapping(CORPUS_ENTITIES_URL)
+    @GetMapping(Endpoints.Evaluation.ENTITIES)
     fun getJobEntities(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
     ): JobsEntities = evaluationService.getJobsEntities(corpus)

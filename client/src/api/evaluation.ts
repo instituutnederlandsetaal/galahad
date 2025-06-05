@@ -9,12 +9,12 @@ import type {
     ConfusionWrapper,
     DistributionWrapper,
     Metrics,
-    TermComparison,
+    TermComparison
 } from "@/types/evaluation"
 import type {
     DocumentEntities,
     JobEntities,
-    JobsEntities,
+    JobsEntities
 } from "@/types/evaluation/entities"
 
 type ConfusionResponse = AxiosResponse<ConfusionWrapper>
@@ -41,12 +41,12 @@ const downloadPath = (corpus: UUID, hypothesis: string): string =>
 const documentLayerComparisonPath = (
     corpus: UUID,
     job: string,
-    document: string,
+    document: string
 ): string => `/corpora/${corpus}/jobs/${job}/documents/${document}/evaluation`
 const documentEntitiesPath = (
     corpus: UUID,
     job: string,
-    document: string,
+    document: string
 ): string => `/corpora/${corpus}/jobs/${job}/documents/${document}/entities`
 const jobEntitiesPath = (corpus: UUID, job: string): string =>
     `${evaluationPath(corpus, job)}/entities`
@@ -59,7 +59,7 @@ const jobsEntitiesPath = (corpus: UUID): string =>
  */
 export function getDistribution(
     corpus: UUID,
-    hypothesis: string,
+    hypothesis: string
 ): Promise<DistributionResponse> {
     return axios.get(distributionPath(corpus, hypothesis))
 }
@@ -73,10 +73,10 @@ export function getDistribution(
 export function getConfusion(
     corpus: UUID,
     hypothesis: string,
-    reference: string,
+    reference: string
 ): Promise<ConfusionResponse> {
     return axios.get(confusionPath(corpus, hypothesis), {
-        params: { reference },
+        params: { reference }
     })
 }
 
@@ -89,7 +89,7 @@ export function getConfusion(
 export function getMetrics(
     corpus: UUID,
     hypothesis: string,
-    reference: string,
+    reference: string
 ): Promise<MetricsResponse> {
     return axios.get(metricsPath(corpus, hypothesis), { params: { reference } })
 }
@@ -103,10 +103,10 @@ export function getMetrics(
 export function getDownloadEvaluation(
     corpus: UUID,
     hypothesis: string,
-    reference: string,
+    reference: string
 ): Promise<BlobResponse> {
     return getBlob(downloadPath(corpus, hypothesis), {
-        params: { reference },
+        params: { reference }
     })
 }
 
@@ -124,10 +124,10 @@ export function getConfusionSamples(
     reference: string,
     hypoFilter: string,
     refFilter: string,
-    annotationType: string,
+    annotationType: string
 ): Promise<BlobResponse> {
     return getBlob(confusionSamplesPath(corpus, hypothesis), {
-        params: { reference, hypoFilter, refFilter, annotationType },
+        params: { reference, hypoFilter, refFilter, annotationType }
     })
 }
 
@@ -146,12 +146,12 @@ export function getMetricsSamples(
     reference: string,
     setting: string,
     classType: string,
-    group?: string,
+    group?: string
 ): Promise<BlobResponse> {
     const params: Record<string, string> = {
         reference,
         metricsType: setting,
-        class: classType,
+        class: classType
     }
     if (group) {
         params.group = group
@@ -171,24 +171,24 @@ export function getDocumentLayerComparison(
     corpus: UUID,
     job: string,
     document: string,
-    reference: string,
+    reference: string
 ): Promise<AxiosResponse<TermComparison[]>> {
     return axios.get(documentLayerComparisonPath(corpus, job, document), {
-        params: { reference },
+        params: { reference }
     })
 }
 
 export function getDocumentEntities(
     corpus: UUID,
     job: string,
-    document: string,
+    document: string
 ): Promise<DocumentEntitiesResponse> {
     return axios.get(documentEntitiesPath(corpus, job, document))
 }
 
 export function getJobEntities(
     corpus: UUID,
-    job: string,
+    job: string
 ): Promise<JobEntitiesResponse> {
     return axios.get(jobEntitiesPath(corpus, job))
 }

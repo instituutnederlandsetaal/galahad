@@ -1,6 +1,6 @@
 <template>
     <label for="document-select">Document:</label>
-    <GSelect v-model="model" :options id="document-select"/>
+    <GSelect v-model="model" :options id="document-select" />
 </template>
 
 <script setup lang="ts">
@@ -12,9 +12,9 @@ const documentsStore = stores.useDocuments()
 const model = defineModel<string>()
 
 const options = computed<SelectOption[]>(() => {
-    return documentsStore.available.map(doc => ({
+    return documentsStore.documents.map(doc => ({
         value: doc.name,
-        text: doc.name,
+        text: doc.name
     }))
 })
 </script>

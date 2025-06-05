@@ -1,12 +1,12 @@
 export enum TableCorporaType {
     Dataset = "benchmark",
     User = "user",
-    Shared = "shared",
+    Shared = "shared"
 }
 
 export enum TableDocumentsType {
     Dataset = "dataset",
-    User = "user",
+    User = "user"
 }
 
 /* sortOn defines what to sort field values on */

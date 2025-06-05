@@ -1,5 +1,8 @@
 <template>
-    <GTable :columns :items="items" />
+    <GTable compact :columns :items="items">
+        <template #title>Annotations of {{ document?.name }}</template>
+        <template #help>Here you can inspect a small part of the source layer of the document.</template>
+    </GTable>
 </template>
 
 <script setup lang="ts">
@@ -12,13 +15,13 @@ const { document, job } = defineProps<{
 }>()
 
 const annotations = computed(() =>
-    document ? document.annotations : job.tagger.annotations,
+    document ? document.annotations : job.tagger.annotations
 )
 const columns = computed(() =>
-    annotations.value.map(i => ({ key: i, label: i })),
+    annotations.value.map(i => ({ key: i, label: i }))
 )
 const terms = computed(() =>
-    document ? document.layerPreview.terms : job.preview.terms,
+    document ? document.layerPreview.terms : job.preview.terms
 )
 const items = computed(() => terms.value.map(t => t.annotations))
 </script>

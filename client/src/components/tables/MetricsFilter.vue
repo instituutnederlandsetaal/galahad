@@ -46,7 +46,7 @@ const groupOptions = computed(() => {
 const singleOrMultipleOptions = [
     { value: "both", text: "Both" },
     { value: "single", text: "Single" },
-    { value: "multi", text: "Multiple" },
+    { value: "multi", text: "Multiple" }
 ]
 const selectedMetric = ref(metricOptions.value[0]?.value)
 const selectedGroup = ref(groupOptions.value[0]?.value)
@@ -73,6 +73,6 @@ function capitalize(str: string): string {
 }
 
 defineExpose({
-    metricName,
+    metricName
 })
 </script>

@@ -1,5 +1,5 @@
 <template>
-    <GModal :show @hide="$emit('hide')">
+    <GModal @hide="$emit('hide')">
         <template #title>
             Types of lemma <i>{{ variantsToDisplay?.lemma }}</i> and part-of-speech
             <i>{{ variantsToDisplay?.pos }}</i>
@@ -35,15 +35,15 @@ const columns: Column[] = [
     {
         key: "occurrences",
         label: "Occurrences",
-        sortOn: (x: DistEntry) => x.occurrences,
-    },
+        sortOn: (x: DistEntry) => x.occurrences
+    }
 ]
 const items: DistEntry[] = computed(() => {
     return Object.entries(props.variantsToDisplay.literals.literals).map(
         ([variant, occurrences]) => ({
             variant,
-            occurrences,
-        }),
+            occurrences
+        })
     )
 })
 </script>

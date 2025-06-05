@@ -1,13 +1,13 @@
 // Libraries & stores
 
 import * as API from "@/api/documents"
+import { documentsPath } from "@/api/documents"
 import * as Utils from "@/api/utils"
 import stores from "@/stores"
 import type { UUID } from "@/types/corpora"
 // Types & API
 import { type DocumentMetadata, Format } from "@/types/documents"
-
-const MAX_FILE_SIZE = 10485760 // 10 MB
+import { useAxios } from "@/api/useAxios"
 
 // Custom types
 type FileStatus = {
@@ -21,21 +21,31 @@ type FileStatus = {
  */
 const documents = defineStore("documents", () => {
     // Stores
-    const errorsStore = stores.useErrors()
+    const errors = stores.useErrors()
     const corporaStore = stores.useCorpora()
 
     // Fields
-    const loading = ref(false)
-    const available = ref([] as DocumentMetadata[])
+    const {
+        data: documents,
+        loading,
+        reload
+    } = useAxios(
+        (): string | undefined =>
+            corporaStore.activeUUID
+                ? documentsPath(corporaStore.activeUUID)
+                : undefined,
+        []
+    )
+
     const numSourceAnnotations = computed(
-        () => available.value.filter(i => i.layerSummary?.tokens > 0).length,
+        () => documents.value.filter(i => i.layerSummary?.tokens > 0).length
     )
     const uploading: Record<string, FileStatus> = reactive({})
     const uploadBusyCount = computed(
-        () => Object.values(uploading).filter(i => i.status === "busy").length,
+        () => Object.values(uploading).filter(i => i.status === "busy").length
     )
     const uploadErrorCount = computed(
-        () => Object.values(uploading).filter(i => i.status === "error").length,
+        () => Object.values(uploading).filter(i => i.status === "error").length
     )
     const filesToUpload = ref([] as File[])
     const illegalFiles = computed((): File[] => {
@@ -49,69 +59,30 @@ const documents = defineStore("documents", () => {
                 "conllu",
                 "naf",
                 "pdf",
-                "docx",
+                "docx"
             ].includes(ext)
         })
     })
-    const tooLargeFiles = computed((): File[] => {
-        return filesToUpload.value.filter((x: any) => x.size > MAX_FILE_SIZE)
-    })
-
-    // Methods
-    /**
-     * Reloads documentsStore.available for a given corpus.
-     * @param corpus
-     */
-    function reloadDocumentsForCorpus(corpus: UUID) {
-        if (!corpus) return
-        // Reset
-        loading.value = true
-        // Fetch
-        API.getDocuments(corpus)
-            .then(response => {
-                // Only update if the response is for the active corpus.
-                if (response.request.responseURL.includes(corpus)) {
-                    available.value = response.data
-                }
-            })
-            .catch(error => {
-                errorsStore.handle("fetch documents", error)
-            })
-            .finally(() => (loading.value = false))
-    }
-
-    /**
-     * Reload documents for the active user corpus and updates the corpora list.
-     * The latter is to update the document count which unlocks, e.g., the job tab.
-     */
-    function reloadForActiveUserCorpus() {
-        reloadDocumentsForCorpus(corporaStore.activeUUID)
-        corporaStore.reload()
-    }
 
     /**
      * Delete a document.
      * @param documentName Document name.
      */
-    function deleteDocument(documentName: string) {
+    function deleteDocument(documentName: string): void {
         API.deleteDocument(corporaStore.activeUUID, documentName)
-            .catch(error => errorsStore.handle("delete document", error))
-            .finally(reloadForActiveUserCorpus)
+            .catch(error => errors.handle(error))
+            .finally(reload)
     }
 
     /**
      * Download original source document.
      * @param documentName Document name.
      */
-    function downloadRaw(documentName: string) {
+    function downloadRaw(documentName: string): void {
         API.getRawDocument(corporaStore.activeUUID, documentName)
             .then(Utils.browserDownloadResponseFile)
             .catch(res =>
-                Utils.handleBlobError(
-                    res,
-                    "download raw document",
-                    errorsStore,
-                ),
+                Utils.handleBlobError(res, "download raw document", errors)
             )
     }
 
@@ -119,7 +90,7 @@ const documents = defineStore("documents", () => {
      * Upload all files in filesToUpload.
      * Creates timeouts to spread load.
      */
-    function uploadAll() {
+    function uploadAll(): void {
         for (let i = 0; i < filesToUpload.value.length; i++) {
             const formData = new FormData()
             const file = filesToUpload.value[i]
@@ -135,7 +106,7 @@ const documents = defineStore("documents", () => {
     /**
      * Clear errors from not yet uploaded files.
      */
-    function clearUploadErrors() {
+    function clearUploadErrors(): void {
         Object.keys(uploading).forEach(key => {
             if (uploading[key].status === "error") delete uploading[key]
         })
@@ -151,7 +122,7 @@ const documents = defineStore("documents", () => {
         const exts_and_headers = {
             tsv: "text/tab-separated-values",
             conllu: "text/tab-separated-values",
-            naf: "text/xml",
+            naf: "text/xml"
         }
 
         let file = fd.get("file") as File
@@ -171,7 +142,7 @@ const documents = defineStore("documents", () => {
      * Upload a single file. Takes http content type header into account.
      * @param formData FormData with file to upload.
      */
-    function upload(formData: FormData) {
+    function upload(formData: FormData): void {
         const file = formData.get("file") as File
 
         // Some files need an explicit content type header.
@@ -187,19 +158,19 @@ const documents = defineStore("documents", () => {
                 error =>
                     (uploading[file.name] = {
                         status: "error",
-                        message: error.response.data.message,
-                    }),
+                        message: error.response.data.message
+                    })
             )
             .finally(() => {
-                if (uploadBusyCount.value === 0) reloadForActiveUserCorpus()
+                if (uploadBusyCount.value === 0) reload()
             })
     }
 
     /**
-     * Checks if the documentsStore.available contains at least one file of the given format.
+     * Checks if the documentsStore.documents contains at least one file of the given format.
      */
     function containsFormat(format: Format): boolean {
-        return available.value.some(i => {
+        return documents.value.some(i => {
             // Overwrite the format for legacy formats.
             let otherFormat = i.format
             if (otherFormat === Format.TEI_P5_LEGACY) {
@@ -212,22 +183,20 @@ const documents = defineStore("documents", () => {
     // Exports
     return {
         // Fields
-        available,
+        documents,
         filesToUpload,
         illegalFiles,
         loading,
-        tooLargeFiles,
         uploading,
         uploadBusyCount,
         uploadErrorCount,
         numSourceAnnotations,
         // Methods
-        reloadDocumentsForCorpus,
         deleteDocument,
         downloadRaw,
         uploadAll,
         clearUploadErrors,
-        containsFormat,
+        containsFormat
     }
 })
 

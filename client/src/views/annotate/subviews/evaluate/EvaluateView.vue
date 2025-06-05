@@ -27,7 +27,7 @@
             { id: 'grouped_metrics', title: 'Grouped Metrics' },
             { id: 'confusion', title: 'Pos Confusion' },
             { id: 'document_layer_comparison', title: 'Document View' },
-            { id: 'entities', title: 'Entities View' },
+            { id: 'entities', title: 'Entities' },
         ]">
         </GTabs>
     </AnnotateTab>
@@ -82,19 +82,19 @@ function reloadEvaluationData(reloadDistribution = false): void {
         confusion.reloadForUUIDHypothesisReference(
             corporaStore.activeUUID,
             hypothesis,
-            reference,
+            reference
         )
         metrics.reloadForUUIDHypothesisReference(
             corporaStore.activeUUID,
             hypothesis,
-            reference,
+            reference
         )
     }
     // Distribution is unaffected by reference changes, so explicitly ask for it.
     if (reloadDistribution && hypothesis != null) {
         distribution.reloadForUUIDHypothesis(
             corporaStore.activeUUID,
-            hypothesis,
+            hypothesis
         )
     }
 
@@ -106,7 +106,6 @@ function reloadEvaluationData(reloadDistribution = false): void {
 
 onMounted(() => {
     // Docs needed to determine whether the sourceLayer job has annotations.
-    documentsStore.reloadDocumentsForCorpus(corporaStore.activeUUID)
     jobsStore.reload()
 })
 
@@ -138,7 +137,7 @@ watch(
     () => jobSelection.hypothesisJobId,
     () => {
         reloadEvaluationData(true)
-    },
+    }
 )
 // watch(
 //     () => jobSelection.referenceJobId,

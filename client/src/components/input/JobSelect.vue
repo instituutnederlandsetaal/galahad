@@ -32,7 +32,7 @@ const { isReference = false, displayName } = defineProps<{
     displayName?: string
 }>()
 const label = computed<string>(
-    () => displayName ?? (isReference ? "Reference" : "Hypothesis"),
+    () => displayName ?? (isReference ? "Reference" : "Hypothesis")
 )
 const selectedJob = computed<string>({
     get(): string {
@@ -46,7 +46,7 @@ const selectedJob = computed<string>({
         } else {
             jobSelectionStore.hypothesisJobId = newValue
         }
-    },
+    }
 })
 
 // Whether there are documents that have not been tagged yet.

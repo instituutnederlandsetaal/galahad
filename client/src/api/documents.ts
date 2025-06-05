@@ -10,11 +10,12 @@ import type { DocumentMetadata } from "@/types/documents"
 
 type DocumentsResponse = AxiosResponse<DocumentMetadata[]>
 
-const documentsPath = (corpus: UUID): string => `/corpora/${corpus}/documents`
+export const documentsPath = (corpus: UUID): string =>
+    `/corpora/${corpus}/documents`
 const documentPath = (corpus: UUID, document: string): string =>
     `${documentsPath(corpus)}/${document}`
 const rawDocumentPath = (corpus: UUID, document: string): string =>
-    `${documentPath(corpus, document)}/raw`
+    `${documentPath(corpus, document)}/download`
 
 /**
  * Fetch all documents for a corpus.
@@ -33,7 +34,7 @@ export function getDocuments(corpus: UUID): Promise<DocumentsResponse> {
 export function postDocument(
     corpus: UUID,
     document: FormData,
-    contentType?: Record<string, string>,
+    contentType?: Record<string, string>
 ): Promise<AxiosResponse> {
     return axios.post(documentsPath(corpus), document, { headers: contentType })
 }
@@ -45,7 +46,7 @@ export function postDocument(
  */
 export function deleteDocument(
     corpus: UUID,
-    document: string,
+    document: string
 ): Promise<AxiosResponse> {
     return axios.delete(documentPath(corpus, document))
 }
@@ -57,7 +58,7 @@ export function deleteDocument(
  */
 export function getRawDocument(
     corpus: UUID,
-    document: string,
+    document: string
 ): Promise<BlobResponse> {
     return getBlob(rawDocumentPath(corpus, document))
 }

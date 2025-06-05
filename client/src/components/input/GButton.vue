@@ -20,7 +20,7 @@ const classes = computed(() => ({
     orange: orange,
     green: green,
     plain: plain,
-    disabled: disabled,
+    disabled: disabled
 }))
 
 defineEmits<{

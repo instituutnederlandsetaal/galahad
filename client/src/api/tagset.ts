@@ -7,11 +7,11 @@ import type { Tagset } from "@/types/tagset"
 
 type TagsetsResponse = AxiosResponse<Tagset[]>
 
-const tagsetsPath = "/tagsets"
+export const tagsetsPath = "/tagsets"
 
 /**
  * Get all tagsets.
  */
 export function getTagsets(): Promise<TagsetsResponse> {
-    return axios.get(tagsetsPath)
+    return axios.get(tagsetsPath, config)
 }

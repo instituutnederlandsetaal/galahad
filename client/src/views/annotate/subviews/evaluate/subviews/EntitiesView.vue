@@ -1,5 +1,5 @@
 <template>
-    <GCard title="Entities View">
+    <GCard title="Entities">
         <template #help>
             <p>
                 Here you can see all the named entities in all jobs.
@@ -14,12 +14,12 @@
             </template>
         </GTable>
 
-        <GModal :show="selectedItem !== undefined" @hide="selectedItem = undefined"
+        <GModal v-if="selectedItem !== undefined" @hide="selectedItem = undefined"
             :title="`Entities in ${selectedItem?.item?.document}`">
             <template #help>
                 Here you can view all the entities in the selected document.
             </template>
-            <DocumentEntitiesTable :filter :entities="selectedItem?.item?.entities" />
+            <DocumentEntitiesTable :entities="selectedItem?.item?.entities" />
         </GModal>
     </GCard>
 </template>
@@ -31,7 +31,7 @@ import type { Column, TableData } from "@/types/ui/table"
 import type {
     DocumentEntities,
     JobEntities,
-    JobsEntities,
+    JobsEntities
 } from "@/types/evaluation/entities"
 
 // --- stores ---
@@ -44,7 +44,10 @@ const selectedItem = ref<TableData<any>>()
 
 // --- computed ---
 const columns = computed<Column[]>(() =>
-    Object.keys(items.value[0] || {}).map(i => ({ key: i })),
+    Object.keys(items.value[0] || {}).map(i => ({
+        key: i,
+        hidden: i === "entities"
+    }))
 )
 const filter = computed(() => {
     if (["document", "total"].includes(selectedItem.value?.field.key)) {
@@ -67,8 +70,8 @@ watchEffect(() => {
 
 // --- methods ---
 function convertJobsEntities(
-    jobsEntities: JobsEntities,
-): { document: string;[key: string]: number | string }[] {
+    jobsEntities: JobsEntities
+): { document: string; [key: string]: number | string }[] {
     const result: Record<string, { [key: string]: number | string }> = {}
 
     // rest of the documents
@@ -81,11 +84,16 @@ function convertJobsEntities(
                 result[docName][`${jobName}-${eLabel}`] = eCount
             }
             result[docName][`${jobName}-total`] = docData.total
+
+            if (!result[docName].entities) {
+                result[docName].entities = {}
+            }
+            result[docName].entities[jobName] = docData.entities
         }
     }
 
     for (const [docName, doc] of Object.entries(
-        jobsEntities.stddev.documents,
+        jobsEntities.stddev.documents
     )) {
         for (const [eLabel, stddev] of Object.entries(doc.stddev)) {
             result[docName][`${eLabel}-std`] = stddev.toFixed(2)

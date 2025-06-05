@@ -10,7 +10,7 @@ import type { Benchmarks } from "@/types/assays"
  */
 const useAssays = defineStore("assays", () => {
     // Stores
-    const errorsStore = stores.useErrors()
+    const errors = stores.useErrors()
 
     // Fields
     const loading = ref(false)
@@ -24,7 +24,7 @@ const useAssays = defineStore("assays", () => {
         loading.value = true
         API.getBenchmarks()
             .then(response => (assays.value = response.data))
-            .catch(error => errorsStore.handle("fetch assays", error))
+            .catch(error => errors.handle(error))
             .finally(() => (loading.value = false))
     }
 
@@ -34,7 +34,7 @@ const useAssays = defineStore("assays", () => {
         assays,
         loading,
         // Methods
-        reload,
+        reload
     }
 })
 

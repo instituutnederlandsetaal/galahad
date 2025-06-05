@@ -1,6 +1,6 @@
 <!-- A modal used by PoS confusion & metrics. -->
 <template>
-    <GModal :show @hide="$emit('hide')" :title>
+    <GModal @hide="$emit('hide')" :title>
         <template #help>
             <p>
                 Here you can see a sample of how a token was tagged by <i>{{ hypothesisJob }}</i> and
@@ -45,7 +45,7 @@ const props = defineProps({
     referenceJob: { type: String },
     hypothesisJob: { type: String },
     downloading: { type: Boolean, default: false },
-    annotationType: { type: String },
+    annotationType: { type: String }
 })
 
 // Emits
@@ -64,7 +64,7 @@ const annotations = computed(() => {
     const hypoAnnotations = Object.keys(firstSample.hypoTerm.annotations)
     const refAnnotations = Object.keys(firstSample.refTerm.annotations)
     return [...new Set([...hypoAnnotations, ...refAnnotations])].filter(
-        i => !ignorableAnnotations.includes(i),
+        i => !ignorableAnnotations.includes(i)
     )
 })
 
@@ -72,17 +72,17 @@ const columns = computed(() => {
     // Currently we take annotations from the first sample of the hypothesis.
     const referenceColumns = annotations.value.map(i => ({
         key: `${props.referenceJob}-${i}`,
-        label: `${props.referenceJob} ${i}`,
+        label: `${props.referenceJob} ${i}`
     }))
     const hypothesisColumns = annotations.value.map(i => ({
         key: `${props.hypothesisJob}-${i}`,
-        label: `${props.hypothesisJob} ${i}`,
+        label: `${props.hypothesisJob} ${i}`
     }))
 
     return [
         { key: "literal", label: "token" },
         ...hypothesisColumns,
-        ...referenceColumns,
+        ...referenceColumns
     ]
 })
 const visibleColumns = ref({}) // { [annotation]: boolean }
@@ -105,18 +105,18 @@ const items = computed(() => {
     return props.samples.samples.map((sample: TermComparison) => {
         const hypoAnnotations = Object.entries(sample.hypoTerm.annotations).map(
             i => ({
-                [`${props.hypothesisJob}-${i[0]}`]: i[1],
-            }),
+                [`${props.hypothesisJob}-${i[0]}`]: i[1]
+            })
         )
         const refAnnotations = Object.entries(sample.refTerm.annotations).map(
             i => ({
-                [`${props.referenceJob}-${i[0]}`]: i[1],
-            }),
+                [`${props.referenceJob}-${i[0]}`]: i[1]
+            })
         )
 
         return {
             literal: literalsForTermComparison(sample),
-            ...Object.assign({}, ...hypoAnnotations, ...refAnnotations),
+            ...Object.assign({}, ...hypoAnnotations, ...refAnnotations)
         }
     })
 })
@@ -131,7 +131,7 @@ watch(
         for (const annotation of annotations) {
             visibleColumns.value[annotation] = true
         }
-    },
+    }
 )
 </script>
 

@@ -10,7 +10,7 @@
         </template>
 
         <GTable :columns :items="tagsets.tagsets" :loading="tagsets.loading">
-            <template #table-empty-instruction>
+            <template #table-empty>
                 No tagsets appeared? That is not right! Please contact the INT at
                 <MailAddress />
             </template>
@@ -22,9 +22,5 @@
 import stores from "@/stores"
 
 const tagsets = stores.useTagsets()
-
-const columns = [
-    { key: "shortName", label: "abbreviation" },
-    { key: "longName", label: "name" },
-]
+const columns = [{ key: "name" }, { key: "description" }]
 </script>

@@ -28,7 +28,7 @@
         </ul>
 
         <!-- Confirmation and clear buttons after a selection has been made -->
-        <fieldset class="btns" v-if="filesToUpload.length != 0">
+        <fieldset v-if="filesToUpload.length != 0" class="btns">
             <GButton green @click="
                 () => {
                     documentsStore.uploadAll()
@@ -89,7 +89,7 @@ const {
     illegalFiles,
     uploadBusyCount,
     uploadErrorCount,
-    uploading,
+    uploading
 } = storeToRefs(documentsStore)
 
 // Fields
@@ -155,6 +155,7 @@ onMounted(() => {
 
     .btns {
         display: flex;
+        gap: 0.25rem;
         justify-content: center;
     }
 }

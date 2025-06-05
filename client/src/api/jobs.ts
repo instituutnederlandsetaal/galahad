@@ -53,7 +53,7 @@ export function postJob(corpus: UUID, job: string): Promise<ProgressResponse> {
 export function cancelOrDeleteJob(
     corpus: UUID,
     job: string,
-    hard: boolean,
+    hard: boolean
 ): Promise<ProgressResponse> {
     return axios.delete(jobPath(corpus, job), { params: { hard: hard } })
 }
@@ -63,7 +63,7 @@ export function cancelOrDeleteJob(
  */
 export function getJobIsBusy(
     corpus: UUID,
-    job: string,
+    job: string
 ): Promise<AxiosResponse<boolean>> {
     return axios.get(jobIsBusyPath(corpus, job))
 }
@@ -73,7 +73,7 @@ export function getJobIsBusy(
  */
 export function getJobProgress(
     corpus: UUID,
-    job: string,
+    job: string
 ): Promise<ProgressResponse> {
     return axios.get(jobProgressPath(corpus, job))
 }

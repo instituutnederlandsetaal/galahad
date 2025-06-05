@@ -8,10 +8,6 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.ivdnt.galahad.annotations.Layer
-import org.ivdnt.galahad.app.JOBS_URL
-import org.ivdnt.galahad.app.JOB_URL
-import org.ivdnt.galahad.app.TAGGERS_URL
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.exceptions.ErrorResponse
 import org.ivdnt.galahad.jobs.JobController
@@ -44,7 +40,7 @@ class JobsController(
         description = "Get a summary of the state of all tagger jobs.",
     )
     @CrossOrigin
-    @GetMapping(JOBS_URL)
+    @GetMapping(Endpoints.Jobs.BASE)
     fun getJobs(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
     ): List<JobMetadata> = corpus.readJobs().readAllMetadata()
@@ -62,7 +58,7 @@ class JobsController(
         content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
     )
     @CrossOrigin
-    @GetMapping(JOB_URL)
+    @GetMapping(Endpoints.Jobs.JOB)
     fun getJob(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,
@@ -91,7 +87,7 @@ class JobsController(
         content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
     )
     @CrossOrigin
-    @PostMapping(JOB_URL)
+    @PostMapping(Endpoints.Jobs.JOB)
     fun postJob(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,
@@ -124,44 +120,24 @@ class JobsController(
         content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
     )
     @CrossOrigin
-    @DeleteMapping(JOB_URL)
-    fun cancelOrDeleteJob(
+    @PostMapping(Endpoints.Jobs.CANCEL)
+    fun postCancel(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,
-        @RequestParam @Parameter(description = "Whether to only cancel the current tagging queue (soft), or delete all job results (hard)") hard: Boolean,
-    ): ResponseEntity<String> {
-        if (hard) {
-            corpus.writeJobs().deleteOrThrow(job)
-        } else {
-            corpus.writeJobs().readOrThrow(job).stop()
-        }
-        return ResponseEntity.noContent().build()
+    ) {
+        corpus.writeJobs().readOrThrow(job).stop()
     }
 
-    @Operation(
-        summary = "Get job result sample",
-        description = "Get a sample summary of the resulting tagged layer of a job.",
-    )
-    @ApiResponse(
-        responseCode = "200", description = "The job layer result."
-    )
-    @ApiResponse(
-        responseCode = "404",
-        description = "Corpus, document or job result was not found.",
-        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
-    )
-    @ApiResponse(
-        responseCode = "400",
-        description = "The sourceLayer is not a tagger.",
-        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
-    )
+
     @CrossOrigin
-    @GetMapping("${JOB_URL}/documents/{document}/result")
-    fun getDocumentResult(
+    @DeleteMapping(Endpoints.Jobs.JOB)
+    fun deleteJob(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,
-        @PathVariable @Parameter(description = "Document name") document: String,
-    ): Layer = corpus.readJobs().readOrThrow(job).results.readOrThrow(document).layer!!
+    ): ResponseEntity<String> {
+        corpus.writeJobs().deleteOrThrow(job)
+        return ResponseEntity.noContent().build()
+    }
 
     @Operation(
         summary = "Get job progress",
@@ -181,17 +157,9 @@ class JobsController(
         content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
     )
     @CrossOrigin
-    @GetMapping("$JOB_URL/progress")
+    @GetMapping(Endpoints.Jobs.PROGRESS)
     fun progress(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,
     ): Progress = corpus.readJobs().readOrThrow(job).progress
-
-    @Operation(
-        summary = "Number of active tagger jobs",
-        description = "Get the number of active jobs. Indicates server load."
-    )
-    @CrossOrigin
-    @GetMapping("$TAGGERS_URL/active")
-    fun activeJobs(): Int = JobController.queueSize
 }

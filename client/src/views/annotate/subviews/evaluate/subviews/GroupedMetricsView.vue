@@ -58,13 +58,13 @@ const posMetrics = computed(() => {
         noMatch: i.classes.noMatch,
         precision: i.metrics.precision,
         recall: i.metrics.recall,
-        f1: i.metrics.f1,
+        f1: i.metrics.f1
     }))
     return ret
 })
 const singlePosMetrics = computed(() => {
     return Object.values(posMetrics.value).filter(
-        pos => !pos.name.includes("+"),
+        pos => !pos.name.includes("+")
     )
 })
 const multiPosMetrics = computed(() => {
@@ -88,13 +88,13 @@ function download(data: Any) {
         jobSelection.referenceJobId,
         metricName.value,
         classType,
-        group,
+        group
     )
         .then(response => {
             Utils.browserDownloadResponseFile(response)
         })
         .catch(res =>
-            Utils.handleBlobError(res, "download grouped metrics samples", app),
+            Utils.handleBlobError(res, "download grouped metrics samples", app)
         )
         .finally(() => (downloading.value = false))
 }

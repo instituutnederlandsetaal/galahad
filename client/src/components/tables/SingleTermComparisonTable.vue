@@ -36,7 +36,7 @@ const ignorableAnnotations = ["token", "id", "misc"]
 const items: Ref<Record<string, string>[]> = computed(() => {
     return [
         { layer: jobSelection.hypothesisJobId, ...props.hypoTerm.annotations },
-        { layer: jobSelection.referenceJobId, ...props.refTerm.annotations },
+        { layer: jobSelection.referenceJobId, ...props.refTerm.annotations }
     ]
 })
 /** columns are simply all unique keys in term.annotations: Record<string, string> */
@@ -61,7 +61,7 @@ function itemEqual(data: Cell): bool {
         return true // always true for source layer
 
     const sourceItem = items.value.find(
-        i => i.layer === jobSelection.referenceJobId,
+        i => i.layer === jobSelection.referenceJobId
     )
     return annotationsEqual(data.value, sourceItem[data.field.key])
 }

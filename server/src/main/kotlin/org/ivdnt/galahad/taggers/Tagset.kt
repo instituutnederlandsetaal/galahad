@@ -8,27 +8,23 @@ import java.io.File
 
 class Tagset(
     // The identifier should be equal to the filename
-    var id: String = "",
-    var longName: String = "",
-    var shortName: String = "",
-    var punctuationTags: Array<String> = emptyArray()
+    var name: String = "",
+    var description: String = "",
+    var punctuation: Array<String> = emptyArray()
 ) {
     companion object {
         val UNKNOWN: Tagset = Tagset(
-            id = "UNKNOWN",
-            longName = "Unknown Tagset",
-            shortName = "UNK",
+            name = "UNKNOWN",
+            description = "Unknown Tagset",
         )
         private const val TAGSETS_DIR: String = "data/tagsets"
         private val dir = File(TAGSETS_DIR)
 
         val tagsets: Map<String, Tagset> = dir.listFiles()
             .map { Yaml(Constructor(Tagset::class.java, LoaderOptions())).load<Tagset>(it.inputStream()) }
-            .associateBy { it.id }
+            .associateBy { it.name }
 
-        fun readOrNull(tagger: Tagger): Tagset? = tagsets[tagger.tagset]
-        fun readOrNull(id: String): Tagset? = tagsets[id]
+        fun readOrNull(id: String?): Tagset? = tagsets[id]
         fun readOrThrow(id: String): Tagset = readOrNull(id) ?: throw TagsetNotFoundException(id)
     }
-
 }

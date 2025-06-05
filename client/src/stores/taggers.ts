@@ -1,11 +1,9 @@
-import { getTaggers } from "@/api/taggers"
-import { useFetch } from "@/ts/useFetch"
+import { taggersPath } from "@/api/taggers"
+import { useAxios } from "@/api/useAxios"
 
-/**
- * Stores all available taggers. Mainly informational.
- */
+/** Stores available taggers. */
 const useTaggers = defineStore("taggers", () => {
-    const { data: taggers, loading } = useFetch(() => getTaggers())
+    const { data: taggers, loading } = useAxios(taggersPath)
     return { loading, taggers }
 })
 

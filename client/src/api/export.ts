@@ -11,14 +11,14 @@ const convertCorpusPath = (
     corpus: UUID,
     job: string,
     format: Format,
-    posHeadOnly: boolean,
+    posHeadOnly: boolean
 ): string =>
     `/corpora/${corpus}/jobs/${job}/export/convert?format=${format}&posHeadOnly=${posHeadOnly}`
 const mergeCorpusPath = (
     corpus: UUID,
     job: string,
     format: Format,
-    posHeadOnly: boolean,
+    posHeadOnly: boolean
 ): string =>
     `/corpora/${corpus}/jobs/${job}/export/merge?format=${format}&posHeadOnly=${posHeadOnly}`
 
@@ -33,7 +33,7 @@ export function convertCorpus(
     corpus: UUID,
     job: string,
     format: Format,
-    posHeadOnly: boolean,
+    posHeadOnly: boolean
 ): Promise<BlobResponse> {
     return getBlob(convertCorpusPath(corpus, job, format, posHeadOnly))
 }
@@ -49,7 +49,7 @@ export function mergeCorpus(
     corpus: UUID,
     job: string,
     format: Format,
-    posHeadOnly: boolean,
+    posHeadOnly: boolean
 ): Promise<BlobResponse> {
     return getBlob(mergeCorpusPath(corpus, job, format, posHeadOnly))
 }

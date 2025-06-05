@@ -1,12 +1,12 @@
 <!-- create or update a corpus -->
 <template>
-    <GModal :title :show @hide="$emit('hide')">
+    <GModal :title @hide="$emit('hide')">
         <template #help>
             <slot name="help"></slot>
         </template>
         <form @submit.prevent @keyup.enter="doAction">
             <table>
-                <template v-if="userStore.hasWriteAccess || !item">
+                <template v-if="userStore.canWrite || !item">
                     <tr>
                         <td>
                             <label>Name:</label> <span class="warning"><small>(Required)</small></span>
@@ -102,14 +102,17 @@ const userStore = stores.useUser()
 const tagsetsStore = stores.useTagsets()
 
 // --- props ---
-const { action, cancel, item, update, title, show } = defineProps({
+const { action, item, update, title, show } = defineProps({
     action: { type: Function },
-    cancel: { type: Function },
     item: { default: null },
     update: { type: Boolean, default: false },
     title: { type: String, default: "" },
-    show: { type: Boolean, default: true },
+    show: { type: Boolean, default: true }
 })
+
+const emit = defineEmits<{
+    hide: []
+}>()
 
 // --- data ---
 const dataset = ref(false)
@@ -126,7 +129,7 @@ const viewers = ref([])
 const showAddDialog = computed(() => {
     // Only show it when you're not editing (i.e. you pressed 'new')
     // Or if you did press edit, only show it when you have access
-    return !update || userStore.hasDeleteAccess
+    return !update || userStore.canDelete
 })
 const disabled = computed(() => {
     if (!item && update) return true
@@ -169,7 +172,7 @@ watch(
         collaborators.value = [...newValue.collaborators]
         viewers.value = [...newValue.viewers]
     },
-    { immediate: true, deep: true },
+    { immediate: true, deep: true }
 )
 
 // --- methods ---
@@ -185,14 +188,11 @@ function doAction(): void {
         collaborators: collaborators.value,
         viewers: viewers.value,
         sourceName: sourceName.value,
-        sourceURL: validateSourceURL(sourceURL.value),
+        sourceURL: validateSourceURL(sourceURL.value)
     }
     action(value)
     resetFormFields()
-}
-function doCancel(): void {
-    resetFormFields()
-    cancel()
+    emit("hide")
 }
 function resetFormFields(): void {
     collaborators.value = []

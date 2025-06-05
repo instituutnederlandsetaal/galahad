@@ -16,7 +16,7 @@ export type BlobResponse = AxiosResponse<Blob>
  */
 export function getBlob(
     path: string,
-    config?: AxiosRequestConfig,
+    config?: AxiosRequestConfig
 ): Promise<BlobResponse> {
     return axios.get(path, { responseType: "blob", ...config })
 }
@@ -48,18 +48,21 @@ export function browserDownloadResponseFile(response: BlobResponse): void {
 export function handleBlobError(
     error: AxiosError<Blob>,
     intent: string,
-    errors: any,
+    errors: any
 ): void {
+    // If no response, handle the NETWORK_ERROR.
+    if (!error.response) errors.handle(error)
+
     const reader = new FileReader()
     // Setup the onload that fires after reading.
     reader.onload = (): void => {
         const json = JSON.parse(reader.result as string) as ErrorMessage
         const errObj = {
             response: {
-                data: json,
-            },
+                data: json
+            }
         } as AxiosError<ErrorMessage>
-        errors.handle(intent, errObj)
+        errors.handle(errObj)
     }
     // Now, read.
     reader.readAsText(error.response?.data as Blob)

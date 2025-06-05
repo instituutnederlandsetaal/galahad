@@ -5,7 +5,7 @@
             <DifferentTagsetsHelp />
         </template>
 
-        <template #table-empty-instruction>
+        <template #table-empty>
             Select a reference layer and a hypothesis layer to generate metrics.
         </template>
 
@@ -46,7 +46,7 @@
         </template>
     </GTable>
 
-    <ComparisonModal :show="showModal" @hide="showModal = false" :samples @download="$emit('download', modalData)"
+    <ComparisonModal v-if="showModal" @hide="showModal = false" :samples @download="$emit('download', modalData)"
         :referenceJob="jobSelection.referenceJobId" :hypothesisJob="jobSelection.hypothesisJobId" :downloading />
 </template>
 
@@ -65,7 +65,7 @@ const props = defineProps({
     items: { type: Array, default: [] },
     loading: { type: Boolean, default: false },
     sortedByColumn: { type: String, default: "count" },
-    downloading: { type: Boolean, default: false },
+    downloading: { type: Boolean, default: false }
 })
 
 // Emits
@@ -88,7 +88,7 @@ function openModal(data) {
     samples.value = {
         title: `${data.field.label} ${data.item.name} samples`,
         samples: data.value.samples,
-        annotationType: data.item.column.toLowerCase(),
+        annotationType: data.item.column.toLowerCase()
     }
     showModal.value = true
 }

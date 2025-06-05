@@ -21,7 +21,7 @@ export function reloadEval(
     ApiCall: (
         corpus: UUID,
         hypothesis: string,
-        reference: string,
+        reference: string
     ) => Promise<AxiosResponse>,
     ResetCall: () => void,
     intent: string,
@@ -30,7 +30,7 @@ export function reloadEval(
     stores: any,
     corpus: UUID,
     hypothesis: string,
-    reference?: string,
+    reference?: string
 ): any {
     // Specifically check reference for null. We'll allow empty strings.
     if (!corpus || !hypothesis || reference == null) {

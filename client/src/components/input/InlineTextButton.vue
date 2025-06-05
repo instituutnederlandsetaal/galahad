@@ -13,7 +13,7 @@ const classes = {
     green: green,
     orange: orange,
     red: red,
-    plain: plain,
+    plain: plain
 }
 </script>
 

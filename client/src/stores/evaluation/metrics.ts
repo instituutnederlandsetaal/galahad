@@ -14,7 +14,7 @@ export const metricsPerPosColumns = [
         sortOn: (x: MetricsRow) =>
             Number.isNaN(Number.parseInt(x.name))
                 ? x.name
-                : Number.parseInt(x.name),
+                : Number.parseInt(x.name)
     },
     // { key: 'accuracy', sortOn: (x: MetricsRow) => x.accuracy },
     { key: "precision", sortOn: (x: MetricsRow) => x.precision },
@@ -24,23 +24,23 @@ export const metricsPerPosColumns = [
     {
         key: "truePositive",
         label: "true positive",
-        sortOn: (x: MetricsRow) => x.truePositive.count / x.count,
+        sortOn: (x: MetricsRow) => x.truePositive.count / x.count
     },
     {
         key: "falsePositive",
         label: "false positive",
-        sortOn: (x: MetricsRow) => x.falsePositive.count / x.count,
+        sortOn: (x: MetricsRow) => x.falsePositive.count / x.count
     },
     {
         key: "falseNegative",
         label: "false negative",
-        sortOn: (x: MetricsRow) => x.falseNegative.count / x.count,
+        sortOn: (x: MetricsRow) => x.falseNegative.count / x.count
     },
     {
         key: "noMatch",
         label: "no match",
-        sortOn: (x: MetricsRow) => x.noMatch.count / x.count,
-    },
+        sortOn: (x: MetricsRow) => x.noMatch.count / x.count
+    }
 ]
 
 /**
@@ -68,7 +68,7 @@ const useMetrics = defineStore("metrics", () => {
     function reloadForUUIDHypothesisReference(
         corpus: UUID,
         hypothesis: string,
-        reference: string,
+        reference: string
     ) {
         Utils.reloadEval(
             API.getMetrics,
@@ -79,7 +79,7 @@ const useMetrics = defineStore("metrics", () => {
             stores,
             corpus,
             hypothesis,
-            reference,
+            reference
         )
     }
 
@@ -90,7 +90,7 @@ const useMetrics = defineStore("metrics", () => {
         metrics,
         // Methods
         reloadForUUIDHypothesisReference,
-        reset,
+        reset
     }
 })
 

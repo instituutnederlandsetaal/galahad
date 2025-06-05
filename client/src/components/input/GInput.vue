@@ -19,7 +19,7 @@ const {
     validityDescriptor,
     validator,
     clearBtn,
-    focus,
+    focus
 } = defineProps<{
     type?: string
     placeholder?: string

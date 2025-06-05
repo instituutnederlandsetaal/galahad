@@ -3,10 +3,6 @@ package org.ivdnt.galahad.web.controller
 import io.swagger.v3.oas.annotations.Hidden
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.app.Config
-import org.ivdnt.galahad.app.INTERNAL_JOBS_ERROR_URL
-import org.ivdnt.galahad.app.INTERNAL_JOBS_RESULT_URL
-import org.ivdnt.galahad.formats.InternalFile
-import org.ivdnt.galahad.jobs.Job
 import org.ivdnt.galahad.jobs.JobController
 import org.ivdnt.galahad.web.service.CorporaService
 import org.springframework.web.bind.annotation.PostMapping
@@ -44,7 +40,7 @@ class InternalJobController(
      * This is a special endpoint, as it is not for use with the client,
      * but for use with the taggers
      */
-    @PostMapping(INTERNAL_JOBS_RESULT_URL)
+    @PostMapping(Endpoints.Internal.RESULT)
     fun receiveTaggerResult(
         @RequestParam(value = "file_id", required = false) fileId: UUID,
         @RequestBody file: MultipartFile,

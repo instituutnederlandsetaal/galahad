@@ -2,6 +2,7 @@ package org.ivdnt.galahad.formats.folia
 
 import org.codehaus.stax2.XMLStreamWriter2
 import org.ivdnt.galahad.annotations.Annotation
+import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.export.LayerConverter
 import org.ivdnt.galahad.formats.xml.PrettyXMLWriter
@@ -80,7 +81,13 @@ class FoliaConverter(export: DocumentExport) : LayerConverter(export) {
                         writer.writeEndElement() // entities
                     }
 
-                    if (Annotation.DEPREL in export.tagger.annotations) {
+                    val containsDeprel: Boolean = if (export.tagger.id == SOURCE_LAYER_NAME) {
+                        Annotation.DEPREL in export.document.metadata.annotations
+                    } else {
+                        Annotation.DEPREL in export.tagger.annotations
+                    }
+
+                    if (containsDeprel) {
                         writer.writeStartElement("dependencies")
                         sentence.terms.forEach { t ->
                             if (t.deprel?.lowercase() != "root") {

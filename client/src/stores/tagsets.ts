@@ -1,11 +1,9 @@
-import { getTagsets } from "@/api/tagset"
-import { useFetch } from "@/ts/useFetch"
+import { tagsetsPath } from "@/api/tagset"
+import { useAxios } from "@/api/useAxios"
 
-/**
- * Stores all available tagsets. Mainly informational.
- */
+/** Stores available tagsets. */
 const useTagsets = defineStore("tagsets", () => {
-    const { data: tagsets, loading } = useFetch(() => getTagsets())
+    const { data: tagsets, loading } = useAxios(tagsetsPath)
     return { loading, tagsets }
 })
 

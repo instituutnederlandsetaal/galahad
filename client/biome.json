@@ -25,7 +25,8 @@
         "formatter": {
             "semicolons": "asNeeded",
             "arrowParentheses": "asNeeded",
-            "bracketSameLine": true
+            "bracketSameLine": true,
+            "trailingCommas": "none"
         }
     }
 }

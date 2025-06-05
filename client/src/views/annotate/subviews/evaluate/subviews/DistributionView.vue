@@ -3,7 +3,7 @@
         <GTable class="right" :title="'Distribution of ' + (jobSelection.hypothesisJobId || 'the hypothesis layer')"
             helpLink="evaluation" :columns :items="itemsToDisplay" :loading="distributionStore.loading" displayOnEmpty
             sortColumn="count">
-            <template #table-empty-instruction>
+            <template #table-empty>
                 <p v-if="distribution.generated">No results for current filter settings.</p>
                 <p v-else>Select a hypothesis layer and an annotation to view a distribution.</p>
             </template>
@@ -103,7 +103,7 @@
             </template>
         </GTable>
 
-        <VariantsModal :variantsToDisplay :show="variantsToDisplay !== null" @hide="variantsToDisplay = null"
+        <VariantsModal :variantsToDisplay v-if="variantsToDisplay !== null" @hide="variantsToDisplay = null"
             id="modal" />
     </div>
 </template>
@@ -142,7 +142,7 @@ const itemsToDisplay = computed((): Distribution[] => {
         distribution.value?.distribution
             // Case insensitive string comparison.
             .filter(x =>
-                x.lemma.toLowerCase().includes(lemmaFilter.value.toLowerCase()),
+                x.lemma.toLowerCase().includes(lemmaFilter.value.toLowerCase())
             )
             .filter(x => selectedPosses.value.includes(x.pos))
             // Filter by single/multiple PoS
@@ -159,7 +159,7 @@ const itemsToDisplay = computed((): Distribution[] => {
                 Object.keys(x.literals.literals)
                     .join("\n")
                     .toLowerCase()
-                    .includes(literalFilter.value.toLowerCase()),
+                    .includes(literalFilter.value.toLowerCase())
             )
     )
 })
@@ -169,19 +169,19 @@ const columns = [
     {
         key: "count",
         label: "total\noccurrences",
-        sortOn: (x: Distribution) => x.count,
+        sortOn: (x: Distribution) => x.count
     },
     {
         key: "variantCount",
         label: "number\nof types",
-        sortOn: (x: Distribution) => Object.keys(x.literals.literals).length,
+        sortOn: (x: Distribution) => Object.keys(x.literals.literals).length
     },
-    { key: "variants", label: "types" },
+    { key: "variants", label: "types" }
 ]
 const singMultiPosOptions: SelectOption[] = [
     { value: "single", text: "Single" },
     { value: "multiple", text: "Multiple" },
-    { value: "both", text: "Both" },
+    { value: "both", text: "Both" }
 ]
 const selectedSingMultiPos = ref(singMultiPosOptions[0].value)
 const filteredPosses = computed(() => {
@@ -204,7 +204,7 @@ watch(
     () => {
         distributionStore.posses.forEach(pos => (includePos.value[pos] = true))
     },
-    { immediate: true },
+    { immediate: true }
 )
 
 watch(
@@ -212,7 +212,7 @@ watch(
     () => {
         selectedPosses.value = filteredPosses.value
     },
-    { immediate: true },
+    { immediate: true }
 )
 </script>
 

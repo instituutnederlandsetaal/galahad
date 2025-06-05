@@ -170,7 +170,7 @@ class EvaluationService(val corpora: CorporaService) {
         }
     }
 
-    fun getDocumentLevelLayerVisualisation(
+    fun getLayerComparison(
         corpus: UUID, document: String, job: String, reference: String?,
     ): List<TermComparison> {
         val reference: String = reference ?: SOURCE_LAYER_NAME

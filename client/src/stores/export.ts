@@ -12,22 +12,15 @@ import type { Format } from "@/types/documents"
 const useExport = defineStore("exportStore", () => {
     // Stores
     const corporaStore = stores.useCorpora()
-    const errorsStore = stores.useErrors()
+    const errors = stores.useErrors()
     const jobSelection = stores.useJobSelection()
 
     // Fields
-    const loading = ref(false)
-    const format = ref<Format>() // can we use this both as the export format as the 'import-to-blacklab' format?
-    const linksAreValid = computed(() => {
-        return (
-            corporaStore.activeUUID !== null &&
-            jobSelection.hypothesisJobId !== null &&
-            format.value !== null
-        )
-    })
+    const loading = ref<boolean>()
+    const format = ref<Format>()
 
     // Methods
-    function convert(shouldMerge: boolean, posHeadOnly: boolean) {
+    function convert(shouldMerge: boolean, posHeadOnly: boolean): void {
         if (shouldMerge) {
             merge(posHeadOnly)
             return
@@ -37,38 +30,32 @@ const useExport = defineStore("exportStore", () => {
             corporaStore.activeUUID,
             jobSelection.hypothesisJobId,
             format.value,
-            posHeadOnly,
+            posHeadOnly
         )
             .then(Utils.browserDownloadResponseFile)
-            .catch(res =>
-                Utils.handleBlobError(res, "convert corpus", errorsStore),
-            )
+            .catch(res => Utils.handleBlobError(res, "convert corpus", errors))
             .finally(() => (loading.value = false))
     }
 
-    function merge(posHeadOnly: boolean) {
+    function merge(posHeadOnly: boolean): void {
         loading.value = true
         API.mergeCorpus(
             corporaStore.activeUUID,
             jobSelection.hypothesisJobId,
             format.value,
-            posHeadOnly,
+            posHeadOnly
         )
             .then(Utils.browserDownloadResponseFile)
-            .catch(res =>
-                Utils.handleBlobError(res, "merge corpus", errorsStore),
-            )
+            .catch(res => Utils.handleBlobError(res, "merge corpus", errors))
             .finally(() => (loading.value = false))
     }
     // Exports
     return {
         // Fields
-        // note: exporting the format seems necessary for reactivity
         format,
-        linksAreValid,
         loading,
         // Methods
-        convert,
+        convert
     }
 })
 

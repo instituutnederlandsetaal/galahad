@@ -13,7 +13,7 @@
         </GInfo>
     </GCard>
     <!-- No write permissions on selected corpus -->
-    <GCard v-else-if="!userStore.hasWriteAccess && !hidePermissionsError" title="Insufficient permissions">
+    <GCard v-else-if="!userStore.canWrite && !hidePermissionsError" title="Insufficient permissions">
         <GInfo error>
             <p>You have insufficient permissions to perform this action.</p>
             <GNav :route="{ path: '/annotate/corpora' }">Select a different corpus</GNav>
@@ -78,19 +78,19 @@ const userStore = stores.useUser()
 const props = defineProps({
     hideDocsError: {
         type: Boolean,
-        default: false,
+        default: false
     },
     hideCorpusError: {
         type: Boolean,
-        default: false,
+        default: false
     },
     hideAnnotationsError: {
         type: Boolean,
-        default: false,
+        default: false
     },
     hidePermissionsError: {
         type: Boolean,
-        default: true,
-    },
+        default: true
+    }
 })
 </script>

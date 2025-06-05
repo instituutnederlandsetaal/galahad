@@ -6,13 +6,13 @@ import axios, { type AxiosResponse } from "axios"
 import type {
     CorpusMetadata,
     MutableCorpusMetadata,
-    UUID,
+    UUID
 } from "@/types/corpora"
 
 type CorporaResponse = AxiosResponse<CorpusMetadata[]>
 type CorpusResponse = AxiosResponse<CorpusMetadata>
 
-const corporaPath = "/corpora"
+export const corporaPath = "/corpora"
 const corpusPath = (uuid: UUID): string => `${corporaPath}/${uuid}`
 
 /**
@@ -36,7 +36,7 @@ export function getCorpus(uuid: UUID): Promise<CorpusResponse> {
  * @param corpus Metadata of new corpus.
  */
 export function postCorpus(
-    corpus: MutableCorpusMetadata,
+    corpus: MutableCorpusMetadata
 ): Promise<AxiosResponse<UUID>> {
     return axios.post(corporaPath, corpus)
 }
@@ -56,7 +56,7 @@ export function deleteCorpus(uuid: UUID): Promise<AxiosResponse> {
  */
 export function patchCorpus(
     uuid: UUID,
-    metadata: MutableCorpusMetadata,
+    metadata: MutableCorpusMetadata
 ): Promise<AxiosResponse> {
     return axios.patch(corpusPath(uuid), metadata)
 }

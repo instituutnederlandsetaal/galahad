@@ -17,7 +17,6 @@
 }
 
 .left {
-    text-align: center;
     flex: 1;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <GModal :show :title="`Tag job ${job.tagger.id}`" @hide="$emit('hide')">
+    <GModal :title="`Tag job ${job.tagger.id}`" @hide="$emit('hide')">
         <template #help>
             <p>
                 Here you can start a job to tag the documents in your corpus.
@@ -88,13 +88,12 @@
         </template>
 
         <!-- delete job modal -->
-        <DeleteModal :show="!!deleteJobId" :item="deleteJobId" :displayname="`the results of job ${deleteJobId}`"
-            @delete="
-                () => {
-                    jobsStore.deleteJob(deleteJobId)
-                    healthLoading = true
-                }
-            " @hide="deleteJobId = null as any" />
+        <DeleteModal v-if="deleteJobId" :itemName="`the results of job ${deleteJobId}`" @delete="
+            () => {
+                jobsStore.deleteJob(deleteJobId)
+                healthLoading = true
+            }
+        " @hide="deleteJobId = null as any" />
     </GModal>
 </template>
 
@@ -108,13 +107,13 @@ import type { Job } from "@/types/jobs"
 import type { TaggerHealth } from "@/types/taggers"
 
 // Stores
-const errorsStore = stores.useErrors()
+const errors = stores.useErrors()
 const jobsStore = stores.useJobs()
 
 // Fields
 const props = defineProps({
     show: { type: Boolean, default: ref(false) },
-    jobId: { type: String, default: "" },
+    jobId: { type: String, default: "" }
 })
 /** The job of this modal */
 const job = computed<Job>(() => {
@@ -169,9 +168,7 @@ function getHealth() {
             health.value = response.data
             healthLoading.value = false
         })
-        .catch(error =>
-            errorsStore.handle("get tagger health", error),
-        )
+        .catch(error => errors.handle(error))
 }
 
 /**

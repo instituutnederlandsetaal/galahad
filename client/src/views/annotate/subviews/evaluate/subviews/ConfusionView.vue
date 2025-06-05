@@ -29,7 +29,7 @@
                 </div>
             </template>
 
-            <template #table-empty-instruction>Select a reference layer, a hypothesis layer and an annotation to
+            <template #table-empty>Select a reference layer, a hypothesis layer and an annotation to
                 generate a confusion table.</template>
 
             <!-- top left header -->
@@ -53,7 +53,7 @@
             </template>
         </GTable>
 
-        <ComparisonModal :show="showModal" @hide="showModal = false" :samples :downloading
+        <ComparisonModal v-if="showModal" @hide="showModal = false" :samples :downloading
             @download="(data) => download(data)" :referenceJob="jobSelection.referenceJobId"
             :hypothesisJob="jobSelection.hypothesisJobId" />
     </GCard>
@@ -74,7 +74,7 @@ import type { Column } from "@/types/ui/table"
 const { loading, confusion } = storeToRefs(stores.useConfusion())
 const corporaStore = stores.useCorpora()
 const jobSelection = stores.useJobSelection()
-const errorsStore = stores.useErrors()
+const errors = stores.useErrors()
 
 // Custom types
 type Item = { [key: string]: EvaluationEntry } & { referenceJob: string }
@@ -82,7 +82,7 @@ type Cell = { field: Column; item: Item; value: EvaluationEntry }
 
 // Fields
 const confusionableAnnotations = computed(() =>
-    Object.keys(confusion.value || {}).map(key => ({ value: key, text: key })),
+    Object.keys(confusion.value || {}).map(key => ({ value: key, text: key }))
 )
 const selectedAnnotation = ref()
 const downloading = ref(false)
@@ -93,7 +93,7 @@ const samples = ref({ title: "", samples: [] } as {
 })
 const showModal = ref(false)
 const selectedConfusion = computed(
-    () => confusion?.value[selectedAnnotation.value] || { table: {} },
+    () => confusion?.value[selectedAnnotation.value] || { table: {} }
 )
 const bothJobsSelected = computed(() => {
     return jobSelection.hypothesisJobId && jobSelection.referenceJobId
@@ -104,7 +104,7 @@ const columns = computed((): Column[] => {
     const entries = {} as { [key: string]: boolean }
     Object.keys(selectedConfusion?.value?.table)?.map(k1 => {
         Object.keys(selectedConfusion?.value?.table[k1])?.forEach(
-            k2 => (entries[k2] = true),
+            k2 => (entries[k2] = true)
         )
     })
 
@@ -114,7 +114,7 @@ const columns = computed((): Column[] => {
         sortOn: (value: Item) => {
             const pos = value.referenceJob
             return posToBottom(pos) ? Number.POSITIVE_INFINITY : pos
-        },
+        }
     }
 
     const allFields = Object.keys(entries)
@@ -132,7 +132,7 @@ const columns = computed((): Column[] => {
             sortOn: value =>
                 field !== "referenceJob"
                     ? value[field]?.count
-                    : value?.referenceJob,
+                    : value?.referenceJob
         }
     })
     returnVal.unshift(refJobField)
@@ -147,7 +147,7 @@ const rows = computed((): Item[] => {
             referenceJob: string
         }
         Object.keys(selectedConfusion.value.table[k1]).forEach(
-            k2 => (ret[k2] = selectedConfusion.value.table[k1][k2]),
+            k2 => (ret[k2] = selectedConfusion.value.table[k1][k2])
         )
         return ret
     })
@@ -165,17 +165,13 @@ function download() {
         jobSelection.referenceJobId,
         hypothesisPos,
         referencePos,
-        selectedAnnotation.value,
+        selectedAnnotation.value
     )
         .then(response => {
             Utils.browserDownloadResponseFile(response)
         })
         .catch(res =>
-            Utils.handleBlobError(
-                res,
-                "download confusion samples",
-                errorsStore,
-            ),
+            Utils.handleBlobError(res, "download confusion samples", errors)
         )
         .finally(() => (downloading.value = false))
 }
@@ -197,7 +193,7 @@ function posToBottom(pos: string) {
         "LET",
         "PUNCT",
         "PC",
-        "MULTIPLE",
+        "MULTIPLE"
     ]
     return posses.includes(pos)
 }
@@ -208,12 +204,12 @@ function cssClass(data) {
     if (warnings.includes(data.field.key)) {
         return {
             orange: match,
-            plain: !match,
+            plain: !match
         }
     }
     return {
         green: match,
-        plain: !match,
+        plain: !match
     }
 }
 
@@ -224,7 +220,7 @@ function openModal(data) {
         samples: data.value.samples,
         hypothesisPos: data.field.key,
         referencePos: data.item.referenceJob,
-        annotationType: selectedAnnotation.value,
+        annotationType: selectedAnnotation.value
     }
     showModal.value = true
 }

@@ -1,16 +1,20 @@
 <template>
-    <GTable :columns :headless :items="documentsStore.available" :loading="documentsStore.loading"
-        :displayOnEmpty="false" sortColumn="name" :sortDesc="false" hoverRow>
+    <GTable :columns :items="documentsStore.documents" :loading="documentsStore.loading" :displayOnEmpty="false"
+        sortColumn="name" :sortDesc="false">
         <template #title>
             <span v-if="!corpus || (type == TableDocumentsType.Dataset && !corpus.dataset)">No documents</span>
             <span v-else>
-                {{ documentsStore.available.length }}
-                {{ documentsStore.available.length === 1 ? "document" : "documents" }}
+                {{ documentsStore.documents.length }}
+                {{ documentsStore.documents.length === 1 ? "document" : "documents" }}
                 in corpus <i>{{ corpus.name }}</i>
             </span>
         </template>
 
-        <template #table-empty-instruction>
+        <template #help v-if="$slots.help">
+            <slot name="help"></slot>
+        </template>
+
+        <template #table-empty>
             <span v-if="!corpus || (type == TableDocumentsType.Dataset && !corpus?.dataset)">No corpus selected.</span>
             <span v-else-if="corpus?.uuid && type != TableDocumentsType.Dataset">
                 This corpus is empty. Upload documents to the corpus.
@@ -55,13 +59,12 @@
 
         <!-- actions cell -->
         <template #cell-actions="data">
-            <div style="display: flex">
+            <div class="actions">
                 <DownloadButton @click="download(data.item)" />
 
                 <GButton red @click="
                     () => {
                         deleteDocumentData = data.item
-                        showDeleteModal = true
                     }
                 " title="Delete">
                     <i class="fa fa-trash"></i>
@@ -71,15 +74,13 @@
     </GTable>
 
     <!-- preview modal -->
-    <GModal :show="previewDocument !== undefined" @hide="previewDocument = undefined">
-        <template #title>Annotations of {{ previewDocument?.name }}</template>
-        <template #help> Here you can inspect a small part of the source layer of the document. </template>
+    <GModal v-if="previewDocument !== undefined" @hide="previewDocument = undefined">
         <LayerViewer :document="previewDocument" />
     </GModal>
 
     <!-- delete modal -->
-    <DeleteModal :show="showDeleteModal" :displayname="'document ' + (deleteDocumentData !== null ? deleteDocumentData.name : '[null]') + ' and associated results'
-        " @hide="showDeleteModal = false" @delete="deleteDocument(deleteDocumentData)" />
+    <DeleteModal v-if="deleteDocumentData" :itemName="`${deleteDocumentData.name} and associated results`"
+        @hide="deleteDocumentData = undefined" @delete="deleteDocument(deleteDocumentData)" />
 </template>
 
 <script setup lang="ts">
@@ -100,36 +101,34 @@ const userStore = stores.useUser()
 // Props
 const props = defineProps({
     type: String as PropType<TableDocumentsType>, // the mode of the table
-    corpus: { type: Object as PropType<CorpusMetadata>, default: null },
-    headless: { type: Boolean, default: false }, // if true, the table will not show a title
+    corpus: { type: Object as PropType<CorpusMetadata>, default: null }
 })
 
 // Fields
 const deleteDocumentData = ref(null as null | DocumentMetadata)
 const previewDocument = ref<DocumentMetadata>()
-const showDeleteModal = ref(false)
 
 const columns = computed<Column[]>(() => {
     const publicFields = [
         {
             key: "name",
-            sortOn: (x: DocumentMetadata) => x.name,
-            align: "left",
+            sortOn: (x: DocumentMetadata) => x.name
         },
         { key: "format", sortOn: (x: DocumentMetadata) => x.format },
-        { key: "preview", align: "left" },
+        { key: "preview" },
         {
             key: "layerSummary",
             label: "tokens",
-            sortOn: (x: DocumentMetadata) => x.layerSummary?.tokens,
+            align: "right",
+            sortOn: (x: DocumentMetadata) => x.layerSummary?.tokens
         },
         {
             key: "lastModified",
             label: "last modified",
-            sortOn: (x: DocumentMetadata) => x.lastModified,
-        },
+            sortOn: (x: DocumentMetadata) => x.lastModified
+        }
     ] as Column[]
-    if (userStore.hasWriteAccess && props.type === TableDocumentsType.User) {
+    if (userStore.canWrite && props.type === TableDocumentsType.User) {
         return publicFields.concat({ key: "actions" })
     }
     // public
@@ -143,21 +142,11 @@ function deleteDocument(document: DocumentMetadata) {
 function download(document: DocumentMetadata) {
     return documentsStore.downloadRaw(document.name)
 }
-
-// Watches & mounts
-// Reload docs on uuid change (and onMounted). But don't show user docs on dataset tab.
-watch(
-    () => props.corpus?.uuid,
-    () => {
-        if (props.type === TableDocumentsType.Dataset && !props.corpus?.dataset)
-            return
-        documentsStore.reloadDocumentsForCorpus(props.corpus?.uuid)
-    },
-    { immediate: true },
-)
-// Reset any previous selection.
-// E.g. when switching between datasets and user corpora.
-onMounted(() => {
-    documentsStore.available = []
-})
 </script>
+
+<style scoped lang="scss">
+.actions {
+    display: flex;
+    gap: 0.25rem;
+}
+</style>

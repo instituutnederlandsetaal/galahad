@@ -11,7 +11,7 @@
 defineProps({
     uploadable: { type: Boolean, default: false },
     exportable: { type: Boolean, default: false },
-    mergeable: { type: Boolean, default: false },
+    mergeable: { type: Boolean, default: false }
 })
 </script>
 

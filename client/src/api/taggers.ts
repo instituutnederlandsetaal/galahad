@@ -9,7 +9,7 @@ type TaggersResponse = AxiosResponse<Tagger[]>
 type TaggerHealthResponse = AxiosResponse<TaggerHealth>
 type TaggersBusyResponse = AxiosResponse<number>
 
-const taggersPath = "/taggers"
+export const taggersPath = "/taggers"
 
 const taggerPath = (tagger: string): string => `${taggersPath}/${tagger}`
 const taggerHealthPath = (tagger: string): string =>

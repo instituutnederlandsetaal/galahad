@@ -43,7 +43,7 @@ type GlobalMetricsRow = {
 const { loading, metrics } = storeToRefs(stores.useMetrics())
 const corporaStore = stores.useCorpora()
 const jobSelection = stores.useJobSelection()
-const errorsStore = stores.useErrors()
+const errors = stores.useErrors()
 
 // Fields
 const downloading = ref(false)
@@ -51,8 +51,8 @@ const columns = computed(() => {
     const withoutName = metricsPerPosColumns.filter(
         col =>
             !["precision", "recall", "f1", "falsePositive", "name"].includes(
-                col.key,
-            ),
+                col.key
+            )
     )
     const addColumns = [
         { key: "name", label: "annotation", sortOn: x => x.annotation },
@@ -60,19 +60,19 @@ const columns = computed(() => {
         {
             key: "macroPrecision",
             label: "macro\nprecision",
-            sortOn: x => x.macroPrecision,
+            sortOn: x => x.macroPrecision
         },
         {
             key: "macroRecall",
             label: "macro\nrecall",
-            sortOn: x => x.macroRecall,
+            sortOn: x => x.macroRecall
         },
         { key: "macroF1", label: "macro\nf1", sortOn: x => x.macroF1 },
         {
             key: "microAccuracy",
             label: "micro\naccuracy",
-            sortOn: x => x.microAccuracy,
-        },
+            sortOn: x => x.microAccuracy
+        }
     ]
     return addColumns.concat(withoutName)
 })
@@ -99,14 +99,14 @@ const items = computed(() => {
                 macroPrecision: i.macro.precision,
                 macroRecall: i.macro.recall,
                 macroF1: i.macro.f1,
-                microAccuracy: i.micro.accuracy,
+                microAccuracy: i.micro.accuracy
             }
         })
     return ret
 })
 const basicItems = computed(() => items.value.filter(basicMetricFilter))
 const complexItems = computed(() =>
-    items.value.filter(item => !basicMetricFilter(item)),
+    items.value.filter(item => !basicMetricFilter(item))
 )
 
 // Methods
@@ -131,7 +131,7 @@ function download(data: Any) {
         jobSelection.hypothesisJobId,
         jobSelection.referenceJobId,
         setting,
-        classType,
+        classType
     )
         .then(response => {
             Utils.browserDownloadResponseFile(response)
@@ -140,8 +140,8 @@ function download(data: Any) {
             Utils.handleBlobError(
                 res,
                 "download global metrics samples",
-                errorsStore,
-            ),
+                errors
+            )
         )
         .finally(() => (downloading.value = false))
 }

@@ -13,15 +13,15 @@ const props = defineProps({
         type: Object,
         default: () => {
             return { path: "", query: "" }
-        },
-    },
+        }
+    }
 })
 
 // Fields
 const contextualRoute = computed(() => {
     return {
         path: props.route.path || $route.path,
-        query: props.route.query || $route.query,
+        query: props.route.query || $route.query
     }
 })
 const url = computed(() => {

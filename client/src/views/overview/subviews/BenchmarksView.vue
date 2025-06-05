@@ -15,7 +15,7 @@
         </template>
 
         <GTable headless :columns :items :loading="assaysStore.loading" sortColumn="accuracy">
-            <template #table-empty-instruction> Select a dataset to view benchmarks. </template>
+            <template #table-empty> Select a dataset to view benchmarks. </template>
 
             <!-- tagger name -->
 
@@ -78,16 +78,16 @@ const corporaStore = stores.useCorpora()
 
 // Fields
 const datasetOptions = computed<SelectOption[]>(() =>
-    corporaStore.datasetCorpora
+    corporaStore.datasets
         .map(d => ({ value: d.uuid, text: d.name }))
-        .sort((a, b) => a.text.localeCompare(b.text)),
+        .sort((a, b) => a.text.localeCompare(b.text))
 )
 const selectedDatasetUuid = ref<string>()
 const selectedDatasetName = computed(
     () =>
-        corporaStore.datasetCorpora.find(
-            d => d.uuid === selectedDatasetUuid.value,
-        )?.name,
+        corporaStore.datasets.find(
+            d => d.uuid === selectedDatasetUuid.value
+        )?.name
 )
 const metricsFilter = ref(null)
 const columns = [
@@ -96,7 +96,7 @@ const columns = [
     { key: "recall", label: "macro\nrecall", sortOn: i => i.recall },
     { key: "f1", label: "macro\nf1", sortOn: i => i.f1 },
     { key: "accuracy", label: "micro\naccuracy", sortOn: i => i.accuracy },
-    { key: "details", label: "detailed\nevaluation" },
+    { key: "details", label: "detailed\nevaluation" }
 ]
 /**
  * Our input data is in the form:
@@ -125,7 +125,7 @@ const selectedAssay = computed(() => {
 const items = computed(() => {
     const metricName = metricsFilter.value?.metricName
     return Object.entries(
-        assaysStore.assays[selectedDatasetName.value]?.[metricName] ?? {},
+        assaysStore.assays[selectedDatasetName.value]?.[metricName] ?? {}
     ).map(taggerAndMetric => {
         const tagger: string = taggerAndMetric[0]
         const mta: MetricTypeAssay = taggerAndMetric[1]
@@ -134,7 +134,7 @@ const items = computed(() => {
             accuracy: mta.micro.accuracy,
             precision: mta.macro.precision,
             recall: mta.macro.recall,
-            f1: mta.macro.f1,
+            f1: mta.macro.f1
         }
         return result
     })

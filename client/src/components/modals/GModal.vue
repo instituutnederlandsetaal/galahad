@@ -1,7 +1,5 @@
 <template>
-    <!-- v-if instead of v-show such that elements inside a GModal can rely on onMounted()-->
-    <dialog v-if="show" ref="modal" class="modal view" tabindex="0" @click.self="$emit('hide')"
-        @keyup.esc="$emit('hide')">
+    <dialog class="modal view" tabindex="0" @click.self="$emit('hide')">
         <GCard class="content" :title>
             <template v-if="$slots.title" #title>
                 <slot name="title"></slot>
@@ -19,8 +17,7 @@
 </template>
 
 <script setup lang="ts">
-const { show, title } = defineProps<{
-    show: boolean
+const { title } = defineProps<{
     title?: string
 }>()
 
@@ -28,12 +25,11 @@ const emit = defineEmits<{
     hide: []
 }>()
 
-onMounted(() => {
-    addEventListener("keyup", event => {
-        if (event.key === "Escape") {
-            emit("hide")
-        }
-    })
+// @keyup does not work due to focus, so use event listener.
+useEventListener(document, "keyup", (e: KeyboardEvent) => {
+    if (e.key === "Escape") {
+        emit("hide")
+    }
 })
 </script>
 

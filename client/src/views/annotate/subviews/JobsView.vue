@@ -6,7 +6,7 @@
             <template #help>
                 <JobsHelp />
             </template>
-            <template #table-empty-instruction>
+            <template #table-empty>
                 <p v-if="Object.keys(jobsStore.taggableJobs).length">No results for current filter settings</p>
                 <div v-else>No taggers showed up? Something went wrong! Please contact support.</div>
             </template>
@@ -97,16 +97,11 @@
                     </div>
                 </div>
 
-                <p>
-                    Shown <b>{{ displayJobs.length }}</b> of
-                    <b>{{ Object.keys(jobsStore.taggableJobs).length }}</b>
-                    taggers.
-                </p>
             </template>
         </GTable>
 
         <!-- job modal -->
-        <JobModal :show="!!jobId" v-if="jobId" :jobId @hide="jobId = null" />
+        <JobModal v-if="jobId" :jobId @hide="jobId = null" />
     </AnnotateTab>
 </template>
 
@@ -159,7 +154,7 @@ const displayJobs = computed(() =>
                 }
             }
             return true
-        }),
+        })
 )
 
 const tagsets = computed(() => {
@@ -175,32 +170,34 @@ const columns = computed(() => {
             key: "id",
             label: "tagger",
             sortOn: x => x.tagger.id,
-            align: "left",
+            align: "left"
         },
         { key: "tagset", sortOn: x => x.tagger.tagset },
         { key: "annotations", label: "annotations" },
         {
             key: "resultSummary",
             label: "tokens",
-            sortOn: x => x.resultSummary.numTokens,
+            align: "right",
+            sortOn: x => x.resultSummary.numTokens
         },
         {
             key: "era",
             label: "period",
-            sortOn: x =>
-                x.tagger.eraFrom.toString() + x.tagger.eraTo.toString(),
+            sortOn: x => x.tagger.eraFrom.toString() + x.tagger.eraTo.toString()
         },
         {
             key: "lastModified",
             label: "last modified",
-            sortOn: x => x.lastModified,
+            align: "center",
+            sortOn: x => x.lastModified
         },
         {
             key: "progress",
-            sortOn: x => x.progress.finished / x.progress.total,
-        },
+            align: "right",
+            sortOn: x => x.progress.finished / x.progress.total
+        }
     ] as Column[]
-    if (userStore.hasWriteAccess) {
+    if (userStore.canWrite) {
         return publicFields.concat({ key: "actions" })
     }
     return publicFields
@@ -253,51 +250,5 @@ table button {
     &:active {
         background-color: rgba(0, 0, 0, 0.15);
     }
-}
-
-/* The slider itself */
-:deep(.vue-slider) .vue-slider-rail {
-    height: 15px;
-    background: var(--int-very-light-grey);
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-:deep(.vue-slider) .vue-slider-process {
-    background: var(--int-theme);
-}
-
-:deep(.vue-slider) .vue-slider-rail:hover {
-    background: var(--int-very-light-grey-hover);
-}
-
-:deep(.vue-slider) .vue-slider-rail:hover .vue-slider-process {
-    background: var(--int-theme-hover);
-}
-
-:deep(.vue-slider) .vue-slider-dot {
-    width: 25px !important;
-    height: 25px !important;
-    z-index: 1;
-}
-
-:deep(.vue-slider) .vue-slider-dot-handle {
-    background: var(--int-theme);
-    border: 2px solid #000;
-    box-shadow: none;
-}
-
-:deep(.vue-slider) .vue-slider-dot-handle:hover {
-    background: var(--int-theme-hover);
-}
-
-:deep(.vue-slider) .vue-slider-dot-handle:active {
-    background: var(--int-theme-active);
-}
-
-:deep(.vue-slider) .vue-slider-dot-tooltip-inner {
-    background: var(--int-theme);
-    color: var(--black);
-    border-color: var(--int-theme);
 }
 </style>

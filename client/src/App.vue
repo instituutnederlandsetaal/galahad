@@ -9,7 +9,7 @@
         </template>
     </GTabs>
 
-    <GModal :show="errors.errors.length > 0" title="Ocharme!" @hide="errors.reset">
+    <GModal v-if="errors.errors.length > 0" title="Ocharme!" @hide="errors.reset">
         <p>
             Please try again or contact
             <MailAddress /> for support.
@@ -22,11 +22,8 @@
 import stores from "@/stores"
 
 const errors = stores.useErrors()
-const userStore = stores.useUser()
-
-onMounted(() => {
-    userStore.fetchUser()
-})
+// Load user globally to confirm connection
+stores.useUser()
 </script>
 
 <style lang="scss">

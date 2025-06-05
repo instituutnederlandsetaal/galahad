@@ -1,6 +1,5 @@
-id: "Gysseling"
-longName: "Tagset Gysseling/Corpus Van Reenen-Mulder"
-shortName: "Gysseling/CRM"
-punctuationTags:
+name: "Gysseling/CRM"
+description: "Tagset Gysseling/Corpus Van Reenen-Mulder"
+punctuation:
   - "PC"
   - "LET"

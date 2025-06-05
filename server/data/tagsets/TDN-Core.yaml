@@ -1,6 +1,5 @@
-id: "TDN-Core"
-longName: "Tagset Diachroon Nederlands (Kern)"
-shortName: "TDN-Core"
-punctuationTags:
+name: "TDN-Core"
+description: "Tagset Diachroon Nederlands (Kern)"
+punctuation:
   - "PC"
   - "LET"

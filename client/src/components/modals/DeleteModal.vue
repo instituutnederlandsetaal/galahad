@@ -1,7 +1,7 @@
 <template>
-    <GModal title="Are you sure?" :show @hide="$emit('hide')">
+    <GModal title="Are you sure?" @hide="$emit('hide')">
         <p>
-            You will <slot name="action">delete</slot> <b>{{ displayname }}</b>. This can not be undone.
+            You will <slot name="action">delete</slot> <b>{{ itemName }}</b>. This can not be undone.
         </p>
         <template #buttons>
             <GButton green @click="$emit('delete'); $emit('hide')">Confirm</GButton>
@@ -10,9 +10,8 @@
 </template>
 
 <script setup lang="ts">
-const { displayname, show } = defineProps<{
-    displayname: string
-    show: boolean
+const { itemName } = defineProps<{
+    itemName: string
 }>()
 
 const emit = defineEmits<{

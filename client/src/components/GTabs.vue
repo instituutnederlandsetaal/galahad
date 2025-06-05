@@ -60,7 +60,7 @@ watch(
     () => route,
     () => {
         induceCurrentTab()
-    },
+    }
 )
 
 // --- methods ---
@@ -92,7 +92,7 @@ function urlForTab(tabId: string) {
     const qs = Object.entries(route.query)
         .map(
             ([k, v]) =>
-                `${k}=${encodeURIComponent(typeof v === "object" ? JSON.stringify(v) : v)}`,
+                `${k}=${encodeURIComponent(typeof v === "object" ? JSON.stringify(v) : v)}`
         )
         .join("&")
     return `/galahad${basePath}/${tabId}?${qs}`
