@@ -1,8 +1,15 @@
 <template>
-    <div>
-        <GTable class="right" :title="'Distribution of ' + (jobSelection.hypothesisJobId || 'the hypothesis layer')"
-            helpLink="evaluation" :columns :items="itemsToDisplay" :loading="distributionStore.loading" displayOnEmpty
-            sortColumn="count">
+    <GCard>
+
+        <form v-if="distributionStore.distributions" @submit.prevent>
+            <label for="annotation-select">Annotation:</label>
+            <GSelect id="annotation-select" :options="distributionStore.distributionOptions"
+                v-model="selectedDistribution" />
+        </form>
+
+        <GTable class="right" helpLink="evaluation" :columns :items="itemsToDisplay"
+            :loading="distributionStore.loading" displayOnEmpty sortColumn="count">
+            <template #title>Distribution of {{ jobSelection.hypothesisId }}</template>
             <template #table-empty>
                 <p v-if="distribution.generated">No results for current filter settings.</p>
                 <p v-else>Select a hypothesis layer and an annotation to view a distribution.</p>
@@ -15,9 +22,39 @@
                 </p>
             </template>
 
-            <!-- count -->
-            <template #cell-count="data">
-                <div>{{ `${data.value}` }}</div>
+
+            <template #header>
+                <p>
+                    <b v-if="distribution.trimmed">
+                        Because of the large corpus size only the 1000 most frequent lemma, part-of-speech pairs are
+                        shown.
+                    </b>
+                </p>
+
+
+                <div class="table-controls">
+                    <!-- search lemma-->
+                    <div class="table-control" id="searchLemma">
+                        Search lemma:
+                        <GInput type="text" v-model="lemmaFilter" placeholder="Lemma" clearBtn />
+                    </div>
+                    <!-- search literals -->
+                    <div class="table-control" id="searchWordForms">
+                        Search types:
+                        <GInput type="text" v-model="literalFilter" placeholder="Type" clearBtn />
+                    </div>
+                </div>
+                <div class="table-controls">
+                    <div class="table-control">
+                        <label for="analysis-select">single/multiple PoS:</label>
+                        <GSelect id="analysis-select" :options="singMultiPosOptions" v-model="selectedSingMultiPos" />
+                    </div>
+                    <div class="table-control">
+                        Include PoS: <br />
+                        <MultiSelect v-model="selectedPosses" :options="filteredPosses" placeholder="Select PoS"
+                            :maxSelectedLabels="5" />
+                    </div>
+                </div>
             </template>
 
             <!-- variantCount -->
@@ -27,96 +64,47 @@
 
             <!-- variants-->
             <template #cell-variants="data">
-                <div style="min-width: 200px">
-                    <template v-if="Object.keys(data.item.literals.literals).length <= 5">
-                        <span v-for="(literal, index) in Object.keys(data.item.literals.literals).sort(function (a, b) {
-                            return data.item.literals.literals[b] - data.item.literals.literals[a]
-                        })" :key="literal">
-                            {{ literal }} <b>{{ `${data.item.literals.literals[literal]}` }}</b>{{ index !=
-                                Object.keys(data.item.literals.literals).length - 1 ? ", " : "" }}
-                        </span>
-                    </template>
-                    <template v-else>
-                        <RightFloatCell>
-                            <template #left>
-                                <span v-for="literal in Object.keys(data.item.literals.literals)
-                                    .sort(function (a, b) {
-                                        return data.item.literals.literals[b] - data.item.literals.literals[a]
-                                    })
-                                    .slice(0, 5)" :key="literal">
-                                    {{ literal }}
-                                    <b>{{ `${data.item.literals.literals[literal]}` }}</b>,
-                                </span>
-                                <i>... and
-                                    {{ Object.keys(data.item.literals.literals).length - 5 }}
-                                    more</i>
-                            </template>
-                            <template #right>
-                                <InspectButton @click="variantsToDisplay = data.item" />
-                            </template>
-                        </RightFloatCell>
-                    </template>
-                </div>
-            </template>
-
-            <template #header>
-                <p>
-                    <b v-if="distribution.trimmed">
-                        Because of the large corpus size only the 1000 most frequent lemma, part-of-speech pairs are
-                        shown.
-                    </b>
-                </p>
-                <div style="display: flex; justify-content: center" v-if="distributionStore.distributions">
-                    <div>
-                        <label for="annotation-select">Annotation:</label>
-                        <GSelect id="annotation-select" :options="distributionStore.distributionOptions"
-                            v-model="selectedDistribution" />
-                    </div>
-                </div>
-                <template v-if="distribution.generated">
-
-                    <div class="table-controls">
-                        <!-- search lemma-->
-                        <div class="table-control" id="searchLemma">
-                            Search lemma:
-                            <GInput type="text" v-model="lemmaFilter" placeholder="Lemma" clearBtn />
-                        </div>
-                        <!-- search literals -->
-                        <div class="table-control" id="searchWordForms">
-                            Search types:
-                            <GInput type="text" v-model="literalFilter" placeholder="Type" clearBtn />
-                        </div>
-                    </div>
-                    <div class="table-controls">
-                        <div class="table-control">
-                            <label for="analysis-select">single/multiple PoS:</label>
-                            <GSelect id="analysis-select" :options="singMultiPosOptions"
-                                v-model="selectedSingMultiPos" />
-                        </div>
-                        <div class="table-control">
-                            Include PoS: <br />
-                            <MultiSelect v-model="selectedPosses" :options="filteredPosses" placeholder="Select PoS"
-                                :maxSelectedLabels="5" />
-                        </div>
-                    </div>
+                <template v-if="Object.keys(data.item.literals.literals).length <= 5">
+                    <span v-for="(literal, index) in Object.keys(data.item.literals.literals).sort(function (a, b) {
+                        return data.item.literals.literals[b] - data.item.literals.literals[a]
+                    })" :key="literal">
+                        {{ literal }} <b>{{ `${data.item.literals.literals[literal]}` }}</b>{{ index !=
+                            Object.keys(data.item.literals.literals).length - 1 ? ", " : "" }}
+                    </span>
+                </template>
+                <template v-else>
+                    <RightFloatCell>
+                        <template #left>
+                            <span v-for="literal in Object.keys(data.item.literals.literals)
+                                .sort(function (a, b) {
+                                    return data.item.literals.literals[b] - data.item.literals.literals[a]
+                                })
+                                .slice(0, 5)" :key="literal">
+                                {{ literal }}
+                                <b>{{ `${data.item.literals.literals[literal]}` }}</b>,
+                            </span>
+                            <i>... and
+                                {{ Object.keys(data.item.literals.literals).length - 5 }}
+                                more</i>
+                        </template>
+                        <template #right>
+                            <InspectButton @click="variantsToDisplay = data.item" />
+                        </template>
+                    </RightFloatCell>
                 </template>
             </template>
+
         </GTable>
 
         <VariantsModal :variantsToDisplay v-if="variantsToDisplay !== null" @hide="variantsToDisplay = null"
             id="modal" />
-    </div>
+    </GCard>
 </template>
 
 <script setup lang="ts">
-// Libraries & stores
-
 import stores from "@/stores"
-
-// API & types
 import type { Distribution } from "@/types/evaluation"
 import type { SelectOption } from "@/types/ui/select"
-
 import MultiSelect from "primevue/multiselect"
 
 // Stores
@@ -168,12 +156,14 @@ const columns = [
     { key: "pos", label: "PoS", sortOn: (x: Distribution) => x.pos },
     {
         key: "count",
-        label: "total\noccurrences",
-        sortOn: (x: Distribution) => x.count
+        label: "count",
+        align: "right",
+        sortOn: (x: Distribution): number => x.count
     },
     {
         key: "variantCount",
-        label: "number\nof types",
+        label: "unique",
+        align: "right",
         sortOn: (x: Distribution) => Object.keys(x.literals.literals).length
     },
     { key: "variants", label: "types" }
@@ -197,7 +187,7 @@ const filteredPosses = computed(() => {
 // Watches
 /**
  * On switching jobs, turn on all PoS checkboxes. We check for change in distributionStore.posses, not in
- * jobSelection.hypothesisJobId, because of the network delay.
+ * jobSelection.hypothesisId, because of the network delay.
  */
 watch(
     () => distributionStore.posses,
@@ -215,50 +205,3 @@ watch(
     { immediate: true }
 )
 </script>
-
-<style scoped lang="scss">
-.table-controls {
-    padding-top: 10px;
-}
-
-.table-control {
-    min-height: 0px !important;
-}
-
-#searchWordForms,
-#searchLemma {
-    flex: 1;
-    max-width: 200px;
-}
-
-div:not(#modal)::v-deep() .g-card .content-wrapper .content {
-    display: flex;
-    flex-direction: column;
-    justify-content: safe center;
-    align-items: safe center;
-}
-
-:deep(table) {
-    max-width: 100%;
-
-    th {
-        word-break: break-word;
-    }
-}
-
-.posGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    column-gap: 0px;
-}
-
-.posGrid span>div {
-    width: fit-content;
-}
-
-:deep(#header) {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-}
-</style>

@@ -18,6 +18,6 @@ export type DocumentMetadata = {
     preview: string
     layerPreview: LayerPreview
     layerSummary: LayerSummary
-    lastModified: number
+    modified: number
     annotations: string[]
 }

@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{
+const { href } = defineProps<{
     href: string
 }>()
 </script>

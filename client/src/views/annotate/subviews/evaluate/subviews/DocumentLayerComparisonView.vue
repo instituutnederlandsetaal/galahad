@@ -66,7 +66,7 @@ const loading = ref(false)
 const firstRecord = ref(0)
 const rowsToDisplay = ref(200)
 const bothJobsSelected = computed(() => {
-    return jobSelection.hypothesisJobId && jobSelection.referenceJobId
+    return jobSelection.hypothesisId && jobSelection.referenceId
 })
 
 // Watches & mounts
@@ -75,9 +75,9 @@ watch(selectedDoc, async newVal => {
         loading.value = true
         API.getDocumentLayerComparison(
             corporaStore.activeUUID,
-            jobSelection.hypothesisJobId,
+            jobSelection.hypothesisId,
             newVal,
-            jobSelection.referenceJobId
+            jobSelection.referenceId
         )
             .then(response => {
                 termcomps.value = response.data

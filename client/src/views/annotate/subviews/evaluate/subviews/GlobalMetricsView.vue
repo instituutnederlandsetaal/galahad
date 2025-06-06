@@ -122,14 +122,14 @@ function splitCamelCase(s: string) {
 }
 
 function download(data: Any) {
-    const classType = data.field.key
+    const classType = data.column.key
     const setting = data.item.id
 
     downloading.value = true
     API.getMetricsSamples(
         corporaStore.activeUUID,
-        jobSelection.hypothesisJobId,
-        jobSelection.referenceJobId,
+        jobSelection.hypothesisId,
+        jobSelection.referenceId,
         setting,
         classType
     )

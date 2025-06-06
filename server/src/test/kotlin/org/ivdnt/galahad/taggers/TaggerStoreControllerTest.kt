@@ -24,18 +24,6 @@ class TaggerStoreControllerTest(
     }
 
     @Test
-    fun `Get valid tagger`() {
-        val tagger = ctrl.getTagger(TestConfig.TAGGER_NAME)
-        assertNotNull(tagger)
-        assertEquals(TestConfig.TAGGER_NAME, tagger?.id)
-    }
-
-    @Test
-    fun `Get invalid tagger`() {
-        assertThrows<TaggerNotFoundException> { ctrl.getTagger("invalid") }
-    }
-
-    @Test
     fun `Get health of invalid tagger`() {
         assertEquals(TaggerHealthStatus.ERROR, ctrl.getTaggerHealth("invalid").status)
     }

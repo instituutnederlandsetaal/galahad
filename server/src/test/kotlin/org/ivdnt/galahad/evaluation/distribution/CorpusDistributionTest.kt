@@ -21,7 +21,7 @@ class CorpusDistributionTest {
     fun `Distribution of two docs sum up`() {
         EvaluationUtil.add_two_docs_to_corpus(corpus)
         EvaluationUtil.addDocWithMissingMatches(corpus)
-        val dist = CorpusDistribution(corpus, SOURCE_LAYER_NAME, Annotation.POS)
+        val dist = JobDistribution(corpus, SOURCE_LAYER_NAME, Annotation.POS)
         assertEquals(6, dist.distribution.size)
         // chars
         assertEquals(18, dist.totalChars)

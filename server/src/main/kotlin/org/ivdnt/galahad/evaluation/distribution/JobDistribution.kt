@@ -11,7 +11,7 @@ import java.util.concurrent.ExecutorCompletionService
  * The frequency distribution of terms in a corpus for a specific tagger layer.
  * A CorpusDistribution is the sum of the [DocumentDistribution]s of all documents in the corpus.
  */
-class CorpusDistribution(
+class JobDistribution(
     corpus: Corpus,
     hypothesis: String = SOURCE_LAYER_NAME,
     groupingAnnotation: Annotation,
@@ -20,7 +20,7 @@ class CorpusDistribution(
     private val hypothesisJob = corpus.jobs.readOrThrow(hypothesis)
 
     @JsonProperty
-    val lastModified: Long = hypothesisJob.lastModified
+    val modified: Long = hypothesisJob.modified
 
     @JsonProperty
     val generated: Long = System.currentTimeMillis()

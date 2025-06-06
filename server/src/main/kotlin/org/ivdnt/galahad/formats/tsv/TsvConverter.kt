@@ -10,18 +10,14 @@ class TsvConverter(export: DocumentExport) : LayerConverter(export) {
     override fun convert(out: OutputStream): Unit = convert(PrintWriter(out))
 
     private fun convert(out: PrintWriter) {
-        val header: List<Annotation> = export.tagger.annotations.toList()
-        // force the header list to be in the order of [Annotation.entries]
-        val orderedHeader = Annotation.entries.toMutableList()
-        orderedHeader.removeIf { it !in header }
-
-        out.println("id\t" + orderedHeader.joinToString("\t"))
+        val header: List<Annotation> = Annotation.order(export.tagger.annotations)
+        out.println("id\t" + header.joinToString("\t"))
         // We only write sentence boundaries (\n) and no #-comments, under the assumption that other TSV software can't handle this.
         documents.forEachIndexed { docI, doc ->
             doc.paragraphs.forEachIndexed { parI, par ->
                 par.sentences.forEachIndexed { sentI, sent ->
                     sent.terms.forEach { term ->
-                        val fields = listOf(term.id) + orderedHeader.map { term.annotations[it] ?: "" }
+                        val fields = listOf(term.id) + header.map { term.annotations[it] ?: "" }
                         out.println(fields.joinToString("\t"))
                     }
                     // empty line between sentences

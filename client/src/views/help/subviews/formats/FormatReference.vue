@@ -7,9 +7,7 @@
     </div>
 </template>
 <script setup lang="ts">
-defineProps({
-    href: { type: String, required: true }
-})
+const { href } = defineProps<{ href: string }>()
 </script>
 <style scoped lang="scss">
 h4 {

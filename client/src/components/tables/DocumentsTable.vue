@@ -1,11 +1,11 @@
 <template>
-    <GTable :columns :items="documentsStore.documents" :loading="documentsStore.loading" :displayOnEmpty="false"
-        sortColumn="name" :sortDesc="false">
+    <GTable :columns :items="documents" :loading sortColumn="name">
+
         <template #title>
             <span v-if="!corpus || (type == TableDocumentsType.Dataset && !corpus.dataset)">No documents</span>
             <span v-else>
-                {{ documentsStore.documents.length }}
-                {{ documentsStore.documents.length === 1 ? "document" : "documents" }}
+                {{ documents.length }}
+                {{ documents.length === 1 ? "document" : "documents" }}
                 in corpus <i>{{ corpus.name }}</i>
             </span>
         </template>
@@ -15,26 +15,15 @@
         </template>
 
         <template #table-empty>
-            <span v-if="!corpus || (type == TableDocumentsType.Dataset && !corpus?.dataset)">No corpus selected.</span>
-            <span v-else-if="corpus?.uuid && type != TableDocumentsType.Dataset">
-                This corpus is empty. Upload documents to the corpus.
-            </span>
+            <template v-if="!corpus">
+                No corpus selected.
+            </template>
+            <template v-else>
+                This corpus is empty.
+            </template>
         </template>
 
-        <!-- name cell -->
-        <template #cell-name="data">
-            <div style="max-height: 3rem; line-break: anywhere; overflow: hidden; min-width: 80px">
-                {{ data.value }}
-            </div>
-        </template>
-
-        <!-- size cell -->
-        <template #cell-size="data">
-            {{ data.value }}
-        </template>
-
-        <!-- layerSummary cell -->
-        <template #cell-layerSummary="data">
+        <template #cell-layerSummary="data: TableData<DocumentMetadata>">
             <RightFloatCell>
                 <template #left>
                     {{ data.value.tokens }}
@@ -45,103 +34,74 @@
             </RightFloatCell>
         </template>
 
-        <!-- plain text preview cell -->
-        <template #cell-preview="data">
-            <div style="min-width: 200px; max-height: 3rem; overflow: hidden">
-                {{ data.value }}
-            </div>
-        </template>
-
-        <!-- last modified cell -->
-        <template #cell-lastModified="data">
-            {{ formatDate(data.value) }}
-        </template>
-
-        <!-- actions cell -->
-        <template #cell-actions="data">
+        <template #cell-actions="data: TableData<DocumentMetadata>">
             <div class="actions">
-                <DownloadButton @click="download(data.item)" />
+                <DownloadButton @click="downloadRaw(data.item.name)" />
 
-                <GButton red @click="
-                    () => {
-                        deleteDocumentData = data.item
-                    }
-                " title="Delete">
+                <GButton red title="Delete" @click="deleteDocumentData = data.item">
                     <i class="fa fa-trash"></i>
                 </GButton>
             </div>
         </template>
+
     </GTable>
 
-    <!-- preview modal -->
     <GModal v-if="previewDocument !== undefined" @hide="previewDocument = undefined">
         <LayerViewer :document="previewDocument" />
     </GModal>
 
-    <!-- delete modal -->
     <DeleteModal v-if="deleteDocumentData" :itemName="`${deleteDocumentData.name} and associated results`"
-        @hide="deleteDocumentData = undefined" @delete="deleteDocument(deleteDocumentData)" />
+        @hide="deleteDocumentData = undefined" @delete="deleteDocument(deleteDocumentData.name)" />
+
 </template>
 
 <script setup lang="ts">
-// Libraries & stores
-
 import stores from "@/stores"
-// Utils
 import { formatDate } from "@/ts/utils"
 import type { CorpusMetadata } from "@/types/corpora"
 import type { DocumentMetadata } from "@/types/documents"
-// API & types
-import { type Column, TableDocumentsType } from "@/types/ui/table"
+import {
+    type Column,
+    type TableData,
+    TableDocumentsType
+} from "@/types/ui/table"
 
 // Stores
-const documentsStore = stores.useDocuments()
-const userStore = stores.useUser()
+const { deleteDocument, downloadRaw } = stores.useDocuments()
+const { documents, loading } = storeToRefs(stores.useDocuments())
+const { canWrite } = storeToRefs(stores.useUser())
 
-// Props
-const props = defineProps({
-    type: String as PropType<TableDocumentsType>, // the mode of the table
-    corpus: { type: Object as PropType<CorpusMetadata>, default: null }
-})
+// --- props ---
+const { type, corpus } = defineProps<{
+    type: TableDocumentsType
+    corpus: CorpusMetadata
+}>()
 
-// Fields
-const deleteDocumentData = ref(null as null | DocumentMetadata)
+// --- data ---
+const deleteDocumentData = ref<DocumentMetadata>()
 const previewDocument = ref<DocumentMetadata>()
 
-const columns = computed<Column[]>(() => {
-    const publicFields = [
-        {
-            key: "name",
-            sortOn: (x: DocumentMetadata) => x.name
-        },
-        { key: "format", sortOn: (x: DocumentMetadata) => x.format },
-        { key: "preview" },
-        {
-            key: "layerSummary",
-            label: "tokens",
-            align: "right",
-            sortOn: (x: DocumentMetadata) => x.layerSummary?.tokens
-        },
-        {
-            key: "lastModified",
-            label: "last modified",
-            sortOn: (x: DocumentMetadata) => x.lastModified
-        }
-    ] as Column[]
-    if (userStore.canWrite && props.type === TableDocumentsType.User) {
-        return publicFields.concat({ key: "actions" })
+// --- computed ---
+const columns = computed<Column[]>(() => [
+    { key: "name" },
+    { key: "format" },
+    { key: "preview" },
+    {
+        key: "layerSummary",
+        label: "tokens",
+        align: "right",
+        sortOn: (x: DocumentMetadata): number => x.layerSummary?.tokens
+    },
+    {
+        key: "modified",
+        format: (x: TableData<DocumentMetadata>): string => formatDate(x.value)
+    },
+    {
+        key: "actions",
+        noSort: true,
+        hidden: !canWrite || type === TableDocumentsType.Dataset
     }
-    // public
-    return publicFields
-})
-
-// Methods
-function deleteDocument(document: DocumentMetadata) {
-    return documentsStore.deleteDocument(document.name)
-}
-function download(document: DocumentMetadata) {
-    return documentsStore.downloadRaw(document.name)
-}
+])
 </script>
 
 <style scoped lang="scss">

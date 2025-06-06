@@ -6,11 +6,11 @@ import java.util.*
 
 /**
  * Metadata about a corpus, to be stored in a cache file,
- * as its immutable fields can become invalidated (e.g. [numDocs], [lastModified]),
+ * as its immutable fields can become invalidated (e.g. [numDocs], [modified]),
  * and of course any [MutableCorpusMetadata] field.
  * This is the superset of [MutableCorpusMetadata], and contains,
- * in addition to the mutable fields of the latter, any immutable fields like [sizeInBytes].
- * [sizeInBytes] is expensive to calculate, hence the cache file.
+ * in addition to the mutable fields of the latter, any immutable fields like [size].
+ * [size] is expensive to calculate, hence the cache file.
  */
 class CorpusMetadata(
     // Mutable fields
@@ -30,8 +30,8 @@ class CorpusMetadata(
     val activeJobs: Int = 0,
     val numResults: Int = 0,
     val numDocs: Int = 0,
-    val sizeInBytes: Long = 0,
-    val lastModified: Long = 0,
+    val size: Long = 0,
+    val modified: Long = 0,
 ) : MutableCorpusMetadata(
     owner = owner,
     name = name,
@@ -53,8 +53,8 @@ class CorpusMetadata(
                 uuid = UUID.fromString(corpus.name),
                 numResults = corpus.jobs.readAll().count { it.hasResult },
                 numDocs = corpus.documents.readAll().size,
-                sizeInBytes = corpus.sizeInBytes,
-                lastModified = System.currentTimeMillis(),
+                size = corpus.size,
+                modified = System.currentTimeMillis(),
             )
             // add mutable fields
             with(corpus.mutableMetadata) {

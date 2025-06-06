@@ -42,7 +42,7 @@
                         <td>
                             <GInput v-model="tagset" list="tagsets" placeholder="tagset name" />
                             <datalist id="tagsets">
-                                <option v-for="(tagset, _) in tagsetsStore.tagsets" :value="tagset.shortName"></option>
+                                <option v-for="(tagset, _) in tagsetsStore.tagsets" :value="tagset.name"></option>
                             </datalist>
                         </td>
                     </tr>
@@ -78,7 +78,7 @@
                     <tr>
                         <td><label>Source url:</label></td>
                         <td>
-                            <GInput v-model="sourceURL" type="url" placeholder="source url" />
+                            <GInput v-model="sourceUrl" type="url" placeholder="source url" />
                         </td>
                     </tr>
 
@@ -96,19 +96,18 @@
 
 <script setup lang="ts">
 import stores from "@/stores"
-import type { MutableCorpusMetadata } from "@/types/corpora"
+import type { CorpusMetadata, MutableCorpusMetadata } from "@/types/corpora"
 
 const userStore = stores.useUser()
 const tagsetsStore = stores.useTagsets()
 
 // --- props ---
-const { action, item, update, title, show } = defineProps({
-    action: { type: Function },
-    item: { default: null },
-    update: { type: Boolean, default: false },
-    title: { type: String, default: "" },
-    show: { type: Boolean, default: true }
-})
+const { action, item, update, title } = defineProps<{
+    action: () => void,
+    item: CorpusMetadata,
+    update: boolean,
+    title: string
+}>()
 
 const emit = defineEmits<{
     hide: []
@@ -121,7 +120,7 @@ const eraFrom = ref<number>()
 const eraTo = ref<number>()
 const tagset = ref("")
 const sourceName = ref("")
-const sourceURL = ref("")
+const sourceUrl = ref("")
 const collaborators = ref([])
 const viewers = ref([])
 
@@ -144,7 +143,7 @@ const disabled = computed(() => {
             collaborators.value.join("\n") === i.collaborators.join("\n") &&
             viewers.value.join("\n") === i.viewers.join("\n") &&
             sourceName.value === i.sourceName &&
-            sourceURL.value === i.sourceURL &&
+            sourceUrl.value === i.sourceUrl &&
             dataset.value === i.dataset)
     )
 })
@@ -167,7 +166,7 @@ watch(
         eraTo.value = newValue.eraTo
         tagset.value = newValue.tagset
         sourceName.value = newValue.sourceName
-        sourceURL.value = newValue.sourceURL
+        sourceUrl.value = newValue.sourceUrl
         dataset.value = newValue.dataset
         collaborators.value = [...newValue.collaborators]
         viewers.value = [...newValue.viewers]
@@ -188,7 +187,7 @@ function doAction(): void {
         collaborators: collaborators.value,
         viewers: viewers.value,
         sourceName: sourceName.value,
-        sourceURL: validateSourceURL(sourceURL.value)
+        sourceUrl: validatesourceUrl(sourceUrl.value)
     }
     action(value)
     resetFormFields()
@@ -202,13 +201,13 @@ function resetFormFields(): void {
     eraTo.value = null
     tagset.value = ""
     sourceName.value = ""
-    sourceURL.value = ""
+    sourceUrl.value = ""
     dataset.value = false
 }
 function validateCorpusName(name: string): boolean {
     return name.toString().match(/^.{3,100}$/)
 }
-function validateSourceURL(url: string): string {
+function validatesourceUrl(url: string): string {
     if (!url) return url
     try {
         new URL(url)

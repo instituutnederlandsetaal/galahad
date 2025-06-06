@@ -10,10 +10,10 @@ import org.ivdnt.galahad.evaluation.JobPair
 import org.ivdnt.galahad.evaluation.comparison.*
 import org.ivdnt.galahad.evaluation.confusion.CONFUSION_TYPES
 import org.ivdnt.galahad.evaluation.confusion.CorpusConfusion
-import org.ivdnt.galahad.evaluation.distribution.CorpusDistribution
+import org.ivdnt.galahad.evaluation.distribution.JobDistribution
 import org.ivdnt.galahad.evaluation.entities.DocumentEntities
 import org.ivdnt.galahad.evaluation.entities.JobEntities
-import org.ivdnt.galahad.evaluation.entities.JobsEntities
+import org.ivdnt.galahad.evaluation.entities.CorpusEntities
 import org.ivdnt.galahad.evaluation.frequency.TokenFrequency
 import org.ivdnt.galahad.evaluation.metrics.*
 import org.ivdnt.galahad.exceptions.AnnotationNotSupported
@@ -43,7 +43,7 @@ class EvaluationService(val corpora: CorporaService) {
     fun getDistribution(
         corpus: UUID,
         job: String,
-    ): Map<Annotation, CorpusDistribution> {
+    ): Map<Annotation, JobDistribution> {
         val corpus = corpora.readAsReaderOrThrow(corpus, user)
         val jobEval = corpus.evaluation.createOrThrow(JobPair(job))
         return jobEval.distribution
@@ -296,7 +296,7 @@ class EvaluationService(val corpora: CorporaService) {
         return jobEval.entities
     }
 
-    fun getJobsEntities(corpus: UUID): JobsEntities {
+    fun getJobsEntities(corpus: UUID): CorpusEntities {
         val corpusObj = corpora.readAsReaderOrThrow(corpus, user)
         return corpusObj.evaluation.entities
     }

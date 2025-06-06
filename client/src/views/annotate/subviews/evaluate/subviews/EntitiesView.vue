@@ -9,16 +9,12 @@
         <GTable class="table" :loading :items :columns compact>
             <template #cell="data: TableData<DocumentEntities>">
                 <GButton class="button" @click="selectedItem = data">
-                    {{ data.value }}
+                    {{ data.value ?? 0 }}
                 </GButton>
             </template>
         </GTable>
 
-        <GModal v-if="selectedItem !== undefined" @hide="selectedItem = undefined"
-            :title="`Entities in ${selectedItem?.item?.document}`">
-            <template #help>
-                Here you can view all the entities in the selected document.
-            </template>
+        <GModal v-if="selectedItem !== undefined" @hide="selectedItem = undefined">
             <DocumentEntitiesTable :entities="selectedItem?.item?.entities" />
         </GModal>
     </GCard>
@@ -50,10 +46,10 @@ const columns = computed<Column[]>(() =>
     }))
 )
 const filter = computed(() => {
-    if (["document", "total"].includes(selectedItem.value?.field.key)) {
+    if (["document", "total"].includes(selectedItem.value?.column.key)) {
         return undefined
     }
-    return selectedItem.value?.field?.key
+    return selectedItem.value?.column?.key
 })
 
 // --- watch ---
@@ -77,10 +73,11 @@ function convertJobsEntities(
     // rest of the documents
     for (const [jobName, jobData] of Object.entries(jobsEntities.jobs)) {
         for (const [docName, docData] of Object.entries(jobData.documents)) {
+            if (!result[docName]) {
+                result[docName] = { document: docName }
+            }
+
             for (const [eLabel, eCount] of Object.entries(docData.summary)) {
-                if (!result[docName]) {
-                    result[docName] = { document: docName }
-                }
                 result[docName][`${jobName}-${eLabel}`] = eCount
             }
             result[docName][`${jobName}-total`] = docData.total

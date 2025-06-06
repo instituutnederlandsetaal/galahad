@@ -15,10 +15,7 @@
             </GCheckBox>
         </form>
 
-        <GTable :columns="filteredColumns" :items headless>
-            <template #head="data">{{ data.field.label || data.field.key }}</template>
-            <template #cell="data">{{ data.value }}</template>
-        </GTable>
+        <GTable :columns="filteredColumns" :items />
         <!--Download-->
         <p>Download all samples for this category.</p>
         <DownloadButton wide :loading="downloading" @click="$emit('download')" />
@@ -40,7 +37,6 @@ const corporaStore = stores.useCorpora()
 
 // Props
 const props = defineProps({
-    show: { type: Boolean },
     samples: { type: Object },
     referenceJob: { type: String },
     hypothesisJob: { type: String },

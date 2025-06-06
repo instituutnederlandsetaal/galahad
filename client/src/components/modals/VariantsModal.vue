@@ -9,15 +9,12 @@
             This is an overview of all types belonging to the chosen lemma, part-of-speech pair.
         </template>
 
-        <GTable compact :columns :items sortColumn="occurrences" :sortDesc="true" />
+        <GTable :columns :items sortColumn="occurrences" :sortDesc="true" />
     </GModal>
 </template>
 
 <script setup lang="ts">
-// Libraries & stores
-
 import type { Distribution } from "@/types/evaluation"
-// Types & API
 import type { Column } from "@/types/ui/table"
 
 // Custom types
@@ -34,7 +31,7 @@ const columns: Column[] = [
     { key: "variant", label: "Type", sortOn: (x: DistEntry) => x.variant },
     {
         key: "occurrences",
-        label: "Occurrences",
+        label: "count",
         sortOn: (x: DistEntry) => x.occurrences
     }
 ]
@@ -47,8 +44,3 @@ const items: DistEntry[] = computed(() => {
     )
 })
 </script>
-<style scoped lang="scss">
-:deep(.my-small) {
-    padding: 1rem;
-}
-</style>

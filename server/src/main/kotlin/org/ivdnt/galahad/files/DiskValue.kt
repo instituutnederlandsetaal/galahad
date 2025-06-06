@@ -12,7 +12,7 @@ import java.io.File
 open class DiskValue<T>(
     val file: File,
 ) {
-    val lastModified: Long get() = file.lastModified()
+    val modified: Long get() = file.lastModified()
 
     inline fun <reified T> readOrNull(): T? {
         if (file.length() == 0L) return null

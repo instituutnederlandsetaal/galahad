@@ -9,14 +9,7 @@
     <GCard v-else-if="!corporaStore.activeCorpus && !hideCorpusError" title="No corpus selected">
         <GInfo error>
             <p>No corpus has been selected.</p>
-            <GNav :route="{ path: '/annotate/corpora' }">Select a corpus</GNav>
-        </GInfo>
-    </GCard>
-    <!-- No write permissions on selected corpus -->
-    <GCard v-else-if="!userStore.canWrite && !hidePermissionsError" title="Insufficient permissions">
-        <GInfo error>
-            <p>You have insufficient permissions to perform this action.</p>
-            <GNav :route="{ path: '/annotate/corpora' }">Select a different corpus</GNav>
+            <router-link to="/annotate/corpora">Select a corpus</router-link>
         </GInfo>
     </GCard>
     <!-- Loading documents -->
@@ -27,7 +20,7 @@
     <GCard v-else-if="!corporaStore.hasDocs && !hideDocsError" title="Empty corpus">
         <GInfo error>
             <p>This corpus has no documents.</p>
-            <GNav :route="{ path: '/annotate/documents' }">Upload documents to this corpus</GNav>
+            <router-link to="/annotate/documents">Upload documents to this corpus</router-link>
         </GInfo>
     </GCard>
     <!-- Loading jobs -->
@@ -40,11 +33,11 @@
             <p>None of the documents have annotations. Either:</p>
             <ul>
                 <li>
-                    <GNav :route="{ path: '/annotate/documents' }">Upload documents</GNav> to this corpus that
+                    <router-link to="/annotate/documents">Upload documents</router-link> to this corpus that
                     contain source annotations
                 </li>
                 <li>
-                    <GNav :route="{ path: '/annotate/jobs' }">Start a tagger job</GNav> to create annotations
+                    <router-link to="/annotate/jobs">Start a tagger job</router-link> to create annotations
                 </li>
                 <li>Or wait for an existing job to finish</li>
             </ul>
@@ -64,33 +57,16 @@
 </template>
 
 <script setup lang="ts">
-// Libraries & stores
 import stores from "@/stores"
 
-// Stores
 const corporaStore = stores.useCorpora()
 const documentsStore = stores.useDocuments()
 const jobsStore = stores.useJobs()
 const jobSelectionStore = stores.useJobSelection()
-const userStore = stores.useUser()
 
-// Props
-const props = defineProps({
-    hideDocsError: {
-        type: Boolean,
-        default: false
-    },
-    hideCorpusError: {
-        type: Boolean,
-        default: false
-    },
-    hideAnnotationsError: {
-        type: Boolean,
-        default: false
-    },
-    hidePermissionsError: {
-        type: Boolean,
-        default: true
-    }
-})
+const { hideDocsError, hideCorpusError, hideAnnotationsError } = defineProps<{
+    hideDocsError?: boolean
+    hideCorpusError?: boolean
+    hideAnnotationsError?: boolean
+}>()
 </script>

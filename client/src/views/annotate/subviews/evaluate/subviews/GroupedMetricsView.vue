@@ -78,14 +78,14 @@ const items = computed(() => {
 
 // Methods
 function download(data: Any) {
-    const classType = data.field.key
+    const classType = data.column.key
     const group = data.item.name
 
     downloading.value = true
     API.getMetricsSamples(
         corporaStore.activeUUID,
-        jobSelection.hypothesisJobId,
-        jobSelection.referenceJobId,
+        jobSelection.hypothesisId,
+        jobSelection.referenceId,
         metricName.value,
         classType,
         group

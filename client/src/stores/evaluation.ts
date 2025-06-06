@@ -51,8 +51,8 @@ const useEvaluation = defineStore("evaluation", () => {
         loading.value = true
         API.getDownloadEvaluation(
             corporaStore.activeUUID,
-            jobSelection.hypothesisJobId,
-            jobSelection.referenceJobId
+            jobSelection.hypothesisId,
+            jobSelection.referenceId
         )
             .then(Utils.browserDownloadResponseFile)
             .catch(error =>

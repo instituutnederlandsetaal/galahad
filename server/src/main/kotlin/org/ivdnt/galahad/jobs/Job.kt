@@ -75,8 +75,8 @@ class Job(
      */
     private val metadataCache = object : ValidatedDiskValue<JobMetadata>(metadataFile) {
         // NOTE: we also check against the last modified of the documents folder: adding new docs should invalidate the cache.
-        override fun isValid(lastModified: Long) =
-            lastModified >= this@Job.lastModified && lastModified >= corpus.documents.lastModified
+        override fun isValid(modified: Long) =
+            modified >= this@Job.modified && modified >= corpus.documents.modified
         override fun set() = JobMetadata.create(this@Job)
     }
 

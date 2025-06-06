@@ -1,6 +1,5 @@
 <template>
-    <GTable :columns :items="displayCorpora" :loading="corporaStore.loading" sortColumn="name" selectable
-        v-model="selectedCorpus">
+    <GTable :columns :items="displayCorpora" :loading sortColumn="name" selectable v-model="selectedCorpus">
 
         <template #title>
             <slot name="title">
@@ -17,9 +16,9 @@
         </template>
 
         <!-- source cell -->
-        <template #cell-source="data">
-            <ExternalLink v-if="data.item.sourceURL" :href="data.item.sourceURL">
-                {{ data.item.sourceName ? data.item.sourceName : data.item.sourceURL }}
+        <template #cell-source="data: TableData<CorpusMetadata>">
+            <ExternalLink v-if="data.item.sourceUrl" :href="data.item.sourceUrl">
+                {{ data.item.sourceName ? data.item.sourceName : data.item.sourceUrl }}
             </ExternalLink>
             <template v-else>{{ data.item.sourceName }}</template>
         </template>
@@ -40,102 +39,82 @@
 <script setup lang="ts">
 import stores from "@/stores"
 import type { CorpusMetadata } from "@/types/corpora"
-import { type Column, TableCorporaType, TableData } from "@/types/ui/table"
+import { type Column, TableCorporaType, type TableData } from "@/types/ui/table"
 import { formatBytes, formatDate } from "@/ts/utils"
 
 // Stores
 const userStore = stores.useUser()
-const corporaStore = stores.useCorpora()
-
-// Props
-const props = defineProps({
-    corpora: Array<CorpusMetadata>,
-    type: String as PropType<TableCorporaType>,
-    selectable: Boolean
+const { loading, activeUUID } = storeToRefs(stores.useCorpora())
+const _selectedCorpus = ref<CorpusMetadata>()
+const selectedCorpus = computed<CorpusMetadata>({
+    get(): CorpusMetadata {
+        return _selectedCorpus.value
+    },
+    set(newValue): void {
+        activeUUID.value = newValue.uuid
+        _selectedCorpus.value = newValue
+    }
 })
 
+// Props
+const { corpora, type } = defineProps<{
+    corpora: CorpusMetadata[]
+    type: TableCorporaType
+}>()
+
 // Fields
-const selectedCorpus = ref(corporaStore.activeCorpus)
-const editable = props.type !== TableCorporaType.Dataset
 const displayCorpora = computed(() => {
-    if (props.type === TableCorporaType.User) {
-        return props.corpora.filter(i => i.owner === userStore.user.id)
+    if (type === TableCorporaType.User) {
+        return corpora.filter(i => i.owner === userStore.user.id)
     }
-    if (props.type === TableCorporaType.Shared) {
-        return props.corpora.filter(
+    if (type === TableCorporaType.Shared) {
+        return corpora.filter(
             i =>
                 i.collaborators.includes(userStore.user.id) ||
                 i.viewers.includes(userStore.user.id)
         )
     }
-    return props.corpora
+    return corpora
 })
-// Enable edit & delete buttons only if activeCorpus is in this table.
-// (Not that CorpusForm cares, but looks nicer)
-const activeCorpusInTable = computed(() => {
-    return displayCorpora.value
-        .map(i => i.uuid)
-        .includes(selectedCorpus.value?.uuid)
-})
-const columns: Column[] = [
-    { key: "uuid", isPrimaryField: true, hidden: true },
-    { key: "name", sortOn: x => x.name },
-    { key: "numDocs", sortOn: x => x.numDocs, label: "docs", align: "right" },
+const columns: Column<CorpusMetadata>[] = [
+    { key: "uuid", hidden: true },
+    { key: "name" },
+    { key: "numDocs", label: "docs", align: "right" },
     {
-        key: "sizeInBytes",
-        label: "size",
-        sortOn: x => x.sizeInBytes,
+        key: "size",
         align: "right",
-        format: d => formatBytes(d.value)
+        format: (d: TableData<CorpusMetadata>): string =>
+            formatBytes(d.item.size)
     },
     {
         key: "period",
-        sortOn: (x: any) => x.eraFrom.toString() + x.eraTo.toString(),
-        align: "center"
+        align: "center",
+        sortOn: (c: CorpusMetadata): string =>
+            c.eraFrom.toString() + c.eraTo.toString()
     },
-    { key: "tagset", sortOn: x => x.tagset },
-    { key: "source", label: "source", sortOn: x => x.source },
+    { key: "tagset" },
+    { key: "source" },
     {
-        key: "lastModified",
-        sortOn: x => x.lastModified,
-        label: "last modified",
-        format: d => formatDate(d.value)
+        key: "modified",
+        format: (d: TableData<CorpusMetadata>): string =>
+            formatDate(d.item.modified)
     },
     {
         key: "collaborators",
-        hidden: !editable,
-        sortOn: x => customSharedSort(x),
         label: "shared with",
         align: "center",
-        format: d => formatCollaborators(d.item)
+        hidden: type === TableCorporaType.Dataset,
+        sortOn: (c: CorpusMetadata): number => customSharedSort(c),
+        format: (d: TableData<CorpusMetadata>): string =>
+            formatCollaborators(d.item)
     },
     {
         key: "activeJobs",
-        hidden: !editable,
-        sortOn: x => x.activeJobs,
         label: "jobs",
-        align: "center"
+        align: "center",
+        hidden: type === TableCorporaType.Dataset
     }
 ]
-
-// Watches
-// We can't use corporaStore.activeCorpus directly, because there will be multiple corpus tables on the page.
-watch(
-    () => corporaStore.activeCorpus,
-    () => {
-        return (selectedCorpus.value = corporaStore.activeCorpus)
-    },
-    { immediate: true }
-)
-watch(
-    () => selectedCorpus.value,
-    () => {
-        if (selectedCorpus.value) {
-            corporaStore.activeUUID = selectedCorpus.value?.uuid
-        }
-    },
-    { immediate: true }
-)
 
 // Methods
 function formatCollaborators(i: CorpusMetadata): string {
@@ -145,7 +124,7 @@ function formatCollaborators(i: CorpusMetadata): string {
     return numPeople === 1 ? `${numPeople} person` : `${numPeople} people`
 }
 
-function customSharedSort(i: CorpusMetadata) {
+function customSharedSort(i: CorpusMetadata): number {
     if (i.dataset) return -1
     return i.collaborators.length + i.viewers.length
 }

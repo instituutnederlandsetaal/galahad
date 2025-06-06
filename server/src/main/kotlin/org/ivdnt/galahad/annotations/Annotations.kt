@@ -21,6 +21,13 @@ enum class Annotation(@JsonValue val value: String) {
             entries.firstOrNull { it.value == s.lowercase() } ?: throw InvalidAnnotationException(
                 "Invalid annotation type $s, valid types are ${entries.map { it.value }}"
             )
+
+        fun order(other: Iterable<Annotation>): List<Annotation> {
+            return entries.filter { it in other }
+        }
+        fun order(other: Array<Annotation>): List<Annotation> {
+            return entries.filter { it in other }
+        }
     }
 }
 

@@ -15,7 +15,7 @@ class JobMetadata(
     @JsonProperty("progress") val progress: Progress,
     @JsonProperty("preview") val preview: LayerPreview,
     @JsonProperty("resultSummary") val resultSummary: LayerSummary,
-    @JsonProperty("lastModified") var lastModified: Long,
+    @JsonProperty("modified") var modified: Long,
 ) {
     companion object {
         fun create(job: Job): JobMetadata {
@@ -40,7 +40,7 @@ class JobMetadata(
                 progress = job.progress,
                 preview = preview,
                 resultSummary = resultSummary,
-                lastModified = System.currentTimeMillis()
+                modified = System.currentTimeMillis()
             )
         }
     }

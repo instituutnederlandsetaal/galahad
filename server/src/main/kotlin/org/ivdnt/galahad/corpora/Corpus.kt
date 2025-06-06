@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.corpora
 
 import org.ivdnt.galahad.documents.Documents
-import org.ivdnt.galahad.evaluation.JobsEvaluations
+import org.ivdnt.galahad.evaluation.CorpusEvaluation
 import org.ivdnt.galahad.files.DiskValue
 import org.ivdnt.galahad.files.GalahadFolder
 import org.ivdnt.galahad.files.ValidatedDiskValue
@@ -28,7 +28,7 @@ class Corpus(
 
     val documents: Documents = Documents(dir.resolve(DOCS_FOLDER), this)
     val jobs: Jobs = Jobs(dir.resolve(JOBS_FOLDER), this)
-    val evaluation: JobsEvaluations = JobsEvaluations(dir.resolve(EVALUATIONS_FOLDER), this)
+    val evaluation: CorpusEvaluation = CorpusEvaluation(dir.resolve(EVALUATIONS_FOLDER), this)
 
     // Files in the corpus folder.
     private val mutableMetadataFile = dir.resolve(MUTABLE_METADATA_FILE)
@@ -49,7 +49,7 @@ class Corpus(
     val immutableMetadata: CorpusMetadata get() = immutableMetadataCache.readOrCreate()
 
     private val immutableMetadataCache = object : ValidatedDiskValue<CorpusMetadata>(immutableMetadataFile) {
-        override fun isValid(lastModified: Long) = lastModified >= this@Corpus.lastModified
+        override fun isValid(modified: Long) = modified >= this@Corpus.modified
         override fun set() = CorpusMetadata.create(this@Corpus)
     }
 

@@ -9,18 +9,22 @@ export enum TableDocumentsType {
     User = "user"
 }
 
-/* sortOn defines what to sort field values on */
-export type Column = {
+export interface Item {
+    [key: string]: unknown
+}
+
+export type Column<T> = {
     key: string
     label?: string
-    sortOn?: (value: any) => any
+    noSort?: boolean
+    sortOn?: (value: T) => number | string
     align?: string
     hidden?: boolean
-    format?: (data: TableData<any>) => string
+    format?: (data: TableData<T>) => string
 }
 
 export type TableData<T> = {
-    field: Column
+    column: Column<T>
     item: T
-    value: any
+    value: unknown
 }

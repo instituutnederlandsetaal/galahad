@@ -1,5 +1,9 @@
 <template>
-    <GTable :items :columns sortColumn="count" compact>
+    <GTable :items :columns sortColumn="count">
+        <template #title>Entities</template>
+        <template #help>
+            Here you can view all the entities in the selected document.
+        </template>
         <template #table-empty>
             No entities found in this document.
         </template>

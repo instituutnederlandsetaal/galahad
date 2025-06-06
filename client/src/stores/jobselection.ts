@@ -9,15 +9,12 @@ import { useRouteQuery } from "@vueuse/router"
 const useJobSelection = defineStore("jobSelection", () => {
     // Stores
     const jobsStore = stores.useJobs()
-    const corporaStore = stores.useCorpora()
+    const corpora = stores.useCorpora()
     const documentsStore = stores.useDocuments()
 
     // Fields
-    const hypothesisJobId = useRouteQuery("hypothesis")
-    const referenceJobId = useRouteQuery("reference")
-    // Set to true once we know the jobs exist in selectableJobs.
-    // (which requires waiting on jobs & docs to load)
-    const selectionsValid = ref(false)
+    const hypothesisId = useRouteQuery<string>("hypothesis")
+    const referenceId = useRouteQuery<string>("reference")
     const tagsetsMismatch = computed(() => {
         return (
             hypothesisJob.value?.tagger.tagset !==
@@ -50,57 +47,19 @@ const useJobSelection = defineStore("jobSelection", () => {
     })
 
     // Private Fields
-    const referenceJob = computed<Job | undefined>(() => {
-        return referenceJobId.value
-            ? jobsStore.jobs[referenceJobId.value]
-            : undefined
-    })
-    const hypothesisJob = computed<Job | undefined>(() => {
-        return hypothesisJobId.value
-            ? jobsStore.jobs[hypothesisJobId.value]
-            : undefined
-    })
+    const referenceJob = computed<Job>(() => jobsStore.jobs[referenceId.value])
+    const hypothesisJob = computed<Job>(
+        () => jobsStore.jobs[hypothesisId.value]
+    )
 
-    // // Watches
     watch(
-        () => corporaStore.activeUUID,
-        (newValue, oldValue) => {
-            if (oldValue !== newValue && oldValue) {
-                hypothesisJobId.value = undefined
-                referenceJobId.value = undefined
-            }
+        () => corpora.activeUUID,
+        () => {
+            hypothesisId.value = undefined
+            referenceId.value = undefined
         }
     )
-    // /** Remove invalid job selections on loading jobs & loading docs (the latter for sourceLayer annotations).*/
-    // watch([() => jobsStore.loading, () => documentsStore.loading], () => {
-    //     validateJobSelections()
-    // })
 
-    // Methods
-    /** Remove any invalid job selections, either non-existing names or jobs that have no layer  */
-    function validateJobSelections() {
-        const jobsExist: boolean =
-            !jobsStore.loading && Object.keys(jobsStore.jobs).length > 0
-        const docsExist: boolean =
-            !documentsStore.loading && documentsStore.documents.length > 0
-        if (jobsExist && docsExist) {
-            if (
-                !selectableJobs.value
-                    .map(job => job.key)
-                    .includes(hypothesisJobId.value)
-            ) {
-                hypothesisJobId.value = undefined
-            }
-            if (
-                !selectableJobs.value
-                    .map(job => job.key)
-                    .includes(referenceJobId.value)
-            ) {
-                referenceJobId.value = undefined
-            }
-            selectionsValid.value = true
-        }
-    }
     /** Format as displayed in the <select> */
     function formatJobString(job: Job) {
         let finished = job.progress.finished
@@ -110,25 +69,20 @@ const useJobSelection = defineStore("jobSelection", () => {
         }
         return `${job.tagger.id} (${job.tagger.description}) [${finished}/${job.progress.total} docs]`
     }
-    function setHypothesisJobId(id: string) {
-        if (Object.keys(jobsStore.jobs)?.includes(id))
-            hypothesisJobId.value = id
+    function sethypothesisId(id: string) {
+        if (Object.keys(jobsStore.jobs)?.includes(id)) hypothesisId.value = id
     }
-    function setReferenceJobId(id: string) {
-        if (Object.keys(jobsStore.jobs)?.includes(id)) referenceJobId.value = id
+    function setreferenceId(id: string) {
+        if (Object.keys(jobsStore.jobs)?.includes(id)) referenceId.value = id
     }
 
-    // Exports
     return {
-        // Fields
         tagsetsMismatch,
-        hypothesisJobId,
-        referenceJobId,
+        hypothesisId,
+        referenceId,
         selectableJobs,
-        selectionsValid,
-        // Methods
-        setHypothesisJobId,
-        setReferenceJobId
+        sethypothesisId,
+        setreferenceId
     }
 })
 

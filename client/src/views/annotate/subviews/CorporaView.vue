@@ -5,13 +5,13 @@
         </template>
 
         <form class="buttons" @submit.prevent>
-            <GButton green @click="newCorpus = true">
+            <GButton green title="New" @click="newCorpus = true">
                 New
             </GButton>
-            <GButton orange :disabled="!user.canWrite" @click="editCorpus = copy(activeCorpus)">
+            <GButton orange title="Edit" :disabled="!user.canWrite" @click="editCorpus = copy(activeCorpus)">
                 Edit
             </GButton>
-            <GButton red :disabled="!user.canDelete" @click="deleteCorpus = activeCorpus">
+            <GButton red title="Delete" :disabled="!user.canDelete" @click="deleteCorpus = activeCorpus">
                 Delete
             </GButton>
         </form>
@@ -43,7 +43,7 @@
                 <BenchmarkSetsHelp />
                 <p>
                     You can inspect them in further detail on the
-                    <GNav :route="{ path: '/annotate/evaluate' }">Evaluate tab</GNav>.
+                    <router-link to="/annotate/evaluate">Evaluate tab</router-link>.
                 </p>
             </template>
             <template #table-empty>

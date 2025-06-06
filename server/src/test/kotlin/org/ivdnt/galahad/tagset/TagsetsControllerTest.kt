@@ -15,22 +15,9 @@ class TagsetsControllerTest(
     @Autowired val mvc: MockMvc,
     @Autowired val ctrl: TagsetsController,
 ) {
-
-    @Test
-    fun `Get valid tagset`() {
-        val tagset = ctrl.getTagset("TDN-Core")
-        assertNotNull(tagset)
-        assertTrue("PC" in tagset.punctuationTags)
-    }
-
-    @Test
-    fun `Get invalid tagset`() {
-        assertThrows(Exception::class.java) { ctrl.getTagset("invalid") }
-    }
-
     @Test
     fun `Get tagsets`() {
         val tagsets = ctrl.getTagsets()
-        assertEquals(1, tagsets.count { it.identifier == "TDN-Core" })
+        assertEquals(1, tagsets.count { it.name == "TDN-Core" })
     }
 }

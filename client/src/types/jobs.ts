@@ -7,7 +7,7 @@ export type Job = {
     tagger: Tagger
     progress: Progress
     preview: LayerPreview
-    lastModified: number | null
+    modified: number | null
 }
 
 export type Progress = {

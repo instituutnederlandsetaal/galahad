@@ -1,63 +1,27 @@
-// Libraries & stores
-
-import * as API from "@/api/evaluation"
+import { confusionPath } from "@/api/evaluation"
+import { useAxios } from "@/api/useAxios"
 import stores from "@/stores"
-import * as Utils from "@/stores/evaluation/utils"
-// API & types
-import type { UUID } from "@/types/corpora"
 import type { ConfusionWrapper } from "@/types/evaluation"
 
-// Allows for Object.keys(confusion.table), which dislikes null.
-const defaultConfusion = () => ({ table: {} }) as ConfusionWrapper
-
-/**
- * Stores and fetches the confusion matrix.
- */
+/** Stores and fetches the confusion matrix. */
 const useConfusion = defineStore("confusion", () => {
-    // Fields
-    const loading = ref(false)
-    const confusion = ref(defaultConfusion())
+    const { hypothesisId: hypothesis, referenceId: reference } = storeToRefs(
+        stores.useJobSelection()
+    )
+    const { activeUUID } = storeToRefs(stores.useCorpora())
+    const url = computed<string>(() => {
+        if (!(hypothesis.value && reference.value)) return undefined
+        return confusionPath(activeUUID.value)
+    })
+    const { loading, data: confusion } = useAxios<ConfusionWrapper>(
+        url,
+        {},
+        { hypothesis: hypothesis.value, reference: reference.value }
+    )
 
-    // Methods
-    /**
-     * Reset it when e.g. the hypothesis or reference is changed.
-     */
-    function reset() {
-        confusion.value = defaultConfusion()
-    }
-
-    /**
-     * Reloads the confusion matrix for the given corpus, hypothesis and reference.
-     * @param corpus The UUID of the corpus.
-     * @param hypothesis Tagger job name as hypothesis layer.
-     * @param reference Tagger job name as reference layer.
-     */
-    function reloadForUUIDHypothesisReference(
-        corpus: UUID,
-        hypothesis: string,
-        reference: string
-    ) {
-        Utils.reloadEval(
-            API.getConfusion,
-            reset,
-            "fetch confusion",
-            loading,
-            confusion,
-            stores,
-            corpus,
-            hypothesis,
-            reference
-        )
-    }
-
-    // Exports
     return {
-        // Fields
         confusion,
-        loading,
-        // Methods
-        reloadForUUIDHypothesisReference,
-        reset
+        loading
     }
 })
 

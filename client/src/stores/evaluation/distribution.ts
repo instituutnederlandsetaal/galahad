@@ -1,6 +1,8 @@
 // Libraries & stores
 
 import * as API from "@/api/evaluation"
+import { distributionPath } from "@/api/evaluation"
+import { useAxios } from "@/api/useAxios"
 import stores from "@/stores"
 import * as Utils from "@/stores/evaluation/utils"
 // API & types
@@ -8,6 +10,7 @@ import * as Utils from "@/stores/evaluation/utils"
 import type { UUID } from "@/types/corpora"
 import type { DistributionWrapper } from "@/types/evaluation"
 import type { SelectOption } from "@/types/ui/select"
+
 
 // Allows for Object.keys(distribution.table), which dislikes null.
 const defaultDistribution = () => ({ distribution: {} }) as DistributionWrapper
@@ -17,7 +20,16 @@ const defaultDistribution = () => ({ distribution: {} }) as DistributionWrapper
  */
 const useDistribution = defineStore("distribution", () => {
     // Fields
-    const distributions = ref<Record<string, DistributionWrapper>>()
+    const { hypothesisId: hypothesis } = storeToRefs(
+            stores.useJobSelection()
+        )
+    const { activeUUID } = storeToRefs(stores.useCorpora())
+    const url = computed<string>(() => {
+        if (!(hypothesis.value)) return undefined
+        return distributionPath(activeUUID.value)
+    })
+    
+    const { loading, data: distributions } = useAxios<Record<string, DistributionWrapper>>(url, {}, { hypothesis: hypothesis.value })
     const distribution = computed(
         () =>
             distributions.value?.[selectedDistribution.value] ??
@@ -36,7 +48,6 @@ const useDistribution = defineStore("distribution", () => {
         },
         { immediate: true }
     )
-    const loading = ref(false)
     const posses = computed(() => {
         // A bit hacky using Object.entries, but .map throws on undefined.
         return Object.entries(distribution.value?.distribution)

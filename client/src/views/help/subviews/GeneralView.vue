@@ -278,7 +278,7 @@
             <p>
                 The following is a short overview of the evaluation terminology used in GaLAHaD. For a more detailed
                 explanation, see the
-                <GNav :route="{ path: '/help/evaluation' }">detailed evaluation help</GNav>.
+                <router-link to="/help/evaluation">detailed evaluation help</router-link>.
             </p>
 
             <h4>F1</h4>

@@ -47,7 +47,7 @@
     </GTable>
 
     <ComparisonModal v-if="showModal" @hide="showModal = false" :samples @download="$emit('download', modalData)"
-        :referenceJob="jobSelection.referenceJobId" :hypothesisJob="jobSelection.hypothesisJobId" :downloading />
+        :referenceJob="jobSelection.referenceId" :hypothesisJob="jobSelection.hypothesisId" :downloading />
 </template>
 
 <script setup lang="ts">
@@ -86,7 +86,7 @@ const modalData = ref({})
 function openModal(data) {
     modalData.value = data
     samples.value = {
-        title: `${data.field.label} ${data.item.name} samples`,
+        title: `${data.column.label} ${data.item.name} samples`,
         samples: data.value.samples,
         annotationType: data.item.column.toLowerCase()
     }

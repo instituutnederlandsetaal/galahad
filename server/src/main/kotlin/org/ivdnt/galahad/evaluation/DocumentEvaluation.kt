@@ -14,7 +14,7 @@ class DocumentEvaluation(
     val entities: DocumentEntities get() = entitiesCache.readOrCreate()
     private val entitiesFile = dir.resolve(ENTITIES_FILE)
     private val entitiesCache = object : ValidatedDiskValue<DocumentEntities>(entitiesFile) {
-        override fun isValid(lastModified: Long) = lastModified >= corpus.lastModified
+        override fun isValid(modified: Long) = modified >= corpus.modified
         override fun set(): DocumentEntities = DocumentEntities.create(corpus.jobs.readOrThrow(jobs.reference).getLayer(name))
     }
     companion object {

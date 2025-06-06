@@ -22,7 +22,7 @@ export type DistributionWrapper = {
     distribution: Distribution[]
     generated: number
     hypothesis: string
-    lastModified: number
+    modified: number
     totalAlphabeticChars: number
     totalChars: number
     trimmed: boolean

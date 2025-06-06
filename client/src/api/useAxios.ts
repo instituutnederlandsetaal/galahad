@@ -24,7 +24,7 @@ export function useAxios<T>(
 
         loading.value = true
         axios
-            .get(url, toValue(params))
+            .get(url, { params: toValue(params) })
             .then(res => {
                 data.value = res.data
             })

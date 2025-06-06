@@ -1,8 +1,7 @@
 <template>
     <AnnotateTab hideAnnotationsError>
         <GTable :title="`Jobs for corpus ${corporaStore.activeCorpus?.name}`" helpLink="jobs" :columns
-            :items="displayJobs" :loading="jobsStore.loading" fill hoverRow sortColumn="id" :sortDesc="false"
-            class="jobsview">
+            :items="displayJobs" :loading="jobsStore.loading" fill hoverRow sortColumn="id" class="jobsview">
             <template #help>
                 <JobsHelp />
             </template>
@@ -20,12 +19,6 @@
                 <div v-else>
                     <span style="font-weight: bold">{{ d.item.tagger.id }}</span>
                 </div>
-            </template>
-
-            <!-- tagset cell -->
-            <template #cell-tagset="d">
-                <div v-if="!d.item.tagger.tagset"><i>Unknown</i></div>
-                <div v-else>{{ d.item.tagger.tagset }}</div>
             </template>
 
             <!-- annotations cell -->
@@ -51,9 +44,9 @@
                 </div>
             </template>
 
-            <!-- last modified cell -->
-            <template #cell-lastModified="d">
-                <span style="white-space: nowrap">{{ formatDate(d.item.lastModified) }}</span>
+            <!-- modified cell -->
+            <template #cell-modified="d">
+                <span style="white-space: nowrap">{{ formatDate(d.item.modified) }}</span>
             </template>
 
             <!-- progress cell -->
@@ -68,10 +61,7 @@
 
             <!-- actions cell -->
             <template v-slot:cell-actions="d">
-                <GNav v-if="!corporaStore.hasDocs" :route="{ path: '/annotate/data/documents' }">
-                    Upload documents to start job
-                </GNav>
-                <GButton v-else @click="jobId = d.item.tagger.id"> View &amp; Tag </GButton>
+                <GButton @click="jobId = d.item.tagger.id"> View &amp; Tag </GButton>
             </template>
 
             <template #header>
@@ -186,10 +176,10 @@ const columns = computed(() => {
             sortOn: x => x.tagger.eraFrom.toString() + x.tagger.eraTo.toString()
         },
         {
-            key: "lastModified",
-            label: "last modified",
+            key: "modified",
+            label: "modified",
             align: "center",
-            sortOn: x => x.lastModified
+            sortOn: x => x.modified
         },
         {
             key: "progress",

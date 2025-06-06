@@ -24,20 +24,19 @@ type DocumentEntitiesResponse = AxiosResponse<DocumentEntities>
 type JobEntitiesResponse = AxiosResponse<JobEntities>
 type JobsEntitiesResponse = AxiosResponse<JobsEntities>
 
-const evaluationPath = (corpus: UUID, hypothesis: string): string =>
-    `/corpora/${corpus}/jobs/${hypothesis}/evaluation`
-const confusionPath = (corpus: UUID, hypothesis: string): string =>
-    `${evaluationPath(corpus, hypothesis)}/confusion`
-const confusionSamplesPath = (corpus: UUID, hypo: string): string =>
-    `${confusionPath(corpus, hypo)}/download`
-const distributionPath = (corpus: UUID, hypothesis: string): string =>
-    `${evaluationPath(corpus, hypothesis)}/distribution`
-const metricsPath = (corpus: UUID, hypothesis: string): string =>
-    `${evaluationPath(corpus, hypothesis)}/metrics`
-const metricsSamplesPath = (corpus: UUID, hypo: string): string =>
-    `${metricsPath(corpus, hypo)}/download`
-const downloadPath = (corpus: UUID, hypothesis: string): string =>
-    `${evaluationPath(corpus, hypothesis)}/download`
+const evaluationPath = (corpus: UUID): string => `/corpora/${corpus}/evaluation`
+export const confusionPath = (corpus: UUID): string =>
+    `${evaluationPath(corpus)}/confusion`
+const confusionSamplesPath = (corpus: UUID): string =>
+    `${confusionPath(corpus)}/download`
+export const distributionPath = (corpus: UUID): string =>
+    `${evaluationPath(corpus)}/distribution`
+const metricsPath = (corpus: UUID): string =>
+    `${evaluationPath(corpus)}/metrics`
+const metricsSamplesPath = (corpus: UUID): string =>
+    `${metricsPath(corpus)}/download`
+const downloadPath = (corpus: UUID): string =>
+    `${evaluationPath(corpus)}/download`
 const documentLayerComparisonPath = (
     corpus: UUID,
     job: string,
@@ -61,7 +60,7 @@ export function getDistribution(
     corpus: UUID,
     hypothesis: string
 ): Promise<DistributionResponse> {
-    return axios.get(distributionPath(corpus, hypothesis))
+    return axios.get(distributionPath(corpus), { params: { hypothesis } })
 }
 
 /**

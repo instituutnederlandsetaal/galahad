@@ -4,7 +4,7 @@
             <p>
                 Benchmarks show the performance of taggers on the default datasets. The accuracy scores are given for
                 lemma, PoS, and both. For more details on the datasets, see the
-                <GNav :route="{ path: '/overview/datasets' }">datasets overview</GNav>.
+                <router-link to="/overview/datasets">datasets overview</router-link>.
             </p>
             <p>
                 <i>
@@ -85,9 +85,8 @@ const datasetOptions = computed<SelectOption[]>(() =>
 const selectedDatasetUuid = ref<string>()
 const selectedDatasetName = computed(
     () =>
-        corporaStore.datasets.find(
-            d => d.uuid === selectedDatasetUuid.value
-        )?.name
+        corporaStore.datasets.find(d => d.uuid === selectedDatasetUuid.value)
+            ?.name
 )
 const metricsFilter = ref(null)
 const columns = [

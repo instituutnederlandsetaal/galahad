@@ -25,48 +25,45 @@
             <table :class="classes">
                 <thead v-if="!isEmpty">
                     <tr>
-                        <th v-for="field in visibleFields" :key="field.key">
+                        <th v-for="column in visibleColumns" :key="column.key">
                             <div>
-                                <!-- specific head -->
-                                <slot :name="'head-' + field.key" :field>
-                                    <!-- generic head -->
-                                    <slot name="head" :field>{{ field.label || field.key }}</slot>
+                                <!-- override head -->
+                                <slot :name="`head-${column.key}`" :column>
+                                    <!-- default head -->
+                                    <slot name="head" :column>{{ column.label || column.key }}</slot>
                                 </slot>
                             </div>
 
-                            <span class="sort-control" v-if="field.sortOn">
-                                <span @click="sortBy(field.key, true)"
-                                    :class="{ active: sortDesc && sortColumn == field.key }">▼</span>
+                            <span class="sort-control" v-if="!column.noSort">
+                                <span @click="sortBy(column.key, true)"
+                                    :class="{ active: sortDesc && sortColumn == column.key }">▼</span>
                                 |
-                                <span @click="sortBy(field.key, false)"
-                                    :class="{ active: !sortDesc && sortColumn == field.key }">▲</span>
+                                <span @click="sortBy(column.key, false)"
+                                    :class="{ active: !sortDesc && sortColumn == column.key }">▲</span>
                             </span>
                         </th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- the rows -->
-                    <template v-for="(item, i) in itemsToDisplay" :key="'row' + i">
-                        <tr @click="rowClicked(item)" :class="(equal(model, item) ? 'selected' : '')">
-                            <td v-for="field in visibleFields" :key="field.key" :style="{ textAlign: field.align }">
-                                <!-- specific cell rendering -->
-                                <slot :name="'cell-' + field.key" :field="_field(field)" :item
-                                    :value="item[field.key] || ''">
-                                    <!-- generic cell rendering -->
-                                    <slot name="cell" :field="_field(field)" :item :value="item[field.key] || ''">
-                                        <!-- formatted -->
-                                        <template v-if="field.format">
-                                            {{ field.format({ value: item[field.key], item, field }) }}
-                                        </template>
-                                        <!-- default rendering -->
-                                        <template v-else>
-                                            {{ item[field.key] }}
-                                        </template>
-                                    </slot>
+                    <tr v-for="(item, i) in visibleItems" :key="i" @click="model = item"
+                        :class="model == item ? 'selected' : ''">
+                        <td v-for="column in visibleColumns" :key="column.key" :style="{ textAlign: column.align }">
+                            <!-- specific cell rendering -->
+                            <slot :name="`cell-${column.key}`" :column :item :value="item[column.key]">
+                                <!-- generic cell rendering -->
+                                <slot name="cell" :column :item :value="item[column.key]">
+                                    <!-- formatted -->
+                                    <template v-if="column.format">
+                                        {{ column.format({ value: item[column.key], item, column: column }) }}
+                                    </template>
+                                    <!-- default rendering -->
+                                    <template v-else>
+                                        {{ item[column.key] }}
+                                    </template>
                                 </slot>
-                            </td>
-                        </tr>
-                    </template>
+                            </slot>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
 
@@ -77,10 +74,8 @@
 </template>
 
 <script setup lang="ts">
-import type { Column } from "@/types/ui/table"
+import type { Column, Item } from "@/types/ui/table"
 import type { HelpLink } from "@/types/ui/help"
-
-type Item = { [key: string]: unknown }
 
 // --- props ---
 const {
@@ -91,18 +86,16 @@ const {
     loading,
     selectable,
     sortColumn: initSortColumn,
-    sortDesc: initSortDesc = true,
-    compact
+    sortDesc: initSortDesc = true
 } = defineProps<{
-    items?: Item[]
-    columns: Column[]
+    items: Item[]
+    columns: Column<Item>[]
     title?: string
     helpLink?: HelpLink | string
     loading?: boolean
     selectable?: boolean
     sortColumn?: string
     sortDesc?: boolean
-    compact?: boolean
 }>()
 
 // --- data ---
@@ -113,77 +106,57 @@ const sortDesc = ref<boolean>(initSortDesc)
 
 // --- computed ---
 const classes = computed(() => ({
-    compact: compact,
     loading: loading,
     selectable: selectable
 }))
 const isEmpty = computed<boolean>(() => items?.length === 0)
-const itemsToDisplay = computed<Item[]>(() => {
-    if (items === undefined) return []
 
-    function getPageItems(allItems: Item[]) {
-        return allItems.slice(
-            (page.value - 1) * pageSize,
-            page.value * pageSize
-        )
-    }
-
+const visibleItems = computed<Item[]>(() => {
     // only paginate
-    if (sortColumn.value === null) return getPageItems(items)
+    if (!sortColumn.value) return paginate(items)
 
-    const sortOn = columns.filter(field => field.key === sortColumn.value)[0]
-        ?.sortOn //hmm
-    function mapToSortProp(x: any) {
-        return sortOn ? sortOn(x) : x
-    }
-
-    if (sortColumn.value === null) {
-        // no sort, just paginate
-        return getPageItems(items)
-    }
     // sort and then paginate
-    const allItems = items
-        .slice()
-        .sort(
-            (a: Item, b: Item) =>
-                (-1) ** (+sortDesc.value | 0) *
-                compareAny(mapToSortProp(a), mapToSortProp(b))
-        )
-    return getPageItems(allItems)
+    const sortOn =
+        columns.find(column => column.key === sortColumn.value)?.sortOn ??
+        ((x: Item): Item => x[sortColumn.value])
+    const sorted = items.toSorted((a: Item, b: Item) => {
+        const order = sortDesc.value ? -1 : 1
+        return order * compareAny(sortOn(a), sortOn(b))
+    })
+    return paginate(sorted)
 })
-const numPages = computed<number>(() => {
-    return Math.ceil((items?.length ?? 0) / pageSize)
-})
+const numPages = computed<number>(() =>
+    Math.ceil((items?.length ?? 0) / pageSize)
+)
 const pageSize = 15
-const primaryKeyFields = computed<string[]>(() => {
-    return columns.filter(field => field.isPrimaryField).map(field => field.key)
-})
-const visibleFields = computed<Column[]>(() => {
-    return columns.filter(field => !field.hidden)
-})
+const visibleColumns = computed<Column<Item>[]>(() =>
+    columns.filter(field => !field.hidden)
+)
 
 // --- watch ---
-watch(numPages, newVal => {
-    if (page.value > newVal && newVal > 0) {
-        page.value = newVal
+// reset to first page on item change
+watch(
+    () => items,
+    () => {
+        page.value = 1
     }
-})
+)
 
 function compareAny(a: unknown, b: unknown): number {
-    // null and undefined are always smaller
-    if (nu(a) && nu(b)) return 0
-    if (nu(a)) return -1
-    if (nu(b)) return 1
+    // // null and undefined are always smaller
+    // if (nu(a) && nu(b)) return 0
+    // if (nu(a)) return -1
+    // if (nu(b)) return 1
 
-    // Infinity is always bigger
-    if (a === Number.POSITIVE_INFINITY) return 1
-    if (b === Number.POSITIVE_INFINITY) return -1
+    // // Infinity is always bigger
+    // if (a === Number.POSITIVE_INFINITY) return 1
+    // if (b === Number.POSITIVE_INFINITY) return -1
 
     if (typeof a === "number" && typeof b === "number") {
         return a - b
     }
     if (typeof a === "string" && typeof b === "string") {
-        return a.localeCompare(b)
+        return -a.localeCompare(b)
     }
     if (Array.isArray(a) && Array.isArray(b)) {
         if (a.length === 0 && b.length === 0) return 0
@@ -199,66 +172,34 @@ function compareAny(a: unknown, b: unknown): number {
     //garbage
     return 0
 }
-function _field(field: Column): Column {
-    if (!field.label) {
-        field.label = field.key
-    }
-    return field
+
+function nu(v: unknown): boolean {
+    return v === null || v === undefined || v === ""
 }
-function equal(item1: Item, item2: Item): boolean {
-    // tests for equality of two items based an the primary key fields
-    if (primaryKeyFields.value.length === 0) return item1 === item2
-    if (nu(item1) && nu(item2)) return true
-    if (nu(item1) || nu(item2)) return false
-    return (
-        primaryKeyFields.value
-            .map((key: string) => item1[key] === item2[key])
-            .filter(x => !x).length === 0
-    )
+
+/** Return items on page N */
+function paginate(items: Item[]): Item[] {
+    return items.slice((page.value - 1) * pageSize, page.value * pageSize)
 }
-function nu(v: unknown) {
-    return v === null || v === undefined
-} //utility
-function rowClicked(item: Item): void {
-    if (selectable) {
-        model.value = item
-    }
-}
+
+/** Sort by the column key, descending or ascending, and jump to the first page. */
 function sortBy(key: string, desc: boolean): void {
     sortColumn.value = key
     sortDesc.value = desc
-    // Reset to first page to see the effect of sorting.
     page.value = 1
 }
 </script>
 
 <style scoped lang="scss">
-*:deep(.table-controls) {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-    align-content: stretch;
-
-    .table-control {
-        flex-basis: 100px;
-        min-height: 100px;
-
-        &.slider {
-            /*Some overrides because the slider looks bad when small*/
-            flex: 1;
-            min-width: 200px;
-            padding: 0px 20px;
-            max-width: 400px;
-        }
-    }
-}
-
 table {
     border-collapse: collapse;
 
     &.loading {
         filter: blur(5px);
+    }
+
+    tr {
+        border: 1px solid var(--int-very-light-grey-hover);
     }
 
     thead {
@@ -290,7 +231,6 @@ table {
 
     tbody {
         tr {
-            border: 1px solid var(--int-very-light-grey-hover);
 
             &:nth-child(even) {
                 background: #fff;

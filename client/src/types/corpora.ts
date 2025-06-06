@@ -4,10 +4,10 @@ export type CorpusMetadata = MutableCorpusMetadata & {
     activeJobs: number
     numResults: number
     dataset: boolean
-    lastModified: number
+    modified: number
     numDocs: number
     public: boolean
-    sizeInBytes: number
+    size: number
     uuid: UUID
 }
 
@@ -22,5 +22,5 @@ export type MutableCorpusMetadata = {
     collaborators: string[]
     viewers: string[]
     sourceName: string
-    sourceURL: string
+    sourceUrl: string
 }

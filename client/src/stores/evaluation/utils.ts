@@ -49,8 +49,8 @@ export function reloadEval(
                 const jobSelection = stores.useJobSelection()
                 // Retrieve latest selections
                 const currentCorpus = corporaStore.activeUUID
-                const currentHypothesis = jobSelection.hypothesisJobId
-                const currentReference = jobSelection.referenceJobId
+                const currentHypothesis = jobSelection.hypothesisId
+                const currentReference = jobSelection.referenceId
                 // Only commit the response if it corresponds to the current corpus and layers
                 // This prevents late responses overwriting responses to newer requests
                 const url: string = response.request.responseURL

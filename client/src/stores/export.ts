@@ -28,7 +28,7 @@ const useExport = defineStore("exportStore", () => {
         loading.value = true
         API.convertCorpus(
             corporaStore.activeUUID,
-            jobSelection.hypothesisJobId,
+            jobSelection.hypothesisId,
             format.value,
             posHeadOnly
         )
@@ -41,7 +41,7 @@ const useExport = defineStore("exportStore", () => {
         loading.value = true
         API.mergeCorpus(
             corporaStore.activeUUID,
-            jobSelection.hypothesisJobId,
+            jobSelection.hypothesisId,
             format.value,
             posHeadOnly
         )

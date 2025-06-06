@@ -2,24 +2,23 @@
     <section class="tabs">
 
         <header class="header">
+
             <template v-if="$slots.banner">
                 <slot name="banner"></slot>
             </template>
+
             <nav class="nav">
-                <template v-for="tab in tabs" :key="tab.id">
-                    <a v-if="!tab.disabled && !tab.stub" :href="urlForTab(tab.id)"
-                        :class="'textcolor ' + navLinkClass(tab.id)" @click.prevent="navigateTo(tab.id)">
-                        <slot :name="`${tab.id}-title`" :isActive="currentTab == tab.id">{{ tab.title || tab.id }}
-                        </slot>
-                    </a>
-                    <span :class="`nav-link ${tab.disabled ? 'disabled' : ''}`" v-else>
-                        <slot :name="`${tab.id}-title`">{{ tab.title || tab.id }}</slot>
-                    </span>
-                </template>
+                <slot v-for="tab in tabs" :key="tab.id" :name="`${tab.id}-title`">
+                    <a v-if="tab.disabled" class="nav-link disabled">{{ tab.title || tab.id }}</a>
+                    <router-link v-else class="nav-link" :to="{ path: `${basePath}/${tab.id}`, query: route.query }">
+                        {{ tab.title || tab.id }}
+                    </router-link>
+                </slot>
             </nav>
+
         </header>
 
-        <RouterView class="view" @navigate="router.push" />
+        <RouterView class="view" />
     </section>
 </template>
 
@@ -36,67 +35,7 @@ const { basePath, tabs } = defineProps<{
     tabs: Tab[]
 }>()
 
-const currentTab = ref<string>()
 const route = useRoute()
-const router = useRouter()
-
-onMounted(() => {
-    if (route.path.split("/").length > basePath.split("/").length) {
-        // respect the url
-        induceCurrentTab()
-        return
-    }
-    const state = localStorage.getItem(`galahad:${basePath}`)
-    if (state !== null && state !== undefined) {
-        // load state from local storage
-        navigateTo(state, true)
-    } else {
-        // default
-        navigateTo(tabs[0].id, true)
-    }
-})
-
-watch(
-    () => route,
-    () => {
-        induceCurrentTab()
-    }
-)
-
-// --- methods ---
-function induceCurrentTab() {
-    const last = route.path.split("/").pop() as string
-    setCurrentTab(last)
-}
-function navigateTo(tabId: string, replace = false) {
-    const path = `${basePath}/${tabId}`
-    if (!route.path.startsWith(path)) {
-        if (replace) {
-            router.replace({ path: path, query: route.query })
-        } else {
-            router.push({ path: path, query: route.query })
-        }
-    }
-    setCurrentTab(tabId)
-}
-function navLinkClass(tabId: string) {
-    return `nav-link${currentTab.value === tabId ? " active" : ""}`
-}
-function setCurrentTab(tabId: string) {
-    // Since the route is not reactive, we have to update the value like this
-    currentTab.value = tabId
-    if (tabId !== null && tabId !== undefined)
-        localStorage.setItem(`galahad:${basePath}`, tabId)
-}
-function urlForTab(tabId: string) {
-    const qs = Object.entries(route.query)
-        .map(
-            ([k, v]) =>
-                `${k}=${encodeURIComponent(typeof v === "object" ? JSON.stringify(v) : v)}`
-        )
-        .join("&")
-    return `/galahad${basePath}/${tabId}?${qs}`
-}
 </script>
 
 <style scoped lang="scss">
@@ -124,7 +63,7 @@ function urlForTab(tabId: string) {
                 color: black;
                 user-select: none;
 
-                &:hover:not(.disabled):not(.active) {
+                &:hover:not(.disabled):not(.router-link-active) {
                     cursor: pointer;
                     background-color: var(--int-theme-hover);
                 }
@@ -137,11 +76,11 @@ function urlForTab(tabId: string) {
                     cursor: not-allowed;
                 }
 
-                &.active {
+                &.router-link-active {
                     background-color: var(--int-theme-outline);
                 }
 
-                &:active:not(.disabled):not(.active) {
+                &:active:not(.disabled):not(.router-link-active) {
                     background-color: var(--int-theme-active);
                 }
             }

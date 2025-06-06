@@ -8,11 +8,11 @@
 </template>
 
 <script setup lang="ts">
-defineProps({
-    uploadable: { type: Boolean, default: false },
-    exportable: { type: Boolean, default: false },
-    mergeable: { type: Boolean, default: false }
-})
+const { uploadable, exportable, mergeable } = defineProps<{
+    uploadable: boolean
+    exportable: boolean
+    mergeable: boolean
+}>()
 </script>
 
 <style scoped lang="scss">

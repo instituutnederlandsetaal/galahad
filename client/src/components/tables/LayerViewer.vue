@@ -1,5 +1,5 @@
 <template>
-    <GTable compact :columns :items="items">
+    <GTable :columns :items="items">
         <template #title>Annotations of {{ document?.name }}</template>
         <template #help>Here you can inspect a small part of the source layer of the document.</template>
     </GTable>

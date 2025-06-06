@@ -13,7 +13,7 @@
                 </fieldset>
                 <fieldset class="fieldset">
                     <label for="csv-download">Download as CSV</label>
-                    <i v-if="!jobSelection.hypothesisJobId || !jobSelection.referenceJobId">
+                    <i v-if="!jobSelection.hypothesisId || !jobSelection.referenceId">
                         Select both layers first.
                     </i>
                     <DownloadButton v-else id="csv-download" wide :loading="evaluation.loading"
@@ -57,8 +57,8 @@ const { basePath } = defineProps<{
 function evaluationRequestHasChanged(): boolean {
     return (
         evaluation.corpusUUID !== corporaStore.activeUUID ||
-        evaluation.hypothesis !== jobSelection.hypothesisJobId ||
-        evaluation.reference !== jobSelection.referenceJobId
+        evaluation.hypothesis !== jobSelection.hypothesisId ||
+        evaluation.reference !== jobSelection.referenceId
     )
 }
 
@@ -70,8 +70,8 @@ function evaluationRequestHasChanged(): boolean {
  */
 function reloadEvaluationData(reloadDistribution = false): void {
     if (!corporaStore.activeCorpus) return
-    const hypothesis = jobSelection.hypothesisJobId
-    const reference = jobSelection.referenceJobId
+    const hypothesis = jobSelection.hypothesisId
+    const reference = jobSelection.referenceId
 
     // Only reload if either the corpus uuid or the hypothesis/reference has changed.
     if (!evaluationRequestHasChanged()) {
@@ -134,13 +134,13 @@ onMounted(() => {
 
 // // Reload data on job selection changes.
 watch(
-    () => jobSelection.hypothesisJobId,
+    () => jobSelection.hypothesisId,
     () => {
         reloadEvaluationData(true)
     }
 )
 // watch(
-//     () => jobSelection.referenceJobId,
+//     () => jobSelection.referenceId,
 //     () => {
 //         if (!jobSelection.selectionsValid) return
 //         reloadEvaluationData()
@@ -156,10 +156,10 @@ watch(
 //         // At this point, invalid selections are set to null.
 //         // So we can override the reference to the sourceLayer as a default (if it exists).
 //         if (
-//             jobSelection.referenceJobId == null &&
+//             jobSelection.referenceId == null &&
 //             documentsStore.numSourceAnnotations > 0
 //         ) {
-//             jobSelection.referenceJobId = SOURCE_LAYER
+//             jobSelection.referenceId = SOURCE_LAYER
 //         }
 //     },
 //     { immediate: true },

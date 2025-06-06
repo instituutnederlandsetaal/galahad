@@ -88,7 +88,7 @@ const hasTeiP5Legacy = computed(() =>
 const disabled = computed(
     () =>
         exportStore.format === undefined ||
-        jobSelection.hypothesisJobId === undefined ||
+        jobSelection.hypothesisId === undefined ||
         exportStore.loading
 )
 

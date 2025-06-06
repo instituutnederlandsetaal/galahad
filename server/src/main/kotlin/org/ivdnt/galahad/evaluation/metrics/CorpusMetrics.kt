@@ -24,9 +24,9 @@ class CorpusMetrics(
     hypothesisJob2: Job = corpus.jobs.readOrThrow(hypothesis),
     referenceJob2: Job = corpus.jobs.readOrThrow(reference),
 ) : Metrics(settings, hypoTagger2, refTagger2, hypothesisJob2, referenceJob2, truncate = truncate) {
-    val hypothesisLastModified: Long = hypothesisJob.lastModified
+    val hypothesismodified: Long = hypothesisJob.modified
 
-    val referenceLastModified: Long = referenceJob.lastModified
+    val referencemodified: Long = referenceJob.modified
 
     val generated: Long = System.currentTimeMillis()
 

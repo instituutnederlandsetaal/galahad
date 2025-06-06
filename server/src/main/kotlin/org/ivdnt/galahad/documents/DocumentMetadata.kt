@@ -21,9 +21,9 @@ data class DocumentMetadata(
     /** Some statistics about the source annotations, if present */
     val layerSummary: LayerSummary,
     /** Last modified timestamp in milliseconds. */
-    val lastModified: Long,
+    val modified: Long,
     /** Annotation types in the source layer. */
-    val annotations: Set<Annotation>,
+    val annotations: List<Annotation>,
 ) {
     companion object {
         private const val PREVIEW_LENGTH: Int = 100
@@ -38,8 +38,8 @@ data class DocumentMetadata(
                 preview = text.take(PREVIEW_LENGTH) + if (text.length > PREVIEW_LENGTH) "..." else "",
                 layerPreview = file.layer.preview,
                 layerSummary = file.layer.summary,
-                lastModified = System.currentTimeMillis(),
-                annotations = file.layer.terms.flatMap { it.annotations.keys }.toSet()
+                modified = System.currentTimeMillis(),
+                annotations = Annotation.order(file.layer.terms.flatMap { it.annotations.keys }.toList())
             )
         }
     }

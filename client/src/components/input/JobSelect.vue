@@ -6,14 +6,14 @@
     <GInfo v-if="untaggedDocsExist">
         <p>
             Not all documents have been tagged yet. It is still possible to select this layer, but it will be
-            incomplete. Alternatively, <GNav :route="{ path: '/annotate/jobs' }">start a new tagger job</GNav> or wait
+            incomplete. Alternatively, <router-link to="/annotate/jobs">start a new tagger job</router-link> or wait
             for the current job to finish.
         </p>
     </GInfo>
     <GInfo v-if="sourceLayerHasMissingAnnotations">
         <p>
             Some documents in this corpus have no source annotations. It is still possible to select this layer, but it
-            will be incomplete. Alternatively, <GNav :route="{ path: '/annotate/documents' }">go to documents</GNav> and
+            will be incomplete. Alternatively, <router-link to="/annotate/documents">go to documents</router-link> and
             add or remove documents.
         </p>
     </GInfo>
@@ -37,14 +37,14 @@ const label = computed<string>(
 const selectedJob = computed<string>({
     get(): string {
         return isReference
-            ? jobSelectionStore.referenceJobId
-            : jobSelectionStore.hypothesisJobId
+            ? jobSelectionStore.referenceId
+            : jobSelectionStore.hypothesisId
     },
     set(newValue: string): void {
         if (isReference) {
-            jobSelectionStore.referenceJobId = newValue
+            jobSelectionStore.referenceId = newValue
         } else {
-            jobSelectionStore.hypothesisJobId = newValue
+            jobSelectionStore.hypothesisId = newValue
         }
     }
 })

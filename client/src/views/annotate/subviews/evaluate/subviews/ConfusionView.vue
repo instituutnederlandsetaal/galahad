@@ -1,5 +1,11 @@
 <template>
     <GCard>
+        <div class="table-controls" v-if="bothJobsSelected">
+            <div class="table-control">
+                <label for="annotation-select">Annotation:</label>
+                <GSelect id="annotation-select" :options="confusionableAnnotations" v-model="selectedAnnotation" />
+            </div>
+        </div>
         <GTable title="Part-of-speech confusion" helpLink="evaluation" :columns :items="rows" id="confusionTable"
             :loading sortColumn="referenceJob" :sortDesc="false" hoverRow>
             <template #help>
@@ -20,13 +26,7 @@
             </template>
 
             <template #header>
-                <div class="table-controls" v-if="bothJobsSelected">
-                    <div class="table-control">
-                        <label for="annotation-select">Annotation:</label>
-                        <GSelect id="annotation-select" :options="confusionableAnnotations"
-                            v-model="selectedAnnotation" />
-                    </div>
-                </div>
+
             </template>
 
             <template #table-empty>Select a reference layer, a hypothesis layer and an annotation to
@@ -35,14 +35,14 @@
             <!-- top left header -->
             <template #head-referenceJob>
                 part-of-speech <br />
-                ({{ jobSelection.hypothesisJobId }}→)<br />
-                ({{ jobSelection.referenceJobId }}↓)
+                ({{ jobSelection.hypothesisId }}→)<br />
+                ({{ jobSelection.referenceId }}↓)
             </template>
 
             <!-- custom cell rendering -->
             <template #cell="data: Cell">
                 <!-- header column -->
-                <div v-if="data.field.key == 'referenceJob'">
+                <div v-if="data.column.key == 'referenceJob'">
                     {{ data.value }}
                 </div>
 
@@ -54,8 +54,8 @@
         </GTable>
 
         <ComparisonModal v-if="showModal" @hide="showModal = false" :samples :downloading
-            @download="(data) => download(data)" :referenceJob="jobSelection.referenceJobId"
-            :hypothesisJob="jobSelection.hypothesisJobId" />
+            @download="(data) => download(data)" :referenceJob="jobSelection.referenceId"
+            :hypothesisJob="jobSelection.hypothesisId" />
     </GCard>
 </template>
 
@@ -96,7 +96,7 @@ const selectedConfusion = computed(
     () => confusion?.value[selectedAnnotation.value] || { table: {} }
 )
 const bothJobsSelected = computed(() => {
-    return jobSelection.hypothesisJobId && jobSelection.referenceJobId
+    return jobSelection.hypothesisId && jobSelection.referenceId
 })
 
 const columns = computed((): Column[] => {
@@ -156,13 +156,13 @@ const rows = computed((): Item[] => {
 // Methods
 function download() {
     const data = modalData.value
-    const hypothesisPos = data.field.key
+    const hypothesisPos = data.column.key
     const referencePos = data.item.referenceJob
     downloading.value = true
     API.getConfusionSamples(
         corporaStore.activeUUID,
-        jobSelection.hypothesisJobId,
-        jobSelection.referenceJobId,
+        jobSelection.hypothesisId,
+        jobSelection.referenceId,
         hypothesisPos,
         referencePos,
         selectedAnnotation.value
@@ -199,9 +199,9 @@ function posToBottom(pos: string) {
 }
 
 function cssClass(data) {
-    const match: boolean = strEqual(data.field.key, data.item.referenceJob)
+    const match: boolean = strEqual(data.column.key, data.item.referenceJob)
     const warnings = ["NO_POS", "MULTIPLE", "Missing match"]
-    if (warnings.includes(data.field.key)) {
+    if (warnings.includes(data.column.key)) {
         return {
             orange: match,
             plain: !match
@@ -216,9 +216,9 @@ function cssClass(data) {
 function openModal(data) {
     modalData.value = data
     samples.value = {
-        agreement: strEqual(data.field.key, data.item.referenceJob),
+        agreement: strEqual(data.column.key, data.item.referenceJob),
         samples: data.value.samples,
-        hypothesisPos: data.field.key,
+        hypothesisPos: data.column.key,
         referencePos: data.item.referenceJob,
         annotationType: selectedAnnotation.value
     }

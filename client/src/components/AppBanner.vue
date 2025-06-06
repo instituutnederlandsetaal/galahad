@@ -1,22 +1,19 @@
 <template>
     <hgroup class="banner" role="banner">
         <div class="logo">
-            <GNav :route="{ path: '/' }">
+            <router-link to="/">
                 <img class="painting" src="@/assets/galahad-graal-klein.png" />
-            </GNav>
+            </router-link>
         </div>
 
         <div class="title">
             <a href="https://ivdnt.org/" target="_blank" tabindex="-1" rel="noopener noreferrer">
                 / instituut voor de Nederlandse&nbsp;taal&nbsp;/
             </a>
-            <GNav :route="{ path: '/' }">galahad</GNav>
+            <router-link to="/">galahad</router-link>
         </div>
 
         <nav class="nav">
-            <!-- If we ever decide to make these links open in the same tab, this is how:
-                <GNav :route="{ path: '/help' }">Help</GNav>
-            -->
             <a href="/galahad/help" target="_blank">help</a>
             <a href="/galahad/application" target="_blank">about</a>
             <a href="/galahad/contribute" target="_blank">contribute</a>
