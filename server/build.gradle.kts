@@ -44,7 +44,7 @@ dependencies {
     implementation("com.fasterxml:aalto-xml:1.3.3")
 
     // cache
-    implementation("com.github.ben-manes.caffeine:caffeine:3.2.0")
+    implementation("com.github.ben-manes.caffeine:caffeine:3.2.1")
 
     // reading microsoft word docx
     implementation("org.apache.poi:poi-ooxml:5.4.1")
