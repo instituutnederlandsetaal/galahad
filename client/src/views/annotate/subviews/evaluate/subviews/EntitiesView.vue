@@ -55,7 +55,7 @@ const filter = computed(() => {
 // --- watch ---
 watchEffect(() => {
     loading.value = true
-    API.getJobsEntities(corpora.activeUUID)
+    API.getJobsEntities(corpora.corpusId)
         .then(res => {
             items.value = convertJobsEntities(res.data)
         })

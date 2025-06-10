@@ -8,21 +8,21 @@
             <GButton green title="New" @click="newCorpus = true">
                 New
             </GButton>
-            <GButton orange title="Edit" :disabled="!user.canWrite" @click="editCorpus = copy(activeCorpus)">
+            <GButton orange title="Edit" :disabled="!user.canWrite" @click="editCorpus = copy(corpus)">
                 Edit
             </GButton>
-            <GButton red title="Delete" :disabled="!user.canDelete" @click="deleteCorpus = activeCorpus">
+            <GButton red title="Delete" :disabled="!user.canDelete" @click="deleteCorpus = corpus">
                 Delete
             </GButton>
         </form>
 
         <!-- Owner corpus table -->
-        <CorpusTable :type="TableCorporaType.User" :corpora="allCorpora">
+        <CorpusTable :type="TableCorporaType.user" :corpora="corpora">
             <template #title>Your corpora</template>
         </CorpusTable>
 
         <!-- Shared corpus table -->
-        <CorpusTable :type="TableCorporaType.Shared" :corpora="sharedCorpora">
+        <CorpusTable :type="TableCorporaType.shared" :corpora="sharedCorpora">
             <template #title>Shared with you</template>
             <template #help>
                 <p>
@@ -37,7 +37,7 @@
         </CorpusTable>
 
         <!-- Benchmark corpus table -->
-        <CorpusTable :type="TableCorporaType.Dataset" :corpora="datasets">
+        <CorpusTable :type="TableCorporaType.dataset" :corpora="datasets">
             <template #title>Benchmark corpora</template>
             <template #help>
                 <BenchmarkSetsHelp />
@@ -52,8 +52,7 @@
         </CorpusTable>
 
         <!-- Create modal -->
-        <CorpusForm v-if="newCorpus" title="New corpus" @hide="newCorpus = false"
-            :action="(metadata) => { create(metadata) }">
+        <CorpusForm v-if="newCorpus" title="New corpus" @hide="newCorpus = false" @confirm="create">
             <template #help>
                 Fill in the metadata and create a corpus.
                 <CorpusFormHelp />
@@ -61,8 +60,8 @@
         </CorpusForm>
 
         <!-- Update modal -->
-        <CorpusForm v-if="editCorpus" title="Edit corpus" :item="editCorpus" @hide="editCorpus = null" update
-            :action="(metadata) => { update(editCorpus.uuid, metadata) }">
+        <CorpusForm v-if="editCorpus" title="Edit corpus" :initial="editCorpus" @hide="editCorpus = undefined"
+            @confirm="update">
             <template #help>
                 Change the metadata of an existing corpus.
                 <CorpusFormHelp />
@@ -83,8 +82,7 @@ import { TableCorporaType } from "@/types/ui/table"
 // Stores
 const corporaStore = stores.useCorpora()
 const { create, remove, update } = corporaStore
-const { allCorpora, sharedCorpora, datasets, activeCorpus } =
-    storeToRefs(corporaStore)
+const { corpora, sharedCorpora, datasets, corpus } = storeToRefs(corporaStore)
 const user = stores.useUser()
 
 // Fields

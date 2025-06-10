@@ -21,8 +21,7 @@ import type { Column } from "@/types/ui/table"
 type DistEntry = { variant: string; occurrences: number }
 
 // Props
-const props = defineProps<{
-    show: boolean
+const { variantsToDisplay } = defineProps<{
     variantsToDisplay: Distribution
 }>()
 
@@ -36,7 +35,7 @@ const columns: Column[] = [
     }
 ]
 const items: DistEntry[] = computed(() => {
-    return Object.entries(props.variantsToDisplay.literals.literals).map(
+    return Object.entries(variantsToDisplay.literals.literals).map(
         ([variant, occurrences]) => ({
             variant,
             occurrences

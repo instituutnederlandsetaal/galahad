@@ -1,13 +1,17 @@
-export enum TableCorporaType {
-    Dataset = "benchmark",
-    User = "user",
-    Shared = "shared"
+export const TableCorporaType = {
+    dataset: "benchmark",
+    user: "user",
+    shared: "shared"
 }
+export type TableCorporaType =
+    (typeof TableCorporaType)[keyof typeof TableCorporaType]
 
-export enum TableDocumentsType {
-    Dataset = "dataset",
-    User = "user"
+export const TableDocumentsType = {
+    dataset: "dataset",
+    user: "user"
 }
+export type TableDocumentsType =
+    (typeof TableDocumentsType)[keyof typeof TableDocumentsType]
 
 export interface Item {
     [key: string]: unknown
@@ -20,7 +24,7 @@ export type Column<T> = {
     sortOn?: (value: T) => number | string
     align?: string
     hidden?: boolean
-    format?: (data: TableData<T>) => string
+    format?: (value: T) => number | string
 }
 
 export type TableData<T> = {

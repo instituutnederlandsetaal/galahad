@@ -4,7 +4,7 @@ import type { Tagset } from "@/types/tagset"
 
 /** Stores available tagsets. */
 const useTagsets = defineStore("tagsets", () => {
-    const { data: tagsets, loading } = useAxios<Tagset[]>(tagsetsPath)
+    const { data: tagsets, loading } = useAxios<Tagset[]>(tagsetsPath, [])
     return { loading, tagsets }
 })
 

@@ -1,5 +1,5 @@
 <template>
-    <GTable :columns :items="displayCorpora" :loading sortColumn="name" selectable v-model="selectedCorpus">
+    <GTable :columns :items :loading sortColumn="name" selectable v-model="selectedCorpus">
 
         <template #title>
             <slot name="title">
@@ -23,11 +23,6 @@
             <template v-else>{{ data.item.sourceName }}</template>
         </template>
 
-        <!-- era -->
-        <template #cell-period="d">
-            {{ d.item.eraFrom }} - {{ d.item.eraTo }}
-        </template>
-
         <!-- jobs cell -->
         <template #cell-activeJobs="data: TableData<CorpusMetadata>">
             {{ data.item.numResults }}
@@ -39,19 +34,25 @@
 <script setup lang="ts">
 import stores from "@/stores"
 import type { CorpusMetadata } from "@/types/corpora"
-import { type Column, TableCorporaType, type TableData } from "@/types/ui/table"
+import {
+    type Column,
+    type Item,
+    TableCorporaType,
+    type TableData
+} from "@/types/ui/table"
 import { formatBytes, formatDate } from "@/ts/utils"
 
 // Stores
 const userStore = stores.useUser()
-const { loading, activeUUID } = storeToRefs(stores.useCorpora())
-const _selectedCorpus = ref<CorpusMetadata>()
+const { corpus } = storeToRefs(stores.useCorpora())
+const { loading, corpusId } = storeToRefs(stores.useCorpora())
+const _selectedCorpus = ref<CorpusMetadata>(corpus.value)
 const selectedCorpus = computed<CorpusMetadata>({
     get(): CorpusMetadata {
         return _selectedCorpus.value
     },
     set(newValue): void {
-        activeUUID.value = newValue.uuid
+        corpusId.value = newValue.uuid
         _selectedCorpus.value = newValue
     }
 })
@@ -63,11 +64,11 @@ const { corpora, type } = defineProps<{
 }>()
 
 // Fields
-const displayCorpora = computed(() => {
-    if (type === TableCorporaType.User) {
+const items = computed(() => {
+    if (type === TableCorporaType.user) {
         return corpora.filter(i => i.owner === userStore.user.id)
     }
-    if (type === TableCorporaType.Shared) {
+    if (type === TableCorporaType.shared) {
         return corpora.filter(
             i =>
                 i.collaborators.includes(userStore.user.id) ||
@@ -83,36 +84,33 @@ const columns: Column<CorpusMetadata>[] = [
     {
         key: "size",
         align: "right",
-        format: (d: TableData<CorpusMetadata>): string =>
-            formatBytes(d.item.size)
+        format: (c: CorpusMetadata): string => formatBytes(c.size)
     },
     {
         key: "period",
         align: "center",
-        sortOn: (c: CorpusMetadata): string =>
-            c.eraFrom.toString() + c.eraTo.toString()
+        sortOn: (c: CorpusMetadata): string => `${c.eraFrom} ${c.eraTo}`,
+        format: (c: CorpusMetadata): string => `${c.eraFrom} – ${c.eraTo}`
     },
     { key: "tagset" },
     { key: "source" },
     {
         key: "modified",
-        format: (d: TableData<CorpusMetadata>): string =>
-            formatDate(d.item.modified)
+        format: (c: CorpusMetadata): string => formatDate(c.modified)
     },
     {
         key: "collaborators",
         label: "shared with",
         align: "center",
-        hidden: type === TableCorporaType.Dataset,
+        hidden: type === TableCorporaType.dataset,
         sortOn: (c: CorpusMetadata): number => customSharedSort(c),
-        format: (d: TableData<CorpusMetadata>): string =>
-            formatCollaborators(d.item)
+        format: formatCollaborators
     },
     {
         key: "activeJobs",
         label: "jobs",
         align: "center",
-        hidden: type === TableCorporaType.Dataset
+        hidden: type === TableCorporaType.dataset
     }
 ]
 

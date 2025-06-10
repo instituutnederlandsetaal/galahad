@@ -62,6 +62,7 @@ import stores from "@/stores"
 import type { MetricTypeAssay } from "@/types/assays"
 import { SOURCE_LAYER } from "@/types/jobs"
 import type { TableData } from "@/types/ui/table"
+import type MetricsFilter from "@/components/tables/MetricsFilter.vue"
 
 // Types
 type AssayRow = {
@@ -88,7 +89,8 @@ const selectedDatasetName = computed(
         corporaStore.datasets.find(d => d.uuid === selectedDatasetUuid.value)
             ?.name
 )
-const metricsFilter = ref(null)
+const metricsFilter =
+    useTemplateRef<InstanceType<typeof MetricsFilter>>("metricsFilter")
 const columns = [
     { key: "tagger", label: "tagger" },
     { key: "precision", label: "macro\nprecision", sortOn: i => i.precision },

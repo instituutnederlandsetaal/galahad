@@ -6,7 +6,7 @@
         <GSpinner />
     </GCard>
     <!-- No corpus selected -->
-    <GCard v-else-if="!corporaStore.activeCorpus && !hideCorpusError" title="No corpus selected">
+    <GCard v-else-if="!corporaStore.corpus && !hideCorpusError" title="No corpus selected">
         <GInfo error>
             <p>No corpus has been selected.</p>
             <router-link to="/annotate/corpora">Select a corpus</router-link>
@@ -28,7 +28,7 @@
         <GSpinner />
     </GCard>
     <!-- No non-empty jobs-->
-    <GCard v-else-if="jobSelectionStore.selectableJobs.length == 0 && !hideAnnotationsError" title="No annotations">
+    <GCard v-else-if="jobSelectionStore.options.length == 0 && !hideAnnotationsError" title="No annotations">
         <GInfo error>
             <p>None of the documents have annotations. Either:</p>
             <ul>

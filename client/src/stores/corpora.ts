@@ -21,33 +21,34 @@ const useCorpora = defineStore("corpora", () => {
     const errors = stores.useErrors()
 
     // Fields
-    const activeUUID = useRouteQuery("corpus")
+    const corpusId = useRouteQuery("corpus")
     const {
-        data: allCorpora,
+        data: corpora,
         loading,
         reload
     } = useAxios<CorpusMetadata[]>(API.corporaPath, [])
     const datasets = computed<CorpusMetadata[]>(
-        (): CorpusMetadata[] => allCorpora.value?.filter(i => i.dataset) ?? []
+        (): CorpusMetadata[] => corpora.value?.filter(i => i.dataset) ?? []
     )
     const sharedCorpora = computed<CorpusMetadata[]>(
         (): CorpusMetadata[] =>
-            allCorpora.value?.filter(
+            corpora.value?.filter(
                 i => !i.dataset && i.owner !== user.user?.id
             ) ?? []
     )
-    const activeCorpus = computed((): CorpusMetadata | undefined =>
-        allCorpora.value?.find(i => i.uuid === activeUUID.value)
+    const corpus = computed<CorpusMetadata>(
+        (): CorpusMetadata =>
+            corpora.value?.find(
+                i => i.uuid === corpusId.value
+            ) as CorpusMetadata
     )
-    const hasDocs = computed((): boolean =>
-        Boolean(activeCorpus.value?.numDocs)
-    )
+    const hasDocs = computed((): boolean => Boolean(corpus.value?.numDocs))
     const isCollaborator = computed(
         (): boolean =>
-            activeCorpus.value?.collaborators.includes(user.user?.id) ?? false
+            corpus.value?.collaborators.includes(user.user?.id) ?? false
     )
     const isOwner = computed<boolean>(
-        (): boolean => activeCorpus.value?.owner === user.user?.id
+        (): boolean => corpus.value?.owner === user.user?.id
     )
 
     /**
@@ -55,11 +56,11 @@ const useCorpora = defineStore("corpora", () => {
      * @param metadata Metadata of the new corpus.
      */
     function create(metadata: MutableCorpusMetadata): void {
-        plausible.newCorpus(metadata)
+        plausible.corpusCreated(metadata)
         API.postCorpus(metadata)
             // Automatically set the new corpus as active.
             .then(response => {
-                activeUUID.value = response.data
+                corpusId.value = response.data
             })
             .catch(error => errors.handle(error))
             .finally(reload)
@@ -70,12 +71,12 @@ const useCorpora = defineStore("corpora", () => {
      * @param metadata Corpus to delete.
      */
     function remove(metadata: CorpusMetadata): void {
-        plausible.corpusDeleted()
+        plausible.corpusDeleted(metadata)
         API.deleteCorpus(metadata.uuid)
             .then(() => {
                 // Deselect now deleted corpus
-                if (metadata.uuid === activeUUID.value) {
-                    activeUUID.value = undefined
+                if (metadata.uuid === corpusId.value) {
+                    corpusId.value = undefined
                 }
             })
             .catch(error => errors.handle(error))
@@ -87,9 +88,9 @@ const useCorpora = defineStore("corpora", () => {
      * @param uuid UUID of corpus to update.
      * @param metadata Updated metadata.
      */
-    function update(uuid: UUID, metadata: MutableCorpusMetadata): void {
+    function update(metadata: CorpusMetadata): void {
         plausible.corpusUpdated(metadata)
-        API.patchCorpus(uuid, metadata)
+        API.patchCorpus(metadata.uuid, metadata)
             .catch(error => errors.handle(error))
             .finally(reload)
     }
@@ -97,13 +98,13 @@ const useCorpora = defineStore("corpora", () => {
     // Exports
     return {
         // Fields
-        allCorpora,
+        corpora,
         loading,
         datasets,
         sharedCorpora,
-        activeCorpus,
+        corpus,
         hasDocs,
-        activeUUID,
+        corpusId,
         isCollaborator,
         isOwner,
         // Methods

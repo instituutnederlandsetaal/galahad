@@ -4,6 +4,7 @@
 import * as API from "@/api/export"
 import * as Utils from "@/api/utils"
 import stores from "@/stores"
+import { plausible } from "@/ts/plausible"
 import type { Format } from "@/types/documents"
 
 /**
@@ -26,8 +27,15 @@ const useExport = defineStore("exportStore", () => {
             return
         }
         loading.value = true
+        plausible.corpusExported(
+            corporaStore.corpus,
+            jobSelection.hypothesisId,
+            format.value,
+            shouldMerge,
+            posHeadOnly
+        )
         API.convertCorpus(
-            corporaStore.activeUUID,
+            corporaStore.corpusId,
             jobSelection.hypothesisId,
             format.value,
             posHeadOnly
@@ -39,8 +47,15 @@ const useExport = defineStore("exportStore", () => {
 
     function merge(posHeadOnly: boolean): void {
         loading.value = true
+        plausible.corpusExported(
+            corporaStore.corpus,
+            jobSelection.hypothesisId,
+            format.value,
+            true,
+            posHeadOnly
+        )
         API.mergeCorpus(
-            corporaStore.activeUUID,
+            corporaStore.corpusId,
             jobSelection.hypothesisId,
             format.value,
             posHeadOnly

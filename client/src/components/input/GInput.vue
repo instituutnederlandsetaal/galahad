@@ -30,7 +30,7 @@ const {
     focus?: boolean
 }>()
 
-const inputElement = ref<HTMLInputElement>()
+const inputElement = useTemplateRef<HTMLInputElement>("inputElement")
 onMounted(() => {
     if (focus) {
         nextTick(() => {

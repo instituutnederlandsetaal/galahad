@@ -1,5 +1,5 @@
 // Libraries & stores
-
+import { plausible } from "@/ts/plausible"
 import * as API from "@/api/documents"
 import { documentsPath } from "@/api/documents"
 import * as Utils from "@/api/utils"
@@ -16,24 +16,23 @@ type FileStatus = {
 }
 
 /**
- * Contains the documents for the corporaStore.activeUUID
+ * Contains the documents for the corpusId.value
  * as well as functionality related to the user's documents, like uploading.
  */
 const documents = defineStore("documents", () => {
     // Stores
     const errors = stores.useErrors()
-    const corporaStore = stores.useCorpora()
+    const { corpusId, corpus } = storeToRefs(stores.useCorpora())
+    const { reload: reloadCorpora } = stores.useCorpora()
 
     // Fields
     const {
         data: documents,
         loading,
         reload
-    } = useAxios(
+    } = useAxios<DocumentMetadata[]>(
         (): string | undefined =>
-            corporaStore.activeUUID
-                ? documentsPath(corporaStore.activeUUID)
-                : undefined,
+            corpusId.value ? documentsPath(corpusId.value) : undefined,
         []
     )
 
@@ -47,7 +46,7 @@ const documents = defineStore("documents", () => {
     const uploadErrorCount = computed(
         () => Object.values(uploading).filter(i => i.status === "error").length
     )
-    const filesToUpload = ref([] as File[])
+    const filesToUpload = ref<File[]>([])
     const illegalFiles = computed((): File[] => {
         return filesToUpload.value.filter((x: any) => {
             const ext = x.name.split(".").at(-1)
@@ -66,24 +65,32 @@ const documents = defineStore("documents", () => {
 
     /**
      * Delete a document.
-     * @param documentName Document name.
+     * @param name Document name.
      */
-    function deleteDocument(documentName: string): void {
-        API.deleteDocument(corporaStore.activeUUID, documentName)
+    function deleteDocument(name: string): void {
+        plausible.documentDeleted(corpus.value, getDocument(name))
+        API.deleteDocument(corpusId.value, name)
             .catch(error => errors.handle(error))
             .finally(reload)
     }
 
     /**
      * Download original source document.
-     * @param documentName Document name.
+     * @param name Document name.
      */
-    function downloadRaw(documentName: string): void {
-        API.getRawDocument(corporaStore.activeUUID, documentName)
+    function downloadRaw(name: string): void {
+        plausible.documentDownloaded(corpus.value, getDocument(name))
+        API.getRawDocument(corpusId.value, name)
             .then(Utils.browserDownloadResponseFile)
             .catch(res =>
                 Utils.handleBlobError(res, "download raw document", errors)
             )
+    }
+
+    function getDocument(name: string): DocumentMetadata {
+        return documents.value.find(
+            (d: DocumentMetadata) => d.name === name
+        ) as DocumentMetadata
     }
 
     /**
@@ -126,7 +133,7 @@ const documents = defineStore("documents", () => {
         }
 
         let file = fd.get("file") as File
-        const extension = file?.name.split(".").at(-1)
+        const extension = fileExtension(file)
         let header = null
 
         if (Object.keys(exts_and_headers).includes(extension)) {
@@ -136,6 +143,10 @@ const documents = defineStore("documents", () => {
             fd.set("file", file)
         }
         return header
+    }
+
+    function fileExtension(file: File): string {
+        return file.name.split(".").at(-1)
     }
 
     /**
@@ -148,9 +159,11 @@ const documents = defineStore("documents", () => {
         // Some files need an explicit content type header.
         const header = addContentTypeHeader(formData)
 
+        plausible.documentUploaded(corpus.value, fileExtension(file))
+
         // Update status on upload, on success and on error.
         uploading[file?.name] = { status: "busy" }
-        API.postDocument(corporaStore.activeUUID, formData, header)
+        API.postDocument(corpusId.value, formData, header)
             .then(() => {
                 uploading[file?.name] = { status: "success" }
             })
@@ -162,7 +175,10 @@ const documents = defineStore("documents", () => {
                     })
             )
             .finally(() => {
-                if (uploadBusyCount.value === 0) reload()
+                if (uploadBusyCount.value === 0) {
+                    reload()
+                    reloadCorpora()
+                }
             })
     }
 

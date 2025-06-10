@@ -13,14 +13,14 @@ const useAssays = defineStore("assays", () => {
     const errors = stores.useErrors()
 
     // Fields
-    const loading = ref(false)
-    const assays = ref({} as Benchmarks)
+    const loading = ref<boolean>()
+    const assays = ref<Benchmarks>()
 
     // Methods
     /**
      * Reload all assays.
      */
-    function reload() {
+    function reload(): void {
         loading.value = true
         API.getBenchmarks()
             .then(response => (assays.value = response.data))

@@ -1,6 +1,6 @@
 <template>
     <AnnotateTab :hidePermissionsError="true">
-        <GCard :title="`Export corpus ${corporaStore.activeCorpus?.name}`" helpLink="export">
+        <GCard :title="`Export corpus ${corporaStore.corpus?.name}`" helpLink="export">
             <template #help>
                 <ExportHelp />
             </template>
@@ -70,8 +70,8 @@ const exportStore = stores.useExport()
 const documentsStore = stores.useDocuments()
 
 // Fields
-const posHeadOnly = ref(false)
-const shouldMerge = ref(true)
+const posHeadOnly = ref<boolean>(false)
+const shouldMerge = ref<boolean>(true)
 const showMergeOption = computed(() => {
     const format = exportStore.format
     const formatIsMergeable =

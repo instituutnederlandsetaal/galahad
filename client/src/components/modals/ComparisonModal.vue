@@ -1,21 +1,24 @@
 <!-- A modal used by PoS confusion & metrics. -->
 <template>
-    <GModal @hide="$emit('hide')" :title>
-        <template #help>
-            <p>
-                Here you can see a sample of how a token was tagged by <i>{{ hypothesisJob }}</i> and
-                <i>{{ referenceJob }}</i>. The samples are a random selection of all tokens in this category.
-            </p>
-        </template>
+    <GModal @hide="$emit('hide')">
+        <GTable :columns="filteredColumns" :items :title>
+            <template #help>
+                <p>
+                    Here you can see a sample of how a token was tagged by <i>{{ hypothesisJob }}</i> and
+                    <i>{{ referenceJob }}</i>. The samples are a random selection of all tokens in this category.
+                </p>
+            </template>
 
-        <p>Columns to display:</p>
-        <form @submit.prevent class="columnSelector">
-            <GCheckBox v-for="annotation in annotations" :key="annotation" v-model="visibleColumns[annotation]">
-                {{ annotation }}
-            </GCheckBox>
-        </form>
+            <template #header>
+                <p>Columns to display:</p>
+                <form @submit.prevent class="columnSelector">
+                    <GCheckBox v-for="annotation in annotations" :key="annotation" v-model="visibleColumns[annotation]">
+                        {{ annotation }}
+                    </GCheckBox>
+                </form>
+            </template>
 
-        <GTable :columns="filteredColumns" :items />
+        </GTable>
         <!--Download-->
         <p>Download all samples for this category.</p>
         <DownloadButton wide :loading="downloading" @click="$emit('download')" />
@@ -45,11 +48,13 @@ const props = defineProps({
 })
 
 // Emits
-defineEmits(["hide", "download"])
-
+const emit = defineEmits<{
+    download: []
+    hide: []
+}>()
 // Fields
 const ignorableAnnotations = ["token", "id", "misc"]
-const title = computed(() => {
+const title = computed<string>(() => {
     if (props.samples.title) return props.samples.title
     return props.samples.agreement
         ? "PoS agree samples"
@@ -81,7 +86,7 @@ const columns = computed(() => {
         ...referenceColumns
     ]
 })
-const visibleColumns = ref({}) // { [annotation]: boolean }
+const visibleColumns = ref<Record<string, boolean>>({}) // { [annotation]: boolean }
 /**
  * columns filtered based on the visible columns selection.
  */
@@ -132,26 +137,9 @@ watch(
 </script>
 
 <style scoped lang="scss">
-button,
-p {
-    margin: 5px auto;
-    display: block;
-    width: fit-content;
-}
-
-.fa-download {
-    padding: 0 1rem;
-}
-
 .columnSelector {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
 }
-
-/*
-:deep(td):nth-child(1),
-:deep(td):nth-child(3) {
-    border-right: 1px solid var(--int-very-light-grey-hover);
-} */
 </style>

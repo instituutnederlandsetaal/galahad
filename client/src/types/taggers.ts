@@ -1,19 +1,10 @@
 export type Tagger = {
     id: string
     description: string
-    tagset: null | string
+    tagset: string
     eraFrom: number
     eraTo: number
     annotations: string[]
-    attributions: null | {
-        [key: string]: string
-    }
-    links:
-        | null
-        | {
-              name: string
-              href: string
-          }[]
 }
 
 export enum TaggerStatus {

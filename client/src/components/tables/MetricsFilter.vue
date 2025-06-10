@@ -48,9 +48,9 @@ const singleOrMultipleOptions = [
     { value: "single", text: "Single" },
     { value: "multi", text: "Multiple" }
 ]
-const selectedMetric = ref(metricOptions.value[0]?.value)
-const selectedGroup = ref(groupOptions.value[0]?.value)
-const selectedSingleOrMultiple = ref(singleOrMultipleOptions[0]?.value)
+const selectedMetric = ref<string>(metricOptions.value[0]?.value)
+const selectedGroup = ref<string>(groupOptions.value[0]?.value)
+const selectedSingleOrMultiple = ref<string>(singleOrMultipleOptions[0]?.value)
 
 const metricName = computed(() => {
     let annotation = null

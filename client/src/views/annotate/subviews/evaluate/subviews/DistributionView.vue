@@ -96,8 +96,7 @@
 
         </GTable>
 
-        <VariantsModal :variantsToDisplay v-if="variantsToDisplay !== null" @hide="variantsToDisplay = null"
-            id="modal" />
+        <VariantsModal :variantsToDisplay v-if="variantsToDisplay" @hide="variantsToDisplay = undefined" />
     </GCard>
 </template>
 
@@ -114,13 +113,13 @@ const { distribution, selectedDistribution } = storeToRefs(distributionStore)
 const jobSelection = stores.useJobSelection()
 
 // Fields
-const selectedPosses = ref([])
+const selectedPosses = ref<string[]>([])
 // Table controls.
-const includePos = ref({} as { [pos: string]: boolean })
-const lemmaFilter = ref("")
-const literalFilter = ref("")
+const includePos = ref<Record<string, boolean>>({})
+const lemmaFilter = ref<string>("")
+const literalFilter = ref<string>("")
 // GModal for variants
-const variantsToDisplay = ref(null as null | Distribution)
+const variantsToDisplay = ref<Distribution>()
 // Filtered table items.
 const itemsToDisplay = computed((): Distribution[] => {
     // When distribution not yet generated.
@@ -173,7 +172,7 @@ const singMultiPosOptions: SelectOption[] = [
     { value: "multiple", text: "Multiple" },
     { value: "both", text: "Both" }
 ]
-const selectedSingMultiPos = ref(singMultiPosOptions[0].value)
+const selectedSingMultiPos = ref<string>(singMultiPosOptions[0].value)
 const filteredPosses = computed(() => {
     if (selectedSingMultiPos.value === "single") {
         return distributionStore.posses.filter(pos => !pos.includes("+"))

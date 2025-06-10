@@ -35,5 +35,5 @@ export function getTaggerHealth(tagger: string): Promise<TaggerHealthResponse> {
  * Summed over all taggers & corpora on the server.
  */
 export function getDocsAtTaggers(): Promise<TaggersBusyResponse> {
-    return axios.get(`${taggersPath}/active`)
+    return axios.get(`${taggersPath}/queue`)
 }

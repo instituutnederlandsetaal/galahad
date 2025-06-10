@@ -15,7 +15,7 @@ const { disabled, red, orange, green, plain, loading } = defineProps<{
     loading?: boolean
 }>()
 
-const classes = computed(() => ({
+const classes = computed<Record<string, boolean>>(() => ({
     red: red,
     orange: orange,
     green: green,
@@ -23,7 +23,7 @@ const classes = computed(() => ({
     disabled: disabled
 }))
 
-defineEmits<{
+const emit = defineEmits<{
     click: []
 }>()
 </script>

@@ -46,7 +46,7 @@ const jobSelection = stores.useJobSelection()
 const errors = stores.useErrors()
 
 // Fields
-const downloading = ref(false)
+const downloading = ref<boolean>()
 const columns = computed(() => {
     const withoutName = metricsPerPosColumns.filter(
         col =>
@@ -127,7 +127,7 @@ function download(data: Any) {
 
     downloading.value = true
     API.getMetricsSamples(
-        corporaStore.activeUUID,
+        corporaStore.corpusId,
         jobSelection.hypothesisId,
         jobSelection.referenceId,
         setting,

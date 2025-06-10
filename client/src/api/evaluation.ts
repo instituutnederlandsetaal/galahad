@@ -31,7 +31,7 @@ const confusionSamplesPath = (corpus: UUID): string =>
     `${confusionPath(corpus)}/download`
 export const distributionPath = (corpus: UUID): string =>
     `${evaluationPath(corpus)}/distribution`
-const metricsPath = (corpus: UUID): string =>
+export const metricsPath = (corpus: UUID): string =>
     `${evaluationPath(corpus)}/metrics`
 const metricsSamplesPath = (corpus: UUID): string =>
     `${metricsPath(corpus)}/download`

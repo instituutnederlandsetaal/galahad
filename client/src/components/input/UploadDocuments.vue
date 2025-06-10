@@ -93,7 +93,7 @@ const {
 } = storeToRefs(documentsStore)
 
 // Fields
-const dropZone = ref(null as any as HTMLElement)
+const dropZone = ref<HTMLElement>()
 
 // Methods
 function showDropZone(e: DragEvent) {

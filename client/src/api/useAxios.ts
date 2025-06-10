@@ -7,7 +7,7 @@ export function useAxios<T>(
     params?: MaybeRefOrGetter<Record<string, string | number | boolean>>,
     pageReloadOnError?: boolean
 ): {
-    data: Ref<T | undefined>
+    data: Ref<T>
     loading: Ref<boolean>
     reload: () => void
 } {
@@ -20,7 +20,10 @@ export function useAxios<T>(
 
     function execute(): void {
         const url: string | undefined = toValue(urlRef)
-        if (url === undefined) return
+        if (url === undefined) {
+            data.value = initial
+            return
+        }
 
         loading.value = true
         axios

@@ -4,9 +4,9 @@
         <template #help>
             <slot name="help"></slot>
         </template>
-        <form @submit.prevent @keyup.enter="doAction">
+        <form @submit.prevent @keyup.enter="confirm">
             <table>
-                <template v-if="userStore.canWrite || !item">
+                <template v-if="userStore.canWrite || !initial">
                     <tr>
                         <td>
                             <label>Name:</label> <span class="warning"><small>(Required)</small></span>
@@ -89,7 +89,7 @@
         </form>
 
         <template #buttons>
-            <GButton green @click="doAction" :disabled>{{ update ? "Update" : "Create" }}</GButton>
+            <GButton green @click="confirm" :disabled>{{ initial ? "Update" : "Create" }}</GButton>
         </template>
     </GModal>
 </template>
@@ -102,40 +102,38 @@ const userStore = stores.useUser()
 const tagsetsStore = stores.useTagsets()
 
 // --- props ---
-const { action, item, update, title } = defineProps<{
-    action: () => void,
-    item: CorpusMetadata,
-    update: boolean,
+const { initial, title } = defineProps<{
+    initial?: CorpusMetadata
     title: string
 }>()
 
 const emit = defineEmits<{
     hide: []
+    confirm: [metadata: CorpusMetadata]
 }>()
 
 // --- data ---
-const dataset = ref(false)
-const name = ref("")
+const dataset = ref<boolean>()
+const name = ref<string>("")
 const eraFrom = ref<number>()
 const eraTo = ref<number>()
-const tagset = ref("")
-const sourceName = ref("")
-const sourceUrl = ref("")
-const collaborators = ref([])
-const viewers = ref([])
+const tagset = ref<string>()
+const sourceName = ref<string>()
+const sourceUrl = ref<string>()
+const collaborators = ref<string[]>([])
+const viewers = ref<string[]>([])
 
 // --- computed ---
 const showAddDialog = computed(() => {
     // Only show it when you're not editing (i.e. you pressed 'new')
     // Or if you did press edit, only show it when you have access
-    return !update || userStore.canDelete
+    return !initial || userStore.canDelete
 })
 const disabled = computed(() => {
-    if (!item && update) return true
-    const i = item as MutableCorpusMetadata
+    const i = initial as MutableCorpusMetadata
     return (
         !isValid.value ||
-        (update &&
+        (initial &&
             name.value === i.name &&
             eraFrom.value === i.eraFrom &&
             eraTo.value === i.eraTo &&
@@ -158,8 +156,8 @@ const isValid = computed(() => {
 
 // --- watch ---
 watch(
-    () => item,
-    (newValue: MutableCorpusMetadata): void => {
+    () => initial,
+    (newValue: CorpusMetadata): void => {
         if (!newValue) return
         name.value = newValue.name
         eraFrom.value = newValue.eraFrom
@@ -175,9 +173,8 @@ watch(
 )
 
 // --- methods ---
-function doAction(): void {
-    if (!validateCorpusName(name.value)) return
-    const value: MutableCorpusMetadata = {
+function confirm(): void {
+    const value: CorpusMetadata = {
         owner: "", // this is set by the server for security reasons
         name: name.value,
         eraFrom: eraFrom.value,
@@ -187,24 +184,13 @@ function doAction(): void {
         collaborators: collaborators.value,
         viewers: viewers.value,
         sourceName: sourceName.value,
-        sourceUrl: validatesourceUrl(sourceUrl.value)
+        sourceUrl: validatesourceUrl(sourceUrl.value),
+        uuid: initial?.uuid
     }
-    action(value)
-    resetFormFields()
+    emit("confirm", value)
     emit("hide")
 }
-function resetFormFields(): void {
-    collaborators.value = []
-    viewers.value = []
-    name.value = ""
-    eraFrom.value = null
-    eraTo.value = null
-    tagset.value = ""
-    sourceName.value = ""
-    sourceUrl.value = ""
-    dataset.value = false
-}
-function validateCorpusName(name: string): boolean {
+function validateCorpusName(name: string) {
     return name.toString().match(/^.{3,100}$/)
 }
 function validatesourceUrl(url: string): string {
@@ -222,10 +208,6 @@ function validatesourceUrl(url: string): string {
 <style scoped lang="scss">
 .warning {
     color: var(--int-red);
-}
-
-.borderRow {
-    border-top: 1px solid var(--int-grey);
 }
 
 :deep(table) {

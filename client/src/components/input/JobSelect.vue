@@ -1,8 +1,7 @@
 <template>
     <label>{{ label }}</label>
     <GSpinner v-if="jobsStore.loading" />
-    <GSelect v-else title="Select an annotation layer" :options="jobSelectionStore.selectableJobs"
-        v-model="selectedJob" />
+    <GSelect v-else title="Select an annotation layer" :options="jobSelectionStore.options" v-model="selectedJob" />
     <GInfo v-if="untaggedDocsExist">
         <p>
             Not all documents have been tagged yet. It is still possible to select this layer, but it will be
@@ -21,7 +20,7 @@
 
 <script setup lang="ts">
 import stores from "@/stores"
-import { SOURCE_LAYER } from "@/types/jobs"
+import { SOURCE_LAYER, type Job } from "@/types/jobs"
 
 const jobsStore = stores.useJobs()
 const jobSelectionStore = stores.useJobSelection()
@@ -61,7 +60,7 @@ const sourceLayerHasMissingAnnotations = computed<boolean>(() => {
     return job.value.progress.finished !== documentsStore.numSourceAnnotations
 })
 
-const job = computed<Job | undefined>(() => {
+const job = computed<Job>(() => {
     if (!selectedJob.value) return undefined
     if (!jobsStore.jobs) return undefined
     // any job could be any job, even the source layer

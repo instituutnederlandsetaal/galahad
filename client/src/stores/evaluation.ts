@@ -40,17 +40,17 @@ const useEvaluation = defineStore("evaluation", () => {
     const jobSelection = stores.useJobSelection()
 
     // Fields
-    const loading = ref(false)
+    const loading = ref<boolean>()
     /** Hypothesis, reference and corpusUUID for which the current evaluations are loaded. */
-    const hypothesis = ref(null as string | null)
-    const reference = ref(null as string | null)
-    const corpusUUID = ref(null as UUID | null)
+    const hypothesis = ref<string>()
+    const reference = ref<string>()
+    const corpusUUID = ref<UUID>()
 
     // Methods
-    function downloadCSV() {
+    function downloadCSV(): void {
         loading.value = true
         API.getDownloadEvaluation(
-            corporaStore.activeUUID,
+            corporaStore.corpusId,
             jobSelection.hypothesisId,
             jobSelection.referenceId
         )

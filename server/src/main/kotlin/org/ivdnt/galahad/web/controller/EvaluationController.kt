@@ -54,7 +54,7 @@ class EvaluationController(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Document name") document: String,
         @RequestParam @Parameter(description = "Tagger name or sourceLayer") hypothesis: String,
-        @RequestParam(defaultValue = SOURCE_LAYER_NAME) @Parameter(description = "Tagger name or sourceLayer") reference: String? = SOURCE_LAYER_NAME,
+        @RequestParam @Parameter(description = "Tagger name or sourceLayer") reference: String
     ): List<TermComparison> = evaluationService.getLayerComparison(corpus, document, hypothesis, reference)
 
     @Operation(
@@ -75,7 +75,7 @@ class EvaluationController(
     fun getConfusion(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @RequestParam @Parameter(description = "Tagger name or sourceLayer") hypothesis: String,
-        @RequestParam(defaultValue = SOURCE_LAYER_NAME) @Parameter(description = "Tagger name or sourceLayer") reference: String? = SOURCE_LAYER_NAME,
+        @RequestParam @Parameter(description = "Tagger name or sourceLayer") reference: String,
     ): Map<Annotation, Confusion> = evaluationService.getConfusion(corpus, hypothesis, reference)
 
     @Operation(
@@ -126,7 +126,7 @@ class EvaluationController(
     fun getMetrics(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @RequestParam @Parameter(description = "Tagger name or sourceLayer") hypothesis: String,
-        @RequestParam(defaultValue = SOURCE_LAYER_NAME) @Parameter(description = "Tagger name or sourceLayer") reference: String? = SOURCE_LAYER_NAME,
+        @RequestParam @Parameter(description = "Tagger name or sourceLayer") reference: String,
     ): CorpusMetrics = evaluationService.getMetrics(corpus, hypothesis, reference)
 
     @Operation(
@@ -178,17 +178,9 @@ class EvaluationController(
     fun download(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @RequestParam @Parameter(description = "Tagger name or sourceLayer") hypothesis: String,
-        @RequestParam(defaultValue = SOURCE_LAYER_NAME) @Parameter(description = "Tagger name or sourceLayer") reference: String? = SOURCE_LAYER_NAME,
+        @RequestParam @Parameter(description = "Tagger name or sourceLayer") reference: String,
     ): ByteArray = evaluationService.getEvaluation(corpus, hypothesis, reference)
 
-//    @CrossOrigin
-//    @GetMapping(TOKEN_FREQUENCY_URL)
-//    fun getTokenFrequency(
-//        @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
-//        @RequestParam @Parameter(description = "Tagger name or sourceLayer") hypothesis: String,
-//        @RequestParam(defaultValue = SOURCE_LAYER_NAME) @Parameter(description = "Tagger name or sourceLayer") reference: String? = SOURCE_LAYER_NAME,
-//    ): CorpusMetrics = evaluationService.getTokenFrequency(corpus, job, reference)
-//
     @CrossOrigin
     @GetMapping(Endpoints.Evaluation.ENTITIES)
     fun getJobEntities(

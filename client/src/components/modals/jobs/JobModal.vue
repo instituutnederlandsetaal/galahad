@@ -90,10 +90,10 @@
         <!-- delete job modal -->
         <DeleteModal v-if="deleteJobId" :itemName="`the results of job ${deleteJobId}`" @delete="
             () => {
-                jobsStore.deleteJob(deleteJobId)
+                jobsStore.remove(deleteJobId)
                 healthLoading = true
             }
-        " @hide="deleteJobId = null as any" />
+        " @hide="deleteJobId = undefined" />
     </GModal>
 </template>
 
@@ -111,14 +111,11 @@ const errors = stores.useErrors()
 const jobsStore = stores.useJobs()
 
 // Fields
-const props = defineProps({
-    show: { type: Boolean, default: ref(false) },
-    jobId: { type: String, default: "" }
-})
+const { jobId } = defineProps<{ jobId: string }>()
 /** The job of this modal */
-const job = computed<Job>(() => {
-    return jobsStore.jobs[props.jobId]
-})
+const job = computed<Job>(
+    (): Job => jobsStore.jobs.find((j: Job) => j.tagger.id === jobId)
+)
 /** Returns null while we are waiting on the first getHealth request. */
 const taggerIsAvailable = computed<boolean | null>(() => {
     if (!health.value) return null
@@ -128,15 +125,15 @@ const taggerIsAvailable = computed<boolean | null>(() => {
 const deleteJobId = ref<string | null>(null)
 /** Expected job duration based on queue size at tagger and % of documents tagged in the corpus. */
 const jobIndication = computed<number | null>(() => {
-    if (jobsStore.posting || jobsStore.numActiveDocs == null) {
+    if (jobsStore.posting || jobsStore.queueSize == null) {
         return null
     }
-    return jobsStore.numActiveDocs
+    return jobsStore.queueSize
 })
 /** Updated on an interval to keep track of the queue size. */
 const health = ref<TaggerHealth | null>(null)
 /** When true, display job duration as still calculating. */
-const healthLoading = ref(true)
+const healthLoading = ref<boolean>(true)
 /** Keep track of the interval id, we stop polling on modal close. */
 let healthIntervalId = 0
 
@@ -163,7 +160,7 @@ onUnmounted(() => {
  * Starting and stopping sets health loading to true. getHealth sets it back to false.
  */
 function getHealth() {
-    API.getTaggerHealth(props.jobId)
+    API.getTaggerHealth(jobId)
         .then(response => {
             health.value = response.data
             healthLoading.value = false

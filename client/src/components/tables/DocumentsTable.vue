@@ -2,7 +2,7 @@
     <GTable :columns :items="documents" :loading sortColumn="name">
 
         <template #title>
-            <span v-if="!corpus || (type == TableDocumentsType.Dataset && !corpus.dataset)">No documents</span>
+            <span v-if="!corpus">No documents</span>
             <span v-else>
                 {{ documents.length }}
                 {{ documents.length === 1 ? "document" : "documents" }}
@@ -68,13 +68,14 @@ import {
 
 // Stores
 const { deleteDocument, downloadRaw } = stores.useDocuments()
-const { documents, loading } = storeToRefs(stores.useDocuments())
 const { canWrite } = storeToRefs(stores.useUser())
 
 // --- props ---
-const { type, corpus } = defineProps<{
+const { type, corpus, documents, loading } = defineProps<{
     type: TableDocumentsType
     corpus: CorpusMetadata
+    documents: DocumentMetadata[]
+    loading: boolean
 }>()
 
 // --- data ---
@@ -82,7 +83,7 @@ const deleteDocumentData = ref<DocumentMetadata>()
 const previewDocument = ref<DocumentMetadata>()
 
 // --- computed ---
-const columns = computed<Column[]>(() => [
+const columns = computed<Column<DocumentMetadata>[]>(() => [
     { key: "name" },
     { key: "format" },
     { key: "preview" },
@@ -90,16 +91,16 @@ const columns = computed<Column[]>(() => [
         key: "layerSummary",
         label: "tokens",
         align: "right",
-        sortOn: (x: DocumentMetadata): number => x.layerSummary?.tokens
+        sortOn: (d: DocumentMetadata): number => d.layerSummary?.tokens
     },
     {
         key: "modified",
-        format: (x: TableData<DocumentMetadata>): string => formatDate(x.value)
+        format: (d: DocumentMetadata): string => formatDate(d.modified)
     },
     {
         key: "actions",
         noSort: true,
-        hidden: !canWrite || type === TableDocumentsType.Dataset
+        hidden: !canWrite || type === TableDocumentsType.dataset
     }
 ])
 </script>

@@ -27,6 +27,7 @@ import * as Utils from "@/api/utils"
 import stores from "@/stores"
 // API & types
 import { metricsPerPosColumns } from "@/stores/evaluation/metrics"
+import type MetricsFilter from "@/components/tables/MetricsFilter.vue"
 
 // Stores
 const { loading, metrics } = storeToRefs(stores.useMetrics())
@@ -34,10 +35,11 @@ const corporaStore = stores.useCorpora()
 const jobSelection = stores.useJobSelection()
 
 // Fields
-const downloading = ref(false)
+const downloading = ref<boolean>()
 
 const columns = computed(() => metricsPerPosColumns)
-const metricsFilter = ref(null)
+const metricsFilter =
+    useTemplateRef<InstanceType<typeof MetricsFilter>>("metricsFilter")
 const metricName = computed(() => {
     return metricsFilter.value?.metricName
 })
@@ -83,7 +85,7 @@ function download(data: Any) {
 
     downloading.value = true
     API.getMetricsSamples(
-        corporaStore.activeUUID,
+        corporaStore.corpusId,
         jobSelection.hypothesisId,
         jobSelection.referenceId,
         metricName.value,

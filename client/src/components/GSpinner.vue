@@ -9,15 +9,15 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{
+const { error, small, still } = defineProps<{
     error?: boolean
     small?: boolean
     still?: boolean
 }>()
 const classes = {
-    error: props.error,
-    small: props.small,
-    still: props.still
+    error: error,
+    small: small,
+    still: still
 }
 </script>
 

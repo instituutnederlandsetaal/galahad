@@ -1,6 +1,6 @@
 <template>
     <AnnotateTab>
-        <GCard :title="`Evaluate corpus ${corporaStore.activeCorpus?.name}`" helpLink="evaluation">
+        <GCard :title="`Evaluate corpus ${corporaStore.corpus?.name}`" helpLink="evaluation">
             <template #help>
                 <EvaluateHelp />
             </template>
@@ -21,7 +21,7 @@
                 </fieldset>
             </form>
         </GCard>
-        <GTabs ref="tabs" class="level-3" :basePath :tabs="[
+        <GTabs class="level-3" :basePath :tabs="[
             { id: 'distribution', title: 'Distribution' },
             { id: 'global_metrics', title: 'Global Metrics' },
             { id: 'grouped_metrics', title: 'Grouped Metrics' },
@@ -35,135 +35,15 @@
 
 <script setup lang="ts">
 import stores from "@/stores"
-import { SOURCE_LAYER } from "@/types/jobs"
 
 // Stores
-const jobsStore = stores.useJobs()
 const evaluation = stores.useEvaluation()
-const confusion = stores.useConfusion()
-const distribution = stores.useDistribution()
-const metrics = stores.useMetrics()
 const jobSelection = stores.useJobSelection()
 const corporaStore = stores.useCorpora()
-const documentsStore = stores.useDocuments()
 
 const { basePath } = defineProps<{
     basePath: string
 }>()
-
-/**
- * Whether the corpusUUID or the hypothesis/reference has changed since the last generated evaluation.
- */
-function evaluationRequestHasChanged(): boolean {
-    return (
-        evaluation.corpusUUID !== corporaStore.activeUUID ||
-        evaluation.hypothesis !== jobSelection.hypothesisId ||
-        evaluation.reference !== jobSelection.referenceId
-    )
-}
-
-/**
- * Reloads the three evaluation types for the current hypothesis and reference.
- * Because distribution is affected solely by hypothesis changes, it is not reloaded by default.
- * Check whether the hypothesis has changed yourself.
- * @param reloadDistribution Whether to reload the distribution as well.
- */
-function reloadEvaluationData(reloadDistribution = false): void {
-    if (!corporaStore.activeCorpus) return
-    const hypothesis = jobSelection.hypothesisId
-    const reference = jobSelection.referenceId
-
-    // Only reload if either the corpus uuid or the hypothesis/reference has changed.
-    if (!evaluationRequestHasChanged()) {
-        return
-    }
-
-    if (reference != null && hypothesis != null) {
-        confusion.reloadForUUIDHypothesisReference(
-            corporaStore.activeUUID,
-            hypothesis,
-            reference
-        )
-        metrics.reloadForUUIDHypothesisReference(
-            corporaStore.activeUUID,
-            hypothesis,
-            reference
-        )
-    }
-    // Distribution is unaffected by reference changes, so explicitly ask for it.
-    if (reloadDistribution && hypothesis != null) {
-        distribution.reloadForUUIDHypothesis(
-            corporaStore.activeUUID,
-            hypothesis
-        )
-    }
-
-    // Save the evaluation request, so we don't reload it again (we cache it).
-    if (hypothesis != null) evaluation.hypothesis = hypothesis
-    if (reference != null) evaluation.reference = reference
-    evaluation.corpusUUID = corporaStore.activeUUID
-}
-
-onMounted(() => {
-    // Docs needed to determine whether the sourceLayer job has annotations.
-    jobsStore.reload()
-})
-
-// // Watches & mounts
-// onMounted(() => {
-//     // Always reset, because e.g. the selected corpus might have changed
-//     if (!evaluationRequestHasChanged()) {
-//         return
-//     }
-//     confusion.reset()
-//     metrics.reset()
-//     distribution.reset()
-// })
-
-// // On corpus (=dataset) selection, reload jobs & docs for that corpus
-// watch(
-//     () => corporaStore.activeCorpus,
-//     () => {
-//         // Jobs needed for jobs <select>.
-//         jobsStore.reload()
-//         // Docs needed to determine whether the sourceLayer job has annotations.
-//         documentsStore.reloadDocumentsForCorpus(corporaStore.activeUUID)
-//     },
-//     { immediate: true },
-// )
-
-// // Reload data on job selection changes.
-watch(
-    () => jobSelection.hypothesisId,
-    () => {
-        reloadEvaluationData(true)
-    }
-)
-// watch(
-//     () => jobSelection.referenceId,
-//     () => {
-//         if (!jobSelection.selectionsValid) return
-//         reloadEvaluationData()
-//     },
-// )
-// // OnLoad, we also have to wait on validation.
-// watch(
-//     () => jobSelection.selectionsValid,
-//     () => {
-//         if (jobSelection.selectionsValid) {
-//             reloadEvaluationData(true)
-//         }
-//         // At this point, invalid selections are set to null.
-//         // So we can override the reference to the sourceLayer as a default (if it exists).
-//         if (
-//             jobSelection.referenceId == null &&
-//             documentsStore.numSourceAnnotations > 0
-//         ) {
-//             jobSelection.referenceId = SOURCE_LAYER
-//         }
-//     },
-//     { immediate: true },
-// )
 </script>
 
 <style scoped lang="scss">

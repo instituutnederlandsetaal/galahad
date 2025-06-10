@@ -1,10 +1,12 @@
 // Libraries & stores
 
-import * as API from "@/api/evaluation"
+import { metricsPath } from "@/api/evaluation"
 import stores from "@/stores"
 import * as Utils from "@/stores/evaluation/utils"
 // API & types
 import type { UUID } from "@/types/corpora"
+import { useAxios } from "@/api/useAxios"
+
 import type { Metrics, MetricsRow } from "@/types/evaluation"
 
 export const metricsPerPosColumns = [
@@ -24,22 +26,22 @@ export const metricsPerPosColumns = [
     {
         key: "truePositive",
         label: "true positive",
-        sortOn: (x: MetricsRow) => x.truePositive.count / x.count
+        sortOn: (x: MetricsRow): number => x.truePositive.count / x.count
     },
     {
         key: "falsePositive",
         label: "false positive",
-        sortOn: (x: MetricsRow) => x.falsePositive.count / x.count
+        sortOn: (x: MetricsRow): number => x.falsePositive.count / x.count
     },
     {
         key: "falseNegative",
         label: "false negative",
-        sortOn: (x: MetricsRow) => x.falseNegative.count / x.count
+        sortOn: (x: MetricsRow): number => x.falseNegative.count / x.count
     },
     {
         key: "noMatch",
         label: "no match",
-        sortOn: (x: MetricsRow) => x.noMatch.count / x.count
+        sortOn: (x: MetricsRow): number => x.noMatch.count / x.count
     }
 ]
 
@@ -47,50 +49,21 @@ export const metricsPerPosColumns = [
  * Stores and fetches the Lemma & PoS accuracy metrics.
  */
 const useMetrics = defineStore("metrics", () => {
-    // Fields
-    const loading = ref(false)
-    const metrics = ref({} as Metrics)
+    const { hypothesisId, referenceId } = storeToRefs(stores.useJobSelection())
+    const { corpusId } = storeToRefs(stores.useCorpora())
+    const url = computed<string>(() => {
+        if (!(hypothesisId.value && referenceId.value)) return undefined
+        return metricsPath(corpusId.value)
+    })
+    const { loading, data: metrics } = useAxios<Metrics>(
+        url,
+        {},
+        { hypothesis: hypothesisId.value, reference: referenceId.value }
+    )
 
-    // Methods
-    /**
-     * Reset it when e.g. the hypothesis or reference is changed.
-     */
-    function reset() {
-        metrics.value = {} as Metrics
-    }
-
-    /**
-     * Reloads the metrics for the given corpus, hypothesis and reference.
-     * @param corpus The UUID of the corpus.
-     * @param hypothesis Tagger job name as hypothesis layer.
-     * @param reference Tagger job name as reference layer.
-     */
-    function reloadForUUIDHypothesisReference(
-        corpus: UUID,
-        hypothesis: string,
-        reference: string
-    ) {
-        Utils.reloadEval(
-            API.getMetrics,
-            reset,
-            "fetch metrics",
-            loading,
-            metrics,
-            stores,
-            corpus,
-            hypothesis,
-            reference
-        )
-    }
-
-    // Exports
     return {
-        // Fields
-        loading,
         metrics,
-        // Methods
-        reloadForUUIDHypothesisReference,
-        reset
+        loading
     }
 })
 

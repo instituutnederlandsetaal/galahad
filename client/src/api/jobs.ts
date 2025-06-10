@@ -10,11 +10,9 @@ type JobsResponse = AxiosResponse<Job[]>
 type JobResponse = AxiosResponse<Job>
 export type ProgressResponse = AxiosResponse<Progress>
 
-const jobsPath = (corpus: UUID): string => `/corpora/${corpus}/jobs`
+export const jobsPath = (corpus: UUID): string => `/corpora/${corpus}/jobs`
 const jobPath = (corpus: UUID, job: string): string =>
     `/corpora/${corpus}/jobs/${job}`
-const jobIsBusyPath = (corpus: UUID, job: string): string =>
-    `/corpora/${corpus}/jobs/${job}/isBusy`
 const jobProgressPath = (corpus: UUID, job: string): string =>
     `/corpora/${corpus}/jobs/${job}/progress`
 
@@ -24,15 +22,6 @@ const jobProgressPath = (corpus: UUID, job: string): string =>
  */
 export function getJobs(corpus: UUID): Promise<JobsResponse> {
     return axios.get(jobsPath(corpus), { params: { hasResult: false } })
-}
-
-/**
- * Fetch a single job for a corpus.
- * @param corpus UUID of the corpus.
- * @param job Tagger job name.
- */
-export function getJob(corpus: UUID, job: string): Promise<JobResponse> {
-    return axios.get(jobPath(corpus, job))
 }
 
 /**
@@ -56,16 +45,6 @@ export function cancelOrDeleteJob(
     hard: boolean
 ): Promise<ProgressResponse> {
     return axios.delete(jobPath(corpus, job), { params: { hard: hard } })
-}
-
-/**
- * Simplified job progress poll.
- */
-export function getJobIsBusy(
-    corpus: UUID,
-    job: string
-): Promise<AxiosResponse<boolean>> {
-    return axios.get(jobIsBusyPath(corpus, job))
 }
 
 /**

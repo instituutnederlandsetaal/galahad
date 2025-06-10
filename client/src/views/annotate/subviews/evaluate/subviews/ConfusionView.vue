@@ -7,7 +7,7 @@
             </div>
         </div>
         <GTable title="Part-of-speech confusion" helpLink="evaluation" :columns :items="rows" id="confusionTable"
-            :loading sortColumn="referenceJob" :sortDesc="false" hoverRow>
+            :loading sortColumn="referenceJob" :sortDesc="false">
             <template #help>
                 <p>
                     In part-of-speech confusion, an overview is given of the matches (in green) and mismatches per PoS
@@ -53,7 +53,7 @@
             </template>
         </GTable>
 
-        <ComparisonModal v-if="showModal" @hide="showModal = false" :samples :downloading
+        <ComparisonModal v-if="samples" @hide="samples = undefined" :samples :downloading
             @download="(data) => download(data)" :referenceJob="jobSelection.referenceId"
             :hypothesisJob="jobSelection.hypothesisId" />
     </GCard>
@@ -66,7 +66,7 @@ import stores from "@/stores"
 
 import * as API from "@/api/evaluation"
 import * as Utils from "@/api/utils"
-import type { EvaluationEntry, TermComparison } from "@/types/evaluation"
+import type { EvaluationEntry, Samples } from "@/types/evaluation"
 // API & types
 import type { Column } from "@/types/ui/table"
 
@@ -84,14 +84,10 @@ type Cell = { field: Column; item: Item; value: EvaluationEntry }
 const confusionableAnnotations = computed(() =>
     Object.keys(confusion.value || {}).map(key => ({ value: key, text: key }))
 )
-const selectedAnnotation = ref()
-const downloading = ref(false)
+const selectedAnnotation = ref<string>()
+const downloading = ref<boolean>()
 const modalData = ref({})
-const samples = ref({ title: "", samples: [] } as {
-    title: string
-    samples: TermComparison[]
-})
-const showModal = ref(false)
+const samples = ref<Samples>()
 const selectedConfusion = computed(
     () => confusion?.value[selectedAnnotation.value] || { table: {} }
 )
@@ -160,7 +156,7 @@ function download() {
     const referencePos = data.item.referenceJob
     downloading.value = true
     API.getConfusionSamples(
-        corporaStore.activeUUID,
+        corporaStore.corpusId,
         jobSelection.hypothesisId,
         jobSelection.referenceId,
         hypothesisPos,
@@ -222,7 +218,6 @@ function openModal(data) {
         referencePos: data.item.referenceJob,
         annotationType: selectedAnnotation.value
     }
-    showModal.value = true
 }
 </script>
 

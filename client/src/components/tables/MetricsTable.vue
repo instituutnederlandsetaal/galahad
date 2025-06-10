@@ -46,51 +46,56 @@
         </template>
     </GTable>
 
-    <ComparisonModal v-if="showModal" @hide="showModal = false" :samples @download="$emit('download', modalData)"
+    <ComparisonModal v-if="samples" @hide="samples = undefined" :samples @download="$emit('download', modalData)"
         :referenceJob="jobSelection.referenceId" :hypothesisJob="jobSelection.hypothesisId" :downloading />
 </template>
 
 <script setup lang="ts">
 // Libraries & stores
-
+import type { Column, Item, TableData } from "@/types/ui/table"
 import stores from "@/stores"
+import type { TermComparison, Samples, Metrics } from "@/types/evaluation"
 
 // Stores
 const jobSelection = stores.useJobSelection()
 
 // Props
-const props = defineProps({
-    title: { type: String, default: "Metrics" },
-    columns: { type: Array, default: [] },
-    items: { type: Array, default: [] },
-    loading: { type: Boolean, default: false },
-    sortedByColumn: { type: String, default: "count" },
-    downloading: { type: Boolean, default: false }
-})
+const {
+    title = "Metrics",
+    columns,
+    items,
+    loading,
+    sortColumn = "count",
+    downloading
+} = defineProps<{
+    title: string
+    columns: Column<Item>[]
+    items: Item[]
+    loading: boolean
+    sortColumn: string
+    downloading: boolean
+}>()
 
 // Emits
-defineEmits(["download"])
+const emit = defineEmits<{
+    download: [modalData: TableData<Metrics>]
+}>()
 
 // Fields
-const showModal = ref(false)
-const samples = ref({ title: "", samples: [] } as {
-    title: string
-    samples: TermComparison[]
-})
+const samples = ref<Samples>()
 const modalData = ref({})
 
 // Methods
 /**
  * Open a set of samples in a modal.
  */
-function openModal(data) {
+function openModal(data): void {
     modalData.value = data
     samples.value = {
         title: `${data.column.label} ${data.item.name} samples`,
         samples: data.value.samples,
         annotationType: data.item.column.toLowerCase()
     }
-    showModal.value = true
 }
 </script>
 

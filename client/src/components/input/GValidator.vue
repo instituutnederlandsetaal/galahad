@@ -9,12 +9,14 @@
 
 <script setup lang="ts">
 const { model, validityDescriptor, validator } = defineProps<{
-    model: any
+    model: unknown
     validityDescriptor: string
-    validator: (value: any) => boolean
+    validator: (value: unknown) => boolean
 }>()
 
-const isValid = computed(() => (model === undefined ? false : validator(model)))
+const isValid = computed<boolean>(() =>
+    model === undefined ? false : validator(model)
+)
 </script>
 
 <style scoped lang="scss">

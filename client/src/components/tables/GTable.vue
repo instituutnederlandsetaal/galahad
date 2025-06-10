@@ -10,12 +10,11 @@
 
         <GSpinner v-if="loading" />
 
-        <slot v-else-if="isEmpty" name="table-empty"></slot>
+        <slot v-if="$slots.header" name="header"></slot>
+
+        <slot v-if="isEmpty && !loading" name="table-empty"></slot>
 
         <template v-else>
-
-            <slot v-if="$slots.header" name="header"></slot>
-
             <p v-if="selectable">
                 Click on a row to select an item.
             </p>
@@ -54,7 +53,7 @@
                                 <slot name="cell" :column :item :value="item[column.key]">
                                     <!-- formatted -->
                                     <template v-if="column.format">
-                                        {{ column.format({ value: item[column.key], item, column: column }) }}
+                                        {{ column.format(item) }}
                                     </template>
                                     <!-- default rendering -->
                                     <template v-else>
@@ -89,7 +88,7 @@ const {
     sortDesc: initSortDesc = true
 } = defineProps<{
     items: Item[]
-    columns: Column<Item>[]
+    columns: Column<any>[]
     title?: string
     helpLink?: HelpLink | string
     loading?: boolean

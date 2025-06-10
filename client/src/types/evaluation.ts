@@ -89,3 +89,8 @@ export type EvaluationEntry = {
     count: number
     samples: TermComparison[]
 }
+
+type Samples = {
+    title: string
+    samples: TermComparison[]
+}

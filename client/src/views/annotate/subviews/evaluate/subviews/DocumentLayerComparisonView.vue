@@ -61,10 +61,10 @@ const selectedDoc = ref<string>()
 const selectedAnnotation = ref<string>()
 const annotationOptions = ref<SelectOption[]>()
 const termcomps = ref<TermComparison[]>(null)
-const loading = ref(false)
+const loading = ref<boolean>()
 /** Paginator */
-const firstRecord = ref(0)
-const rowsToDisplay = ref(200)
+const firstRecord = ref<number>(0)
+const rowsToDisplay = ref<number>(200)
 const bothJobsSelected = computed(() => {
     return jobSelection.hypothesisId && jobSelection.referenceId
 })
@@ -74,7 +74,7 @@ watch(selectedDoc, async newVal => {
     if (newVal) {
         loading.value = true
         API.getDocumentLayerComparison(
-            corporaStore.activeUUID,
+            corporaStore.corpusId,
             jobSelection.hypothesisId,
             newVal,
             jobSelection.referenceId
