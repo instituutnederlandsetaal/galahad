@@ -47,26 +47,30 @@ function corpusDocParams(
 
 export const plausible = {
     corpusCreated(corpus: CorpusMetadata): void {
-        window.plausible("corpus-created", corpusParams(corpus))
+        window.plausible("corpus-created", { props: corpusParams(corpus) })
     },
     corpusDeleted(corpus: CorpusMetadata): void {
-        window.plausible("corpus-deleted", corpusParams(corpus))
+        window.plausible("corpus-deleted", { props: corpusParams(corpus) })
     },
     corpusUpdated(corpus: CorpusMetadata): void {
-        window.plausible("corpus-updated", corpusParams(corpus))
+        window.plausible("corpus-updated", { props: corpusParams(corpus) })
     },
     documentDownloaded(corpus: CorpusMetadata, doc: DocumentMetadata): void {
-        window.plausible("document-downloaded", corpusDocParams(corpus, doc))
+        window.plausible("document-downloaded", {
+            props: corpusDocParams(corpus, doc)
+        })
     },
     documentDeleted(corpus: CorpusMetadata, doc: DocumentMetadata): void {
-        window.plausible("document-deleted", corpusDocParams(corpus, doc))
+        window.plausible("document-deleted", {
+            props: corpusDocParams(corpus, doc)
+        })
     },
     documentUploaded(corpus: CorpusMetadata, fileExtension: string): void {
-        const params = {
+        const props = {
             format: fileExtension,
             ...corpusParams(corpus)
         }
-        window.plausible("document-uploaded", params)
+        window.plausible("document-uploaded", { props })
     },
     corpusExported(
         corpus: CorpusMetadata,
@@ -75,16 +79,19 @@ export const plausible = {
         merged: boolean,
         headOnly: boolean
     ): void {
-        const params = {
+        const props = {
             layer,
             format,
             merged,
             headOnly,
             ...corpusParams(corpus)
         }
-        window.plausible("corpus-exported", params)
+        window.plausible("corpus-exported", { props })
     },
     helpClicked(): void {
-        window.plausible("help-clicked", { url: location.pathname })
+        const props = {
+            url: location.pathname
+        }
+        window.plausible("help-clicked", { props })
     }
 }
