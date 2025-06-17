@@ -10,7 +10,7 @@
             <slot></slot>
         </GCard>
         <form class="buttons" @submit.prevent>
-            <GButton red @click="$emit('hide')">Close</GButton>
+            <GButton red title="Close" @click="$emit('hide')">Close</GButton>
             <slot name="buttons"></slot>
         </form>
     </dialog>

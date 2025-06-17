@@ -21,7 +21,7 @@ const useCorpora = defineStore("corpora", () => {
     const errors = stores.useErrors()
 
     // Fields
-    const corpusId = useRouteQuery("corpus")
+    const corpusId = useRouteQuery("corpus") as Ref<UUID>
     const {
         data: corpora,
         loading,

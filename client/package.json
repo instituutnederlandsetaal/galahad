@@ -1,18 +1,18 @@
 {
     "name": "galahad",
-    "private": true,
     "type": "module",
     "scripts": {
         "dev": "vite",
         "build": "vite build",
         "format": "biome format --write src/",
-        "lint": "biome lint src/"
+        "lint": "biome lint src/",
+        "update": "npm-check-updates -u && npm install"
     },
     "dependencies": {
-        "@primeuix/themes": "^1.1.1",
+        "@primeuix/themes": "^1.1.2",
         "@vueuse/core": "^13.3.0",
         "@vueuse/router": "^13.3.0",
-        "axios": "^1.9.0",
+        "axios": "^1.10.0",
         "content-disposition": "^0.5.4",
         "pinia": "^3.0.3",
         "primevue": "^4.3.5",
@@ -25,15 +25,16 @@
         "@rollup/plugin-yaml": "^4.1.2",
         "@tsconfig/node24": "^24.0.1",
         "@types/content-disposition": "^0.5.9",
-        "@types/node": "^24.0.0",
+        "@types/node": "^24.0.3",
         "@vitejs/plugin-vue": "^5.2.4",
         "@vue/tsconfig": "^0.7.0",
+        "npm-check-updates": "^18.0.1",
         "sass-embedded": "^1.89.2",
         "typescript": "~5.8.3",
         "unplugin-auto-import": "^19.3.0",
         "unplugin-vue-components": "^28.7.0",
         "vite": "^6.3.5",
         "vite-plugin-node-polyfills": "^0.23.0",
-        "vite-plugin-vue-devtools": "^7.7.6"
+        "vite-plugin-vue-devtools": "^7.7.7"
     }
 }

@@ -12,6 +12,7 @@ import useJobSelection from "@/stores/jobselection"
 import useTaggers from "@/stores/taggers"
 import useTagsets from "@/stores/tagsets"
 import useUser from "@/stores/user"
+import useEntities from "@/stores/evaluation/entities"
 
 export default {
     useErrors,
@@ -27,5 +28,6 @@ export default {
     useUser,
     useEvaluation,
     useTaggers,
-    useTagsets
+    useTagsets,
+    useEntities
 }

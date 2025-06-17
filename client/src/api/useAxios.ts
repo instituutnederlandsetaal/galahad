@@ -14,6 +14,7 @@ export function useAxios<T>(
     const errors = stores.useErrors()
     const data = ref<T | undefined>(initial)
     const loading = ref<boolean>(false)
+
     watchEffect(() => {
         execute()
     })

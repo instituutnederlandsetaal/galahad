@@ -18,7 +18,7 @@
             <i class="fa fa-arrow-right"></i>
         </GButton>
 
-        <GButton plain :disabled="page == numPages" @click="page = numPages">
+        <GButton plain :disabled="page == numPages" title="Last" @click="page = numPages">
             {{ numPages }}
         </GButton>
     </form>

@@ -144,12 +144,12 @@ watch(
 function compareAny(a: unknown, b: unknown): number {
     // // null and undefined are always smaller
     // if (nu(a) && nu(b)) return 0
-    // if (nu(a)) return -1
-    // if (nu(b)) return 1
+    if (nu(a)) return -1
+    if (nu(b)) return 1
 
     // // Infinity is always bigger
-    // if (a === Number.POSITIVE_INFINITY) return 1
-    // if (b === Number.POSITIVE_INFINITY) return -1
+    if (a === Number.POSITIVE_INFINITY) return 1
+    if (b === Number.POSITIVE_INFINITY) return -1
 
     if (typeof a === "number" && typeof b === "number") {
         return a - b
@@ -192,6 +192,10 @@ function sortBy(key: string, desc: boolean): void {
 <style scoped lang="scss">
 table {
     border-collapse: collapse;
+    // scroll on overflow requires display: block
+    display: block;
+    width: 100%;
+    overflow-x: auto;
 
     &.loading {
         filter: blur(5px);

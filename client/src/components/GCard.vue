@@ -48,9 +48,8 @@ const expand = ref<boolean>()
     padding: 1rem;
 }
 
-.view.g-card>.content,
-{
-flex: 1;
+.view.g-card>.content {
+    flex: 1;
 }
 
 .g-card {
@@ -89,7 +88,6 @@ flex: 1;
         align-items: safe center;
         gap: 1rem;
         max-width: 100%;
-        overflow-x: auto;
 
         &.article {
             max-width: 800px;

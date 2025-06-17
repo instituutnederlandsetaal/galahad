@@ -49,7 +49,7 @@ const documentEntitiesPath = (
 ): string => `/corpora/${corpus}/jobs/${job}/documents/${document}/entities`
 const jobEntitiesPath = (corpus: UUID, job: string): string =>
     `${evaluationPath(corpus, job)}/entities`
-const jobsEntitiesPath = (corpus: UUID): string =>
+export const jobsEntitiesPath = (corpus: UUID): string =>
     `/corpora/${corpus}/evaluation/entities`
 /**
  * Fetch term frequency distribution.
