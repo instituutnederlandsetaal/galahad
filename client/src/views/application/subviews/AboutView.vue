@@ -1,8 +1,5 @@
 <template>
     <GCard article title="About">
-        <template #help>
-            Here you can find information about the application and the exact version you are currently running.
-        </template>
         <p>
             GaLAHaD is created by the
             <ExternalLink href="https://www.ivdnt.org">Dutch Language Institute</ExternalLink>. For this work,

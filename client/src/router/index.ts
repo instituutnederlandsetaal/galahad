@@ -112,6 +112,7 @@ const routes = [
     {
         path: "/application",
         name: "Application",
+        redirect: "/application/about",
         component: ApplicationView,
         children: [
             {

@@ -27,7 +27,6 @@ export type Tab = {
     id: string
     title: string
     disabled?: boolean
-    stub?: boolean
 }
 
 const { basePath, tabs } = defineProps<{
@@ -52,7 +51,7 @@ const route = useRoute()
             line-height: 45px;
             background-color: var(--int-theme);
 
-            .nav-link {
+            :deep(.nav-link) {
                 font-style: normal;
                 text-align: center;
                 display: block;
