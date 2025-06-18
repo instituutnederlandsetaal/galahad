@@ -8,11 +8,20 @@
 
         <GTable class="table" :loading :items :columns sortColumn="document">
             <template #header>
+                <legend class="entities-legend">
+                    <p>Legend:</p>
+                    <div>
+                        <span v-for="(job, i) in Object.keys(entities?.jobs ?? {})" :key="i">
+                            <strong>{{ i + 1 }}:</strong> {{ job }}
+                        </span>
+                    </div>
+                </legend>
                 <form class="filter" @submit.prevent>
                     <fieldset>
                         <label for="entities-select">Entities</label>
                         <MultiSelect id="entities-select" v-model="selectedEntities" :options="entityOptions"
-                            placeholder="Select entities" :maxSelectedLabels="3" />
+                            placeholder="Select entities" :maxSelectedLabels="3" optionLabel="text"
+                            optionValue="value" />
                     </fieldset>
                     <fieldset>
                         <label for="jobs-select">Jobs</label>
@@ -56,7 +65,32 @@ const selectedEntities = ref<string[]>([])
 const selectedJobs = ref<string[]>([])
 
 // --- computed ---
-const entityOptions = computed(() => ["total"].concat(Object.keys(entities.value?.stddev?.stddev ?? {}).toSorted()))
+const entityLegend = computed(() => {
+    if (!entities.value) return {}
+    const legend = {}
+    for (const [jobName, jobData] of Object.entries(entities.value.jobs)) {
+        legend[jobName] = Object.keys(jobData.summary)
+    }
+    return legend
+})
+const entityOptions = computed(() => {
+    const options = [{ text: "Total", value: "total" }]
+    const labels = Object.keys(entities.value?.stddev?.stddev ?? {}).toSorted()
+    for (const label of labels) {
+        // in which indices of entittyLegend does this label occur?
+        const occurence = []
+        for (const [i, job] of Object.keys(entities.value.jobs).entries()) {
+            console.log("job", job, "i", i)
+            if (entities.value.jobs[job].summary[label] !== undefined) {
+                occurence.push(i + 1) // +1 because we want to start from 1, not 0
+            }
+        }
+        // ex.: LOC (1, 2, 3)
+        const text = `${label} (${occurence})`
+        options.push({ text: text, value: label })
+    }
+    return options
+})
 const jobOptions = computed(() => Object.keys(entities.value?.jobs ?? {}).toSorted())
 const items = computed<DocumentEntitiesRow[]>(() => convertJobsEntities(entities.value))
 const columns = computed<Column<Record<string, number>>[]>(() => {
@@ -200,6 +234,19 @@ function formatNumber(value: unknown): string | unknown {
         display: flex;
         flex-direction: column;
         align-items: center;
+    }
+}
+
+.entities-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: center;
+
+    div {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
     }
 }
 </style>

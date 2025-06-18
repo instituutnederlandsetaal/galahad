@@ -51,11 +51,11 @@ const items = computed(() =>
         jobEntities.map(entity => ({ ...entity, job: jobName }))
     )
 )
-const columns = ref<Column[]>([
-    { key: "label", sortOn: i => i.label },
-    { key: "form", sortOn: i => i.form },
-    { key: "count", sortOn: i => i.count },
-    { key: "job", sortOn: i => i.job }
+const columns = ref<Column<Entity>[]>([
+    { key: "label", sortOn: (e: Entity): string => e.label },
+    { key: "form", sortOn: (e: Entity): string => e.form },
+    { key: "count", sortOn: (e: Entity): number => e.count },
+    { key: "job", sortOn: (e: Entity): string => e.job }
 ])
 
 function filter(entity: Entity): boolean {

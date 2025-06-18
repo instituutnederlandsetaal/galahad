@@ -2,6 +2,7 @@ export type Entity = {
     label: string
     form: string
     count: number
+    job: string
 }
 
 export type DocumentEntities = {
