@@ -21,7 +21,7 @@
         "vue-router": "^4.5.1"
     },
     "devDependencies": {
-        "@biomejs/biome": "^1.9.4",
+        "@biomejs/biome": "^2.0.6",
         "@rollup/plugin-yaml": "^4.1.2",
         "@tsconfig/node24": "^24.0.1",
         "@types/content-disposition": "^0.5.9",
