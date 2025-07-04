@@ -2,15 +2,14 @@
     <GModal :title="`Tag job ${job.tagger.id}`" @hide="$emit('hide')">
         <template #help>
             <p>
-                Here you can start a job to tag the documents in your corpus.
-                This may take a while, depending on the corpus size.
-                You can also stop and delete existing jobs.
-                A preview of the resulting annotation layer is shown as well.
+                Here you can start a job to tag the documents in your corpus. This may take a while, depending on the
+                corpus size. You can also stop and delete existing jobs. A preview of the resulting annotation layer is
+                shown as well.
             </p>
             <p>
-                The tagger status (pending, busy, error, finished) will be displayed in the status bar.
-                Tagging is carried out in the background. You do not need to keep the application open.
-                There is also an indication of how busy the server is.
+                The tagger status (pending, busy, error, finished) will be displayed in the status bar. Tagging is
+                carried out in the background. You do not need to keep the application open. There is also an indication
+                of how busy the server is.
             </p>
         </template>
 
@@ -23,7 +22,7 @@
         <!-- Content -->
 
         <template v-else>
-            <GInfo v-if="taggerIsAvailable == false" error>
+            <GInfo v-if="taggerIsAvailable === false" error>
                 The tagger is currently unavailable. Please try again later.
             </GInfo>
 
@@ -38,39 +37,45 @@
                 </p>
             </template>
 
-            <!-- Actions -->
-            <div v-if="jobsStore.posting" class="centerText">
-                <!-- Show load icon while posting an action-->
-                <GSpinner />
-            </div>
-            <form v-else-if="taggerIsAvailable" @submit.prevent class="buttons">
-                <GButton green :disabled="job.progress.pending === 0 || job.progress.busy" @click="
-                    () => {
-                        jobsStore.tag(job.tagger.id)
-                        healthLoading = true
-                    }
-                ">
+            <!-- Show load icon while posting an action-->
+            <GSpinner v-if="jobsStore.posting" />
+
+            <GForm v-else-if="taggerIsAvailable" gap="0.25rem">
+                <GButton
+                    green
+                    :disabled="job.progress.pending === 0 || job.progress.busy"
+                    @click="
+                        () => {
+                            jobsStore.tag(job.tagger.id)
+                            healthLoading = true
+                        }
+                    "
+                >
                     Start
                 </GButton>
-                <GButton orange :disabled="!job.progress.busy" @click="
-                    () => {
-                        jobsStore.cancel(job.tagger.id)
-                        healthLoading = true
-                    }
-                ">
+                <GButton
+                    orange
+                    :disabled="!job.progress.busy"
+                    @click="
+                        () => {
+                            jobsStore.cancel(job.tagger.id)
+                            healthLoading = true
+                        }
+                    "
+                >
                     Stop
                 </GButton>
-                <GButton red :disabled="job.progress.untagged === job.progress.total && !job.progress.hasError"
-                    @click="deleteJobId = job.tagger.id">
+                <GButton
+                    red
+                    :disabled="job.progress.untagged === job.progress.total && !job.progress.hasError"
+                    @click="deleteJobId = job.tagger.id"
+                >
                     Delete
                 </GButton>
-            </form>
+            </GForm>
 
             <!-- progress -->
             <JobProgress :job />
-
-            <!-- Layer preview -->
-            <LayerViewer v-if="job.resultSummary.tokens > 0" :job />
 
             <!-- errors -->
             <GInfo v-if="job.progress.failed > 0" error>
@@ -78,33 +83,39 @@
                 {{ job.progress.failed == 1 ? "document" : "documents" }} encountered errors:<br /><br />
                 <ol>
                     <li v-for="(message, doc) in firstFive(job.progress.errors)" :key="doc">
-                        <b>{{ doc }}</b>:<br />
+                        <b>{{ doc }}</b
+                        >:<br />
                         {{ message }}
                     </li>
                 </ol>
                 <div v-if="job.progress.failed > 5">... and {{ job.progress.failed - 5 }} more errors are omitted.</div>
                 <div v-if="job.progress.failed === 0">None</div>
             </GInfo>
+
+            <!-- Layer preview -->
+            <LayerViewer v-if="job.summary.tokens > 0" :job />
         </template>
 
         <!-- delete job modal -->
-        <DeleteModal v-if="deleteJobId" :itemName="`the results of job ${deleteJobId}`" @delete="
-            () => {
-                jobsStore.remove(deleteJobId)
-                healthLoading = true
-            }
-        " @hide="deleteJobId = undefined" />
+        <DeleteModal
+            v-if="deleteJobId"
+            :itemName="`the results of job ${deleteJobId}`"
+            @delete="
+                () => {
+                    jobsStore.remove(deleteJobId)
+                    healthLoading = true
+                }
+            "
+            @hide="deleteJobId = undefined"
+        />
     </GModal>
 </template>
 
 <script setup lang="ts">
-// Libraries & stores
-
 import * as API from "@/api/taggers"
 import stores from "@/stores"
 import type { Job } from "@/types/jobs"
-// API & types
-import type { TaggerHealth } from "@/types/taggers"
+import { type TaggerHealth, TaggerStatus } from "@/types/taggers"
 
 // Stores
 const errors = stores.useErrors()
@@ -113,13 +124,11 @@ const jobsStore = stores.useJobs()
 // Fields
 const { jobId } = defineProps<{ jobId: string }>()
 /** The job of this modal */
-const job = computed<Job>(
-    (): Job => jobsStore.jobs.find((j: Job) => j.tagger.id === jobId)
-)
+const job = computed<Job>((): Job => jobsStore.jobs.find((j: Job) => j.tagger.id === jobId))
 /** Returns null while we are waiting on the first getHealth request. */
 const taggerIsAvailable = computed<boolean | null>(() => {
     if (!health.value) return null
-    return health.value?.status === "HEALTHY"
+    return health.value?.status === TaggerStatus.HEALTHY
 })
 /** Opens DeleteModal when not null. */
 const deleteJobId = ref<string | null>(null)
@@ -161,11 +170,11 @@ onUnmounted(() => {
  */
 function getHealth() {
     API.getTaggerHealth(jobId)
-        .then(response => {
+        .then((response) => {
             health.value = response.data
             healthLoading.value = false
         })
-        .catch(error => errors.handle(error))
+        .catch((error) => errors.handle(error))
 }
 
 /**
@@ -183,10 +192,3 @@ function firstFive(obj: Record<string, unknown>) {
         }, {})
 }
 </script>
-
-<style scoped lang="scss">
-.buttons {
-    display: flex;
-    gap: 0.25rem;
-}
-</style>

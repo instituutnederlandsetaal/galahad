@@ -3,11 +3,7 @@
  */
 
 import axios, { type AxiosResponse } from "axios"
-import type {
-    CorpusMetadata,
-    MutableCorpusMetadata,
-    UUID
-} from "@/types/corpora"
+import type { CorpusMetadata, MutableCorpusMetadata, UUID } from "@/types/corpora"
 
 type CorporaResponse = AxiosResponse<CorpusMetadata[]>
 type CorpusResponse = AxiosResponse<CorpusMetadata>
@@ -35,9 +31,7 @@ export function getCorpus(uuid: UUID): Promise<CorpusResponse> {
  * Create a new corpus with the given metadata.
  * @param corpus Metadata of new corpus.
  */
-export function postCorpus(
-    corpus: MutableCorpusMetadata
-): Promise<AxiosResponse<UUID>> {
+export function postCorpus(corpus: MutableCorpusMetadata): Promise<AxiosResponse<UUID>> {
     return axios.post(corporaPath, corpus)
 }
 
@@ -54,9 +48,6 @@ export function deleteCorpus(uuid: UUID): Promise<AxiosResponse> {
  * @param uuid UUID of corpus to update.
  * @param metadata New metadata.
  */
-export function patchCorpus(
-    uuid: UUID,
-    metadata: MutableCorpusMetadata
-): Promise<AxiosResponse> {
+export function patchCorpus(uuid: UUID, metadata: MutableCorpusMetadata): Promise<AxiosResponse> {
     return axios.patch(corpusPath(uuid), metadata)
 }

@@ -26,32 +26,27 @@ const useDistribution = defineStore("distribution", () => {
         return distributionPath(corpusId.value)
     })
 
-    const { loading, data: distributions } = useAxios<
-        Record<string, DistributionWrapper>
-    >(url, {}, { hypothesis: hypothesisId.value })
-
-    const distribution = computed(
-        () =>
-            distributions.value?.[selectedDistribution.value] ??
-            defaultDistribution()
+    const { loading, data: distributions } = useAxios<Record<string, DistributionWrapper>>(
+        url,
+        {},
+        { hypothesis: hypothesisId.value },
     )
+
+    const distribution = computed(() => distributions.value?.[selectedDistribution.value] ?? defaultDistribution())
     const selectedDistribution = ref<string>()
     const distributionOptions = computed<SelectOption[]>(
         () => {
             if (!distributions.value) {
                 return []
             }
-            return Object.keys(distributions.value).map(x => ({
-                value: x,
-                text: x
-            }))
+            return Object.keys(distributions.value).map((x) => ({ value: x, text: x }))
         },
-        { immediate: true }
+        { immediate: true },
     )
     const posses = computed(() => {
         // A bit hacky using Object.entries, but .map throws on undefined.
         return Object.entries(distribution.value?.distribution)
-            ?.map(x => x[1].pos)
+            ?.map((x) => x[1].pos)
             .filter((val, ind, arr) => arr.indexOf(val) === ind) // unique values
             .sort()
     })
@@ -63,7 +58,7 @@ const useDistribution = defineStore("distribution", () => {
         posses,
         selectedDistribution,
         distributionOptions,
-        distributions
+        distributions,
     }
 })
 

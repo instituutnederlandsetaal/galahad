@@ -1,24 +1,18 @@
 <template>
-    <div class="spinner">
+    <div class="spinner" :class="classes">
         <svg class="icon" height="100" width="100" viewBox="0 0 100 100" :class="classes">
-            <path class="grail"
-                d="M10 10 L90 10 Q90 40 65 40 L65 80 Q80 80 80 90 L20 90 Q20 80 35 80 L35 80 L35 40 Q10 40 10 10 Z" />
+            <path
+                class="grail"
+                d="M10 10 L90 10 Q90 40 65 40 L65 80 Q80 80 80 90 L20 90 Q20 80 35 80 L35 80 L35 40 Q10 40 10 10 Z"
+            />
             <ellipse class="wine" cx="60" cy="90" rx="30" ry="10" />
         </svg>
     </div>
 </template>
 
 <script setup lang="ts">
-const { error, small, still } = defineProps<{
-    error?: boolean
-    small?: boolean
-    still?: boolean
-}>()
-const classes = {
-    error: error,
-    small: small,
-    still: still
-}
+const { error, small, still } = defineProps<{ error?: boolean; small?: boolean; still?: boolean }>()
+const classes = { error: error, small: small, still: still }
 </script>
 
 <style scoped lang="scss">
@@ -26,9 +20,15 @@ const classes = {
     height: 40px;
     width: 40px;
 
+    &.small {
+        height: 20px;
+        width: 20px;
+    }
+
     .icon {
         height: 40px;
         width: 40px;
+        display: block;
         position: absolute;
         animation: spin 4s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
         fill: var(--int-yellow-outline);

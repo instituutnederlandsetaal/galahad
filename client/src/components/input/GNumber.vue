@@ -6,15 +6,14 @@
 <script setup lang="ts">
 const model = defineModel<number>()
 
-const { placeholder, min, max, step, validityDescriptor, validator } =
-    defineProps<{
-        placeholder?: string
-        min?: number
-        max?: number
-        step?: number
-        validityDescriptor?: string
-        validator?: (value: number) => boolean
-    }>()
+const { placeholder, min, max, step, validityDescriptor, validator } = defineProps<{
+    placeholder?: string
+    min?: number
+    max?: number
+    step?: number
+    validityDescriptor?: string
+    validator?: (value: unknown) => boolean
+}>()
 </script>
 
 <style scoped lang="scss">

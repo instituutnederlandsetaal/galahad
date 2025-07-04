@@ -34,8 +34,12 @@
     </tr>
 
     <!-- delete modal -->
-    <DeleteModal v-if="userToDelete" :itemName="userToDelete" @hide="userToDelete = null"
-        @delete="removeUser(userToDelete)">
+    <DeleteModal
+        v-if="userToDelete"
+        :itemName="userToDelete"
+        @hide="userToDelete = null"
+        @delete="removeUser(userToDelete)"
+    >
         <template #action>remove access for user</template>
     </DeleteModal>
 </template>
@@ -46,28 +50,16 @@ import stores from "@/stores"
 export default defineComponent({
     name: "UserList",
     props: {
-        users: {
-            type: Array<string>,
-            default: () => []
-        },
-        listName: {
-            type: String,
-            default: "Users"
-        },
-        showAddDialog: {
-            type: Boolean,
-            default: true
-        }
+        users: { type: Array<string>, default: () => [] },
+        listName: { type: String, default: "Users" },
+        showAddDialog: { type: Boolean, default: true },
     },
     setup() {
         const userStore = stores.useUser()
         return { userStore: userStore }
     },
     data() {
-        return {
-            newUser: "",
-            userToDelete: null
-        }
+        return { newUser: "", userToDelete: null }
     },
     methods: {
         canDelete(username: string): boolean {
@@ -86,8 +78,8 @@ export default defineComponent({
         removeUser(username: string) {
             const removeIndex = this.users.indexOf(username)
             this.users.splice(removeIndex, 1)
-        }
-    }
+        },
+    },
 })
 </script>
 
@@ -95,7 +87,7 @@ export default defineComponent({
 .users {
     display: flex;
 
-    >p {
+    > p {
         margin: 5px 0px;
         flex: 1;
     }
@@ -107,8 +99,9 @@ ul {
 
 .usersInput {
     display: flex;
+    gap: 0.5rem;
 
-    >input {
+    > input {
         flex: 1;
     }
 }

@@ -15,9 +15,7 @@
         <slot v-if="isEmpty && !loading" name="table-empty"></slot>
 
         <template v-else>
-            <p v-if="selectable">
-                Click on a row to select an item.
-            </p>
+            <p v-if="selectable">Click on a row to select an item.</p>
 
             <GTablePaginator v-if="numPages > 1" v-model="page" :numPages />
 
@@ -34,18 +32,30 @@
                             </div>
 
                             <span class="sort-control" v-if="!column.noSort">
-                                <span @click="sortBy(column.key, true)"
-                                    :class="{ active: sortDesc && sortColumn == column.key }">▼</span>
+                                <span
+                                    @click="sortBy(column.key, true)"
+                                    :class="{ active: sortDesc && sortColumn == column.key }"
+                                    title="Sort descending"
+                                    >▼</span
+                                >
                                 |
-                                <span @click="sortBy(column.key, false)"
-                                    :class="{ active: !sortDesc && sortColumn == column.key }">▲</span>
+                                <span
+                                    @click="sortBy(column.key, false)"
+                                    :class="{ active: !sortDesc && sortColumn == column.key }"
+                                    title="Sort ascending"
+                                    >▲</span
+                                >
                             </span>
                         </th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(item, i) in visibleItems" :key="i" @click="model = item"
-                        :class="model == item ? 'selected' : ''">
+                    <tr
+                        v-for="(item, i) in visibleItems"
+                        :key="i"
+                        @click="model = item"
+                        :class="model === item ? 'selected' : ''"
+                    >
                         <td v-for="column in visibleColumns" :key="column.key" :style="{ textAlign: column.align }">
                             <!-- specific cell rendering -->
                             <slot :name="`cell-${column.key}`" :column :item :value="item[column.key]">
@@ -67,13 +77,12 @@
             </table>
 
             <GTablePaginator v-if="numPages > 1" v-model="page" :numPages />
-
         </template>
     </GCard>
 </template>
 
-<script setup lang="ts">
-import type { Column, Item } from "@/types/ui/table"
+<script setup lang="ts" generic="T">
+import type { Column } from "@/types/ui/table"
 import type { HelpLink } from "@/types/ui/help"
 
 // --- props ---
@@ -85,10 +94,10 @@ const {
     loading,
     selectable,
     sortColumn: initSortColumn,
-    sortDesc: initSortDesc = true
+    sortDesc: initSortDesc = true,
 } = defineProps<{
-    items: Item[]
-    columns: Column<any>[]
+    items: T[]
+    columns: Column<T>[]
     title?: string
     helpLink?: HelpLink | string
     loading?: boolean
@@ -98,39 +107,31 @@ const {
 }>()
 
 // --- data ---
-const model = defineModel<Item>()
+const model = defineModel<T>()
 const page = ref<number>(1)
-const sortColumn = ref<string>(initSortColumn)
+const sortColumn = ref<string | undefined>(initSortColumn)
 const sortDesc = ref<boolean>(initSortDesc)
 
 // --- computed ---
-const classes = computed(() => ({
-    loading: loading,
-    selectable: selectable
-}))
+const classes = computed(() => ({ loading: loading, selectable: selectable }))
 const isEmpty = computed<boolean>(() => items?.length === 0)
 
-const visibleItems = computed<Item[]>(() => {
+const visibleItems = computed<T[]>(() => {
     // only paginate
     if (!sortColumn.value) return paginate(items)
 
     // sort and then paginate
     const sortOn =
-        columns.find(column => column.key === sortColumn.value)?.sortOn ??
-        ((x: Item): Item => x[sortColumn.value])
-    const sorted = items.toSorted((a: Item, b: Item) => {
+        columns.find((column) => column.key === sortColumn.value)?.sortOn ?? ((x: T): T => x[sortColumn.value])
+    const sorted = items.toSorted((a: T, b: T) => {
         const order = sortDesc.value ? -1 : 1
         return order * compareAny(sortOn(a), sortOn(b))
     })
     return paginate(sorted)
 })
-const numPages = computed<number>(() =>
-    Math.ceil((items?.length ?? 0) / pageSize)
-)
+const numPages = computed<number>(() => Math.ceil((items?.length ?? 0) / pageSize))
 const pageSize = 15
-const visibleColumns = computed<Column<Item>[]>(() =>
-    columns.filter(field => !field.hidden)
-)
+const visibleColumns = computed<Column<T>[]>(() => columns.filter((field) => !field.hidden))
 
 // --- watch ---
 // reset to first page on item change
@@ -138,7 +139,7 @@ watch(
     () => items,
     () => {
         page.value = 1
-    }
+    },
 )
 
 function compareAny(a: unknown, b: unknown): number {
@@ -177,7 +178,7 @@ function nu(v: unknown): boolean {
 }
 
 /** Return items on page N */
-function paginate(items: Item[]): Item[] {
+function paginate(items: T[]): T[] {
     return items.slice((page.value - 1) * pageSize, page.value * pageSize)
 }
 
@@ -194,7 +195,7 @@ table {
     border-collapse: collapse;
     // scroll on overflow requires display: block
     display: block;
-    width: 100%;
+    max-width: 100%;
     overflow-x: auto;
 
     &.loading {
@@ -234,7 +235,6 @@ table {
 
     tbody {
         tr {
-
             &:nth-child(even) {
                 background: #fff;
             }

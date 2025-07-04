@@ -9,41 +9,62 @@
                 <template v-if="userStore.canWrite || !initial">
                     <tr>
                         <td>
-                            <label>Name:</label> <span class="warning"><small>(Required)</small></span>
+                            <label>Name</label> <span class="warning"><small>(Required)</small></span>
                         </td>
                         <td>
-                            <GInput v-model="name" focus placeholder="corpus name" :validator="validateCorpusName"
-                                validityDescriptor="3-100 characters" />
+                            <GInput
+                                v-model="name"
+                                focus
+                                placeholder="Corpus name"
+                                :validator="validateCorpusName"
+                                validityDescriptor="3-100 characters"
+                            />
                         </td>
                     </tr>
                     <tr>
-                        <td><label>Year from:</label></td>
+                        <td><label>Year from</label></td>
                         <td>
-                            <GNumber v-model="eraFrom" validityDescriptor="Must be before end year" placeholder="YYYY"
-                                :min="-10000" :max="2100" :step="50"
-                                :validator="(v) => { console.log(v); return v <= eraTo }" />
+                            <GNumber
+                                v-model="eraFrom"
+                                validityDescriptor="Before end year"
+                                placeholder="YYYY"
+                                :min="-6000"
+                                :max="2100"
+                                :step="50"
+                                :validator="
+                                    (v) => {
+                                        return (v ?? 0) <= (eraTo ?? 0)
+                                    }
+                                "
+                            />
                         </td>
                     </tr>
 
                     <tr>
-                        <td><label>Year to:</label></td>
+                        <td><label>Year to</label></td>
                         <td>
-                            <GNumber v-model="eraTo" validityDescriptor="Must be after start year" placeholder="YYYY"
-                                :min="-10000" :max="2100" :step="50" :validator="(v) => { return v >= eraFrom }" />
+                            <GNumber
+                                v-model="eraTo"
+                                validityDescriptor="After start year"
+                                placeholder="YYYY"
+                                :min="-6000"
+                                :max="2100"
+                                :step="50"
+                                :validator="
+                                    (v) => {
+                                        return (v ?? 0) >= (eraFrom ?? 0)
+                                    }
+                                "
+                            />
                         </td>
                     </tr>
 
                     <tr>
                         <td>
-                            <label>
-                                <ExternalLink href="/galahad/overview/tagsets">Tagset</ExternalLink>:
-                            </label>
+                            <label><ExternalLink href="/galahad/overview/tagsets">Tagset</ExternalLink></label>
                         </td>
                         <td>
-                            <GInput v-model="tagset" list="tagsets" placeholder="tagset name" />
-                            <datalist id="tagsets">
-                                <option v-for="(tagset, _) in tagsetsStore.tagsets" :value="tagset.name"></option>
-                            </datalist>
+                            <TagsetSelect v-model="tagset" />
                         </td>
                     </tr>
 
@@ -55,7 +76,7 @@
                         </tr>
 
                         <tr>
-                            <td>Benchmark set:</td>
+                            <td>Benchmark set</td>
                             <td>
                                 <GCheckBox v-model="dataset">Benchmark</GCheckBox>
                             </td>
@@ -69,16 +90,16 @@
                     </tr>
 
                     <tr>
-                        <td><label>Source name:</label></td>
+                        <td><label>Source name</label></td>
                         <td>
-                            <GInput v-model="sourceName" placeholder="source name" />
+                            <GInput v-model="sourceName" placeholder="Source name" />
                         </td>
                     </tr>
 
                     <tr>
-                        <td><label>Source url:</label></td>
+                        <td><label>Source url</label></td>
                         <td>
-                            <GInput v-model="sourceUrl" type="url" placeholder="source url" />
+                            <GInput v-model="sourceUrl" type="url" placeholder="Source url" />
                         </td>
                     </tr>
 
@@ -102,24 +123,18 @@ const userStore = stores.useUser()
 const tagsetsStore = stores.useTagsets()
 
 // --- props ---
-const { initial, title } = defineProps<{
-    initial?: CorpusMetadata
-    title: string
-}>()
+const { initial, title } = defineProps<{ initial?: CorpusMetadata; title: string }>()
 
-const emit = defineEmits<{
-    hide: []
-    confirm: [metadata: CorpusMetadata]
-}>()
+const emit = defineEmits<{ hide: []; confirm: [metadata: CorpusMetadata] }>()
 
 // --- data ---
 const dataset = ref<boolean>()
 const name = ref<string>("")
 const eraFrom = ref<number>()
 const eraTo = ref<number>()
-const tagset = ref<string>()
-const sourceName = ref<string>()
-const sourceUrl = ref<string>()
+const tagset = ref<string>("")
+const sourceName = ref<string>("")
+const sourceUrl = ref<string>("")
 const collaborators = ref<string[]>([])
 const viewers = ref<string[]>([])
 
@@ -169,7 +184,7 @@ watch(
         collaborators.value = [...newValue.collaborators]
         viewers.value = [...newValue.viewers]
     },
-    { immediate: true, deep: true }
+    { immediate: true, deep: true },
 )
 
 // --- methods ---
@@ -185,7 +200,7 @@ function confirm(): void {
         viewers: viewers.value,
         sourceName: sourceName.value,
         sourceUrl: validatesourceUrl(sourceUrl.value),
-        uuid: initial?.uuid
+        uuid: initial?.uuid,
     }
     emit("confirm", value)
     emit("hide")

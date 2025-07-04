@@ -1,24 +1,24 @@
 <template>
     <GCard title="Taggers overview">
         <template #help>
+            <p>Here you can see an overview of all available taggers within GaLAHaD.</p>
             <p>
-                Here you can see an overview of all available taggers within GaLAHaD. <br />
-                For more information on the taggers, please visit GitHub:
+                For more information on the taggers, please visit
                 <ExternalLink href="https://github.com/INL/galahad-taggers-dockerized/">
-                    galahad-taggers-dockerized
-                </ExternalLink>
+                    galahad-taggers-dockerized on GitHub </ExternalLink
+                >.
             </p>
         </template>
 
         <GTable :loading :columns :items sortColumn="id">
             <template #table-empty>
                 No taggers appeared? That is not right! Please contact the INT at
-                <MailAddress />
+                <MailAddress />.
             </template>
 
             <!-- id -->
-            <template #cell-id="d">
-                <span :id="d.value" :class="markActive(d.value)">{{ d.value }}</span>
+            <template #cell-id="d: TableData<Tagger>">
+                <span :id="d.item.id" :class="markActive(d.item.id)">{{ d.value }}</span>
             </template>
 
             <!-- links -->
@@ -34,10 +34,12 @@
 <script setup lang="ts">
 import stores from "@/stores"
 import type { Tagger } from "@/types/taggers"
-import type { Column } from "@/types/ui/table"
+import type { Column, TableData } from "@/types/ui/table"
 
+// #stores
 const { taggers: items, loading } = storeToRefs(stores.useTaggers())
 
+// #data
 const columns: Column<Tagger>[] = [
     { key: "id", label: "name" },
     { key: "description" },
@@ -46,18 +48,19 @@ const columns: Column<Tagger>[] = [
         key: "era",
         label: "period",
         sortOn: (t: Tagger): string => `${t.eraFrom} ${t.eraTo}`,
-        format: (t: Tagger): string => `${t.eraFrom} – ${t.eraTo}`
+        format: (t: Tagger): string => `${t.eraFrom} – ${t.eraTo}`,
     },
     {
         key: "annotations",
         format: (t: Tagger): string => t.annotations.join(", "),
-        sortOn: (t: Tagger): string => t.annotations.join()
+        sortOn: (t: Tagger): string => t.annotations.join(),
     },
     { key: "model" },
     { key: "software" },
-    { key: "dataset" }
+    { key: "dataset" },
 ]
 
+// #methods
 /**
  * Mark the active row, retrieved from the url anchor.
  */

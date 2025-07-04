@@ -1,9 +1,7 @@
 <template>
     <GCard title="Entities">
         <template #help>
-            <p>
-                Here you can see all the named entities in all jobs.
-            </p>
+            <p>Here you can see all the named entities in all jobs.</p>
         </template>
 
         <GTable class="table" :loading :items :columns sortColumn="document">
@@ -16,19 +14,30 @@
                         </span>
                     </div>
                 </legend>
-                <form class="filter" @submit.prevent>
+                <GForm>
                     <fieldset>
                         <label for="entities-select">Entities</label>
-                        <MultiSelect id="entities-select" v-model="selectedEntities" :options="entityOptions"
-                            placeholder="Select entities" :maxSelectedLabels="3" optionLabel="text"
-                            optionValue="value" />
+                        <MultiSelect
+                            id="entities-select"
+                            v-model="selectedEntities"
+                            :options="entityOptions"
+                            placeholder="Select entities"
+                            :maxSelectedLabels="3"
+                            optionLabel="text"
+                            optionValue="value"
+                        />
                     </fieldset>
                     <fieldset>
                         <label for="jobs-select">Jobs</label>
-                        <MultiSelect id="jobs-select" v-model="selectedJobs" :options="jobOptions"
-                            placeholder="Select jobs" :maxSelectedLabels="3" />
+                        <MultiSelect
+                            id="jobs-select"
+                            v-model="selectedJobs"
+                            :options="jobOptions"
+                            placeholder="Select jobs"
+                            :maxSelectedLabels="3"
+                        />
                     </fieldset>
-                </form>
+                </GForm>
             </template>
             <template #cell="data">
                 <GButton v-if="data.value" class="button" @click="selectedItem = data">
@@ -49,12 +58,8 @@ import type { Column, TableData } from "@/types/ui/table"
 import type { JobsEntities } from "@/types/evaluation/entities"
 import MultiSelect from "primevue/multiselect"
 
-
 // --- types ---
-type DocumentEntitiesRow = {
-    document: string
-    [key: string]: number | string
-}
+type DocumentEntitiesRow = { document: string; [key: string]: number | string }
 
 // --- stores ---
 const { entities, loading } = storeToRefs(stores.useEntities())
@@ -98,7 +103,11 @@ const columns = computed<Column<Record<string, number>>[]>(() => {
         return []
     }
     const cols: Column<DocumentEntitiesRow>[] = [
-        { key: "document", sortOn: (d: DocumentEntitiesRow): number | string => d.document === "total" ? Number.POSITIVE_INFINITY : d.document },
+        {
+            key: "document",
+            sortOn: (d: DocumentEntitiesRow): number | string =>
+                d.document === "total" ? Number.POSITIVE_INFINITY : d.document,
+        },
         { key: "entities", hidden: true },
     ]
 
@@ -138,9 +147,7 @@ function filterAccepts(entity: string, job?: string): boolean {
     return selectedEntities.value.includes(entity) && (!job || selectedJobs.value.includes(job))
 }
 
-function convertJobsEntities(
-    jobsEntities: JobsEntities
-): DocumentEntitiesRow[] {
+function convertJobsEntities(jobsEntities: JobsEntities): DocumentEntitiesRow[] {
     if (!jobsEntities) return []
 
     const result: Record<string, { [key: string]: number | string }> = {}
@@ -164,9 +171,7 @@ function convertJobsEntities(
         }
     }
 
-    for (const [docName, doc] of Object.entries(
-        jobsEntities.stddev.documents
-    )) {
+    for (const [docName, doc] of Object.entries(jobsEntities.stddev.documents)) {
         for (const [eLabel, stddev] of Object.entries(doc.stddev)) {
             result[docName][`${eLabel} std`] = stddev
         }
@@ -198,7 +203,6 @@ function formatNumber(value: unknown): string | unknown {
     }
     return value
 }
-
 </script>
 
 <style scoped lang="scss">
@@ -213,7 +217,6 @@ function formatNumber(value: unknown): string | unknown {
             background-color: transparent;
             justify-content: right;
 
-
             &:hover {
                 background-color: var(--int-light-grey) !important;
             }
@@ -222,18 +225,6 @@ function formatNumber(value: unknown): string | unknown {
                 background-color: var(--int-light-grey-hover) !important;
             }
         }
-    }
-}
-
-.filter {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-
-    fieldset {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
     }
 }
 

@@ -5,16 +5,30 @@
     <form class="form">
         <!-- Styled label for input -->
         <label for="file-upload" class="custom-file-upload">
-            <svg class="svg-icon" aria-hidden="true" role="img" focusable="false" xmlns="http://www.w3.org/2000/svg"
-                width="20" height="12" viewBox="0 0 20 12">
+            <svg
+                class="svg-icon"
+                aria-hidden="true"
+                role="img"
+                focusable="false"
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="12"
+                viewBox="0 0 20 12"
+            >
                 <polygon class="st0" points="10,4.2 2.2,12 0.1,9.9 10,0 19.9,9.9 17.8,12 "></polygon>
             </svg>
             Select file(s) or drag & drop
         </label>
         <!-- Actual input -->
-        <input type="file" ref="uploadInput" name="filefield" multiple id="file-upload"
+        <input
+            type="file"
+            ref="uploadInput"
+            name="filefield"
+            multiple
+            id="file-upload"
             accept=".xml, .tsv, .txt, .zip, .conllu, .naf, .pdf, .docx"
-            @change="(e) => (filesToUpload = Object.values(e.target.files as FileList))" />
+            @change="(e) => (filesToUpload = Object.values(e.target.files as FileList))"
+        />
 
         <!-- List of currently selected files. -->
         <ul v-if="filesToUpload.length > 0">
@@ -29,20 +43,26 @@
 
         <!-- Confirmation and clear buttons after a selection has been made -->
         <fieldset v-if="filesToUpload.length != 0" class="btns">
-            <GButton green @click="
-                () => {
-                    documentsStore.uploadAll()
-                    $refs.uploadInput.value = null
-                }
-            ">
+            <GButton
+                green
+                @click="
+                    () => {
+                        documentsStore.uploadAll()
+                        $refs.uploadInput.value = null
+                    }
+                "
+            >
                 Upload
             </GButton>
-            <GButton plain @click="
-                () => {
-                    filesToUpload = []
-                    $refs.uploadInput.value = null
-                }
-            ">
+            <GButton
+                plain
+                @click="
+                    () => {
+                        filesToUpload = []
+                        $refs.uploadInput.value = null
+                    }
+                "
+            >
                 &#10006;&nbsp;clear
             </GButton>
         </fieldset>
@@ -84,13 +104,7 @@ import stores from "@/stores"
 
 // Stores
 const documentsStore = stores.useDocuments()
-const {
-    filesToUpload,
-    illegalFiles,
-    uploadBusyCount,
-    uploadErrorCount,
-    uploading
-} = storeToRefs(documentsStore)
+const { filesToUpload, illegalFiles, uploadBusyCount, uploadErrorCount, uploading } = storeToRefs(documentsStore)
 
 // Fields
 const dropZone = ref<HTMLElement>()
@@ -118,7 +132,7 @@ onMounted(() => {
     dropZone.value.addEventListener("dragleave", hideDropZone)
     dropZone.value.addEventListener("drop", handleDrop)
     // Apparently, this is needed to prevent the browser from opening the file.
-    dropZone.value.addEventListener("dragover", e => e.preventDefault())
+    dropZone.value.addEventListener("dragover", (e) => e.preventDefault())
 })
 </script>
 

@@ -2,7 +2,7 @@
     <hgroup class="banner" role="banner">
         <div class="logo">
             <router-link to="/">
-                <img class="painting" src="@/assets/galahad-graal-klein.png" />
+                <img class="painting" src="@/assets/logo/galahad-graal-klein.png" />
             </router-link>
         </div>
 
@@ -34,8 +34,6 @@
     // header top tabs start
     .logo {
         align-self: flex-start;
-
-
 
         a {
             display: block;

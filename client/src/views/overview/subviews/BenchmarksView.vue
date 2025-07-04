@@ -8,7 +8,7 @@
             </p>
             <p>
                 <i>
-                    <b>Note:</b>
+                    <strong>Note:</strong>
                     When taggers use a different tagset than the reference tagset, the score can be very low.
                 </i>
             </p>
@@ -20,8 +20,10 @@
             <!-- tagger name -->
 
             <template #cell-tagger="d">
-                <ExternalLink v-if="d.item.tagger !== SOURCE_LAYER"
-                    :href="`/galahad/overview/taggers#${d.item.tagger}`">
+                <ExternalLink
+                    v-if="d.item.tagger !== SOURCE_LAYER"
+                    :href="`/galahad/overview/taggers#${d.item.tagger}`"
+                >
                     {{ d.item.tagger }}
                 </ExternalLink>
                 <div v-else>
@@ -35,7 +37,8 @@
 
             <template #cell-details="d">
                 <ExternalLink
-                    :href="`/galahad/annotate/evaluate?corpus=${selectedDatasetUuid}&hypothesis=${d.item.tagger}`">
+                    :href="`/galahad/annotate/evaluate?corpus=${selectedDatasetUuid}&hypothesis=${d.item.tagger}`"
+                >
                     Details
                 </ExternalLink>
             </template>
@@ -43,7 +46,7 @@
             <template #header>
                 <div class="table-controls">
                     <div class="table-control">
-                        <label for="dataset-select">Dataset:</label>
+                        <label for="dataset-select">Dataset</label>
                         <GSelect id="dataset-select" :options="datasetOptions" v-model="selectedDatasetUuid" />
                     </div>
                 </div>
@@ -65,13 +68,7 @@ import type { TableData } from "@/types/ui/table"
 import type MetricsFilter from "@/components/tables/MetricsFilter.vue"
 
 // Types
-type AssayRow = {
-    tagger: string
-    accuracy: number
-    precision: number
-    recall: number
-    f1: number
-}
+type AssayRow = { tagger: string; accuracy: number; precision: number; recall: number; f1: number }
 
 // Stores
 const assaysStore = stores.useAssays()
@@ -79,25 +76,20 @@ const corporaStore = stores.useCorpora()
 
 // Fields
 const datasetOptions = computed<SelectOption[]>(() =>
-    corporaStore.datasets
-        .map(d => ({ value: d.uuid, text: d.name }))
-        .sort((a, b) => a.text.localeCompare(b.text))
+    corporaStore.datasets.map((d) => ({ value: d.uuid, text: d.name })).sort((a, b) => a.text.localeCompare(b.text)),
 )
 const selectedDatasetUuid = ref<string>()
 const selectedDatasetName = computed(
-    () =>
-        corporaStore.datasets.find(d => d.uuid === selectedDatasetUuid.value)
-            ?.name
+    () => corporaStore.datasets.find((d) => d.uuid === selectedDatasetUuid.value)?.name,
 )
-const metricsFilter =
-    useTemplateRef<InstanceType<typeof MetricsFilter>>("metricsFilter")
+const metricsFilter = useTemplateRef<InstanceType<typeof MetricsFilter>>("metricsFilter")
 const columns = [
     { key: "tagger", label: "tagger" },
-    { key: "precision", label: "macro\nprecision", sortOn: i => i.precision },
-    { key: "recall", label: "macro\nrecall", sortOn: i => i.recall },
-    { key: "f1", label: "macro\nf1", sortOn: i => i.f1 },
-    { key: "accuracy", label: "micro\naccuracy", sortOn: i => i.accuracy },
-    { key: "details", label: "detailed\nevaluation" }
+    { key: "precision", label: "macro\nprecision", sortOn: (i) => i.precision },
+    { key: "recall", label: "macro\nrecall", sortOn: (i) => i.recall },
+    { key: "f1", label: "macro\nf1", sortOn: (i) => i.f1 },
+    { key: "accuracy", label: "micro\naccuracy", sortOn: (i) => i.accuracy },
+    { key: "details", label: "detailed\nevaluation" },
 ]
 /**
  * Our input data is in the form:
@@ -125,9 +117,7 @@ const selectedAssay = computed(() => {
 })
 const items = computed(() => {
     const metricName = metricsFilter.value?.metricName
-    return Object.entries(
-        assaysStore.assays[selectedDatasetName.value]?.[metricName] ?? {}
-    ).map(taggerAndMetric => {
+    return Object.entries(assaysStore.assays[selectedDatasetName.value]?.[metricName] ?? {}).map((taggerAndMetric) => {
         const tagger: string = taggerAndMetric[0]
         const mta: MetricTypeAssay = taggerAndMetric[1]
         const result = {
@@ -135,7 +125,7 @@ const items = computed(() => {
             accuracy: mta.micro.accuracy,
             precision: mta.macro.precision,
             recall: mta.macro.recall,
-            f1: mta.macro.f1
+            f1: mta.macro.f1,
         }
         return result
     })

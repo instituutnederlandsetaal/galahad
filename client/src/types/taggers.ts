@@ -11,12 +11,7 @@ export enum TaggerStatus {
     HEALTHY = "HEALTHY",
     ERROR = "ERROR",
     NOT_HEALTHY = "NOT_HEALTHY",
-    UNKOWN = "UNKOWN"
+    UNKOWN = "UNKOWN",
 }
 
-export type TaggerHealth = {
-    status: TaggerStatus
-    queueSizeAtTagger: number
-    processingSpeed: number
-    message: string
-}
+export type TaggerHealth = { status: TaggerStatus; message: string }

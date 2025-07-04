@@ -1,8 +1,6 @@
 <template>
     <section class="tabs">
-
         <header class="header">
-
             <template v-if="$slots.banner">
                 <slot name="banner"></slot>
             </template>
@@ -15,7 +13,6 @@
                     </router-link>
                 </slot>
             </nav>
-
         </header>
 
         <RouterView class="view" />
@@ -23,16 +20,10 @@
 </template>
 
 <script setup lang="ts">
-export type Tab = {
-    id: string
-    title: string
-    disabled?: boolean
-}
+// #types
+type Tab = { id: string; title: string; disabled?: boolean }
 
-const { basePath, tabs } = defineProps<{
-    basePath: string
-    tabs: Tab[]
-}>()
+const { basePath, tabs } = defineProps<{ basePath: string; tabs: Tab[] }>()
 
 const route = useRoute()
 </script>
@@ -93,7 +84,7 @@ const route = useRoute()
     &.level-1 {
         min-height: 100vh;
 
-        >.header .nav {
+        > .header .nav {
             min-width: 100%;
         }
     }
@@ -113,7 +104,6 @@ const route = useRoute()
 
 @media (max-width: 730px) {
     .tabs {
-
         &.level-2 {
             padding: 1rem 0;
         }

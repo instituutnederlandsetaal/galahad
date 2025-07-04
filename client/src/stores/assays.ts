@@ -23,8 +23,8 @@ const useAssays = defineStore("assays", () => {
     function reload(): void {
         loading.value = true
         API.getBenchmarks()
-            .then(response => (assays.value = response.data))
-            .catch(error => errors.handle(error))
+            .then((response) => (assays.value = response.data))
+            .catch((error) => errors.handle(error))
             .finally(() => (loading.value = false))
     }
 
@@ -34,7 +34,7 @@ const useAssays = defineStore("assays", () => {
         assays,
         loading,
         // Methods
-        reload
+        reload,
     }
 })
 

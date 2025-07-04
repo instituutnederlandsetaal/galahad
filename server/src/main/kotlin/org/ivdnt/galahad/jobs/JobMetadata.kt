@@ -11,17 +11,17 @@ import org.ivdnt.galahad.taggers.Tagger
  * Cache-able job metadata.
  */
 class JobMetadata(
-    @JsonProperty("tagger") val tagger: Tagger,
-    @JsonProperty("progress") val progress: Progress,
-    @JsonProperty("preview") val preview: LayerPreview,
-    @JsonProperty("resultSummary") val resultSummary: LayerSummary,
-    @JsonProperty("modified") var modified: Long,
+    val tagger: Tagger,
+    val progress: Progress,
+    val preview: LayerPreview,
+    val summary: LayerSummary,
+    var modified: Long,
 ) {
     companion object {
         fun create(job: Job): JobMetadata {
             val djs = job.results.readAll()
             // sum up the number of tokens/lemmas/etc of all documents
-            val resultSummary: LayerSummary =
+            val summary: LayerSummary =
                 djs.mapNotNull { it.layer?.summary }.reduceOrNull { a, b -> a + b } ?: LayerSummary(0)
             // Preview of the resulting terms of this job.
             // Show the first preview of the first document that isn't LayerPreview.EMPTY.
@@ -39,7 +39,7 @@ class JobMetadata(
                 tagger = tagger,
                 progress = job.progress,
                 preview = preview,
-                resultSummary = resultSummary,
+                summary = summary,
                 modified = System.currentTimeMillis()
             )
         }

@@ -1,4 +1,1 @@
-export type HelpLink = {
-    subject: string
-    href: string
-}
+export type HelpLink = { subject: string; href: string }

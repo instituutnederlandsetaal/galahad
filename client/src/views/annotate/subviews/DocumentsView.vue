@@ -6,18 +6,18 @@
                     <DocumentsHelp />
                 </slot>
             </template>
-            <UploadDocuments v-if="userStore.canWrite" />
-            <DocumentsTable :type="TableDocumentsType.user" :corpus :loading :documents />
+            <UploadDocuments v-if="canWrite" />
+            <DocumentsTable :corpus :loading :documents :type="DocsTableType.user" />
         </GCard>
     </AnnotateTab>
 </template>
 
 <script setup lang="ts">
 import stores from "@/stores"
-import { TableDocumentsType } from "@/types/ui/table"
+import { DocsTableType } from "@/types/ui/table"
 
 const { corpus } = storeToRefs(stores.useCorpora())
-const userStore = stores.useUser()
+const { canWrite } = storeToRefs(stores.useUser())
 const { documents, loading } = storeToRefs(stores.useDocuments())
 const { clearUploadErrors } = stores.useDocuments()
 

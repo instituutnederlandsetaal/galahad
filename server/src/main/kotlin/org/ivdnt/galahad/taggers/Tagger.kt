@@ -48,8 +48,8 @@ class Tagger(
         }
 
     class LinkItem(
-        @JsonProperty("name") var name: String = "",
-        @JsonProperty("href") var href: String = "",
+        var name: String = "",
+        var href: String = "",
     )
 
     companion object {
@@ -74,7 +74,7 @@ class Tagger(
 
         fun createSourceTagger(corpus: Corpus): Tagger {
             val metadata = corpus.immutableMetadata
-            val produces = corpus.documents.readAll().flatMap { it.metadata.annotations }.toTypedArray()
+            val produces = corpus.documents.readAll().flatMap { it.metadata.annotations }.toSet().toTypedArray()
             return Tagger(
                 id = SOURCE_LAYER_NAME,
                 description = "uploaded annotations",

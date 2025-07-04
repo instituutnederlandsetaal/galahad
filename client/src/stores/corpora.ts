@@ -4,11 +4,7 @@ import * as API from "@/api/corpora"
 import { plausible } from "@/ts/plausible"
 import stores from "@/stores"
 // Types & API
-import type {
-    CorpusMetadata,
-    MutableCorpusMetadata,
-    UUID
-} from "@/types/corpora"
+import type { CorpusMetadata, MutableCorpusMetadata, UUID } from "@/types/corpora"
 import { useRouteQuery } from "@vueuse/router"
 import { useAxios } from "@/api/useAxios"
 
@@ -21,35 +17,18 @@ const useCorpora = defineStore("corpora", () => {
     const errors = stores.useErrors()
 
     // Fields
-    const corpusId = useRouteQuery("corpus") as Ref<UUID>
-    const {
-        data: corpora,
-        loading,
-        reload
-    } = useAxios<CorpusMetadata[]>(API.corporaPath, [])
-    const datasets = computed<CorpusMetadata[]>(
-        (): CorpusMetadata[] => corpora.value?.filter(i => i.dataset) ?? []
-    )
+    const corpusId = useRouteQuery<UUID>("corpus")
+    const { data: corpora, loading, reload } = useAxios<CorpusMetadata[]>(API.corporaPath, [])
+    const datasets = computed<CorpusMetadata[]>((): CorpusMetadata[] => corpora.value?.filter((i) => i.dataset) ?? [])
     const sharedCorpora = computed<CorpusMetadata[]>(
-        (): CorpusMetadata[] =>
-            corpora.value?.filter(
-                i => !i.dataset && i.owner !== user.user?.id
-            ) ?? []
+        (): CorpusMetadata[] => corpora.value?.filter((i) => !i.dataset && i.owner !== user.user?.id) ?? [],
     )
     const corpus = computed<CorpusMetadata>(
-        (): CorpusMetadata =>
-            corpora.value?.find(
-                i => i.uuid === corpusId.value
-            ) as CorpusMetadata
+        (): CorpusMetadata => corpora.value?.find((i) => i.uuid === corpusId.value) as CorpusMetadata,
     )
     const hasDocs = computed((): boolean => Boolean(corpus.value?.numDocs))
-    const isCollaborator = computed(
-        (): boolean =>
-            corpus.value?.collaborators.includes(user.user?.id) ?? false
-    )
-    const isOwner = computed<boolean>(
-        (): boolean => corpus.value?.owner === user.user?.id
-    )
+    const isCollaborator = computed((): boolean => corpus.value?.collaborators.includes(user.user?.id) ?? false)
+    const isOwner = computed<boolean>((): boolean => corpus.value?.owner === user.user?.id)
 
     /**
      * Create a new corpus with the given metadata and set it as active.
@@ -59,10 +38,11 @@ const useCorpora = defineStore("corpora", () => {
         plausible.corpusCreated(metadata)
         API.postCorpus(metadata)
             // Automatically set the new corpus as active.
-            .then(response => {
+            .then((response) => {
+                console.log("Created corpus", response.data)
                 corpusId.value = response.data
             })
-            .catch(error => errors.handle(error))
+            .catch((error) => errors.handle(error))
             .finally(reload)
     }
 
@@ -79,19 +59,18 @@ const useCorpora = defineStore("corpora", () => {
                     corpusId.value = undefined
                 }
             })
-            .catch(error => errors.handle(error))
+            .catch((error) => errors.handle(error))
             .finally(reload)
     }
 
     /**
      * Update metadata of existing corpus. Keeps it selected.
-     * @param uuid UUID of corpus to update.
      * @param metadata Updated metadata.
      */
     function update(metadata: CorpusMetadata): void {
         plausible.corpusUpdated(metadata)
         API.patchCorpus(metadata.uuid, metadata)
-            .catch(error => errors.handle(error))
+            .catch((error) => errors.handle(error))
             .finally(reload)
     }
 
@@ -111,7 +90,7 @@ const useCorpora = defineStore("corpora", () => {
         reload,
         create,
         remove,
-        update
+        update,
     }
 })
 

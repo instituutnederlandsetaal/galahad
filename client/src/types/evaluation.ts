@@ -1,14 +1,7 @@
 // Confusion
 export type ConfusionWrapper = {
-    matrix: {
-        [key: string]: {
-            count: number
-            samples: TermComparison[]
-        }
-    }
-    table: {
-        [key: string]: {}
-    }
+    matrix: { [key: string]: { count: number; samples: TermComparison[] } }
+    table: { [key: string]: {} }
     generated: number
     hypothesisLastModified: number
     referenceLastModified: number
@@ -28,12 +21,7 @@ export type DistributionWrapper = {
     trimmed: boolean
 }
 
-export type Distribution = {
-    lemma: string
-    pos: string
-    count: number
-    literals: { [literal: string]: number }
-}
+export type Distribution = { lemma: string; pos: string; count: number; literals: { [literal: string]: number } }
 
 // Metrics
 export type Metrics = {
@@ -55,10 +43,7 @@ export type MetricsRow = {
     noMatch: MetricEntry
 }
 
-export type MetricEntry = {
-    count: number
-    samples: TermComparison[]
-}
+export type MetricEntry = { count: number; samples: TermComparison[] }
 
 // Shared
 export type TermComparison = {
@@ -71,26 +56,10 @@ export type TermComparison = {
     partialOverlap: boolean
 }
 
-export type Term = {
-    id: string
-    offset: number
-    annotations: Record<string, string>
-    spaceAfter?: boolean
-}
+export type Term = { id: string; offset: number; annotations: Record<string, string>; spaceAfter?: boolean }
 
-export type WordForm = {
-    literal: string
-    offset: number
-    length: number
-    id: null | string
-}
+export type WordForm = { literal: string; offset: number; length: number; id: null | string }
 
-export type EvaluationEntry = {
-    count: number
-    samples: TermComparison[]
-}
+export type EvaluationEntry = { count: number; samples: TermComparison[] }
 
-type Samples = {
-    title: string
-    samples: TermComparison[]
-}
+type Samples = { title: string; samples: TermComparison[] }

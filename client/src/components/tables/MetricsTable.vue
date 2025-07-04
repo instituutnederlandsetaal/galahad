@@ -5,9 +5,7 @@
             <DifferentTagsetsHelp />
         </template>
 
-        <template #table-empty>
-            Select a reference layer and a hypothesis layer to generate metrics.
-        </template>
+        <template #table-empty> Select a reference layer and a hypothesis layer to generate metrics. </template>
 
         <template #header v-if="loading">
             <p>Generating metrics for large corpora may take a while...</p>
@@ -17,26 +15,31 @@
             <slot name="prepend"></slot>
         </template>
 
-        <template v-for="cell in [
-            'cell-accuracy',
-            'cell-precision',
-            'cell-recall',
-            'cell-f1',
-            'cell-macroPrecision',
-            'cell-microPrecision',
-            'cell-macroRecall',
-            'cell-microRecall',
-            'cell-macroF1',
-            'cell-microF1',
-            'cell-microAccuracy',
-        ]" #[cell]="data">
+        <template
+            v-for="cell in [
+                'cell-accuracy',
+                'cell-precision',
+                'cell-recall',
+                'cell-f1',
+                'cell-macroPrecision',
+                'cell-microPrecision',
+                'cell-macroRecall',
+                'cell-microRecall',
+                'cell-macroF1',
+                'cell-microF1',
+                'cell-microAccuracy',
+            ]"
+            #[cell]="data"
+        >
             <div :key="cell">
                 {{ `${data.value ? parseFloat(data.value).toString().slice(0, 4) : 0}` }}
             </div>
         </template>
 
-        <template v-for="cell in ['cell-falsePositive', 'cell-falseNegative', 'cell-truePositive', 'cell-noMatch']"
-            #[cell]="data">
+        <template
+            v-for="cell in ['cell-falsePositive', 'cell-falseNegative', 'cell-truePositive', 'cell-noMatch']"
+            #[cell]="data"
+        >
             <div :key="cell">
                 <GButton :disabled="data.value.count === 0" @click="openModal(data)">
                     {{ `${((data.value.count / data.item.count) * 100).toFixed(1)}%` }}
@@ -46,8 +49,15 @@
         </template>
     </GTable>
 
-    <ComparisonModal v-if="samples" @hide="samples = undefined" :samples @download="$emit('download', modalData)"
-        :referenceJob="jobSelection.referenceId" :hypothesisJob="jobSelection.hypothesisId" :downloading />
+    <ComparisonModal
+        v-if="samples"
+        @hide="samples = undefined"
+        :samples
+        @download="$emit('download', modalData)"
+        :referenceJob="jobSelection.referenceId"
+        :hypothesisJob="jobSelection.hypothesisId"
+        :downloading
+    />
 </template>
 
 <script setup lang="ts">
@@ -66,7 +76,7 @@ const {
     items,
     loading,
     sortColumn = "count",
-    downloading
+    downloading,
 } = defineProps<{
     title: string
     columns: Column<Item>[]
@@ -77,9 +87,7 @@ const {
 }>()
 
 // Emits
-const emit = defineEmits<{
-    download: [modalData: TableData<Metrics>]
-}>()
+const emit = defineEmits<{ download: [modalData: TableData<Metrics>] }>()
 
 // Fields
 const samples = ref<Samples>()
@@ -94,7 +102,7 @@ function openModal(data): void {
     samples.value = {
         title: `${data.column.label} ${data.item.name} samples`,
         samples: data.value.samples,
-        annotationType: data.item.column.toLowerCase()
+        annotationType: data.item.column.toLowerCase(),
     }
 }
 </script>

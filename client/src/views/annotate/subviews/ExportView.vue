@@ -1,45 +1,35 @@
 <template>
     <AnnotateTab :hidePermissionsError="true">
-        <GCard :title="`Export corpus ${corporaStore.corpus?.name}`" helpLink="export">
+        <GCard :title="`Export corpus ${corpus.name}`" helpLink="export">
             <template #help>
                 <ExportHelp />
             </template>
 
-            <form @submit.prevent class="form">
+            <GForm vertical>
                 <JobSelect displayName="Annotation layer" />
 
                 <FileFormatInput />
 
-                <GCheckBox v-model="posHeadOnly">
-                    Export part of speech without features
-                </GCheckBox>
+                <GCheckBox v-model="posHeadOnly">Export part of speech without features</GCheckBox>
 
-                <GCheckBox v-if="showMergeOption" v-model="shouldMerge">
-                    Merge encoding
-                </GCheckBox>
+                <GCheckBox v-if="showMergeOption" v-model="shouldMerge">Merge encoding</GCheckBox>
 
-                <DownloadButton class="download" wide :disabled
-                    @click="exportStore.convert(shouldMerge, posHeadOnly)" />
-            </form>
+                <DownloadButton wide :disabled @click="convert(shouldMerge, posHeadOnly)" />
+            </GForm>
 
-            <GInfo v-if="exportStore.loading" spinner>
-                Please wait while your export is being processed.
-            </GInfo>
+            <GInfo v-if="loading" spinner>Please wait while your export is being processed.</GInfo>
 
             <template v-if="showMergeOption">
                 <GInfo>
                     <p>
                         You have uploaded
-                        <b>{{ formatToHumanReadable(exportStore.format) }}</b> files to this corpus and you
-                        are now
-                        exporting <b>{{ formatToHumanReadable(exportStore.format) }}</b>.
-                        It is possible to insert the annotation layer into the original file. This will
-                        retain the
+                        <b>{{ formatToHumanReadable(format) }}</b> files to this corpus and you are now exporting
+                        <b>{{ formatToHumanReadable(format) }}</b
+                        >. It is possible to insert the annotation layer into the original file. This will retain the
                         original encoding.
                     </p>
                     <p>
-                        If you do not choose the merge option, your export will ignore the original encoding
-                        of your
+                        If you do not choose the merge option, your export will ignore the original encoding of your
                         uploaded document.
                     </p>
                 </GInfo>
@@ -54,45 +44,35 @@
 </template>
 
 <script setup lang="ts">
-// Libraries & stores
-
 import stores from "@/stores"
-// Api & types
 import { Format } from "@/types/documents"
-
 import TeiP5LegacyWarning from "@/views/help/subviews/formats/TeiP5LegacyWarning.vue"
 
-// Stores
-const corporaStore = stores.useCorpora()
-const jobsStore = stores.useJobs()
-const jobSelection = stores.useJobSelection()
+// #stores
+const { corpus } = storeToRefs(stores.useCorpora())
+const { hypothesisId } = storeToRefs(stores.useJobSelection())
 const exportStore = stores.useExport()
+const { convert } = exportStore
+const { loading, format } = storeToRefs(exportStore)
 const documentsStore = stores.useDocuments()
+const { documents } = storeToRefs(documentsStore)
+const { containsFormat } = documentsStore
 
-// Fields
+// #data
 const posHeadOnly = ref<boolean>(false)
 const shouldMerge = ref<boolean>(true)
+
+// #computed
 const showMergeOption = computed(() => {
-    const format = exportStore.format
-    const formatIsMergeable =
-        format === Format.TEI_P5 ||
-        format === Format.TSV ||
-        format === Format.FOLIA ||
-        format === Format.CONLLU
-    const formatInCorpus = documentsStore.containsFormat(format)
+    const f = format.value
+    const formatIsMergeable = f === Format.TEI_P5 || f === Format.TSV || f === Format.FOLIA || f === Format.CONLLU
+    const formatInCorpus = containsFormat(f)
     return formatIsMergeable && formatInCorpus
 })
-const hasTeiP5Legacy = computed(() =>
-    documentsStore.documents.some(i => i.format === Format.TEI_P5_LEGACY)
-)
-const disabled = computed(
-    () =>
-        exportStore.format === undefined ||
-        jobSelection.hypothesisId === undefined ||
-        exportStore.loading
-)
+const hasTeiP5Legacy = computed(() => documents.value.some((i) => i.format === Format.TEI_P5_LEGACY))
+const disabled = computed(() => format.value === undefined || hypothesisId.value === undefined || loading.value)
 
-// Methods
+// #methods
 function formatToHumanReadable(format: Format): string {
     switch (format) {
         case Format.TEI_P5:
@@ -102,23 +82,4 @@ function formatToHumanReadable(format: Format): string {
             return format
     }
 }
-
-// Watchers
-// Load jobs list once. jobSelectionStore takes care of the selected job.
-onMounted(() => {
-    jobsStore.reload()
-})
 </script>
-
-<style scoped lang="scss">
-.form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    align-items: center;
-
-    .download {
-        align-self: center;
-    }
-}
-</style>

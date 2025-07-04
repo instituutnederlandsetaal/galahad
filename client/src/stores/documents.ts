@@ -4,20 +4,16 @@ import * as API from "@/api/documents"
 import { documentsPath } from "@/api/documents"
 import * as Utils from "@/api/utils"
 import stores from "@/stores"
-import type { UUID } from "@/types/corpora"
 // Types & API
 import { type DocumentMetadata, Format } from "@/types/documents"
 import { useAxios } from "@/api/useAxios"
 
 // Custom types
-type FileStatus = {
-    status: "busy" | "success" | "error"
-    message?: string
-}
+type FileStatus = { status: "busy" | "success" | "error"; message?: string }
 
 /**
- * Contains the documents for the corpusId.value
- * as well as functionality related to the user's documents, like uploading.
+ * Contains the documents for the current corpus,
+ * as well as functionality for uploading, deleting and downloading documents.
  */
 const documents = defineStore("documents", () => {
     // Stores
@@ -29,37 +25,21 @@ const documents = defineStore("documents", () => {
     const {
         data: documents,
         loading,
-        reload
+        reload,
     } = useAxios<DocumentMetadata[]>(
-        (): string | undefined =>
-            corpusId.value ? documentsPath(corpusId.value) : undefined,
-        []
+        (): string | undefined => (corpusId.value ? documentsPath(corpusId.value) : undefined),
+        [],
     )
 
-    const numSourceAnnotations = computed(
-        () => documents.value.filter(i => i.layerSummary?.tokens > 0).length
-    )
+    const numSourceAnnotations = computed(() => documents.value.filter((i) => i.layerSummary?.tokens > 0).length)
     const uploading: Record<string, FileStatus> = reactive({})
-    const uploadBusyCount = computed(
-        () => Object.values(uploading).filter(i => i.status === "busy").length
-    )
-    const uploadErrorCount = computed(
-        () => Object.values(uploading).filter(i => i.status === "error").length
-    )
+    const uploadBusyCount = computed(() => Object.values(uploading).filter((i) => i.status === "busy").length)
+    const uploadErrorCount = computed(() => Object.values(uploading).filter((i) => i.status === "error").length)
     const filesToUpload = ref<File[]>([])
     const illegalFiles = computed((): File[] => {
         return filesToUpload.value.filter((x: any) => {
             const ext = x.name.split(".").at(-1)
-            return ![
-                "xml",
-                "tsv",
-                "txt",
-                "zip",
-                "conllu",
-                "naf",
-                "pdf",
-                "docx"
-            ].includes(ext)
+            return !["xml", "tsv", "txt", "zip", "conllu", "naf", "pdf", "docx"].includes(ext)
         })
     })
 
@@ -70,7 +50,7 @@ const documents = defineStore("documents", () => {
     function deleteDocument(name: string): void {
         plausible.documentDeleted(corpus.value, getDocument(name))
         API.deleteDocument(corpusId.value, name)
-            .catch(error => errors.handle(error))
+            .catch((error) => errors.handle(error))
             .finally(reload)
     }
 
@@ -82,15 +62,11 @@ const documents = defineStore("documents", () => {
         plausible.documentDownloaded(corpus.value, getDocument(name))
         API.getRawDocument(corpusId.value, name)
             .then(Utils.browserDownloadResponseFile)
-            .catch(res =>
-                Utils.handleBlobError(res, "download raw document", errors)
-            )
+            .catch((res) => Utils.handleBlobError(res, "download raw document", errors))
     }
 
     function getDocument(name: string): DocumentMetadata {
-        return documents.value.find(
-            (d: DocumentMetadata) => d.name === name
-        ) as DocumentMetadata
+        return documents.value.find((d: DocumentMetadata) => d.name === name) as DocumentMetadata
     }
 
     /**
@@ -114,7 +90,7 @@ const documents = defineStore("documents", () => {
      * Clear errors from not yet uploaded files.
      */
     function clearUploadErrors(): void {
-        Object.keys(uploading).forEach(key => {
+        Object.keys(uploading).forEach((key) => {
             if (uploading[key].status === "error") delete uploading[key]
         })
     }
@@ -129,7 +105,7 @@ const documents = defineStore("documents", () => {
         const exts_and_headers = {
             tsv: "text/tab-separated-values",
             conllu: "text/tab-separated-values",
-            naf: "text/xml"
+            naf: "text/xml",
         }
 
         let file = fd.get("file") as File
@@ -167,13 +143,7 @@ const documents = defineStore("documents", () => {
             .then(() => {
                 uploading[file?.name] = { status: "success" }
             })
-            .catch(
-                error =>
-                    (uploading[file.name] = {
-                        status: "error",
-                        message: error.response.data.message
-                    })
-            )
+            .catch((error) => (uploading[file.name] = { status: "error", message: error.response.data.message }))
             .finally(() => {
                 if (uploadBusyCount.value === 0) {
                     reload()
@@ -186,7 +156,7 @@ const documents = defineStore("documents", () => {
      * Checks if the documentsStore.documents contains at least one file of the given format.
      */
     function containsFormat(format: Format): boolean {
-        return documents.value.some(i => {
+        return documents.value.some((i) => {
             // Overwrite the format for legacy formats.
             let otherFormat = i.format
             if (otherFormat === Format.TEI_P5_LEGACY) {
@@ -212,7 +182,7 @@ const documents = defineStore("documents", () => {
         downloadRaw,
         uploadAll,
         clearUploadErrors,
-        containsFormat
+        containsFormat,
     }
 })
 

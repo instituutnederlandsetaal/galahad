@@ -31,8 +31,6 @@ class TaggersService : Logging {
             val response = client.send(request, HttpResponse.BodyHandlers.ofString())
             val json = JsonUtil.mapper.readTree(response.body())
             val healthy = json.get("healthy").asBoolean()
-            val queueSizeAtTagger = json.get("queueSizeAtTagger").asInt()
-            val processingSpeed = json.get("processingSpeed").asInt()
 
             // Note that this queuesize only represents the queue present at a single instance of the tagger,
             // also the processing speed is of a single tagger
@@ -40,8 +38,6 @@ class TaggersService : Logging {
             // We could get this by count all pending document for this tagger in all corpora
             TaggerHealth(
                 status = if (healthy) TaggerHealthStatus.HEALTHY else TaggerHealthStatus.NOT_HEALTHY,
-                queueSizeAtTagger = queueSizeAtTagger,
-                processingSpeed = processingSpeed,
                 message = "Can connect to tagger. Taggers health response: ${response.body()}"
             )
         } catch (e: Exception) {

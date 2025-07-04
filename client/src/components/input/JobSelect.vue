@@ -1,74 +1,45 @@
 <template>
-    <label>{{ label }}</label>
-    <GSpinner v-if="jobsStore.loading" />
-    <GSelect v-else title="Select an annotation layer" :options="jobSelectionStore.options" v-model="selectedJob" />
-    <GInfo v-if="untaggedDocsExist">
-        <p>
-            Not all documents have been tagged yet. It is still possible to select this layer, but it will be
-            incomplete. Alternatively, <router-link to="/annotate/jobs">start a new tagger job</router-link> or wait
-            for the current job to finish.
-        </p>
-    </GInfo>
-    <GInfo v-if="sourceLayerHasMissingAnnotations">
-        <p>
-            Some documents in this corpus have no source annotations. It is still possible to select this layer, but it
-            will be incomplete. Alternatively, <router-link to="/annotate/documents">go to documents</router-link> and
-            add or remove documents.
-        </p>
-    </GInfo>
+    <fieldset>
+        <label :for="`${label}-select`">{{ label }}</label>
+        <GSpinner v-if="loading" />
+        <GSelect v-else :id="`${label}-select`" :options title="Select annotation layer" v-model="jobId" />
+        <GInfo v-if="untaggedDocsExist">
+            <p>
+                Not all documents have been tagged yet. It is still possible to select this layer, but it will be
+                incomplete. Alternatively, <router-link to="/annotate/jobs">start a new tagger job</router-link> or wait
+                for the current job to finish.
+            </p>
+        </GInfo>
+    </fieldset>
 </template>
 
 <script setup lang="ts">
 import stores from "@/stores"
-import { SOURCE_LAYER, type Job } from "@/types/jobs"
+import type { Job } from "@/types/jobs"
 
-const jobsStore = stores.useJobs()
-const jobSelectionStore = stores.useJobSelection()
-const documentsStore = stores.useDocuments()
+// #props
+const { isReference = false, displayName } = defineProps<{ isReference?: boolean; displayName?: string }>()
 
-const { isReference = false, displayName } = defineProps<{
-    isReference?: boolean
-    displayName?: string
-}>()
-const label = computed<string>(
-    () => displayName ?? (isReference ? "Reference" : "Hypothesis")
-)
-const selectedJob = computed<string>({
+// #stores
+const { loading, jobs } = storeToRefs(stores.useJobs())
+const { hypothesisId, referenceId, options } = storeToRefs(stores.useJobSelection())
+
+// #computed
+const label = computed<string>(() => displayName ?? (isReference ? "Reference" : "Hypothesis"))
+const jobId = computed<string>({
     get(): string {
-        return isReference
-            ? jobSelectionStore.referenceId
-            : jobSelectionStore.hypothesisId
+        return isReference ? referenceId.value : hypothesisId.value
     },
     set(newValue: string): void {
         if (isReference) {
-            jobSelectionStore.referenceId = newValue
+            referenceId.value = newValue
         } else {
-            jobSelectionStore.hypothesisId = newValue
+            hypothesisId.value = newValue
         }
-    }
+    },
 })
-
-// Whether there are documents that have not been tagged yet.
-// Not relevant for source layer.
-const untaggedDocsExist = computed<boolean>(() => {
-    if (!job.value) return false
-    return job.value.progress.finished < job.value.progress.total
-})
-// Whether the selected layer is sourceLayer and has missing annotations.
-const sourceLayerHasMissingAnnotations = computed<boolean>(() => {
-    if (!job.value) return false
-    return job.value.progress.finished !== documentsStore.numSourceAnnotations
-})
-
-const job = computed<Job>(() => {
-    if (!selectedJob.value) return undefined
-    if (!jobsStore.jobs) return undefined
-    // any job could be any job, even the source layer
-    const anyJob = jobsStore.jobs[selectedJob.value]
-    if (!anyJob) return undefined
-    // if the job is not source layer, return it
-    if (anyJob.tagger.id !== SOURCE_LAYER) return anyJob
-    // if the job is source layer, return undefined
-    return undefined
-})
+const job = computed<Job | undefined>(() => jobs.value.find((j: Job) => j.tagger.id === jobId.value))
+const untaggedDocsExist = computed<boolean>(() =>
+    job.value ? job.value.progress.finished < job.value.progress.total : false,
+)
 </script>

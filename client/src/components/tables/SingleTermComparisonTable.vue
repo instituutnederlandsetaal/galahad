@@ -24,10 +24,7 @@ type Item = Term & { layer: string }
 type Cell = { field: Column; item: Item; value: string }
 
 // Props
-const props = defineProps<{
-    hypoTerm: Term
-    refTerm: Term
-}>()
+const props = defineProps<{ hypoTerm: Term; refTerm: Term }>()
 
 // Fields
 const ignorableAnnotations = ["token", "id", "misc"]
@@ -36,33 +33,27 @@ const ignorableAnnotations = ["token", "id", "misc"]
 const items: Ref<Record<string, string>[]> = computed(() => {
     return [
         { layer: jobSelection.hypothesisId, ...props.hypoTerm.annotations },
-        { layer: jobSelection.referenceId, ...props.refTerm.annotations }
+        { layer: jobSelection.referenceId, ...props.refTerm.annotations },
     ]
 })
 /** columns are simply all unique keys in term.annotations: Record<string, string> */
 const columns: Ref<Column[]> = computed(() => {
     return items.value
         .reduce((acc, item) => {
-            Object.keys(item).forEach(key => {
+            Object.keys(item).forEach((key) => {
                 if (!acc.includes(key)) acc.push(key)
             })
             return acc
         }, [] as string[])
-        .filter(i => !ignorableAnnotations.includes(i))
-        .map(key => ({ key, label: key }))
+        .filter((i) => !ignorableAnnotations.includes(i))
+        .map((key) => ({ key, label: key }))
 })
 
 // Methods
 function itemEqual(data: Cell): bool {
-    if (
-        data.item.layer === jobSelection.referenceId ||
-        data.column.key === "layer"
-    )
-        return true // always true for source layer
+    if (data.item.layer === jobSelection.referenceId || data.column.key === "layer") return true // always true for source layer
 
-    const sourceItem = items.value.find(
-        i => i.layer === jobSelection.referenceId
-    )
+    const sourceItem = items.value.find((i) => i.layer === jobSelection.referenceId)
     return annotationsEqual(data.value, sourceItem[data.column.key])
 }
 

@@ -23,17 +23,11 @@ const useJobs = defineStore("jobs", () => {
     // Fields
     // Job statuses for the taggers.
     const url = computed<string | undefined>((): string | undefined =>
-        corpusId.value ? jobsPath(corpusId.value) : undefined
+        corpusId.value ? jobsPath(corpusId.value) : undefined,
     )
-    const {
-        data: jobs,
-        loading,
-        reload
-    } = useAxios<Job[]>(url, [], { hasResult: false })
+    const { data: jobs, loading, reload } = useAxios<Job[]>(url, [])
 
-    const taggerJobs = computed((): Job[] =>
-        jobs.value.filter(i => i.tagger.id !== SOURCE_LAYER)
-    )
+    const taggerJobs = computed((): Job[] => jobs.value.filter((i) => i.tagger.id !== SOURCE_LAYER))
     const posting = ref<boolean>()
     const pollers = {} as { [tagger: string]: number }
     const queueSize = ref<number>()
@@ -45,8 +39,8 @@ const useJobs = defineStore("jobs", () => {
      */
     function getProgress(job: string, corpus: string): void {
         API.getJobProgress(corpus, job)
-            .then(response => setProgress(job, response))
-            .catch(error => errors.handle(error))
+            .then((response) => setProgress(job, response))
+            .catch((error) => errors.handle(error))
     }
 
     /**
@@ -81,7 +75,7 @@ const useJobs = defineStore("jobs", () => {
                     getProgress(job, corpus)
                 },
                 POLL_INTERVAL,
-                job
+                job,
             )
         }
     }
@@ -98,7 +92,7 @@ const useJobs = defineStore("jobs", () => {
     function tag(job: string): void {
         posting.value = true
         API.postJob(corporaStore.corpusId, job)
-            .then(response => {
+            .then((response) => {
                 posting.value = false
                 // Fake it, because at this point all files will still be 'pending'.
                 // isBusy however depends on 'processing', so at this point it will still be false.
@@ -108,30 +102,30 @@ const useJobs = defineStore("jobs", () => {
                 startPolling(job, corporaStore.corpusId) // TODO: this is a problem, because if the state doesn't change, the polling isn't stopped.
                 getDocsAtTagger()
             })
-            .catch(error => errors.handle(error))
+            .catch((error) => errors.handle(error))
     }
 
     function cancel(job: string): void {
         posting.value = true
         API.cancelOrDeleteJob(corporaStore.corpusId, job, false)
-            .then(response => {
+            .then((response) => {
                 posting.value = false
                 setProgress(job, response)
                 getDocsAtTagger()
             })
-            .catch(error => errors.handle(error))
+            .catch((error) => errors.handle(error))
     }
 
     // 'delete' is a reserved keyword
     function remove(job: string): void {
         posting.value = true
         API.cancelOrDeleteJob(corporaStore.corpusId, job, true)
-            .then(response => {
+            .then((response) => {
                 posting.value = false
                 setProgress(job, response)
                 getDocsAtTagger()
             })
-            .catch(error => errors.handle(error))
+            .catch((error) => errors.handle(error))
     }
 
     /**
@@ -140,10 +134,10 @@ const useJobs = defineStore("jobs", () => {
     function getDocsAtTagger(): void {
         queueSize.value = null
         getDocsAtTaggers()
-            .then(response => {
+            .then((response) => {
                 queueSize.value = response.data
             })
-            .catch(error => {
+            .catch((error) => {
                 // Ignore
             })
     }
@@ -161,7 +155,7 @@ const useJobs = defineStore("jobs", () => {
         cancel,
         remove,
         reload,
-        getDocsAtTagger
+        getDocsAtTagger,
     }
 })
 

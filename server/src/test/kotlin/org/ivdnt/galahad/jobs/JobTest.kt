@@ -3,7 +3,6 @@ package org.ivdnt.galahad.jobs
 import org.ivdnt.galahad.util.TestConfig
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.annotations.LayerPreview
-import org.ivdnt.galahad.evaluation.metrics.FlatMetricType
 import org.ivdnt.galahad.util.LayerBuilder
 import org.ivdnt.galahad.util.TestUtil
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -30,7 +29,7 @@ class JobTest {
         // verify from state cache
         assertEquals(LayerPreview.EMPTY, job.metadata.preview)
         assertEquals(0, job.metadata.progress.total)
-        assertEquals(0, job.metadata.resultSummary.tokens)
+        assertEquals(0, job.metadata.summary.tokens)
     }
 
     @Test

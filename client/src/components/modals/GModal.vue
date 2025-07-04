@@ -17,13 +17,9 @@
 </template>
 
 <script setup lang="ts">
-const { title } = defineProps<{
-    title?: string
-}>()
+const { title } = defineProps<{ title?: string }>()
 
-const emit = defineEmits<{
-    hide: []
-}>()
+const emit = defineEmits<{ hide: [] }>()
 
 // @keyup does not work due to focus, so use event listener.
 useEventListener(document, "keyup", (e: KeyboardEvent) => {
@@ -42,8 +38,8 @@ useEventListener(document, "keyup", (e: KeyboardEvent) => {
     backdrop-filter: blur(5px);
 
     position: fixed;
-    height: 100%;
-    width: 100%;
+    height: 100vh;
+    width: 100vw;
     z-index: 2;
     display: flex;
     flex-direction: column;
@@ -55,6 +51,8 @@ useEventListener(document, "keyup", (e: KeyboardEvent) => {
     .content {
         border: 1px solid var(--int-light-grey);
         width: fit-content;
+        overflow: auto;
+        min-height: 0;
     }
 
     .buttons {

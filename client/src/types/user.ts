@@ -1,4 +1,1 @@
-export type User = {
-    id: string
-    isAdmin: boolean
-}
+export type User = { id: string; isAdmin: boolean }

@@ -4,39 +4,42 @@
             label="failed"
             color="var(--int-red)"
             :total="job.progress.total"
-            :value="job.progress.failed" />
+            :value="job.progress.failed"
+        />
         <JobProgressSegment
             label="finished"
             color="var(--int-green)"
             :total="job.progress.total"
-            :value="job.progress.finished" />
+            :value="job.progress.finished"
+        />
         <JobProgressSegment
             label="processing"
             color="var(--int-light-grey)"
             :total="job.progress.total"
-            :value="job.progress.processing" />
+            :value="job.progress.processing"
+        />
         <!-- When busy, consider untagged documents pending. -->
         <!-- Confusingly, the API already calls them pending, though. -->
         <JobProgressSegment
             label="pending"
             color="var(--int-very-light-grey)"
             :total="job.progress.total"
-            :value="job.progress.busy ? job.progress.pending : 0" />
+            :value="job.progress.busy ? job.progress.pending : 0"
+        />
         <!-- Otherwise, just untagged. -->
         <JobProgressSegment
             label="untagged"
             color="var(--int-very-light-grey)"
             :total="job.progress.total"
-            :value="job.progress.busy ? 0 : job.progress.pending" />
+            :value="job.progress.busy ? 0 : job.progress.pending"
+        />
     </div>
 </template>
 
 <script setup lang="ts">
 import type { Job } from "@/types/jobs"
 
-const { job } = defineProps<{
-    job: Job
-}>()
+const { job } = defineProps<{ job: Job }>()
 </script>
 
 <style scoped lang="scss">

@@ -1,11 +1,8 @@
 <template>
-    <!-- with clear button-->
-    <fieldset class="clear" v-if="clearBtn">
+    <fieldset>
         <input v-model="model" :type :placeholder :list ref="inputElement" />
         <input type="reset" value="&#10006;" :disabled="model?.length == 0" title="Clear" @click="model = ''" />
     </fieldset>
-    <!-- without clear button -->
-    <input v-else v-model="model" :type :placeholder :list ref="inputElement" />
     <GValidator v-if="validator && validityDescriptor" :model :validator :validityDescriptor />
 </template>
 
@@ -18,15 +15,13 @@ const {
     list,
     validityDescriptor,
     validator,
-    clearBtn,
-    focus
+    focus,
 } = defineProps<{
     type?: string
     placeholder?: string
     list?: string
     validityDescriptor?: string
-    validator?: (value: string) => boolean
-    clearBtn?: boolean
+    validator?: (value: unknown) => boolean
     focus?: boolean
 }>()
 
@@ -41,11 +36,6 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-label {
-    margin-bottom: 0px;
-}
-
-/* Inputs */
 input[type="text"],
 input[type="url"],
 input[type="reset"] {
@@ -62,7 +52,9 @@ input[type="reset"] {
     }
 }
 
-.clear {
+fieldset {
+    display: inline;
+    vertical-align: inherit;
     width: 208px;
     height: 39px;
     padding: 0;
@@ -81,7 +73,7 @@ input[type="reset"] {
             outline: none;
         }
 
-        &[type="text"] {
+        &[type="text"], &[type="url"] {
             width: 169px;
             border-right: 0;
         }

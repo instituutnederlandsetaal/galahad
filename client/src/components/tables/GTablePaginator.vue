@@ -1,14 +1,12 @@
 <template>
     <form class="paginator" @submit.prevent>
-        <GButton plain :disabled="page == 1" title="First" @click="page = 1">
-            1
-        </GButton>
+        <GButton plain :disabled="page == 1" title="First" @click="page = 1"> 1 </GButton>
 
         <GButton plain :disabled="page == 1" title="Previous" @click="page -= 1">
             <i class="fa fa-arrow-left"></i>
         </GButton>
 
-        <select v-model="page" class="page-select">
+        <select v-model="page" class="page-select" title="Select page">
             <option v-for="n in numPages" :key="n" :value="n">
                 {{ n }}
             </option>
@@ -25,11 +23,11 @@
 </template>
 
 <script setup lang="ts">
+// #model
 const page = defineModel<number>({ default: 1 })
 
-const { numPages } = defineProps<{
-    numPages: number
-}>()
+// #props
+const { numPages } = defineProps<{ numPages: number }>()
 </script>
 
 <style scoped lang="scss">
@@ -57,7 +55,6 @@ const { numPages } = defineProps<{
         &:active {
             background: var(--int-very-light-grey-hover);
         }
-
     }
 }
 </style>

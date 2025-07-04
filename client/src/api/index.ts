@@ -4,10 +4,7 @@
 
 import axios from "axios"
 
-export type ErrorMessage = {
-    statusCode: string
-    message: string
-}
+export type ErrorMessage = { statusCode: string; message: string }
 
 /**
  * Set the axios request base to localhost:8010 if running locally,

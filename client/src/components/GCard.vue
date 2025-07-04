@@ -5,8 +5,18 @@
                 <h3 class="h3">
                     <slot name="title">{{ title }}</slot>
                 </h3>
-                <GButton v-if="$slots.help" class="help-btn" title="Help" plain
-                    @click="expand = !expand; plausible.helpClicked()">
+                <GButton
+                    v-if="$slots.help"
+                    class="help-btn"
+                    title="Help"
+                    plain
+                    @click="
+                        () => {
+                            expand = !expand
+                            plausible.helpClicked()
+                        }
+                    "
+                >
                     {{ expand ? "&times;" : "?" }}
                 </GButton>
             </hgroup>
@@ -31,24 +41,20 @@ import { plausible } from "@/ts/plausible"
 import type { HelpLink } from "@/types/ui/help"
 
 // --- props ---
-const { helpLink, title } = defineProps<{
-    helpLink?: HelpLink | string
-    title?: string
-    article?: boolean
-}>()
+const { helpLink, title } = defineProps<{ helpLink?: HelpLink | string; title?: string; article?: boolean }>()
 
 // --- data ---
 const expand = ref<boolean>()
 </script>
 
 <style scoped lang="scss">
-.view>.g-card,
+.view > .g-card,
 .view.g-card,
 .modal .g-card {
     padding: 1rem;
 }
 
-.view.g-card>.content {
+.view.g-card > .content {
     flex: 1;
 }
 

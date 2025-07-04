@@ -1,10 +1,11 @@
 {
+    "editor.codeActionsOnSave": { "source.fixAll": "explicit" },
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
     "explorer.fileNesting.enabled": true,
     "explorer.fileNesting.patterns": {
-        "tsconfig.json": "tsconfig.*.json, *.d.ts, biome.json",
-        "package.json": "package-lock.json"
+        "tsconfig.json": "tsconfig*, *.d.ts",
+        "package.json": "package-lock.json, eslint*, .prettier*"
     },
-    "[vue]": {
-        "editor.defaultFormatter": "Vue.volar"
-    }
+    "[vue]": { "editor.defaultFormatter": "esbenp.prettier-vscode" }
 }

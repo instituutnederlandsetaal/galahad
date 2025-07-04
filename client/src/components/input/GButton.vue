@@ -20,12 +20,10 @@ const classes = computed<Record<string, boolean>>(() => ({
     orange: orange,
     green: green,
     plain: plain,
-    disabled: disabled
+    disabled: disabled,
 }))
 
-const emit = defineEmits<{
-    click: []
-}>()
+const emit = defineEmits<{ click: [] }>()
 </script>
 
 <style scoped lang="scss">

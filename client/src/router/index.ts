@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router"
+import { createRouter, createWebHistory, type RouterScrollBehavior } from "vue-router"
 
 import HomeView from "@/views/HomeView.vue"
 import AnnotateView from "@/views/annotate/AnnotateView.vue"
@@ -30,97 +30,55 @@ import DocumentFormatsView from "@/views/help/subviews/formats/DocumentFormatsVi
 import PageNotFound from "@/views/PageNotFound.vue"
 import UserView from "@/views/UserView.vue"
 
-export type RouterQuery = {
-    corpus?: string
-    referenceJob?: string
-    hypothesisJob?: string
-}
+export type RouterQuery = { corpus?: string; referenceJob?: string; hypothesisJob?: string }
 
 const routes = [
     { path: "/:pathMatch(.*)*", component: PageNotFound },
-    {
-        path: "/",
-        component: HomeView
-    },
+    { path: "/", component: HomeView },
     {
         path: "/annotate",
         redirect: "/annotate/corpora",
         component: AnnotateView,
         children: [
-            {
-                meta: { title: "Corpora" },
-                path: "corpora",
-                component: CorporaView
-            },
-            {
-                meta: { title: "Documents" },
-                path: "documents",
-                component: DocumentsView
-            },
-            {
-                meta: { title: "Jobs" },
-                path: "jobs",
-                component: JobsView
-            },
+            { meta: { title: "Corpora" }, path: "corpora", component: CorporaView },
+            { meta: { title: "Documents" }, path: "documents", component: DocumentsView },
+            { meta: { title: "Jobs" }, path: "jobs", component: JobsView },
             {
                 path: "evaluate",
                 component: EvaluateView,
                 redirect: "/annotate/evaluate/distribution",
-                props: { basePath: "/annotate/evaluate" },
                 children: [
                     {
                         meta: { title: "Evaluate" },
                         title: "Distribution",
                         path: "distribution",
-                        component: DistributionView
+                        component: DistributionView,
                     },
                     {
                         meta: { title: "Evaluate" },
                         title: "Distribution",
                         path: "global_metrics",
-                        component: GlobalMetricsView
+                        component: GlobalMetricsView,
                     },
-                    {
-                        meta: { title: "Evaluate" },
-                        path: "grouped_metrics",
-                        component: GroupedMetricsView
-                    },
-                    {
-                        meta: { title: "Evaluate" },
-                        path: "confusion",
-                        component: ConfusionView
-                    },
+                    { meta: { title: "Evaluate" }, path: "grouped_metrics", component: GroupedMetricsView },
+                    { meta: { title: "Evaluate" }, path: "confusion", component: ConfusionView },
                     {
                         meta: { title: "Evaluate" },
                         path: "document_layer_comparison",
-                        component: DocumentLayerComparisonView
+                        component: DocumentLayerComparisonView,
                     },
-                    {
-                        meta: { title: "Evaluate" },
-                        path: "entities",
-                        component: EntitiesView
-                    }
-                ]
+                    { meta: { title: "Evaluate" }, path: "entities", component: EntitiesView },
+                ],
             },
-            {
-                meta: { title: "Export" },
-                path: "export",
-                component: ExportView
-            }
-        ]
+            { meta: { title: "Export" }, path: "export", component: ExportView },
+        ],
     },
     {
         path: "/application",
         name: "Application",
         redirect: "/application/about",
         component: ApplicationView,
-        children: [
-            {
-                meta: { title: "About" },
-                path: "about",
-                component: AboutView
-            }
-        ]
+        children: [{ meta: { title: "About" }, path: "about", component: AboutView }],
     },
     {
         path: "/overview",
@@ -128,43 +86,21 @@ const routes = [
         redirect: "/overview/taggers",
         component: OverviewView,
         children: [
-            {
-                meta: { title: "Taggers" },
-                path: "taggers",
-                component: TaggersView
-            },
-            {
-                meta: { title: "Tagsets" },
-                path: "tagsets",
-                component: TagsetsView
-            },
-            {
-                meta: { title: "Datasets" },
-                path: "datasets",
-                component: DatasetsView
-            },
-            {
-                meta: { title: "Benchmarks" },
-                path: "benchmarks",
-                component: BenchmarksView
-            }
-        ]
+            { meta: { title: "Taggers" }, path: "taggers", component: TaggersView },
+            { meta: { title: "Tagsets" }, path: "tagsets", component: TagsetsView },
+            { meta: { title: "Datasets" }, path: "datasets", component: DatasetsView },
+            { meta: { title: "Benchmarks" }, path: "benchmarks", component: BenchmarksView },
+        ],
     },
     {
         path: "/contribute",
+        name: "Contribute",
+        redirect: "/contribute/taggers",
         component: ContributeView,
         children: [
-            {
-                meta: { title: "Contribute" },
-                path: "taggers",
-                component: ContributeTaggersView
-            },
-            {
-                meta: { title: "Contribute" },
-                path: "datasets",
-                component: ContributeDatasetsView
-            }
-        ]
+            { meta: { title: "Contribute" }, path: "taggers", component: ContributeTaggersView },
+            { meta: { title: "Contribute" }, path: "datasets", component: ContributeDatasetsView },
+        ],
     },
     {
         path: "/help",
@@ -172,28 +108,12 @@ const routes = [
         redirect: "/help/general",
         component: HelpView,
         children: [
-            {
-                meta: { title: "Help - General" },
-                path: "general",
-                component: GeneralView
-            },
-            {
-                meta: { title: "Help - Formats" },
-                path: "formats",
-                component: DocumentFormatsView
-            },
-            {
-                meta: { title: "Help - Evaluation" },
-                path: "evaluation",
-                component: EvaluationView
-            }
-        ]
+            { meta: { title: "Help - General" }, path: "general", component: GeneralView },
+            { meta: { title: "Help - Formats" }, path: "formats", component: DocumentFormatsView },
+            { meta: { title: "Help - Evaluation" }, path: "evaluation", component: EvaluationView },
+        ],
     },
-    {
-        meta: { title: "User" },
-        path: "/user",
-        component: UserView
-    }
+    { meta: { title: "User" }, path: "/user", component: UserView },
 ]
 
 const router = createRouter({
@@ -203,7 +123,7 @@ const router = createRouter({
         if (to?.hash) {
             return {
                 el: to.hash,
-                top: 10 // avoid the top bar
+                top: 10, // avoid the top bar
             }
         }
         if (savedPosition) {
@@ -213,11 +133,11 @@ const router = createRouter({
             return // since we're on the same page, don't scroll to top
         }
         return { top: 0 }
-    }
+    },
 })
 
 // Whenever we navigate, change the document title to the name of the route
-router.afterEach(to => {
+router.afterEach((to) => {
     if (to.meta.title) {
         document.title = `GaLAHaD - ${to.meta.title}`
     } else {

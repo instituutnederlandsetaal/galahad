@@ -14,13 +14,10 @@ const useConfusion = defineStore("confusion", () => {
     const { loading, data: confusion } = useAxios<ConfusionWrapper>(
         url,
         {},
-        { hypothesis: hypothesisId.value, reference: referenceId.value }
+        { hypothesis: hypothesisId.value, reference: referenceId.value },
     )
 
-    return {
-        confusion,
-        loading
-    }
+    return { confusion, loading }
 })
 
 export default useConfusion

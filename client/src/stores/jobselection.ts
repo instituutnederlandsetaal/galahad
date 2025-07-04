@@ -21,7 +21,7 @@ const useJobSelection = defineStore("jobSelection", () => {
     const options = computed<SelectOption[]>((): SelectOption[] =>
         jobs.value
             .filter((j: Job) => j.progress.finished > 0)
-            .map((j: Job) => ({ value: j.tagger.id, text: formatJobString(j) }))
+            .map((j: Job) => ({ value: j.tagger.id, text: formatJobString(j) })),
     )
 
     watch(
@@ -29,7 +29,7 @@ const useJobSelection = defineStore("jobSelection", () => {
         () => {
             hypothesisId.value = undefined
             referenceId.value = undefined
-        }
+        },
     )
 
     /** Format as displayed in the <select> */
@@ -43,11 +43,7 @@ const useJobSelection = defineStore("jobSelection", () => {
         return `${job.tagger.id} (${job.tagger.description}) [${finished}/${total} docs]`
     }
 
-    return {
-        hypothesisId,
-        referenceId,
-        options
-    }
+    return { hypothesisId, referenceId, options }
 })
 
 export default useJobSelection

@@ -8,7 +8,7 @@ export type Job = {
     progress: Progress
     preview: LayerPreview
     modified: number
-    resultSummary: LayerSummary
+    summary: LayerSummary
 }
 
 export type Progress = {
@@ -23,10 +23,6 @@ export type Progress = {
     errors: { [document: string]: string }
 }
 
-export type LayerPreview = {
-    terms: Term[]
-}
+export type LayerPreview = { terms: Term[] }
 
-export type LayerSummary = {
-    tokens: number
-}
+export type LayerSummary = { tokens: number }

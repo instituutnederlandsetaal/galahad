@@ -1,6 +1,5 @@
 <template>
     <GTable :columns :items="documents" :loading sortColumn="name">
-
         <template #title>
             <span v-if="!corpus">No documents</span>
             <span v-else>
@@ -15,12 +14,8 @@
         </template>
 
         <template #table-empty>
-            <template v-if="!corpus">
-                No corpus selected.
-            </template>
-            <template v-else>
-                This corpus is empty.
-            </template>
+            <template v-if="!corpus"> No corpus selected. </template>
+            <template v-else> This corpus is empty. </template>
         </template>
 
         <template #cell-layerSummary="data: TableData<DocumentMetadata>">
@@ -43,16 +38,18 @@
                 </GButton>
             </div>
         </template>
-
     </GTable>
 
     <GModal v-if="previewDocument !== undefined" @hide="previewDocument = undefined">
         <LayerViewer :document="previewDocument" />
     </GModal>
 
-    <DeleteModal v-if="deleteDocumentData" :itemName="`${deleteDocumentData.name} and associated results`"
-        @hide="deleteDocumentData = undefined" @delete="deleteDocument(deleteDocumentData.name)" />
-
+    <DeleteModal
+        v-if="deleteDocumentData"
+        :itemName="`${deleteDocumentData.name} and associated results`"
+        @hide="deleteDocumentData = undefined"
+        @delete="deleteDocument(deleteDocumentData.name)"
+    />
 </template>
 
 <script setup lang="ts">
@@ -60,11 +57,7 @@ import stores from "@/stores"
 import { formatDate } from "@/ts/utils"
 import type { CorpusMetadata } from "@/types/corpora"
 import type { DocumentMetadata } from "@/types/documents"
-import {
-    type Column,
-    type TableData,
-    TableDocumentsType
-} from "@/types/ui/table"
+import { type Column, type TableData, DocsTableType } from "@/types/ui/table"
 
 // Stores
 const { deleteDocument, downloadRaw } = stores.useDocuments()
@@ -72,8 +65,8 @@ const { canWrite } = storeToRefs(stores.useUser())
 
 // --- props ---
 const { type, corpus, documents, loading } = defineProps<{
-    type: TableDocumentsType
-    corpus: CorpusMetadata
+    type: DocsTableType
+    corpus?: CorpusMetadata
     documents: DocumentMetadata[]
     loading: boolean
 }>()
@@ -91,17 +84,10 @@ const columns = computed<Column<DocumentMetadata>[]>(() => [
         key: "layerSummary",
         label: "tokens",
         align: "right",
-        sortOn: (d: DocumentMetadata): number => d.layerSummary?.tokens
+        sortOn: (d: DocumentMetadata): number => d.layerSummary?.tokens,
     },
-    {
-        key: "modified",
-        format: (d: DocumentMetadata): string => formatDate(d.modified)
-    },
-    {
-        key: "actions",
-        noSort: true,
-        hidden: !canWrite || type === TableDocumentsType.dataset
-    }
+    { key: "modified", format: (d: DocumentMetadata): string => formatDate(d.modified) },
+    { key: "actions", noSort: true, hidden: !canWrite || type === DocsTableType.dataset },
 ])
 </script>
 

@@ -14,13 +14,12 @@ const { model, validityDescriptor, validator } = defineProps<{
     validator: (value: unknown) => boolean
 }>()
 
-const isValid = computed<boolean>(() =>
-    model === undefined ? false : validator(model)
-)
+const isValid = computed<boolean>(() => (validator(model)))
 </script>
 
 <style scoped lang="scss">
 .feedback {
+    display: inline-block;
     border-bottom: 2px solid var(--int-red);
     margin-left: 10px;
     padding: 2px;

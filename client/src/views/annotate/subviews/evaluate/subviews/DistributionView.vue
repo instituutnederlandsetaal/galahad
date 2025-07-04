@@ -1,14 +1,13 @@
 <template>
     <GCard>
-
-        <form v-if="distributionStore.distributions" @submit.prevent>
-            <label for="annotation-select">Annotation:</label>
-            <GSelect id="annotation-select" :options="distributionStore.distributionOptions"
-                v-model="selectedDistribution" />
-        </form>
-
-        <GTable class="right" helpLink="evaluation" :columns :items="itemsToDisplay"
-            :loading="distributionStore.loading" displayOnEmpty sortColumn="count">
+        <GTable
+            helpLink="evaluation"
+            :columns
+            :items="itemsToDisplay"
+            :loading="distributionStore.loading"
+            displayOnEmpty
+            sortColumn="count"
+        >
             <template #title>Distribution of {{ jobSelection.hypothesisId }}</template>
             <template #table-empty>
                 <p v-if="distribution.generated">No results for current filter settings.</p>
@@ -22,39 +21,46 @@
                 </p>
             </template>
 
-
             <template #header>
-                <p>
-                    <b v-if="distribution.trimmed">
+                <p v-if="distribution.trimmed">
+                    <i>
                         Because of the large corpus size only the 1000 most frequent lemma, part-of-speech pairs are
                         shown.
-                    </b>
+                    </i>
                 </p>
 
-
-                <div class="table-controls">
-                    <!-- search lemma-->
-                    <div class="table-control" id="searchLemma">
-                        Search lemma:
-                        <GInput type="text" v-model="lemmaFilter" placeholder="Lemma" clearBtn />
-                    </div>
-                    <!-- search literals -->
-                    <div class="table-control" id="searchWordForms">
-                        Search types:
-                        <GInput type="text" v-model="literalFilter" placeholder="Type" clearBtn />
-                    </div>
-                </div>
-                <div class="table-controls">
-                    <div class="table-control">
-                        <label for="analysis-select">single/multiple PoS:</label>
+                <GForm>
+                    <fieldset>
+                        <label for="annotation-select">Annotation</label>
+                        <GSelect
+                            id="annotation-select"
+                            :options="distributionStore.distributionOptions"
+                            v-model="selectedDistribution"
+                        />
+                    </fieldset>
+                    <fieldset>
+                        <label for="lemma-input">Search lemma</label>
+                        <GInput if="lemma-input" type="text" v-model="lemmaFilter" placeholder="Lemma" />
+                    </fieldset>
+                    <fieldset>
+                        <label for="literal-input">Search types</label>
+                        <GInput if="literal-input" type="text" v-model="literalFilter" placeholder="Type" />
+                    </fieldset>
+                    <fieldset>
+                        <label for="analysis-select">single/multiple PoS</label>
                         <GSelect id="analysis-select" :options="singMultiPosOptions" v-model="selectedSingMultiPos" />
-                    </div>
-                    <div class="table-control">
-                        Include PoS: <br />
-                        <MultiSelect v-model="selectedPosses" :options="filteredPosses" placeholder="Select PoS"
-                            :maxSelectedLabels="5" />
-                    </div>
-                </div>
+                    </fieldset>
+                    <fieldset>
+                        <label for="pos-select">Include PoS</label>
+                        <MultiSelect
+                            id="pos-select"
+                            v-model="selectedPosses"
+                            :options="filteredPosses"
+                            placeholder="Select PoS"
+                            :maxSelectedLabels="5"
+                        />
+                    </fieldset>
+                </GForm>
             </template>
 
             <!-- variantCount -->
@@ -65,27 +71,36 @@
             <!-- variants-->
             <template #cell-variants="data">
                 <template v-if="Object.keys(data.item.literals.literals).length <= 5">
-                    <span v-for="(literal, index) in Object.keys(data.item.literals.literals).sort(function (a, b) {
-                        return data.item.literals.literals[b] - data.item.literals.literals[a]
-                    })" :key="literal">
-                        {{ literal }} <b>{{ `${data.item.literals.literals[literal]}` }}</b>{{ index !=
-                            Object.keys(data.item.literals.literals).length - 1 ? ", " : "" }}
+                    <span
+                        v-for="(literal, index) in Object.keys(data.item.literals.literals).sort(function (a, b) {
+                            return data.item.literals.literals[b] - data.item.literals.literals[a]
+                        })"
+                        :key="literal"
+                    >
+                        {{ literal }} <b>{{ `${data.item.literals.literals[literal]}` }}</b
+                        >{{ index != Object.keys(data.item.literals.literals).length - 1 ? ", " : "" }}
                     </span>
                 </template>
                 <template v-else>
                     <RightFloatCell>
                         <template #left>
-                            <span v-for="literal in Object.keys(data.item.literals.literals)
-                                .sort(function (a, b) {
-                                    return data.item.literals.literals[b] - data.item.literals.literals[a]
-                                })
-                                .slice(0, 5)" :key="literal">
+                            <span
+                                v-for="literal in Object.keys(data.item.literals.literals)
+                                    .sort(function (a, b) {
+                                        return data.item.literals.literals[b] - data.item.literals.literals[a]
+                                    })
+                                    .slice(0, 5)"
+                                :key="literal"
+                            >
                                 {{ literal }}
-                                <b>{{ `${data.item.literals.literals[literal]}` }}</b>,
+                                <b>{{ `${data.item.literals.literals[literal]}` }}</b
+                                >,
                             </span>
-                            <i>... and
+                            <i
+                                >... and
                                 {{ Object.keys(data.item.literals.literals).length - 5 }}
-                                more</i>
+                                more</i
+                            >
                         </template>
                         <template #right>
                             <InspectButton @click="variantsToDisplay = data.item" />
@@ -93,7 +108,6 @@
                     </RightFloatCell>
                 </template>
             </template>
-
         </GTable>
 
         <VariantsModal :variantsToDisplay v-if="variantsToDisplay" @hide="variantsToDisplay = undefined" />
@@ -128,57 +142,45 @@ const itemsToDisplay = computed((): Distribution[] => {
     return (
         distribution.value?.distribution
             // Case insensitive string comparison.
-            .filter(x =>
-                x.lemma.toLowerCase().includes(lemmaFilter.value.toLowerCase())
-            )
-            .filter(x => selectedPosses.value.includes(x.pos))
+            .filter((x) => x.lemma.toLowerCase().includes(lemmaFilter.value.toLowerCase()))
+            .filter((x) => selectedPosses.value.includes(x.pos))
             // Filter by single/multiple PoS
-            .filter(x => {
-                if (selectedSingMultiPos.value === "single")
-                    return !x.pos.includes("+")
-                if (selectedSingMultiPos.value === "multiple")
-                    return x.pos.includes("+")
+            .filter((x) => {
+                if (selectedSingMultiPos.value === "single") return !x.pos.includes("+")
+                if (selectedSingMultiPos.value === "multiple") return x.pos.includes("+")
                 return true
             })
             // Case insensitive string comparison.
             // join on \n, as it can't be entered into a <input type=text>
-            .filter(x =>
-                Object.keys(x.literals.literals)
-                    .join("\n")
-                    .toLowerCase()
-                    .includes(literalFilter.value.toLowerCase())
+            .filter((x) =>
+                Object.keys(x.literals.literals).join("\n").toLowerCase().includes(literalFilter.value.toLowerCase()),
             )
     )
 })
 const columns = [
     { key: "lemma", label: "lemma", sortOn: (x: Distribution) => x.lemma },
     { key: "pos", label: "PoS", sortOn: (x: Distribution) => x.pos },
-    {
-        key: "count",
-        label: "count",
-        align: "right",
-        sortOn: (x: Distribution): number => x.count
-    },
+    { key: "count", label: "count", align: "right", sortOn: (x: Distribution): number => x.count },
     {
         key: "variantCount",
         label: "unique",
         align: "right",
-        sortOn: (x: Distribution) => Object.keys(x.literals.literals).length
+        sortOn: (x: Distribution) => Object.keys(x.literals.literals).length,
     },
-    { key: "variants", label: "types" }
+    { key: "variants", label: "types" },
 ]
 const singMultiPosOptions: SelectOption[] = [
     { value: "single", text: "Single" },
     { value: "multiple", text: "Multiple" },
-    { value: "both", text: "Both" }
+    { value: "both", text: "Both" },
 ]
 const selectedSingMultiPos = ref<string>(singMultiPosOptions[0].value)
 const filteredPosses = computed(() => {
     if (selectedSingMultiPos.value === "single") {
-        return distributionStore.posses.filter(pos => !pos.includes("+"))
+        return distributionStore.posses.filter((pos) => !pos.includes("+"))
     }
     if (selectedSingMultiPos.value === "multiple") {
-        return distributionStore.posses.filter(pos => pos.includes("+"))
+        return distributionStore.posses.filter((pos) => pos.includes("+"))
     }
     return distributionStore.posses
 })
@@ -191,9 +193,19 @@ const filteredPosses = computed(() => {
 watch(
     () => distributionStore.posses,
     () => {
-        distributionStore.posses.forEach(pos => (includePos.value[pos] = true))
+        distributionStore.posses.forEach((pos) => (includePos.value[pos] = true))
     },
-    { immediate: true }
+    { immediate: true },
+)
+
+watch(
+    () => distributionStore.distributionOptions,
+    () => {
+        // Reset selectedDistribution when options change.
+        if (distributionStore.distributionOptions.length > 0) {
+            selectedDistribution.value = distributionStore.distributionOptions[0].value
+        }
+    },
 )
 
 watch(
@@ -201,6 +213,6 @@ watch(
     () => {
         selectedPosses.value = filteredPosses.value
     },
-    { immediate: true }
+    { immediate: true },
 )
 </script>

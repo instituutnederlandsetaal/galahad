@@ -45,24 +45,24 @@ function check(): void {
 }
 
 /* On mouse-over, add a grey background color */
-.checkbox-container:hover input~.checkmark {
+.checkbox-container:hover input ~ .checkmark {
     background-color: var(--int-very-light-grey-hover);
 }
 
-.checkbox-container:active input~.checkmark {
+.checkbox-container:active input ~ .checkmark {
     background-color: var(--int-light-grey-hover);
 }
 
 /* When the checkbox is checked, add a INT background */
-.checkbox-container input:checked~.checkmark {
+.checkbox-container input:checked ~ .checkmark {
     background-color: var(--int-theme);
 }
 
-.checkbox-container:hover input:checked~.checkmark {
+.checkbox-container:hover input:checked ~ .checkmark {
     background-color: var(--int-theme-hover);
 }
 
-.checkbox-container:active input:checked~.checkmark {
+.checkbox-container:active input:checked ~ .checkmark {
     background-color: var(--int-theme-active);
 }
 
@@ -74,7 +74,7 @@ function check(): void {
 }
 
 /* Show the checkmark when checked */
-.checkbox-container input:checked~.checkmark:after {
+.checkbox-container input:checked ~ .checkmark:after {
     display: block;
 }
 

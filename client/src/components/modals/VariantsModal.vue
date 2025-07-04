@@ -21,25 +21,17 @@ import type { Column } from "@/types/ui/table"
 type DistEntry = { variant: string; occurrences: number }
 
 // Props
-const { variantsToDisplay } = defineProps<{
-    variantsToDisplay: Distribution
-}>()
+const { variantsToDisplay } = defineProps<{ variantsToDisplay: Distribution }>()
 
 // Fields
 const columns: Column[] = [
     { key: "variant", label: "Type", sortOn: (x: DistEntry) => x.variant },
-    {
-        key: "occurrences",
-        label: "count",
-        sortOn: (x: DistEntry) => x.occurrences
-    }
+    { key: "occurrences", label: "count", sortOn: (x: DistEntry) => x.occurrences },
 ]
 const items: DistEntry[] = computed(() => {
-    return Object.entries(variantsToDisplay.literals.literals).map(
-        ([variant, occurrences]) => ({
-            variant,
-            occurrences
-        })
-    )
+    return Object.entries(variantsToDisplay.literals.literals).map(([variant, occurrences]) => ({
+        variant,
+        occurrences,
+    }))
 })
 </script>

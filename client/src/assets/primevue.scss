@@ -1,0 +1,27 @@
+/** Overrides for primevue */
+@use "@/assets/main.scss" as *;
+
+:root:root {
+    --p-multiselect-background: rgb(233, 233, 237);
+    --p-multiselect-border-radius: 0;
+    --p-primary-color: #{$theme};
+    --p-checkbox-icon-checked-color: black;
+    --p-checkbox-border-radius: 0;
+    --p-highlight-background: var(--int-theme-lighter);
+
+    .p-multiselect-header {
+        border-bottom: 1px solid var(--int-light-grey);
+
+        &::after {
+            content: "select all";
+        }
+    }
+
+    :root .p-multiselect {
+        border: none;
+
+        &:hover {
+            background-color: var(--int-very-light-grey-hover);
+        }
+    }
+}

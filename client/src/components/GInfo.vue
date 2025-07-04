@@ -11,10 +11,7 @@
 </template>
 
 <script setup lang="ts">
-const { error, spinner } = defineProps<{
-    error?: boolean
-    spinner?: boolean
-}>()
+const { error, spinner } = defineProps<{ error?: boolean; spinner?: boolean }>()
 </script>
 
 <style scoped lang="scss">

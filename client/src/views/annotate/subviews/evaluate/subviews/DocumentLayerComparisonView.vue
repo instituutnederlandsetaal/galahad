@@ -8,16 +8,10 @@
 
         <p v-if="loading">Loading...</p>
 
-        <div class="table-controls" v-if="bothJobsSelected">
-            <div class="table-control">
-                <label for="document-select">Document:</label>
-                <GSelect id="document-select" :options="docNames" v-model="selectedDoc" />
-            </div>
-            <div v-if="annotationOptions" class="table-control">
-                <label for="annotation-select">Annotation:</label>
-                <GSelect id="annotation-select" :options="annotationOptions" v-model="selectedAnnotation" />
-            </div>
-        </div>
+        <GForm v-if="bothJobsSelected">
+            <DocumentSelect v-model="selectedDoc" />
+            <AnnotationSelect v-if="annotationOptions" v-model="selectedAnnotation" :options="annotationOptions" />
+        </GForm>
 
         <div v-if="selectedDoc && selectedAnnotation" class="document">
             <template v-for="tc in termcomps.slice(firstRecord, firstRecord + rowsToDisplay)" :key="tc.refTerm.id">
@@ -30,8 +24,12 @@
                 <br v-if="tc.refTerm.annotations['token'] == '.'" />
             </template>
 
-            <Paginator v-if="termcomps.length > rowsToDisplay" v-model:first="firstRecord" :rows="rowsToDisplay"
-                :totalRecords="termcomps.length"></Paginator>
+            <Paginator
+                v-if="termcomps.length > rowsToDisplay"
+                v-model:first="firstRecord"
+                :rows="rowsToDisplay"
+                :totalRecords="termcomps.length"
+            ></Paginator>
         </div>
         <p v-else>Select a reference layer, a hypothesis layer. Then, select a document and an annotation.</p>
     </GCard>
@@ -54,9 +52,6 @@ const corporaStore = stores.useCorpora()
 const jobSelection = stores.useJobSelection()
 
 // Fields
-const docNames = computed<SelectOption[]>(() =>
-    documentsStore.documents.map(doc => ({ value: doc.name, text: doc.name }))
-)
 const selectedDoc = ref<string>()
 const selectedAnnotation = ref<string>()
 const annotationOptions = ref<SelectOption[]>()
@@ -70,16 +65,16 @@ const bothJobsSelected = computed(() => {
 })
 
 // Watches & mounts
-watch(selectedDoc, async newVal => {
+watch(selectedDoc, async (newVal) => {
     if (newVal) {
         loading.value = true
         API.getDocumentLayerComparison(
             corporaStore.corpusId,
             jobSelection.hypothesisId,
             newVal,
-            jobSelection.referenceId
+            jobSelection.referenceId,
         )
-            .then(response => {
+            .then((response) => {
                 termcomps.value = response.data
             })
             .finally(() => {
@@ -91,11 +86,8 @@ watch(selectedDoc, async newVal => {
 watch(termcomps, () => {
     if (!termcomps.value) return
     annotationOptions.value = documentsStore.documents
-        .find(doc => doc.name === selectedDoc.value)
-        ?.annotations.map(key => ({
-            value: key,
-            text: key
-        }))
+        .find((doc) => doc.name === selectedDoc.value)
+        ?.annotations.map((key) => ({ value: key, text: key }))
 })
 
 // Methods
@@ -106,9 +98,7 @@ function annotationsEqual(tc: TermComparison) {
 }
 
 function cleanAnnotation(term: Term) {
-    return term.annotations[selectedAnnotation.value]
-        ?.toLowerCase()
-        .replace("_", "")
+    return term.annotations[selectedAnnotation.value]?.toLowerCase().replace("_", "")
 }
 </script>
 

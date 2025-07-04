@@ -1,5 +1,1 @@
-export type Tagset = {
-    name: string
-    description: string
-    punctuation: string[]
-}
+export type Tagset = { name: string; description: string; punctuation: string[] }

@@ -5,14 +5,9 @@ import type { JobsEntities } from "@/types/evaluation/entities"
 
 const useEntities = defineStore("entities", () => {
     const { corpusId } = storeToRefs(stores.useCorpora())
-    const { loading, data: entities } = useAxios<JobsEntities>(() =>
-        jobsEntitiesPath(corpusId.value)
-    )
+    const { loading, data: entities } = useAxios<JobsEntities>(() => jobsEntitiesPath(corpusId.value))
 
-    return {
-        entities,
-        loading
-    }
+    return { entities, loading }
 })
 
 export default useEntities

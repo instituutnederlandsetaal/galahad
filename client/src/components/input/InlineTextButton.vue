@@ -9,12 +9,7 @@ const { green, orange, red, plain } = defineProps<{
     red?: boolean
     plain?: boolean
 }>()
-const classes = {
-    green: green,
-    orange: orange,
-    red: red,
-    plain: plain
-}
+const classes = { green: green, orange: orange, red: red, plain: plain }
 </script>
 
 <style scoped lang="scss">

@@ -1,7 +1,13 @@
 <template>
     <div>
-        <MetricsTable title="Basic Global Metrics" :loading :columns :items="basicItems"
-            @download="(data) => download(data)" :downloading>
+        <MetricsTable
+            title="Basic Global Metrics"
+            :loading
+            :columns
+            :items="basicItems"
+            @download="(data) => download(data)"
+            :downloading
+        >
             <template #help>
                 <p>
                     In Global Metrics an overview is given of the (dis)agreement between the two layers that have been
@@ -10,8 +16,14 @@
             </template>
         </MetricsTable>
 
-        <MetricsTable title="Extended Global Metrics" :loading :columns :items="complexItems"
-            @download="(data) => download(data)" :downloading />
+        <MetricsTable
+            title="Extended Global Metrics"
+            :loading
+            :columns
+            :items="complexItems"
+            @download="(data) => download(data)"
+            :downloading
+        />
     </div>
 </template>
 
@@ -49,30 +61,15 @@ const errors = stores.useErrors()
 const downloading = ref<boolean>()
 const columns = computed(() => {
     const withoutName = metricsPerPosColumns.filter(
-        col =>
-            !["precision", "recall", "f1", "falsePositive", "name"].includes(
-                col.key
-            )
+        (col) => !["precision", "recall", "f1", "falsePositive", "name"].includes(col.key),
     )
     const addColumns = [
-        { key: "name", label: "annotation", sortOn: x => x.annotation },
-        { key: "group", label: "grouped by", sortOn: x => x.group },
-        {
-            key: "macroPrecision",
-            label: "macro\nprecision",
-            sortOn: x => x.macroPrecision
-        },
-        {
-            key: "macroRecall",
-            label: "macro\nrecall",
-            sortOn: x => x.macroRecall
-        },
-        { key: "macroF1", label: "macro\nf1", sortOn: x => x.macroF1 },
-        {
-            key: "microAccuracy",
-            label: "micro\naccuracy",
-            sortOn: x => x.microAccuracy
-        }
+        { key: "name", label: "annotation", sortOn: (x) => x.annotation },
+        { key: "group", label: "grouped by", sortOn: (x) => x.group },
+        { key: "macroPrecision", label: "macro\nprecision", sortOn: (x) => x.macroPrecision },
+        { key: "macroRecall", label: "macro\nrecall", sortOn: (x) => x.macroRecall },
+        { key: "macroF1", label: "macro\nf1", sortOn: (x) => x.macroF1 },
+        { key: "microAccuracy", label: "micro\naccuracy", sortOn: (x) => x.microAccuracy },
     ]
     return addColumns.concat(withoutName)
 })
@@ -84,8 +81,8 @@ const items = computed(() => {
     // We want to transform this to
     // [ { name: "PoS", f1, recall, ... }, { name: "Lemma", f1, recall, ... }, { name: "Lemma & PoS", f1, recall, ... } ]
     const ret = Object.keys(metrics.value.metrics)
-        .map(key => ({ name: key, ...metrics.value.metrics[key] }))
-        .map(i => {
+        .map((key) => ({ name: key, ...metrics.value.metrics[key] }))
+        .map((i) => {
             const annoAndGroup = annotationAndGroupFromName(i.name)
             return {
                 id: i.setting.id,
@@ -99,15 +96,13 @@ const items = computed(() => {
                 macroPrecision: i.macro.precision,
                 macroRecall: i.macro.recall,
                 macroF1: i.macro.f1,
-                microAccuracy: i.micro.accuracy
+                microAccuracy: i.micro.accuracy,
             }
         })
     return ret
 })
 const basicItems = computed(() => items.value.filter(basicMetricFilter))
-const complexItems = computed(() =>
-    items.value.filter(item => !basicMetricFilter(item))
-)
+const complexItems = computed(() => items.value.filter((item) => !basicMetricFilter(item)))
 
 // Methods
 function annotationAndGroupFromName(name: string) {
@@ -131,18 +126,12 @@ function download(data: Any) {
         jobSelection.hypothesisId,
         jobSelection.referenceId,
         setting,
-        classType
+        classType,
     )
-        .then(response => {
+        .then((response) => {
             Utils.browserDownloadResponseFile(response)
         })
-        .catch(res =>
-            Utils.handleBlobError(
-                res,
-                "download global metrics samples",
-                errors
-            )
-        )
+        .catch((res) => Utils.handleBlobError(res, "download global metrics samples", errors))
         .finally(() => (downloading.value = false))
 }
 

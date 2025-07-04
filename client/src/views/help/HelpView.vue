@@ -6,5 +6,6 @@
             { id: 'general', title: 'General' },
             { id: 'evaluation', title: 'Detailed Evaluation Help' },
             { id: 'formats', title: 'Formats' },
-        ]" />
+        ]"
+    />
 </template>

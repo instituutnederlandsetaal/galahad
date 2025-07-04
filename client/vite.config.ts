@@ -15,20 +15,9 @@ export default defineConfig({
         vueDevTools(),
         yaml(),
         nodePolyfills({ include: ["buffer", "path"] }),
-        AutoImport({
-            imports: ["vue", "pinia", "vue-router", "@vueuse/core"],
-            dts: true,
-        }),
+        AutoImport({ imports: ["vue", "pinia", "vue-router", "@vueuse/core"], dts: true }),
         Components({ dts: true }),
     ],
-    server: {
-        watch: {
-            usePolling: true,
-        },
-    },
-    resolve: {
-        alias: {
-            "@": fileURLToPath(new URL("./src", import.meta.url)),
-        },
-    },
+    server: { watch: { usePolling: true } },
+    resolve: { alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) } },
 })

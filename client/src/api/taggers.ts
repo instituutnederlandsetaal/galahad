@@ -12,8 +12,7 @@ type TaggersBusyResponse = AxiosResponse<number>
 export const taggersPath = "/taggers"
 
 const taggerPath = (tagger: string): string => `${taggersPath}/${tagger}`
-const taggerHealthPath = (tagger: string): string =>
-    `${taggerPath(tagger)}/health`
+const taggerHealthPath = (tagger: string): string => `${taggerPath(tagger)}/health`
 
 /**
  * Get all taggers.

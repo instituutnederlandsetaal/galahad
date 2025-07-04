@@ -29,5 +29,5 @@ export default {
     useEvaluation,
     useTaggers,
     useTagsets,
-    useEntities
+    useEntities,
 }

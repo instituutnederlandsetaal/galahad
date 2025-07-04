@@ -5,11 +5,7 @@
 </template>
 
 <script setup lang="ts">
-const { disabled, loading, wide } = defineProps<{
-    disabled?: boolean
-    loading?: boolean
-    wide?: boolean
-}>()
+const { disabled, loading, wide } = defineProps<{ disabled?: boolean; loading?: boolean; wide?: boolean }>()
 </script>
 
 <style scoped lang="scss">

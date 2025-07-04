@@ -1,12 +1,5 @@
 <template>
     <GTable :columns :items :loading sortColumn="name" selectable v-model="selectedCorpus">
-
-        <template #title>
-            <slot name="title">
-                {{ type }} corpora
-            </slot>
-        </template>
-
         <template #help v-if="$slots.help">
             <slot name="help"></slot>
         </template>
@@ -34,87 +27,77 @@
 <script setup lang="ts">
 import stores from "@/stores"
 import type { CorpusMetadata } from "@/types/corpora"
-import {
-    type Column,
-    type Item,
-    TableCorporaType,
-    type TableData
-} from "@/types/ui/table"
+import { type Column, CorpusTableType, type TableData } from "@/types/ui/table"
 import { formatBytes, formatDate } from "@/ts/utils"
 
-// Stores
+// --- props ---
+const { corpora, type } = defineProps<{ corpora: CorpusMetadata[]; type: CorpusTableType }>()
+
+// --- stores ---
 const userStore = stores.useUser()
-const { corpus } = storeToRefs(stores.useCorpora())
-const { loading, corpusId } = storeToRefs(stores.useCorpora())
-const _selectedCorpus = ref<CorpusMetadata>(corpus.value)
-const selectedCorpus = computed<CorpusMetadata>({
-    get(): CorpusMetadata {
-        return _selectedCorpus.value
-    },
-    set(newValue): void {
-        corpusId.value = newValue.uuid
-        _selectedCorpus.value = newValue
-    }
-})
+const corporaStore = stores.useCorpora()
 
-// Props
-const { corpora, type } = defineProps<{
-    corpora: CorpusMetadata[]
-    type: TableCorporaType
-}>()
-
-// Fields
-const items = computed(() => {
-    if (type === TableCorporaType.user) {
-        return corpora.filter(i => i.owner === userStore.user.id)
-    }
-    if (type === TableCorporaType.shared) {
-        return corpora.filter(
-            i =>
-                i.collaborators.includes(userStore.user.id) ||
-                i.viewers.includes(userStore.user.id)
-        )
-    }
-    return corpora
-})
+// --- data ---
+const { loading, corpusId, corpus } = storeToRefs(corporaStore)
+const selectedCorpus = ref<CorpusMetadata>()
 const columns: Column<CorpusMetadata>[] = [
     { key: "uuid", hidden: true },
     { key: "name" },
     { key: "numDocs", label: "docs", align: "right" },
-    {
-        key: "size",
-        align: "right",
-        format: (c: CorpusMetadata): string => formatBytes(c.size)
-    },
+    { key: "size", align: "right", format: (c: CorpusMetadata): string => formatBytes(c.size) },
     {
         key: "period",
         align: "center",
         sortOn: (c: CorpusMetadata): string => `${c.eraFrom} ${c.eraTo}`,
-        format: (c: CorpusMetadata): string => `${c.eraFrom} – ${c.eraTo}`
+        format: (c: CorpusMetadata): string => `${c.eraFrom} – ${c.eraTo}`,
     },
     { key: "tagset" },
     { key: "source" },
-    {
-        key: "modified",
-        format: (c: CorpusMetadata): string => formatDate(c.modified)
-    },
+    { key: "modified", format: (c: CorpusMetadata): string => formatDate(c.modified) },
     {
         key: "collaborators",
         label: "shared with",
         align: "center",
-        hidden: type === TableCorporaType.dataset,
-        sortOn: (c: CorpusMetadata): number => customSharedSort(c),
-        format: formatCollaborators
+        hidden: type === CorpusTableType.dataset,
+        sortOn: (c: CorpusMetadata): number => sortShared(c),
+        format: formatCollaborators,
     },
-    {
-        key: "activeJobs",
-        label: "jobs",
-        align: "center",
-        hidden: type === TableCorporaType.dataset
-    }
+    { key: "activeJobs", label: "jobs", align: "center", hidden: type === CorpusTableType.dataset },
 ]
 
-// Methods
+// --- computed ---
+const items = computed(() => {
+    if (type === CorpusTableType.user) {
+        return corpora.filter((i) => i.owner === userStore.user.id)
+    }
+    if (type === CorpusTableType.shared) {
+        return corpora.filter(
+            (i) => i.collaborators.includes(userStore.user.id) || i.viewers.includes(userStore.user.id),
+        )
+    }
+    return corpora
+})
+
+// --- watch ---
+// On corpus selection, change the corpusId
+watch(selectedCorpus, () => {
+    if (selectedCorpus.value) {
+        console.debug("changing corpusID to", selectedCorpus.value.uuid)
+        corpusId.value = selectedCorpus.value.uuid
+    }
+})
+// on corpusId change, update the selectedCorpus
+watch(
+    corpus,
+    () => {
+        if (corpus.value) {
+            selectedCorpus.value = corpus.value
+        }
+    },
+    { immediate: true },
+)
+
+// --- methods ---
 function formatCollaborators(i: CorpusMetadata): string {
     if (i.dataset) return "Dataset"
     const numPeople = i.collaborators.length + i.viewers.length
@@ -122,7 +105,7 @@ function formatCollaborators(i: CorpusMetadata): string {
     return numPeople === 1 ? `${numPeople} person` : `${numPeople} people`
 }
 
-function customSharedSort(i: CorpusMetadata): number {
+function sortShared(i: CorpusMetadata): number {
     if (i.dataset) return -1
     return i.collaborators.length + i.viewers.length
 }

@@ -1,28 +1,27 @@
 <template>
-    <table class="key-values">
+    <table>
         <tbody>
             <tr v-for="key in keys" :key>
-                <td class="key">{{ key }}</td>
-                <td>
-                    {{ data[key] }}
-                </td>
+                <td>{{ key }}</td>
+                <td>{{ data[key] }}</td>
             </tr>
         </tbody>
     </table>
 </template>
 
 <script setup lang="ts">
-const { data } = defineProps<{
-    data: Record<string, string>
-}>()
+// #props
+const { data } = defineProps<{ data: Record<string, string> }>()
+
+// #data
 const keys = Object.keys(data)
 </script>
 
 <style scoped lang="scss">
-.key-values {
+table {
     font-family: monospace;
 
-    .key {
+    td:first-child {
         padding-right: 2rem;
     }
 }

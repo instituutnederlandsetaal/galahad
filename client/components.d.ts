@@ -9,6 +9,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AnnotateTab: typeof import('./src/components/AnnotateTab.vue')['default']
+    AnnotationSelect: typeof import('./src/components/input/AnnotationSelect.vue')['default']
     AppBanner: typeof import('./src/components/AppBanner.vue')['default']
     BenchmarkSetsHelp: typeof import('./src/components/help/BenchmarkSetsHelp.vue')['default']
     ComparisonModal: typeof import('./src/components/modals/ComparisonModal.vue')['default']
@@ -30,6 +31,8 @@ declare module 'vue' {
     GButton: typeof import('./src/components/input/GButton.vue')['default']
     GCard: typeof import('./src/components/GCard.vue')['default']
     GCheckBox: typeof import('./src/components/input/GCheckBox.vue')['default']
+    GForm: typeof import('./src/components/input/GForm.vue')['default']
+    GFormHorizontal: typeof import('./src/components/input/GFormHorizontal.vue')['default']
     GInfo: typeof import('./src/components/GInfo.vue')['default']
     GInput: typeof import('./src/components/input/GInput.vue')['default']
     GModal: typeof import('./src/components/modals/GModal.vue')['default']
@@ -58,6 +61,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SingleTermComparisonTable: typeof import('./src/components/tables/SingleTermComparisonTable.vue')['default']
+    TagsetSelect: typeof import('./src/components/input/TagsetSelect.vue')['default']
     UploadDocuments: typeof import('./src/components/input/UploadDocuments.vue')['default']
     UserList: typeof import('./src/components/modals/corpus/UserList.vue')['default']
     VariantsModal: typeof import('./src/components/modals/VariantsModal.vue')['default']

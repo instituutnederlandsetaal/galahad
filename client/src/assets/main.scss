@@ -1,5 +1,10 @@
 @use "sass:color";
 
+@font-face {
+    font-family: "Schoolboek";
+    src: url("@/assets/Schoolboek-Regular.woff") format("woff");
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -10,11 +15,8 @@
 body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     line-height: 1.5;
-}
-
-@font-face {
-    font-family: "Schoolboek";
-    src: url("@/assets/Schoolboek-Regular.woff") format("woff");
+    min-height: 100vh;
+    background-color: var(--int-very-light-grey);
 }
 
 h1,
@@ -23,25 +25,26 @@ h3,
 h4,
 h5,
 h6 {
-    font-family: "Schoolboek", "Helvetica Neue", Helvetica, sans-serif;
+    font-family: "Schoolboek", "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight: normal;
 }
 
-ul, ol {
+ul,
+ol {
     padding: revert;
 }
 
 a {
-    color: #000;
+    color: black;
     text-decoration: underline;
 
     &:hover {
-        color: #000;
+        color: black;
         text-decoration: none;
     }
 
     &:active {
-        color: #000;
+        color: black;
     }
 }
 
@@ -50,7 +53,7 @@ i.fa {
     font-size: 1.3rem;
 }
 
-$galahad-theme: #62b6ff;
+$theme: #62b6ff;
 
 :root:root {
     // INT theme colors
@@ -85,33 +88,9 @@ $galahad-theme: #62b6ff;
     --int-grey-hover: #8a8b8f;
     --white: white;
     // Current Theme
-    --int-theme: #{$galahad-theme};
-    --int-theme-lighter: #{color.adjust($galahad-theme, $lightness: 10%)};
-    --int-theme-hover: #{color.adjust($galahad-theme, $lightness: -7%)};
-    --int-theme-active: #{color.adjust($galahad-theme, $lightness: -20%)};
-    --int-theme-outline: #{color.adjust($galahad-theme, $lightness: -15%)};
-    // primevue overrides
-    --p-multiselect-background: rgb(233, 233, 237);
-    --p-multiselect-border-radius: 0;
-    --p-primary-color: #{$galahad-theme};
-    --p-checkbox-icon-checked-color: black;
-    --p-checkbox-border-radius: 0;
-    --p-highlight-background: var(--int-theme-lighter);
-}
-
-// primevue overrides
-.p-multiselect-header {
-    border-bottom: 1px solid var(--int-light-grey);
-}
-
-.p-multiselect-header::after {
-    content: "select all";
-}
-
-:root .p-multiselect {
-    border: none;
-
-    &:hover {
-        background-color: var(--int-very-light-grey-hover);
-    }
+    --int-theme: #{$theme};
+    --int-theme-lighter: #{color.adjust($theme, $lightness: 10%)};
+    --int-theme-hover: #{color.adjust($theme, $lightness: -7%)};
+    --int-theme-active: #{color.adjust($theme, $lightness: -20%)};
+    --int-theme-outline: #{color.adjust($theme, $lightness: -15%)};
 }

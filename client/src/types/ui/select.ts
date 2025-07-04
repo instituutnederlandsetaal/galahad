@@ -1,4 +1,1 @@
-export type SelectOption = {
-    value: string
-    text: string
-}
+export type SelectOption = { value: string; text: string }

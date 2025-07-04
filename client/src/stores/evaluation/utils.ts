@@ -18,11 +18,7 @@ import type { Ref } from "vue"
  * @param reference Tagger job name as reference layer.
  */
 export function reloadEval(
-    ApiCall: (
-        corpus: UUID,
-        hypothesis: string,
-        reference: string
-    ) => Promise<AxiosResponse>,
+    ApiCall: (corpus: UUID, hypothesis: string, reference: string) => Promise<AxiosResponse>,
     ResetCall: () => void,
     intent: string,
     loading: Ref<boolean>,
@@ -30,7 +26,7 @@ export function reloadEval(
     stores: any,
     corpus: UUID,
     hypothesis: string,
-    reference?: string
+    reference?: string,
 ): any {
     // Specifically check reference for null. We'll allow empty strings.
     if (!corpus || !hypothesis || reference == null) {
@@ -44,7 +40,7 @@ export function reloadEval(
 
     return new Promise<void>((resolve, reject) => {
         ApiCall(corpus, hypothesis, reference)
-            .then(response => {
+            .then((response) => {
                 const corporaStore = stores.useCorpora()
                 const jobSelection = stores.useJobSelection()
                 // Retrieve latest selections
@@ -55,20 +51,15 @@ export function reloadEval(
                 // This prevents late responses overwriting responses to newer requests
                 const url: string = response.request.responseURL
                 // Distribution does not need a reference and instead passes an empty string.
-                const includesRef =
-                    reference === "" ? true : url.includes(currentReference)
+                const includesRef = reference === "" ? true : url.includes(currentReference)
 
-                if (
-                    url.includes(currentCorpus) &&
-                    url.includes(currentHypothesis) &&
-                    includesRef
-                ) {
+                if (url.includes(currentCorpus) && url.includes(currentHypothesis) && includesRef) {
                     // commit
                     data.value = response.data
                     resolve()
                 }
             })
-            .catch(error => {
+            .catch((error) => {
                 stores.useErrors().handle(intent, error)
                 reject()
             })

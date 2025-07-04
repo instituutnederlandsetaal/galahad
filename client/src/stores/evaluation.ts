@@ -13,13 +13,10 @@ export function literalsForTerm(term: Term): string {
     return term.annotations.token
 }
 
-export function literalsForTermComparison(
-    termComparison: TermComparison
-): string {
+export function literalsForTermComparison(termComparison: TermComparison): string {
     // the literals could be different for term1 and term2
     if (
-        literalsForTerm(termComparison.hypoTerm) ===
-            literalsForTerm(termComparison.refTerm) ||
+        literalsForTerm(termComparison.hypoTerm) === literalsForTerm(termComparison.refTerm) ||
         literalsForTerm(termComparison.refTerm) === ""
     ) {
         return literalsForTerm(termComparison.hypoTerm)
@@ -49,16 +46,12 @@ const useEvaluation = defineStore("evaluation", () => {
     // Methods
     function downloadCSV(): void {
         loading.value = true
-        API.getDownloadEvaluation(
-            corporaStore.corpusId,
-            jobSelection.hypothesisId,
-            jobSelection.referenceId
-        )
+        API.getDownloadEvaluation(corporaStore.corpusId, jobSelection.hypothesisId, jobSelection.referenceId)
             .then(Utils.browserDownloadResponseFile)
-            .catch(error =>
-                Utils.handleBlobError(error, "download evaluation", errors)
-            )
-            .finally(() => (loading.value = false))
+            .catch((error) => Utils.handleBlobError(error, "download evaluation", errors))
+            .finally(() => {
+                loading.value = false
+            })
     }
 
     // Exports

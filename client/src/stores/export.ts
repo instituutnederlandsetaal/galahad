@@ -27,41 +27,19 @@ const useExport = defineStore("exportStore", () => {
             return
         }
         loading.value = true
-        plausible.corpusExported(
-            corporaStore.corpus,
-            jobSelection.hypothesisId,
-            format.value,
-            shouldMerge,
-            posHeadOnly
-        )
-        API.convertCorpus(
-            corporaStore.corpusId,
-            jobSelection.hypothesisId,
-            format.value,
-            posHeadOnly
-        )
+        plausible.corpusExported(corporaStore.corpus, jobSelection.hypothesisId, format.value, shouldMerge, posHeadOnly)
+        API.convertCorpus(corporaStore.corpusId, jobSelection.hypothesisId, format.value, posHeadOnly)
             .then(Utils.browserDownloadResponseFile)
-            .catch(res => Utils.handleBlobError(res, "convert corpus", errors))
+            .catch((res) => Utils.handleBlobError(res, "convert corpus", errors))
             .finally(() => (loading.value = false))
     }
 
     function merge(posHeadOnly: boolean): void {
         loading.value = true
-        plausible.corpusExported(
-            corporaStore.corpus,
-            jobSelection.hypothesisId,
-            format.value,
-            true,
-            posHeadOnly
-        )
-        API.mergeCorpus(
-            corporaStore.corpusId,
-            jobSelection.hypothesisId,
-            format.value,
-            posHeadOnly
-        )
+        plausible.corpusExported(corporaStore.corpus, jobSelection.hypothesisId, format.value, true, posHeadOnly)
+        API.mergeCorpus(corporaStore.corpusId, jobSelection.hypothesisId, format.value, posHeadOnly)
             .then(Utils.browserDownloadResponseFile)
-            .catch(res => Utils.handleBlobError(res, "merge corpus", errors))
+            .catch((res) => Utils.handleBlobError(res, "merge corpus", errors))
             .finally(() => (loading.value = false))
     }
     // Exports
@@ -70,7 +48,7 @@ const useExport = defineStore("exportStore", () => {
         format,
         loading,
         // Methods
-        convert
+        convert,
     }
 })
 

@@ -7,5 +7,6 @@
             { id: 'tagsets', title: 'Tagsets' },
             { id: 'datasets', title: 'Datasets' },
             { id: 'benchmarks', title: 'Benchmarks' },
-        ]" />
+        ]"
+    />
 </template>
