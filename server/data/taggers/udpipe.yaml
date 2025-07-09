@@ -1,6 +1,7 @@
 id: udpipe
 description: "udpipe"
 tagset: "Universal Dependencies"
+language: "Latin"
 eraFrom: "2000"
 eraTo: "2020"
 annotations:

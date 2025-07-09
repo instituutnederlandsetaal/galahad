@@ -1,6 +1,7 @@
 id: pie-tdn-1600-1900
 description: "PIE trained on DBNL excerpts, GTB dictionary quotations, newspapers & letters as loot (1600-1900)"
 tagset: "TDN-Core"
+language: "Dutch"
 eraFrom: "1600"
 eraTo: "1900"
 annotations:

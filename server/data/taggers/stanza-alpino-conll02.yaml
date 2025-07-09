@@ -1,6 +1,7 @@
 id: stanza-alpino-conll02
 description: "stanza trained on conll02 for NER and alpino for the rest"
 tagset: "Universal Dependencies"
+language: "Latin"
 eraFrom: "2000"
 eraTo: "2020"
 annotations:

@@ -68,6 +68,13 @@
                         </td>
                     </tr>
 
+                    <tr>
+                        <td><label>Language</label></td>
+                        <td>
+                            <GInput v-model="language" placeholder="Language" />
+                        </td>
+                    </tr>
+
                     <template v-if="userStore.user.isAdmin">
                         <tr>
                             <td colspan="2">
@@ -133,6 +140,7 @@ const name = ref<string>("")
 const eraFrom = ref<number>()
 const eraTo = ref<number>()
 const tagset = ref<string>("")
+const language = ref<string>("")
 const sourceName = ref<string>("")
 const sourceUrl = ref<string>("")
 const collaborators = ref<string[]>([])
@@ -153,6 +161,7 @@ const disabled = computed(() => {
             eraFrom.value === i.eraFrom &&
             eraTo.value === i.eraTo &&
             tagset.value === i.tagset &&
+            language.value === i.language &&
             collaborators.value.join("\n") === i.collaborators.join("\n") &&
             viewers.value.join("\n") === i.viewers.join("\n") &&
             sourceName.value === i.sourceName &&
@@ -178,6 +187,7 @@ watch(
         eraFrom.value = newValue.eraFrom
         eraTo.value = newValue.eraTo
         tagset.value = newValue.tagset
+        language.value = newValue.language
         sourceName.value = newValue.sourceName
         sourceUrl.value = newValue.sourceUrl
         dataset.value = newValue.dataset
@@ -195,6 +205,7 @@ function confirm(): void {
         eraFrom: eraFrom.value,
         eraTo: eraTo.value,
         tagset: tagset.value,
+        language: language.value,
         dataset: dataset.value,
         collaborators: collaborators.value,
         viewers: viewers.value,

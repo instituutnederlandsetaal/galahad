@@ -2,6 +2,7 @@ export type Tagger = {
     id: string
     description: string
     tagset: string
+    langauge: string
     eraFrom: number
     eraTo: number
     annotations: string[]

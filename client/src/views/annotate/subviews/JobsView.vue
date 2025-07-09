@@ -105,6 +105,7 @@ const items = computed(() =>
 const columns = computed<Column<Job>[]>((): Column<Job>[] => [
     { key: "id", label: "tagger", sortOn: (j: Job): string => j.tagger.id, align: "left" },
     { key: "tagset", sortOn: (j: Job): string => j.tagger.tagset, format: (j: Job): string => j.tagger.tagset },
+    { key: "language", sortOn: (j: Job): string => j.tagger.language, format: (j: Job): string => j.tagger.language },
     {
         key: "annotations",
         format: (j: Job): string => j.tagger.annotations.join(", "),

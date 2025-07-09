@@ -1,6 +1,7 @@
 id: hug-tdn-all
 description: "INT-Hug trained on all TDN-Core material"
 tagset: "TDN-Core"
+language: "Dutch"
 eraFrom: "1400"
 eraTo: "1900"
 annotations:

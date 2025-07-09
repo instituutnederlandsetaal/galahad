@@ -53,6 +53,7 @@ const columns: Column<CorpusMetadata>[] = [
     },
     { key: "tagset" },
     { key: "source" },
+    { key: "language" },
     { key: "modified", format: (c: CorpusMetadata): string => formatDate(c.modified) },
     {
         key: "collaborators",

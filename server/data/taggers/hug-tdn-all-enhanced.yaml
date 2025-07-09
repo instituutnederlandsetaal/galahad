@@ -1,6 +1,7 @@
 id: hug-tdn-all-enhanced
 description: "INT-Hug trained on all TDN-Core material with enhancements for separable verbs"
 tagset: "TDN-Core"
+language: "Dutch"
 eraFrom: "1400"
 eraTo: "1900"
 annotations:

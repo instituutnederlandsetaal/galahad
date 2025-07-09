@@ -4,7 +4,7 @@
 
     <form class="form">
         <!-- Styled label for input -->
-        <label for="file-upload" class="custom-file-upload">
+        <label for="file-upload" class="custom-file-upload" title="Select files">
             <svg
                 class="svg-icon"
                 aria-hidden="true"
@@ -43,7 +43,7 @@
 
         <!-- Confirmation and clear buttons after a selection has been made -->
         <fieldset v-if="filesToUpload.length != 0" class="btns">
-            <GButton
+            <GButton title="Upload"
                 green
                 @click="
                     () => {
@@ -54,7 +54,7 @@
             >
                 Upload
             </GButton>
-            <GButton
+            <GButton title="Cancel"
                 plain
                 @click="
                     () => {
@@ -63,7 +63,7 @@
                     }
                 "
             >
-                &#10006;&nbsp;clear
+                &#10006;&nbsp;cancel
             </GButton>
         </fieldset>
 

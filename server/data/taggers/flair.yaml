@@ -1,6 +1,7 @@
 id: flair
 description: "flair"
 tagset: "Universal Dependencies"
+language: "Multilingual"
 eraFrom: "2000"
 eraTo: "2020"
 annotations:

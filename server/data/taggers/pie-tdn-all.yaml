@@ -1,6 +1,7 @@
 id: pie-tdn-all
 description: "PIE trained on all TDN-Core material"
 tagset: "TDN-Core"
+language: "Dutch"
 eraFrom: "1200"
 eraTo: "1900"
 annotations:

@@ -1,6 +1,7 @@
 id: pie-tdn-1200-1600
 description: "PIE trained on DBNL excerpts, GTB dictionary quotations, CLVN & Gysseling (1200-1600)"
 tagset: "TDN-Core"
+language: "Dutch"
 eraFrom: "1200"
 eraTo: "1600"
 annotations:

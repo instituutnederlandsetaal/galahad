@@ -1,6 +1,7 @@
 id: stanza-lassysmall-wikiner
 description: "stanza trained on wikiner for NER and lassysmall for the rest"
 tagset: "Universal Dependencies"
+language: "Latin"
 eraFrom: "2000"
 eraTo: "2020"
 annotations:

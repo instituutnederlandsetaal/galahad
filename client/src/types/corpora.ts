@@ -17,6 +17,7 @@ export type MutableCorpusMetadata = {
     eraFrom: number
     eraTo: number
     tagset: string
+    language: string
     dataset: boolean
     public: boolean
     collaborators: string[]

@@ -1,6 +1,7 @@
 id: spacy
 description: "spacy"
 tagset: "Universal Dependencies"
+language: "Dutch"
 eraFrom: "2000"
 eraTo: "2020"
 annotations:
