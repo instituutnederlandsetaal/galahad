@@ -13,7 +13,7 @@
                         $emit('hide')
                     }
                 "
-                >Confirm</GButton
+                ><i class="fa fa-check"></i></GButton
             >
         </template>
     </GModal>

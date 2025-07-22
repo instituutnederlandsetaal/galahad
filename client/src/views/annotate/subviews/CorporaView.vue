@@ -5,9 +5,9 @@
         </template>
 
         <GForm gap="0.25rem">
-            <GButton green title="New" @click="newCorpus = true"> New </GButton>
-            <GButton orange title="Edit" :disabled="!canWrite" @click="editCorpus = copy(corpus)"> Edit </GButton>
-            <GButton red title="Delete" :disabled="!canDelete" @click="deleteCorpus = corpus"> Delete </GButton>
+            <GButton green title="New" @click="newCorpus = true"><i class="fa fa-plus"></i></GButton>
+            <GButton orange title="Edit" :disabled="!canWrite" @click="editCorpus = copy(corpus)"><i class="fa fa-pencil"></i></GButton>
+            <GButton red title="Delete" :disabled="!canDelete" @click="deleteCorpus = corpus"><i class="fa fa-trash"></i></GButton>
         </GForm>
 
         <!-- Owner corpus table -->

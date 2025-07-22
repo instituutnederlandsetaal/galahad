@@ -43,6 +43,9 @@
                 <GButton v-if="data.value" class="button" @click="selectedItem = data">
                     {{ formatNumber(data.value) }}
                 </GButton>
+                <template v-else>
+                    {{  formatNumber(data.value) }}
+                </template>
             </template>
         </GTable>
 
@@ -198,8 +201,13 @@ function convertJobsEntities(jobsEntities: JobsEntities): DocumentEntitiesRow[] 
 // custom format because we are overriding the cell slot
 function formatNumber(value: unknown): string | unknown {
     // only tofixed if value is a float
-    if (typeof value === "number" && !Number.isInteger(value)) {
-        return value.toFixed(2)
+    if (typeof value === "number") {
+        if (!Number.isInteger(value)) {
+            return value.toFixed(2)
+        } 
+        if (value === 0) {
+            return ""
+        }
     }
     return value
 }

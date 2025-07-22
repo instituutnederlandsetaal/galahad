@@ -52,7 +52,7 @@
                     }
                 "
             >
-                Upload
+                <i class="fa fa-upload"></i>
             </GButton>
             <GButton title="Cancel"
                 plain
@@ -63,7 +63,7 @@
                     }
                 "
             >
-                &#10006;&nbsp;cancel
+                <i class="fa fa-close"></i>
             </GButton>
         </fieldset>
 

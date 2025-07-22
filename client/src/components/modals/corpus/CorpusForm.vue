@@ -28,9 +28,6 @@
                                 v-model="eraFrom"
                                 validityDescriptor="Before end year"
                                 placeholder="YYYY"
-                                :min="-6000"
-                                :max="2100"
-                                :step="50"
                                 :validator="
                                     (v) => {
                                         return (v ?? 0) <= (eraTo ?? 0)
@@ -47,9 +44,6 @@
                                 v-model="eraTo"
                                 validityDescriptor="After start year"
                                 placeholder="YYYY"
-                                :min="-6000"
-                                :max="2100"
-                                :step="50"
                                 :validator="
                                     (v) => {
                                         return (v ?? 0) >= (eraFrom ?? 0)
@@ -117,7 +111,7 @@
         </form>
 
         <template #buttons>
-            <GButton green @click="confirm" :disabled>{{ initial ? "Update" : "Create" }}</GButton>
+            <GButton green @click="confirm" :disabled><i class="fa fa-check"></i></GButton>
         </template>
     </GModal>
 </template>
