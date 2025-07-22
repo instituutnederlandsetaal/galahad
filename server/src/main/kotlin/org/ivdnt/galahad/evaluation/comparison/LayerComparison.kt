@@ -6,20 +6,26 @@ import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.export.DocumentExport
 
 /** An iterator that saves the current item. */
-class SmartIterator<T> : Iterator<T?> {
-    var current: T? = null
+class TermIterator : Iterator<Term?> {
+    var current: Term? = null
+        private set
+    var chars: Int = 0
         private set
 
-    private val iter: Iterator<T>
+    private val iter: Iterator<Term?>
 
-    constructor(iter: Iterator<T>) {
+    constructor(iter: Iterator<Term?>) {
         this.iter = iter
         next()
     }
 
     override fun hasNext(): Boolean = iter.hasNext()
 
-    override fun next(): T? {
+    override fun next(): Term? {
+        // add length of now previous term
+        if (current != null) {
+            chars += (current as Term).token.length
+        }
         current = if (iter.hasNext()) iter.next() else null
         return current
     }
@@ -39,50 +45,30 @@ open class LayerComparison(
     constructor(export: DocumentExport) : this(export.layer, export.sourceLayer)
 
     val matches: MutableList<TermComparison> = ArrayList()
-    private val hypoIter: SmartIterator<Term> = SmartIterator(hypothesis.terms.iterator())
-    private val refIter: SmartIterator<Term> = SmartIterator(reference.terms.iterator())
+    private val hypoIter: TermIterator = TermIterator(hypothesis.terms.iterator())
+    private val refIter: TermIterator = TermIterator(reference.terms.iterator())
 
     /** Iterate through the terms of both layers simultaneously and compare them. */
     init {
         // While non null, compare
         while (hypoIter.current != null && refIter.current != null) {
-            compareTerm(TermComparison(hypoIter.current!!, refIter.current!!))
+            if (hypoIter.chars == refIter.chars) {
+                match(TermComparison(hypoIter.current!!, refIter.current!!))
+                hypoIter.next()
+                refIter.next()
+            } else {
+                if (refIter.chars < hypoIter.chars) {
+                    noMatch(refIter.current!!)
+                    refIter.next()
+                } else {
+                    hypoIter.next()
+                }
+            }
         }
         // Only one or both are null. So refIter.current can be non-null.
         refIter.current?.let { noMatch(it) }
         // And add any remaining terms
         refIter.forEachRemaining { t -> noMatch(t!!) }
-    }
-
-    private fun compareTerm(comp: TermComparison) {
-        // Act on the comparison
-        if (comp.equalAnnotation(Annotation.TOKEN)) {
-            match(comp)
-            hypoIter.next()
-            refIter.next()
-        } else {
-            if (truncatedPCMatch(comp)) {
-                // If so, still match it.
-                match(comp)
-                // and fix iterators for the next terms
-                fixIter(comp)
-            } else {
-                noMatch(comp.refTerm)
-            }
-        }
-    }
-
-    private fun fixIter(comp: TermComparison) {
-        hypoIter.next()
-        refIter.next()
-        // Now, the shorter iterator needs to be advanced until it matches.
-        val hypoShorter: Boolean = comp.hypoTerm.token.length < comp.refTerm.token.length
-        val shorterIter = if (hypoShorter) hypoIter else refIter
-        val termToMatch = if (hypoShorter) refIter.current else hypoIter.current
-        while (termToMatch != null && shorterIter.current != null && !truncatedPCMatch(termToMatch, shorterIter.current!!)) {
-            // Advance
-            shorterIter.next()
-        }
     }
 
     private fun match(comp: TermComparison) {
