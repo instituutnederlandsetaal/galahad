@@ -31,14 +31,6 @@
 
                 <GForm>
                     <fieldset>
-                        <label for="annotation-select">Annotation</label>
-                        <GSelect
-                            id="annotation-select"
-                            :options="distributionStore.distributionOptions"
-                            v-model="selectedDistribution"
-                        />
-                    </fieldset>
-                    <fieldset>
                         <label for="lemma-input">Search lemma</label>
                         <GInput if="lemma-input" type="text" v-model="lemmaFilter" placeholder="Lemma" />
                     </fieldset>
@@ -47,11 +39,19 @@
                         <GInput if="literal-input" type="text" v-model="literalFilter" placeholder="Type" />
                     </fieldset>
                     <fieldset>
-                        <label for="analysis-select">single/multiple PoS</label>
+                        <label for="annotation-select">Annotation</label>
+                        <GSelect
+                            id="annotation-select"
+                            :options="distributionStore.distributionOptions"
+                            v-model="selectedDistribution"
+                        />
+                    </fieldset>
+                    <fieldset>
+                        <label for="analysis-select">single/multiple analyses</label>
                         <GSelect id="analysis-select" :options="singMultiPosOptions" v-model="selectedSingMultiPos" />
                     </fieldset>
                     <fieldset>
-                        <label for="pos-select">Include PoS</label>
+                        <label for="pos-select">Include values</label>
                         <MultiSelect
                             id="pos-select"
                             v-model="selectedPosses"
