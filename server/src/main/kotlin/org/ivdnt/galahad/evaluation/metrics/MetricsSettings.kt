@@ -8,6 +8,9 @@ import org.ivdnt.galahad.evaluation.comparison.LayerComparison.Companion.truncat
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
 import org.ivdnt.galahad.evaluation.frequency.TokenFrequency
 
+// for compound lemma like "aan_pakken" instead of "aanpakken"
+val LEMMA_REGEX = Regex("_")
+
 interface MetricsSettings {
     /** When are terms equal? */
     fun termsEqual(comp: TermComparison): Boolean
@@ -73,13 +76,9 @@ open class LemmaByLemmaMetricsSettings : MetricsSettings {
     override val nullTerm: String = "NO_LEMMA"
     override val requiredAnnotations: List<Annotation> = listOf(Annotation.LEMMA)
 
-    override fun termsEqual(comp: TermComparison): Boolean = comp.equalAnnotation(Annotation.LEMMA, lemmaRegex)
+    override fun termsEqual(comp: TermComparison): Boolean = comp.equalAnnotation(Annotation.LEMMA, LEMMA_REGEX)
 
     override fun groupBy(term: Term): String = term.lemma ?: nullTerm
-
-    companion object {
-        val lemmaRegex = Regex("_")
-    }
 }
 
 open class DeprelByDeprel : MetricsSettings {
@@ -128,7 +127,7 @@ class LemmaByPosMetricsSettings : PosByPosMetricsSettings() {
     override val annotation: String = "Lemma"
     override val requiredAnnotations: List<Annotation> = listOf(Annotation.LEMMA, Annotation.POS)
 
-    override fun termsEqual(comp: TermComparison): Boolean = comp.equalAnnotation(Annotation.LEMMA)
+    override fun termsEqual(comp: TermComparison): Boolean = comp.equalAnnotation(Annotation.LEMMA, LEMMA_REGEX)
 }
 
 class PosByLemmaMetricsSettings : LemmaByLemmaMetricsSettings() {
@@ -145,7 +144,7 @@ class LemmaPosByPosMetricsSettings : PosByPosMetricsSettings() {
     override val requiredAnnotations: List<Annotation> = listOf(Annotation.LEMMA, Annotation.POS)
 
     override fun termsEqual(comp: TermComparison): Boolean =
-        comp.equalAnnotation(Annotation.POS) && comp.equalAnnotation(Annotation.LEMMA)
+        comp.equalAnnotation(Annotation.POS) && comp.equalAnnotation(Annotation.LEMMA, LEMMA_REGEX)
 }
 
 class DeprelHeadbyDeprelMetricsSettings : DeprelByDeprel() {
@@ -163,7 +162,7 @@ class LemmaPosByLemmaMetricsSettings : LemmaByLemmaMetricsSettings() {
     override val requiredAnnotations: List<Annotation> = listOf(Annotation.LEMMA, Annotation.POS)
 
     override fun termsEqual(comp: TermComparison): Boolean =
-        comp.equalAnnotation(Annotation.POS) && comp.equalAnnotation(Annotation.LEMMA)
+        comp.equalAnnotation(Annotation.POS) && comp.equalAnnotation(Annotation.LEMMA, LEMMA_REGEX)
 }
 
 class UposByUposMetricsSettings : MetricsSettings {
