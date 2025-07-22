@@ -1,6 +1,6 @@
 <template>
     <GTable :columns :items>
-        <template #title>Annotations preview</template>
+        <template #title>Annotations preview of {{ name }}</template>
         <template #header>
             <dl>
                 <dl v-for="[key, value] in Object.entries(summary.annotations)" :key="key">
@@ -20,6 +20,7 @@ import type { Job } from "@/types/jobs"
 const { document, job } = defineProps<{ document?: DocumentMetadata; job?: Job }>()
 
 // #computed
+const name = computed(() => (document ? document.name : job?.tagger.id))
 const summary = computed(() => (document ? document.summary : job.summary))
 const annotations = computed(() => (document ? document.annotations : job.tagger.annotations))
 const columns = computed(() => annotations.value.map((i) => ({ key: i, label: i })))
