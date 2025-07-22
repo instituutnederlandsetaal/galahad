@@ -31,7 +31,7 @@ const documents = defineStore("documents", () => {
         [],
     )
 
-    const numSourceAnnotations = computed(() => documents.value.filter((i) => i.summary?.tokens > 0).length)
+    const numSourceAnnotations = computed(() => documents.value.filter((i) => i.summary?.annotations.token > 0).length)
     const uploading: Record<string, FileStatus> = reactive({})
     const uploadBusyCount = computed(() => Object.values(uploading).filter((i) => i.status === "busy").length)
     const uploadErrorCount = computed(() => Object.values(uploading).filter((i) => i.status === "error").length)
