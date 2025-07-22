@@ -19,9 +19,9 @@ class LayerComparisonTest {
             val hypo = builder.build()
             val ref = builder.build()
             val comparison = LayerComparison(
-                hypothesisLayer = hypo,
-                referenceLayer = ref,
-                layerFilter = NouNouFilter()
+                hypothesis = hypo,
+                reference = ref,
+                filter = NouNouFilter()
             )
             assertEquals(100, comparison.matches.size)
             assertEquals(0, comparison.hypothesisTermsWithoutMatches.size)
@@ -38,9 +38,9 @@ class LayerComparisonTest {
             val hypo = LayerBuilder().loadDummies(100, pos = "NOU").build()
             val ref = LayerBuilder().loadDummies(100, pos = "VRB").build()
             val comparison = LayerComparison(
-                hypothesisLayer = hypo,
-                referenceLayer = ref,
-                layerFilter = NouNouFilter()
+                hypothesis = hypo,
+                reference = ref,
+                filter = NouNouFilter()
             )
             // The filter will not match any TermComparisons, because none are NOU-NOU.
             assertEquals(0, comparison.matches.size)
@@ -66,7 +66,7 @@ class LayerComparisonTest {
                 .loadDummies(1).loadDummies(1, "\"").loadDummies(1, ":").build()
             val ref = LayerBuilder() // dummy":
                 .loadDummies(1, "dummy\":").build()
-            val comparison = LayerComparison(hypothesisLayer = hypo, referenceLayer = ref)
+            val comparison = LayerComparison(hypothesis = hypo, reference = ref)
             assertEquals(0, comparison.matches.size)
             assertEquals(3, comparison.hypothesisTermsWithoutMatches.size)
             assertEquals(1, comparison.referenceTermsWithoutMatches.size)
@@ -100,7 +100,7 @@ class LayerComparisonTest {
             val ref = refBuilder.build()
             assertEquals(words.size, ref.terms.count())
             // Compare
-            val comparison = LayerComparison(hypothesisLayer = hypo, referenceLayer = ref)
+            val comparison = LayerComparison(hypothesis = hypo, reference = ref)
             assertEquals(numMatches, comparison.matches.size)
             assertEquals(numHypoMissing, comparison.hypothesisTermsWithoutMatches.size)
             assertEquals(numRefMissing, comparison.referenceTermsWithoutMatches.size)
@@ -119,7 +119,7 @@ class LayerComparisonTest {
         ) {
             val hypo = LayerBuilder().loadDummies(numHypoTerms).build()
             val ref = LayerBuilder().loadDummies(numRefTerms).build()
-            val comparison = LayerComparison(hypothesisLayer = hypo, referenceLayer = ref)
+            val comparison = LayerComparison(hypothesis = hypo, reference = ref)
             assertEquals(numMatches, comparison.matches.size)
             assertEquals(numHypoMissing, comparison.hypothesisTermsWithoutMatches.size)
             assertEquals(numRefMissing, comparison.referenceTermsWithoutMatches.size)

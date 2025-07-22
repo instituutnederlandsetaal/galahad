@@ -1,14 +1,29 @@
 package org.ivdnt.galahad.evaluation.comparison
 
-import com.fasterxml.jackson.annotation.JsonIgnore
+import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.export.DocumentExport
 
-fun Iterator<Term>.nextOrNull(): Term? = if (hasNext()) next() else null
+/** An iterator that saves the current item. */
+class SmartIterator<T> : Iterator<T?> {
+    var current: T? = null
+        private set
 
-// Some hardcoded punctuation
-val PUNCTUATION: Array<Char> = arrayOf(',', '.', '?', '!', ':', ';', ')', '(', '\'', '"')
+    private val iter: Iterator<T>
+
+    constructor(iter: Iterator<T>) {
+        this.iter = iter
+        next()
+    }
+
+    override fun hasNext(): Boolean = iter.hasNext()
+
+    override fun next(): T? {
+        current = if (iter.hasNext()) iter.next() else null
+        return current
+    }
+}
 
 /**
  * Match the [Layer.terms] of two layers based on their [WordForm] position (offset and length)
@@ -17,142 +32,88 @@ val PUNCTUATION: Array<Char> = arrayOf(',', '.', '?', '!', ':', ';', ')', '(', '
  * (Still, aggregating these matches is up to the (corpus/documents) evaluation classes)
  */
 open class LayerComparison(
-    hypothesisLayer: Layer,
-    referenceLayer: Layer,
-    private val layerFilter: LayerFilter? = null,
+    private val hypothesis: Layer,
+    private val reference: Layer,
+    private val filter: LayerFilter? = null,
 ) {
     constructor(export: DocumentExport) : this(export.layer, export.sourceLayer)
 
-    @JsonIgnore
     val matches: MutableList<TermComparison> = ArrayList()
-
-    @JsonIgnore
-    val referenceTermsWithoutMatches: MutableList<Term> = ArrayList()
-
-    @JsonIgnore
-    val hypothesisTermsWithoutMatches: MutableList<Term> = ArrayList()
-
-    @JsonIgnore
-    private val hypoIter: Iterator<Term> = hypothesisLayer.terms.iterator()
-
-    @JsonIgnore
-    private val refIter: Iterator<Term> = referenceLayer.terms.iterator()
-
-    @JsonIgnore
-    private var currentHypoTerm: Term? = Term.EMPTY
-
-    @JsonIgnore
-    private var currentRefTerm: Term? = Term.EMPTY
-
-    init {
-        if (refIter.hasNext() && hypoIter.hasNext()) {
-            compare()
-        } else {
-            hypothesisTermsWithoutMatches.addAll(hypothesisLayer.terms)
-            referenceTermsWithoutMatches.addAll(referenceLayer.terms)
-        }
-    }
+    private val hypoIter: SmartIterator<Term> = SmartIterator(hypothesis.terms.iterator())
+    private val refIter: SmartIterator<Term> = SmartIterator(reference.terms.iterator())
 
     /** Iterate through the terms of both layers simultaneously and compare them. */
-    private fun compare() {
-        // First terms
-        nextHypo()
-        nextRef()
-        // While there are next terms
-        while (currentHypoTerm != null && currentRefTerm != null) {
-            val comp = TermComparison(hypoTerm = currentHypoTerm!!, refTerm = currentRefTerm!!)
-            compareTerm(comp)
+    init {
+        // While non null, compare
+        while (hypoIter.current != null && refIter.current != null) {
+            compareTerm(TermComparison(hypoIter.current!!, refIter.current!!))
         }
-        // One of the two could be non-null. These are not included in the remaining refIter.
-        currentHypoTerm?.let(::hypoNoMatch)
-        currentRefTerm?.let(::refNoMatch)
-        // The remaining terms have no matches
-        hypoIter.forEachRemaining(::hypoNoMatch)
-        refIter.forEachRemaining(::refNoMatch)
+        // Only one or both are null. So refIter.current can be non-null.
+        refIter.current?.let { noMatch(it) }
+        // And add any remaining terms
+        refIter.forEachRemaining { t -> noMatch(t!!) }
     }
 
     private fun compareTerm(comp: TermComparison) {
         // Act on the comparison
-        if (comp.overlap) {
-            fullMatch(comp)
+        if (comp.equalAnnotation(Annotation.TOKEN)) {
+            match(comp)
+            hypoIter.next()
+            refIter.next()
         } else {
-            // Unequal first offset
-            if (comp.hypoTerm.offset < comp.refTerm.offset) {
-                hypoNoMatch()
-            } else if (comp.hypoTerm.offset > comp.refTerm.offset) {
-                refNoMatch()
-            }
-            // Equal first offset but no match.
-            // Try to truncate either terms to see if the last char is punctuation.
-            else if (symmetricTruncatedPcMatch(comp)) {
+            if (truncatedPCMatch(comp)) {
                 // If so, still match it.
-                fullMatch(comp)
+                match(comp)
+                // and fix iterators for the next terms
+                fixIter(comp)
             } else {
-                hypoNoMatch()
-                refNoMatch()
+                noMatch(comp.refTerm)
             }
         }
     }
 
-    private fun fullMatch(comp: TermComparison) {
-        if (layerFilter?.filter(comp) != false) {
+    private fun fixIter(comp: TermComparison) {
+        hypoIter.next()
+        refIter.next()
+        // Now, the shorter iterator needs to be advanced until it matches.
+        val hypoShorter: Boolean = comp.hypoTerm.token.length < comp.refTerm.token.length
+        val shorterIter = if (hypoShorter) hypoIter else refIter
+        val termToMatch = if (hypoShorter) refIter.current else hypoIter.current
+        while (termToMatch != null && shorterIter.current != null && !truncatedPCMatch(termToMatch, shorterIter.current!!)) {
+            // Advance
+            shorterIter.next()
+        }
+    }
+
+    private fun match(comp: TermComparison) {
+        if (filter?.filter(comp) != false) {
             matches.add(comp)
         }
-        nextHypo()
-        nextRef()
     }
 
-    private fun hypoNoMatch() {
-        hypoNoMatch(currentHypoTerm!!)
-        nextHypo()
-    }
-
-    protected open fun hypoNoMatch(t: Term) {
-        // Note how layerFilter can be null, and both null and true != false.
-        if (layerFilter?.hypoTermFilter?.filter(t) != false) {
-            hypothesisTermsWithoutMatches.add(t)
+    protected open fun noMatch(t: Term) {
+        if (filter?.refTermFilter?.filter(t) != false) {
+            matches.add(TermComparison(Term.EMPTY, t))
         }
-    }
-
-    private fun refNoMatch() {
-        refNoMatch(currentRefTerm!!)
-        nextRef()
-    }
-
-    protected open fun refNoMatch(t: Term) {
-        if (layerFilter?.refTermFilter?.filter(t) != false) {
-            referenceTermsWithoutMatches.add(t)
-        }
-    }
-
-    private fun nextHypo() {
-        currentHypoTerm = hypoIter.nextOrNull()
-    }
-
-    private fun nextRef() {
-        currentRefTerm = refIter.nextOrNull()
     }
 
     companion object {
-        fun symmetricTruncatedPcMatch(comp: TermComparison): Boolean {
-            val aStr: String = comp.hypoTerm.token
-            val bStr: String = comp.refTerm.token
-            return truncatedPcMatch(aStr, bStr) || truncatedPcMatch(bStr, aStr)
+        // It will mostly be a single punctuation mark, but this is more generic.
+        val PUNCT: Regex = Regex("""\W$""")
+
+        private fun truncatedPCMatch(comp: TermComparison): Boolean {
+            return truncatedPCMatch(comp.hypoTerm, comp.refTerm)
         }
 
-        private fun truncatedPcMatch(aStr: String, bStr: String): Boolean {
-            if (aStr.isEmpty() || bStr.isEmpty()) {
-                return false
-            }
-            return truncatePC(aStr) == bStr
+        private fun truncatedPCMatch(t1: Term, t2: Term): Boolean {
+            val a: String = t1.token
+            val b: String = t2.token
+            return truncatePC(a) == b || truncatePC(b) == a
         }
 
+        /** Truncate any punctuation at the end of the string. */
         fun truncatePC(str: String): String {
-            return if (str.isNotEmpty() && str.last() in PUNCTUATION) {
-                str.slice(0 until str.lastIndex)
-            } else {
-                str
-            }
+            return PUNCT.replace(str, "")
         }
     }
 }
@@ -163,17 +124,13 @@ class DocumentLayerComparison(
     private val layerFilter: LayerFilter? = null,
 ) : LayerComparison(hypothesisLayer, referenceLayer, layerFilter) {
 
-    override fun hypoNoMatch(t: Term) {
-        // ignore
-    }
-
-    override fun refNoMatch(t: Term) {
+    override fun noMatch(t: Term) {
         if (layerFilter?.refTermFilter?.filter(t) != false) {
             matches.add(TermComparison(hypoTerm = Term.EMPTY, refTerm = t))
         }
     }
 
     init {
-        matches.addAll(referenceTermsWithoutMatches.map { TermComparison(hypoTerm = Term.EMPTY, refTerm = it) })
+        // matches.addAll(referenceTermsWithoutMatches.map { TermComparison(hypoTerm = Term.EMPTY, refTerm = it) })
     }
 }

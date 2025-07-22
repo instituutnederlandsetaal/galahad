@@ -24,13 +24,6 @@ class DocumentMetrics(
 
     init {
         val layerComparison = LayerComparison(hypothesisJob.getLayer(doc), referenceJob.getLayer(doc), layerFilter)
-
         layerComparison.matches.forEach(this::add)
-
-        layerComparison.referenceTermsWithoutMatches.forEach {
-            add(
-                TermComparison(hypoTerm = Term.EMPTY, refTerm = it)
-            )
-        }
     }
 }

@@ -1,6 +1,5 @@
 package org.ivdnt.galahad.evaluation.comparison
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Term
 
@@ -8,10 +7,6 @@ data class TermComparison(
     val hypoTerm: Term, // Hypothesis
     val refTerm: Term, // True reference
 ) {
-    /** Full overlap dependent on the word forms. Overlap of position, not lemma/pos. */
-    @JsonIgnore
-    val overlap: Boolean = hypoTerm.offset == refTerm.offset && hypoTerm.token == refTerm.token
-
     /**
      * Apply a removal regex transformation to the annotation before comparing. E.g. removing _ from lemmas.
      */

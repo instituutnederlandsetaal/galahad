@@ -44,7 +44,7 @@ export function getDistribution(corpus: UUID, hypothesis: string): Promise<Distr
  * @param reference Tagger job name as reference layer.
  */
 export function getConfusion(corpus: UUID, hypothesis: string, reference: string): Promise<ConfusionResponse> {
-    return axios.get(confusionPath(corpus, hypothesis), { params: { reference } })
+    return axios.get(confusionPath(corpus), { params: { hypothesis, reference } })
 }
 
 /**
@@ -54,7 +54,7 @@ export function getConfusion(corpus: UUID, hypothesis: string, reference: string
  * @param reference Tagger job name as reference layer.
  */
 export function getMetrics(corpus: UUID, hypothesis: string, reference: string): Promise<MetricsResponse> {
-    return axios.get(metricsPath(corpus, hypothesis), { params: { reference } })
+    return axios.get(metricsPath(corpus), { params: { hypothesis, reference } })
 }
 
 /**

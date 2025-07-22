@@ -2,6 +2,7 @@ package org.ivdnt.galahad.evaluation.confusion
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.ivdnt.galahad.annotations.Annotation
+import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.evaluation.EvaluationEntry
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
 import org.ivdnt.galahad.export.csv.CSVFile
@@ -76,8 +77,8 @@ open class Confusion(private val truncate: Boolean = true, val annotation: Annot
 
     fun add(termComp: TermComparison) {
         add(
-            termComp.hypoTerm.annotationHeadOrMissing(annotation),
-            termComp.refTerm.annotationHeadOrMissing(annotation),
+            termComp.hypoTerm.takeUnless { it == Term.EMPTY }?.annotationHeadOrMissing(annotation) ?: TermComparison.MISSING_MATCH,
+            termComp.refTerm.takeUnless { it == Term.EMPTY }?.annotationHeadOrMissing(annotation) ?: TermComparison.MISSING_MATCH,
             termComp
         )
     }

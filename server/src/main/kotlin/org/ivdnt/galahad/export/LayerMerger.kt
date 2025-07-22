@@ -15,13 +15,7 @@ abstract class LayerMerger protected constructor(protected val export: DocumentE
     private val layerComparison: LayerComparison = LayerComparison(export)
 
     // TODO move to LayerComparison
-    protected val sourceTermComparisons: List<TermComparison> =
-        (layerComparison.matches + layerComparison.referenceTermsWithoutMatches.map {
-            TermComparison(
-                Term.EMPTY,
-                it
-            )
-        }).sortedBy { it.refTerm.offset }
+    protected val sourceTermComparisons: List<TermComparison> = layerComparison.matches.sortedBy { it.refTerm.offset }
 
     abstract fun merge(out: OutputStream)
 

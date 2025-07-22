@@ -13,33 +13,13 @@ import org.ivdnt.galahad.evaluation.comparison.TermComparison
 class DocumentConfusion(
     hypothesis: Layer,
     reference: Layer,
-    layerFilter: LayerFilter? = null,
+    filter: LayerFilter? = null,
     annotation: Annotation = Annotation.POS,
-) : Confusion(truncate = layerFilter == null, annotation) {
+) : Confusion(truncate = filter == null, annotation) {
 
     init {
-        val layerComparison = LayerComparison(
-            hypothesisLayer = hypothesis,
-            referenceLayer = reference,
-            layerFilter = layerFilter
-        )
+        val layerComparison = LayerComparison(hypothesis, reference, filter)
 
         layerComparison.matches.forEach(::add)
-
-        layerComparison.hypothesisTermsWithoutMatches.forEach {
-            add(
-                hypoPos = it.annotationHeadOrMissing(annotation),
-                refPos = TermComparison.MISSING_MATCH,
-                sample = TermComparison(hypoTerm = it, refTerm = Term.EMPTY)
-            )
-        }
-
-        layerComparison.referenceTermsWithoutMatches.forEach {
-            add(
-                hypoPos = TermComparison.MISSING_MATCH,
-                refPos = it.annotationHeadOrMissing(annotation),
-                sample = TermComparison(hypoTerm = Term.EMPTY, refTerm = it)
-            )
-        }
     }
 }
