@@ -18,25 +18,25 @@
             <template v-else> This corpus is empty. </template>
         </template>
 
-        <template #cell-layerSummary="data: TableData<DocumentMetadata>">
+        <template #cell-summary="data: TableData<DocumentMetadata>">
             <RightFloatCell>
                 <template #left>
-                    {{ data.value.tokens }}
+                    {{ data.value.annotations.token }}
                 </template>
                 <template #right>
-                    <InspectButton v-if="data.value.tokens > 0" @click="previewDocument = data.item" />
+                    <InspectButton v-if="data.value.annotations.token > 0" @click="previewDocument = data.item" />
                 </template>
             </RightFloatCell>
         </template>
 
         <template #cell-actions="data: TableData<DocumentMetadata>">
-            <div class="actions">
+            <GForm gap=".25rem">
                 <DownloadButton @click="downloadRaw(data.item.name)" />
 
                 <GButton red title="Delete" @click="deleteDocumentData = data.item">
                     <i class="fa fa-trash"></i>
                 </GButton>
-            </div>
+            </GForm>
         </template>
     </GTable>
 
@@ -79,21 +79,15 @@ const previewDocument = ref<DocumentMetadata>()
 const columns = computed<Column<DocumentMetadata>[]>(() => [
     { key: "name" },
     { key: "format" },
-    { key: "preview" },
+    { key: "text" },
     {
-        key: "layerSummary",
+        key: "summary",
         label: "tokens",
         align: "right",
-        sortOn: (d: DocumentMetadata): number => d.layerSummary?.tokens,
+        sortOn: (d: DocumentMetadata): number => d.summary?.annotations.token,
     },
     { key: "modified", format: (d: DocumentMetadata): string => formatDate(d.modified) },
     { key: "actions", noSort: true, hidden: !canWrite || type === DocsTableType.dataset },
 ])
 </script>
 
-<style scoped lang="scss">
-.actions {
-    display: flex;
-    gap: 0.25rem;
-}
-</style>

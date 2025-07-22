@@ -15,11 +15,11 @@ data class DocumentMetadata(
     /** Number of alphabetic chars in the parsed plaintext. */
     val numAlphabeticChars: Int,
     /** A truncated preview of the parsed plaintext. */
-    val preview: String,
+    val text: String,
     /** A truncated preview of the annotated layer. */
-    val layerPreview: LayerPreview,
+    val preview: LayerPreview,
     /** Some statistics about the source annotations, if present */
-    val layerSummary: LayerSummary,
+    val summary: LayerSummary,
     /** Last modified timestamp in milliseconds. */
     val modified: Long,
     /** Annotation types in the source layer. */
@@ -35,9 +35,9 @@ data class DocumentMetadata(
                 format = file.format,
                 numChars = text.length,
                 numAlphabeticChars = text.filter { it.isLetter() }.length,
-                preview = text.take(PREVIEW_LENGTH) + if (text.length > PREVIEW_LENGTH) "..." else "",
-                layerPreview = file.layer.preview,
-                layerSummary = file.layer.summary,
+                text = text.take(PREVIEW_LENGTH) + if (text.length > PREVIEW_LENGTH) "..." else "",
+                preview = file.layer.preview,
+                summary = file.layer.summary,
                 modified = System.currentTimeMillis(),
                 annotations = Annotation.order(file.layer.terms.flatMap { it.annotations.keys }.toList())
             )

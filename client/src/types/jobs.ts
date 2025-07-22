@@ -25,4 +25,4 @@ export type Progress = {
 
 export type LayerPreview = { terms: Term[] }
 
-export type LayerSummary = { tokens: number }
+export type LayerSummary = { annotations: Record<string, number> }

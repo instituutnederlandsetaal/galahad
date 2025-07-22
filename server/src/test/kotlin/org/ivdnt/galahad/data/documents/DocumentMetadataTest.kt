@@ -27,8 +27,8 @@ class DocumentMetadataTest {
         assertEquals(DocumentFormat.Txt, meta.format)
         assertEquals(plaintext.count { it.isLetter() }, meta.numAlphabeticChars)
         assertEquals(plaintext.length, meta.numChars)
-        assertEquals(plaintext, meta.preview) // This works because the preview is < MAX_PREVIEW_LENGTH
-        val layer = meta.layerSummary
+        assertEquals(plaintext, meta.text) // This works because the preview is < MAX_PREVIEW_LENGTH
+        val layer = meta.summary
         val total = layer.tokens
         assertEquals(0, total)
     }
@@ -43,8 +43,8 @@ class DocumentMetadataTest {
         assertEquals(DocumentFormat.TeiP5, meta.format)
         assertEquals(plaintext.count { it.isLetter() }, meta.numAlphabeticChars)
         assertEquals(plaintext.length, meta.numChars)
-        assertEquals(plaintext, meta.preview) // This works because the preview is < MAX_PREVIEW_LENGTH
-        val layer = meta.layerSummary
+        assertEquals(plaintext, meta.text) // This works because the preview is < MAX_PREVIEW_LENGTH
+        val layer = meta.summary
         assertEquals(21, layer.tokens)
     }
 }

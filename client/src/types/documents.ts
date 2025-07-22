@@ -15,9 +15,9 @@ export type Format = (typeof Format)[keyof typeof Format]
 export type DocumentMetadata = {
     name: string
     format: Format
-    preview: string
-    layerPreview: LayerPreview
-    layerSummary: LayerSummary
+    text: string
+    preview: LayerPreview
+    summary: LayerSummary
     modified: number
     annotations: string[]
 }

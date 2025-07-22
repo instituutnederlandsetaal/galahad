@@ -4,11 +4,23 @@ package org.ivdnt.galahad.annotations
  * Stores the size of the [Layer] in terms of number of [WordForm], [Term], lemma and pos.
  */
 data class LayerSummary(
-    val tokens: Int,
-)
+    val annotations: Map<Annotation, Int>,
+) {
+    constructor(terms: Iterable<Term>) : this(
+        annotations = terms.flatMap { it.annotations.keys }.groupingBy { it }.eachCount()
+    )
+
+    companion object {
+        val EMPTY: LayerSummary = LayerSummary(emptyMap())
+    }
+}
 
 operator fun LayerSummary.plus(b: LayerSummary): LayerSummary {
     return LayerSummary(
-        tokens = this.tokens + b.tokens,
+        annotations = this.annotations.toMutableMap().also {
+            b.annotations.forEach { (annotation, count) ->
+                it.merge(annotation, count, Integer::sum)
+            }
+        }
     )
 }

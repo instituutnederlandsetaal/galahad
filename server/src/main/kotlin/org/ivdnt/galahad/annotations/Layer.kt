@@ -27,7 +27,7 @@ class Layer(
     }
 
     @get:JsonIgnore
-    val summary: LayerSummary by lazy { LayerSummary(tokens = terms.count()) }
+    val summary: LayerSummary by lazy { LayerSummary(terms.asIterable()) }
 
     @get:JsonIgnore
     val preview: LayerPreview by lazy { LayerPreview(terms.take(LAYER_PREVIEW_LENGTH).toList()) }

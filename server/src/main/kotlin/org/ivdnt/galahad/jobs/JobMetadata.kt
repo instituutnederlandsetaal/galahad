@@ -22,7 +22,7 @@ class JobMetadata(
             val djs = job.results.readAll()
             // sum up the number of tokens/lemmas/etc of all documents
             val summary: LayerSummary =
-                djs.mapNotNull { it.layer?.summary }.reduceOrNull { a, b -> a + b } ?: LayerSummary(0)
+                djs.mapNotNull { it.layer?.summary }.reduceOrNull { a, b -> a + b } ?: LayerSummary.EMPTY
             // Preview of the resulting terms of this job.
             // Show the first preview of the first document that isn't LayerPreview.EMPTY.
             val preview = djs.firstNotNullOfOrNull { it.layer?.preview } ?: LayerPreview.EMPTY
