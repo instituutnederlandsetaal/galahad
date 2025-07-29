@@ -1,10 +1,10 @@
 package org.ivdnt.galahad.formats
 
 import org.ivdnt.galahad.annotations.Annotation
-import org.ivdnt.galahad.annotations.AnnotationReader
+import org.ivdnt.galahad.annotations.LayerReader
 import org.ivdnt.galahad.annotations.TermSpan
 
-abstract class LineReader : AnnotationReader() {
+abstract class LineReader : LayerReader() {
     /**
      * Override newSentence to insert ner spans
      */

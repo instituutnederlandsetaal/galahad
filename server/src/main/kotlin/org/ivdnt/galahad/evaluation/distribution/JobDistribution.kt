@@ -1,41 +1,30 @@
 package org.ivdnt.galahad.evaluation.distribution
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonValue
 import org.ivdnt.galahad.annotations.Annotation
-import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.corpora.Corpus
-import org.ivdnt.galahad.util.ThreadPoolUtil
-import java.util.concurrent.ExecutorCompletionService
+import org.ivdnt.galahad.evaluation.DocumentEvaluations
+import org.ivdnt.galahad.util.merge
 
 /**
  * The frequency distribution of terms in a corpus for a specific tagger layer.
  * A CorpusDistribution is the sum of the [DocumentDistribution]s of all documents in the corpus.
  */
 class JobDistribution(
-    corpus: Corpus,
-    hypothesis: String = SOURCE_LAYER_NAME,
-    groupingAnnotation: Annotation,
-) : Distribution(groupingAnnotation) {
-
-    private val hypothesisJob = corpus.jobs.readOrThrow(hypothesis)
-
-    @JsonProperty
-    val modified: Long = hypothesisJob.modified
-
-    @JsonProperty
-    val generated: Long = System.currentTimeMillis()
-
-    init {
-        val completionService = ExecutorCompletionService<DocumentDistribution>(ThreadPoolUtil.pool)
-
-        val allDocs = corpus.documents.readAll()
-        allDocs.forEach { doc ->
-            completionService.submit {
-                DocumentDistribution(hypothesisJob.getLayer(doc), doc.metadata, groupingAnnotation)
-            }
-        }
-
-        for (i in 0..<allDocs.size) add(completionService.take().get())
+    @JsonValue val typeTokens: Map<Annotation, List<TypeToken>>
+) {
+    companion object {
+        fun create(corpus: Corpus, docEvals: DocumentEvaluations): JobDistribution = JobDistribution(
+            corpus.documents.readAllSequence().map { docEvals.createOrThrow(it.name).distribution.typeTokens }
+                .reduce { map1, map2 ->
+                    map1.merge(map2, { v1, v2 ->
+                        (v1 + v2).groupingBy { it.lemma to it.group }.reduce { _, a, b ->
+                            TypeToken(
+                                lemma = a.lemma, group = a.group, tokens = a.tokens.merge(b.tokens, Integer::sum)
+                            )
+                        }.values.sortedByDescending { it.count }
+                    })
+                })
     }
 }
 

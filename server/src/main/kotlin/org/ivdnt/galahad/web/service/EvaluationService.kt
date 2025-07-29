@@ -10,7 +10,9 @@ import org.ivdnt.galahad.evaluation.JobPair
 import org.ivdnt.galahad.evaluation.comparison.*
 import org.ivdnt.galahad.evaluation.confusion.CONFUSION_TYPES
 import org.ivdnt.galahad.evaluation.confusion.CorpusConfusion
+import org.ivdnt.galahad.evaluation.distribution.DocumentDistribution
 import org.ivdnt.galahad.evaluation.distribution.JobDistribution
+//import org.ivdnt.galahad.evaluation.distribution.JobDistribution
 import org.ivdnt.galahad.evaluation.entities.DocumentEntities
 import org.ivdnt.galahad.evaluation.entities.JobEntities
 import org.ivdnt.galahad.evaluation.entities.CorpusEntities
@@ -40,27 +42,27 @@ class EvaluationService(val corpora: CorporaService) {
 
     private val user: User get() = User.fromRequest(request)
 
-    fun getDistribution(
-        corpus: UUID,
-        job: String,
-    ): Map<Annotation, JobDistribution> {
-        val corpus = corpora.readAsReaderOrThrow(corpus, user)
-        val jobEval = corpus.evaluation.createOrThrow(JobPair(job))
-        return jobEval.distribution
-        // val allAnnots = annotationTypesForTagger(job, corpus)
-        // if (Annotation.LEMMA !in allAnnots) {
-        //     return emptyMap()
-        // }
-        // val annotationTypes = CONFUSION_TYPES.filter { it in allAnnots }
-        // val distributions = annotationTypes.associateWith {
-        //     CorpusDistribution(
-        //         corpora.readAsReaderOrThrow(corpus, user),
-        //         job,
-        //         it
-        //     ).trim(DISTRIBUTION_MAX_SIZE) as CorpusDistribution
-        // }
-        // return distributions
-    }
+//    fun getDistribution(
+//        corpus: UUID,
+//        job: String,
+//    ): Map<Annotation, JobDistribution> {
+//        val corpus = corpora.readAsReaderOrThrow(corpus, user)
+//        val jobEval = corpus.evaluation.createOrThrow(JobPair(job))
+//        return jobEval.distribution
+//        // val allAnnots = annotationTypesForTagger(job, corpus)
+//        // if (Annotation.LEMMA !in allAnnots) {
+//        //     return emptyMap()
+//        // }
+//        // val annotationTypes = CONFUSION_TYPES.filter { it in allAnnots }
+//        // val distributions = annotationTypes.associateWith {
+//        //     CorpusDistribution(
+//        //         corpora.readAsReaderOrThrow(corpus, user),
+//        //         job,
+//        //         it
+//        //     ).trim(DISTRIBUTION_MAX_SIZE) as CorpusDistribution
+//        // }
+//        // return distributions
+//    }
 
     fun getConfusion(
         corpus: UUID,
@@ -201,11 +203,11 @@ class EvaluationService(val corpora: CorporaService) {
     }
 
     private fun createDistributionCsv(dir: File, corpus: UUID, job: String) {
-        val distributions = getDistribution(corpus, job)
-        distributions.forEach { (annotation, distribution) ->
-            val file = CSVFile(dir.resolve("distribution-${annotation.value}.csv"))
-            file.appendText(distribution.toCSV())
-        }
+//        val distributions = getDistribution(corpus, job)
+//        distributions.forEach { (annotation, distribution) ->
+//            val file = CSVFile(dir.resolve("distribution-${annotation.value}.csv"))
+//            file.appendText(distribution.toCSV())
+//        }
     }
 
     private fun createConfusionCsv(dir: File, corpus: UUID, job: String, reference: String?) {
@@ -243,7 +245,7 @@ class EvaluationService(val corpora: CorporaService) {
         return metadata
     }
 
-    private fun annotationTypesForTagger(job: String, corpus: UUID): Array<Annotation> {
+    private fun annotationTypesForTagger(job: String, corpus: UUID): Set<Annotation> {
         val corpusObj = corpora.readAsReaderOrThrow(corpus, user)
         return Tagger.readOrThrow(job, corpusObj).annotations
     }
@@ -299,5 +301,25 @@ class EvaluationService(val corpora: CorporaService) {
     fun getJobsEntities(corpus: UUID): CorpusEntities {
         val corpusObj = corpora.readAsReaderOrThrow(corpus, user)
         return corpusObj.evaluation.entities
+    }
+
+    fun getDocumentDistribution(
+        corpus: UUID,
+        job: String,
+        document: String,
+    ): DocumentDistribution {
+        val corpusObj = corpora.readAsReaderOrThrow(corpus, user)
+        val jobEval = corpusObj.evaluation.createOrThrow(JobPair(job))
+        val docEval = jobEval.documents.createOrThrow(document)
+        return docEval.distribution
+    }
+
+    fun getJobDistribution(
+        corpus: UUID,
+        job: String,
+    ): JobDistribution {
+        val corpusObj = corpora.readAsReaderOrThrow(corpus, user)
+        val jobEval = corpusObj.evaluation.createOrThrow(JobPair(job))
+        return jobEval.distribution
     }
 }

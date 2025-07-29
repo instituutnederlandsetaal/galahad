@@ -3,28 +3,32 @@ package org.ivdnt.galahad.annotations
 import com.fasterxml.jackson.annotation.JsonIgnore
 import java.util.*
 
+/** Name of the layer containing the annotations of the uploaded source document as if it were a tagger. */
 const val SOURCE_LAYER_NAME: String = "sourceLayer"
 
-/**
- * A Annotation Layer may contain multiple documents. (E.g. connlu "newdoc id", tei "<text>")
- * Those may be split into paragraphs, sentences, etc.
- */
+/** Annotation layer of a file. */
 class Layer(
+    /** Documents in this layer. (Formats like conllu support multiple documents.) */
     val documents: Array<DocumentLayer>,
+    /** ID of this layer. Ideally the file PID as documents may have different ids. */
     val id: String = UUID.randomUUID().toString(),
 ) {
+    /** Terms in this layer. Documents, paragraphs, sentences flattened. */
     @get:JsonIgnore
-    val spans: Map<Annotation, Sequence<TermSpan>> by lazy {
-        Annotation.entries.associateWith { annotation ->
-            documents.asSequence().flatMap { document ->
-                document.paragraphs.asSequence().flatMap { paragraph ->
-                    paragraph.sentences.asSequence().flatMap { sentence ->
-                        sentence.spans?.get(annotation)?.asSequence() ?: emptySequence()
-                    }
-                }
+    val terms: Sequence<Term> by lazy { sentences.flatMap { it.terms.asSequence() } }
+
+    /** Sentences in this layer. Documents, paragraphs flattened. */
+    private val sentences: Sequence<SentenceLayer> by lazy {
+        documents.asSequence().flatMap { doc ->
+            doc.paragraphs.asSequence().flatMap { par ->
+                par.sentences.asSequence()
             }
         }
     }
+
+    /** Unique annotation types in this layer. */
+    @get:JsonIgnore
+    val annotations: Set<Annotation> by lazy { Annotation.order(terms.flatMap { it.annotations.keys }.asIterable()) }
 
     @get:JsonIgnore
     val summary: LayerSummary by lazy { LayerSummary(terms.asIterable()) }
@@ -32,44 +36,49 @@ class Layer(
     @get:JsonIgnore
     val preview: LayerPreview by lazy { LayerPreview(terms.take(LAYER_PREVIEW_LENGTH).toList()) }
 
-    @get:JsonIgnore
-    val terms: Sequence<Term> by lazy {
-        documents.asSequence().flatMap { document ->
-            document.paragraphs.asSequence().flatMap { paragraph ->
-                paragraph.sentences.asSequence().flatMap { sentence ->
-                    sentence.terms.asSequence()
-                }
-            }
-        }
-    }
-
-    override fun toString(): String = documents.joinToString("\n\n") + "\n" // Unix convention EOF
+    /** Layer as string, concatenating all documents with a newline in between. Unix EOF terminated (\n). */
+    override fun toString(): String = documents.joinToString("\n\n") + "\n"
 
     companion object {
+        /** Default empty layer **/
         val EMPTY: Layer = Layer(emptyArray(), "")
     }
 }
 
+/** Layer storing a single document with its ID and paragraphs. */
 class DocumentLayer(
+    /** Document ID. (E.g. conllu: "newdoc id".) */
     val id: String,
+    /** Paragraphs in this document. */
     val paragraphs: Array<ParagraphLayer>,
 ) {
+    /** Document as string, concatenating all paragraphs with an empty line in between. */
     override fun toString(): String = paragraphs.joinToString("\n\n")
 }
 
+/** Layer storing a single paragraph with its ID and sentences. */
 class ParagraphLayer(
+    /** Paragraph ID. (E.g. conllu: "newpar id".) */
     val id: String,
+    /** Sentences in this paragraph. */
     val sentences: Array<SentenceLayer>,
 ) {
+    /** Paragraph as string, concatenating all sentences with newlines. */
     override fun toString(): String = sentences.joinToString("\n")
 }
 
+/** Layer storing a single sentence with its ID, terms, and spans over terms. Annotations in [spans] are present in [terms] */
 class SentenceLayer(
+    /** Sentence ID. (E.g. conllu: "sent_id".) */
     val id: String,
+    /** Terms in this sentence. */
     val terms: Array<Term>,
+    /** An empty map can be given as argument, for which we want to force this.spans to be null. */
     spans: Map<Annotation, Array<TermSpan>>?,
 ) {
+    /** TermSpans in this sentence per annotation type. */
     val spans: Map<Annotation, Array<TermSpan>>? = spans?.ifEmpty { null }
 
+    /** Sentence as string, concatenating all terms with spaces when [Term.spaceAfter] isn't falsy. */
     override fun toString(): String = terms.toSpacedString()
 }

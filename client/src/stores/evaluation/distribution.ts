@@ -1,22 +1,10 @@
-// Libraries & stores
-
-import * as API from "@/api/evaluation"
 import { distributionPath } from "@/api/evaluation"
 import { useAxios } from "@/api/useAxios"
 import stores from "@/stores"
-import * as Utils from "@/stores/evaluation/utils"
-// API & types
-// API & types
-import type { UUID } from "@/types/corpora"
-import type { DistributionWrapper } from "@/types/evaluation"
+import type { TypeToken, Distribution } from "@/types/evaluation/distribution"
 import type { SelectOption } from "@/types/ui/select"
 
-// Allows for Object.keys(distribution.table), which dislikes null.
-const defaultDistribution = () => ({ distribution: {} }) as DistributionWrapper
-
-/**
- * Stores and fetches the term frequency distribution.
- */
+/** Stores and fetches the term frequency distribution. */
 const useDistribution = defineStore("distribution", () => {
     // Fields
     const { hypothesisId } = storeToRefs(stores.useJobSelection())
@@ -26,30 +14,14 @@ const useDistribution = defineStore("distribution", () => {
         return distributionPath(corpusId.value)
     })
 
-    const { loading, data: distributions } = useAxios<Record<string, DistributionWrapper>>(
-        url,
-        {},
-        { hypothesis: hypothesisId.value },
-    )
-
-    const distribution = computed(() => distributions.value?.[selectedDistribution.value] ?? defaultDistribution())
-    const selectedDistribution = ref<string>()
-    const distributionOptions = computed<SelectOption[]>(
-        () => {
-            if (!distributions.value) {
-                return []
-            }
-            return Object.keys(distributions.value).map((x) => ({ value: x, text: x }))
-        },
-        { immediate: true },
-    )
-    const posses = computed(() => {
-        // A bit hacky using Object.entries, but .map throws on undefined.
-        return Object.entries(distribution.value?.distribution)
-            ?.map((x) => x[1].pos)
-            .filter((val, ind, arr) => arr.indexOf(val) === ind) // unique values
-            .sort()
+    const { loading, data: distributions } = useAxios<Record<string, Distribution>>(url, undefined, {
+        hypothesis: hypothesisId.value,
     })
+
+    const distribution = computed<TypeToken[]>(() => distributions.value?.[selectedDistribution.value])
+    const selectedDistribution = ref<string>()
+    const distributionOptions = computed<SelectOption[]>(() => Object.keys(distributions.value || {}).map((x) => ({ value: x, text: x })))
+    const posses = computed<string[]>(() => [...new Set(Object.values(distribution.value || {}).map((t: TypeToken) => t.group))].sort())
     // Exports
     return {
         // Fields

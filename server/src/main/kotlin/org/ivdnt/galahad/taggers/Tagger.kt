@@ -25,7 +25,7 @@ class Tagger(
     var tagset: String? = null,
     var eraFrom: Int = 0,
     var eraTo: Int = 0,
-    var annotations: Array<Annotation> = emptyArray(),
+    var annotations: Set<Annotation> = emptySet(),
     var model: LinkItem = LinkItem(),
     var software: LinkItem = LinkItem(),
     var dataset: LinkItem = LinkItem(),
@@ -74,7 +74,7 @@ class Tagger(
 
         fun createSourceTagger(corpus: Corpus): Tagger {
             val metadata = corpus.immutableMetadata
-            val produces = corpus.documents.readAll().flatMap { it.metadata.annotations }.toSet().toTypedArray()
+            val produces = corpus.documents.readAll().flatMap { it.metadata.annotations }.toSet()
             return Tagger(
                 id = SOURCE_LAYER_NAME,
                 description = "uploaded annotations",

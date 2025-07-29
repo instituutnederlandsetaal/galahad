@@ -23,8 +23,8 @@ import java.io.File
  * // val file3 = folder.readOrThrow(key) // throws
  */
 abstract class GalahadFolderManager<ReadType : GalahadFolder, CreateType : Any>(
-    dir: File,
-) : GalahadFolder(dir) {
+    file: File,
+) : GalahadFolder(file) {
 
     protected abstract fun ctor(key: String): ReadType
 

@@ -32,11 +32,9 @@ declare module 'vue' {
     GCard: typeof import('./src/components/GCard.vue')['default']
     GCheckBox: typeof import('./src/components/input/GCheckBox.vue')['default']
     GForm: typeof import('./src/components/input/GForm.vue')['default']
-    GFormHorizontal: typeof import('./src/components/input/GFormHorizontal.vue')['default']
     GInfo: typeof import('./src/components/GInfo.vue')['default']
     GInput: typeof import('./src/components/input/GInput.vue')['default']
     GModal: typeof import('./src/components/modals/GModal.vue')['default']
-    GNav: typeof import('./src/components/links/GNav.vue')['default']
     GNumber: typeof import('./src/components/input/GNumber.vue')['default']
     GSelect: typeof import('./src/components/input/GSelect.vue')['default']
     GSpinner: typeof import('./src/components/GSpinner.vue')['default']
@@ -62,8 +60,8 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SingleTermComparisonTable: typeof import('./src/components/tables/SingleTermComparisonTable.vue')['default']
     TagsetSelect: typeof import('./src/components/input/TagsetSelect.vue')['default']
+    TypeTokenModal: typeof import('./src/components/modals/TypeTokenModal.vue')['default']
     UploadDocuments: typeof import('./src/components/input/UploadDocuments.vue')['default']
     UserList: typeof import('./src/components/modals/corpus/UserList.vue')['default']
-    VariantsModal: typeof import('./src/components/modals/VariantsModal.vue')['default']
   }
 }

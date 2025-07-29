@@ -66,7 +66,7 @@ object EvaluationUtil {
         addLayersAsJobs(corpus, doc.name, layer, layer)
     }
 
-    fun addLayersAsJobs(
+    private fun addLayersAsJobs(
         corpus: Corpus,
         docName: String,
         tagger: Layer,

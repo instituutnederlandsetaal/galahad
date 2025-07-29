@@ -7,22 +7,6 @@ export type ConfusionWrapper = {
     referenceLastModified: number
 }
 
-// Distribution
-export type DistributionWrapper = {
-    corpus_uuid: string
-    coveredAlphabeticChars: number
-    coveredChars: number
-    distribution: Distribution[]
-    generated: number
-    hypothesis: string
-    modified: number
-    totalAlphabeticChars: number
-    totalChars: number
-    trimmed: boolean
-}
-
-export type Distribution = { lemma: string; pos: string; count: number; literals: { [literal: string]: number } }
-
 // Metrics
 export type Metrics = {
     global: MetricsRow

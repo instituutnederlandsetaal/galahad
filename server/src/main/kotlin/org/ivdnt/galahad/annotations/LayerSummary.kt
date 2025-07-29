@@ -7,8 +7,8 @@ data class LayerSummary(
     val annotations: Map<Annotation, Int>,
 ) {
     constructor(terms: Iterable<Term>) : this(
-        annotations = terms.flatMap { it.annotations.keys }.groupingBy { it }.eachCount()
-    )
+        annotations = terms.flatMap { it.annotations.keys }.groupingBy { it }
+        .eachCount().toSortedMap { a, b -> Annotation.entries.indexOf(a).compareTo(Annotation.entries.indexOf(b)) })
 
     companion object {
         val EMPTY: LayerSummary = LayerSummary(emptyMap())
@@ -21,6 +21,5 @@ operator fun LayerSummary.plus(b: LayerSummary): LayerSummary {
             b.annotations.forEach { (annotation, count) ->
                 it.merge(annotation, count, Integer::sum)
             }
-        }
-    )
+        })
 }

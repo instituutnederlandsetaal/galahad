@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 fun Array<Term>.toSpacedString(): String = buildString {
     this@toSpacedString.forEachIndexed { i, t ->
         append(t.token)
+        // Never add a space for the last term
         if (i != this@toSpacedString.lastIndex) append(t.space)
     }
 }
@@ -47,11 +48,6 @@ class Term(
 
     @get:JsonIgnore
     val ner: String? = annotations[Annotation.NER]
-
-    /**
-     * Returns a term with the same data, except its offset is aligned to that of [refTerm].
-     */
-    fun alignedTo(refTerm: Term): Term = Term(id, refTerm.offset, annotations, spaceAfter)
 
     fun isMulti(annotation: Annotation): Boolean = annotations[annotation]?.contains("+") == true
 

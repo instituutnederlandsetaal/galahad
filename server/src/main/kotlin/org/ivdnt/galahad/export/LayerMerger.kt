@@ -1,6 +1,5 @@
 package org.ivdnt.galahad.export
 
-import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.documents.DocumentFormat
 import org.ivdnt.galahad.evaluation.comparison.LayerComparison
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
@@ -12,10 +11,7 @@ import org.ivdnt.galahad.formats.tsv.TsvMerger
 import java.io.OutputStream
 
 abstract class LayerMerger protected constructor(protected val export: DocumentExport) {
-    private val layerComparison: LayerComparison = LayerComparison(export)
-
-    // TODO move to LayerComparison
-    protected val sourceTermComparisons: List<TermComparison> = layerComparison.matches.sortedBy { it.refTerm.offset }
+    protected val termComparisons: List<TermComparison> = LayerComparison(export).matches
 
     abstract fun merge(out: OutputStream)
 

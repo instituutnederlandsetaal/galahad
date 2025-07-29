@@ -14,9 +14,8 @@ import java.io.File
 import kotlin.collections.joinToString
 
 object JSON {
-    val mapper = ObjectMapper()
-    inline fun <reified T> fromStr(json: String): T = mapper.readValue(json, object : TypeReference<T>() {})
-    fun toStr(it: Any): String = mapper.writeValueAsString(it)
+    inline fun <reified T> fromStr(json: String): T = JsonUtil.mapper.readValue(json, object : TypeReference<T>() {})
+    fun toStr(it: Any): String = JsonUtil.mapper.writeValueAsString(it)
 }
 
 object UserHeader {

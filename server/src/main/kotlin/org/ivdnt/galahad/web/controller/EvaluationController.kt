@@ -8,10 +8,11 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.annotations.Annotation
-import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
 import org.ivdnt.galahad.evaluation.confusion.Confusion
 import org.ivdnt.galahad.evaluation.distribution.JobDistribution
+import org.ivdnt.galahad.evaluation.distribution.TypeToken
+//import org.ivdnt.galahad.evaluation.distribution.JobDistribution
 import org.ivdnt.galahad.evaluation.entities.CorpusEntities
 import org.ivdnt.galahad.evaluation.metrics.CorpusMetrics
 import org.ivdnt.galahad.exceptions.ErrorResponse
@@ -39,10 +40,10 @@ class EvaluationController(
     )
     @CrossOrigin
     @GetMapping(Endpoints.Evaluation.DISTRIBUTION)
-    fun getDistribution(
+    fun getJobDistribution(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @RequestParam @Parameter(description = "Tagger name or sourceLayer") hypothesis: String,
-    ): Map<Annotation, JobDistribution> = evaluationService.getDistribution(corpus, hypothesis)
+    ): JobDistribution = evaluationService.getJobDistribution(corpus, hypothesis)
 
     @Operation(
         summary = "Get document layer comparison",
@@ -186,4 +187,12 @@ class EvaluationController(
     fun getJobEntities(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
     ): CorpusEntities = evaluationService.getJobsEntities(corpus)
+
+    @CrossOrigin
+    @GetMapping(Endpoints.Evaluation.Document.DISTRIBUTION)
+    fun getDocumentDistribution(
+        @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
+        @PathVariable @Parameter(description = "Document name") document: String,
+        @RequestParam @Parameter(description = "Tagger name or sourceLayer") hypothesis: String,
+    ): Map<Annotation, List<TypeToken>> = evaluationService.getDocumentDistribution(corpus, hypothesis, document).typeTokens
 }

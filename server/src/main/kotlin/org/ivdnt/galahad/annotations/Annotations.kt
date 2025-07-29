@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonValue
 import org.ivdnt.galahad.exceptions.InvalidAnnotationException
 
+/** Linguistic enrichment annotation types */
 enum class Annotation(@JsonValue val value: String) {
     TOKEN("token"),
     LEMMA("lemma"),
@@ -13,21 +14,18 @@ enum class Annotation(@JsonValue val value: String) {
     DEPREL("deprel"),
     NER("ner");
 
+    // Force lowercase and/or custom name.
     override fun toString(): String = value
 
     companion object {
+        // Used by Spring.
         @JsonCreator
-        fun fromString(s: String): Annotation =
-            entries.firstOrNull { it.value == s.lowercase() } ?: throw InvalidAnnotationException(
-                "Invalid annotation type $s, valid types are ${entries.map { it.value }}"
+        fun fromString(s: String): Annotation = entries.firstOrNull { it.value == s.lowercase() } ?: throw InvalidAnnotationException(
+                "Invalid annotation type $s, valid types are $entries"
             )
 
-        fun order(other: Iterable<Annotation>): List<Annotation> {
-            return entries.filter { it in other }
-        }
-        fun order(other: Array<Annotation>): List<Annotation> {
-            return entries.filter { it in other }
-        }
+        /** Get annotations in consistent enum declaration order. */
+        fun order(other: Iterable<Annotation>): Set<Annotation> = entries.filter { it in other }.toSet()
     }
 }
 

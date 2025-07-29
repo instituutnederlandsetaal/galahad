@@ -1,5 +1,6 @@
 package org.ivdnt.galahad.jobs
 
+import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.util.TestConfig
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.annotations.LayerPreview
@@ -29,7 +30,7 @@ class JobTest {
         // verify from state cache
         assertEquals(LayerPreview.EMPTY, job.metadata.preview)
         assertEquals(0, job.metadata.progress.total)
-        assertEquals(0, job.metadata.summary.tokens)
+        assertEquals(0, job.metadata.summary.annotations[Annotation.TOKEN])
     }
 
     @Test

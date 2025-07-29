@@ -1,14 +1,14 @@
-package org.ivdnt.galahad.evaluation
+package org.ivdnt.galahad.web
 
-import java.util.zip.ZipInputStream
-import org.ivdnt.galahad.util.TestConfig
-import org.ivdnt.galahad.util.UserHeader
-import org.ivdnt.galahad.util.addUrlParams
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.Galahad
 import org.ivdnt.galahad.corpora.Corpus
+import org.ivdnt.galahad.evaluation.EvaluationUtil
+import org.ivdnt.galahad.util.TestConfig
 import org.ivdnt.galahad.util.TestUtil
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.ivdnt.galahad.util.UserHeader
+import org.ivdnt.galahad.util.addUrlParams
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import java.io.File
 import java.nio.charset.StandardCharsets
+import java.util.zip.ZipInputStream
 
 @WebMvcTest(properties = ["spring.main.allow-bean-definition-overriding=true"])
 @ContextConfiguration(classes = [Galahad::class, TestConfig::class])
@@ -32,7 +33,7 @@ class EvaluationControllerTest(
 
         // url
         val uuid = corpus.immutableMetadata.uuid
-        val url = "/corpora/$uuid/jobs/${TestConfig.TAGGER_NAME}/evaluation/download?reference=sourceLayer"
+        val url = "/corpora/$uuid/jobs/${TestConfig.Companion.TAGGER_NAME}/evaluation/download?reference=sourceLayer"
         // /GET
         val bytes = mvc.perform(
             MockMvcRequestBuilders.get(url)
@@ -52,7 +53,7 @@ class EvaluationControllerTest(
             "refFilter" to "ADJ",
             "hypoFilter" to "ADJ",
         )
-        val url = "/corpora/$uuid/jobs/${TestConfig.TAGGER_NAME}/evaluation/confusion/download".addUrlParams(params)
+        val url = "/corpora/$uuid/jobs/${TestConfig.Companion.TAGGER_NAME}/evaluation/confusion/download".addUrlParams(params)
         val bytes = mvc.perform(
             MockMvcRequestBuilders.get(url)
                 .headers(UserHeader.get())
@@ -71,7 +72,7 @@ class EvaluationControllerTest(
             "class" to "truePositive",
             "group" to "ADJ",
         )
-        val url = "/corpora/$uuid/jobs/${TestConfig.TAGGER_NAME}/evaluation/metrics/download".addUrlParams(params)
+        val url = "/corpora/$uuid/jobs/${TestConfig.Companion.TAGGER_NAME}/evaluation/metrics/download".addUrlParams(params)
         val bytes = mvc.perform(
             MockMvcRequestBuilders.get(url)
                 .headers(UserHeader.get())
@@ -101,7 +102,7 @@ class EvaluationControllerTest(
                 try {
                     f = TestUtil.get("evaluation/zip/${zipEntry.name}")
                     val content: String = f.readText()
-                    assertEquals(content, fileContent)
+                    Assertions.assertEquals(content, fileContent)
                     evals++
                 } catch (e: Exception) {
                     println("File not found: ${zipEntry.name}")
@@ -110,7 +111,7 @@ class EvaluationControllerTest(
             }
             zipEntry = zipInputStream.nextEntry
         }
-        assertEquals(13, evals)
+        Assertions.assertEquals(13, evals)
     }
 
     private fun assertSingleFileZip(byteArray: ByteArray, expected: String) {
@@ -121,11 +122,11 @@ class EvaluationControllerTest(
             println("unzipped: " + (zipEntry.name ?: ""))
             val fileContent = String(zipInputStream.readAllBytes(), StandardCharsets.UTF_16LE)
             if (zipEntry.name.split(".")[1] == "csv") {
-                assertEquals(TestUtil.get("evaluation/zip/$expected").readText(), fileContent)
+                Assertions.assertEquals(TestUtil.get("evaluation/zip/$expected").readText(), fileContent)
                 evals++
             }
             zipEntry = zipInputStream.nextEntry
         }
-        assertEquals(1, evals)
+        Assertions.assertEquals(1, evals)
     }
 }

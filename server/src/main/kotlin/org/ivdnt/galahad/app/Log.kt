@@ -12,27 +12,20 @@ import java.time.Instant
 @Component
 @WebFilter("/*")
 class Log : Filter, Logging {
-    @Throws(ServletException::class)
-    override fun init(filterConfig: FilterConfig?) {
-        // empty
-    }
-
+    /** doFilter performs each request. */
     @Throws(IOException::class, ServletException::class)
     override fun doFilter(req: ServletRequest, resp: ServletResponse?, chain: FilterChain) {
-        val start = Instant.now()
-        try {
+        val start = Instant.now() // Record request timing.
+        try { // Perform request.
             chain.doFilter(req, resp)
         } finally {
             val url = (req as HttpServletRequest).requestURI
+            // Log all requests except /user
             if (url != "/user") {
                 val finish = Instant.now()
                 val time: Long = Duration.between(start, finish).toMillis()
                 logger.info("in $time ms: ${req.method} $url")
             }
         }
-    }
-
-    override fun destroy() {
-        // empty
     }
 }

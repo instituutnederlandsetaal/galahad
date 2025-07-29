@@ -66,7 +66,7 @@ open class TsvMerger(
         annotation: Annotation,
         columnIndex: Int,
     ) {
-        val term = sourceTermComparisons[termIndex].hypoTerm
+        val term = termComparisons[termIndex].hypoTerm
         columns[columnIndex] = term.annotationOrMissing(annotation)
     }
 }

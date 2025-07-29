@@ -1,4 +1,4 @@
-package org.ivdnt.galahad.data.documents
+package org.ivdnt.galahad.documents
 
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.util.TestUtil
@@ -37,7 +37,7 @@ class DocumentsTest {
         assertFileDeleted("input.conllu")
     }
 
-    fun addFile(path: String) {
+    private fun addFile(path: String) {
         val file = TestUtil.get(path)
         // The file does not exist
         assertThrows(Exception::class.java) { corpus.documents.readOrThrow(file.name) }

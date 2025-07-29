@@ -1,4 +1,4 @@
-package org.ivdnt.galahad.data
+package org.ivdnt.galahad.web
 
 import org.ivdnt.galahad.util.TestConfig
 import org.ivdnt.galahad.util.UserHeader
@@ -50,7 +50,7 @@ class ExportControllerTest(
         result.ignoreLineEndings().ignoreWhiteSpaceDocumentWide().result()
     }
 
-    fun unzip(bytes: ByteArray): List<File> {
+    private fun unzip(bytes: ByteArray): List<File> {
         val zipInputStream = ZipInputStream(bytes.inputStream())
         var zipEntry = zipInputStream.nextEntry
         val files = mutableListOf<File>()
@@ -71,7 +71,7 @@ class ExportControllerTest(
     }
 
     // Create and populate a corpus with a TEI and Folia document.
-    fun createAndPopulateCorpus(): Corpus {
+    private fun createAndPopulateCorpus(): Corpus {
         val corpus = SpringUtil.createCorpus(config)
         mvc.uploadFile(TestUtil.get("all-formats/input/input.tei.xml"), corpus)
         // hardcode layer

@@ -76,7 +76,7 @@
     "continuousIntegration": "https://github.com/INL/galahad/actions",
     "developmentStatus": [
         "https://www.repostatus.org/#active",
-        "https://w3id.org/research-technology-readiness-levels#Level6LatePrototype"
+        "https://w3id.org/research-technology-readiness-levels#Level8Complete"
     ],
     "producer": {
         "@type": "Organization",

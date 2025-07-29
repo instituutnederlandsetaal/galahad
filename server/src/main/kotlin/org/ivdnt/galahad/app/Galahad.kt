@@ -23,6 +23,11 @@ import java.util.regex.Pattern
 
 var application_profile: String = System.getenv("spring.profiles.active") ?: "prod"
 
+
+fun main(args: Array<String>) {
+    runApplication<Galahad>(*args)
+}
+
 @Configuration
 @ConfigurationProperties(prefix = "")
 @EnableScheduling
@@ -41,6 +46,7 @@ class Config {
 @ComponentScan("org.ivdnt.galahad")
 @SpringBootApplication
 class Galahad {
+    /** Customize OpenAPI documentation header. */
     @Bean
     fun customOpenAPI(): OpenAPI {
         var api = OpenAPI().components(Components()).info(
@@ -53,40 +59,6 @@ class Galahad {
             api = api.servers(listOf(Server().url("/galahad/api").description("GaLAHaD API")))
         }
         return api
-    }
-}
-
-fun main(args: Array<String>) {
-    runApplication<Galahad>(*args)
-}
-
-@Configuration
-@ConfigurationProperties(prefix = "spring.servlet.multipart")
-class MultipartConfig {
-
-    lateinit var maxFileSize: String
-    lateinit var maxRequestSize: String
-
-    val maxFilesSizeAsBytes: Long get() = toBytes(maxFileSize)
-
-    companion object {
-        fun toBytes(filesize: String?): Long {
-            var returnValue: Long = -1
-            val patt: Pattern = Pattern.compile("([\\d.]+)([GMK]B)", Pattern.CASE_INSENSITIVE)
-            val matcher: Matcher = patt.matcher(filesize)
-            val powerMap: MutableMap<String, Int> = HashMap()
-            powerMap["GB"] = 3
-            powerMap["MB"] = 2
-            powerMap["KB"] = 1
-            if (matcher.find()) {
-                val number: String = matcher.group(1)
-                val pow = powerMap[matcher.group(2).uppercase()]!!
-                var bytes = BigDecimal(number)
-                bytes = bytes.multiply(BigDecimal.valueOf(1024).pow(pow))
-                returnValue = bytes.longValueExact()
-            }
-            return returnValue
-        }
     }
 }
 

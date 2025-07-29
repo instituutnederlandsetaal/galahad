@@ -6,6 +6,7 @@ import org.ivdnt.galahad.util.toFixed
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 
+/** Reports cache statistics at fixed interval. Define interval in application.properties */
 @Component
 class CacheStatsReporter : Logging {
     @Scheduled(fixedDelayString = "\${galahad.logging.cache-period}")

@@ -30,7 +30,7 @@ class ConlluMerger(
         when (annotation) {
             Annotation.NER -> { // TODO if no NER still export spaceAfter
                 // construct MISC by combining NER and MISC
-                val term: Term = sourceTermComparisons[termIndex].hypoTerm
+                val term: Term = termComparisons[termIndex].hypoTerm
                 val ner: String? = term.annotations[Annotation.NER]?.let { "NamedEntity=$it" }
                 val spaceAfter: String? = if (term.spaceAfter == false) "SpaceAfter=No" else null
                 val miscField: String = listOfNotNull(ner, spaceAfter).joinToString("|")
@@ -38,7 +38,7 @@ class ConlluMerger(
             }
             Annotation.UPOS -> {
                 // Split UPOS into head and features
-                val term: Term = sourceTermComparisons[termIndex].hypoTerm
+                val term: Term = termComparisons[termIndex].hypoTerm
                 val head: String = term.annotationHead(Annotation.UPOS) ?: "_"
                 val features: String = Term.features(term.annotations[Annotation.UPOS]) ?: "_"
                 columns[3] = head

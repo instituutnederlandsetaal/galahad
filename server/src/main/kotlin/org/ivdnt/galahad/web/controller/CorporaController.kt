@@ -67,6 +67,24 @@ class CorporaController(
     }
 
     @Operation(
+        summary = "Get single corpus metadata",
+        description = "Get the metadata of a corpus."
+    )
+    @ApiResponse(
+        responseCode = "404",
+        description = "The corpus was not found.",
+        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "CorpusMetadata of the requested corpus.",
+    )
+    @CrossOrigin
+    @GetMapping(Endpoints.Corpora.CORPUS)
+    fun getCorpus(@PathVariable @Parameter(description = "Corpus UUID") corpus: UUID): CorpusMetadata =
+        corporaService.readAsReaderOrThrow(corpus, user).immutableMetadata
+
+    @Operation(
         summary = "Update corpus metadata",
         description = "Update the metadata of an existing corpus.",
     )

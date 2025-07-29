@@ -2,7 +2,7 @@ package org.ivdnt.galahad.formats.naf
 
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.export.DocumentExport
-import org.ivdnt.galahad.export.LayerConverter
+import org.ivdnt.galahad.export.LayerWriter
 import org.ivdnt.galahad.util.XmlUtil
 import org.w3c.dom.Document
 import org.w3c.dom.Element
@@ -10,7 +10,7 @@ import java.io.OutputStream
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 
-class NafConverter(export: DocumentExport) : LayerConverter(export) {
+class NafWriter(export: DocumentExport) : LayerWriter(export) {
     val now: Long = System.currentTimeMillis()
 
     override fun convert(out: OutputStream) {

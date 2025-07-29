@@ -11,11 +11,6 @@ import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.documents.DocumentFormat
 import org.ivdnt.galahad.export.CorpusExport
 import org.ivdnt.galahad.export.DocumentExport
-import org.ivdnt.galahad.formats.conllu.ConlluFile
-import org.ivdnt.galahad.formats.folia.FoliaConverter
-import org.ivdnt.galahad.formats.folia.FoliaFile
-import org.ivdnt.galahad.formats.naf.NafConverter
-import org.ivdnt.galahad.formats.tei.TeiFile
 import org.ivdnt.galahad.formats.tsv.TsvFile
 import java.io.File
 import kotlin.io.path.createTempDirectory
@@ -87,7 +82,7 @@ class DocTestBuilder(
     val corpus: Corpus,
 ) {
 
-    var expected: String? = null
+    private var expected: String? = null
 
     fun expecting(result: String): DocTestBuilder {
         this.expected = result
@@ -100,7 +95,7 @@ class DocTestBuilder(
     }
 
     /** The file extension is relevant, otherwise conversion will fail */
-    fun getDummyTransformMetadata(
+    private fun getDummyTransformMetadata(
         layer: Layer,
         format: DocumentFormat,
         file: File? = null,
@@ -116,7 +111,7 @@ class DocTestBuilder(
 
     // generic
 
-    fun convertToFormat(
+    private fun convertToFormat(
         layer: Layer,
         format: DocumentFormat,
     ): TestResult {
@@ -125,7 +120,7 @@ class DocTestBuilder(
         return got(text)
     }
 
-    fun mergeToFormat(
+    private fun mergeToFormat(
         layer: Layer,
         format: DocumentFormat,
         file: File,
@@ -141,7 +136,7 @@ class DocTestBuilder(
 
     fun mergeTSV(path: String, layer: Layer): TestResult = mergeTSV(TestUtil.get(path), layer)
 
-    fun mergeTSV(file: File, layer: Layer): TestResult = mergeToFormat(layer, DocumentFormat.Tsv, file)
+    private fun mergeTSV(file: File, layer: Layer): TestResult = mergeToFormat(layer, DocumentFormat.Tsv, file)
 
     // Conllu
 
@@ -149,7 +144,7 @@ class DocTestBuilder(
 
     fun mergeConllu(path: String, layer: Layer): TestResult = mergeConllu(TestUtil.get(path), layer)
 
-    fun mergeConllu(file: File, layer: Layer): TestResult = mergeToFormat(layer, DocumentFormat.Conllu, file)
+    private fun mergeConllu(file: File, layer: Layer): TestResult = mergeToFormat(layer, DocumentFormat.Conllu, file)
 
     // NAF
 
@@ -181,8 +176,8 @@ class DocTestBuilder(
 }
 
 class TestResult(
-    var expected: String,
-    var actual: String,
+    private var expected: String,
+    private var actual: String,
 ) {
 
     fun ignoreDate(): TestResult {

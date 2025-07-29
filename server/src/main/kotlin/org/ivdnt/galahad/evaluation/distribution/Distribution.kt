@@ -17,10 +17,6 @@ open class Distribution(private val groupingAnnotation: Annotation) {
     val distributionMap: MutableMap<Pair<String, String>, Pair<Int, LiteralsEntry>> = HashMap()
 
     var isTrimmed: Boolean = false
-    var coveredChars: Int = 0
-    var coveredAlphabeticChars: Int = 0
-    var totalChars: Int = 0
-    var totalAlphabeticChars: Int = 0
 
     /**
      * Is serialized and send through API, so it is in fact used.
@@ -36,9 +32,6 @@ open class Distribution(private val groupingAnnotation: Annotation) {
         }.toSet()
 
     fun add(term: Term) {
-        val literal: String = term.token
-        coveredChars += literal.length
-        coveredAlphabeticChars += literal.count { char -> char.isLetter() }
         add(
             lemma = term.lemma ?: Term.missingName(Annotation.LEMMA),
             pos = term.annotationHeadOrMissing(groupingAnnotation),
@@ -54,10 +47,6 @@ open class Distribution(private val groupingAnnotation: Annotation) {
     }
 
     fun add(other: Distribution) {
-        coveredChars += other.coveredChars
-        coveredAlphabeticChars += other.coveredAlphabeticChars
-        totalChars += other.totalChars
-        totalAlphabeticChars += other.totalAlphabeticChars
         other.distributionMap.forEach {
             add(it.key.first, it.key.second, it.value.first, it.value.second)
         }

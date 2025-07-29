@@ -1,5 +1,6 @@
-package org.ivdnt.galahad.data.documents
+package org.ivdnt.galahad.documents
 
+import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.documents.DocumentFormat
 import org.ivdnt.galahad.util.TestUtil
@@ -18,18 +19,15 @@ class DocumentMetadataTest {
 
     @Test
     fun `Properties for an unannotated file`() {
-        val path = "all-formats/input/input.txt"
+        val path = "formats/shared-converter/input.txt"
         val file = TestUtil.get(path)
         val plaintext = file.readText()
         val doc = TestUtil.getDoc(path)
         val meta = doc.metadata
         assertEquals("input.txt", meta.name)
         assertEquals(DocumentFormat.Txt, meta.format)
-        assertEquals(plaintext.count { it.isLetter() }, meta.numAlphabeticChars)
-        assertEquals(plaintext.length, meta.numChars)
         assertEquals(plaintext, meta.text) // This works because the preview is < MAX_PREVIEW_LENGTH
-        val layer = meta.summary
-        val total = layer.tokens
+        val total = meta.summary.annotations[Annotation.TOKEN]
         assertEquals(0, total)
     }
 
@@ -41,10 +39,8 @@ class DocumentMetadataTest {
         val meta = doc.metadata
         assertEquals("input.tei.xml", meta.name)
         assertEquals(DocumentFormat.TeiP5, meta.format)
-        assertEquals(plaintext.count { it.isLetter() }, meta.numAlphabeticChars)
-        assertEquals(plaintext.length, meta.numChars)
         assertEquals(plaintext, meta.text) // This works because the preview is < MAX_PREVIEW_LENGTH
-        val layer = meta.summary
-        assertEquals(21, layer.tokens)
+        val total = meta.summary.annotations[Annotation.TOKEN]
+        assertEquals(21, total)
     }
 }

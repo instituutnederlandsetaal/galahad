@@ -2,15 +2,15 @@ package org.ivdnt.galahad.formats.tsv
 
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.export.DocumentExport
-import org.ivdnt.galahad.export.LayerConverter
+import org.ivdnt.galahad.export.LayerWriter
 import java.io.OutputStream
 import java.io.PrintWriter
 
-class TsvConverter(export: DocumentExport) : LayerConverter(export) {
+class TsvWriter(export: DocumentExport) : LayerWriter(export) {
     override fun convert(out: OutputStream): Unit = convert(PrintWriter(out))
 
     private fun convert(out: PrintWriter) {
-        val header: List<Annotation> = Annotation.order(export.tagger.annotations)
+        val header: Set<Annotation> = Annotation.order(export.tagger.annotations)
         out.println("id\t" + header.joinToString("\t"))
         // We only write sentence boundaries (\n) and no #-comments, under the assumption that other TSV software can't handle this.
         documents.forEachIndexed { docI, doc ->

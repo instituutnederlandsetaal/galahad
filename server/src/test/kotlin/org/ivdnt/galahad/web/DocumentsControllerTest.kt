@@ -1,6 +1,5 @@
-package org.ivdnt.galahad.data
+package org.ivdnt.galahad.web
 
-import org.ivdnt.galahad.*
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.Galahad
 import org.ivdnt.galahad.corpora.Corpus
@@ -22,7 +21,6 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.util.zip.ZipEntry
@@ -74,7 +72,7 @@ class DocumentsControllerTest(
         assertEquals(6, getDocs(corpus).size)
     }
 
-    fun zipped(files: Iterable<File>): File {
+    private fun zipped(files: Iterable<File>): File {
         val zipFile = File.createTempFile("tmp", ".zip")
         val zipStream = ZipOutputStream(FileOutputStream(zipFile))
         for (f in files) {

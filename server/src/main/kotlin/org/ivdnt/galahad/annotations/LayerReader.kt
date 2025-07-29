@@ -1,6 +1,6 @@
 package org.ivdnt.galahad.annotations
 
-abstract class AnnotationReader {
+abstract class LayerReader {
     val layer: Layer by lazy { read() }
 
     protected val documents: MutableList<DocumentLayer> = mutableListOf()

@@ -1,6 +1,6 @@
 package org.ivdnt.galahad.formats
 
-import org.ivdnt.galahad.annotations.AnnotationReader
+import org.ivdnt.galahad.annotations.LayerReader
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.documents.DocumentFormat
 import org.ivdnt.galahad.exceptions.DocumentInvalidException
@@ -19,7 +19,7 @@ abstract class InternalFile protected constructor() {
     abstract val file: File
     abstract val format: DocumentFormat
     val layer: Layer by lazy { reader.layer }
-    protected abstract val reader: AnnotationReader
+    protected abstract val reader: LayerReader
 
     companion object {
         fun create(file: File): InternalFile {
@@ -36,8 +36,6 @@ abstract class InternalFile protected constructor() {
                 DocumentFormat.TeiP5Legacy,
                 DocumentFormat.TeiP5,
                     -> TeiFile(file, format)
-
-                else -> throw DocumentInvalidException(file.name, "Unsupported format.")
             }
         }
     }

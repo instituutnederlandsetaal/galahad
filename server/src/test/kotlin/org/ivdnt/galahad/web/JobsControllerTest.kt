@@ -1,14 +1,17 @@
-package org.ivdnt.galahad.jobs
+package org.ivdnt.galahad.web
 
+import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Layer
-import org.ivdnt.galahad.util.TestConfig
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.Galahad
+import org.ivdnt.galahad.jobs.JobMetadata
+import org.ivdnt.galahad.jobs.Progress
 import org.ivdnt.galahad.util.SpringUtil
+import org.ivdnt.galahad.util.TestConfig
 import org.ivdnt.galahad.util.TestUtil
 import org.ivdnt.galahad.web.controller.JobsController
 import org.ivdnt.galahad.web.controller.TaggersController
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,7 +23,7 @@ import org.springframework.http.HttpMethod
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
-import java.util.*
+import java.util.UUID
 
 @ContextConfiguration(classes = [Galahad::class, TestConfig::class])
 @SpringBootTest(
@@ -41,23 +44,23 @@ class JobsControllerTest(
         val doc = corpus.documents.createOrThrow(TestUtil.get("all-formats/input/input.tei.xml"))
         val uuid = corpus.immutableMetadata.uuid
 
-        assertEquals(taggers.getTaggers().count() + 1, getJobs(uuid).size) // +1 for the sourceLayer
+        Assertions.assertEquals(taggers.getTaggers().count() + 1, getJobs(uuid).size) // +1 for the sourceLayer
         var progress: Progress =
             rest.postForEntity("/corpora/$uuid/jobs/pie-tdn", getHeaders(), Progress::class.java).body!!
-        assertEquals(1, progress.total)
-        assertTrue(progress.busy)
+        Assertions.assertEquals(1, progress.total)
+        Assertions.assertTrue(progress.busy)
 
         Thread.sleep(3000)
 
         // poll progress
-        progress = pollProgress(uuid, TestConfig.TAGGER_NAME)
-        assertFalse(progress.busy)
-        assertEquals(1, progress.finished)
+        progress = pollProgress(uuid, TestConfig.Companion.TAGGER_NAME)
+        Assertions.assertFalse(progress.busy)
+        Assertions.assertEquals(1, progress.finished)
 
         // check result
-        val resultPreview = getDocumentJobResult(uuid, TestConfig.TAGGER_NAME, doc.name)
-        assertTrue(resultPreview.summary.tokens > 0)
-        assertTrue(resultPreview.preview.terms.isNotEmpty())
+        val resultPreview = getDocumentJobResult(uuid, TestConfig.Companion.TAGGER_NAME, doc.name)
+        Assertions.assertTrue(resultPreview.summary.annotations[Annotation.TOKEN]!! > 0)
+        Assertions.assertTrue(resultPreview.preview.terms.isNotEmpty())
     }
 
     private fun pollProgress(uuid: UUID, job: String): Progress {

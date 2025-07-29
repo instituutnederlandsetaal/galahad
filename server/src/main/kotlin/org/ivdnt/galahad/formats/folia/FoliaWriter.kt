@@ -4,13 +4,13 @@ import org.codehaus.stax2.XMLStreamWriter2
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.export.DocumentExport
-import org.ivdnt.galahad.export.LayerConverter
+import org.ivdnt.galahad.export.LayerWriter
 import org.ivdnt.galahad.formats.xml.PrettyXMLWriter
 import org.ivdnt.galahad.util.XmlUtil.Companion.outputFactory
 import java.io.OutputStream
 import javax.xml.XMLConstants
 
-class FoliaConverter(export: DocumentExport) : LayerConverter(export) {
+class FoliaWriter(export: DocumentExport) : LayerWriter(export) {
     override fun convert(out: OutputStream) {
         val writer = PrettyXMLWriter(outputFactory.createXMLStreamWriter(out) as XMLStreamWriter2)
 

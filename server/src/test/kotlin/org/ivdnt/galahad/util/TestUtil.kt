@@ -35,7 +35,7 @@ object TestUtil {
     fun getLayer(doc: Document, job: String = SOURCE_LAYER_NAME): Layer =
         corpus.jobs.readOrThrow(job).getLayer(doc.name)
 
-    val mapper: ObjectMapper = JsonMapper.builder()
+    private val mapper: ObjectMapper = JsonMapper.builder()
         .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
         .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
         .configure(SerializationFeature.INDENT_OUTPUT, true)

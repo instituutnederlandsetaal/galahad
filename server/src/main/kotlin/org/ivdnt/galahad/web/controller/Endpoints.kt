@@ -69,6 +69,8 @@ object Endpoints {
 
         object Document {
             const val BASE: String = "${Documents.DOCUMENT}/evaluation"
+            const val ENTITIES: String = "$BASE/entities"
+            const val DISTRIBUTION: String = "$BASE/distribution"
             const val COMPARISON: String = "$BASE/comparison"
         }
     }

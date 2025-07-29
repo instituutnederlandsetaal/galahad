@@ -73,6 +73,9 @@ class TsvReader(
 
         // Retrieve values
         val annotations: Map<Annotation, String> = buildMap {
+            // by default put an empty token
+            put(Annotation.TOKEN, "")
+            // Add annotations values for non empty columns
             for (column in columnIndices.entries) {
                 columnOrNull(column.value, values)?.let { put(column.key, it) }
             }

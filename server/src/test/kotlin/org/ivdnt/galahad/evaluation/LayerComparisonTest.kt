@@ -24,11 +24,9 @@ class LayerComparisonTest {
                 filter = NouNouFilter()
             )
             assertEquals(100, comparison.matches.size)
-            assertEquals(0, comparison.hypothesisTermsWithoutMatches.size)
-            assertEquals(0, comparison.referenceTermsWithoutMatches.size)
         }
 
-        fun NouNouFilter(): LayerFilter {
+        private fun NouNouFilter(): LayerFilter {
             val termFilter = HeadGroupTermFilter(Annotation.POS, "NOU")
             return ConfusionLayerFilter(termFilter, termFilter)
         }
@@ -44,8 +42,6 @@ class LayerComparisonTest {
             )
             // The filter will not match any TermComparisons, because none are NOU-NOU.
             assertEquals(0, comparison.matches.size)
-            assertEquals(0, comparison.hypothesisTermsWithoutMatches.size)
-            assertEquals(0, comparison.referenceTermsWithoutMatches.size)
         }
     }
 
@@ -68,8 +64,6 @@ class LayerComparisonTest {
                 .loadDummies(1, "dummy\":").build()
             val comparison = LayerComparison(hypothesis = hypo, reference = ref)
             assertEquals(0, comparison.matches.size)
-            assertEquals(3, comparison.hypothesisTermsWithoutMatches.size)
-            assertEquals(1, comparison.referenceTermsWithoutMatches.size)
         }
 
         /**
@@ -102,8 +96,6 @@ class LayerComparisonTest {
             // Compare
             val comparison = LayerComparison(hypothesis = hypo, reference = ref)
             assertEquals(numMatches, comparison.matches.size)
-            assertEquals(numHypoMissing, comparison.hypothesisTermsWithoutMatches.size)
-            assertEquals(numRefMissing, comparison.referenceTermsWithoutMatches.size)
         }
     }
 
@@ -121,8 +113,6 @@ class LayerComparisonTest {
             val ref = LayerBuilder().loadDummies(numRefTerms).build()
             val comparison = LayerComparison(hypothesis = hypo, reference = ref)
             assertEquals(numMatches, comparison.matches.size)
-            assertEquals(numHypoMissing, comparison.hypothesisTermsWithoutMatches.size)
-            assertEquals(numRefMissing, comparison.referenceTermsWithoutMatches.size)
         }
 
         @Test

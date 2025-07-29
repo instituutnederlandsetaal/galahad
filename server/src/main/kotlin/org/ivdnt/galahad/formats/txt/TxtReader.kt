@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.formats.txt
 
 import org.ivdnt.galahad.annotations.Annotation
-import org.ivdnt.galahad.annotations.AnnotationReader
+import org.ivdnt.galahad.annotations.LayerReader
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.Term
 import java.io.File
@@ -13,7 +13,7 @@ import java.io.File
  */
 class TxtReader(
     val file: File
-) : AnnotationReader() {
+) : LayerReader() {
     override fun read(): Layer {
         file.forEachLine {
             if (it.isNotBlank()) {

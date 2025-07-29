@@ -4,12 +4,12 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.io.File
 
-class FileBackedValueTest {
+class DiskValueTest {
     @Test
     fun getFile() {
         val file = File.createTempFile("temp", null)
-        val fbv = DiskValue<String>(file)
-        fbv.write<String>("some characters")
-        Assertions.assertEquals("some characters", fbv.readOrThrow<String>())
+        val diskValue = DiskValue<String>(file)
+        diskValue.write<String>("some characters")
+        Assertions.assertEquals("some characters", diskValue.readOrThrow<String>())
     }
 }

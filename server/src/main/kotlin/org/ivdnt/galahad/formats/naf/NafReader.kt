@@ -11,7 +11,7 @@ import java.util.*
 typealias WordformID = String
 typealias TermID = String
 
-class NafReader(file: File) : AnnotationReader() {
+class NafReader(file: File) : LayerReader() {
     private val xml = XmlUtil.builder.parse(file)
     private val root = xml.documentElement
     private val nafWordforms = root.childOrNull("text")!!.childElements.map {

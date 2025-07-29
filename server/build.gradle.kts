@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm") version "2.2.0"
     kotlin("plugin.spring") version "2.2.0"
-    id("org.springframework.boot") version "3.5.3"
+    id("org.springframework.boot") version "3.5.4"
     id("io.spring.dependency-management") version "1.1.7"
 }
 
@@ -44,7 +44,7 @@ dependencies {
     implementation("com.fasterxml:aalto-xml:1.3.3")
 
     // cache
-    implementation("com.github.ben-manes.caffeine:caffeine:3.2.1")
+    implementation("com.github.ben-manes.caffeine:caffeine:3.2.2")
 
     // reading microsoft word docx
     implementation("org.apache.poi:poi-ooxml:5.4.1")

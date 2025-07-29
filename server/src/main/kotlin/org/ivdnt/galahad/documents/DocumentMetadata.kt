@@ -10,10 +10,6 @@ data class DocumentMetadata(
     val name: String,
     /** Format of the uploaded file as induced by FormatInducer. */
     val format: DocumentFormat,
-    /** Number of chars in the parsed plaintext. */
-    val numChars: Int,
-    /** Number of alphabetic chars in the parsed plaintext. */
-    val numAlphabeticChars: Int,
     /** A truncated preview of the parsed plaintext. */
     val text: String,
     /** A truncated preview of the annotated layer. */
@@ -23,7 +19,7 @@ data class DocumentMetadata(
     /** Last modified timestamp in milliseconds. */
     val modified: Long,
     /** Annotation types in the source layer. */
-    val annotations: List<Annotation>,
+    val annotations: Set<Annotation>,
 ) {
     companion object {
         private const val PREVIEW_LENGTH: Int = 100
@@ -33,13 +29,11 @@ data class DocumentMetadata(
             return DocumentMetadata(
                 name = file.file.name,
                 format = file.format,
-                numChars = text.length,
-                numAlphabeticChars = text.filter { it.isLetter() }.length,
                 text = text.take(PREVIEW_LENGTH) + if (text.length > PREVIEW_LENGTH) "..." else "",
                 preview = file.layer.preview,
                 summary = file.layer.summary,
                 modified = System.currentTimeMillis(),
-                annotations = Annotation.order(file.layer.terms.flatMap { it.annotations.keys }.toList())
+                annotations = file.layer.annotations
             )
         }
     }

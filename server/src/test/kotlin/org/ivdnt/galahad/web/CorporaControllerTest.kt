@@ -1,4 +1,4 @@
-package org.ivdnt.galahad.data
+package org.ivdnt.galahad.web
 
 import org.ivdnt.galahad.util.JSON
 import org.ivdnt.galahad.util.TestConfig
@@ -7,7 +7,6 @@ import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.Galahad
 import org.ivdnt.galahad.corpora.CorpusMetadata
 import org.ivdnt.galahad.corpora.MutableCorpusMetadata
-import org.ivdnt.galahad.web.controller.CorporaController
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
@@ -27,7 +26,6 @@ import java.util.*
 class CorporaControllerTest(
     @Autowired val mvc: MockMvc,
     @Autowired val config: Config,
-    @Autowired val ctrl: CorporaController,
 ) {
 
     @Test

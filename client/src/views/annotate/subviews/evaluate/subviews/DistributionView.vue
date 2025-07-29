@@ -1,16 +1,9 @@
 <template>
     <GCard>
-        <GTable
-            helpLink="evaluation"
-            :columns
-            :items="itemsToDisplay"
-            :loading="distributionStore.loading"
-            displayOnEmpty
-            sortColumn="count"
-        >
-            <template #title>Distribution of {{ jobSelection.hypothesisId }}</template>
+        <GTable helpLink="evaluation" :columns :loading :items="itemsToDisplay" sortColumn="count">
+            <template #title>Distribution</template>
             <template #table-empty>
-                <p v-if="distribution.generated">No results for current filter settings.</p>
+                <p v-if="distribution">No results for current filter settings.</p>
                 <p v-else>Select a hypothesis layer and an annotation to view a distribution.</p>
             </template>
             <template #help>
@@ -22,14 +15,7 @@
             </template>
 
             <template #header>
-                <p v-if="distribution.trimmed">
-                    <i>
-                        Because of the large corpus size only the 1000 most frequent lemma, part-of-speech pairs are
-                        shown.
-                    </i>
-                </p>
-
-                <GForm>
+                <GForm v-if="distribution">
                     <fieldset>
                         <label for="lemma-input">Search lemma</label>
                         <GInput if="lemma-input" type="text" v-model="lemmaFilter" placeholder="Lemma" />
@@ -39,7 +25,7 @@
                         <GInput if="literal-input" type="text" v-model="literalFilter" placeholder="Type" />
                     </fieldset>
                     <fieldset>
-                        <label for="annotation-select">Annotation</label>
+                        <label for="annotation-select">Group by</label>
                         <GSelect
                             id="annotation-select"
                             :options="distributionStore.distributionOptions"
@@ -47,11 +33,11 @@
                         />
                     </fieldset>
                     <fieldset>
-                        <label for="analysis-select">single/multiple analyses</label>
+                        <label for="analysis-select">Single/multiple analyses</label>
                         <GSelect id="analysis-select" :options="singMultiPosOptions" v-model="selectedSingMultiPos" />
                     </fieldset>
                     <fieldset>
-                        <label for="pos-select">Include values</label>
+                        <label for="pos-select">Include groups</label>
                         <MultiSelect
                             id="pos-select"
                             v-model="selectedPosses"
@@ -63,68 +49,66 @@
                 </GForm>
             </template>
 
-            <!-- variantCount -->
-            <template #cell-variantCount="data">
-                <div>{{ `${Object.keys(data.item.literals.literals).length}` }}</div>
+            <!-- unique -->
+            <template #cell-unique="data">
+                <div>{{ `${Object.keys(data.item.tokens).length}` }}</div>
             </template>
 
-            <!-- variants-->
-            <template #cell-variants="data">
-                <template v-if="Object.keys(data.item.literals.literals).length <= 5">
+            <!-- types -->
+            <template #cell-types="data">
+                <template v-if="Object.keys(data.item.tokens).length <= 5">
                     <span
-                        v-for="(literal, index) in Object.keys(data.item.literals.literals).sort(function (a, b) {
-                            return data.item.literals.literals[b] - data.item.literals.literals[a]
+                        v-for="(literal, index) in Object.keys(data.item.tokens).sort(function (a, b) {
+                            return data.item.tokens[b] - data.item.tokens[a]
                         })"
                         :key="literal"
                     >
-                        {{ literal }} <b>{{ `${data.item.literals.literals[literal]}` }}</b
-                        >{{ index != Object.keys(data.item.literals.literals).length - 1 ? ", " : "" }}
+                        {{ literal }} <b>{{ `${data.item.tokens[literal]}` }}</b
+                        >{{ index != Object.keys(data.item.tokens).length - 1 ? ", " : "" }}
                     </span>
                 </template>
                 <template v-else>
                     <RightFloatCell>
                         <template #left>
                             <span
-                                v-for="literal in Object.keys(data.item.literals.literals)
+                                v-for="literal in Object.keys(data.item.tokens)
                                     .sort(function (a, b) {
-                                        return data.item.literals.literals[b] - data.item.literals.literals[a]
+                                        return data.item.tokens[b] - data.item.tokens[a]
                                     })
                                     .slice(0, 5)"
                                 :key="literal"
                             >
                                 {{ literal }}
-                                <b>{{ `${data.item.literals.literals[literal]}` }}</b
+                                <b>{{ `${data.item.tokens[literal]}` }}</b
                                 >,
                             </span>
                             <i
                                 >... and
-                                {{ Object.keys(data.item.literals.literals).length - 5 }}
+                                {{ Object.keys(data.item.tokens).length - 5 }}
                                 more</i
                             >
                         </template>
                         <template #right>
-                            <InspectButton @click="variantsToDisplay = data.item" />
+                            <InspectButton @click="typeToken = data.item" />
                         </template>
                     </RightFloatCell>
                 </template>
             </template>
         </GTable>
 
-        <VariantsModal :variantsToDisplay v-if="variantsToDisplay" @hide="variantsToDisplay = undefined" />
+        <TypeTokenModal v-if="typeToken" :typeToken @hide="typeToken = undefined" />
     </GCard>
 </template>
 
 <script setup lang="ts">
 import stores from "@/stores"
-import type { Distribution } from "@/types/evaluation"
+import type { TypeToken } from "@/types/evaluation/distribution"
 import type { SelectOption } from "@/types/ui/select"
 import MultiSelect from "primevue/multiselect"
 
 // Stores
 const distributionStore = stores.useDistribution()
-// Doesn't need to be ref'ed, but it's easier to read.
-const { distribution, selectedDistribution } = storeToRefs(distributionStore)
-const jobSelection = stores.useJobSelection()
+const { distribution, selectedDistribution, loading } = storeToRefs(distributionStore)
 
 // Fields
 const selectedPosses = ref<string[]>([])
@@ -133,41 +117,32 @@ const includePos = ref<Record<string, boolean>>({})
 const lemmaFilter = ref<string>("")
 const literalFilter = ref<string>("")
 // GModal for variants
-const variantsToDisplay = ref<Distribution>()
+const typeToken = ref<TypeToken>()
 // Filtered table items.
-const itemsToDisplay = computed((): Distribution[] => {
-    // When distribution not yet generated.
-    if (!distribution.value?.distribution?.length) return []
-
-    return (
-        distribution.value?.distribution
+const itemsToDisplay = computed((): TypeToken[] => {
+    if (!distribution.value) return []
+    return distribution.value
             // Case insensitive string comparison.
-            .filter((x) => x.lemma.toLowerCase().includes(lemmaFilter.value.toLowerCase()))
-            .filter((x) => selectedPosses.value.includes(x.pos))
+            .filter((t: TypeToken) => t.lemma.toLowerCase().includes(lemmaFilter.value.toLowerCase()))
+            .filter((t: TypeToken) => selectedPosses.value.includes(t.group))
             // Filter by single/multiple PoS
-            .filter((x) => {
-                if (selectedSingMultiPos.value === "single") return !x.pos.includes("+")
-                if (selectedSingMultiPos.value === "multiple") return x.pos.includes("+")
+            .filter((t: TypeToken) => {
+                if (selectedSingMultiPos.value === "single") return !t.group.includes("+")
+                if (selectedSingMultiPos.value === "multiple") return t.group.includes("+")
                 return true
             })
             // Case insensitive string comparison.
             // join on \n, as it can't be entered into a <input type=text>
-            .filter((x) =>
-                Object.keys(x.literals.literals).join("\n").toLowerCase().includes(literalFilter.value.toLowerCase()),
+            .filter((t: TypeToken) =>
+                Object.keys(t.tokens).join("\n").toLowerCase().includes(literalFilter.value.toLowerCase()),
             )
-    )
 })
 const columns = [
-    { key: "lemma", label: "lemma", sortOn: (x: Distribution) => x.lemma },
-    { key: "pos", label: "PoS", sortOn: (x: Distribution) => x.pos },
-    { key: "count", label: "count", align: "right", sortOn: (x: Distribution): number => x.count },
-    {
-        key: "variantCount",
-        label: "unique",
-        align: "right",
-        sortOn: (x: Distribution) => Object.keys(x.literals.literals).length,
-    },
-    { key: "variants", label: "types" },
+    { key: "lemma" },
+    { key: "group" },
+    { key: "count", align: "right", sortOn: (t: TypeToken): number => t.count },
+    { key: "unique", label: "unique", align: "right", sortOn: (t: TypeToken) => Object.keys(t.tokens).length },
+    { key: "types" },
 ]
 const singMultiPosOptions: SelectOption[] = [
     { value: "single", text: "Single" },

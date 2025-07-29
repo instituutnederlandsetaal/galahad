@@ -2,11 +2,11 @@ package org.ivdnt.galahad.formats.conllu
 
 import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.export.DocumentExport
-import org.ivdnt.galahad.export.LayerConverter
+import org.ivdnt.galahad.export.LayerWriter
 import java.io.OutputStream
 import java.io.PrintWriter
 
-class ConlluConverter(export: DocumentExport) : LayerConverter(export) {
+class ConlluWriter(export: DocumentExport) : LayerWriter(export) {
     override fun convert(out: OutputStream): Unit = convert(PrintWriter(out))
 
     private fun convert(out: PrintWriter) {

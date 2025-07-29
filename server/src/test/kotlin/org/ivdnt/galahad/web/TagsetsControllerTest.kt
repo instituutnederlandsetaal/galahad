@@ -1,8 +1,8 @@
-package org.ivdnt.galahad.tagset
+package org.ivdnt.galahad.web
 
 import org.ivdnt.galahad.app.Galahad
 import org.ivdnt.galahad.web.controller.TagsetsController
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -18,6 +18,6 @@ class TagsetsControllerTest(
     @Test
     fun `Get tagsets`() {
         val tagsets = ctrl.getTagsets()
-        assertEquals(1, tagsets.count { it.name == "TDN-Core" })
+        Assertions.assertEquals(1, tagsets.count { it.name == "TDN-Core" })
     }
 }

@@ -8,29 +8,6 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class TermComparisonTest {
-
-    // The overlap is more rigorously tested in WordFormComparisonTest.
-    @Nested
-    inner class OverlapTest {
-        @Test
-        fun `Full overlap`() {
-            val term1 = Term("", 0, mapOf(Annotation.TOKEN to "word"))
-            val term2 = Term("", 0, mapOf(Annotation.TOKEN to "word"))
-            TermComparison(term1, term2).apply {
-                assertTrue(overlap)
-            }
-        }
-
-        @Test
-        fun `Partial overlap`() {
-            val term1 = Term("", 0, mapOf(Annotation.TOKEN to "word"))
-            val term2 = Term("", 2, mapOf(Annotation.TOKEN to "word"))
-            TermComparison(term1, term2).apply {
-                assertFalse(overlap)
-            }
-        }
-    }
-
     @Nested
     inner class LemmaPosTest {
         // Default values would make the terms equal.

@@ -2,18 +2,16 @@ package org.ivdnt.galahad.documents
 
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonValue
+import org.ivdnt.galahad.exceptions.DocumentInvalidException
 import org.ivdnt.galahad.exceptions.InvalidDocumentFormatException
 import org.ivdnt.galahad.util.XmlUtil
 import java.io.File
 import javax.xml.stream.XMLStreamReader
 
-/**
- * The DocumentFormat will be used to declare the format for indexing in BlackLab and
- * is used to switch between the different parsers to extract plaintext and merge layers.
- */
+/** Format of a document. No 1-to-1 correspondence with extensions due to xml format overlap. */
 enum class DocumentFormat(val identifier: String, val extension: String) {
-    TeiP4Legacy("tei-p4-legacy", "xml"),
-    TeiP5Legacy("tei-p5-legacy", "xml"),
+    TeiP4Legacy("tei-p4-legacy", "tei.xml"),
+    TeiP5Legacy("tei-p5-legacy", "tei.xml"),
     TeiP5("tei-p5", "tei.xml"),
     Naf("naf", "naf.xml"),
     Tsv("tsv", "tsv"),
@@ -21,25 +19,21 @@ enum class DocumentFormat(val identifier: String, val extension: String) {
     Folia("folia", "folia.xml"),
     Txt("txt", "txt"),
     Docx("docx", "docx"),
-    Pdf("pdf", "pdf"),
-    Unknown("unknown", "unknown");
+    Pdf("pdf", "pdf");
 
+    // Force print identifier only.
     @JsonValue
     override fun toString(): String = identifier
 
     companion object {
-        /**
-         * BlackLab uses formats that contain -, which is not allowed in an enum, so we need this mapping
-         */
-        @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
+        // Used by Spring.
+        @JsonCreator
         fun fromString(s: String): DocumentFormat =
             entries.firstOrNull { it.identifier == s } ?: throw InvalidDocumentFormatException(
-                "Invalid format $s, valid formats are ${entries.map { it.identifier }}"
+                "Invalid format $s, valid formats are $entries"
             )
 
-        /**
-         * Induce the format of a document based on its file extension and content (e.g. root XML node).
-         */
+        /** Get format of a document based on its file extension or content (e.g. root XML node). */
         fun fromFile(file: File): DocumentFormat = when (file.extension) {
             "tsv" -> Tsv
             "folia" -> Folia
@@ -49,26 +43,26 @@ enum class DocumentFormat(val identifier: String, val extension: String) {
             "txt" -> Txt
             "naf" -> Naf
             "pdf" -> Pdf
-            else -> Unknown
+            else -> throw DocumentInvalidException(file.name, "Could not determine document format.")
         }
 
-        /**
-         * Differentiate based on the root node.
-         */
+        /** Determine xml format based on the root node. */
         private fun determineXmlFormat(file: File): DocumentFormat {
-            val sr = XmlUtil.inputFactory.createXMLStreamReader(file.inputStream())
-            while (sr.hasNext()) {
-                if (sr.next() == XMLStreamReader.START_ELEMENT) {
-                    return when (sr.localName.lowercase()) {
-                        "folia" -> Folia
-                        "tei.2", "teicorpus.2" -> TeiP4Legacy
-                        "tei", "teicorpus" -> TeiP5
-                        "naf" -> Naf
-                        else -> Unknown
+            file.inputStream().use { stream ->
+                val sr = XmlUtil.inputFactory.createXMLStreamReader(stream)
+                while (sr.hasNext()) {
+                    if (sr.next() == XMLStreamReader.START_ELEMENT) {
+                        return when (sr.localName.lowercase()) {
+                            "folia" -> Folia
+                            "tei.2", "teicorpus.2" -> TeiP4Legacy
+                            "tei", "teicorpus" -> TeiP5
+                            "naf" -> Naf
+                            else -> break // and throw
+                        }
                     }
                 }
             }
-            return Unknown // No root element found
+            throw DocumentInvalidException(file.name, "Could not determine document format.")
         }
     }
 }

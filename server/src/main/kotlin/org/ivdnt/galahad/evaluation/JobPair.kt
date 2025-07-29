@@ -2,7 +2,7 @@ package org.ivdnt.galahad.evaluation
 
 class JobPair(
     val reference: String,
-    val hypothesis: String? = reference,
+    val hypothesis: String = reference,
 ) {
     override fun toString(): String = "$reference/$hypothesis"
 

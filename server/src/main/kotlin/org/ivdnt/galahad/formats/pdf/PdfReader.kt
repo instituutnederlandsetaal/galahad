@@ -2,7 +2,7 @@ package org.ivdnt.galahad.formats.pdf
 
 import com.itextpdf.text.pdf.parser.PdfTextExtractor
 import org.ivdnt.galahad.annotations.Annotation
-import org.ivdnt.galahad.annotations.AnnotationReader
+import org.ivdnt.galahad.annotations.LayerReader
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.Term
 import java.io.InputStream
@@ -10,7 +10,7 @@ import com.itextpdf.text.pdf.PdfReader as PdfReaderIText
 
 class PdfReader(
     stream: InputStream
-) : AnnotationReader() {
+) : LayerReader() {
     val reader = PdfReaderIText(stream)
 
     override fun read(): Layer {

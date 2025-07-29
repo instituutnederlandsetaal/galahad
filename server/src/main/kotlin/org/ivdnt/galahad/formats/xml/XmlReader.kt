@@ -9,7 +9,7 @@ import javax.xml.XMLConstants
 import javax.xml.stream.XMLStreamConstants
 import javax.xml.stream.XMLStreamReader
 
-abstract class XmlReader(stream: InputStream) : AnnotationReader() {
+abstract class XmlReader(stream: InputStream) : LayerReader() {
     protected var pos: String? = null
     protected var lemma: String? = null
     protected var literal: String = ""

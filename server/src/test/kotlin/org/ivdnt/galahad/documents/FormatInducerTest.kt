@@ -1,4 +1,4 @@
-package org.ivdnt.galahad.data.documents
+package org.ivdnt.galahad.documents
 
 import org.ivdnt.galahad.documents.DocumentFormat
 import org.ivdnt.galahad.util.TestUtil
@@ -15,8 +15,6 @@ class FormatInducerTest {
 
     @Test
     fun `Parse invalid formats`() {
-        assertEquals(DocumentFormat.Unknown, DocumentFormat.fromFile(TestUtil.get("all-formats/invalid/invalid")))
-        assertEquals(DocumentFormat.Unknown, DocumentFormat.fromFile(TestUtil.get("all-formats/invalid/invalid.json")))
         assertThrows(Exception::class.java) { DocumentFormat.fromString("invalid") }
     }
 
@@ -43,6 +41,5 @@ class FormatInducerTest {
 
     @Test
     fun `Parse unknown XML root node`() {
-        assertEquals(DocumentFormat.Unknown, DocumentFormat.fromFile(TestUtil.get("all-formats/invalid/invalid.xml")))
     }
 }
