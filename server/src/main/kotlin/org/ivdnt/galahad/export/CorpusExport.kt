@@ -12,6 +12,7 @@ import org.ivdnt.galahad.jobs.Job
 import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.util.FileMapper
 import org.ivdnt.galahad.util.createZipFile
+import org.ivdnt.galahad.util.withoutFormatExt
 import java.io.OutputStream
 
 class CorpusExport private constructor(
@@ -55,7 +56,10 @@ class CorpusExport private constructor(
      */
     fun export(out: OutputStream) {
         val docs = corpus.documents.readAll().filter { DocumentExport.create(this, it).layer != Layer.EMPTY }
-        val seq: Sequence<FileMapper> = docs.asSequence().map { doc -> doc.name to { out -> formatMapper(doc, out) } }
+        val seq: Sequence<FileMapper> = docs.asSequence().map { doc ->
+            val fileName = doc.uploadedFile.withoutFormatExt + "." + format.extension
+            fileName to { out -> formatMapper(doc,out) }
+        }
         val seqCmdi: Sequence<FileMapper> = docs.asSequence().map { doc ->
             "metadata/CMDI-${doc.uploadedFile}.xml" to { out ->
                 DocumentExport.create(
