@@ -22,6 +22,8 @@ class FoliaWriter(export: DocumentExport) : LayerWriter(export) {
         writer.writeAttribute("", "version", "2.5.3")
         writer.writeAttribute(XMLConstants.XML_NS_URI, "id", export.layer.id)
 
+        FoliaMetadataWriter(writer, export).write()
+
         documents.forEach { doc ->
             writer.writeStartElement("text")
             writer.writeAttribute(XMLConstants.XML_NS_URI, "id", doc.id)

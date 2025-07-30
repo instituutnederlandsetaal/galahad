@@ -1,5 +1,18 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <FoLiA xmlns="http://ilk.uvt.nl/folia" xmlns:xml="http://www.w3.org/XML/1998/namespace" generator="galahad.ivdnt.org" version="2.5.3" xml:id="e51560ff-81a2-4ddd-ba04-c7eb07af6d2b">
+    <metadata type="native">
+        <annotations>
+            <text-annotation/>
+            <paragraph-annotation/>
+            <sentence-annotation/>
+            <token-annotation/>
+        </annotations>
+        <provenance>
+            <processor xml:id="sourceLayer" name="sourceLayer" type="auto" src="https://github.com/instituutnederlandsetaal/galahad-taggers-dockerized" host="https://galahad.ivdnt.org" user="user"/>
+        </provenance>
+        <meta id="title">karel_en_martijn</meta>
+        <meta id="language">Dutch</meta>
+    </metadata>
     <text xml:id="d1">
         <p xml:id="d1.p1">
             <s xml:id="d1.p1.s1">
