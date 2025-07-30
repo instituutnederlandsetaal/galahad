@@ -95,7 +95,7 @@ class TsvReader(
             Annotation.LEMMA to listOf("lemma"),
             Annotation.POS to listOf("pos", "xpos"),
             Annotation.UPOS to listOf("upos"),
-            Annotation.DEPREL to listOf("deprel"),
+            Annotation.DEPREL to listOf("deprel", "dependency"),
             Annotation.HEAD to listOf("head"),
             Annotation.NER to listOf("entity", "ner", "named-entity", "NamedEntity"),
         )
