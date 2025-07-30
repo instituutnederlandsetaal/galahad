@@ -10,7 +10,7 @@ const val SOURCE_LAYER_NAME: String = "sourceLayer"
 class Layer(
     /** Documents in this layer. (Formats like conllu support multiple documents.) */
     val documents: Array<DocumentLayer>,
-    /** ID of this layer. Ideally the file PID as documents may have different ids. */
+    /** ID of this layer. Ideally this is the file PID, so that documents may have different ids. */
     val id: String = UUID.randomUUID().toString(),
 ) {
     /** Terms in this layer. Documents, paragraphs, sentences flattened. */

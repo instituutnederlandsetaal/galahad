@@ -33,6 +33,11 @@ open class MutableCorpusMetadata(
     @JsonIgnore
     var user: User? = null
 
+    @get:JsonIgnore
+    val langCode: String
+        // iso 639 code. "und" for undefined.
+        get() = Locale.getAvailableLocales().find { it.getDisplayLanguage(Locale.ENGLISH).equals(language, true) }?.isO3Language ?: "und"
+
     /**
      * Whether the user is in the list of collaborators of this corpus.
      * Note that this is not the same as having write access: use [hasWriteAccess].

@@ -7,6 +7,7 @@ import org.ivdnt.galahad.util.XmlUtil
 import org.ivdnt.galahad.util.child
 import org.ivdnt.galahad.util.childElements
 import org.ivdnt.galahad.util.ifNullOrBlank
+import org.ivdnt.galahad.util.withoutFormatExt
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import java.io.OutputStream
@@ -22,7 +23,7 @@ import javax.xml.transform.stream.StreamResult
  * the metadata values in the DOM with each instance.
  */
 class CmdiMetadata(val export: DocumentExport) {
-    private val docTitle = export.document.uploadedFile.nameWithoutExtension
+    private val docTitle = export.document.uploadedFile.withoutFormatExt
     private val corpus: MutableCorpusMetadata = export.corpus.mutableMetadata
     private val format = export.format.identifier
     private val now = Date()

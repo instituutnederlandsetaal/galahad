@@ -1,5 +1,88 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:id="galahadTest">
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:id="e51560ff-81a2-4ddd-ba04-c7eb07af6d2b">
+    <teiHeader>
+        <fileDesc>
+            <titleStmt>
+                <title>karel_en_martijn</title>
+                <respStmt>
+                    <resp>linguistic annotation by GaLAHaD (https://galahad.ivdnt.org)</resp>
+                    <orgName xml:lang="nl">Instituut voor de Nederlandse Taal</orgName>
+                    <orgName xml:lang="en">Dutch Language Institute</orgName>
+                </respStmt>
+                <respStmt>
+                    <resp>exported as tei-p5 by GaLAHaD (https://galahad.ivdnt.org)</resp>
+                    <orgName xml:lang="nl">Instituut voor de Nederlandse Taal</orgName>
+                    <orgName xml:lang="en">Dutch Language Institute</orgName>
+                </respStmt>
+            </titleStmt>
+            <publicationStmt>
+                <publisher>!Needs to be filled in!</publisher>
+                <idno type="sourceID">karel_en_martijn</idno>
+                <idno type="GaLAHaDPersistentIdentifier">e51560ff-81a2-4ddd-ba04-c7eb07af6d2b_tei</idno>
+            </publicationStmt>
+            <notesStmt>
+                <note resp="GaLAHaD" type="corpusName">testCorpus</note>
+                <note resp="GaLAHaD" type="sourceCollection">source name</note>
+                <note resp="GaLAHaD" type="sourceCollectionURL">http://source.url</note>
+            </notesStmt>
+            <sourceDesc>
+                <ab>
+                    <idno type="sourceID">karel_en_martijn</idno>
+                </ab>
+                <ab type="date">
+                    <date from="1200" to="1300"/>
+                </ab>
+            </sourceDesc>
+        </fileDesc>
+        <encodingDesc>
+            <appInfo resp="GaLAHaD">
+                <application xml:id="sourceLayer" ident="sourceLayer" version="">
+                    <label>POS-tagger and lemmatiser</label>
+                    <ptr target=""/>
+                </application>
+            </appInfo>
+            <editorialDecl resp="GaLAHaD">
+                <interpretation xml:id="A0001">
+                    <ab type="linguisticAnnotation" subtype="POS-tagging_lemmatisation">
+                        <interGrp type="annotationStyle">
+                            <interp>inline</interp>
+                        </interGrp>
+                        <interGrp type="Documentation">
+                            <interp/>
+                        </interGrp>
+                        <interGrp type="annotationSet">
+                            <interp>TDN-Core</interp>
+                        </interGrp>
+                        <interGrp type="annotationDescription">
+                            <interp>The file was automatically annotated within the platform GaLAHaD, which is a central hub for enriching historical Dutch.</interp>
+                        </interGrp>
+                        <interGrp type="annotationFormat">
+                            <interp>TEI xml</interp>
+                        </interGrp>
+                    </ab>
+                    <ab type="linguisticAnnotation" subtype="POS-tagging_lemmatisationProvenance1">
+                        <interGrp type="annotationMode">
+                            <interp>automatically annotated</interp>
+                        </interGrp>
+                        <interpGrp type="processor">
+                            <interp sameAs="#sourceLayer"/>
+                        </interpGrp>
+                        <date from="2025-07-30" to="2025-07-30"/>
+                    </ab>
+                </interpretation>
+            </editorialDecl>
+        </encodingDesc>
+        <profileDesc>
+            <langUsage>
+                <language ident="nld">
+                    Dutch
+                    <interGrp type="dominantLanguage">
+                        <interp>true</interp>
+                    </interGrp>
+                </language>
+            </langUsage>
+        </profileDesc>
+    </teiHeader>
     <text xml:id="d1">
         <body>
             <p xml:id="d1.p1">

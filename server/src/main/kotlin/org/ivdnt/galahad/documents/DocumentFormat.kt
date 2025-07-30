@@ -26,6 +26,9 @@ enum class DocumentFormat(val identifier: String, val extension: String) {
     override fun toString(): String = identifier
 
     companion object {
+        val extensions: Set<String>
+            get() = entries.map { "." + it.extension }.toSet()
+
         // Used by Spring.
         @JsonCreator
         fun fromString(s: String): DocumentFormat =

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<NAF version="v3.3" xml:lang="dum">
+<NAF version="v3.3" xml:lang="nld">
     <nafHeader>
-        <fileDesc author="user"    />
-        <public publicId="galahadTest"/>
+        <fileDesc author="user" creationtime="1745591638145" filename="karel_en_martijn.conllu" filetype="conllu" title="karel_en_martijn"/>
+        <public publicId="e51560ff-81a2-4ddd-ba04-c7eb07af6d2b"/>
         <linguisticProcessors layer="terms">
             <lp hostname="https://galahad.ivdnt.org" name="sourceLayer" timestamp="1745591638145"/>
         </linguisticProcessors>

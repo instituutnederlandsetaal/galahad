@@ -4,6 +4,7 @@ import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.export.LayerWriter
 import org.ivdnt.galahad.util.XmlUtil
+import org.ivdnt.galahad.util.withoutFormatExt
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import java.io.OutputStream
@@ -17,7 +18,7 @@ class NafWriter(export: DocumentExport) : LayerWriter(export) {
         val xml = XmlUtil.builder.newDocument()
         val root = xml.createElement("NAF").apply {
             setAttribute("version", "v3.3")
-            setAttribute("xml:lang", "dum")
+            setAttribute("xml:lang", export.corpus.mutableMetadata.langCode)
         }
         xml.appendChild(root)
 
@@ -40,7 +41,7 @@ class NafWriter(export: DocumentExport) : LayerWriter(export) {
         root.appendChild(nafHeader)
 
         val fileDesc = xml.createElement("fileDesc").apply {
-            setAttribute("title", export.document.name)
+            setAttribute("title", export.document.uploadedFile.withoutFormatExt)
             setAttribute("author", export.user.id)
             setAttribute("creationtime", now.toString())
             setAttribute("filename", export.document.name)

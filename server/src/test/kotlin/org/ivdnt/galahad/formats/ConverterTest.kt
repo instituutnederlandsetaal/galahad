@@ -15,7 +15,8 @@ import java.io.File
 
 open class ConverterTest {
     private lateinit var corpus: Corpus
-    private val fileName = "input"
+    private val fileName = "karel_en_martijn"
+    private val uuid = "e51560ff-81a2-4ddd-ba04-c7eb07af6d2b"
 
     protected open val folder: String = "shared-converter"
 
@@ -57,7 +58,7 @@ open class ConverterTest {
 
     private fun setLayerId(doc: Document) {
         val layer = corpus.jobs.createOrThrow(SOURCE_LAYER_NAME).getLayer(doc)
-        val fixedLayer = Layer(layer.documents, "galahadTest")
+        val fixedLayer = Layer(layer.documents, uuid)
         corpus.jobs.createOrThrow(SOURCE_LAYER_NAME).setLayer(doc, fixedLayer)
     }
 
@@ -67,7 +68,6 @@ open class ConverterTest {
             Regex("""timestamp="[0-9]+""""),
             Regex("""filename="[^"]+""""),
             Regex("""filetype="[^"]+""""),
-            Regex("""title="[^"]+""""),
         )
     }
 }

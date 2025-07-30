@@ -6,6 +6,7 @@ import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.util.XmlUtil
 import org.ivdnt.galahad.util.childOrNull
 import org.ivdnt.galahad.util.ifNullOrBlank
+import org.ivdnt.galahad.util.withoutFormatExt
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -32,7 +33,7 @@ class TeiMetadata(
                 ?.childOrNull("titleStmt")
                 ?.childOrNull("title")?.textContent
                 ?: // if null, use filename without extension
-                export.document.uploadedFile.nameWithoutExtension
+                export.document.uploadedFile.withoutFormatExt
         }
 
     private val corpusMetadata: MutableCorpusMetadata = export.corpus.mutableMetadata
