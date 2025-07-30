@@ -59,13 +59,14 @@ object Endpoints {
 
     object Evaluation {
         const val BASE: String = "${Corpora.CORPUS}/evaluation"
+        const val DOWNLOAD: String = "$BASE/download"
         const val ENTITIES: String = "$BASE/entities"
         const val METRICS: String = "$BASE/metrics"
-        const val METRICS_SAMPLES: String = "$METRICS/download"
+        const val METRICS_DOWNLOAD: String = "$METRICS/download"
         const val CONFUSION: String = "$BASE/confusion"
-        const val CONFUSION_SAMPLES: String = "$CONFUSION/download"
+        const val CONFUSION_DOWNLOAD: String = "$CONFUSION/download"
         const val DISTRIBUTION: String = "$BASE/distribution"
-        const val DOWNLOAD: String = "$BASE/download"
+        const val DISTRIBUTION_DOWNLOAD: String = "$DISTRIBUTION/download"
 
         object Document {
             const val BASE: String = "${Documents.DOCUMENT}/evaluation"

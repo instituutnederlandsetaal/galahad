@@ -30,9 +30,11 @@ class TeiReader(
                     nerTargets.add(reader.getAttributeValue(XMLConstants.XML_NS_URI, "id"))
                 }
             }
+
             in NER_TAGS -> {
                 nerValue = reader.getAttributeValue(null, "type")
             }
+
             "link" -> {
                 deprel = reader.getAttributeValue(null, "ana")?.replace("ud-syn:", "")
                 reader.getAttributeValue(null, "target")?.split(" ")?.also {

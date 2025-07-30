@@ -1,8 +1,8 @@
 package org.ivdnt.galahad.formats.txt
 
 import org.ivdnt.galahad.annotations.Annotation
-import org.ivdnt.galahad.annotations.LayerReader
 import org.ivdnt.galahad.annotations.Layer
+import org.ivdnt.galahad.annotations.LayerReader
 import org.ivdnt.galahad.annotations.Term
 import java.io.File
 

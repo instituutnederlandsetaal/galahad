@@ -77,6 +77,7 @@ class Job(
         // NOTE: we also check against the last modified of the documents folder: adding new docs should invalidate the cache.
         override fun isValid(modified: Long) =
             modified >= this@Job.modified && modified >= corpus.documents.modified
+
         override fun set() = JobMetadata.create(this@Job)
     }
 
@@ -85,10 +86,12 @@ class Job(
     fun setLayer(key: String, layer: Layer) {
         results.createOrThrow(key).layer = layer
     }
+
     fun setLayer(doc: Document, layer: Layer): Unit = setLayer(doc.name, layer)
     fun start() {
         JobController.queue(this)
     }
+
     fun stop() {
         JobController.unqueue(this)
     }
@@ -102,6 +105,7 @@ class Job(
 
     companion object {
         private const val DOCUMENT_JOBS_FOLDER = "documents"
+
         /** Number of documents at the tagger per job */
         private const val IS_ACTIVE_FILE = "active"
         private const val METADATA_FILE = "metadata.json"

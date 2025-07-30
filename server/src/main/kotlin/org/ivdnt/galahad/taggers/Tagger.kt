@@ -1,7 +1,6 @@
 package org.ivdnt.galahad.taggers
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonProperty
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.app.application_profile
@@ -69,6 +68,7 @@ class Tagger(
         fun readOrThrow(id: String, corpus: Corpus? = null): Tagger = when (id) {
             SOURCE_LAYER_NAME -> corpus?.jobs?.readOrThrow(SOURCE_LAYER_NAME)?.metadata?.tagger
                 ?: throw TaggerNotFoundException(id)
+
             else -> taggers[id] ?: throw TaggerNotFoundException(id)
         }
 

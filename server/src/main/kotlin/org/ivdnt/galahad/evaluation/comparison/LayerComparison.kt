@@ -1,6 +1,5 @@
 package org.ivdnt.galahad.evaluation.comparison
 
-import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.export.DocumentExport

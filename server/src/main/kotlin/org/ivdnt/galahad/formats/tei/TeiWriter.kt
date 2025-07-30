@@ -19,7 +19,7 @@ class TeiWriter(export: DocumentExport) : LayerWriter(export) {
         writer.writeNamespace("", "http://www.tei-c.org/ns/1.0")
         writer.writeNamespace("xml", "http://www.w3.org/XML/1998/namespace")
         writer.writeAttribute(XMLConstants.XML_NS_URI, "id", export.layer.id)
-        //TeiMetadata(writer, export, merging = false)
+        // TeiMetadata(writer, export, merging = false)
 
         export.layer.documents.forEach { doc ->
             writer.writeStartElement("text")

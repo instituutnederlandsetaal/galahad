@@ -36,6 +36,7 @@ class ConlluMerger(
                 val miscField: String = listOfNotNull(ner, spaceAfter).joinToString("|")
                 columns[columnIndex] = miscField.ifEmpty { "_" }
             }
+
             Annotation.UPOS -> {
                 // Split UPOS into head and features
                 val term: Term = termComparisons[termIndex].hypoTerm
@@ -44,6 +45,7 @@ class ConlluMerger(
                 columns[3] = head
                 columns[5] = features
             }
+
             else -> super.mergeSingleColumn(columns, annotation, columnIndex)
         }
     }

@@ -1,6 +1,5 @@
 package org.ivdnt.galahad.jobs
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import org.ivdnt.galahad.annotations.LayerPreview
 import org.ivdnt.galahad.annotations.LayerSummary
 import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME

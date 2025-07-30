@@ -12,7 +12,6 @@ import org.ivdnt.galahad.evaluation.comparison.TermComparison
 import org.ivdnt.galahad.evaluation.confusion.Confusion
 import org.ivdnt.galahad.evaluation.distribution.JobDistribution
 import org.ivdnt.galahad.evaluation.distribution.TypeToken
-//import org.ivdnt.galahad.evaluation.distribution.JobDistribution
 import org.ivdnt.galahad.evaluation.entities.CorpusEntities
 import org.ivdnt.galahad.evaluation.metrics.CorpusMetrics
 import org.ivdnt.galahad.exceptions.ErrorResponse
@@ -99,7 +98,7 @@ class EvaluationController(
         content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
     )
     @CrossOrigin
-    @GetMapping(Endpoints.Evaluation.CONFUSION_SAMPLES)
+    @GetMapping(Endpoints.Evaluation.CONFUSION_DOWNLOAD)
     fun getConfusionSamples(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @RequestParam @Parameter(description = "Tagger name or sourceLayer") hypothesis: String,
@@ -107,7 +106,8 @@ class EvaluationController(
         @RequestParam @Parameter(description = "Annotation type for which to generate the confusion") annotation: Annotation,
         @RequestParam @Parameter(description = "Annotation head to filter on") hypoFilter: String,
         @RequestParam @Parameter(description = "Annotation head to filter on") refFilter: String,
-    ): ByteArray = evaluationService.getConfusionSamples(hypoFilter, refFilter, annotation, corpus, hypothesis, reference)
+    ): ByteArray =
+        evaluationService.getConfusionSamples(hypoFilter, refFilter, annotation, corpus, hypothesis, reference)
 
     @Operation(
         summary = "Get metrics",
@@ -150,7 +150,7 @@ class EvaluationController(
         content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
     )
     @CrossOrigin
-    @GetMapping(Endpoints.Evaluation.METRICS_SAMPLES)
+    @GetMapping(Endpoints.Evaluation.METRICS_DOWNLOAD)
     fun getMetricsSamples(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @RequestParam @Parameter(description = "Tagger name or sourceLayer") hypothesis: String,
@@ -194,5 +194,6 @@ class EvaluationController(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Document name") document: String,
         @RequestParam @Parameter(description = "Tagger name or sourceLayer") hypothesis: String,
-    ): Map<Annotation, List<TypeToken>> = evaluationService.getDocumentDistribution(corpus, hypothesis, document).typeTokens
+    ): Map<Annotation, List<TypeToken>> =
+        evaluationService.getDocumentDistribution(corpus, hypothesis, document).typeTokens
 }

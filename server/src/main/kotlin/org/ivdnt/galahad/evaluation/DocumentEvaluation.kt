@@ -21,15 +21,17 @@ class DocumentEvaluation(
     val refLayer: Layer get() = corpus.jobs.readOrThrow(jobs.reference).getLayer(name)
     val hypLayer: Layer get() = corpus.jobs.readOrThrow(jobs.hypothesis).getLayer(name)
 
-    val entities: DocumentEntities get() = object : ValidatedDiskValue<DocumentEntities>(dir.resolve(ENTITIES_FILE)) {
-        override fun isValid(modified: Long) = modified >= corpus.documents.readOrThrow(name).modified
-        override fun set(): DocumentEntities = DocumentEntities.create(refLayer)
-    }.readOrCreate<DocumentEntities>()
+    val entities: DocumentEntities
+        get() = object : ValidatedDiskValue<DocumentEntities>(dir.resolve(ENTITIES_FILE)) {
+            override fun isValid(modified: Long) = modified >= corpus.documents.readOrThrow(name).modified
+            override fun set(): DocumentEntities = DocumentEntities.create(refLayer)
+        }.readOrCreate<DocumentEntities>()
 
-    val distribution: DocumentDistribution get() = object : ValidatedDiskValue<DocumentDistribution>(dir.resolve(DISTRIBUTION_FILE)) {
-        override fun isValid(modified: Long) = modified >= corpus.documents.readOrThrow(name).modified
-        override fun set(): DocumentDistribution = DocumentDistribution.create(refLayer)
-    }.readOrCreate<DocumentDistribution>()
+    val distribution: DocumentDistribution
+        get() = object : ValidatedDiskValue<DocumentDistribution>(dir.resolve(DISTRIBUTION_FILE)) {
+            override fun isValid(modified: Long) = modified >= corpus.documents.readOrThrow(name).modified
+            override fun set(): DocumentDistribution = DocumentDistribution.create(refLayer)
+        }.readOrCreate<DocumentDistribution>()
 
     companion object {
         private const val ENTITIES_FILE = "entities.json"

@@ -16,10 +16,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.core.convert.converter.Converter
 import org.springframework.scheduling.annotation.EnableScheduling
 import java.io.File
-import java.math.BigDecimal
 import java.util.*
-import java.util.regex.Matcher
-import java.util.regex.Pattern
 
 var application_profile: String = System.getenv("spring.profiles.active") ?: "prod"
 

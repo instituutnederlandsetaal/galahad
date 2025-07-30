@@ -12,10 +12,9 @@ import org.ivdnt.galahad.evaluation.confusion.CONFUSION_TYPES
 import org.ivdnt.galahad.evaluation.confusion.CorpusConfusion
 import org.ivdnt.galahad.evaluation.distribution.DocumentDistribution
 import org.ivdnt.galahad.evaluation.distribution.JobDistribution
-//import org.ivdnt.galahad.evaluation.distribution.JobDistribution
+import org.ivdnt.galahad.evaluation.entities.CorpusEntities
 import org.ivdnt.galahad.evaluation.entities.DocumentEntities
 import org.ivdnt.galahad.evaluation.entities.JobEntities
-import org.ivdnt.galahad.evaluation.entities.CorpusEntities
 import org.ivdnt.galahad.evaluation.frequency.TokenFrequency
 import org.ivdnt.galahad.evaluation.metrics.*
 import org.ivdnt.galahad.exceptions.AnnotationNotSupported
@@ -41,28 +40,6 @@ class EvaluationService(val corpora: CorporaService) {
     private val response: HttpServletResponse? = null
 
     private val user: User get() = User.fromRequest(request)
-
-//    fun getDistribution(
-//        corpus: UUID,
-//        job: String,
-//    ): Map<Annotation, JobDistribution> {
-//        val corpus = corpora.readAsReaderOrThrow(corpus, user)
-//        val jobEval = corpus.evaluation.createOrThrow(JobPair(job))
-//        return jobEval.distribution
-//        // val allAnnots = annotationTypesForTagger(job, corpus)
-//        // if (Annotation.LEMMA !in allAnnots) {
-//        //     return emptyMap()
-//        // }
-//        // val annotationTypes = CONFUSION_TYPES.filter { it in allAnnots }
-//        // val distributions = annotationTypes.associateWith {
-//        //     CorpusDistribution(
-//        //         corpora.readAsReaderOrThrow(corpus, user),
-//        //         job,
-//        //         it
-//        //     ).trim(DISTRIBUTION_MAX_SIZE) as CorpusDistribution
-//        // }
-//        // return distributions
-//    }
 
     fun getConfusion(
         corpus: UUID,
@@ -264,7 +241,7 @@ class EvaluationService(val corpora: CorporaService) {
         file.appendText(csvBody)
         // Write metadata & create zip
         val metadata = writeMetadataToDir(corpus, job, reference, dir)
-        val zipFile = dir //createZipFile(dir.listFiles()!!.asSequence()) // TODO: Fix this
+        val zipFile = dir // createZipFile(dir.listFiles()!!.asSequence()) // TODO: Fix this
         // Configure response for zip.
         response!!.contentType = "application/zip"
         response.setContentDisposition(metadata.name + "-evaluation.zip")
@@ -285,7 +262,7 @@ class EvaluationService(val corpora: CorporaService) {
         return cm
     }
 
-    fun getEntities(corpus: UUID, document: String, job: String): DocumentEntities {
+    fun getDocumentEntities(corpus: UUID, document: String, job: String): DocumentEntities {
         val corpus = corpora.readAsReaderOrThrow(corpus, user)
         val jobEval = corpus.evaluation.createOrThrow(JobPair(job))
         val docEval = jobEval.documents.createOrThrow(document)

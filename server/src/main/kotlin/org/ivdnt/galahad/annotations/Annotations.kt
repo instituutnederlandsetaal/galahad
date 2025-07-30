@@ -20,7 +20,8 @@ enum class Annotation(@JsonValue val value: String) {
     companion object {
         // Used by Spring.
         @JsonCreator
-        fun fromString(s: String): Annotation = entries.firstOrNull { it.value == s.lowercase() } ?: throw InvalidAnnotationException(
+        fun fromString(s: String): Annotation =
+            entries.firstOrNull { it.value == s.lowercase() } ?: throw InvalidAnnotationException(
                 "Invalid annotation type $s, valid types are $entries"
             )
 

@@ -2,10 +2,8 @@ package org.ivdnt.galahad.evaluation.confusion
 
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Layer
-import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.evaluation.comparison.LayerComparison
 import org.ivdnt.galahad.evaluation.comparison.LayerFilter
-import org.ivdnt.galahad.evaluation.comparison.TermComparison
 
 /**
  * Part of speech confusion of a document for two different tagger layers.

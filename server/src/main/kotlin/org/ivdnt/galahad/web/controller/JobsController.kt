@@ -10,7 +10,6 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.exceptions.ErrorResponse
-import org.ivdnt.galahad.jobs.JobController
 import org.ivdnt.galahad.jobs.JobMetadata
 import org.ivdnt.galahad.jobs.Jobs
 import org.ivdnt.galahad.jobs.Progress

@@ -2,7 +2,6 @@ package org.ivdnt.galahad.evaluation
 
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.evaluation.distribution.JobDistribution
-//import org.ivdnt.galahad.evaluation.distribution.JobDistribution
 import org.ivdnt.galahad.evaluation.entities.JobEntities
 import org.ivdnt.galahad.files.GalahadFolder
 import org.ivdnt.galahad.files.ValidatedDiskValue
@@ -27,10 +26,11 @@ class JobEvaluation(
             override fun set(): JobEntities = JobEntities.create(corpus, documents)
         }.readOrCreate()
 
-    val distribution: JobDistribution get() = object : ValidatedDiskValue<JobDistribution>(dir.resolve(DISTRIBUTION_FILE)) {
-        override fun isValid(modified: Long) = modified >= Math.max(refJob.modified, hypJob.modified)
-        override fun set(): JobDistribution = JobDistribution.create(corpus, documents)
-    }.readOrCreate()
+    val distribution: JobDistribution
+        get() = object : ValidatedDiskValue<JobDistribution>(dir.resolve(DISTRIBUTION_FILE)) {
+            override fun isValid(modified: Long) = modified >= Math.max(refJob.modified, hypJob.modified)
+            override fun set(): JobDistribution = JobDistribution.create(corpus, documents)
+        }.readOrCreate()
 
     companion object {
         private const val DISTRIBUTION_FILE = "distribution.json"

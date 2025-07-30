@@ -7,6 +7,6 @@ class JobPair(
     override fun toString(): String = "$reference/$hypothesis"
 
     companion object {
-        fun fromString(pair: String): JobPair = pair.split('/').let {JobPair(it[0], it[1])}
+        fun fromString(pair: String): JobPair = pair.split('/').let { JobPair(it[0], it[1]) }
     }
 }

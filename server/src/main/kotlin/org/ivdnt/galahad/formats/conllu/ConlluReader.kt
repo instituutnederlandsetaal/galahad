@@ -34,6 +34,7 @@ class ConlluReader(
                     // get ID last, so we don't overwrite it while creating a new unit
                     sentID = it.id
                 }
+
                 !it.startsWith("#") -> {
                     newWord(it)
                 }
@@ -50,7 +51,7 @@ class ConlluReader(
     }
 
     private fun parseMultiWordToken(string: String) {
-        //val parent = wordforms.last()
+        // val parent = wordforms.last()
         // we could create multiple analysis tokens like PD+NOU-C here.
     }
 
@@ -103,6 +104,7 @@ class ConlluReader(
 
     /** returns null on _ */
     private fun getColumn(i: Int, fields: List<String>): String? = getColumnRaw(i, fields)?.takeIf { it != "_" }
+
     /** returns the raw value, even if it is "_" */
     private fun getColumnRaw(i: Int, fields: List<String>): String? = fields.getOrNull(i)
 

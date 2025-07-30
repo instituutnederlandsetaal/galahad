@@ -68,6 +68,7 @@ abstract class XmlReader(stream: InputStream) : LayerReader() {
                         in wordTags -> wordID = currentXmlID
                     }
                 }
+
                 XMLStreamConstants.CHARACTERS -> if (!ignoring) parseChars()
                 XMLStreamConstants.END_ELEMENT -> if (!shouldIgnore()) {
                     when (reader.localName) {

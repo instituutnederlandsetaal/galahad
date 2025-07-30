@@ -16,10 +16,11 @@ class CorpusEvaluation(
     override fun ctor(key: String): JobEvaluation = ctor(JobPair.fromString(key))
     override fun throwNotFound(key: String): Nothing = throw JobNotFoundException(key)
 
-    val entities: CorpusEntities get() = object : ValidatedDiskValue<CorpusEntities>(dir.resolve(ENTITIES_FILE)) {
-        override fun isValid(modified: Long) = modified >= corpus.modified
-        override fun set(): CorpusEntities = CorpusEntities.create(corpus, this@CorpusEvaluation)
-    }.readOrCreate()
+    val entities: CorpusEntities
+        get() = object : ValidatedDiskValue<CorpusEntities>(dir.resolve(ENTITIES_FILE)) {
+            override fun isValid(modified: Long) = modified >= corpus.modified
+            override fun set(): CorpusEntities = CorpusEntities.create(corpus, this@CorpusEvaluation)
+        }.readOrCreate()
 
     companion object {
         private const val ENTITIES_FILE = "entities.json"

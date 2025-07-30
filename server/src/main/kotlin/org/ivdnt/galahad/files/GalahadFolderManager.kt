@@ -33,7 +33,8 @@ abstract class GalahadFolderManager<ReadType : GalahadFolder, CreateType : Any>(
     open fun createOrThrow(key: CreateType): ReadType = ctor(key.toString())
 
     open fun readAll(): List<ReadType> = dir.list()?.map { readOrThrow(it) } ?: emptyList()
-    open fun readAllSequence(): Sequence<ReadType> = dir.list()?.asSequence()?.map { readOrThrow(it) } ?: emptySequence()
+    open fun readAllSequence(): Sequence<ReadType> =
+        dir.list()?.asSequence()?.map { readOrThrow(it) } ?: emptySequence()
 
     open fun readOrNull(key: String): ReadType? = if (dir.resolve(key).exists()) ctor(key) else null
 

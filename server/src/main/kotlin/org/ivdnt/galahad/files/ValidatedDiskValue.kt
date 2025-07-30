@@ -14,6 +14,7 @@ abstract class ValidatedDiskValue<T>(
      * @param modified The last modified time of the file.
      */
     abstract fun isValid(modified: Long): Boolean
+
     /** Set value to be written when no longer valid. */
     abstract fun set(): T
 
