@@ -31,6 +31,7 @@ declare module 'vue' {
     GButton: typeof import('./src/components/input/GButton.vue')['default']
     GCard: typeof import('./src/components/GCard.vue')['default']
     GCheckBox: typeof import('./src/components/input/GCheckBox.vue')['default']
+    GFooter: typeof import('./src/components/GFooter.vue')['default']
     GForm: typeof import('./src/components/input/GForm.vue')['default']
     GInfo: typeof import('./src/components/GInfo.vue')['default']
     GInput: typeof import('./src/components/input/GInput.vue')['default']
