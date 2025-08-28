@@ -13,6 +13,8 @@
         </template>
     </GTabs>
 
+    <GFooter />
+
     <GModal v-if="errors.length > 0" title="Ocharme!" @hide="reset">
         <p>
             Please try again or contact
