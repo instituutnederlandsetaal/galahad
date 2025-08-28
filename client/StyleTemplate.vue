@@ -27,6 +27,9 @@ type myType = { id: number; name: string }
 // --- model ---
 const model = defineModel<string>()
 
+// --- ref ---
+const metricsFilter = useTemplateRef<InstanceType<typeof MetricsFilter>>("metricsFilter")
+
 // --- props ---
 const { foo = "bar" } = defineProps<{ foo?: string }>()
 

@@ -11,7 +11,7 @@
         <td>
             <div class="usersInput">
                 <GInput placeholder="CLARIN login (email)" v-model="newUser" @enter="setUser(newUser)" />
-                <GButton :disabled="!newUser.length" @click="setUser(newUser)"><i class="fa fa-plus"></i></GButton>
+                <GButton :disabled="!newUser.length" @click="setUser(newUser)" title="Add"><i class="fa fa-plus"></i></GButton>
             </div>
         </td>
     </tr>
@@ -24,7 +24,7 @@
                 <li v-for="(userName, i) in users" :key="i">
                     <div class="users">
                         <p>{{ userName }}</p>
-                        <GButton plain @click="userToDelete = userName" v-if="canDelete(userName)">
+                        <GButton plain @click="userToDelete = userName" v-if="canDelete(userName)" title="Remove">
                             <i class="fa fa-close"></i>
                         </GButton>
                     </div>

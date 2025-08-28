@@ -121,7 +121,8 @@ const typeToken = ref<TypeToken>()
 // Filtered table items.
 const itemsToDisplay = computed((): TypeToken[] => {
     if (!distribution.value) return []
-    return distribution.value
+    return (
+        distribution.value
             // Case insensitive string comparison.
             .filter((t: TypeToken) => t.lemma.toLowerCase().includes(lemmaFilter.value.toLowerCase()))
             .filter((t: TypeToken) => selectedPosses.value.includes(t.group))
@@ -136,13 +137,14 @@ const itemsToDisplay = computed((): TypeToken[] => {
             .filter((t: TypeToken) =>
                 Object.keys(t.tokens).join("\n").toLowerCase().includes(literalFilter.value.toLowerCase()),
             )
+    )
 })
 const columns = [
     { key: "lemma" },
     { key: "group" },
-    { key: "count", align: "right", sortOn: (t: TypeToken): number => t.count },
+    { key: "count", align: "right" },
     { key: "unique", label: "unique", align: "right", sortOn: (t: TypeToken) => Object.keys(t.tokens).length },
-    { key: "types" },
+    { key: "types", noSort: true },
 ]
 const singMultiPosOptions: SelectOption[] = [
     { value: "single", text: "Single" },

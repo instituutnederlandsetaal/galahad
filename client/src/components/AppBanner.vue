@@ -7,9 +7,7 @@
         </div>
 
         <div class="title">
-            <a href="https://ivdnt.org/" target="_blank" tabindex="-1" rel="noopener noreferrer">
-                / instituut voor de Nederlandse&nbsp;taal&nbsp;/
-            </a>
+            <a href="https://ivdnt.org/" target="_blank">/ instituut voor de Nederlandse&nbsp;taal&nbsp;/</a>
             <router-link to="/">galahad</router-link>
         </div>
 

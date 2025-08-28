@@ -125,7 +125,7 @@ const columns = computed<Column<Job>[]>((): Column<Job>[] => [
     },
     { key: "modified", align: "center", format: (j: Job): string => formatDate(j.modified) },
     { key: "progress", align: "right", sortOn: (j: Job): number => j.progress.finished / j.progress.total },
-    { key: "actions", hidden: !canWrite.value },
+    { key: "actions", hidden: !canWrite.value, noSort: true },
 ])
 
 // #methods

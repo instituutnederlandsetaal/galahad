@@ -1,6 +1,6 @@
 <template>
     <select v-model="model" class="select">
-        <option class="option" hidden selected :value="undefined">-- select an option --</option>
+        <option class="option" selected :value="undefined">-- select an option --</option>
         <option v-for="option in options" :key="option.value" :value="option.value" class="option">
             {{ option.text }}
         </option>

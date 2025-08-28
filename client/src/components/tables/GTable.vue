@@ -33,6 +33,9 @@
 
                             <span class="sort-control" v-if="!column.noSort">
                                 <span
+                                    tabindex="0"
+                                    @keypress.space.prevent="sortBy(column.key, true)"
+                                    @keypress.enter="sortBy(column.key, true)"
                                     @click="sortBy(column.key, true)"
                                     :class="{ active: sortDesc && sortColumn == column.key }"
                                     title="Sort descending"
@@ -40,6 +43,9 @@
                                 >
                                 |
                                 <span
+                                    tabindex="0"
+                                    @keypress.space.prevent="sortBy(column.key, false)"
+                                    @keypress.enter="sortBy(column.key, false)"
                                     @click="sortBy(column.key, false)"
                                     :class="{ active: !sortDesc && sortColumn == column.key }"
                                     title="Sort ascending"
@@ -55,6 +61,12 @@
                         :key="i"
                         @click="model = item"
                         :class="model === item ? 'selected' : ''"
+                        :tabindex="selectable ? 0 : -1"
+                        @keydown="
+                            (e: KeyboardEvent) => {
+                                if (e.key === ' ' || e.key === 'Enter') model = item
+                            }
+                        "
                     >
                         <td v-for="column in visibleColumns" :key="column.key" :style="{ textAlign: column.align }">
                             <!-- specific cell rendering -->

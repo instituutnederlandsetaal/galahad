@@ -34,6 +34,29 @@ ol {
     padding: revert;
 }
 
+button,
+div,
+span,
+input,
+label,
+select {
+    &[title]:focus-visible:after {
+        content: attr(title);
+        position: absolute;
+        display: inline-block;
+        font-size: 16px;
+        font-style: normal;
+        text-transform: none;
+        font-weight: normal;
+        letter-spacing: normal;
+        background: black;
+        color: white;
+        padding: 0.25rem;
+        z-index: 1;
+        margin: 3rem 0 0 3rem;
+    }
+}
+
 a {
     color: black;
     text-decoration: underline;
@@ -51,7 +74,7 @@ a {
 // Awesome font icons
 i.fa {
     font-size: 1.3rem;
-    padding: 0 0.2rem
+    padding: 0 0.2rem;
 }
 
 $theme: #62b6ff;

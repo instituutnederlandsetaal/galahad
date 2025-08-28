@@ -4,12 +4,16 @@
 
     <form class="form">
         <!-- Styled label for input -->
-        <label for="file-upload" class="custom-file-upload" title="Select files">
+        <label
+            tabindex="0"
+            for="file-upload"
+            class="custom-file-upload"
+            title="Select files"
+            @keydown.enter="$refs.uploadInput.click()"
+        >
             <svg
                 class="svg-icon"
-                aria-hidden="true"
                 role="img"
-                focusable="false"
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
                 height="12"
@@ -43,7 +47,8 @@
 
         <!-- Confirmation and clear buttons after a selection has been made -->
         <fieldset v-if="filesToUpload.length != 0" class="btns">
-            <GButton title="Upload"
+            <GButton
+                title="Upload"
                 green
                 @click="
                     () => {
@@ -54,7 +59,8 @@
             >
                 <i class="fa fa-upload"></i>
             </GButton>
-            <GButton title="Cancel"
+            <GButton
+                title="Cancel"
                 plain
                 @click="
                     () => {

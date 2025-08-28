@@ -5,7 +5,7 @@
             >. This can not be undone.
         </p>
         <template #buttons>
-            <GButton
+            <GButton title="Accept"
                 green
                 @click="
                     () => {

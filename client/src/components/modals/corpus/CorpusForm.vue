@@ -111,7 +111,7 @@
         </form>
 
         <template #buttons>
-            <GButton green @click="confirm" :disabled><i class="fa fa-check"></i></GButton>
+            <GButton green @click="confirm" :disabled title="Accept"><i class="fa fa-check"></i></GButton>
         </template>
     </GModal>
 </template>

@@ -40,11 +40,11 @@
                 </GForm>
             </template>
             <template #cell="data">
-                <GButton v-if="data.value" class="button" @click="selectedItem = data">
+                <GButton v-if="data.value" class="button" @click="selectedItem = data" title="View document entities">
                     {{ formatNumber(data.value) }}
                 </GButton>
                 <template v-else>
-                    {{  formatNumber(data.value) }}
+                    {{ formatNumber(data.value) }}
                 </template>
             </template>
         </GTable>
@@ -204,7 +204,7 @@ function formatNumber(value: unknown): string | unknown {
     if (typeof value === "number") {
         if (!Number.isInteger(value)) {
             return value.toFixed(2)
-        } 
+        }
         if (value === 0) {
             return ""
         }

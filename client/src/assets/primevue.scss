@@ -9,6 +9,10 @@
     --p-checkbox-border-radius: 0;
     --p-highlight-background: var(--int-theme-lighter);
 
+    --p-form-field-focus-ring-width: 1px;
+    --p-form-field-focus-ring-style: solid;
+    --p-form-field-focus-ring-color: blue;
+
     .p-multiselect-header {
         border-bottom: 1px solid var(--int-light-grey);
 

@@ -1,5 +1,6 @@
 <template>
-    <dialog class="modal view" tabindex="0" @click.self="$emit('hide')">
+    <dialog class="modal view" tabindex="-1" aria-modal="true" @click.self="$emit('hide')" role="alertdialog">
+        {{ focusable }}
         <GCard class="content" :title>
             <template v-if="$slots.title" #title>
                 <slot name="title"></slot>
@@ -21,8 +22,8 @@ const { title } = defineProps<{ title?: string }>()
 
 const emit = defineEmits<{ hide: [] }>()
 
-// @keyup does not work due to focus, so use event listener.
-useEventListener(document, "keyup", (e: KeyboardEvent) => {
+// // @keyup does not work due to focus, so use event listener.
+useEventListener(document, "keydown", (e: KeyboardEvent) => {
     if (e.key === "Escape") {
         emit("hide")
     }

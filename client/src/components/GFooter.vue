@@ -1,10 +1,10 @@
 <template>
     <footer>
-        <p>© 2025 Dutch Language Institute, all rights reserved.</p>
-        <div>
-            <a href="https://ivdnt.org/english/privacy-statement/">privacy statement</a>
-            <a href="https://ivdnt.org/english/terms-and-conditions/">terms and conditions</a>
-        </div>
+        <p>
+            © 2025 Dutch Language Institute, see our
+            <a href="https://ivdnt.org/english/privacy-statement/">privacy statement</a> &
+            <a href="https://ivdnt.org/english/terms-and-conditions/">terms and conditions</a>.
+        </p>
     </footer>
 </template>
 

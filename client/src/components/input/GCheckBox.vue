@@ -1,8 +1,8 @@
 <template>
-    <label class="checkbox-container">
+    <label class="checkbox-container" tabindex="0" title="Check" @keypress.space.prevent="check" @keyup.enter="check">
         <slot></slot>
         <input class="checkbox" v-model="model" type="checkbox" />
-        <span class="checkmark" tabindex="0" @keypress.space.prevent="check" @keyup.enter="check"></span>
+        <span class="checkmark"></span>
     </label>
 </template>
 
