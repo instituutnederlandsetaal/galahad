@@ -35,7 +35,7 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-api-kotlin:1.5.0")
 
     // yaml
-    implementation("org.yaml:snakeyaml:2.4")
+    implementation("org.yaml:snakeyaml:2.5")
 
     // json
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
