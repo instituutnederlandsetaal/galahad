@@ -11,7 +11,7 @@
     "dependencies": {
         "@primeuix/themes": "^1.2.3",
         "@vueuse/core": "^13.8.0",
-        "@vueuse/router": "^13.8.0",
+        "@vueuse/router": "^13.9.0",
         "axios": "^1.11.0",
         "content-disposition": "^0.5.4",
         "pinia": "^3.0.3",
