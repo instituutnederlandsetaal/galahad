@@ -15,7 +15,7 @@
         "axios": "^1.11.0",
         "content-disposition": "^0.5.4",
         "pinia": "^3.0.3",
-        "primevue": "^4.3.7",
+        "primevue": "^4.3.8",
         "safe-buffer": "^5.2.1",
         "vue": "^3.5.20",
         "vue-router": "^4.5.1"
