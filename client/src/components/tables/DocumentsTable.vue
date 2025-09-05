@@ -90,4 +90,3 @@ const columns = computed<Column<DocumentMetadata>[]>(() => [
     { key: "actions", noSort: true, hidden: !canWrite || type === DocsTableType.dataset },
 ])
 </script>
-

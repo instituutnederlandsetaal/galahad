@@ -20,11 +20,9 @@
 </template>
 
 <script setup lang="ts">
-// #types
-type Tab = { id: string; title: string; disabled?: boolean }
+import type { Tab } from "@/types/ui/tab"
 
 const { basePath, tabs } = defineProps<{ basePath: string; tabs: Tab[] }>()
-
 const route = useRoute()
 </script>
 

@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Column } from '@/types/ui/table'
+import type { Column } from "@/types/ui/table"
 
 // #types
 type Example = {

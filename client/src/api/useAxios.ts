@@ -35,7 +35,6 @@ export function useAxios<T>(
                 data.value = res.data
             })
             .catch((err) => {
-                errors.handle(err)
                 if (pageReloadOnError) {
                     setTimeout(() => location.reload(), 2000)
                 }

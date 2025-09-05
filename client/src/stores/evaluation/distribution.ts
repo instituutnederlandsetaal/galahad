@@ -20,8 +20,12 @@ const useDistribution = defineStore("distribution", () => {
 
     const distribution = computed<TypeToken[]>(() => distributions.value?.[selectedDistribution.value])
     const selectedDistribution = ref<string>()
-    const distributionOptions = computed<SelectOption[]>(() => Object.keys(distributions.value || {}).map((x) => ({ value: x, text: x })))
-    const posses = computed<string[]>(() => [...new Set(Object.values(distribution.value || {}).map((t: TypeToken) => t.group))].sort())
+    const distributionOptions = computed<SelectOption[]>(() =>
+        Object.keys(distributions.value || {}).map((x) => ({ value: x, text: x })),
+    )
+    const posses = computed<string[]>(() =>
+        [...new Set(Object.values(distribution.value || {}).map((t: TypeToken) => t.group))].sort(),
+    )
     // Exports
     return {
         // Fields

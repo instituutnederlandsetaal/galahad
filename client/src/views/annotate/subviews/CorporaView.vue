@@ -4,10 +4,17 @@
             <CorpusHelp />
         </template>
 
+        <!-- Action buttons -->
         <GForm gap="0.25rem">
-            <GButton green title="New" @click="newCorpus = true"><i class="fa fa-plus"></i></GButton>
-            <GButton orange title="Edit" :disabled="!canWrite" @click="editCorpus = copy(corpus)"><i class="fa fa-pencil"></i></GButton>
-            <GButton red title="Delete" :disabled="!canDelete" @click="deleteCorpus = corpus"><i class="fa fa-trash"></i></GButton>
+            <GButton green title="New" @click="newCorpus = true">
+                <i class="fa fa-plus"></i>
+            </GButton>
+            <GButton orange title="Edit" :disabled="!canWrite" @click="editCorpus = copy(corpus)">
+                <i class="fa fa-pencil"></i>
+            </GButton>
+            <GButton red title="Delete" :disabled="!canDelete" @click="deleteCorpus = corpus">
+                <i class="fa fa-trash"></i>
+            </GButton>
         </GForm>
 
         <!-- Owner corpus table -->
@@ -22,7 +29,7 @@
                     inspect and evaluate it.
                 </p>
             </template>
-            <template #table-empty> No corpora have been shared with you. </template>
+            <template #table-empty>No corpora have been shared with you.</template>
         </CorpusTable>
 
         <!-- Benchmark corpus table -->
@@ -34,7 +41,7 @@
                     <router-link to="/annotate/evaluate">Evaluate tab</router-link>.
                 </p>
             </template>
-            <template #table-empty> No benchmark corpora available. </template>
+            <template #table-empty>No benchmark corpora available.</template>
         </CorpusTable>
 
         <!-- Create modal -->
@@ -74,13 +81,12 @@ import stores from "@/stores"
 import type { CorpusMetadata } from "@/types/corpora"
 import { CorpusTableType } from "@/types/ui/table"
 
-// --- store data ---
-const corporaStore = stores.useCorpora()
-const { create, remove, update } = corporaStore
-const { corpora, sharedCorpora, datasets, corpus } = storeToRefs(corporaStore)
+const { create, remove, update, reload } = stores.useCorpora()
+const { corpora, sharedCorpora, datasets, corpus } = storeToRefs(stores.useCorpora())
 const { canWrite, canDelete } = storeToRefs(stores.useUser())
 
-// Fields
+reload()
+
 // Once not falsy, respective modal is shown.
 const newCorpus = ref<boolean>()
 const deleteCorpus = ref<CorpusMetadata>()
@@ -88,6 +94,6 @@ const editCorpus = ref<CorpusMetadata>()
 
 // Deepcopy so we can modify the object freely.
 function copy(corpus: CorpusMetadata): CorpusMetadata {
-    return JSON.parse(JSON.stringify(corpus)) as CorpusMetadata
+    return structuredClone(toRaw(corpus))
 }
 </script>

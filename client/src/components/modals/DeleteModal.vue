@@ -5,7 +5,8 @@
             >. This can not be undone.
         </p>
         <template #buttons>
-            <GButton title="Accept"
+            <GButton
+                title="Accept"
                 green
                 @click="
                     () => {
@@ -13,8 +14,8 @@
                         $emit('hide')
                     }
                 "
-                ><i class="fa fa-check"></i></GButton
-            >
+                ><i class="fa fa-check"></i
+            ></GButton>
         </template>
     </GModal>
 </template>

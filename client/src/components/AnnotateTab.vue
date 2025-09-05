@@ -17,7 +17,7 @@
         <GSpinner />
     </GCard>
     <!-- No documents in corpus-->
-    <GCard v-else-if="!corporaStore.hasDocs && !hideDocsError" title="Empty corpus">
+    <GCard v-else-if="!documentsStore.documents.length && !hideDocsError" title="Empty corpus">
         <GInfo error>
             <p>This corpus has no documents.</p>
             <router-link to="/annotate/documents">Upload documents to this corpus</router-link>

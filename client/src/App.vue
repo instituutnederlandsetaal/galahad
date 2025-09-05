@@ -1,13 +1,5 @@
 <template>
-    <GTabs
-        class="level-1"
-        basePath=""
-        :tabs="[
-            { id: 'annotate', title: 'Annotate & Evaluate' },
-            { id: 'overview', title: 'Taggers & Datasets' },
-            { id: 'user', title: 'User' },
-        ]"
-    >
+    <GTabs :tabs class="level-1" basePath="">
         <template #banner>
             <AppBanner />
         </template>
@@ -15,7 +7,7 @@
 
     <GFooter />
 
-    <GModal v-if="errors.length > 0" title="Ocharme!" @hide="reset">
+    <GModal v-if="errors.length > 0" title="Ocharme!" @hide="errors = []">
         <p>
             Please try again or contact
             <MailAddress /> for support.
@@ -25,12 +17,15 @@
 </template>
 
 <script setup lang="ts">
+import type { Tab } from "@/types/ui/tab"
 import stores from "@/stores"
 
-// #stores
-const errorStore = stores.useErrors()
-const { reset } = errorStore
-const { errors } = storeToRefs(errorStore)
+const { errors } = storeToRefs(stores.useErrors())
+const tabs: Tab[] = [
+    { id: "annotate", title: "Annotate & Evaluate" },
+    { id: "overview", title: "Taggers & Datasets" },
+    { id: "user", title: "User" },
+]
 
 // Load user globally to confirm connection
 stores.useUser()

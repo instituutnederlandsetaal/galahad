@@ -35,11 +35,16 @@ const { corpora, type } = defineProps<{ corpora: CorpusMetadata[]; type: CorpusT
 
 // --- stores ---
 const userStore = stores.useUser()
-const corporaStore = stores.useCorpora()
 
 // --- data ---
-const { loading, corpusId, corpus } = storeToRefs(corporaStore)
-const selectedCorpus = ref<CorpusMetadata>()
+const { loading, corpusId, corpus } = storeToRefs(stores.useCorpora())
+const selectedCorpus = computed<CorpusMetadata>({
+    get: () => corpus.value,
+    set: (value: CorpusMetadata) => {
+        console.log("Selected corpus", value)
+        corpusId.value = value.uuid
+    },
+})
 const columns: Column<CorpusMetadata>[] = [
     { key: "uuid", hidden: true },
     { key: "name" },
@@ -71,32 +76,8 @@ const items = computed(() => {
     if (type === CorpusTableType.user) {
         return corpora.filter((i) => i.owner === userStore.user.id)
     }
-    if (type === CorpusTableType.shared) {
-        return corpora.filter(
-            (i) => i.collaborators.includes(userStore.user.id) || i.viewers.includes(userStore.user.id),
-        )
-    }
     return corpora
 })
-
-// --- watch ---
-// On corpus selection, change the corpusId
-watch(selectedCorpus, () => {
-    if (selectedCorpus.value) {
-        console.debug("changing corpusID to", selectedCorpus.value.uuid)
-        corpusId.value = selectedCorpus.value.uuid
-    }
-})
-// on corpusId change, update the selectedCorpus
-watch(
-    corpus,
-    () => {
-        if (corpus.value) {
-            selectedCorpus.value = corpus.value
-        }
-    },
-    { immediate: true },
-)
 
 // --- methods ---
 function formatCollaborators(i: CorpusMetadata): string {

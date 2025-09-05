@@ -73,7 +73,8 @@ fieldset {
             outline: none;
         }
 
-        &[type="text"], &[type="url"] {
+        &[type="text"],
+        &[type="url"] {
             width: 169px;
             border-right: 0;
         }
