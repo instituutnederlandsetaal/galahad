@@ -78,9 +78,9 @@ class EvaluationService(val corpora: CorporaService) {
         val corpusObj = corpora.readAsReaderOrThrow(corpus, user)
         val allAnnots = annotationTypesForTagger(job, corpus)
         val settings = METRIC_TYPES.filter { it.requiredAnnotations.all { it in allAnnots } }.toMutableList()
-        val freq = TokenFrequency(corpusObj, job)
-        val freqSettings = settings.map { FrequencyMetricsSettings(freq, it) }
-        settings.addAll(freqSettings)
+//        val freq = TokenFrequency(corpusObj, job)
+//        val freqSettings = settings.map { FrequencyMetricsSettings(freq, it) }
+//        settings.addAll(freqSettings)
         val cm = CorpusMetrics(
             corpusObj,
             settings = settings,
