@@ -24,7 +24,7 @@ class Log : Filter, Logging {
             if (url != "/user") {
                 val finish = Instant.now()
                 val time: Long = Duration.between(start, finish).toMillis()
-                logger.info("in $time ms: ${req.method} $url")
+                logger.info("in $time ms: ${req.method} $url?${req.queryString ?: "" }")
             }
         }
     }
