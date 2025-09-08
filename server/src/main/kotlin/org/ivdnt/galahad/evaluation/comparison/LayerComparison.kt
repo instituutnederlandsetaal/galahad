@@ -87,7 +87,7 @@ open class LayerComparison(
         val PUNCT: Regex = Regex("""\W$""")
 
         private fun truncatedPCMatch(comp: TermComparison): Boolean {
-            return truncatedPCMatch(comp.hypoTerm, comp.refTerm)
+            return truncatedPCMatch(comp.hyp, comp.ref)
         }
 
         private fun truncatedPCMatch(t1: Term, t2: Term): Boolean {
@@ -111,7 +111,7 @@ class DocumentLayerComparison(
 
     override fun noMatch(t: Term) {
         if (layerFilter?.refTermFilter?.filter(t) != false) {
-            matches.add(TermComparison(hypoTerm = Term.EMPTY, refTerm = t))
+            matches.add(TermComparison(hyp = Term.EMPTY, ref = t))
         }
     }
 

@@ -1,23 +1,23 @@
-import { confusionPath } from "@/api/evaluation"
-import { useAxios } from "@/api/useAxios"
 import stores from "@/stores"
-import type { ConfusionWrapper } from "@/types/evaluation"
+import type { Confusion } from "@/types/evaluation"
+import * as API from "@/api/evaluation"
 
 /** Stores and fetches the confusion matrix. */
 const useConfusion = defineStore("confusion", () => {
     const { hypothesisId, referenceId } = storeToRefs(stores.useJobSelection())
     const { corpusId } = storeToRefs(stores.useCorpora())
-    const url = computed<string>(() => {
-        if (!(hypothesisId.value && referenceId.value)) return undefined
-        return confusionPath(corpusId.value)
-    })
-    const { loading, data: confusion } = useAxios<ConfusionWrapper>(
-        url,
-        {},
-        { hypothesis: hypothesisId.value, reference: referenceId.value },
-    )
+    const loading = ref<boolean>(false)
+    const confusions = ref<Record<string, Confusion>>()
 
-    return { confusion, loading }
+    function reload(): void {
+        if (!corpusId.value || !hypothesisId.value || !referenceId.value) return
+        loading.value = true
+        API.getConfusion(corpusId.value, hypothesisId.value, referenceId.value)
+            .then((res) => (confusions.value = res.data))
+            .finally(() => (loading.value = false))
+    }
+
+    return { reload, confusions, loading }
 })
 
 export default useConfusion

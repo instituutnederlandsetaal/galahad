@@ -1,12 +1,9 @@
-// Libraries & stores
 import { plausible } from "@/ts/plausible"
 import * as API from "@/api/documents"
-import { documentsPath } from "@/api/documents"
 import * as Utils from "@/api/utils"
 import stores from "@/stores"
-// Types & API
-import { type DocumentMetadata, Format } from "@/types/documents"
-import { useAxios } from "@/api/useAxios"
+import { type DocumentMetadata } from "@/types/documents"
+import { addContentTypeHeader, fileExtension } from "@/ts/file"
 
 // Custom types
 type FileStatus = { status: "busy" | "success" | "error"; message?: string }
@@ -17,20 +14,12 @@ type FileStatus = { status: "busy" | "success" | "error"; message?: string }
  */
 const documents = defineStore("documents", () => {
     // Stores
-    const errors = stores.useErrors()
     const { corpusId, corpus } = storeToRefs(stores.useCorpora())
     const { reload: reloadCorpora } = stores.useCorpora()
 
     // Fields
-    const {
-        data: documents,
-        loading,
-        reload,
-    } = useAxios<DocumentMetadata[]>(
-        (): string | undefined => (corpusId.value ? documentsPath(corpusId.value) : undefined),
-        [],
-    )
-
+    const loading = ref<boolean>(false)
+    const documents = ref<DocumentMetadata[]>([])
     const numSourceAnnotations = computed(() => documents.value.filter((i) => i.summary?.annotations.token > 0).length)
     const uploading: Record<string, FileStatus> = reactive({})
     const uploadBusyCount = computed(() => Object.values(uploading).filter((i) => i.status === "busy").length)
@@ -43,36 +32,34 @@ const documents = defineStore("documents", () => {
         })
     })
 
-    /**
-     * Delete a document.
-     * @param name Document name.
-     */
-    function deleteDocument(name: string): void {
+    /** Reload documents and corpora (number of docs in corpusmetadata can change). */
+    function reload(): void {
+        reloadCorpora()
+        loading.value = true
+        API.getDocuments(corpusId.value)
+            .then((res) => (documents.value = res.data))
+            .finally(() => (loading.value = false))
+    }
+
+    /** Delete a document. */
+    function remove(name: string): void {
         plausible.documentDeleted(corpus.value, getDocument(name))
         API.deleteDocument(corpusId.value, name)
-            .catch((error) => errors.handle(error))
             .finally(reload)
     }
 
-    /**
-     * Download original source document.
-     * @param name Document name.
-     */
-    function downloadRaw(name: string): void {
+    /** Download original source document. */
+    function download(name: string): void {
         plausible.documentDownloaded(corpus.value, getDocument(name))
         API.getRawDocument(corpusId.value, name)
             .then(Utils.browserDownloadResponseFile)
-            .catch((res) => Utils.handleBlobError(res, "download raw document", errors))
     }
 
     function getDocument(name: string): DocumentMetadata {
         return documents.value.find((d: DocumentMetadata) => d.name === name) as DocumentMetadata
     }
 
-    /**
-     * Upload all files in filesToUpload.
-     * Creates timeouts to spread load.
-     */
+    /** Upload all files in filesToUpload. Creates timeouts to spread load. */
     function uploadAll(): void {
         for (let i = 0; i < filesToUpload.value.length; i++) {
             const formData = new FormData()
@@ -86,43 +73,11 @@ const documents = defineStore("documents", () => {
         filesToUpload.value = []
     }
 
-    /**
-     * Clear errors from not yet uploaded files.
-     */
+    /** Clear errors from not yet uploaded files. */
     function clearUploadErrors(): void {
         Object.keys(uploading).forEach((key) => {
             if (uploading[key].status === "error") delete uploading[key]
         })
-    }
-
-    /**
-     * Add content type header.
-     * @param fd FormData with file to upload.
-     * @param contentType Content type header.
-     * @param exts File extensions to apply the content type header to.
-     */
-    function addContentTypeHeader(fd: FormData): Record<string, string> | null {
-        const exts_and_headers = {
-            tsv: "text/tab-separated-values",
-            conllu: "text/tab-separated-values",
-            naf: "text/xml",
-        }
-
-        let file = fd.get("file") as File
-        const extension = fileExtension(file)
-        let header = null
-
-        if (Object.keys(exts_and_headers).includes(extension)) {
-            const contentType = exts_and_headers[extension]
-            file = new File([file], file.name, { type: contentType })
-            header = { "Content-Type": contentType }
-            fd.set("file", file)
-        }
-        return header
-    }
-
-    function fileExtension(file: File): string {
-        return file.name.split(".").at(-1)
     }
 
     /**
@@ -147,23 +102,8 @@ const documents = defineStore("documents", () => {
             .finally(() => {
                 if (uploadBusyCount.value === 0) {
                     reload()
-                    reloadCorpora()
                 }
             })
-    }
-
-    /**
-     * Checks if the documentsStore.documents contains at least one file of the given format.
-     */
-    function containsFormat(format: Format): boolean {
-        return documents.value.some((i) => {
-            // Overwrite the format for legacy formats.
-            let otherFormat = i.format
-            if (otherFormat === Format.TEI_P5_LEGACY) {
-                otherFormat = Format.TEI_P5
-            }
-            return otherFormat === format
-        })
     }
 
     // Exports
@@ -178,11 +118,11 @@ const documents = defineStore("documents", () => {
         uploadErrorCount,
         numSourceAnnotations,
         // Methods
-        deleteDocument,
-        downloadRaw,
+        reload,
+        remove,
+        download,
         uploadAll,
         clearUploadErrors,
-        containsFormat,
     }
 })
 

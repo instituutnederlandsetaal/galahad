@@ -1,51 +1,42 @@
-// Libraries & stores
-
 import * as API from "@/api/jobs"
-import { jobsPath } from "@/api/jobs"
 import type { ProgressResponse } from "@/api/jobs"
 import { getDocsAtTaggers } from "@/api/taggers"
-import { useAxios } from "@/api/useAxios"
 import stores from "@/stores"
-// API & Types
 import { type Job, SOURCE_LAYER } from "@/types/jobs"
 
 const POLL_INTERVAL = 5000
 
-/**
- * Starts, stops and deletes jobs. Polls for job progress. Fetches available jobs.
- */
+/** Starts, stops and deletes jobs. Polls for job progress. Fetches available jobs. */
 const useJobs = defineStore("jobs", () => {
     // Stores
-    const errors = stores.useErrors()
     const corporaStore = stores.useCorpora()
+    const documents = stores.useDocuments()
     const { corpusId } = storeToRefs(corporaStore)
 
     // Fields
-    // Job statuses for the taggers.
-    const url = computed<string | undefined>((): string | undefined =>
-        corpusId.value ? jobsPath(corpusId.value) : undefined,
-    )
-    const { data: jobs, loading, reload } = useAxios<Job[]>(url, [])
-
+    const loading = ref<boolean>(false)
+    const jobs = ref<Job[]>([])
     const taggerJobs = computed((): Job[] => jobs.value.filter((i) => i.tagger.id !== SOURCE_LAYER))
     const posting = ref<boolean>()
     const pollers = {} as { [tagger: string]: number }
     const queueSize = ref<number>()
 
     // Methods
-    /**
-     * Fetch the progress for the given job. To be used within a poller.
-     * @param job Tagger job name.
-     */
+    /** Reload the available jobs for the current corpus. */
+    function reload(): void {
+        documents.reload()
+        loading.value = true
+        API.getJobs(corpusId.value)
+            .then((response) => (jobs.value = response.data))
+            .finally(() => (loading.value = false))
+    }
+    /** Fetch the progress for the given job. To be used within a poller. */
     function getProgress(job: string, corpus: string): void {
         API.getJobProgress(corpus, job)
             .then((response) => setProgress(job, response))
-            .catch((error) => errors.handle(error))
     }
 
-    /**
-     * On poll promise resolve, set the progress for the given job.
-     */
+    /** On poll promise resolve, set the progress for the given job. */
     const setProgress = (job: string, response: ProgressResponse): void => {
         if (response.request.responseURL.includes(corporaStore.corpusId)) {
             // Only commit the response if it corresponds to the correct corpus
@@ -64,10 +55,7 @@ const useJobs = defineStore("jobs", () => {
         }
     }
 
-    /**
-     * Start a continuous progress poller for the given job
-     * @param job Tagger job name.
-     */
+    /** Start a continuous progress poller for the given job*/
     function startPolling(job: string, corpus: string): void {
         if (!(job in pollers)) {
             pollers[job] = setInterval(
@@ -80,10 +68,7 @@ const useJobs = defineStore("jobs", () => {
         }
     }
 
-    /**
-     * Stop polling progress for the given job.
-     * @param job Tagger job name.
-     */
+    /** Stop polling progress for the given job. */
     function stopPolling(job: string): void {
         clearInterval(pollers[job])
         delete pollers[job]
@@ -102,7 +87,6 @@ const useJobs = defineStore("jobs", () => {
                 startPolling(job, corporaStore.corpusId) // TODO: this is a problem, because if the state doesn't change, the polling isn't stopped.
                 getDocsAtTagger()
             })
-            .catch((error) => errors.handle(error))
     }
 
     function cancel(job: string): void {
@@ -113,7 +97,6 @@ const useJobs = defineStore("jobs", () => {
                 setProgress(job, response)
                 getDocsAtTagger()
             })
-            .catch((error) => errors.handle(error))
     }
 
     // 'delete' is a reserved keyword
@@ -125,20 +108,14 @@ const useJobs = defineStore("jobs", () => {
                 setProgress(job, response)
                 getDocsAtTagger()
             })
-            .catch((error) => errors.handle(error))
     }
 
-    /**
-     * Get the number of documents processing at all taggers.
-     */
+    /** Get the number of documents processing at all taggers. */
     function getDocsAtTagger(): void {
         queueSize.value = null
         getDocsAtTaggers()
             .then((response) => {
                 queueSize.value = response.data
-            })
-            .catch((error) => {
-                // Ignore
             })
     }
 

@@ -4,15 +4,15 @@ import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Term
 
 data class TermComparison(
-    val hypoTerm: Term, // Hypothesis
-    val refTerm: Term, // True reference
+    val hyp: Term, // Hypothesis
+    val ref: Term, // True reference
 ) {
     /**
      * Apply a removal regex transformation to the annotation before comparing. E.g. removing _ from lemmas.
      */
-    fun equalAnnotation(annotation: Annotation, regex: Regex): Boolean {
-        var refAnnot: String? = refTerm.annotations[annotation]
-        var hypAnnot: String? = hypoTerm.annotations[annotation]
+    fun equal(annotation: Annotation, regex: Regex): Boolean {
+        var refAnnot: String? = ref.annotations[annotation]
+        var hypAnnot: String? = hyp.annotations[annotation]
 
         if (refAnnot != null) {
             refAnnot = regex.replace(refAnnot, "")
@@ -21,23 +21,23 @@ data class TermComparison(
             hypAnnot = regex.replace(hypAnnot, "")
         }
 
-        return equalAnnotation(refAnnot, hypAnnot)
+        return equal(refAnnot, hypAnnot)
     }
 
-    fun equalAnnotation(annotation: Annotation): Boolean {
-        val refAnnot: String? = refTerm.annotations[annotation]
-        val hypAnnot: String? = hypoTerm.annotations[annotation]
-        return equalAnnotation(refAnnot, hypAnnot)
-    }
-
-    private fun equalAnnotation(ref: String?, hyp: String?): Boolean {
-        if (ref == null) return true
-        if (ref.isEmpty()) return true
-        if (hyp == null) return false
-        return hyp.equals(ref, true)
+    fun equal(annotation: Annotation): Boolean {
+        val refAnnot: String? = ref.annotations[annotation]
+        val hypAnnot: String? = hyp.annotations[annotation]
+        return equal(refAnnot, hypAnnot)
     }
 
     companion object {
         const val MISSING_MATCH: String = "Missing match"
+
+        private fun equal(ref: String?, hyp: String?): Boolean {
+            if (ref == null) return true
+            if (ref.isEmpty()) return true
+            if (hyp == null) return false
+            return hyp.equals(ref, true)
+        }
     }
 }

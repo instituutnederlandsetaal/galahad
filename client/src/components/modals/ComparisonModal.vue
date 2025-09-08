@@ -32,7 +32,7 @@
 import * as API from "@/api/evaluation"
 import * as Utils from "@/api/utils"
 import stores from "@/stores"
-import { literalsForTermComparison } from "@/stores/evaluation"
+import { literalsForTermComparison } from "@/ts/termcomparison"
 import type { TermComparison } from "@/types/evaluation"
 
 // Stores
@@ -57,8 +57,8 @@ const title = computed<string>(() => {
 })
 const annotations = computed(() => {
     const firstSample = props.samples.samples[0]
-    const hypoAnnotations = Object.keys(firstSample.hypoTerm.annotations)
-    const refAnnotations = Object.keys(firstSample.refTerm.annotations)
+    const hypoAnnotations = Object.keys(firstSample.hyp.annotations)
+    const refAnnotations = Object.keys(firstSample.ref.annotations)
     return [...new Set([...hypoAnnotations, ...refAnnotations])].filter((i) => !ignorableAnnotations.includes(i))
 })
 
@@ -93,10 +93,10 @@ const filteredColumns = computed(() => {
 const items = computed(() => {
     if (!props.samples.samples) return []
     return props.samples.samples.map((sample: TermComparison) => {
-        const hypoAnnotations = Object.entries(sample.hypoTerm.annotations).map((i) => ({
+        const hypoAnnotations = Object.entries(sample.hyp.annotations).map((i) => ({
             [`${props.hypothesisJob}-${i[0]}`]: i[1],
         }))
-        const refAnnotations = Object.entries(sample.refTerm.annotations).map((i) => ({
+        const refAnnotations = Object.entries(sample.ref.annotations).map((i) => ({
             [`${props.referenceJob}-${i[0]}`]: i[1],
         }))
 

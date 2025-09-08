@@ -19,12 +19,7 @@ import { DocsTableType } from "@/types/ui/table"
 const { corpus } = storeToRefs(stores.useCorpora())
 const { canWrite } = storeToRefs(stores.useUser())
 const { documents, loading } = storeToRefs(stores.useDocuments())
-const { clearUploadErrors } = stores.useDocuments()
+const { reload } = stores.useDocuments()
 
-onMounted(() => {
-    // Clear errors when this tab is opened.
-    // Note that we can't put this inside DocumentsTable,
-    // because on upload, AnnotateTab will mount it again with v-if.
-    clearUploadErrors()
-})
+reload()
 </script>

@@ -31,9 +31,9 @@
 
         <template #cell-actions="data: TableData<DocumentMetadata>">
             <GForm gap=".25rem">
-                <DownloadButton @click="downloadRaw(data.item.name)" />
+                <DownloadButton @click="download(data.item.name)" />
 
-                <GButton red title="Delete" @click="deleteDocumentData = data.item">
+                <GButton red title="Delete" @click="deleteDocument = data.item">
                     <i class="fa fa-trash"></i>
                 </GButton>
             </GForm>
@@ -45,10 +45,10 @@
     </GModal>
 
     <DeleteModal
-        v-if="deleteDocumentData"
-        :itemName="`${deleteDocumentData.name} and associated results`"
-        @hide="deleteDocumentData = undefined"
-        @delete="deleteDocument(deleteDocumentData.name)"
+        v-if="deleteDocument"
+        :itemName="`${deleteDocument.name} and associated results`"
+        @hide="deleteDocument = undefined"
+        @delete="remove(deleteDocument.name)"
     />
 </template>
 
@@ -60,7 +60,7 @@ import type { DocumentMetadata } from "@/types/documents"
 import { type Column, type TableData, DocsTableType } from "@/types/ui/table"
 
 // Stores
-const { deleteDocument, downloadRaw } = stores.useDocuments()
+const { remove, download } = stores.useDocuments()
 const { canWrite } = storeToRefs(stores.useUser())
 
 // --- props ---
@@ -72,7 +72,7 @@ const { type, corpus, documents, loading } = defineProps<{
 }>()
 
 // --- data ---
-const deleteDocumentData = ref<DocumentMetadata>()
+const deleteDocument = ref<DocumentMetadata>()
 const previewDocument = ref<DocumentMetadata>()
 
 // --- computed ---

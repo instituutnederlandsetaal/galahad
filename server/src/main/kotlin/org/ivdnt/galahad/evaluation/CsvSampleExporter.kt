@@ -23,9 +23,9 @@ interface CsvSampleExporter {
 
         // body
         comps?.forEach { termComp ->
-            val literal = termComp.hypoTerm.token.ifEmpty { termComp.refTerm.token }
-            val refAnnots = refColumns.map { termComp.refTerm.annotations[it] ?: Term.missingName(it) }
-            val hypoAnnots = hypoColumns.map { termComp.hypoTerm.annotations[it] ?: Term.missingName(it) }
+            val literal = termComp.hyp.token.ifEmpty { termComp.ref.token }
+            val refAnnots = refColumns.map { termComp.ref.annotations[it] ?: Term.missingName(it) }
+            val hypoAnnots = hypoColumns.map { termComp.hyp.annotations[it] ?: Term.missingName(it) }
             csv += CSVFile.toCSVRecord(listOf(literal) + refAnnots + hypoAnnots)
         }
         return csv

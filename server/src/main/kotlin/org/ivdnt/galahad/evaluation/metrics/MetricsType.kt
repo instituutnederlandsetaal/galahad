@@ -120,10 +120,10 @@ class MetricsType(
         }
 
         // no match
-        if (comp.hypoTerm == Term.EMPTY) {
+        if (comp.hyp == Term.EMPTY) {
             add(
                 Metric(
-                    name = setting.groupBy(comp.refTerm),
+                    name = setting.groupBy(comp.ref),
                     cls = ClassificationClasses(
                         noMatch = EvaluationEntry(1, mutableListOf(comp)),
                         count = 0
@@ -141,7 +141,7 @@ class MetricsType(
         )
         add(
             Metric(
-                name = setting.groupBy(comp.refTerm),
+                name = setting.groupBy(comp.ref),
                 cls = cls
             )
         )
@@ -149,11 +149,11 @@ class MetricsType(
             // This term is also be someone else's false positive, so switch around.
             val cls2 = ClassificationClasses(
                 falsePositive = EvaluationEntry(count = falses.samples.size, falses.samples.toMutableList()),
-                count = if (setting.groupBy(comp.hypoTerm) == setting.groupBy(comp.refTerm)) 0 else 1
+                count = if (setting.groupBy(comp.hyp) == setting.groupBy(comp.ref)) 0 else 1
             )
             add(
                 Metric(
-                    name = setting.groupBy(comp.hypoTerm), // Terms are switched, so hypo.
+                    name = setting.groupBy(comp.hyp), // Terms are switched, so hypo.
                     cls = cls2
                 )
             )

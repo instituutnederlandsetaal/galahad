@@ -1,20 +1,13 @@
 <template>
     <GCard>
-        <div class="table-controls" v-if="bothJobsSelected">
-            <div class="table-control">
-                <label for="annotation-select">Annotation</label>
-                <GSelect id="annotation-select" :options="confusionableAnnotations" v-model="selectedAnnotation" />
-            </div>
-        </div>
         <GTable
-            title="Part-of-speech confusion"
+            title="Confusion table"
             helpLink="evaluation"
             :columns
             :items="rows"
             id="confusionTable"
             :loading
             sortColumn="referenceJob"
-            :sortDesc="false"
         >
             <template #help>
                 <p>
@@ -30,11 +23,18 @@
                 <DifferentTagsetsHelp />
             </template>
 
-            <template #header> </template>
+            <template #header>
+                <GForm v-if="confusion">
+                    <fieldset>
+                        <label for="annotation-select">Annotation</label>
+                        <GSelect id="annotation-select" :options="annotationOptions" v-model="selectedAnnotation" />
+                    </fieldset>
+                </GForm>
+            </template>
 
-            <template #table-empty
-                >Select a reference layer, a hypothesis layer and an annotation to generate a confusion table.</template
-            >
+            <template #table-empty>
+                Select a reference layer and a hypothesis layer to generate a confusion table.
+            </template>
 
             <!-- top left header -->
             <template #head-referenceJob>
@@ -49,9 +49,7 @@
                 <div v-if="data.column.key == 'referenceJob'">
                     {{ data.value }}
                 </div>
-
-                <!-- cell -->
-                <GButton v-else :disabled="!data.value.count" :class="cssClass(data)" @click="openModal(data)">
+                <GButton v-else :disabled="!data.value" :class="cssClass(data)" @click="openModal(data)">
                     {{ `${(data.value ? data.value.count : 0).toString().padStart(3, "&nbsp;")}` }}
                 </GButton>
             </template>
@@ -70,44 +68,41 @@
 </template>
 
 <script setup lang="ts">
-// Libraries & stores
-
 import stores from "@/stores"
-
 import * as API from "@/api/evaluation"
 import * as Utils from "@/api/utils"
-import type { EvaluationEntry, Samples } from "@/types/evaluation"
-// API & types
+import { Confusion, type EvaluationEntry, type Samples } from "@/types/evaluation"
 import type { Column } from "@/types/ui/table"
 
 // Stores
-const { loading, confusion } = storeToRefs(stores.useConfusion())
+const { loading, confusions } = storeToRefs(stores.useConfusion())
 const corporaStore = stores.useCorpora()
 const jobSelection = stores.useJobSelection()
-const errors = stores.useErrors()
+const { hypothesisId, referenceId } = storeToRefs(stores.useJobSelection())
+const { reload } = stores.useConfusion()
+watch([hypothesisId, referenceId], reload, { immediate: true })
 
 // Custom types
 type Item = { [key: string]: EvaluationEntry } & { referenceJob: string }
 type Cell = { field: Column; item: Item; value: EvaluationEntry }
 
 // Fields
-const confusionableAnnotations = computed(() =>
-    Object.keys(confusion.value || {}).map((key) => ({ value: key, text: key })),
-)
+// Selected confusion
+const annotationOptions = computed(() => Object.keys(confusions.value ?? {}).map((key) => ({ value: key, text: key })))
+watch(annotationOptions, () => (selectedAnnotation.value = annotationOptions.value[0]?.value))
 const selectedAnnotation = ref<string>()
+const confusion = computed<Confusion>(() => confusions.value?.[selectedAnnotation.value])
+
 const downloading = ref<boolean>()
 const modalData = ref({})
 const samples = ref<Samples>()
-const selectedConfusion = computed(() => confusion?.value[selectedAnnotation.value] || { table: {} })
-const bothJobsSelected = computed(() => {
-    return jobSelection.hypothesisId && jobSelection.referenceId
-})
 
 const columns = computed((): Column[] => {
+    if (!confusion.value) return []
     // add the entries
     const entries = {} as { [key: string]: boolean }
-    Object.keys(selectedConfusion?.value?.table)?.map((k1) => {
-        Object.keys(selectedConfusion?.value?.table[k1])?.forEach((k2) => (entries[k2] = true))
+    Object.keys(confusion.value)?.map((k1) => {
+        Object.keys(confusion.value[k1])?.forEach((k2) => (entries[k2] = true))
     })
 
     // add referenceJob, sort, map and return
@@ -136,11 +131,10 @@ const columns = computed((): Column[] => {
 })
 
 const rows = computed((): Item[] => {
-    return Object.keys(selectedConfusion.value.table).map((k1) => {
+    if (!confusion.value) return []
+    return Object.keys(confusion.value).map((k1) => {
         const ret = { referenceJob: k1 } as { [key: string]: EvaluationEntry } & { referenceJob: string }
-        Object.keys(selectedConfusion.value.table[k1]).forEach(
-            (k2) => (ret[k2] = selectedConfusion.value.table[k1][k2]),
-        )
+        Object.keys(confusion.value[k1]).forEach((k2) => (ret[k2] = confusion.value[k1][k2]))
         return ret
     })
 })
@@ -162,19 +156,14 @@ function download() {
         .then((response) => {
             Utils.browserDownloadResponseFile(response)
         })
-        .catch((res) => Utils.handleBlobError(res, "download confusion samples", errors))
         .finally(() => (downloading.value = false))
 }
-/**
- * Case insensitive string compare.
- */
+/** Case insensitive string compare. */
 function strEqual(a: string, b: string) {
     return a.toUpperCase() === b.toUpperCase()
 }
 
-/**
- * returns whether this pos should be sorted to the bottom.
- */
+/** returns whether this pos should be sorted to the bottom. */
 function posToBottom(pos: string) {
     const posses = ["NO_POS", "Missing match", "OTHER", "LET", "PUNCT", "PC", "MULTIPLE"]
     return posses.includes(pos)

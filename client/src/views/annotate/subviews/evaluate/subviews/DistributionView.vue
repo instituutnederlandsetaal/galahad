@@ -1,7 +1,6 @@
 <template>
     <GCard>
-        <GTable helpLink="evaluation" :columns :loading :items="itemsToDisplay" sortColumn="count">
-            <template #title>Distribution</template>
+        <GTable helpLink="evaluation" :columns :loading :items="itemsToDisplay" sortColumn="count" title="Distribution">
             <template #table-empty>
                 <p v-if="distribution">No results for current filter settings.</p>
                 <p v-else>Select a hypothesis layer and an annotation to view a distribution.</p>
@@ -26,22 +25,22 @@
                     </fieldset>
                     <fieldset>
                         <label for="annotation-select">Group by</label>
-                        <GSelect
-                            id="annotation-select"
-                            :options="distributionStore.distributionOptions"
-                            v-model="selectedDistribution"
-                        />
+                        <GSelect id="annotation-select" :options="distributionOptions" v-model="selectedDistribution" />
                     </fieldset>
                     <fieldset>
                         <label for="analysis-select">Single/multiple analyses</label>
-                        <GSelect id="analysis-select" :options="singMultiPosOptions" v-model="selectedSingMultiPos" />
+                        <GSelect
+                            id="analysis-select"
+                            :options="singleMultipleOptions"
+                            v-model="selectedSingleMultiple"
+                        />
                     </fieldset>
                     <fieldset>
                         <label for="pos-select">Include groups</label>
                         <MultiSelect
                             id="pos-select"
                             v-model="selectedPosses"
-                            :options="filteredPosses"
+                            :options="filteredGroups"
                             placeholder="Select PoS"
                             :maxSelectedLabels="5"
                         />
@@ -107,38 +106,40 @@ import type { SelectOption } from "@/types/ui/select"
 import MultiSelect from "primevue/multiselect"
 
 // Stores
-const distributionStore = stores.useDistribution()
-const { distribution, selectedDistribution, loading } = storeToRefs(distributionStore)
+const { hypothesisId } = storeToRefs(stores.useJobSelection())
+const { distributions, loading } = storeToRefs(stores.useDistribution())
+const { reload } = stores.useDistribution()
 
 // Fields
+// Selected distribution.
+const distributionOptions = computed<SelectOption[]>(() =>
+    Object.keys(distributions.value ?? {}).map((x) => ({ value: x, text: x })),
+)
+const selectedDistribution = ref<string>()
+const distribution = computed<TypeToken[]>(() => distributions.value?.[selectedDistribution.value])
+
 const selectedPosses = ref<string[]>([])
 // Table controls.
-const includePos = ref<Record<string, boolean>>({})
 const lemmaFilter = ref<string>("")
 const literalFilter = ref<string>("")
 // GModal for variants
 const typeToken = ref<TypeToken>()
+
 // Filtered table items.
 const itemsToDisplay = computed((): TypeToken[] => {
     if (!distribution.value) return []
     return (
         distribution.value
-            // Case insensitive string comparison.
+            // // Case insensitive string comparison.
             .filter((t: TypeToken) => t.lemma.toLowerCase().includes(lemmaFilter.value.toLowerCase()))
-            .filter((t: TypeToken) => selectedPosses.value.includes(t.group))
-            // Filter by single/multiple PoS
-            .filter((t: TypeToken) => {
-                if (selectedSingMultiPos.value === "single") return !t.group.includes("+")
-                if (selectedSingMultiPos.value === "multiple") return t.group.includes("+")
-                return true
-            })
-            // Case insensitive string comparison.
-            // join on \n, as it can't be entered into a <input type=text>
+            // // join on \n, as it can't be entered into a <input type=text>
             .filter((t: TypeToken) =>
                 Object.keys(t.tokens).join("\n").toLowerCase().includes(literalFilter.value.toLowerCase()),
             )
+            .filter((t: TypeToken) => selectedPosses.value.includes(t.group))
     )
 })
+
 const columns = [
     { key: "lemma" },
     { key: "group" },
@@ -146,50 +147,47 @@ const columns = [
     { key: "unique", label: "unique", align: "right", sortOn: (t: TypeToken) => Object.keys(t.tokens).length },
     { key: "types", noSort: true },
 ]
-const singMultiPosOptions: SelectOption[] = [
+const singleMultipleOptions: SelectOption[] = [
     { value: "single", text: "Single" },
     { value: "multiple", text: "Multiple" },
     { value: "both", text: "Both" },
 ]
-const selectedSingMultiPos = ref<string>(singMultiPosOptions[0].value)
-const filteredPosses = computed(() => {
-    if (selectedSingMultiPos.value === "single") {
-        return distributionStore.posses.filter((pos) => !pos.includes("+"))
+const selectedSingleMultiple = ref<string>(singleMultipleOptions[0].value)
+const filteredGroups = computed(() => {
+    if (selectedSingleMultiple.value === "single") {
+        return groups.value.filter((pos) => !pos.includes("+"))
     }
-    if (selectedSingMultiPos.value === "multiple") {
-        return distributionStore.posses.filter((pos) => pos.includes("+"))
+    if (selectedSingleMultiple.value === "multiple") {
+        return groups.value.filter((pos) => pos.includes("+"))
     }
-    return distributionStore.posses
+    return groups.value
 })
+
+// const distribution = computed<TypeToken[]>(() => distributions.value?.[selectedDistribution.value] ?? [])
+// const selectedDistribution = ref<string>()
+// const distributionOptions = computed<SelectOption[]>(() =>
+//     Object.keys(distributions.value || {}).map((x) => ({ value: x, text: x })),
+// )
+const groups = computed<string[]>(() =>
+    [...new Set(Object.values(distribution.value || {}).map((t: TypeToken) => t.group))].sort(),
+)
 
 // Watches
 /**
  * On switching jobs, turn on all PoS checkboxes. We check for change in distributionStore.posses, not in
  * jobSelection.hypothesisId, because of the network delay.
  */
-watch(
-    () => distributionStore.posses,
-    () => {
-        distributionStore.posses.forEach((pos) => (includePos.value[pos] = true))
-    },
-    { immediate: true },
-)
+// watch(
+//     () => distributionStore.posses,
+//     () => {
+//         distributionStore.posses.forEach((pos) => (includePos.value[pos] = true))
+//     },
+//     { immediate: true },
+// )
 
-watch(
-    () => distributionStore.distributionOptions,
-    () => {
-        // Reset selectedDistribution when options change.
-        if (distributionStore.distributionOptions.length > 0) {
-            selectedDistribution.value = distributionStore.distributionOptions[0].value
-        }
-    },
-)
+watch(hypothesisId, reload, { immediate: true })
 
-watch(
-    () => filteredPosses.value,
-    () => {
-        selectedPosses.value = filteredPosses.value
-    },
-    { immediate: true },
-)
+watch(distributionOptions, () => (selectedDistribution.value = distributionOptions.value[0]?.value))
+
+watch(filteredGroups, () => (selectedPosses.value = filteredGroups.value))
 </script>

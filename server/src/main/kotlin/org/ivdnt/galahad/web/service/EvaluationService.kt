@@ -9,7 +9,7 @@ import org.ivdnt.galahad.corpora.CorpusMetadata
 import org.ivdnt.galahad.evaluation.JobPair
 import org.ivdnt.galahad.evaluation.comparison.*
 import org.ivdnt.galahad.evaluation.confusion.CONFUSION_TYPES
-import org.ivdnt.galahad.evaluation.confusion.CorpusConfusion
+import org.ivdnt.galahad.evaluation.confusion.JobConfusion
 import org.ivdnt.galahad.evaluation.distribution.DocumentDistribution
 import org.ivdnt.galahad.evaluation.distribution.JobDistribution
 import org.ivdnt.galahad.evaluation.entities.CorpusEntities
@@ -41,24 +41,6 @@ class EvaluationService(val corpora: CorporaService) {
 
     private val user: User get() = User.fromRequest(request)
 
-    fun getConfusion(
-        corpus: UUID,
-        job: String,
-        reference: String?,
-    ): Map<Annotation, CorpusConfusion> {
-        val allAnnots = annotationTypesForTagger(job, corpus)
-        val annotationTypes = CONFUSION_TYPES.filter { it in allAnnots }
-        val confusions = annotationTypes.associateWith {
-            CorpusConfusion(
-                corpora.readAsReaderOrThrow(corpus, user),
-                hypothesis = job,
-                annotation = it,
-                reference = if (reference.isNullOrBlank()) SOURCE_LAYER_NAME else reference,
-            )
-        }
-        return confusions
-    }
-
     fun getConfusionSamples(
         hypoFilter: String,
         refFilter: String,
@@ -67,24 +49,25 @@ class EvaluationService(val corpora: CorporaService) {
         job: String,
         reference: String,
     ): ByteArray {
-        // Ensure the job has the required annotation types.
-        if (annotation !in annotationTypesForTagger(job, corpus)) {
-            throw AnnotationNotSupported(job, annotation)
-        }
-        var layerFilter: ConfusionLayerFilter? = ConfusionLayerFilter(
-            HeadGroupTermFilter(annotation, hypoFilter),
-            HeadGroupTermFilter(annotation, refFilter),
-        )
-        val cc = CorpusConfusion(
-            corpus = corpora.readAsReaderOrThrow(corpus, user),
-            hypothesis = job,
-            reference = reference,
-            layerFilter = layerFilter,
-            annotation = annotation
-        )
-        val fileName = "confusion-${refFilter}-${hypoFilter}.csv"
-        val csv = cc.samplesToCSV()
-        return samplesToZip(corpus, job, reference, csv, fileName)
+        return ByteArray(0)
+//        // Ensure the job has the required annotation types.
+//        if (annotation !in annotationTypesForTagger(job, corpus)) {
+//            throw AnnotationNotSupported(job, annotation)
+//        }
+//        var layerFilter: ConfusionLayerFilter? = ConfusionLayerFilter(
+//            HeadGroupTermFilter(annotation, hypoFilter),
+//            HeadGroupTermFilter(annotation, refFilter),
+//        )
+//        val cc = JobConfusion(
+//            corpus = corpora.readAsReaderOrThrow(corpus, user),
+//            hypothesis = job,
+//            reference = reference,
+//            layerFilter = layerFilter,
+//            annotation = annotation
+//        )
+//        val fileName = "confusion-${refFilter}-${hypoFilter}.csv"
+//        val csv = cc.samplesToCSV()
+//        return samplesToZip(corpus, job, reference, csv, fileName)
     }
 
     fun getMetrics(
@@ -188,11 +171,11 @@ class EvaluationService(val corpora: CorporaService) {
     }
 
     private fun createConfusionCsv(dir: File, corpus: UUID, job: String, reference: String?) {
-        val confusions = getConfusion(corpus, job, reference)
-        confusions.forEach { (annotation, confusion) ->
-            val file = CSVFile(dir.resolve("confusion-${annotation.value}.csv"))
-            file.appendText(confusion.countsToCSV())
-        }
+//        val confusions = getJobConfusion(corpus, job, reference)
+//        confusions.forEach { (annotation, confusion) ->
+//            val file = CSVFile(dir.resolve("confusion-${annotation.value}.csv"))
+//            file.appendText(confusion.countsToCSV())
+//        }
     }
 
     private fun createMetricsCsv(dir: File, corpus: UUID, job: String, reference: String?) {
@@ -298,5 +281,15 @@ class EvaluationService(val corpora: CorporaService) {
         val corpusObj = corpora.readAsReaderOrThrow(corpus, user)
         val jobEval = corpusObj.evaluation.createOrThrow(JobPair(job))
         return jobEval.distribution
+    }
+
+    fun getJobConfusion(
+        corpus: UUID,
+        hypothesis: String,
+        reference: String,
+    ): JobConfusion {
+        val corpusObj = corpora.readAsReaderOrThrow(corpus, user)
+        val jobEval = corpusObj.evaluation.createOrThrow(JobPair(hypothesis, reference))
+        return jobEval.confusion
     }
 }

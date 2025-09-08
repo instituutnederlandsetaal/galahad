@@ -23,8 +23,7 @@
                 <GInfo>
                     <p>
                         You have uploaded
-                        <b>{{ formatToHumanReadable(format) }}</b> files to this corpus and you are now exporting
-                        <b>{{ formatToHumanReadable(format) }}</b
+                        <b>{{ format }}</b> files to this corpus and you are now exporting <b>{{ format }}</b
                         >. It is possible to insert the annotation layer into the original file. This will retain the
                         original encoding.
                     </p>
@@ -56,30 +55,18 @@ const { convert } = exportStore
 const { loading, format } = storeToRefs(exportStore)
 const documentsStore = stores.useDocuments()
 const { documents } = storeToRefs(documentsStore)
-const { containsFormat } = documentsStore
 
 // #data
 const posHeadOnly = ref<boolean>(false)
-const shouldMerge = ref<boolean>(true)
+const shouldMerge = ref<boolean>(false)
 
 // #computed
 const showMergeOption = computed(() => {
     const f = format.value
     const formatIsMergeable = f === Format.TEI_P5 || f === Format.TSV || f === Format.FOLIA || f === Format.CONLLU
-    const formatInCorpus = containsFormat(f)
+    const formatInCorpus = documents.value.some((doc) => doc.format === f)
     return formatIsMergeable && formatInCorpus
 })
 const hasTeiP5Legacy = computed(() => documents.value.some((i) => i.format === Format.TEI_P5_LEGACY))
 const disabled = computed(() => format.value === undefined || hypothesisId.value === undefined || loading.value)
-
-// #methods
-function formatToHumanReadable(format: Format): string {
-    switch (format) {
-        case Format.TEI_P5:
-        case Format.TEI_P5_LEGACY:
-            return "TEI P5"
-        default:
-            return format
-    }
-}
 </script>

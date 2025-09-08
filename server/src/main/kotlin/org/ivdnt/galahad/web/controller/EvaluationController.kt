@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
-import org.ivdnt.galahad.evaluation.confusion.Confusion
+import org.ivdnt.galahad.evaluation.confusion.JobConfusion
 import org.ivdnt.galahad.evaluation.distribution.JobDistribution
 import org.ivdnt.galahad.evaluation.distribution.TypeToken
 import org.ivdnt.galahad.evaluation.entities.CorpusEntities
@@ -72,11 +72,11 @@ class EvaluationController(
     )
     @CrossOrigin
     @GetMapping(Endpoints.Evaluation.CONFUSION)
-    fun getConfusion(
+    fun getJobConfusion(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @RequestParam @Parameter(description = "Tagger name or sourceLayer") hypothesis: String,
         @RequestParam @Parameter(description = "Tagger name or sourceLayer") reference: String,
-    ): Map<Annotation, Confusion> = evaluationService.getConfusion(corpus, hypothesis, reference)
+    ): JobConfusion = evaluationService.getJobConfusion(corpus, hypothesis, reference)
 
     @Operation(
         summary = "Get confusion samples",

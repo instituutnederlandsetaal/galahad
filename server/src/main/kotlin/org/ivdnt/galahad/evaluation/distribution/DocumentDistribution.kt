@@ -9,7 +9,7 @@ class DocumentDistribution(
     @JsonValue val typeTokens: Map<Annotation, List<TypeToken>>
 ) {
     companion object {
-        private val GROUPABLE_ANNOTATIONS = arrayOf(Annotation.POS, Annotation.UPOS, Annotation.NER)
+        private val ANNOTATIONS = arrayOf(Annotation.POS, Annotation.UPOS, Annotation.NER)
 
         fun create(layer: Layer): DocumentDistribution =
             DocumentDistribution(buildMap<Annotation, MutableMap<Pair<String, String>, MutableMap<String, Int>>> {
@@ -19,7 +19,7 @@ class DocumentDistribution(
                 // Then convert it to List<TypeToken>.
                 layer.terms.forEach { t ->
                     // For each term in the layer, get the valid annotations and their values
-                    t.annotations.filter { it.key in GROUPABLE_ANNOTATIONS }.forEach { (annotation, _) ->
+                    t.annotations.filter { it.key in ANNOTATIONS }.forEach { (annotation, _) ->
                         // map the annotation to a map of pairs [lemma; annotation head] and tokens and their counts.
                         // Pair examples: [NO_LEMMA; PC], [lopen; VRB] (so head only)
                         val pair = t.annotationOrMissing(Annotation.LEMMA) to t.annotationHeadOrMissing(annotation)

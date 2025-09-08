@@ -21,8 +21,7 @@
                 { id: 'distribution', title: 'Distribution' },
                 { id: 'global_metrics', title: 'Global Metrics' },
                 { id: 'grouped_metrics', title: 'Grouped Metrics' },
-                { id: 'confusion', title: 'Pos Confusion' },
-                { id: 'document_layer_comparison', title: 'Document View' },
+                { id: 'confusion', title: 'Confusion' },
                 { id: 'entities', title: 'Entities' },
             ]"
         >

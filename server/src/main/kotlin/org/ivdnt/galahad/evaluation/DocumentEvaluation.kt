@@ -2,10 +2,13 @@ package org.ivdnt.galahad.evaluation
 
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.corpora.Corpus
+import org.ivdnt.galahad.evaluation.comparison.LayerComparison
+import org.ivdnt.galahad.evaluation.confusion.DocumentConfusion
 import org.ivdnt.galahad.evaluation.distribution.DocumentDistribution
 import org.ivdnt.galahad.evaluation.entities.DocumentEntities
 import org.ivdnt.galahad.files.GalahadFolder
 import org.ivdnt.galahad.files.ValidatedDiskValue
+import org.ivdnt.galahad.jobs.Job
 import java.io.File
 
 /**
@@ -18,23 +21,35 @@ class DocumentEvaluation(
     private val corpus: Corpus,
     private val jobs: JobPair,
 ) : GalahadFolder(dir) {
-    val refLayer: Layer get() = corpus.jobs.readOrThrow(jobs.reference).getLayer(name)
-    val hypLayer: Layer get() = corpus.jobs.readOrThrow(jobs.hypothesis).getLayer(name)
+    private val refJob: Job get() = corpus.jobs.readOrThrow(jobs.reference)
+    private val hypJob: Job get() = corpus.jobs.readOrThrow(jobs.hypothesis)
+    private val refLayer: Layer get() = refJob.getLayer(name)
+    private val hypLayer: Layer get() = hypJob.getLayer(name)
+    private val refModified: Long get() = refJob.results.readOrThrow(name).modified
+    private val hypModified: Long get() = hypJob.results.readOrThrow(name).modified
+    private val lastModified: Long get() = hypModified.coerceAtLeast(refModified)
 
     val entities: DocumentEntities
         get() = object : ValidatedDiskValue<DocumentEntities>(dir.resolve(ENTITIES_FILE)) {
-            override fun isValid(modified: Long) = modified >= corpus.documents.readOrThrow(name).modified
+            override fun isValid(modified: Long) = modified >= lastModified
             override fun set(): DocumentEntities = DocumentEntities.create(refLayer)
         }.readOrCreate<DocumentEntities>()
 
     val distribution: DocumentDistribution
         get() = object : ValidatedDiskValue<DocumentDistribution>(dir.resolve(DISTRIBUTION_FILE)) {
-            override fun isValid(modified: Long) = modified >= corpus.documents.readOrThrow(name).modified
+            override fun isValid(modified: Long) = modified >= lastModified
             override fun set(): DocumentDistribution = DocumentDistribution.create(refLayer)
         }.readOrCreate<DocumentDistribution>()
+
+    val confusion: DocumentConfusion
+        get() = object : ValidatedDiskValue<DocumentConfusion>(dir.resolve(CONFUSION_FILE)) {
+            override fun isValid(modified: Long) = modified >= lastModified
+            override fun set(): DocumentConfusion = DocumentConfusion.create(LayerComparison(refLayer, hypLayer))
+        }.readOrCreate<DocumentConfusion>()
 
     companion object {
         private const val ENTITIES_FILE = "entities.json"
         private const val DISTRIBUTION_FILE = "distribution.json"
+        private const val CONFUSION_FILE = "confusion.json"
     }
 }

@@ -3,12 +3,11 @@ import { type Job, SOURCE_LAYER } from "@/types/jobs"
 import type { SelectOption } from "@/types/ui/select"
 import { useRouteQuery } from "@vueuse/router"
 
-/**
- * Stores the current job selection from the <select>. Used in Evaluation & Export.
- */
+/** Stores the current job selection from the <select>. Used in Evaluation & Export. */
 const useJobSelection = defineStore("jobSelection", () => {
     // Stores
     const { jobs } = storeToRefs(stores.useJobs())
+    const { reload } = stores.useJobs()
     const corpora = stores.useCorpora()
     const documentsStore = stores.useDocuments()
 
@@ -42,6 +41,8 @@ const useJobSelection = defineStore("jobSelection", () => {
         }
         return `${job.tagger.id} (${job.tagger.description}) [${finished}/${total} docs]`
     }
+
+    reload()
 
     return { hypothesisId, referenceId, options }
 })

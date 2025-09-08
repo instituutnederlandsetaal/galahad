@@ -1,11 +1,5 @@
 // Confusion
-export type ConfusionWrapper = {
-    matrix: { [key: string]: { count: number; samples: TermComparison[] } }
-    table: { [key: string]: {} }
-    generated: number
-    hypothesisLastModified: number
-    referenceLastModified: number
-}
+export type Confusion = Record<string, Record<string, { count: number; samples: TermComparison[] }>>
 
 // Metrics
 export type Metrics = {
@@ -31,8 +25,8 @@ export type MetricEntry = { count: number; samples: TermComparison[] }
 
 // Shared
 export type TermComparison = {
-    hypoTerm: Term
-    refTerm: Term
+    hyp: Term
+    ref: Term
     equalLemma: boolean
     equalPOS: boolean
     equalLabel: boolean

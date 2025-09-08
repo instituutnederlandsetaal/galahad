@@ -16,7 +16,7 @@ const useErrors = defineStore("errors", () => {
     }
 
     setupErrorHandler()
-    
+
     return { errors }
 })
 

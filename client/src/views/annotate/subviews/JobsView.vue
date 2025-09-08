@@ -75,7 +75,10 @@ import MultiSelect from "primevue/multiselect"
 // #stores
 const { canWrite } = storeToRefs(stores.useUser())
 const { loading, taggerJobs } = storeToRefs(stores.useJobs())
+const { reload } = stores.useJobs()
 const { corpus } = storeToRefs(stores.useCorpora())
+
+reload()
 
 // #data
 const jobId = ref<string>()

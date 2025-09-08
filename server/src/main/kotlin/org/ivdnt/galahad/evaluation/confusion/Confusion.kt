@@ -77,9 +77,9 @@ open class Confusion(private val truncate: Boolean = true, val annotation: Annot
 
     fun add(termComp: TermComparison) {
         add(
-            termComp.hypoTerm.takeUnless { it == Term.EMPTY }?.annotationHeadOrMissing(annotation)
+            termComp.hyp.takeUnless { it == Term.EMPTY }?.annotationHeadOrMissing(annotation)
                 ?: TermComparison.MISSING_MATCH,
-            termComp.refTerm.takeUnless { it == Term.EMPTY }?.annotationHeadOrMissing(annotation)
+            termComp.ref.takeUnless { it == Term.EMPTY }?.annotationHeadOrMissing(annotation)
                 ?: TermComparison.MISSING_MATCH,
             termComp
         )

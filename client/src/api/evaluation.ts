@@ -5,10 +5,10 @@
 import axios, { type AxiosResponse } from "axios"
 import { getBlob, type BlobResponse } from "@/api/utils"
 import type { UUID } from "@/types/corpora"
-import type { ConfusionWrapper, DistributionWrapper, Metrics, TermComparison } from "@/types/evaluation"
+import type { Confusion, DistributionWrapper, Metrics, TermComparison } from "@/types/evaluation"
 import type { DocumentEntities, JobEntities, JobsEntities } from "@/types/evaluation/entities"
 
-type ConfusionResponse = AxiosResponse<ConfusionWrapper>
+type ConfusionResponse = AxiosResponse<Confusion>
 type DistributionResponse = AxiosResponse<DistributionWrapper>
 type MetricsResponse = AxiosResponse<Metrics>
 type DocumentEntitiesResponse = AxiosResponse<DocumentEntities>
