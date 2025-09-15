@@ -46,7 +46,7 @@ class Job(
             val errors = results.readAll().mapNotNull { it.error?.let { error -> name to error } }.toMap()
             return Progress(
                 pending = statuses.count { it == JobStatus.PENDING },
-                processing = statuses.count { it == JobStatus.PROCESSING },
+                processing = (if (JobController.inQueue(this)) 1 else 0),
                 failed = statuses.count { it == JobStatus.ERROR },
                 finished = statuses.count { it == JobStatus.FINISHED },
                 errors = errors
@@ -93,7 +93,7 @@ class Job(
     }
 
     fun stop() {
-        JobController.unqueue(this)
+        JobController.dequeue(this)
     }
 
     override fun equals(other: Any?): Boolean {

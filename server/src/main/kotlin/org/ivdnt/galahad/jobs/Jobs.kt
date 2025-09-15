@@ -43,7 +43,7 @@ class Jobs(
     override fun ctor(key: String): Job = Job(dir.resolve(key), corpus)
     override fun throwNotFound(key: String): Nothing = throw JobNotFoundException(key)
     override fun deleteOrThrow(key: String) {
-        JobController.unqueue(readOrThrow(key))
+        JobController.dequeue(readOrThrow(key))
         super.deleteOrThrow(key)
     }
 

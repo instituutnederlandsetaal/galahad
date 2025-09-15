@@ -26,16 +26,28 @@ object JobController {
     private var task: Task? = null
     val queueSize: Int get() = queue.size
 
+    fun inQueue(job: Job): Boolean = job in queue
+
     fun queue(job: Job) {
         if (job.name == SOURCE_LAYER_NAME) throw SourceLayerNotATaggerException()
+        if (job in queue) {
+            return // Already in queue, nothing to do.
+        }
         queue += job
         start()
     }
 
-    fun unqueue(job: Job) {
+    fun dequeue(job: Job) {
         if (job.name == SOURCE_LAYER_NAME) throw SourceLayerNotATaggerException()
-        queue -= job
-        stop(job)
+        if (job in queue) {
+            queue -= job
+        }
+        if (task?.job == job) {
+            task = null
+            terminate(job)
+        }
+        // next job now that this one is gone
+        start()
     }
 
     fun receive(uuid: UUID, file: File) {
@@ -43,10 +55,10 @@ object JobController {
             throw Exception("No task found for UUID $uuid")
         }
         task!!.finish(file)
-        // if no untagged documents are left, remove the job from the queue
+        // if no untagged documents are left, remove the job from the queue and terminate the tagger
         val numUntagged = task!!.job.corpus.documents.readAll().count { task!!.job.results.readOrNull(it.name) == null }
         if (numUntagged == 0) {
-            queue -= task!!.job
+            dequeue(task!!.job)
         }
         // next document, or next job if all documents are tagged
         task = null
@@ -65,8 +77,8 @@ object JobController {
                 // Is there even an untagged document?
                 val doc = untagged.firstOrNull()
                 if (doc == null) {
-                    // Somehow no untagged documents left, remove the job from the queue anyway.
-                    queue -= job
+                    // Nothing to tag, dequeue.
+                    dequeue(job)
                 } else {
                     // Tag and register task.
                     val id = tag(job, doc)
@@ -74,16 +86,6 @@ object JobController {
                 }
             }
         }
-    }
-
-    private fun stop(job: Job) {
-        if (task?.job != job) {
-            return // No task to stop.
-        }
-        // Send stop signal to tagger.
-        val url = "${Tagger.readOrThrow(job.name).url}/input/${task?.uuid}"
-        RestTemplate().delete(url)
-        task = null
     }
 
     private fun tag(job: Job, doc: Document): UUID {
@@ -100,6 +102,17 @@ object JobController {
             throw Exception("Error while tagging: ${response.statusCode}")
         }
         return UUID.fromString(response.body) ?: throw Exception("No UUID received from tagger")
+    }
+
+    /** Terminate the tagger associated with this job. */
+    private fun terminate(job: Job) {
+        try {
+            val url = "${Tagger.readOrThrow(job.name).url}/terminate"
+            RestTemplate().postForEntity<String>(url, null)
+        }
+        catch (e: Exception) {
+            // Ignore. Can only hope tagger has terminated.
+        }
     }
 
     private class Task(val uuid: UUID, val job: Job, val doc: String) {
