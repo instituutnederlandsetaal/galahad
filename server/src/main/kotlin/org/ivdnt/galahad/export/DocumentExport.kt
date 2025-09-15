@@ -22,8 +22,8 @@ class DocumentExport private constructor(
     val layer: Layer = job.getLayer(document)
     val sourceLayer: Layer by lazy { corpus.jobs.readOrNull(SOURCE_LAYER_NAME)?.getLayer(document) ?: Layer.EMPTY }
 
-    fun convert(out: OutputStream): Unit = LayerWriter.create(this).convert(out)
-    fun merge(out: OutputStream): Unit = LayerMerger.create(this).merge(out)
+    fun convert(out: OutputStream): Unit = LayerWriter.create(this).convert(out).also { out.flush() }
+    fun merge(out: OutputStream): Unit = LayerMerger.create(this).merge(out).also { out.flush() }
     fun cmdi(out: OutputStream): Unit = CmdiMetadata(this).write(out)
 
     companion object {
