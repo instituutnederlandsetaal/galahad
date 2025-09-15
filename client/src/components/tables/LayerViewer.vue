@@ -22,7 +22,7 @@ const { document, job } = defineProps<{ document?: DocumentMetadata; job?: Job }
 // #computed
 const name = computed(() => (document ? document.name : job?.tagger.id))
 const summary = computed(() => (document ? document.summary : job.summary))
-const annotations = computed(() => (document ? document.annotations : job.tagger.annotations))
+const annotations = computed(() => Object.keys(summary.value.annotations))
 const columns = computed(() => annotations.value.map((i) => ({ key: i, label: i })))
 const terms = computed(() => (document ? document.preview.terms : job.preview.terms))
 const items = computed(() => terms.value.map((t) => t.annotations))
