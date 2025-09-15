@@ -10,7 +10,6 @@ const POLL_INTERVAL = 5000
 const useJobs = defineStore("jobs", () => {
     // Stores
     const corporaStore = stores.useCorpora()
-    const documents = stores.useDocuments()
     const { corpusId } = storeToRefs(corporaStore)
 
     // Fields
@@ -24,10 +23,14 @@ const useJobs = defineStore("jobs", () => {
     // Methods
     /** Reload the available jobs for the current corpus. */
     function reload(): void {
-        documents.reload()
         loading.value = true
         API.getJobs(corpusId.value)
-            .then((response) => (jobs.value = response.data))
+            .then((res) => {
+                jobs.value = res.data
+                jobs.value
+                    .filter((j: Job) => j.progress.busy)
+                    .forEach((j: Job) => { startPolling(j.tagger.id, corpusId.value) })
+            })
             .finally(() => (loading.value = false))
     }
     /** Fetch the progress for the given job. To be used within a poller. */
@@ -41,7 +44,7 @@ const useJobs = defineStore("jobs", () => {
         if (response.request.responseURL.includes(corporaStore.corpusId)) {
             // Only commit the response if it corresponds to the correct corpus
             // This prevents late responses overwriting responses to newer requests
-            jobs.value[job].progress = response.data
+            jobs.value.find((j: Job) => j.tagger.id === job).progress = response.data
             // Stop polling if the job is done.
             if (!response.data.busy) {
                 stopPolling(job)
@@ -118,6 +121,8 @@ const useJobs = defineStore("jobs", () => {
                 queueSize.value = response.data
             })
     }
+
+    reload()
 
     // Exports
     return {

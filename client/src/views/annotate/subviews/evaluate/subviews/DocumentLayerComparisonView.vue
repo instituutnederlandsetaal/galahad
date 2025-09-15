@@ -14,14 +14,14 @@
         </GForm>
 
         <div v-if="selectedDoc && selectedAnnotation" class="document">
-            <template v-for="tc in termcomps.slice(firstRecord, firstRecord + rowsToDisplay)" :key="tc.refTerm.id">
+            <template v-for="tc in termcomps.slice(firstRecord, firstRecord + rowsToDisplay)" :key="tc.ref.id">
                 <span class="wordComparison" :class="{ incorrect: !annotationsEqual(tc) }">
-                    {{ tc.refTerm.annotations["token"] }}
-                    <SingleTermComparisonTable :hypoTerm="tc.hypoTerm" :refTerm="tc.refTerm" class="tooltip" />
+                    {{ tc.ref.annotations["token"] }}
+                    <SingleTermComparisonTable :hypoTerm="tc.hyp" :refTerm="tc.ref" class="tooltip" />
                 </span>
 
                 <!-- add newline after . -->
-                <br v-if="tc.refTerm.annotations['token'] == '.'" />
+                <br v-if="tc.ref.annotations['token'] == '.'" />
             </template>
 
             <Paginator
@@ -92,8 +92,8 @@ watch(termcomps, () => {
 
 // Methods
 function annotationsEqual(tc: TermComparison) {
-    const refAnnot = cleanAnnotation(tc.refTerm)
-    const hypoAnnot = cleanAnnotation(tc.hypoTerm)
+    const refAnnot = cleanAnnotation(tc.ref)
+    const hypoAnnot = cleanAnnotation(tc.hyp)
     return refAnnot === hypoAnnot
 }
 

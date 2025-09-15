@@ -18,9 +18,8 @@ const documents = defineStore("documents", () => {
     const { reload: reloadCorpora } = stores.useCorpora()
 
     // Fields
-    const loading = ref<boolean>(false)
+    const loading = ref<boolean>()
     const documents = ref<DocumentMetadata[]>([])
-    const numSourceAnnotations = computed(() => documents.value.filter((i) => i.summary?.annotations.token > 0).length)
     const uploading: Record<string, FileStatus> = reactive({})
     const uploadBusyCount = computed(() => Object.values(uploading).filter((i) => i.status === "busy").length)
     const uploadErrorCount = computed(() => Object.values(uploading).filter((i) => i.status === "error").length)
@@ -106,6 +105,8 @@ const documents = defineStore("documents", () => {
             })
     }
 
+    reload()
+
     // Exports
     return {
         // Fields
@@ -116,7 +117,6 @@ const documents = defineStore("documents", () => {
         uploading,
         uploadBusyCount,
         uploadErrorCount,
-        numSourceAnnotations,
         // Methods
         reload,
         remove,

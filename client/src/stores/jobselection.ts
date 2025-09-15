@@ -1,5 +1,5 @@
 import stores from "@/stores"
-import { type Job, SOURCE_LAYER } from "@/types/jobs"
+import { type Job } from "@/types/jobs"
 import type { SelectOption } from "@/types/ui/select"
 import { useRouteQuery } from "@vueuse/router"
 
@@ -7,9 +7,7 @@ import { useRouteQuery } from "@vueuse/router"
 const useJobSelection = defineStore("jobSelection", () => {
     // Stores
     const { jobs } = storeToRefs(stores.useJobs())
-    const { reload } = stores.useJobs()
-    const corpora = stores.useCorpora()
-    const documentsStore = stores.useDocuments()
+    const { corpusId } = storeToRefs(stores.useCorpora())
 
     // Fields
     const hypothesisId = useRouteQuery<string>("hypothesis")
@@ -20,29 +18,15 @@ const useJobSelection = defineStore("jobSelection", () => {
     const options = computed<SelectOption[]>((): SelectOption[] =>
         jobs.value
             .filter((j: Job) => j.progress.finished > 0)
-            .map((j: Job) => ({ value: j.tagger.id, text: formatJobString(j) })),
-    )
-
-    watch(
-        () => corpora.corpusId,
-        () => {
-            hypothesisId.value = undefined
-            referenceId.value = undefined
-        },
+            .map((j: Job) => ({ value: j.tagger.id, text: format(j) })),
     )
 
     /** Format as displayed in the <select> */
-    function formatJobString(job: Job): string {
-        const total = job.progress.total
-        let finished = job.progress.finished
-        if (job.tagger.id === SOURCE_LAYER) {
-            finished = documentsStore.numSourceAnnotations
-            return `source annotations [${finished}/${total} docs]`
-        }
-        return `${job.tagger.id} (${job.tagger.description}) [${finished}/${total} docs]`
+    function format(job: Job): string {
+        return `${job.tagger.id} (${job.tagger.description}) [${job.progress.finished}/${job.progress.total} docs]`
     }
 
-    reload()
+    watch(corpusId, () => { hypothesisId.value = undefined; referenceId.value = undefined })
 
     return { hypothesisId, referenceId, options }
 })

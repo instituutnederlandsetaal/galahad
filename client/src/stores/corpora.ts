@@ -53,6 +53,8 @@ const useCorpora = defineStore("corpora", () => {
         API.patchCorpus(metadata.uuid, metadata).finally(reload)
     }
 
+    reload()
+
     return {
         corpora,
         loading,
