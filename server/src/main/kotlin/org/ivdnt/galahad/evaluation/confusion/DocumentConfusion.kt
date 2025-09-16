@@ -16,7 +16,7 @@ class DocumentConfusion(
         fun create(layerComparison: LayerComparison): DocumentConfusion = DocumentConfusion(
             buildMap<Annotation, MutableMap<String, MutableMap<String, EvaluationEntry>>> {
                     layerComparison.matches.forEach { termComparison ->
-                        termComparison.ref.annotations.filter { it.key in ANNOTATIONS }.forEach { (annotation, _) ->
+                        ANNOTATIONS.forEach { annotation ->
                             val reference = termComparison.ref.annotationHeadOrMissing(annotation)
                             val hypothesis = termComparison.hyp.annotationHeadOrMissing(annotation)
                             val entry = EvaluationEntry(1, mutableListOf(termComparison))
