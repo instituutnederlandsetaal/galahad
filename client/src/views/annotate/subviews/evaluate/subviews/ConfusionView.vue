@@ -5,9 +5,9 @@
             helpLink="evaluation"
             :columns
             :items="rows"
-            id="confusionTable"
             :loading
             sortColumn="referenceJob"
+            class="confusion"
         >
             <template #help>
                 <p>
@@ -46,11 +46,11 @@
             <!-- custom cell rendering -->
             <template #cell="data: Cell">
                 <!-- header column -->
-                <div v-if="data.column.key == 'referenceJob'">
+                <span v-if="data.column.key == 'referenceJob'">
                     {{ data.value }}
-                </div>
+                </span>
                 <GButton v-else :disabled="!data.value" :class="cssClass(data)" @click="openModal(data)">
-                    {{ `${(data.value ? data.value.count : 0).toString().padStart(3, "&nbsp;")}` }}
+                    {{ data.value ? data.value.count : 0 }}
                 </GButton>
             </template>
         </GTable>
@@ -191,6 +191,30 @@ function openModal(data) {
 </script>
 
 <style scoped lang="scss">
+:deep(.confusion) td {
+    padding: 0 !important;
+    span {
+        padding: 0 0.5rem !important;
+    }
+    button {
+        width: 100%;
+        border: 0;
+
+        &.plain {
+            background-color: transparent;
+
+            &:hover {
+                background-color: var(--int-light-grey) !important;
+            }
+
+            &:focus {
+                background-color: var(--int-light-grey-hover) !important;
+            }
+        }
+    }
+}
+
+/*
 #confusionTable :deep(td) {
     padding: 0 !important;
     margin: 0;
@@ -221,4 +245,5 @@ function openModal(data) {
         }
     }
 }
+    */
 </style>
