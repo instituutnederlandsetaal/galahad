@@ -16,16 +16,48 @@
                 <MailAddress />.
             </template>
 
-            <!-- id -->
             <template #cell-id="d: TableData<Tagger>">
                 <span :id="d.item.id" :class="markActive(d.item.id)">{{ d.value }}</span>
             </template>
 
-            <!-- links -->
-            <template v-for="cell in ['cell-model', 'cell-software', 'cell-dataset']" :key="cell" #[cell]="d">
-                <ExternalLink :href="d.value.href">
-                    {{ d.value.name }}
-                </ExternalLink>
+            <template #cell-annotations="d: TableData<Tagger>">
+                {{ d.item.annotations.map((a) => a.annotation).join(", ") }}
+                <AnnotationItemsViewer :items="d.item.annotations">
+                    <template #title>Annotations and principles of {{ d.item.id }}</template>
+                </AnnotationItemsViewer>
+            </template>
+
+            <template #cell-attributions="d: TableData<Tagger>">
+                {{ Object.keys(d.item.attributions).length }} attributions
+                <InspectButton @click="showAttributions = true" />
+                <GModal v-if="showAttributions" @hide="showAttributions = false">
+                    <template #title>Attributions of {{ d.item.id }}</template>
+                    <ul>
+                        <li v-for="attribution in d.item.attributions" :key="attribution.name">
+                            <dl>
+                                <dt>
+                                    <b>{{ attribution.name }}:</b>
+                                </dt>
+                                <dd>
+                                    <ExternalLink :href="attribution.href">
+                                        {{ attribution.details ?? attribution.href }}
+                                    </ExternalLink>
+                                </dd>
+                            </dl>
+                        </li>
+                        <!-- always add version last -->
+                        <li>
+                            <dl>
+                                <dt>
+                                    <b>Version:</b>
+                                </dt>
+                                <dd>
+                                    {{ d.item.version }}
+                                </dd>
+                            </dl>
+                        </li>
+                    </ul>
+                </GModal>
             </template>
         </GTable>
     </GCard>
@@ -36,34 +68,25 @@ import stores from "@/stores"
 import type { Tagger } from "@/types/taggers"
 import type { Column, TableData } from "@/types/ui/table"
 
-// #stores
 const { taggers: items, loading } = storeToRefs(stores.useTaggers())
 
-// #data
+const showAnnotations = ref<boolean>()
+const showAttributions = ref<boolean>()
+
 const columns: Column<Tagger>[] = [
     { key: "id", label: "name" },
     { key: "description" },
-    { key: "tagset" },
+    { key: "language" },
     {
-        key: "era",
-        label: "period",
-        sortOn: (t: Tagger): string => `${t.eraFrom} ${t.eraTo}`,
-        format: (t: Tagger): string => `${t.eraFrom} – ${t.eraTo}`,
+        key: "period",
+        sortOn: (t: Tagger): string => `${t.period.from} ${t.period.to}`,
+        format: (t: Tagger): string => `${t.period.from} – ${t.period.to}`,
     },
-    {
-        key: "annotations",
-        format: (t: Tagger): string => t.annotations.join(", "),
-        sortOn: (t: Tagger): string => t.annotations.join(),
-    },
-    { key: "model" },
-    { key: "software" },
-    { key: "dataset" },
+    { key: "annotations", sortOn: (t: Tagger): string => t.annotations.map((a) => a.annotation).join() },
+    { key: "attributions", noSort: true },
 ]
 
-// #methods
-/**
- * Mark the active row, retrieved from the url anchor.
- */
+/** Mark the active row, retrieved from the url anchor. */
 function markActive(id: string): string {
     const hash = window.location.hash.substring(1)
     return id === hash ? "active" : ""
@@ -73,5 +96,12 @@ function markActive(id: string): string {
 <style scoped lang="scss">
 :deep(tr):has(> td > span.active) {
     background-color: var(--int-theme-lighter);
+}
+
+ul {
+    padding: 0 1rem;
+    .annotation-principles {
+        padding: 0 1rem;
+    }
 }
 </style>

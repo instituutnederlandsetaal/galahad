@@ -55,7 +55,7 @@ open class TsvMerger(
     private fun replaceColumns(
         columns: MutableList<String>,
     ) {
-        export.tagger.annotations.forEach { annot ->
+        export.tagger.annotationSet.forEach { annot ->
             val index = columnIndices[annot] ?: return@forEach // Skip if not in the file.
             mergeSingleColumn(columns, annot, index)
         }

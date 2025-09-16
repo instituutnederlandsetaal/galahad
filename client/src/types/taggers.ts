@@ -1,12 +1,17 @@
 export type Tagger = {
     id: string
+    version: string
+    uri: string
     description: string
-    tagset: string
     language: string
-    eraFrom: number
-    eraTo: number
-    annotations: string[]
+    period: Period
+    annotations: AnnotationItem[]
+    attributions: LinkItem[]
 }
+
+export type LinkItem = { name: string; details: string; href: string }
+export type AnnotationItem = { annotation: string; principles: LinkItem[] }
+export type Period = { from: number; to: number }
 
 export enum TaggerStatus {
     HEALTHY = "HEALTHY",

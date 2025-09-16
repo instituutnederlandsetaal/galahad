@@ -10,7 +10,7 @@ class TsvWriter(export: DocumentExport) : LayerWriter(export) {
     override fun convert(out: OutputStream): Unit = convert(PrintWriter(out))
 
     private fun convert(out: PrintWriter) {
-        val header: Set<Annotation> = Annotation.order(export.tagger.annotations)
+        val header: Set<Annotation> = Annotation.order(export.tagger.annotationSet)
         out.println("id\t" + header.joinToString("\t"))
         // We only write sentence boundaries (\n) and no #-comments, under the assumption that other TSV software can't handle this.
         documents.forEachIndexed { docI, doc ->

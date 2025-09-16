@@ -12,8 +12,8 @@ interface CsvSampleExporter {
 
         // [Tagger].produces is a Set<>, making the order unpredictable
         // So create an alphabetically sorted list once and reuse it
-        val hypoColumns = hypoJob.annotations.sorted()
-        val refColumns = refJob.annotations.sorted()
+        val hypoColumns = hypoJob.annotationSet.sorted()
+        val refColumns = refJob.annotationSet.sorted()
 
         // header
         val columns: MutableList<String> = mutableListOf("token")

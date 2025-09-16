@@ -64,7 +64,7 @@ class TeiWriter(export: DocumentExport) : LayerWriter(export) {
                     // <linkGrp targFunc="head argument" type="UD-SYN">
                     //     <link target="#d1.p1.s1.w1 #d1.p1.s1.w2" ana="ud-syn:det"/>
                     // </linkGrp>
-                    if (Annotation.DEPREL in export.tagger.annotations && sentence.terms.any { it.deprel != null }) {
+                    if (Annotation.DEPREL in export.tagger.annotationSet && sentence.terms.any { it.deprel != null }) {
                         writer.writeStartElement("linkGrp")
                         writer.writeAttribute("targFunc", "head argument")
                         writer.writeAttribute("type", "UD-SYN")

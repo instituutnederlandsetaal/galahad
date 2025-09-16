@@ -237,7 +237,7 @@ class TeiMetadata(
         // <label>
         application.createChild("label", "POS-tagger and lemmatiser")
         // <ptr>
-        application.createChild("ptr", "target" to export.tagger.model.href)
+        application.createChild("ptr", "target" to export.tagger.uri)
     }
 
     /**
@@ -263,7 +263,7 @@ class TeiMetadata(
             ab, mapOf(
                 "annotationStyle" to "inline",
                 "Documentation" to "",
-                "annotationSet" to (export.tagger.tagset ?: ""),
+                "annotationSet" to export.tagger.principles,
                 "annotationDescription" to "The file was automatically annotated within the platform GaLAHaD, which is a central hub for enriching historical Dutch.",
                 "annotationFormat" to "TEI xml",
             )

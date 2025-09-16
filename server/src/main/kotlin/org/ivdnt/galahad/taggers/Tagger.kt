@@ -21,17 +21,13 @@ class Tagger(
     // So can only contain certain characters
     var id: String = "",
     var description: String = "",
-    var tagset: String? = null,
-    var eraFrom: Int = 0,
-    var eraTo: Int = 0,
-    var annotations: Set<Annotation> = emptySet(),
-    var model: LinkItem = LinkItem(),
-    var software: LinkItem = LinkItem(),
-    var dataset: LinkItem = LinkItem(),
-    var trainedBy: String = "",
-    var date: String = "",
-    var language: String? = "",
+    var period: Period? = null,
+    var annotations: List<AnnotationItem> = emptyList(),
+    var attributions: List<LinkItem> = emptyList(),
+    var language: String? = "", // TODO multiple languages
+    // Version & URI are split from attributions because they need to be present in metadata
     var version: String = "",
+    var uri: String = "",
 ) {
     @JsonIgnore
     var devport: Int? = 0
@@ -46,9 +42,28 @@ class Tagger(
             URI("http://$id:8080").toURL()
         }
 
+    @get:JsonIgnore
+    val annotationSet: Set<Annotation>
+        get() = annotations.map { it.annotation!! }.toSet()
+
+    @get:JsonIgnore
+    val principles: String
+        get() = annotations.mapNotNull { it.principles }.flatten().joinToString { it.name!! }
+
     class LinkItem(
-        var name: String = "",
-        var href: String = "",
+        var name: String? = null,
+        var details: String? = null,
+        var href: String? = null,
+    )
+
+    class AnnotationItem(
+        var annotation: Annotation? = null,
+        var principles: List<LinkItem>? = null,
+    )
+
+    class Period(
+        var from: Int = 0,
+        var to: Int = 0,
     )
 
     companion object {
@@ -78,11 +93,9 @@ class Tagger(
             return Tagger(
                 id = SOURCE_LAYER_NAME,
                 description = "uploaded annotations",
-                tagset = metadata.tagset,
-                eraFrom = metadata.eraFrom,
-                eraTo = metadata.eraTo,
+                period = Period(metadata.eraFrom, metadata.eraTo),
                 language = metadata.language,
-                annotations = produces,
+                annotations = produces.map { AnnotationItem(it) },
             )
         }
     }

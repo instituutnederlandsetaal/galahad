@@ -86,7 +86,7 @@ class FoliaWriter(export: DocumentExport) : LayerWriter(export) {
                     val containsDeprel: Boolean = if (export.tagger.id == SOURCE_LAYER_NAME) {
                         Annotation.DEPREL in export.document.metadata.annotations
                     } else {
-                        Annotation.DEPREL in export.tagger.annotations
+                        Annotation.DEPREL in export.tagger.annotationSet
                     }
 
                     if (containsDeprel) {

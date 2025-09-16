@@ -26,10 +26,10 @@ class NafWriter(export: DocumentExport) : LayerWriter(export) {
         addRaw(xml, root)
         addText(xml, root)
         addTerms(xml, root)
-        if (Annotation.NER in export.tagger.annotations) {
+        if (Annotation.NER in export.tagger.annotationSet) {
             addEntities(xml, root)
         }
-        if (Annotation.DEPREL in export.tagger.annotations) {
+        if (Annotation.DEPREL in export.tagger.annotationSet) {
             addDependencies(xml, root)
         }
 
@@ -65,7 +65,7 @@ class NafWriter(export: DocumentExport) : LayerWriter(export) {
         lpTerms.appendChild(lp)
         nafHeader.appendChild(lpTerms)
 
-        if (Annotation.NER in export.tagger.annotations) {
+        if (Annotation.NER in export.tagger.annotationSet) {
             val lpNer = xml.createElement("linguisticProcessors").apply {
                 setAttribute("layer", "entities")
             }
@@ -73,7 +73,7 @@ class NafWriter(export: DocumentExport) : LayerWriter(export) {
             nafHeader.appendChild(lpNer)
         }
 
-        if (Annotation.DEPREL in export.tagger.annotations) {
+        if (Annotation.DEPREL in export.tagger.annotationSet) {
             val lpDep = xml.createElement("linguisticProcessors").apply {
                 setAttribute("layer", "deps")
             }

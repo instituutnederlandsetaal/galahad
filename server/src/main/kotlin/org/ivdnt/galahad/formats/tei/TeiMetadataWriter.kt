@@ -191,7 +191,7 @@ class TeiMetadataWriter(val writer: PrettyXMLWriter, val export: DocumentExport)
                 // <label>
                 writer.writeElement("label", "POS-tagger and lemmatiser")
                 // <ptr>
-                writer.writeEmptyElement("ptr", mapOf("target" to export.tagger.model.href))
+                writer.writeEmptyElement("ptr", mapOf("target" to export.tagger.uri))
             }
         }
     }
@@ -219,7 +219,7 @@ class TeiMetadataWriter(val writer: PrettyXMLWriter, val export: DocumentExport)
                         mapOf(
                             "annotationStyle" to "inline",
                             "Documentation" to "",
-                            "annotationSet" to (export.tagger.tagset ?: ""),
+                            "annotationSet" to export.tagger.principles,
                             "annotationDescription" to "The file was automatically annotated within the platform GaLAHaD, which is a central hub for enriching historical Dutch.",
                             "annotationFormat" to "TEI xml",
                         )

@@ -207,7 +207,7 @@ class EvaluationService(val corpora: CorporaService) {
 
     private fun annotationTypesForTagger(job: String, corpus: UUID): Set<Annotation> {
         val corpusObj = corpora.readAsReaderOrThrow(corpus, user)
-        return Tagger.readOrThrow(job, corpusObj).annotations
+        return Tagger.readOrThrow(job, corpusObj).annotationSet
     }
 
     fun samplesToZip(
