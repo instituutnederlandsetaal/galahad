@@ -1,23 +1,35 @@
 id: hug-tdn-all
-description: "INT-Hug trained on all TDN-Core material"
-tagset: "TDN-Core"
-language: "Dutch"
-eraFrom: "1400"
-eraTo: "1900"
+uri: https://github.com/instituutnederlandsetaal/galahad-huggingface-models/tree/master/models/galahad/tagger/pos_model_tdn_ALL
+version: 1.0.1
+description: INT-Hug trained on all TDN-Core material
+language: Dutch
+period:
+  from: 1400
+  to: 1900
 annotations:
-  - token
-  - lemma
-  - pos
-model:
-  name: hug-tdn-all
-  href: https://github.com/instituutnederlandsetaal/galahad-huggingface-models/tree/master/models/galahad/tagger/pos_model_tdn_ALL
-software:
-  name: int-huggingface
-  href: https://github.com/instituutnederlandsetaal/int-huggingface-tagger/
-dataset:
-  name: ALL
-  href: https://github.com/instituutnederlandsetaal/galahad-corpus-data/tree/1.0.1/combinations/ALL.combination.json
-trainedBy: "INT"
-date: "2024-06-12"
-devport: 8112
-version: "1.0.0"
+  - annotation: token
+  - annotation: lemma
+    principles:
+      - name: Lemmatisation principles for GiGaNT
+        details: Lemmatiseerprincipes voor GiGaNT, het centrale lexicon van het INT
+        href: https://ivdnt.org/wp-content/uploads/2024/11/lemmatiseerprincipesV2_combi.pdf
+  - annotation: pos
+    principles:
+      - name: TDN-Core
+        details: Tagset voor Diachroon corpusmateriaal van het Nederlands
+        href: https://ivdnt.org/wp-content/uploads/2024/11/TDNV2_combi.pdf
+attributions:
+  - name: Dataset
+    details: Galahad Corpus Data (all)
+    href: https://github.com/instituutnederlandsetaal/galahad-corpus-data/tree/1.0.1/combinations/ALL.combination.json
+  - name: Software
+    details: INT Huggingface Tagger
+    href: https://github.com/instituutnederlandsetaal/int-huggingface-tagger/
+  - name: Model
+    details: hug-tdn-all
+    href: https://github.com/instituutnederlandsetaal/galahad-huggingface-models/tree/master/models/galahad/tagger/pos_model_tdn_ALL
+  - name: Trained by
+    details: Instituut voor de Nederlandse Taal
+    href: https://ivdnt.org/
+port: 8112
+

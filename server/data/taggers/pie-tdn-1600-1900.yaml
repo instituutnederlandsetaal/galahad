@@ -1,23 +1,34 @@
 id: pie-tdn-1600-1900
-description: "PIE trained on DBNL excerpts, GTB dictionary quotations, newspapers & letters as loot (1600-1900)"
-tagset: "TDN-Core"
-language: "Dutch"
-eraFrom: "1600"
-eraTo: "1900"
+uri: https://github.com/instituutnederlandsetaal/galahad-taggers/tree/2.0.0/pie/TDN-1600-1900
+version: 1.1.0
+description: PIE trained on DBNL excerpts, GTB dictionary quotations, newspapers & letters as loot (1600-1900)
+language: Dutch
+period:
+  from: 1600
+  to: 1900
 annotations:
-  - token
-  - lemma
-  - pos
-model:
-  name: pie-tdn-1600-1900
-  href: https://github.com/instituutnederlandsetaal/galahad-taggers-dockerized/tree/1.1.0/pie/TDN-1600-1900
-software:
-  name: int-pie
-  href: https://github.com/instituutnederlandsetaal/int-pie/tree/1.1.0
-dataset:
-  name: 1600-1900
-  href: https://github.com/instituutnederlandsetaal/galahad-corpus-data/tree/1.1.0/combinations/1600-1900.combination.json
-trainedBy: "INT"
-date: "2025-04-07"
-devport: 8101
-version: "1.1.0"
+  - annotation: token
+  - annotation: lemma
+    principles:
+      - name: Lemmatisation principles for GiGaNT
+        details: Lemmatiseerprincipes voor GiGaNT, het centrale lexicon van het INT
+        href: https://ivdnt.org/wp-content/uploads/2024/11/lemmatiseerprincipesV2_combi.pdf
+  - annotation: pos
+    principles:
+      - name: TDN-Core
+        details: Tagset voor Diachroon corpusmateriaal van het Nederlands
+        href: https://ivdnt.org/wp-content/uploads/2024/11/TDNV2_combi.pdf
+attributions:
+  - name: Dataset
+    details: Galahad Corpus Data (1600-1900)
+    href: https://github.com/instituutnederlandsetaal/galahad-taggers-dockerized/tree/1.1.0/pie/TDN-1600-1900
+  - name: Software
+    details: INT PIE
+    href: https://github.com/instituutnederlandsetaal/int-pie/tree/1.1.0
+  - name: Model
+    details: pie-tdn-1600-1900
+    href: https://github.com/instituutnederlandsetaal/galahad-taggers/tree/2.0.0/pie/TDN-1600-1900
+  - name: Trained by
+    details: Instituut voor de Nederlandse Taal
+    href: https://ivdnt.org/
+port: 8101

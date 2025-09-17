@@ -1,23 +1,34 @@
 id: hug-tdn-1600-1900
-description: "INT-Hug trained on DBNL excerpts, GTB dictionary quotations, newspapers & letters as loot (1600-1900)"
-tagset: "TDN-Core"
-language: "Dutch"
-eraFrom: "1600"
-eraTo: "1900"
+uri: https://github.com/instituutnederlandsetaal/galahad-huggingface-models/tree/master/models/galahad/tagger/pos_model_tdn_1600-1900
+version: 1.0.1
+description: INT-Hug trained on DBNL excerpts, GTB dictionary quotations, newspapers & letters as loot (1600-1900)
+language: Dutch
+period:
+  from: 1600
+  to: 1900
 annotations:
-  - token
-  - lemma
-  - pos
-model:
-  name: hug-tdn-1600-1900
-  href: https://github.com/instituutnederlandsetaal/galahad-huggingface-models/tree/master/models/galahad/tagger/pos_model_tdn_1600-1900
-software:
-  name: int-huggingface
-  href: https://github.com/instituutnederlandsetaal/int-huggingface-tagger/
-dataset:
-  name: 1600-1900
-  href: https://github.com/instituutnederlandsetaal/galahad-corpus-data/tree/1.0.1/combinations/1600-1900.combination.json
-trainedBy: "INT"
-date: "2024-06-12"
-devport: 8111
-version: "1.0.0"
+  - annotation: token
+  - annotation: lemma
+    principles:
+      - name: Lemmatisation principles for GiGaNT
+        details: Lemmatiseerprincipes voor GiGaNT, het centrale lexicon van het INT
+        href: https://ivdnt.org/wp-content/uploads/2024/11/lemmatiseerprincipesV2_combi.pdf
+  - annotation: pos
+    principles:
+      - name: TDN-Core
+        details: Tagset voor Diachroon corpusmateriaal van het Nederlands
+        href: https://ivdnt.org/wp-content/uploads/2024/11/TDNV2_combi.pdf
+attributions:
+  - name: Dataset
+    details: Galahad Corpus Data 1600-1900
+    href: https://github.com/instituutnederlandsetaal/galahad-corpus-data/tree/1.0.1/combinations/1600-1900.combination.json
+  - name: Software
+    details: INT Huggingface Tagger
+    href: https://github.com/instituutnederlandsetaal/int-huggingface-tagger/
+  - name: Model
+    details: hug-tdn-1600-1900
+    href: https://github.com/instituutnederlandsetaal/galahad-huggingface-models/tree/master/models/galahad/tagger/pos_model_tdn_1600-1900
+  - name: Trained by
+    details: Instituut voor de Nederlandse Taal
+    href: https://ivdnt.org/
+port: 8111

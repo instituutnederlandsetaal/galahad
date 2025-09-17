@@ -1,5 +1,5 @@
 id: hug-tdn-1400-1600
-uri: https://github.com/instituutnederlandsetaal/galahad-huggingface-models/
+uri: https://github.com/instituutnederlandsetaal/galahad-huggingface-models/tree/master/models/galahad/tagger/pos_model_tdn_1400-1600
 version: 1.0.1
 description: INT-Hug trained on DBNL excerpts, GTB dictionary quotations & CLVN (1400-1600)
 language: Dutch
@@ -31,4 +31,4 @@ attributions:
   - name: Trained by
     details: Instituut voor de Nederlandse Taal
     href: https://ivdnt.org/
-devport: 8110
+port: 8110

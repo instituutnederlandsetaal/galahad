@@ -30,14 +30,14 @@ class Tagger(
     var uri: String = "",
 ) {
     @JsonIgnore
-    var devport: Int? = 0
+    var port: Int? = 0
 
     // Has to be a getter, because taggers are first initialized with an empty constructor,
     // and then filled from yaml, meaning that devport is 0 at the time of initialization
     @get:JsonIgnore
     val url: URL
         get() = if ("dev" in application_profile) {
-            URI("http://localhost:$devport").toURL()
+            URI("http://localhost:$port").toURL()
         } else {
             URI("http://$id:8080").toURL()
         }

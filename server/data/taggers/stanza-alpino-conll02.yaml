@@ -1,27 +1,61 @@
 id: stanza-alpino-conll02
-description: "stanza trained on conll02 for NER and alpino for the rest"
-tagset: "Universal Dependencies"
-language: "Latin"
-eraFrom: "2000"
-eraTo: "2020"
+uri: https://stanfordnlp.github.io/stanza/
+version: 1.10.1
+description: Stanza trained on conll02 for NER and alpino for the rest
+language: Dutch
+period:
+  from: 1960
+  to: 2002
 annotations:
-  - token
-  - lemma
-  - pos
-  - upos
-  - head
-  - deprel
-  - ner
-model:
-  name: dutch alpino
-  href: https://stanfordnlp.github.io/stanza/performance.html#system-performance-on-ud-treebanks
-software:
-  name: stanza
-  href: https://stanfordnlp.github.io/stanza/
-dataset:
-  name: Universal Dependencies v2.12
-  href: https://lindat.mff.cuni.cz/repository/xmlui/handle/11234/1-5150
-trainedBy: "Stanford NLP Group"
-date: "2024-11-12"
-devport: 8121
-version: "1.9.2"
+  - annotation: token
+  - annotation: lemma
+    principles:
+      - name: Universal Dependencies
+        details: D-COI POS-tagging and lemmatization manual
+        href: https://www.let.rug.nl/vannoord/Lassy/POS_manual.pdf
+  - annotation: pos
+    principles:
+      - name: Universal Dependencies
+        details: D-COI POS-tagging and lemmatization manual
+        href: https://www.let.rug.nl/vannoord/Lassy/POS_manual.pdf
+  - annotation: upos
+    principles:
+      - name: Universal Dependencies
+        details: UD for Dutch (v2)
+        href: https://universaldependencies.org/nl/index.html
+  - annotation: head
+    principles:
+      - name: Universal Dependencies
+        details: Lassy Syntactic Annotation Manual
+        href: https://www.let.rug.nl/~vannoord/Lassy/sa-man_lassy.pdf
+  - annotation: deprel
+    principles:
+      - name: Universal Dependencies
+        details: Lassy Syntactic Annotation Manual
+        href: https://www.let.rug.nl/~vannoord/Lassy/sa-man_lassy.pdf
+  - annotation: ner
+    principles:
+      - name: CoNLL02
+        details: CoNLL-2002 shared task
+        href: https://www.clips.uantwerpen.be/conll2002/ner/
+attributions:
+  - name: Dataset (non-NER)
+    details: Dutch Alpino (Universal Dependencies v2.12)
+    href: https://github.com/UniversalDependencies/UD_Dutch-Alpino
+  - name: Dataset (NER)
+    details: CoNLL-2002 Dutch
+    href: https://www.clips.uantwerpen.be/conll2002/ner/
+  - name: Software
+    details: Stanza 1.10.1
+    href: https://stanfordnlp.github.io/stanza/
+  - name: Model (NER)
+    details: CoNLL02 Dutch
+    href: https://stanfordnlp.github.io/stanza/ner_models.html
+  - name: Model (non-NER)
+    details: LassySmall
+    href: https://stanfordnlp.github.io/stanza/performance.html
+  - name: Trained by
+    details: Stanford NLP Group
+    href: https://stanfordnlp.github.io/stanza/
+port: 8122
+
