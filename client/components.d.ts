@@ -9,8 +9,10 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AnnotateTab: typeof import('./src/components/AnnotateTab.vue')['default']
+    AnnotationItemsViewer: typeof import('./src/components/modals/metadata/AnnotationItemsViewer.vue')['default']
     AnnotationSelect: typeof import('./src/components/input/AnnotationSelect.vue')['default']
     AppBanner: typeof import('./src/components/AppBanner.vue')['default']
+    AttributionsViewer: typeof import('./src/components/modals/metadata/AttributionsViewer.vue')['default']
     BenchmarkSetsHelp: typeof import('./src/components/help/BenchmarkSetsHelp.vue')['default']
     ComparisonModal: typeof import('./src/components/modals/ComparisonModal.vue')['default']
     CorpusForm: typeof import('./src/components/modals/corpus/CorpusForm.vue')['default']

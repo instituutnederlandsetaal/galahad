@@ -10,7 +10,7 @@
             </p>
         </template>
 
-        <GTable :loading :columns :items sortColumn="id">
+        <GTable :loading :columns :items sortColumn="period">
             <template #table-empty>
                 No taggers appeared? That is not right! Please contact the INT at
                 <MailAddress />.
@@ -21,7 +21,6 @@
             </template>
 
             <template #cell-annotations="d: TableData<Tagger>">
-                {{ d.item.annotations.map((a) => a.annotation).join(", ") }}
                 <AnnotationItemsViewer :items="d.item.annotations">
                     <template #title>Annotations and principles of {{ d.item.id }}</template>
                 </AnnotationItemsViewer>
@@ -29,35 +28,9 @@
 
             <template #cell-attributions="d: TableData<Tagger>">
                 {{ Object.keys(d.item.attributions).length }} attributions
-                <InspectButton @click="showAttributions = true" />
-                <GModal v-if="showAttributions" @hide="showAttributions = false">
+                <AttributionsViewer :items="d.item.attributions" :version="d.item.version">
                     <template #title>Attributions of {{ d.item.id }}</template>
-                    <ul>
-                        <li v-for="attribution in d.item.attributions" :key="attribution.name">
-                            <dl>
-                                <dt>
-                                    <b>{{ attribution.name }}:</b>
-                                </dt>
-                                <dd>
-                                    <ExternalLink :href="attribution.href">
-                                        {{ attribution.details ?? attribution.href }}
-                                    </ExternalLink>
-                                </dd>
-                            </dl>
-                        </li>
-                        <!-- always add version last -->
-                        <li>
-                            <dl>
-                                <dt>
-                                    <b>Version:</b>
-                                </dt>
-                                <dd>
-                                    {{ d.item.version }}
-                                </dd>
-                            </dl>
-                        </li>
-                    </ul>
-                </GModal>
+                </AttributionsViewer>
             </template>
         </GTable>
     </GCard>
@@ -69,9 +42,6 @@ import type { Tagger } from "@/types/taggers"
 import type { Column, TableData } from "@/types/ui/table"
 
 const { taggers: items, loading } = storeToRefs(stores.useTaggers())
-
-const showAnnotations = ref<boolean>()
-const showAttributions = ref<boolean>()
 
 const columns: Column<Tagger>[] = [
     { key: "id", label: "name" },
@@ -96,12 +66,5 @@ function markActive(id: string): string {
 <style scoped lang="scss">
 :deep(tr):has(> td > span.active) {
     background-color: var(--int-theme-lighter);
-}
-
-ul {
-    padding: 0 1rem;
-    .annotation-principles {
-        padding: 0 1rem;
-    }
 }
 </style>

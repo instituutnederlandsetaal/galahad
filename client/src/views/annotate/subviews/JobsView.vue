@@ -13,16 +13,6 @@
                     </fieldset>
 
                     <fieldset>
-                        <label for="tagset-select">Select tagset</label>
-                        <MultiSelect
-                            id="tagset-select"
-                            v-model="tagsetFilter"
-                            :options="tagsets"
-                            placeholder="Tagset"
-                        />
-                    </fieldset>
-
-                    <fieldset>
                         <label for="annotation-select">Select annotation</label>
                         <MultiSelect
                             id="annotation-select"
@@ -58,6 +48,13 @@
             <template v-slot:cell-actions="d: TableData<Job>">
                 <GButton plain @click="jobId = d.item.tagger.id">View &amp; Tag</GButton>
             </template>
+
+            <!-- annotations cell -->
+            <template #cell-annotations="d: TableData<Job>">
+                <AnnotationItemsViewer :items="d.item.tagger.annotations">
+                    <template #title>Annotations and principles of {{ d.item.tagger.id }}</template>
+                </AnnotationItemsViewer>
+            </template>
         </GTable>
 
         <!-- job modal -->
@@ -71,6 +68,7 @@ import type { Job, Progress } from "@/types/jobs"
 import type { Column, TableData } from "@/types/ui/table"
 import { formatDate } from "@/ts/utils"
 import MultiSelect from "primevue/multiselect"
+import AnnotationItemsViewer from "@/components/modals/metadata/AnnotationItemsViewer.vue"
 
 // #stores
 const { canWrite } = storeToRefs(stores.useUser())
@@ -89,8 +87,9 @@ const annotationFilter = ref<string[]>([])
 
 // #computed
 // select options
-const tagsets = computed<string[]>(() => [...new Set(taggerJobs.value.flatMap((j: Job) => j.tagger.tagset))])
-const annotations = computed<string[]>(() => [...new Set(taggerJobs.value.flatMap((j: Job) => j.tagger.annotations))])
+const annotations = computed<string[]>(() => [
+    ...new Set(taggerJobs.value.flatMap((j: Job) => j.tagger.annotations.flatMap((a) => a.annotation))),
+])
 // table data
 const items = computed(() =>
     taggerJobs.value
@@ -107,18 +106,13 @@ const items = computed(() =>
 )
 const columns = computed<Column<Job>[]>((): Column<Job>[] => [
     { key: "id", label: "tagger", sortOn: (j: Job): string => j.tagger.id, align: "left" },
-    { key: "tagset", sortOn: (j: Job): string => j.tagger.tagset, format: (j: Job): string => j.tagger.tagset },
     { key: "language", sortOn: (j: Job): string => j.tagger.language, format: (j: Job): string => j.tagger.language },
     {
         key: "period",
-        sortOn: (j: Job): string => `${j.tagger.eraFrom} ${j.tagger.eraTo}`,
-        format: (j: Job): string => `${j.tagger.eraFrom} – ${j.tagger.eraTo}`,
+        sortOn: (j: Job): string => `${j.tagger.period.from} ${j.tagger.period.to}`,
+        format: (j: Job): string => `${j.tagger.period.from} – ${j.tagger.period.to}`,
     },
-    {
-        key: "annotations",
-        format: (j: Job): string => j.tagger.annotations.join(", "),
-        sortOn: (j: Job): string => j.tagger.annotations.join(),
-    },
+    { key: "annotations", sortOn: (j: Job): string => j.tagger.annotations.map((a) => a.annotation).join() },
     {
         key: "summary",
         label: "tokens",
