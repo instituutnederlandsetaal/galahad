@@ -102,10 +102,11 @@
                 historical and modern corpora, and principles for
                 <a href="https://ivdnt.org/wp-content/uploads/2024/11/lemmatiseerprincipesV2_combi.pdf">lemmatisation</a
                 >, 2. by harmonising and extending
-                <a href="https://github.com/INL/galahad-corpus-data/">training and evaluation material</a>, and 3. by
-                developing an online infrastructure for historical corpus building and deployment, consisting of the
-                <a href="https://autosearch.ivdnt.org/">Autosearch</a> corpus exploration environment, the
-                <a href="https://portal.clarin.ivdnt.org/lancelot/">LAnCeLoT</a> tool for manual correction of
+                <a href="https://github.com/instituutnederlandsetaal/galahad-corpus-data/"
+                    >training and evaluation material</a
+                >, and 3. by developing an online infrastructure for historical corpus building and deployment,
+                consisting of the <a href="https://autosearch.ivdnt.org/">Autosearch</a> corpus exploration environment,
+                the <a href="https://portal.clarin.ivdnt.org/lancelot/">LAnCeLoT</a> tool for manual correction of
                 linguistic annotation and the GaLAHaD application for the deployment and evaluation of various
                 approaches to automatic linguistic annotation.
             </p>
@@ -135,7 +136,7 @@
                 There is also the option to self-host an instance using the publicly available docker images from the
                 <a href="https://hub.docker.com/u/instituutnederlandsetaal">INT Docker Hub</a>
                 or the open source code available on
-                <a href="https://github.com/INL/galahad">GitHub</a>.
+                <a href="https://github.com/instituutnederlandsetaal/galahad">GitHub</a>.
             </p>
 
             <!-- H2: Release 1.0.0 -->
@@ -515,7 +516,7 @@
             <p>
                 Here you can find an overview of the text sets that have been used to benchmark the taggers. The
                 complete benchmark sets, including training and development sets can be found on Github:
-                <a href="https://github.com/INL/galahad-corpus-data">galahad-corpus-data</a>.
+                <a href="https://github.com/instituutnederlandsetaal/galahad-corpus-data">galahad-corpus-data</a>.
             </p>
 
             <!-- H3: Benchmarks -->

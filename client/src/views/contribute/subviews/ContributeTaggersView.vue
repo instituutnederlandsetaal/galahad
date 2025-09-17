@@ -6,8 +6,8 @@
         </p>
         <p>
             See
-            <ExternalLink href="https://github.com/INL/galahad-taggers-dockerized"
-                >galahad-taggers-dockerized
+            <ExternalLink href="https://github.com/instituutnederlandsetaal/galahad-taggers"
+                >galahad-taggers
             </ExternalLink>
             for more information.
         </p>

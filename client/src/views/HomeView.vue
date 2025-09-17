@@ -36,7 +36,7 @@
                             >INT Docker Hub
                         </ExternalLink>
                         or the open source code available on
-                        <ExternalLink href="https://github.com/INL/galahad">GitHub</ExternalLink>.
+                        <ExternalLink href="https://github.com/instituutnederlandsetaal/galahad">GitHub</ExternalLink>.
                     </p>
                 </section>
                 <figure>

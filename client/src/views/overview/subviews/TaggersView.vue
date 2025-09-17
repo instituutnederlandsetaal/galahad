@@ -4,8 +4,8 @@
             <p>Here you can see an overview of all available taggers within GaLAHaD.</p>
             <p>
                 For more information on the taggers, please visit
-                <ExternalLink href="https://github.com/INL/galahad-taggers-dockerized/">
-                    galahad-taggers-dockerized on GitHub </ExternalLink
+                <ExternalLink href="https://github.com/instituutnederlandsetaal/galahad-taggers/">
+                    galahad-taggers on GitHub </ExternalLink
                 >.
             </p>
         </template>
