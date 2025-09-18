@@ -3,7 +3,7 @@ import type { Tagger } from "@/types/taggers"
 
 export const SOURCE_LAYER: string = "sourceLayer"
 
-export type Job = { tagger: Tagger; progress: Progress; preview: LayerPreview; modified: number; summary: LayerSummary }
+export type Job = { tagger: Tagger; progress: Progress; preview: LayerPreview; modified: number; annotations: Record<string, number> }
 
 export type Progress = {
     pending: number
@@ -18,5 +18,3 @@ export type Progress = {
 }
 
 export type LayerPreview = { terms: Term[] }
-
-export type LayerSummary = { annotations: Record<string, number> }

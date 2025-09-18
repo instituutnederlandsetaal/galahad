@@ -5,18 +5,17 @@ import { useRouteQuery } from "@vueuse/router"
 
 /** Stores the current job selection from the <select>. Used in Evaluation & Export. */
 const useJobSelection = defineStore("jobSelection", () => {
-    // Stores
     const { jobs } = storeToRefs(stores.useJobs())
     const { corpusId } = storeToRefs(stores.useCorpora())
 
-    // Fields
     const hypothesisId = useRouteQuery<string>("hypothesis")
     const referenceId = useRouteQuery<string>("reference")
+    const hypothesisJob = computed<Job>(() => jobs.value.find((j: Job) => j.tagger.id === hypothesisId.value))
+    const referenceJob = computed<Job>(() => jobs.value.find((j: Job) => j.tagger.id === referenceId.value))
 
-    // Selectable jobs are jobs that have at least one finished document,
-    // or have source annotations (i.e. sourceLayer).
     const options = computed<SelectOption[]>((): SelectOption[] =>
         jobs.value
+            // Selectable jobs have at least one finished document.
             .filter((j: Job) => j.progress.finished > 0)
             .map((j: Job) => ({ value: j.tagger.id, text: format(j) })),
     )
@@ -28,7 +27,7 @@ const useJobSelection = defineStore("jobSelection", () => {
 
     watch(corpusId, () => { hypothesisId.value = undefined; referenceId.value = undefined })
 
-    return { hypothesisId, referenceId, options }
+    return { hypothesisId, referenceId, hypothesisJob, referenceJob, options }
 })
 
 export default useJobSelection

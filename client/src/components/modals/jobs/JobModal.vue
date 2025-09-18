@@ -93,7 +93,7 @@
             </GInfo>
 
             <!-- Layer preview -->
-            <LayerViewer v-if="job.summary.annotations.token > 0" :job />
+            <LayerViewer v-if="job.annotations.token > 0" :job />
         </template>
 
         <!-- delete job modal -->

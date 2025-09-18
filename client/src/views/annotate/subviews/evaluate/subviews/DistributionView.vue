@@ -162,29 +162,11 @@ const filteredGroups = computed(() => {
     }
     return groups.value
 })
-
-// const distribution = computed<TypeToken[]>(() => distributions.value?.[selectedDistribution.value] ?? [])
-// const selectedDistribution = ref<string>()
-// const distributionOptions = computed<SelectOption[]>(() =>
-//     Object.keys(distributions.value || {}).map((x) => ({ value: x, text: x })),
-// )
 const groups = computed<string[]>(() =>
     [...new Set(Object.values(distribution.value || {}).map((t: TypeToken) => t.group))].sort(),
 )
 
 // Watches
-/**
- * On switching jobs, turn on all PoS checkboxes. We check for change in distributionStore.posses, not in
- * jobSelection.hypothesisId, because of the network delay.
- */
-// watch(
-//     () => distributionStore.posses,
-//     () => {
-//         distributionStore.posses.forEach((pos) => (includePos.value[pos] = true))
-//     },
-//     { immediate: true },
-// )
-
 watch(hypothesisId, reload, { immediate: true })
 
 watch(distributionOptions, () => (selectedDistribution.value = distributionOptions.value[0]?.value))

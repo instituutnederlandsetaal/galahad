@@ -18,13 +18,11 @@
             <template v-else> This corpus is empty. </template>
         </template>
 
-        <template #cell-summary="data: TableData<DocumentMetadata>">
+        <template #cell-annotations="data: TableData<DocumentMetadata>">
             <RightFloatCell>
-                <template #left>
-                    {{ data.value.annotations.token }}
-                </template>
+                <template #left> {{ data.item.annotations.token }} </template>
                 <template #right>
-                    <InspectButton v-if="data.value.annotations.token > 0" @click="previewDocument = data.item" />
+                    <InspectButton v-if="data.item.annotations.token > 0" @click="previewDocument = data.item" />
                 </template>
             </RightFloatCell>
         </template>
@@ -81,10 +79,10 @@ const columns = computed<Column<DocumentMetadata>[]>(() => [
     { key: "format" },
     { key: "text" },
     {
-        key: "summary",
+        key: "annotations",
         label: "tokens",
         align: "right",
-        sortOn: (d: DocumentMetadata): number => d.summary?.annotations.token,
+        sortOn: (d: DocumentMetadata): number => d.annotations.token,
     },
     { key: "modified", format: (d: DocumentMetadata): string => formatDate(d.modified) },
     { key: "actions", noSort: true, hidden: !canWrite || type === DocsTableType.dataset },

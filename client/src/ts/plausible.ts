@@ -1,10 +1,17 @@
 import type { CorpusMetadata, MutableCorpusMetadata } from "@/types/corpora"
 import type { DocumentMetadata, Format } from "@/types/documents"
+import type { Job } from "@/types/jobs"
 
 declare global {
     interface Window {
         plausible: (eventName: string, props?: Record<string, any>) => void
     }
+}
+
+enum JobType {
+    Hypothesis = "hypothesis",
+    Reference = "reference",
+    Tagger = "tagger",
 }
 
 // debug printing for plausible
@@ -15,17 +22,22 @@ if (location.hostname.includes("localhost")) {
 
 function corpusParams(corpus: CorpusMetadata): Record<string, number | string | boolean> {
     return {
-        shared: corpus.collaborators.length + corpus.viewers.length,
-        tagset: corpus.tagset,
+        shared: corpus.dataset ? "dataset" : (corpus.collaborators.length + corpus.viewers.length),
         period: `${corpus.eraFrom} - ${corpus.eraTo}`,
         source: Boolean(corpus.sourceName) || Boolean(corpus.sourceUrl),
-        dataset: corpus.dataset,
         numDocs: corpus.numDocs,
     }
 }
 
 function docParams(doc: DocumentMetadata): Record<string, string> {
     return { format: doc.format, annotations: doc.annotations.join() }
+}
+
+function jobParams(job: Job, type: JobType): Record<string, any> {
+    return {
+        [`${type}-id`]: job.tagger.id,
+        [`${type}-annotations`]: job.tagger.annotations.map((a) => a.annotation),
+    }
 }
 
 function corpusDocParams(corpus: CorpusMetadata, doc: DocumentMetadata): Record<string, string | number | boolean> {
@@ -60,4 +72,44 @@ export const plausible = {
         const props = { url: location.pathname }
         window.plausible("help-clicked", { props })
     },
+    distributionEvaluated(corpus: CorpusMetadata, hypothesisJob: Job): void {
+        const props = { ...jobParams(hypothesisJob, JobType.Hypothesis), ...corpusParams(corpus) }
+        window.plausible("distribution-evaluated", { props })
+    },
+    confusionEvaluated(corpus: CorpusMetadata, hypothesisJob: Job, referenceJob: Job): void {
+        const props = {
+            ...jobParams(hypothesisJob, JobType.Hypothesis),
+            ...jobParams(referenceJob, JobType.Reference),
+            ...corpusParams(corpus),
+        }
+        window.plausible("confusion-evaluated", { props })
+    },
+    metricsEvaluated(corpus: CorpusMetadata, hypothesisJob: Job, referenceJob: Job): void {
+        const props = {
+            ...jobParams(hypothesisJob, JobType.Hypothesis),
+            ...jobParams(referenceJob, JobType.Reference),
+            ...corpusParams(corpus),
+        }
+        window.plausible("metrics-evaluated", { props })
+    },
+    evaluationDownloaded(corpus: CorpusMetadata, hypothesisJob: Job, referenceJob: Job): void {
+        const props = {
+            ...jobParams(hypothesisJob, JobType.Hypothesis),
+            ...jobParams(referenceJob, JobType.Reference),
+            ...corpusParams(corpus),
+        }
+        window.plausible("evaluation-downloaded", { props })
+    },
+    jobStarted(corpus: CorpusMetadata, taggerJob: Job): void {
+        const props = { ...jobParams(taggerJob, JobType.Tagger), ...corpusParams(corpus) }
+        window.plausible("job-started", { props })
+    },
+    jobDeleted(corpus: CorpusMetadata, taggerJob: Job): void {
+        const props = { ...jobParams(taggerJob, JobType.Tagger), ...corpusParams(corpus) }
+        window.plausible("job-deleted", { props })
+    },
+    jobStopped(corpus: CorpusMetadata, taggerJob: Job): void {
+        const props = { ...jobParams(taggerJob, JobType.Tagger), ...corpusParams(corpus) }
+        window.plausible("job-stopped", { props })
+    }
 }

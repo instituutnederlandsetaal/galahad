@@ -13,6 +13,7 @@ export type ProgressResponse = AxiosResponse<Progress>
 export const jobsPath = (corpus: UUID): string => `/corpora/${corpus}/jobs`
 const jobPath = (corpus: UUID, job: string): string => `/corpora/${corpus}/jobs/${job}`
 const jobProgressPath = (corpus: UUID, job: string): string => `/corpora/${corpus}/jobs/${job}/progress`
+const jobCancelPath = (corpus: UUID, job: string): string => `/corpora/${corpus}/jobs/${job}/cancel`
 
 /**
  * Fetch all jobs for a corpus.
@@ -37,8 +38,12 @@ export function postJob(corpus: UUID, job: string): Promise<ProgressResponse> {
  * @param job Tagger job name.
  * @param hard True to delete the job, false to cancel it.
  */
-export function cancelOrDeleteJob(corpus: UUID, job: string, hard: boolean): Promise<ProgressResponse> {
-    return axios.delete(jobPath(corpus, job), { params: { hard: hard } })
+export function removeJob(corpus: UUID, job: string): Promise<ProgressResponse> {
+    return axios.delete(jobPath(corpus, job))
+}
+
+export function cancelJob(corpus: UUID, job: string): Promise<ProgressResponse> {
+    return axios.post(jobCancelPath(corpus, job))
 }
 
 /**

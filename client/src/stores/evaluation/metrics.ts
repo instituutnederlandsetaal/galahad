@@ -8,6 +8,7 @@ import type { UUID } from "@/types/corpora"
 import { useAxios } from "@/api/useAxios"
 
 import type { Metrics, MetricsRow } from "@/types/evaluation"
+import { plausible } from "@/ts/plausible"
 
 export const metricsPerPosColumns = [
     {
@@ -38,10 +39,11 @@ export const metricsPerPosColumns = [
  * Stores and fetches the Lemma & PoS accuracy metrics.
  */
 const useMetrics = defineStore("metrics", () => {
-    const { hypothesisId, referenceId } = storeToRefs(stores.useJobSelection())
-    const { corpusId } = storeToRefs(stores.useCorpora())
+    const { hypothesisId, referenceId, hypothesisJob, referenceJob } = storeToRefs(stores.useJobSelection())
+    const { corpusId, corpus } = storeToRefs(stores.useCorpora())
     const url = computed<string>(() => {
         if (!(hypothesisId.value && referenceId.value)) return undefined
+        plausible.metricsEvaluated(corpus.value, hypothesisJob.value, referenceJob.value)
         return metricsPath(corpusId.value)
     })
     const { loading, data: metrics } = useAxios<Metrics>(

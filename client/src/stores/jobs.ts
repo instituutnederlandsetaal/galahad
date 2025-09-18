@@ -2,6 +2,7 @@ import * as API from "@/api/jobs"
 import type { ProgressResponse } from "@/api/jobs"
 import { getDocsAtTaggers } from "@/api/taggers"
 import stores from "@/stores"
+import { plausible } from "@/ts/plausible"
 import { type Job, SOURCE_LAYER } from "@/types/jobs"
 
 const POLL_INTERVAL = 5000
@@ -10,7 +11,7 @@ const POLL_INTERVAL = 5000
 const useJobs = defineStore("jobs", () => {
     // Stores
     const corporaStore = stores.useCorpora()
-    const { corpusId } = storeToRefs(corporaStore)
+    const { corpusId, corpus } = storeToRefs(corporaStore)
 
     // Fields
     const loading = ref<boolean>(false)
@@ -78,6 +79,7 @@ const useJobs = defineStore("jobs", () => {
     }
 
     function tag(job: string): void {
+        plausible.jobStarted(corpus.value, jobs.value.find((j) => j.tagger.id === job))
         posting.value = true
         API.postJob(corporaStore.corpusId, job)
             .then((response) => {
@@ -93,8 +95,9 @@ const useJobs = defineStore("jobs", () => {
     }
 
     function cancel(job: string): void {
+        plausible.jobStopped(corpus.value, jobs.value.find((j) => j.tagger.id === job))
         posting.value = true
-        API.cancelOrDeleteJob(corporaStore.corpusId, job, false)
+        API.cancelJob(corporaStore.corpusId, job)
             .then((response) => {
                 posting.value = false
                 setProgress(job, response)
@@ -104,8 +107,9 @@ const useJobs = defineStore("jobs", () => {
 
     // 'delete' is a reserved keyword
     function remove(job: string): void {
+        plausible.jobDeleted(corpus.value, jobs.value.find((j) => j.tagger.id === job))
         posting.value = true
-        API.cancelOrDeleteJob(corporaStore.corpusId, job, true)
+        API.removeJob(corporaStore.corpusId, job)
             .then((response) => {
                 posting.value = false
                 setProgress(job, response)

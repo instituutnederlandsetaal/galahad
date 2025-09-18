@@ -3,7 +3,7 @@
         <template #title>Annotations preview of {{ name }}</template>
         <template #header>
             <dl>
-                <dl v-for="[key, value] in Object.entries(summary.annotations)" :key="key">
+                <dl v-for="[key, value] in Object.entries(annotations)" :key="key">
                     <dt>{{ key }}:</dt>
                     <dd>{{ value }}</dd>
                 </dl>
@@ -21,9 +21,8 @@ const { document, job } = defineProps<{ document?: DocumentMetadata; job?: Job }
 
 // #computed
 const name = computed(() => (document ? document.name : job?.tagger.id))
-const summary = computed(() => (document ? document.summary : job.summary))
-const annotations = computed(() => Object.keys(summary.value.annotations))
-const columns = computed(() => annotations.value.map((i) => ({ key: i, label: i, noSort: true })))
+const annotations = computed(() => (document ? document.annotations : job.annotations))
+const columns = computed(() => Object.keys(annotations.value).map((i) => ({ key: i, label: i, noSort: true })))
 const terms = computed(() => (document ? document.preview.terms : job.preview.terms))
 const items = computed(() => terms.value.map((t) => t.annotations))
 </script>
