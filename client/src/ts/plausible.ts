@@ -30,13 +30,13 @@ function corpusParams(corpus: CorpusMetadata): Record<string, number | string | 
 }
 
 function docParams(doc: DocumentMetadata): Record<string, string> {
-    return { format: doc.format, annotations: doc.annotations.join() }
+    return { format: doc.format, annotations: Object.keys(doc.annotations).join() }
 }
 
 function jobParams(job: Job, type: JobType): Record<string, any> {
     return {
         [`${type}-id`]: job.tagger.id,
-        [`${type}-annotations`]: job.tagger.annotations.map((a) => a.annotation),
+        [`${type}-annotations`]: job.tagger.annotations.map((a) => a.annotation).join(),
     }
 }
 
