@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.jobs
 
 import org.ivdnt.galahad.annotations.LayerPreview
-import org.ivdnt.galahad.annotations.LayerSummary
+import org.ivdnt.galahad.annotations.LayerAnnotations
 import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.exceptions.JobNotFoundException
@@ -51,7 +51,7 @@ class Jobs(
         // Create a map of all taggers with empty metadata
         val numDocs = corpus.immutableMetadata.numDocs
         val allJobs = Tagger.taggers.mapValues {
-            JobMetadata(it.value, Progress(numDocs), LayerPreview.EMPTY, LayerSummary.EMPTY, 0)
+            JobMetadata(it.value, Progress(numDocs), LayerPreview.EMPTY, LayerAnnotations.EMPTY, 0)
         }
         // replace the entries for which a job exists
         val jobs = readAll().map { it.metadata }.associateBy { it.tagger.id }

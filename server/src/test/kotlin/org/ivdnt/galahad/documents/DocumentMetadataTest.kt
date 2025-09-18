@@ -2,7 +2,6 @@ package org.ivdnt.galahad.documents
 
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.corpora.Corpus
-import org.ivdnt.galahad.documents.DocumentFormat
 import org.ivdnt.galahad.util.TestUtil
 import org.junit.jupiter.api.Test
 
@@ -27,7 +26,7 @@ class DocumentMetadataTest {
         assertEquals("input.txt", meta.name)
         assertEquals(DocumentFormat.Txt, meta.format)
         assertEquals(plaintext, meta.text) // This works because the preview is < MAX_PREVIEW_LENGTH
-        val total = meta.summary.annotations[Annotation.TOKEN]
+        val total = meta.annotations.annotations[Annotation.TOKEN]
         assertEquals(0, total)
     }
 
@@ -40,7 +39,7 @@ class DocumentMetadataTest {
         assertEquals("input.tei.xml", meta.name)
         assertEquals(DocumentFormat.TeiP5, meta.format)
         assertEquals(plaintext, meta.text) // This works because the preview is < MAX_PREVIEW_LENGTH
-        val total = meta.summary.annotations[Annotation.TOKEN]
+        val total = meta.annotations.annotations[Annotation.TOKEN]
         assertEquals(21, total)
     }
 }

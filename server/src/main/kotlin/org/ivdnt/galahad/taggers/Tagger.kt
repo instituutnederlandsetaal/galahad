@@ -89,7 +89,7 @@ class Tagger(
 
         fun createSourceTagger(corpus: Corpus): Tagger {
             val metadata = corpus.immutableMetadata
-            val produces = corpus.documents.readAll().flatMap { it.metadata.annotations }.toSet()
+            val produces = corpus.documents.readAll().flatMap { it.metadata.annotationSet }.toSet()
             return Tagger(
                 id = SOURCE_LAYER_NAME,
                 description = "uploaded annotations",

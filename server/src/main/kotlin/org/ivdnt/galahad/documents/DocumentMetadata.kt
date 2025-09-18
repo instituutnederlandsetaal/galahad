@@ -1,8 +1,9 @@
 package org.ivdnt.galahad.documents
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.LayerPreview
-import org.ivdnt.galahad.annotations.LayerSummary
+import org.ivdnt.galahad.annotations.LayerAnnotations
 import org.ivdnt.galahad.formats.InternalFile
 
 data class DocumentMetadata(
@@ -15,12 +16,14 @@ data class DocumentMetadata(
     /** A truncated preview of the annotated layer. */
     val preview: LayerPreview,
     /** Some statistics about the source annotations, if present */
-    val summary: LayerSummary,
+    val annotations: LayerAnnotations,
     /** Last modified timestamp in milliseconds. */
     val modified: Long,
-    /** Annotation types in the source layer. */
-    val annotations: Set<Annotation>,
 ) {
+    @get:JsonIgnore
+    val annotationSet: List<Annotation>
+        get() = annotations.annotations.map { it.key }
+
     companion object {
         private const val PREVIEW_LENGTH: Int = 100
 
@@ -31,9 +34,8 @@ data class DocumentMetadata(
                 format = file.format,
                 text = text.take(PREVIEW_LENGTH) + if (text.length > PREVIEW_LENGTH) "..." else "",
                 preview = file.layer.preview,
-                summary = file.layer.summary,
+                annotations = file.layer.summary,
                 modified = System.currentTimeMillis(),
-                annotations = file.layer.annotations
             )
         }
     }
