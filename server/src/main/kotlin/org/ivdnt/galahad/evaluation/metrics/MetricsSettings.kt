@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Term
-import org.ivdnt.galahad.evaluation.comparison.LayerComparison.Companion.truncatePC
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
 import org.ivdnt.galahad.evaluation.frequency.TokenFrequency
 
@@ -207,7 +206,7 @@ class FrequencyMetricsSettings(
 
     override fun groupBy(term: Term): String {
         val freq = tokenFrequency.getFrequency(term.token.lowercase())
-        val truncatedFreq = tokenFrequency.getFrequency(truncatePC(term.token.lowercase()))
+        val truncatedFreq = tokenFrequency.getFrequency(term.token.lowercase())
         return if (freq == 0) {
             truncatedFreq.toString()
         } else {

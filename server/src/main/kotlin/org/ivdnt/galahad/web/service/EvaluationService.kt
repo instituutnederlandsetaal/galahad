@@ -8,7 +8,6 @@ import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.corpora.CorpusMetadata
 import org.ivdnt.galahad.evaluation.JobPair
 import org.ivdnt.galahad.evaluation.comparison.*
-import org.ivdnt.galahad.evaluation.confusion.CONFUSION_TYPES
 import org.ivdnt.galahad.evaluation.confusion.JobConfusion
 import org.ivdnt.galahad.evaluation.distribution.DocumentDistribution
 import org.ivdnt.galahad.evaluation.distribution.JobDistribution
@@ -17,7 +16,6 @@ import org.ivdnt.galahad.evaluation.entities.DocumentEntities
 import org.ivdnt.galahad.evaluation.entities.JobEntities
 import org.ivdnt.galahad.evaluation.frequency.TokenFrequency
 import org.ivdnt.galahad.evaluation.metrics.*
-import org.ivdnt.galahad.exceptions.AnnotationNotSupported
 import org.ivdnt.galahad.exceptions.InvalidMetricsTypeException
 import org.ivdnt.galahad.export.csv.CSVFile
 import org.ivdnt.galahad.taggers.Tagger
@@ -136,9 +134,9 @@ class EvaluationService(val corpora: CorporaService) {
         corpus: UUID, document: String, job: String, reference: String?,
     ): List<TermComparison> {
         val reference: String = reference ?: SOURCE_LAYER_NAME
-        return DocumentLayerComparison(
-            hypothesisLayer = corpora.readAsReaderOrThrow(corpus, user).jobs.readOrThrow(job).getLayer(document),
-            referenceLayer = corpora.readAsReaderOrThrow(corpus, user).jobs.readOrThrow(reference).getLayer(document)
+        return LayerComparison(
+            hypothesis = corpora.readAsReaderOrThrow(corpus, user).jobs.readOrThrow(job).getLayer(document),
+            reference = corpora.readAsReaderOrThrow(corpus, user).jobs.readOrThrow(reference).getLayer(document)
         ).matches
     }
 

@@ -2,9 +2,6 @@ package org.ivdnt.galahad.evaluation.comparison
 
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Term
-import org.ivdnt.galahad.evaluation.confusion.MULTIPLE_POS
-import org.ivdnt.galahad.evaluation.confusion.OTHER_POS
-import org.ivdnt.galahad.evaluation.confusion.OTHER_POS_REGEX
 
 interface TermFilter {
     fun filter(term: Term): Boolean
@@ -30,13 +27,11 @@ class BasicTermFilter(private val annotation: Annotation, private val value: Str
 class HeadGroupTermFilter(private val annotation: Annotation, private val value: String) : TermFilter {
     // Filter methods
     private val multiFilter = { t: Term -> t.isMulti(annotation) }
-    private val otherFilter = { t: Term -> t.annotations[annotation]?.contains(Regex(OTHER_POS_REGEX)) == true }
     private val singleFilter = { t: Term -> t.annotationHeadOrMissing(annotation) == value }
 
     // Decide which filter to use on class initialization
     private val filterFunc: (Term) -> Boolean = when {
-        (value.uppercase() == MULTIPLE_POS) -> multiFilter
-        (value.uppercase() == OTHER_POS) -> otherFilter
+        (value.uppercase() == "MULTIPLE") -> multiFilter
         else -> singleFilter
     }
 

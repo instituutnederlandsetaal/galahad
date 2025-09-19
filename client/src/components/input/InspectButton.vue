@@ -1,5 +1,5 @@
 <template>
     <GButton title="Inspect">
-        <i class="fa fa-search"></i>
+        <i class="fa fa-info"></i>
     </GButton>
 </template>
