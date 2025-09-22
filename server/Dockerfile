@@ -1,4 +1,4 @@
-FROM gradle:9.0.0-jdk21-alpine AS build
+FROM gradle:9.1.0-jdk21-alpine AS build
 COPY --chown=gradle:gradle . /home/gradle/src
 WORKDIR /home/gradle/src
 RUN gradle build -x test
