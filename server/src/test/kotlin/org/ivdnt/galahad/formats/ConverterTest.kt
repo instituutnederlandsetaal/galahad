@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.text.SimpleDateFormat
 
 open class ConverterTest {
     private lateinit var corpus: Corpus
@@ -68,6 +69,7 @@ open class ConverterTest {
             Regex("""timestamp="[0-9]+""""),
             Regex("""filename="[^"]+""""),
             Regex("""filetype="[^"]+""""),
+            Regex("""[0-9]{4}-[0-9]{2}-[0-9]{2}""""),
         )
     }
 }

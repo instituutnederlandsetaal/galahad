@@ -1,5 +1,6 @@
 package org.ivdnt.galahad.formats.tei
 
+import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.documents.DocumentFormat
 import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.formats.xml.PrettyXMLWriter
@@ -18,6 +19,7 @@ class TeiMetadataWriter(val writer: PrettyXMLWriter, val export: DocumentExport)
     val language = export.corpus.mutableMetadata.language.ifNullOrBlank { "!No language defined!" }
     val langCode = export.corpus.mutableMetadata.langCode
     val today = SimpleDateFormat("yyyy-MM-dd").format(System.currentTimeMillis())
+    val annotationSet = if (export.tagger.id == SOURCE_LAYER_NAME) export.corpus.mutableMetadata.tagset.ifNullOrBlank { "!No tagset defined!" } else export.tagger.principles
 
     fun write() {
         writer.wrapIn("teiHeader") {
@@ -219,7 +221,7 @@ class TeiMetadataWriter(val writer: PrettyXMLWriter, val export: DocumentExport)
                         mapOf(
                             "annotationStyle" to "inline",
                             "Documentation" to "",
-                            "annotationSet" to export.tagger.principles,
+                            "annotationSet" to annotationSet,
                             "annotationDescription" to "The file was automatically annotated within the platform GaLAHaD, which is a central hub for enriching historical Dutch.",
                             "annotationFormat" to "TEI xml",
                         )
