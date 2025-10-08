@@ -1,0 +1,61 @@
+{
+  "documents" : [ {
+    "id" : "d1",
+    "paragraphs" : [ {
+      "id" : "d1.p1",
+      "sentences" : [ {
+        "id" : "d1.p1.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "Punctuatie,"
+          },
+          "id" : "d1.p1.s1.w1",
+          "offset" : 0
+        }, {
+          "annotations" : {
+            "token" : "zin"
+          },
+          "id" : "d1.p1.s1.w2",
+          "offset" : 12
+        }, {
+          "annotations" : {
+            "token" : "zonder"
+          },
+          "id" : "d1.p1.s1.w3",
+          "offset" : 16
+        }, {
+          "annotations" : {
+            "token" : "tags."
+          },
+          "id" : "d1.p1.s1.w4",
+          "offset" : 23
+        }, {
+          "annotations" : {
+            "token" : "Zin"
+          },
+          "id" : "d1.p1.s1.w5",
+          "offset" : 29
+        }, {
+          "annotations" : {
+            "token" : "met"
+          },
+          "id" : "d1.p1.s1.w6",
+          "offset" : 33
+        }, {
+          "annotations" : {
+            "token" : "tags"
+          },
+          "id" : "d1.p1.s1.w7",
+          "offset" : 37
+        }, {
+          "annotations" : {
+            "token" : "."
+          },
+          "id" : "d1.p1.s1.w8",
+          "offset" : 42
+        } ]
+      } ]
+    } ]
+  } ],
+  "id" : "UUID"
+}

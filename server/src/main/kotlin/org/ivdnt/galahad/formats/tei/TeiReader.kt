@@ -2,10 +2,11 @@ package org.ivdnt.galahad.formats.tei
 
 import org.ivdnt.galahad.formats.xml.XmlReader
 import java.io.BufferedInputStream
+import java.io.InputStream
 import javax.xml.XMLConstants
 
 class TeiReader(
-    stream: BufferedInputStream,
+    stream: InputStream,
 ) : XmlReader(stream) {
     override val nerTags: Array<String> = NER_TAGS
     override val documentTags: Array<String> = DOCUMENT_TAGS

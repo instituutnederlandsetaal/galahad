@@ -1,0 +1,1438 @@
+{
+  "documents" : [ {
+    "id" : "INT_UUID.TEI.1.text.1",
+    "paragraphs" : [ {
+      "id" : "INT_UUID.TEI.1.text.1.body.1.div.1.div.1.head.1",
+      "sentences" : [ {
+        "id" : "INT_UUID.TEI.1.text.1.body.1.div.1.div.1.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "286",
+            "pos" : "NUM"
+          },
+          "id" : "w.0",
+          "offset" : 0
+        } ]
+      }, {
+        "id" : "INT_UUID.TEI.1.text.1.body.1.div.1.div.1.s2",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "Van",
+            "lemma" : "van",
+            "pos" : "ADP"
+          },
+          "id" : "w.1",
+          "offset" : 4
+        }, {
+          "annotations" : {
+            "token" : "Outhoom",
+            "lemma" : "oudoom",
+            "pos" : "NOU"
+          },
+          "id" : "w.2",
+          "offset" : 8
+        }, {
+          "annotations" : {
+            "token" : ",",
+            "pos" : ","
+          },
+          "id" : "pc.post.0000001",
+          "offset" : 16
+        }, {
+          "annotations" : {
+            "token" : "Van",
+            "lemma" : "van",
+            "pos" : "ADP"
+          },
+          "id" : "w.3",
+          "offset" : 18
+        }, {
+          "annotations" : {
+            "token" : "Hoorn",
+            "lemma" : "hoorn",
+            "pos" : "NELOC"
+          },
+          "id" : "w.4",
+          "offset" : 22
+        }, {
+          "annotations" : {
+            "token" : ",",
+            "pos" : ","
+          },
+          "id" : "pc.post.0000002",
+          "offset" : 28
+        }, {
+          "annotations" : {
+            "token" : "Van",
+            "lemma" : "van",
+            "pos" : "ADP"
+          },
+          "id" : "w.5",
+          "offset" : 30
+        }, {
+          "annotations" : {
+            "token" : "Riebeeck",
+            "lemma" : "repiek",
+            "pos" : "NELOC"
+          },
+          "id" : "w.6",
+          "offset" : 34
+        }, {
+          "annotations" : {
+            "token" : ",",
+            "pos" : ","
+          },
+          "id" : "pc.post.0000003",
+          "offset" : 43
+        }, {
+          "annotations" : {
+            "token" : "Pijl",
+            "lemma" : "pijl",
+            "pos" : "NOU"
+          },
+          "id" : "w.7",
+          "offset" : 45
+        }, {
+          "annotations" : {
+            "token" : ",",
+            "pos" : ","
+          },
+          "id" : "pc.post.0000004",
+          "offset" : 50
+        }, {
+          "annotations" : {
+            "token" : "Cops",
+            "lemma" : "kop",
+            "pos" : "NOU"
+          },
+          "id" : "w.8",
+          "offset" : 52
+        }, {
+          "annotations" : {
+            "token" : ",",
+            "pos" : ","
+          },
+          "id" : "pc.post.0000005",
+          "offset" : 57
+        }, {
+          "annotations" : {
+            "token" : "enz",
+            "lemma" : "n",
+            "pos" : "ADV"
+          },
+          "id" : "w.9",
+          "offset" : 59
+        }, {
+          "annotations" : {
+            "token" : ".",
+            "lemma" : "e.",
+            "pos" : "."
+          },
+          "id" : "pc.post.0000006",
+          "offset" : 63
+        } ]
+      }, {
+        "id" : "INT_UUID.TEI.1.text.1.body.1.div.1.div.1.s3",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "XLHI",
+            "lemma" : "xeres",
+            "pos" : "NEPER_NEPER"
+          },
+          "id" : "w.10",
+          "offset" : 65
+        }, {
+          "annotations" : {
+            "token" : ",",
+            "pos" : ","
+          },
+          "id" : "pc.post.0000007",
+          "offset" : 70
+        }, {
+          "annotations" : {
+            "token" : "14",
+            "pos" : "NUM"
+          },
+          "id" : "w.11",
+          "offset" : 72
+        }, {
+          "annotations" : {
+            "token" : "maart",
+            "lemma" : "maart",
+            "pos" : "NOU"
+          },
+          "id" : "w.12",
+          "offset" : 75
+        }, {
+          "annotations" : {
+            "token" : "1704",
+            "pos" : "NUM"
+          },
+          "id" : "w.13",
+          "offset" : 81
+        } ]
+      }, {
+        "id" : "INT_UUID.TEI.1.text.1.body.1.div.1.div.1.head.1.s4",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "XLIH",
+            "lemma" : "xeres",
+            "pos" : "NEPER_NEPER"
+          },
+          "id" : "w.14",
+          "offset" : 86
+        }, {
+          "annotations" : {
+            "token" : ".",
+            "lemma" : "e.",
+            "pos" : "."
+          },
+          "id" : "pc.post.0000008",
+          "offset" : 91
+        } ]
+      }, {
+        "id" : "INT_UUID.TEI.1.text.1.body.1.div.1.div.1.head.1.s5",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "WILLEM",
+            "lemma" : "willem",
+            "pos" : "NOU"
+          },
+          "id" : "w.15",
+          "offset" : 93
+        }, {
+          "annotations" : {
+            "token" : "VAN",
+            "lemma" : "van",
+            "pos" : "NOU"
+          },
+          "id" : "w.16",
+          "offset" : 100
+        }, {
+          "annotations" : {
+            "token" : "OUTHOORN",
+            "lemma" : "onthoornen",
+            "pos" : "NOU"
+          },
+          "id" : "w.17",
+          "offset" : 104
+        }, {
+          "annotations" : {
+            "token" : ",",
+            "pos" : ","
+          },
+          "id" : "pc.post.0000009",
+          "offset" : 113
+        }, {
+          "annotations" : {
+            "token" : "JOAN",
+            "lemma" : "jan",
+            "pos" : "NEPER_NEPER"
+          },
+          "id" : "w.18",
+          "offset" : 115
+        }, {
+          "annotations" : {
+            "token" : "VAN",
+            "lemma" : "van",
+            "pos" : "NEPER_NEPER"
+          },
+          "id" : "w.19",
+          "offset" : 120
+        }, {
+          "annotations" : {
+            "token" : "HOORN",
+            "lemma" : "hoorn",
+            "pos" : "NEPER"
+          },
+          "id" : "w.20",
+          "offset" : 124
+        }, {
+          "annotations" : {
+            "token" : ",",
+            "pos" : ","
+          },
+          "id" : "pc.post.0000010",
+          "offset" : 130
+        }, {
+          "annotations" : {
+            "token" : "ABRAHAM",
+            "lemma" : "abraham",
+            "pos" : "NOU"
+          },
+          "id" : "w.21",
+          "offset" : 132
+        }, {
+          "annotations" : {
+            "token" : "VAN",
+            "lemma" : "van",
+            "pos" : "NOU"
+          },
+          "id" : "w.22",
+          "offset" : 140
+        }, {
+          "annotations" : {
+            "token" : "RIEBEECK",
+            "lemma" : "repiek",
+            "pos" : "NOU"
+          },
+          "id" : "w.23",
+          "offset" : 144
+        }, {
+          "annotations" : {
+            "token" : ",",
+            "pos" : ","
+          },
+          "id" : "pc.post.0000011",
+          "offset" : 153
+        }, {
+          "annotations" : {
+            "token" : "LAURENS",
+            "lemma" : "leuren",
+            "pos" : "NEPER"
+          },
+          "id" : "w.24",
+          "offset" : 155
+        }, {
+          "annotations" : {
+            "token" : "PIJL",
+            "lemma" : "pijl",
+            "pos" : "NOU"
+          },
+          "id" : "w.25",
+          "offset" : 163
+        }, {
+          "annotations" : {
+            "token" : ",",
+            "pos" : ","
+          },
+          "id" : "pc.post.0000012",
+          "offset" : 168
+        }, {
+          "annotations" : {
+            "token" : "JOANNES",
+            "lemma" : "jan",
+            "pos" : "NEPER_NEPER"
+          },
+          "id" : "w.26",
+          "offset" : 170
+        }, {
+          "annotations" : {
+            "token" : "COPS",
+            "lemma" : "kops",
+            "pos" : "NEPER_NEPER"
+          },
+          "id" : "w.27",
+          "offset" : 178
+        }, {
+          "annotations" : {
+            "token" : ",",
+            "pos" : ","
+          },
+          "id" : "pc.post.0000013",
+          "offset" : 183
+        }, {
+          "annotations" : {
+            "token" : "MANUEL",
+            "lemma" : "manueel",
+            "pos" : "NOU"
+          },
+          "id" : "w.28",
+          "offset" : 185
+        }, {
+          "annotations" : {
+            "token" : "BORNEZEE",
+            "lemma" : "born",
+            "pos" : "NOU"
+          },
+          "id" : "w.29",
+          "offset" : 192
+        }, {
+          "annotations" : {
+            "token" : ",",
+            "pos" : ","
+          },
+          "id" : "pc.post.0000014",
+          "offset" : 201
+        }, {
+          "annotations" : {
+            "token" : "CHRISTOFFEL",
+            "lemma" : "christoffel, christoffel",
+            "pos" : "NOU"
+          },
+          "id" : "w.30",
+          "offset" : 203
+        }, {
+          "annotations" : {
+            "token" : "VAN",
+            "lemma" : "van",
+            "pos" : "NOU"
+          },
+          "id" : "w.31",
+          "offset" : 215
+        }, {
+          "annotations" : {
+            "token" : "SWOLL",
+            "lemma" : "zwol",
+            "pos" : "NOU"
+          },
+          "id" : "w.32",
+          "offset" : 219
+        }, {
+          "annotations" : {
+            "token" : ",",
+            "pos" : ","
+          },
+          "id" : "pc.post.0000015",
+          "offset" : 225
+        }, {
+          "annotations" : {
+            "token" : "HERMAN",
+            "lemma" : "herm",
+            "pos" : "NEPER"
+          },
+          "id" : "w.33",
+          "offset" : 227
+        }, {
+          "annotations" : {
+            "token" : "DE",
+            "lemma" : "de",
+            "pos" : "NEPER"
+          },
+          "id" : "w.34",
+          "offset" : 234
+        }, {
+          "annotations" : {
+            "token" : "WILDE",
+            "lemma" : "wild",
+            "pos" : "NEPER"
+          },
+          "id" : "w.35",
+          "offset" : 237
+        }, {
+          "annotations" : {
+            "token" : ",",
+            "pos" : ","
+          },
+          "id" : "pc.post.0000016",
+          "offset" : 243
+        }, {
+          "annotations" : {
+            "token" : "ABRAHAM",
+            "lemma" : "abraham",
+            "pos" : "NOU"
+          },
+          "id" : "w.36",
+          "offset" : 245
+        }, {
+          "annotations" : {
+            "token" : "DOUGLAS",
+            "lemma" : "douglas",
+            "pos" : "NOU"
+          },
+          "id" : "w.37",
+          "offset" : 253
+        }, {
+          "annotations" : {
+            "token" : ",",
+            "pos" : ","
+          },
+          "id" : "pc.post.0000017",
+          "offset" : 261
+        }, {
+          "annotations" : {
+            "token" : "ADAM",
+            "lemma" : "adam",
+            "pos" : "NOU"
+          },
+          "id" : "w.38",
+          "offset" : 263
+        }, {
+          "annotations" : {
+            "token" : "VAN",
+            "lemma" : "van",
+            "pos" : "NOU"
+          },
+          "id" : "w.39",
+          "offset" : 268
+        }, {
+          "annotations" : {
+            "token" : "RIJN",
+            "lemma" : "rijn",
+            "pos" : "NOU"
+          },
+          "id" : "w.40",
+          "offset" : 272
+        }, {
+          "annotations" : {
+            "token" : "EN",
+            "lemma" : "en",
+            "pos" : "NOU"
+          },
+          "id" : "w.41",
+          "offset" : 277
+        }, {
+          "annotations" : {
+            "token" : "ADRIAAN",
+            "lemma" : "atrium",
+            "pos" : "NOU"
+          },
+          "id" : "w.42",
+          "offset" : 280
+        }, {
+          "annotations" : {
+            "token" : "VAN",
+            "lemma" : "van",
+            "pos" : "NOU"
+          },
+          "id" : "w.43",
+          "offset" : 288
+        }, {
+          "annotations" : {
+            "token" : "DER",
+            "lemma" : "maat",
+            "pos" : "NOU"
+          },
+          "id" : "w.44",
+          "offset" : 292
+        }, {
+          "annotations" : {
+            "token" : "STEL",
+            "lemma" : "stel",
+            "pos" : "NOU"
+          },
+          "id" : "w.45",
+          "offset" : 296
+        }, {
+          "annotations" : {
+            "token" : ",",
+            "pos" : ","
+          },
+          "id" : "pc.post.0000018",
+          "offset" : 301
+        }, {
+          "annotations" : {
+            "token" : "BATAVIA",
+            "lemma" : "batavia ",
+            "pos" : "NOU"
+          },
+          "id" : "w.46",
+          "offset" : 303
+        }, {
+          "annotations" : {
+            "token" : "14",
+            "pos" : "NUM"
+          },
+          "id" : "w.47",
+          "offset" : 311
+        }, {
+          "annotations" : {
+            "token" : "maart",
+            "lemma" : "maart",
+            "pos" : "NOU"
+          },
+          "id" : "w.48",
+          "offset" : 314
+        }, {
+          "annotations" : {
+            "token" : "1704",
+            "pos" : "NUM"
+          },
+          "id" : "w.49",
+          "offset" : 320
+        }, {
+          "annotations" : {
+            "token" : ".",
+            "lemma" : "e.",
+            "pos" : "."
+          },
+          "id" : "pc.post.0000019",
+          "offset" : 325
+        } ]
+      } ]
+    }, {
+      "id" : "INT_UUID.TEI.1.text.1.body.1.div.1.div.1.p.1",
+      "sentences" : [ {
+        "id" : "INT_UUID.TEI.1.text.1.body.1.div.1.div.1.p.1.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "Kol",
+            "lemma" : "kol",
+            "pos" : "NOU"
+          },
+          "id" : "w.50",
+          "offset" : 327
+        }, {
+          "annotations" : {
+            "token" : ".",
+            "lemma" : "e.",
+            "pos" : "."
+          },
+          "id" : "pc.post.0000020",
+          "offset" : 331
+        } ]
+      }, {
+        "id" : "INT_UUID.TEI.1.text.1.body.1.div.1.div.1.p.1.s2",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "Arch.",
+            "lemma" : "ark",
+            "pos" : "NEPER"
+          },
+          "id" : "w.51",
+          "offset" : 333
+        }, {
+          "annotations" : {
+            "token" : "1563",
+            "pos" : "NUM"
+          },
+          "id" : "w.52",
+          "offset" : 339
+        }, {
+          "annotations" : {
+            "token" : ",",
+            "pos" : ","
+          },
+          "id" : "pc.post.0000022",
+          "offset" : 344
+        }, {
+          "annotations" : {
+            "token" : "fol.",
+            "lemma" : "fol.",
+            "pos" : "ADJ"
+          },
+          "id" : "w.53",
+          "offset" : 346
+        }, {
+          "annotations" : {
+            "token" : "2180-2183",
+            "pos" : "NUM"
+          },
+          "id" : "w.54",
+          "offset" : 351
+        }, {
+          "annotations" : {
+            "token" : ",",
+            "pos" : ","
+          },
+          "id" : "pc.post.0000024",
+          "offset" : 361
+        }, {
+          "annotations" : {
+            "token" : "copie",
+            "lemma" : "kopie",
+            "pos" : "NOU"
+          },
+          "id" : "w.55",
+          "offset" : 363
+        }, {
+          "annotations" : {
+            "token" : "1573",
+            "pos" : "NUM"
+          },
+          "id" : "w.56",
+          "offset" : 369
+        }, {
+          "annotations" : {
+            "token" : ",",
+            "pos" : ","
+          },
+          "id" : "pc.post.0000025",
+          "offset" : 374
+        }, {
+          "annotations" : {
+            "token" : "fol.",
+            "lemma" : "fol.",
+            "pos" : "ADJ"
+          },
+          "id" : "w.57",
+          "offset" : 376
+        }, {
+          "annotations" : {
+            "token" : "493-496",
+            "pos" : "NUM"
+          },
+          "id" : "w.58",
+          "offset" : 381
+        }, {
+          "annotations" : {
+            "token" : "').",
+            "lemma" : "e.",
+            "pos" : "NUM"
+          },
+          "id" : "pc.floating.0000027",
+          "offset" : 389
+        } ]
+      } ]
+    }, {
+      "id" : "INT_UUID.TEI.1.text.1.body.1.div.1.div.1.p.2",
+      "sentences" : [ {
+        "id" : "INT_UUID.TEI.1.text.1.body.1.div.1.div.1.p.2.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "Men",
+            "lemma" : "men",
+            "pos" : "PRN"
+          },
+          "id" : "w.95",
+          "offset" : 393
+        }, {
+          "annotations" : {
+            "token" : "wel",
+            "lemma" : "wel",
+            "pos" : "ADV"
+          },
+          "id" : "w.96",
+          "offset" : 397
+        }, {
+          "annotations" : {
+            "token" : "soude",
+            "lemma" : "zullen",
+            "pos" : "VRB"
+          },
+          "id" : "w.97",
+          "offset" : 401
+        }, {
+          "annotations" : {
+            "token" : "mogen",
+            "lemma" : "mogen",
+            "pos" : "VRB"
+          },
+          "id" : "w.98",
+          "offset" : 407
+        }, {
+          "annotations" : {
+            "token" : "prognosticeren",
+            "lemma" : "prognosticeren",
+            "pos" : "VRB"
+          },
+          "id" : "w.99",
+          "offset" : 413
+        }, {
+          "annotations" : {
+            "token" : ",",
+            "pos" : ","
+          },
+          "id" : "pc.post.0000034",
+          "offset" : 428
+        }, {
+          "annotations" : {
+            "token" : "de",
+            "lemma" : "de",
+            "pos" : "ART"
+          },
+          "id" : "w.100",
+          "offset" : 430
+        }, {
+          "annotations" : {
+            "token" : "zoon",
+            "lemma" : "zoon",
+            "pos" : "NOU"
+          },
+          "id" : "w.101",
+          "offset" : 433
+        }, {
+          "annotations" : {
+            "token" : "van",
+            "lemma" : "van",
+            "pos" : "ADP"
+          },
+          "id" : "w.102",
+          "offset" : 438
+        }, {
+          "annotations" : {
+            "token" : "den",
+            "lemma" : "de",
+            "pos" : "ART"
+          },
+          "id" : "w.103",
+          "offset" : 442
+        }, {
+          "annotations" : {
+            "token" : "Pangeran",
+            "lemma" : "pangeran",
+            "pos" : "NOU"
+          },
+          "id" : "w.104",
+          "offset" : 446
+        }, {
+          "annotations" : {
+            "token" : "Poegar",
+            "lemma" : "poger",
+            "pos" : "NOU"
+          },
+          "id" : "w.105",
+          "offset" : 455
+        }, {
+          "annotations" : {
+            "token" : "met",
+            "lemma" : "met",
+            "pos" : "ADP"
+          },
+          "id" : "w.106",
+          "offset" : 462
+        }, {
+          "annotations" : {
+            "token" : "sijn",
+            "lemma" : "zijn",
+            "pos" : "PRN"
+          },
+          "id" : "w.107",
+          "offset" : 466
+        }, {
+          "annotations" : {
+            "token" : "opstand",
+            "lemma" : "opstand",
+            "pos" : "NOU"
+          },
+          "id" : "w.108",
+          "offset" : 471
+        }, {
+          "annotations" : {
+            "token" : "tegen",
+            "lemma" : "tegen",
+            "pos" : "ADP"
+          },
+          "id" : "w.109",
+          "offset" : 479
+        }, {
+          "annotations" : {
+            "token" : "den",
+            "lemma" : "de",
+            "pos" : "ART"
+          },
+          "id" : "w.110",
+          "offset" : 485
+        }, {
+          "annotations" : {
+            "token" : "nieuwen",
+            "lemma" : "nieuw",
+            "pos" : "ADJ"
+          },
+          "id" : "w.111",
+          "offset" : 489
+        }, {
+          "annotations" : {
+            "token" : "Soesoehoenang",
+            "pos" : "NOU"
+          },
+          "id" : "w.112",
+          "offset" : 497
+        }, {
+          "annotations" : {
+            "token" : "sijn",
+            "lemma" : "zijn",
+            "pos" : "PRN"
+          },
+          "id" : "w.113",
+          "offset" : 511
+        }, {
+          "annotations" : {
+            "token" : "intentie",
+            "lemma" : "intentie",
+            "pos" : "NOU"
+          },
+          "id" : "w.114",
+          "offset" : 516
+        }, {
+          "annotations" : {
+            "token" : "beswaarlijk",
+            "lemma" : "bezwaarlijk",
+            "pos" : "ADJ"
+          },
+          "id" : "w.115",
+          "offset" : 525
+        }, {
+          "annotations" : {
+            "token" : "sal",
+            "lemma" : "zullen",
+            "pos" : "VRB"
+          },
+          "id" : "w.116",
+          "offset" : 537
+        }, {
+          "annotations" : {
+            "token" : "bereiken",
+            "lemma" : "bereiken",
+            "pos" : "VRB"
+          },
+          "id" : "w.117",
+          "offset" : 541
+        }, {
+          "annotations" : {
+            "token" : ",",
+            "pos" : ","
+          },
+          "id" : "pc.post.0000035",
+          "offset" : 550
+        }, {
+          "annotations" : {
+            "token" : "de",
+            "lemma" : "de",
+            "pos" : "CON"
+          },
+          "id" : "w.118",
+          "offset" : 552
+        }, {
+          "annotations" : {
+            "token" : "wij",
+            "lemma" : "wij",
+            "pos" : "PRN"
+          },
+          "id" : "w.119",
+          "offset" : 555
+        }, {
+          "annotations" : {
+            "token" : "le",
+            "lemma" : "el",
+            "pos" : "VRB"
+          },
+          "id" : "w.120",
+          "offset" : 559
+        }, {
+          "annotations" : {
+            "token" : "hij",
+            "lemma" : "hij",
+            "pos" : "PRN"
+          },
+          "id" : "w.121",
+          "offset" : 562
+        }, {
+          "annotations" : {
+            "token" : "reets",
+            "lemma" : "reeds",
+            "pos" : "ADV"
+          },
+          "id" : "w.122",
+          "offset" : 566
+        }, {
+          "annotations" : {
+            "token" : "met",
+            "lemma" : "met",
+            "pos" : "ADP"
+          },
+          "id" : "w.123",
+          "offset" : 572
+        }, {
+          "annotations" : {
+            "token" : "sijn",
+            "lemma" : "zijn",
+            "pos" : "PRN"
+          },
+          "id" : "w.124",
+          "offset" : 576
+        }, {
+          "annotations" : {
+            "token" : "bij",
+            "lemma" : "bij",
+            "pos" : "ADJ"
+          },
+          "id" : "w.125",
+          "offset" : 581
+        }, {
+          "annotations" : {
+            "token" : "hebbende",
+            "lemma" : "hebben",
+            "pos" : "ADJ"
+          },
+          "id" : "w.126",
+          "offset" : 585
+        }, {
+          "annotations" : {
+            "token" : "macht",
+            "lemma" : "macht",
+            "pos" : "NOU"
+          },
+          "id" : "w.127",
+          "offset" : 594
+        }, {
+          "annotations" : {
+            "token" : "na",
+            "lemma" : "na",
+            "pos" : "ADP"
+          },
+          "id" : "w.128",
+          "offset" : 600
+        }, {
+          "annotations" : {
+            "token" : "het",
+            "lemma" : "het",
+            "pos" : "ART"
+          },
+          "id" : "w.129",
+          "offset" : 603
+        }, {
+          "annotations" : {
+            "token" : "district",
+            "lemma" : "district",
+            "pos" : "NOU"
+          },
+          "id" : "w.130",
+          "offset" : 607
+        }, {
+          "annotations" : {
+            "token" : "van",
+            "lemma" : "van",
+            "pos" : "ADP"
+          },
+          "id" : "w.131",
+          "offset" : 616
+        }, {
+          "annotations" : {
+            "token" : "Ceribon",
+            "lemma" : "kariboe",
+            "pos" : "NELOC"
+          },
+          "id" : "w.132",
+          "offset" : 620
+        }, {
+          "annotations" : {
+            "token" : "soude",
+            "lemma" : "zullen",
+            "pos" : "VRB"
+          },
+          "id" : "w.133",
+          "offset" : 628
+        }, {
+          "annotations" : {
+            "token" : "sijn",
+            "lemma" : "zijn",
+            "pos" : "VRB"
+          },
+          "id" : "w.134",
+          "offset" : 634
+        }, {
+          "annotations" : {
+            "token" : "geweken",
+            "lemma" : "wijken",
+            "pos" : "VRB"
+          },
+          "id" : "w.135",
+          "offset" : 639
+        }, {
+          "annotations" : {
+            "token" : ",",
+            "pos" : ","
+          },
+          "id" : "pc.post.0000036",
+          "offset" : 647
+        }, {
+          "annotations" : {
+            "token" : "tenware",
+            "lemma" : "tenware",
+            "pos" : "CON"
+          },
+          "id" : "w.136",
+          "offset" : 649
+        }, {
+          "annotations" : {
+            "token" : "dat",
+            "lemma" : "dat",
+            "pos" : "CON"
+          },
+          "id" : "w.137",
+          "offset" : 657
+        }, {
+          "annotations" : {
+            "token" : "die",
+            "lemma" : "die",
+            "pos" : "PRN"
+          },
+          "id" : "w.138",
+          "offset" : 661
+        }, {
+          "annotations" : {
+            "token" : "van",
+            "lemma" : "van",
+            "pos" : "ADP"
+          },
+          "id" : "w.139",
+          "offset" : 665
+        }, {
+          "annotations" : {
+            "token" : "Bagaleen",
+            "lemma" : "begallen",
+            "pos" : "NELOC"
+          },
+          "id" : "w.140",
+          "offset" : 669
+        }, {
+          "annotations" : {
+            "token" : "en",
+            "lemma" : "en",
+            "pos" : "CON"
+          },
+          "id" : "w.141",
+          "offset" : 678
+        }, {
+          "annotations" : {
+            "token" : "Madion",
+            "lemma" : "medio",
+            "pos" : "NEPER"
+          },
+          "id" : "w.142",
+          "offset" : 681
+        }, {
+          "annotations" : {
+            "token" : "aan",
+            "lemma" : "aan",
+            "pos" : "ADP"
+          },
+          "id" : "w.143",
+          "offset" : 688
+        }, {
+          "annotations" : {
+            "token" : "de",
+            "lemma" : "de",
+            "pos" : "ART"
+          },
+          "id" : "w.144",
+          "offset" : 692
+        }, {
+          "annotations" : {
+            "token" : "andere",
+            "lemma" : "ander",
+            "pos" : "ADJ"
+          },
+          "id" : "w.145",
+          "offset" : 695
+        }, {
+          "annotations" : {
+            "token" : "kant",
+            "lemma" : "kant",
+            "pos" : "NOU"
+          },
+          "id" : "w.146",
+          "offset" : 702
+        }, {
+          "annotations" : {
+            "token" : ",",
+            "pos" : ","
+          },
+          "id" : "pc.post.0000037",
+          "offset" : 707
+        }, {
+          "annotations" : {
+            "token" : "over",
+            "lemma" : "over",
+            "pos" : "ADP"
+          },
+          "id" : "w.147",
+          "offset" : 709
+        }, {
+          "annotations" : {
+            "token" : "het",
+            "lemma" : "het",
+            "pos" : "ART"
+          },
+          "id" : "w.148",
+          "offset" : 714
+        }, {
+          "annotations" : {
+            "token" : "reets",
+            "lemma" : "reeds",
+            "pos" : "ADV"
+          },
+          "id" : "w.149",
+          "offset" : 718
+        }, {
+          "annotations" : {
+            "token" : "aangedaan",
+            "lemma" : "aangedaan",
+            "pos" : "ADJ"
+          },
+          "id" : "w.150",
+          "offset" : 724
+        }, {
+          "annotations" : {
+            "token" : "quaad",
+            "lemma" : "kwaad",
+            "pos" : "ADJ"
+          },
+          "id" : "w.151",
+          "offset" : 734
+        }, {
+          "annotations" : {
+            "token" : "tractement",
+            "lemma" : "traktement",
+            "pos" : "NOU"
+          },
+          "id" : "w.152",
+          "offset" : 740
+        }, {
+          "annotations" : {
+            "token" : "aan",
+            "lemma" : "aan",
+            "pos" : "ADP"
+          },
+          "id" : "w.153",
+          "offset" : 751
+        }, {
+          "annotations" : {
+            "token" : "de",
+            "lemma" : "de",
+            "pos" : "ART"
+          },
+          "id" : "w.154",
+          "offset" : 755
+        }, {
+          "annotations" : {
+            "token" : "hare",
+            "lemma" : "haar",
+            "pos" : "PRN"
+          },
+          "id" : "w.155",
+          "offset" : 758
+        }, {
+          "annotations" : {
+            "token" : "misnoegt",
+            "lemma" : "misnoegen",
+            "pos" : "VRB"
+          },
+          "id" : "w.156",
+          "offset" : 763
+        }, {
+          "annotations" : {
+            "token" : "en",
+            "lemma" : "en",
+            "pos" : "CON"
+          },
+          "id" : "w.157",
+          "offset" : 772
+        }, {
+          "annotations" : {
+            "token" : "de",
+            "lemma" : "de",
+            "pos" : "ART"
+          },
+          "id" : "w.158",
+          "offset" : 775
+        }, {
+          "annotations" : {
+            "token" : "laatste",
+            "lemma" : "laatst",
+            "pos" : "ADJ"
+          },
+          "id" : "w.159",
+          "offset" : 778
+        }, {
+          "annotations" : {
+            "token" : "reets",
+            "lemma" : "reeds",
+            "pos" : "ADV"
+          },
+          "id" : "w.160",
+          "offset" : 786
+        }, {
+          "annotations" : {
+            "token" : "op",
+            "lemma" : "op",
+            "pos" : "ADV"
+          },
+          "id" : "w.161",
+          "offset" : 792
+        }, {
+          "annotations" : {
+            "token" : "de",
+            "lemma" : "de",
+            "pos" : "ART"
+          },
+          "id" : "w.162",
+          "offset" : 795
+        }, {
+          "annotations" : {
+            "token" : "been",
+            "lemma" : "been",
+            "pos" : "NOU"
+          },
+          "id" : "w.163",
+          "offset" : 798
+        }, {
+          "annotations" : {
+            "token" : "geraakt",
+            "lemma" : "raken",
+            "pos" : "VRB"
+          },
+          "id" : "w.164",
+          "offset" : 803
+        }, {
+          "annotations" : {
+            "token" : "zijnde",
+            "lemma" : "zijn",
+            "pos" : "VRB"
+          },
+          "id" : "w.165",
+          "offset" : 811
+        }, {
+          "annotations" : {
+            "token" : ",",
+            "pos" : ","
+          },
+          "id" : "pc.post.0000038",
+          "offset" : 818
+        }, {
+          "annotations" : {
+            "token" : "hem",
+            "lemma" : "hij",
+            "pos" : "PRN"
+          },
+          "id" : "w.166",
+          "offset" : 820
+        }, {
+          "annotations" : {
+            "token" : "incommodeerden",
+            "lemma" : "incommoderen",
+            "pos" : "VRB"
+          },
+          "id" : "w.167",
+          "offset" : 824
+        }, {
+          "annotations" : {
+            "token" : "en",
+            "lemma" : "en",
+            "pos" : "CON"
+          },
+          "id" : "w.168",
+          "offset" : 839
+        }, {
+          "annotations" : {
+            "token" : "de",
+            "lemma" : "de",
+            "pos" : "ART"
+          },
+          "id" : "w.169",
+          "offset" : 842
+        }, {
+          "annotations" : {
+            "token" : "handen",
+            "lemma" : "hand",
+            "pos" : "NOU"
+          },
+          "id" : "w.170",
+          "offset" : 845
+        }, {
+          "annotations" : {
+            "token" : "vol",
+            "lemma" : "vol",
+            "pos" : "ADJ"
+          },
+          "id" : "w.171",
+          "offset" : 852
+        }, {
+          "annotations" : {
+            "token" : "werk",
+            "lemma" : "werk",
+            "pos" : "NOU"
+          },
+          "id" : "w.172",
+          "offset" : 856
+        }, {
+          "annotations" : {
+            "token" : "geven",
+            "lemma" : "geven",
+            "pos" : "VRB"
+          },
+          "id" : "w.173",
+          "offset" : 861
+        }, {
+          "annotations" : {
+            "token" : ".",
+            "lemma" : "e.",
+            "pos" : "."
+          },
+          "id" : "pc.post.0000039",
+          "offset" : 867
+        } ]
+      } ]
+    }, {
+      "id" : "INT_UUID.TEI.1.text.1.body.1.div.1.div.2.head.1",
+      "sentences" : [ {
+        "id" : "INT_UUID.TEI.1.text.1.body.1.div.1.div.2.head.1.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "JOAN",
+            "lemma" : "jan",
+            "pos" : "NEPER_NEPER"
+          },
+          "id" : "w.219",
+          "offset" : 869
+        }, {
+          "annotations" : {
+            "token" : "VAN",
+            "lemma" : "van",
+            "pos" : "NEPER_NEPER"
+          },
+          "id" : "w.220",
+          "offset" : 874
+        }, {
+          "annotations" : {
+            "token" : "HOORN",
+            "lemma" : "hoorn",
+            "pos" : "NEPER"
+          },
+          "id" : "w.221",
+          "offset" : 878
+        } ]
+      } ]
+    }, {
+      "id" : "INT_UUID.TEI.1.text.1.body.1.div.1.div.2.p.1",
+      "sentences" : [ {
+        "id" : "INT_UUID.TEI.1.text.1.body.1.div.1.div.2.p.1.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "15",
+            "pos" : "NUM"
+          },
+          "id" : "w.222",
+          "offset" : 884
+        }, {
+          "annotations" : {
+            "token" : "AUGUSTUS",
+            "lemma" : "augustus",
+            "pos" : "NOU"
+          },
+          "id" : "w.223",
+          "offset" : 887
+        }, {
+          "annotations" : {
+            "token" : "1704",
+            "pos" : "NUM"
+          },
+          "id" : "w.224",
+          "offset" : 896
+        }, {
+          "annotations" : {
+            "token" : "—",
+            "lemma" : "e",
+            "pos" : "NUM"
+          },
+          "id" : "pc.floating.0000048",
+          "offset" : 901
+        }, {
+          "annotations" : {
+            "token" : "30",
+            "pos" : "NUM"
+          },
+          "id" : "w.226",
+          "offset" : 903
+        }, {
+          "annotations" : {
+            "token" : "OCTOBER",
+            "lemma" : "oktober",
+            "pos" : "NOU"
+          },
+          "id" : "w.227",
+          "offset" : 906
+        }, {
+          "annotations" : {
+            "token" : "1709",
+            "pos" : "NUM"
+          },
+          "id" : "w.228",
+          "offset" : 914
+        } ]
+      } ]
+    } ]
+  } ],
+  "id" : "INT_UUID"
+}

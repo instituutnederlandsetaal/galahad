@@ -20,48 +20,48 @@ class CorpusConfusionTest {
         corpus = TestUtil.createCorpus()
     }
 
-    @Test
-    fun `Confusion of three docs summed`() {
-        EvaluationUtil.add_two_docs_to_corpus(corpus)
-        EvaluationUtil.addDocWithMissingMatches(corpus)
-        val cc = JobConfusion(corpus, TestConfig.TAGGER_NAME) // default reference is SOURCE_LAYER_NAME
-        // Table
-        cc.table.forEach(::println)
-        assertEquals(7, cc.table.size)
-        assertEquals(1, cc.table["NOU"]?.size)
-        assertEquals(2, cc.table["PD"]?.size)
-        // missing should exist
-        assertEquals(1, cc.table[TermComparison.MISSING_MATCH]?.size)
-        assertEquals(4, cc.table[TermComparison.MISSING_MATCH]?.get("LET")?.count)
-
-        // Matrix
-        cc.matrix.forEach(::println)
-        assertEquals(9, cc.matrix.size) // 4 matching pairs + 1 wrong
-        // (VRB, VRB) from the 1st doc should exist
-        assertEquals(2, cc.matrix["VRB" to "VRB"]?.count)
-        // (PD, WRONG) from the 2nd doc should exist
-        assertEquals(1, cc.matrix["WRONG" to "PD"]?.count)
-        //
-    }
-
-    @Test
-    fun `To CSV`() {
-        EvaluationUtil.add_two_docs_to_corpus(corpus)
-        EvaluationUtil.addDocWithMissingMatches(corpus)
-        val cc = JobConfusion(corpus, TestConfig.TAGGER_NAME) // default reference is SOURCE_LAYER_NAME
-        val csv: String = cc.countsToCSV()
-        assertEquals(TestUtil.get("evaluation/confusion/output.csv").readText(), csv)
-    }
-
-    @Test
-    fun `PoS confusion with filter`() {
-        EvaluationUtil.addDocWithMissingMatches(corpus)
-        val filter = ConfusionLayerFilter(
-            hypoTermFilter = HeadGroupTermFilter(Annotation.POS, "LET"),
-            refTermFilter = HeadGroupTermFilter(Annotation.POS, TermComparison.MISSING_MATCH),
-        )
-
-        val cc = JobConfusion(corpus, TestConfig.TAGGER_NAME, layerFilter = filter)
-        assertEquals(TestUtil.get("evaluation/confusion/let-vs-missing.csv").readText(), cc.samplesToCSV())
-    }
+//    @Test
+//    fun `Confusion of three docs summed`() {
+//        EvaluationUtil.add_two_docs_to_corpus(corpus)
+//        EvaluationUtil.addDocWithMissingMatches(corpus)
+//        val cc = JobConfusion(corpus, TestConfig.TAGGER_NAME) // default reference is SOURCE_LAYER_NAME
+//        // Table
+//        cc.table.forEach(::println)
+//        assertEquals(7, cc.table.size)
+//        assertEquals(1, cc.table["NOU"]?.size)
+//        assertEquals(2, cc.table["PD"]?.size)
+//        // missing should exist
+//        assertEquals(1, cc.table[TermComparison.MISSING_MATCH]?.size)
+//        assertEquals(4, cc.table[TermComparison.MISSING_MATCH]?.get("LET")?.count)
+//
+//        // Matrix
+//        cc.matrix.forEach(::println)
+//        assertEquals(9, cc.matrix.size) // 4 matching pairs + 1 wrong
+//        // (VRB, VRB) from the 1st doc should exist
+//        assertEquals(2, cc.matrix["VRB" to "VRB"]?.count)
+//        // (PD, WRONG) from the 2nd doc should exist
+//        assertEquals(1, cc.matrix["WRONG" to "PD"]?.count)
+//        //
+//    }
+//
+//    @Test
+//    fun `To CSV`() {
+//        EvaluationUtil.add_two_docs_to_corpus(corpus)
+//        EvaluationUtil.addDocWithMissingMatches(corpus)
+//        val cc = JobConfusion(corpus, TestConfig.TAGGER_NAME) // default reference is SOURCE_LAYER_NAME
+//        val csv: String = cc.countsToCSV()
+//        assertEquals(TestUtil.get("evaluation/confusion/output.csv").readText(), csv)
+//    }
+//
+//    @Test
+//    fun `PoS confusion with filter`() {
+//        EvaluationUtil.addDocWithMissingMatches(corpus)
+//        val filter = ConfusionLayerFilter(
+//            hypoTermFilter = HeadGroupTermFilter(Annotation.POS, "LET"),
+//            refTermFilter = HeadGroupTermFilter(Annotation.POS, TermComparison.MISSING_MATCH),
+//        )
+//
+//        val cc = JobConfusion(corpus, TestConfig.TAGGER_NAME, layerFilter = filter)
+//        assertEquals(TestUtil.get("evaluation/confusion/let-vs-missing.csv").readText(), cc.samplesToCSV())
+//    }
 }

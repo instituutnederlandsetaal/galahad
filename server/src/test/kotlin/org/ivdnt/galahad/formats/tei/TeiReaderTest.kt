@@ -1,49 +1,55 @@
 package org.ivdnt.galahad.formats.tei
 
-import org.ivdnt.galahad.util.TestUtil
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.ivdnt.galahad.documents.DocumentFormat
+import org.ivdnt.galahad.formats.ReaderTest
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-internal class TeiReaderTest {
+internal class TeiReaderTest : ReaderTest() {
+    override val format: DocumentFormat = DocumentFormat.TeiP5
+
     @Nested
     inner class TEIP5Test {
-        @Test
-        fun `Multiple text elements`() {
-            val teiFile = TeiFile(TestUtil.get("formats/tei/dummies/multipletextelements.xml"))
-            assertEquals("text1\ntext2 text3", teiFile.layer.toString())
-        }
-
-        @Test
-        fun `Simple word tags in one paragraph`() {
-            val teiFile = TeiFile(TestUtil.get("formats/tei/dummies/withwtags.xml"))
-            assertEquals("word1 word2", teiFile.layer.toString())
-        }
-
-        @Test
-        fun `Simple word tags in two paragraph`() {
-            val teiFile = TeiFile(TestUtil.get("formats/tei/dummies/wandp.xml"))
-            assertEquals("word1 word2\n\nword3 word4", teiFile.layer.toString())
-        }
-
-        @Test
-        fun `Import highly intertwined tags`() {
-            val file = TeiFile(TestUtil.get("formats/tei/twine/twine.input.xml"))
-            TestUtil.assertPlaintextAndSourcelayer("tei/twine", file)
-        }
 
         @Test
         fun `Import huygens brieven TEI`() {
-            val file = TeiFile(TestUtil.get("formats/tei/brieven/input.tei.xml"))
-            // Has no source layer
-            TestUtil.assertPlainText("tei/brieven", file)
+            assertLayerAndText("formats/tei/reader/brieven")
+        }
+
+        @Test
+        fun `Import missiven TEI`() {
+            assertLayerAndText("formats/tei/reader/missiven")
+        }
+
+        @Test
+        fun `Sentence with mixed tag and tagless text`() {
+            assertLayerAndText("formats/tei/reader/mixed-tags/")
         }
 
         @Test
         fun `Import TEI with w-tags without spaces in between`() {
-            val file = TeiFile(TestUtil.get("formats/tei/nospaces/input.tei.xml"))
-            assertEquals("a a a", file.layer.toString())
+            assertLayerAndText("formats/tei/reader/nospaces")
+        }
 
+
+        @Test
+        fun `Note tag should be ignored`() {
+            assertLayerAndText("formats/tei/reader/note/")
+        }
+
+        @Test
+        fun `Import peerle TEI`() {
+            assertLayerAndText("formats/tei/reader/peerle")
+        }
+
+        @Test
+        fun `Import teicorpus`() {
+            assertLayerAndText("formats/tei/reader/teicorpus")
+        }
+
+        @Test
+        fun `Import highly intertwined tags`() {
+            assertLayerAndText("formats/tei/reader/twine")
         }
     }
 
@@ -51,8 +57,7 @@ internal class TeiReaderTest {
     inner class TEIP4Test {
         @Test
         fun `Import TEI P4`() {
-            val file = TeiFile(TestUtil.get("formats/tei/legacy/teip4/input.tei.xml"))
-            TestUtil.assertPlaintextAndSourcelayer("tei/legacy/teip4", file)
+            assertLayerAndText("formats/tei/reader/teip4")
         }
     }
 
@@ -60,8 +65,7 @@ internal class TeiReaderTest {
     inner class TEIP5LegacyTest {
         @Test
         fun `Import TEI P5`() {
-            val file = TeiFile(TestUtil.get("formats/tei/legacy/teip5/input.tei.xml"))
-            TestUtil.assertPlaintextAndSourcelayer("tei/legacy/teip5", file)
+            assertLayerAndText("formats/tei/reader/teip5")
         }
     }
 }

@@ -3,6 +3,7 @@ package org.ivdnt.galahad.formats.tsv
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.Term
+import org.ivdnt.galahad.exceptions.DocumentInvalidException
 import org.ivdnt.galahad.formats.LineReader
 import java.io.File
 
@@ -16,7 +17,7 @@ class TsvReader(
         file.forEachLine { line ->
             if (columnIndices.isEmpty()) {
                 parseHeader(line)
-            } else {
+            } else if (!line.startsWith("#")) {
                 parseBody(line)
             }
         }
@@ -36,7 +37,7 @@ class TsvReader(
 
         // Check for the presence of a token
         if (columnIndices[Annotation.TOKEN] == null) {
-            throw IllegalArgumentException("No token column found in TSV file.")
+            throw DocumentInvalidException(file.name, "No token column found in TSV file.")
         }
     }
 

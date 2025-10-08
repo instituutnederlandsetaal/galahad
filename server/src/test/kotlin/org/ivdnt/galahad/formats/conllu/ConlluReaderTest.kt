@@ -1,27 +1,24 @@
 package org.ivdnt.galahad.formats.conllu
 
-import org.ivdnt.galahad.util.TestUtil
-import org.junit.jupiter.api.Assertions.*
+import org.ivdnt.galahad.documents.DocumentFormat
+import org.ivdnt.galahad.formats.ReaderTest
 import org.junit.jupiter.api.Test
 
-class ConlluReaderTest {
+class ConlluReaderTest : ReaderTest() {
+    override val format: DocumentFormat = DocumentFormat.Conllu
+
     @Test
     fun `Empty nodes`() {
-        val reader = ConlluReader(TestUtil.get("formats/conllu/empty-nodes.conllu"))
-        val text = "Sue likes coffee and Bill tea\n" // LF because reader.layer produces a valid unix file.
-        assertEquals(text, reader.layer.toString())
+        assertLayerAndText("formats/conllu/reader/empty-nodes")
     }
 
     @Test
     fun `Multi-word tokens`() {
-        val reader = ConlluReader(TestUtil.get("formats/conllu/mw.conllu"))
-        val text = "Gas dalla statua.\nTer hoogte van.\n" // LF because reader.layer produces a valid unix file.
-        assertEquals(text, reader.layer.toString())
+        assertLayerAndText("formats/conllu/reader/mw")
     }
 
     @Test
     fun `Read underscore in TOKEN`() {
-        val reader = ConlluReader(TestUtil.get("formats/conllu/underscore.conllu"))
-        assertEquals("_\n", reader.layer.toString())  // LF because reader.layer produces a valid unix file.
+        assertLayerAndText("formats/conllu/reader/underscore")
     }
 }

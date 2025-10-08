@@ -1,0 +1,1951 @@
+{
+  "documents" : [ {
+    "id" : "d1",
+    "paragraphs" : [ {
+      "id" : "d1.p1",
+      "sentences" : [ {
+        "id" : "d1.p1.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "net"
+          },
+          "id" : "d1.p1.s1.w1",
+          "offset" : 0
+        }, {
+          "annotations" : {
+            "token" : "was"
+          },
+          "id" : "d1.p1.s1.w2",
+          "offset" : 4
+        }, {
+          "annotations" : {
+            "token" : "ik"
+          },
+          "id" : "d1.p1.s1.w3",
+          "offset" : 8
+        }, {
+          "annotations" : {
+            "token" : "naar"
+          },
+          "id" : "d1.p1.s1.w4",
+          "offset" : 11
+        }, {
+          "annotations" : {
+            "token" : "school"
+          },
+          "id" : "d1.p1.s1.w5",
+          "offset" : 16
+        }, {
+          "annotations" : {
+            "token" : "heen"
+          },
+          "id" : "d1.p1.s1.w6",
+          "offset" : 23
+        }, {
+          "annotations" : {
+            "token" : "en"
+          },
+          "id" : "d1.p1.s1.w7",
+          "offset" : 28
+        }, {
+          "annotations" : {
+            "token" : "terug"
+          },
+          "id" : "d1.p1.s1.w8",
+          "offset" : 31
+        }, {
+          "annotations" : {
+            "token" : "wezen"
+          },
+          "id" : "d1.p1.s1.w9",
+          "offset" : 37
+        }, {
+          "annotations" : {
+            "token" : "lopenenzo"
+          },
+          "id" : "d1.p1.s1.w10",
+          "offset" : 43
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p2",
+      "sentences" : [ {
+        "id" : "d1.p2.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : ".",
+            "lemma" : "onzin"
+          },
+          "id" : "d1.p2.s1.w1",
+          "offset" : 53
+        }, {
+          "annotations" : {
+            "token" : ".",
+            "pos" : "onzin"
+          },
+          "id" : "d1.p2.s1.w2",
+          "offset" : 55
+        }, {
+          "annotations" : {
+            "token" : "."
+          },
+          "id" : "d1.p2.s1.w3",
+          "offset" : 57
+        }, {
+          "annotations" : {
+            "token" : "scholen",
+            "lemma" : "onzin"
+          },
+          "id" : "d1.p2.s1.w4",
+          "offset" : 59
+        }, {
+          "annotations" : {
+            "token" : "scholen",
+            "pos" : "onzin"
+          },
+          "id" : "d1.p2.s1.w5",
+          "offset" : 67
+        }, {
+          "annotations" : {
+            "token" : "scholen"
+          },
+          "id" : "d1.p2.s1.w6",
+          "offset" : 75
+        }, {
+          "annotations" : {
+            "token" : "scho"
+          },
+          "id" : "d1.p2.s1.w7",
+          "offset" : 83
+        }, {
+          "annotations" : {
+            "token" : "len"
+          },
+          "id" : "d1.p2.s1.w8",
+          "offset" : 88
+        }, {
+          "annotations" : {
+            "token" : "scho"
+          },
+          "id" : "d1.p2.s1.w9",
+          "offset" : 92
+        }, {
+          "annotations" : {
+            "token" : "len"
+          },
+          "id" : "d1.p2.s1.w10",
+          "offset" : 97
+        }, {
+          "annotations" : {
+            "token" : "schrijvende"
+          },
+          "id" : "d1.p2.s1.w11",
+          "offset" : 101
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p3",
+      "sentences" : [ {
+        "id" : "d1.p3.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "electuarien"
+          },
+          "id" : "d1.p3.s1.w1",
+          "offset" : 113
+        }, {
+          "annotations" : {
+            "token" : "zijnde"
+          },
+          "id" : "d1.p3.s1.w2",
+          "offset" : 125
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p4",
+      "sentences" : [ {
+        "id" : "d1.p4.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "electu"
+          },
+          "id" : "d1.p4.s1.w1",
+          "offset" : 132
+        }, {
+          "annotations" : {
+            "token" : "arien"
+          },
+          "id" : "d1.p4.s1.w2",
+          "offset" : 139
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p5",
+      "sentences" : [ {
+        "id" : "d1.p5.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "electuarien"
+          },
+          "id" : "d1.p5.s1.w1",
+          "offset" : 145
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p6",
+      "sentences" : [ {
+        "id" : "d1.p6.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "electu"
+          },
+          "id" : "d1.p6.s1.w1",
+          "offset" : 157
+        }, {
+          "annotations" : {
+            "token" : "arien"
+          },
+          "id" : "d1.p6.s1.w2",
+          "offset" : 164
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p7",
+      "sentences" : [ {
+        "id" : "d1.p7.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "testen"
+          },
+          "id" : "d1.p7.s1.w1",
+          "offset" : 170
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p8",
+      "sentences" : [ {
+        "id" : "d1.p8.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "testen"
+          },
+          "id" : "d1.p8.s1.w1",
+          "offset" : 177
+        }, {
+          "annotations" : {
+            "token" : "woord"
+          },
+          "id" : "d1.p8.s1.w2",
+          "offset" : 184
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p9",
+      "sentences" : [ {
+        "id" : "d1.p9.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "testen"
+          },
+          "id" : "d1.p9.s1.w1",
+          "offset" : 190
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p10",
+      "sentences" : [ {
+        "id" : "d1.p10.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "woord"
+          },
+          "id" : "d1.p10.s1.w1",
+          "offset" : 197
+        }, {
+          "annotations" : {
+            "token" : "testen"
+          },
+          "id" : "d1.p10.s1.w2",
+          "offset" : 203
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p11",
+      "sentences" : [ {
+        "id" : "d1.p11.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "woord"
+          },
+          "id" : "d1.p11.s1.w1",
+          "offset" : 210
+        }, {
+          "annotations" : {
+            "token" : "testen"
+          },
+          "id" : "d1.p11.s1.w2",
+          "offset" : 216
+        }, {
+          "annotations" : {
+            "token" : "woord"
+          },
+          "id" : "d1.p11.s1.w3",
+          "offset" : 223
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p12",
+      "sentences" : [ {
+        "id" : "d1.p12.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "woord"
+          },
+          "id" : "d1.p12.s1.w1",
+          "offset" : 229
+        }, {
+          "annotations" : {
+            "token" : "testen"
+          },
+          "id" : "d1.p12.s1.w2",
+          "offset" : 235
+        }, {
+          "annotations" : {
+            "token" : "woord"
+          },
+          "id" : "d1.p12.s1.w3",
+          "offset" : 242
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p13",
+      "sentences" : [ {
+        "id" : "d1.p13.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "testen"
+          },
+          "id" : "d1.p13.s1.w1",
+          "offset" : 248
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p14",
+      "sentences" : [ {
+        "id" : "d1.p14.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "testen"
+          },
+          "id" : "d1.p14.s1.w1",
+          "offset" : 255
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p15",
+      "sentences" : [ {
+        "id" : "d1.p15.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "cba"
+          },
+          "id" : "d1.p15.s1.w1",
+          "offset" : 262
+        }, {
+          "annotations" : {
+            "token" : "fedabc"
+          },
+          "id" : "d1.p15.s1.w2",
+          "offset" : 266
+        }, {
+          "annotations" : {
+            "token" : "defghi"
+          },
+          "id" : "d1.p15.s1.w3",
+          "offset" : 273
+        }, {
+          "annotations" : {
+            "token" : "jklmno"
+          },
+          "id" : "d1.p15.s1.w4",
+          "offset" : 280
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p16",
+      "sentences" : [ {
+        "id" : "d1.p16.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "abc"
+          },
+          "id" : "d1.p16.s1.w1",
+          "offset" : 287
+        }, {
+          "annotations" : {
+            "token" : "def"
+          },
+          "id" : "d1.p16.s1.w2",
+          "offset" : 291
+        }, {
+          "annotations" : {
+            "token" : "ghijklmno"
+          },
+          "id" : "d1.p16.s1.w3",
+          "offset" : 295
+        }, {
+          "annotations" : {
+            "token" : "pqrstu"
+          },
+          "id" : "d1.p16.s1.w4",
+          "offset" : 305
+        }, {
+          "annotations" : {
+            "token" : "xyzabc"
+          },
+          "id" : "d1.p16.s1.w5",
+          "offset" : 312
+        }, {
+          "annotations" : {
+            "token" : "def"
+          },
+          "id" : "d1.p16.s1.w6",
+          "offset" : 319
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p17",
+      "sentences" : [ {
+        "id" : "d1.p17.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "To"
+          },
+          "id" : "d1.p17.s1.w1",
+          "offset" : 323
+        }, {
+          "annotations" : {
+            "token" : "obey"
+          },
+          "id" : "d1.p17.s1.w2",
+          "offset" : 326
+        }, {
+          "annotations" : {
+            "token" : "or"
+          },
+          "id" : "d1.p17.s1.w3",
+          "offset" : 331
+        }, {
+          "annotations" : {
+            "token" : "not"
+          },
+          "id" : "d1.p17.s1.w4",
+          "offset" : 334
+        }, {
+          "annotations" : {
+            "token" : "to"
+          },
+          "id" : "d1.p17.s1.w5",
+          "offset" : 338
+        }, {
+          "annotations" : {
+            "token" : "be,that"
+          },
+          "id" : "d1.p17.s1.w6",
+          "offset" : 341
+        }, {
+          "annotations" : {
+            "token" : "is"
+          },
+          "id" : "d1.p17.s1.w7",
+          "offset" : 349
+        }, {
+          "annotations" : {
+            "token" : "the"
+          },
+          "id" : "d1.p17.s1.w8",
+          "offset" : 352
+        }, {
+          "annotations" : {
+            "token" : "one"
+          },
+          "id" : "d1.p17.s1.w9",
+          "offset" : 356
+        }, {
+          "annotations" : {
+            "token" : "question"
+          },
+          "id" : "d1.p17.s1.w10",
+          "offset" : 360
+        }, {
+          "annotations" : {
+            "token" : "that"
+          },
+          "id" : "d1.p17.s1.w11",
+          "offset" : 369
+        }, {
+          "annotations" : {
+            "token" : "yremained."
+          },
+          "id" : "d1.p17.s1.w12",
+          "offset" : 374
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p18",
+      "sentences" : [ {
+        "id" : "d1.p18.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "abc"
+          },
+          "id" : "d1.p18.s1.w1",
+          "offset" : 385
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p19",
+      "sentences" : [ {
+        "id" : "d1.p19.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "abcdef"
+          },
+          "id" : "d1.p19.s1.w1",
+          "offset" : 389
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p20",
+      "sentences" : [ {
+        "id" : "d1.p20.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "abcdef"
+          },
+          "id" : "d1.p20.s1.w1",
+          "offset" : 396
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p21",
+      "sentences" : [ {
+        "id" : "d1.p21.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "abcdef"
+          },
+          "id" : "d1.p21.s1.w1",
+          "offset" : 403
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p22",
+      "sentences" : [ {
+        "id" : "d1.p22.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "abcdefghi"
+          },
+          "id" : "d1.p22.s1.w1",
+          "offset" : 410
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p23",
+      "sentences" : [ {
+        "id" : "d1.p23.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "defghijkl"
+          },
+          "id" : "d1.p23.s1.w1",
+          "offset" : 420
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p24",
+      "sentences" : [ {
+        "id" : "d1.p24.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "abcdefghijkl"
+          },
+          "id" : "d1.p24.s1.w1",
+          "offset" : 430
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p25",
+      "sentences" : [ {
+        "id" : "d1.p25.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "abcdef"
+          },
+          "id" : "d1.p25.s1.w1",
+          "offset" : 443
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p26",
+      "sentences" : [ {
+        "id" : "d1.p26.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "abcdefghi"
+          },
+          "id" : "d1.p26.s1.w1",
+          "offset" : 450
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p27",
+      "sentences" : [ {
+        "id" : "d1.p27.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "abcdefghi"
+          },
+          "id" : "d1.p27.s1.w1",
+          "offset" : 460
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p28",
+      "sentences" : [ {
+        "id" : "d1.p28.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "abcdefghijkl"
+          },
+          "id" : "d1.p28.s1.w1",
+          "offset" : 470
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p29",
+      "sentences" : [ {
+        "id" : "d1.p29.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "cbaabcdef"
+          },
+          "id" : "d1.p29.s1.w1",
+          "offset" : 483
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p30",
+      "sentences" : [ {
+        "id" : "d1.p30.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "cbaabcdefghi"
+          },
+          "id" : "d1.p30.s1.w1",
+          "offset" : 493
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p31",
+      "sentences" : [ {
+        "id" : "d1.p31.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "abccbadefghi"
+          },
+          "id" : "d1.p31.s1.w1",
+          "offset" : 506
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p32",
+      "sentences" : [ {
+        "id" : "d1.p32.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "abccbadefghijkl"
+          },
+          "id" : "d1.p32.s1.w1",
+          "offset" : 519
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p33",
+      "sentences" : [ {
+        "id" : "d1.p33.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "die",
+            "lemma" : "de",
+            "pos" : "PD(type=d-p,subtype=art,position=prenom)"
+          },
+          "id" : "enge022vand01_01.TEI.2.text.body.div.lg.7633.s.1.w.11",
+          "offset" : 535
+        }, {
+          "annotations" : {
+            "token" : "droecheit",
+            "lemma" : "droogheid",
+            "pos" : "NOU-C(number=sg)"
+          },
+          "id" : "enge022vand01_01.TEI.2.text.body.div.lg.7633.s.1.w.12",
+          "offset" : 539
+        }, {
+          "annotations" : {
+            "token" : "rebellen",
+            "lemma" : "rebel",
+            "pos" : "NOU-C(number=pl)"
+          },
+          "id" : "w.185",
+          "offset" : 549
+        }, {
+          "annotations" : {
+            "token" : ".",
+            "lemma" : "e.",
+            "pos" : "LET"
+          },
+          "id" : "pc.000005",
+          "offset" : 558
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p34",
+      "sentences" : [ {
+        "id" : "d1.p34.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "scholen."
+          },
+          "id" : "pc.000005",
+          "offset" : 560
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p35",
+      "sentences" : [ {
+        "id" : "d1.p35.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "wilt"
+          },
+          "id" : "pc.000005",
+          "offset" : 569
+        }, {
+          "annotations" : {
+            "token" : "verwittigen."
+          },
+          "id" : "pc.000005",
+          "offset" : 574
+        }, {
+          "annotations" : {
+            "token" : "Eersame"
+          },
+          "id" : "pc.000005",
+          "offset" : 587
+        }, {
+          "annotations" : {
+            "token" : "vrome"
+          },
+          "id" : "pc.000005",
+          "offset" : 595
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p36",
+      "sentences" : [ {
+        "id" : "d1.p36.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "test"
+          },
+          "id" : "pc.000005",
+          "offset" : 601
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p37",
+      "sentences" : [ {
+        "id" : "d1.p37.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "Copie"
+          },
+          "id" : "pc.000005",
+          "offset" : 606
+        }, {
+          "annotations" : {
+            "token" : "Wert"
+          },
+          "id" : "pc.000005",
+          "offset" : 612
+        }, {
+          "annotations" : {
+            "token" : "belast"
+          },
+          "id" : "pc.000005",
+          "offset" : 617
+        }, {
+          "annotations" : {
+            "token" : "ende"
+          },
+          "id" : "pc.000005",
+          "offset" : 624
+        }, {
+          "annotations" : {
+            "token" : "bevolen"
+          },
+          "id" : "pc.000005",
+          "offset" : 629
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p38",
+      "sentences" : [ {
+        "id" : "d1.p38.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "andere"
+          },
+          "id" : "pc.000005",
+          "offset" : 637
+        }, {
+          "annotations" : {
+            "token" : "officieren."
+          },
+          "id" : "pc.000005",
+          "offset" : 644
+        }, {
+          "annotations" : {
+            "token" : "Concludeert"
+          },
+          "id" : "pc.000005",
+          "offset" : 656
+        }, {
+          "annotations" : {
+            "token" : "daeromme"
+          },
+          "id" : "pc.000005",
+          "offset" : 668
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p39",
+      "sentences" : [ {
+        "id" : "d1.p39.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "na"
+          },
+          "id" : "pc.000005",
+          "offset" : 677
+        }, {
+          "annotations" : {
+            "token" : "de"
+          },
+          "id" : "pc.000005",
+          "offset" : 680
+        }, {
+          "annotations" : {
+            "token" : "Ordonnantie"
+          },
+          "id" : "pc.000005",
+          "offset" : 683
+        }, {
+          "annotations" : {
+            "token" : "en"
+          },
+          "id" : "pc.000005",
+          "offset" : 695
+        }, {
+          "annotations" : {
+            "token" : "Placaaten"
+          },
+          "id" : "pc.000005",
+          "offset" : 698
+        }, {
+          "annotations" : {
+            "token" : "van"
+          },
+          "id" : "pc.000005",
+          "offset" : 708
+        }, {
+          "annotations" : {
+            "token" : "de"
+          },
+          "id" : "pc.000005",
+          "offset" : 712
+        }, {
+          "annotations" : {
+            "token" : "Politie,"
+          },
+          "id" : "pc.000005",
+          "offset" : 715
+        }, {
+          "annotations" : {
+            "token" : "haare"
+          },
+          "id" : "pc.000005",
+          "offset" : 724
+        }, {
+          "annotations" : {
+            "token" : "af"
+          },
+          "id" : "pc.000005",
+          "offset" : 730
+        }, {
+          "annotations" : {
+            "token" : "kundinge"
+          },
+          "id" : "pc.000005",
+          "offset" : 733
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p40",
+      "sentences" : [ {
+        "id" : "d1.p40.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "Hoe"
+          },
+          "id" : "pc.000005",
+          "offset" : 742
+        }, {
+          "annotations" : {
+            "token" : "Walewein"
+          },
+          "id" : "pc.000005",
+          "offset" : 746
+        }, {
+          "annotations" : {
+            "token" : "Lancelote"
+          },
+          "id" : "pc.000005",
+          "offset" : 755
+        }, {
+          "annotations" : {
+            "token" : "bescudde"
+          },
+          "id" : "pc.000005",
+          "offset" : 765
+        }, {
+          "annotations" : {
+            "token" : "en"
+          },
+          "id" : "pc.000005",
+          "offset" : 774
+        }, {
+          "annotations" : {
+            "token" : "enen"
+          },
+          "id" : "pc.000005",
+          "offset" : 777
+        }, {
+          "annotations" : {
+            "token" : "camp"
+          },
+          "id" : "pc.000005",
+          "offset" : 782
+        }, {
+          "annotations" : {
+            "token" : "voor"
+          },
+          "id" : "pc.000005",
+          "offset" : 787
+        }, {
+          "annotations" : {
+            "token" : "hem"
+          },
+          "id" : "pc.000005",
+          "offset" : 792
+        }, {
+          "annotations" : {
+            "token" : "vacht."
+          },
+          "id" : "pc.000005",
+          "offset" : 796
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p41",
+      "sentences" : [ {
+        "id" : "d1.p41.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "ter"
+          },
+          "id" : "pc.000005",
+          "offset" : 803
+        }, {
+          "annotations" : {
+            "token" : "putientie?"
+          },
+          "id" : "pc.000005",
+          "offset" : 807
+        }, {
+          "annotations" : {
+            "token" : "van"
+          },
+          "id" : "pc.000005",
+          "offset" : 818
+        }, {
+          "annotations" : {
+            "token" : "mijn"
+          },
+          "id" : "pc.000005",
+          "offset" : 822
+        }, {
+          "annotations" : {
+            "token" : "heer"
+          },
+          "id" : "pc.000005",
+          "offset" : 827
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p42",
+      "sentences" : [ {
+        "id" : "d1.p42.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "alhier"
+          },
+          "id" : "pc.000005",
+          "offset" : 832
+        }, {
+          "annotations" : {
+            "token" : "hoechnoedich"
+          },
+          "id" : "pc.000005",
+          "offset" : 839
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p43",
+      "sentences" : [ {
+        "id" : "d1.p43.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "met"
+          },
+          "id" : "pc.000005",
+          "offset" : 852
+        }, {
+          "annotations" : {
+            "token" : "noch"
+          },
+          "id" : "pc.000005",
+          "offset" : 856
+        }, {
+          "annotations" : {
+            "token" : "dlik?"
+          },
+          "id" : "pc.000005",
+          "offset" : 861
+        }, {
+          "annotations" : {
+            "token" : "uuyt"
+          },
+          "id" : "pc.000005",
+          "offset" : 867
+        }, {
+          "annotations" : {
+            "token" : "desen"
+          },
+          "id" : "pc.000005",
+          "offset" : 872
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p44",
+      "sentences" : [ {
+        "id" : "d1.p44.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "hopluyden"
+          },
+          "id" : "pc.000005",
+          "offset" : 878
+        }, {
+          "annotations" : {
+            "token" : "knechten"
+          },
+          "id" : "pc.000005",
+          "offset" : 888
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p45",
+      "sentences" : [ {
+        "id" : "d1.p45.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "naemen"
+          },
+          "id" : "pc.000005",
+          "offset" : 897
+        }, {
+          "annotations" : {
+            "token" : "van"
+          },
+          "id" : "pc.000005",
+          "offset" : 904
+        }, {
+          "annotations" : {
+            "token" : "de"
+          },
+          "id" : "pc.000005",
+          "offset" : 908
+        }, {
+          "annotations" : {
+            "token" : "Keyserlicke"
+          },
+          "id" : "pc.000005",
+          "offset" : 911
+        }, {
+          "annotations" : {
+            "token" : "Majesteyt"
+          },
+          "id" : "pc.000005",
+          "offset" : 923
+        }, {
+          "annotations" : {
+            "token" : "de"
+          },
+          "id" : "pc.000005",
+          "offset" : 933
+        }, {
+          "annotations" : {
+            "token" : "justicie"
+          },
+          "id" : "pc.000005",
+          "offset" : 936
+        }, {
+          "annotations" : {
+            "token" : "om"
+          },
+          "id" : "pc.000005",
+          "offset" : 945
+        }, {
+          "annotations" : {
+            "token" : "vergiffenisse."
+          },
+          "id" : "pc.000005",
+          "offset" : 948
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p46",
+      "sentences" : [ {
+        "id" : "d1.p46.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "nyet"
+          },
+          "id" : "pc.000005",
+          "offset" : 963
+        }, {
+          "annotations" : {
+            "token" : "en"
+          },
+          "id" : "pc.000005",
+          "offset" : 968
+        }, {
+          "annotations" : {
+            "token" : "es,"
+          },
+          "id" : "pc.000005",
+          "offset" : 971
+        }, {
+          "annotations" : {
+            "token" : "maer"
+          },
+          "id" : "pc.000005",
+          "offset" : 975
+        }, {
+          "annotations" : {
+            "token" : "der"
+          },
+          "id" : "pc.000005",
+          "offset" : 980
+        }, {
+          "annotations" : {
+            "token" : "selver"
+          },
+          "id" : "pc.000005",
+          "offset" : 984
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p47",
+      "sentences" : [ {
+        "id" : "d1.p47.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "ik"
+          },
+          "id" : "pc.000005",
+          "offset" : 991
+        }, {
+          "annotations" : {
+            "token" : "loop"
+          },
+          "id" : "pc.000005",
+          "offset" : 994
+        }, {
+          "annotations" : {
+            "token" : "naar"
+          },
+          "id" : "pc.000005",
+          "offset" : 999
+        }, {
+          "annotations" : {
+            "token" : "school"
+          },
+          "id" : "pc.000005",
+          "offset" : 1004
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p48",
+      "sentences" : [ {
+        "id" : "d1.p48.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "ik"
+          },
+          "id" : "pc.000005",
+          "offset" : 1011
+        }, {
+          "annotations" : {
+            "token" : "loop"
+          },
+          "id" : "pc.000005",
+          "offset" : 1014
+        }, {
+          "annotations" : {
+            "token" : "naar"
+          },
+          "id" : "pc.000005",
+          "offset" : 1019
+        }, {
+          "annotations" : {
+            "token" : "huis"
+          },
+          "id" : "pc.000005",
+          "offset" : 1024
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p49",
+      "sentences" : [ {
+        "id" : "d1.p49.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "stadt"
+          },
+          "id" : "pc.000005",
+          "offset" : 1029
+        }, {
+          "annotations" : {
+            "token" : "Sutphen"
+          },
+          "id" : "pc.000005",
+          "offset" : 1035
+        }, {
+          "annotations" : {
+            "token" : "Receptae"
+          },
+          "id" : "pc.000005",
+          "offset" : 1043
+        }, {
+          "annotations" : {
+            "token" : "16"
+          },
+          "id" : "pc.000005",
+          "offset" : 1052
+        }, {
+          "annotations" : {
+            "token" : "Martii"
+          },
+          "id" : "pc.000005",
+          "offset" : 1055
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p50",
+      "sentences" : [ {
+        "id" : "d1.p50.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "frunden"
+          },
+          "id" : "pc.000005",
+          "offset" : 1062
+        }, {
+          "annotations" : {
+            "token" : "Receptae"
+          },
+          "id" : "pc.000005",
+          "offset" : 1070
+        }, {
+          "annotations" : {
+            "token" : "16"
+          },
+          "id" : "pc.000005",
+          "offset" : 1079
+        }, {
+          "annotations" : {
+            "token" : "Martii"
+          },
+          "id" : "pc.000005",
+          "offset" : 1082
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p51",
+      "sentences" : [ {
+        "id" : "d1.p51.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "mir"
+          },
+          "id" : "pc.000005",
+          "offset" : 1089
+        }, {
+          "annotations" : {
+            "token" : "das"
+          },
+          "id" : "pc.000005",
+          "offset" : 1093
+        }, {
+          "annotations" : {
+            "token" : "ring,"
+          },
+          "id" : "pc.000005",
+          "offset" : 1097
+        }, {
+          "annotations" : {
+            "token" : "das"
+          },
+          "id" : "pc.000005",
+          "offset" : 1103
+        }, {
+          "annotations" : {
+            "token" : "sonst"
+          },
+          "id" : "pc.000005",
+          "offset" : 1107
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p52",
+      "sentences" : [ {
+        "id" : "d1.p52.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "test-en"
+          },
+          "id" : "pc.000005",
+          "offset" : 1113
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p53",
+      "sentences" : [ {
+        "id" : "d1.p53.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "genige"
+          },
+          "id" : "pc.000005",
+          "offset" : 1121
+        }, {
+          "annotations" : {
+            "token" : "voirschrevendan"
+          },
+          "id" : "pc.000005",
+          "offset" : 1128
+        }, {
+          "annotations" : {
+            "token" : "dat"
+          },
+          "id" : "pc.000005",
+          "offset" : 1144
+        }, {
+          "annotations" : {
+            "token" : "oick"
+          },
+          "id" : "pc.000005",
+          "offset" : 1148
+        }, {
+          "annotations" : {
+            "token" : "die"
+          },
+          "id" : "pc.000005",
+          "offset" : 1153
+        }, {
+          "annotations" : {
+            "token" : "fiandt"
+          },
+          "id" : "pc.000005",
+          "offset" : 1157
+        }, {
+          "annotations" : {
+            "token" : "ahm"
+          },
+          "id" : "pc.000005",
+          "offset" : 1164
+        }, {
+          "annotations" : {
+            "token" : "gesyn"
+          },
+          "id" : "pc.000005",
+          "offset" : 1168
+        }, {
+          "annotations" : {
+            "token" : "sich"
+          },
+          "id" : "pc.000005",
+          "offset" : 1174
+        }, {
+          "annotations" : {
+            "token" : "versammelen"
+          },
+          "id" : "pc.000005",
+          "offset" : 1179
+        }, {
+          "annotations" : {
+            "token" : "und"
+          },
+          "id" : "pc.000005",
+          "offset" : 1191
+        }, {
+          "annotations" : {
+            "token" : "sines"
+          },
+          "id" : "pc.000005",
+          "offset" : 1195
+        }, {
+          "annotations" : {
+            "token" : "arlisztes"
+          },
+          "id" : "pc.000005",
+          "offset" : 1201
+        }, {
+          "annotations" : {
+            "token" : "gewelttig"
+          },
+          "id" : "pc.000005",
+          "offset" : 1211
+        }, {
+          "annotations" : {
+            "token" : "moth"
+          },
+          "id" : "pc.000005",
+          "offset" : 1221
+        }, {
+          "annotations" : {
+            "token" : "sijn,"
+          },
+          "id" : "pc.000005",
+          "offset" : 1226
+        }, {
+          "annotations" : {
+            "token" : "vifftig"
+          },
+          "id" : "pc.000005",
+          "offset" : 1232
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p54",
+      "sentences" : [ {
+        "id" : "d1.p54.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "blievet"
+          },
+          "id" : "pc.000005",
+          "offset" : 1240
+        }, {
+          "annotations" : {
+            "token" : "froeme"
+          },
+          "id" : "pc.000005",
+          "offset" : 1248
+        }, {
+          "annotations" : {
+            "token" : "dat"
+          },
+          "id" : "pc.000005",
+          "offset" : 1255
+        }, {
+          "annotations" : {
+            "token" : "l"
+          },
+          "id" : "pc.000005",
+          "offset" : 1259
+        }, {
+          "annotations" : {
+            "token" : "g"
+          },
+          "id" : "pc.000005",
+          "offset" : 1261
+        }, {
+          "annotations" : {
+            "token" : "in"
+          },
+          "id" : "pc.000005",
+          "offset" : 1263
+        }, {
+          "annotations" : {
+            "token" : "gesontheid"
+          },
+          "id" : "pc.000005",
+          "offset" : 1266
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p55",
+      "sentences" : [ {
+        "id" : "d1.p55.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "wij"
+          },
+          "id" : "pc.000005",
+          "offset" : 1277
+        }, {
+          "annotations" : {
+            "token" : "in"
+          },
+          "id" : "pc.000005",
+          "offset" : 1281
+        }, {
+          "annotations" : {
+            "token" : "dese"
+          },
+          "id" : "pc.000005",
+          "offset" : 1284
+        }, {
+          "annotations" : {
+            "token" : "weszhae"
+          },
+          "id" : "pc.000005",
+          "offset" : 1289
+        }, {
+          "annotations" : {
+            "token" : "zeer"
+          },
+          "id" : "pc.000005",
+          "offset" : 1297
+        }, {
+          "annotations" : {
+            "token" : "verfallene"
+          },
+          "id" : "pc.000005",
+          "offset" : 1302
+        }, {
+          "annotations" : {
+            "token" : "und"
+          },
+          "id" : "pc.000005",
+          "offset" : 1313
+        }, {
+          "annotations" : {
+            "token" : "geoppressirde"
+          },
+          "id" : "pc.000005",
+          "offset" : 1317
+        }, {
+          "annotations" : {
+            "token" : "nots"
+          },
+          "id" : "pc.000005",
+          "offset" : 1331
+        }, {
+          "annotations" : {
+            "token" : "ghiene"
+          },
+          "id" : "pc.000005",
+          "offset" : 1336
+        }, {
+          "annotations" : {
+            "token" : "provisi"
+          },
+          "id" : "pc.000005",
+          "offset" : 1343
+        }, {
+          "annotations" : {
+            "token" : "van"
+          },
+          "id" : "pc.000005",
+          "offset" : 1351
+        }, {
+          "annotations" : {
+            "token" : "holt"
+          },
+          "id" : "pc.000005",
+          "offset" : 1355
+        }, {
+          "annotations" : {
+            "token" : "bij"
+          },
+          "id" : "pc.000005",
+          "offset" : 1360
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p56",
+      "sentences" : [ {
+        "id" : "d1.p56.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "gunstige"
+          },
+          "id" : "pc.000005",
+          "offset" : 1364
+        }, {
+          "annotations" : {
+            "token" : "here,"
+          },
+          "id" : "pc.000005",
+          "offset" : 1373
+        }, {
+          "annotations" : {
+            "token" : "wij"
+          },
+          "id" : "pc.000005",
+          "offset" : 1379
+        }, {
+          "annotations" : {
+            "token" : "hadden"
+          },
+          "id" : "pc.000005",
+          "offset" : 1383
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p57",
+      "sentences" : [ {
+        "id" : "d1.p57.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "An"
+          },
+          "id" : "pc.000005",
+          "offset" : 1390
+        }, {
+          "annotations" : {
+            "token" : "den"
+          },
+          "id" : "pc.000005",
+          "offset" : 1393
+        }, {
+          "annotations" : {
+            "token" : "scholtis"
+          },
+          "id" : "pc.000005",
+          "offset" : 1397
+        }, {
+          "annotations" : {
+            "token" : "to"
+          },
+          "id" : "pc.000005",
+          "offset" : 1406
+        }, {
+          "annotations" : {
+            "token" : "Zutphen"
+          },
+          "id" : "pc.000005",
+          "offset" : 1409
+        }, {
+          "annotations" : {
+            "token" : "of"
+          },
+          "id" : "pc.000005",
+          "offset" : 1417
+        }, {
+          "annotations" : {
+            "token" : "sijnen"
+          },
+          "id" : "pc.000005",
+          "offset" : 1420
+        }, {
+          "annotations" : {
+            "token" : "statholder"
+          },
+          "id" : "pc.000005",
+          "offset" : 1427
+        }, {
+          "annotations" : {
+            "token" : "Erentfeste"
+          },
+          "id" : "pc.000005",
+          "offset" : 1438
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p58",
+      "sentences" : [ {
+        "id" : "d1.p58.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "welcker"
+          },
+          "id" : "pc.000005",
+          "offset" : 1449
+        }, {
+          "annotations" : {
+            "token" : "voirscreuen"
+          },
+          "id" : "pc.000005",
+          "offset" : 1457
+        }, {
+          "annotations" : {
+            "token" : "LVj"
+          },
+          "id" : "pc.000005",
+          "offset" : 1469
+        }, {
+          "annotations" : {
+            "token" : "rydders"
+          },
+          "id" : "pc.000005",
+          "offset" : 1473
+        }, {
+          "annotations" : {
+            "token" : "die"
+          },
+          "id" : "pc.000005",
+          "offset" : 1481
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p59",
+      "sentences" : [ {
+        "id" : "d1.p59.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "desse"
+          },
+          "id" : "pc.000005",
+          "offset" : 1485
+        }, {
+          "annotations" : {
+            "token" : "breiff."
+          },
+          "id" : "pc.000005",
+          "offset" : 1491
+        }, {
+          "annotations" : {
+            "token" : "vermeldet"
+          },
+          "id" : "pc.000005",
+          "offset" : 1499
+        }, {
+          "annotations" : {
+            "token" : "Soe"
+          },
+          "id" : "pc.000005",
+          "offset" : 1509
+        }, {
+          "annotations" : {
+            "token" : "is"
+          },
+          "id" : "pc.000005",
+          "offset" : 1513
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p60",
+      "sentences" : [ {
+        "id" : "d1.p60.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "vyfftich"
+          },
+          "id" : "pc.000005",
+          "offset" : 1516
+        }, {
+          "annotations" : {
+            "token" : "met"
+          },
+          "id" : "pc.000005",
+          "offset" : 1525
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p61",
+      "sentences" : [ {
+        "id" : "d1.p61.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "pater"
+          },
+          "id" : "pc.000005",
+          "offset" : 1529
+        }, {
+          "annotations" : {
+            "token" : "toe"
+          },
+          "id" : "pc.000005",
+          "offset" : 1535
+        }, {
+          "annotations" : {
+            "token" : "Aelsum"
+          },
+          "id" : "pc.000005",
+          "offset" : 1539
+        }, {
+          "annotations" : {
+            "token" : "(bij"
+          },
+          "id" : "pc.000005",
+          "offset" : 1546
+        }, {
+          "annotations" : {
+            "token" : "Akkrum),"
+          },
+          "id" : "pc.000005",
+          "offset" : 1551
+        }, {
+          "annotations" : {
+            "token" : "ende"
+          },
+          "id" : "pc.000005",
+          "offset" : 1560
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p62",
+      "sentences" : [ {
+        "id" : "d1.p62.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "Mijnen"
+          },
+          "id" : "pc.000005",
+          "offset" : 1565
+        }, {
+          "annotations" : {
+            "token" : "gans"
+          },
+          "id" : "pc.000005",
+          "offset" : 1572
+        }, {
+          "annotations" : {
+            "token" : "goetwijlleghen"
+          },
+          "id" : "pc.000005",
+          "offset" : 1577
+        }, {
+          "annotations" : {
+            "token" : "dijens[t]"
+          },
+          "id" : "pc.000005",
+          "offset" : 1592
+        }, {
+          "annotations" : {
+            "token" : "na"
+          },
+          "id" : "pc.000005",
+          "offset" : 1602
+        }, {
+          "annotations" : {
+            "token" : "allen"
+          },
+          "id" : "pc.000005",
+          "offset" : 1605
+        }, {
+          "annotations" : {
+            "token" : "vermoeghen"
+          },
+          "id" : "pc.000005",
+          "offset" : 1611
+        }, {
+          "annotations" : {
+            "token" : "altijt"
+          },
+          "id" : "pc.000005",
+          "offset" : 1622
+        }, {
+          "annotations" : {
+            "token" : "tibi"
+          },
+          "id" : "pc.000005",
+          "offset" : 1629
+        }, {
+          "annotations" : {
+            "token" : "honorem *"
+          },
+          "id" : "pc.000005",
+          "offset" : 1634
+        }, {
+          "annotations" : {
+            "token" : " ."
+          },
+          "id" : "pc.000005",
+          "offset" : 1644
+        }, {
+          "annotations" : {
+            "token" : "Eerbare,"
+          },
+          "id" : "pc.000005",
+          "offset" : 1647
+        } ]
+      } ]
+    }, {
+      "id" : "d1.p63",
+      "sentences" : [ {
+        "id" : "d1.p63.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "ghemeynten"
+          },
+          "id" : "pc.000005",
+          "offset" : 1656
+        }, {
+          "annotations" : {
+            "token" : "vanden"
+          },
+          "id" : "pc.000005",
+          "offset" : 1667
+        }, {
+          "annotations" : {
+            "token" : "lande"
+          },
+          "id" : "pc.000005",
+          "offset" : 1674
+        }, {
+          "annotations" : {
+            "token" : "van"
+          },
+          "id" : "pc.000005",
+          "offset" : 1680
+        }, {
+          "annotations" : {
+            "token" : "breuites"
+          },
+          "id" : "pc.000005",
+          "offset" : 1684
+        }, {
+          "annotations" : {
+            "token" : "vitam"
+          },
+          "id" : "pc.000005",
+          "offset" : 1693
+        }, {
+          "annotations" : {
+            "token" : "magistrum"
+          },
+          "id" : "pc.000005",
+          "offset" : 1699
+        } ]
+      } ]
+    } ]
+  } ],
+  "id" : "UUID"
+}
