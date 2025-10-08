@@ -1,5 +1,5 @@
 *
-!src/**
+!src/main/**
 !build.gradle.kts
 !settings.gradle.kts
 !application.properties
