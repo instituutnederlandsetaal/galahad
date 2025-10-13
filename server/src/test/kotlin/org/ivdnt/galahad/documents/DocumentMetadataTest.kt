@@ -18,7 +18,7 @@ class DocumentMetadataTest {
 
     @Test
     fun `Properties for an unannotated file`() {
-        val path = "formats/shared-converter/input.txt"
+        val path = "formats/shared/converter/input.txt"
         val file = TestUtil.get(path)
         val plaintext = file.readText()
         val doc = TestUtil.getDoc(path)

@@ -19,7 +19,7 @@ open class ConverterTest {
     private val fileName = "karel_en_martijn"
     private val uuid = "e51560ff-81a2-4ddd-ba04-c7eb07af6d2b"
 
-    protected open val folder: String = "shared-converter"
+    protected open val folder: String = "shared/converter"
 
     /** Whether to override the [Layer].id for the sake of a consistent test.
      * For formats like tsv that don't define an id at the root node. */

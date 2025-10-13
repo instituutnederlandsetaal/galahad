@@ -1,0 +1,64 @@
+id	token	lemma	notes
+d1.p1.s1.w1	Fraaie	DUMMY	example notes
+d1.p1.s1.w2	historie	DUMMY	
+d1.p1.s1.w3	ende	DUMMY	
+d1.p1.s1.w4	alwaer	DUMMY	
+d1.p1.s1.w5	.	DUMMY	
+
+# comment line
+d1.p1.s2.w1	Magh	DUMMY	
+d1.p1.s2.w2	'k	DUMMY	example notes
+d1.p1.s2.w3	u	DUMMY	
+d1.p1.s2.w4	vertellen	DUMMY	
+d1.p1.s2.w5	,	DUMMY	
+d1.p1.s2.w6	hoirt	DUMMY	
+d1.p1.s2.w7	naer	DUMMY	
+d1.p1.s2.w8	.	DUMMY	
+
+
+d1.p2.s1.w1	't	DUMMY	
+d1.p2.s1.w2	Was	DUMMY	
+d1.p2.s1.w3	op	DUMMY	
+d1.p2.s1.w4	enen	DUMMY	
+d1.p2.s1.w5	avondstonde	DUMMY	
+d1.p2.s1.w6	.	DUMMY	example notes
+
+d1.p2.s2.w1	Dat	DUMMY	
+d1.p2.s2.w2	koning	DUMMY	
+d1.p2.s2.w3	Carel	DUMMY	
+d1.p2.s2.w4	slaepen	DUMMY	
+d1.p2.s2.w5	beghonde	DUMMY	
+d1.p2.s2.w6	.	DUMMY	
+
+
+d1.p3.s1.w1	"	DUMMY	
+d1.p3.s1.w2	Martijn	DUMMY	
+d1.p3.s1.w3	,	DUMMY	
+d1.p3.s1.w4	slaepstu	DUMMY	
+d1.p3.s1.w5	?	DUMMY	
+d1.p3.s1.w6	slaept	DUMMY	
+d1.p3.s1.w7	dijn	DUMMY	
+d1.p3.s1.w8	sin	DUMMY	
+d1.p3.s1.w9	?	DUMMY	
+d1.p3.s1.w10	"	DUMMY	
+
+d1.p3.s2.w1	Sprec	DUMMY	
+d1.p3.s2.w2	!	DUMMY	
+d1.p3.s2.w3	hebstu	DUMMY	
+d1.p3.s2.w4	gheen	DUMMY	
+d1.p3.s2.w5	spreken	DUMMY	
+d1.p3.s2.w6	in	DUMMY	
+d1.p3.s2.w7	?	DUMMY	
+
+
+d1.p4.s1.w1	Du	DUMMY	
+d1.p4.s1.w2	dinkes	DUMMY	
+d1.p4.s1.w3	mi	DUMMY	
+d1.p4.s1.w4	verdoren	DUMMY	
+d1.p4.s1.w5	.	DUMMY	
+
+d1.p4.s2.w1	Dune	DUMMY	
+d1.p4.s2.w2	achtes	DUMMY	
+d1.p4.s2.w3	meer	DUMMY	
+d1.p4.s2.w4	no	DUMMY	
+d1.p4.s2.w5	min	DUMMY	

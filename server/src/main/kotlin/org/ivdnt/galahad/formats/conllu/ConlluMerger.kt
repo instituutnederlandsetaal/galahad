@@ -12,6 +12,8 @@ import org.ivdnt.galahad.formats.tsv.TsvMerger
 class ConlluMerger(
     export: DocumentExport,
 ) : TsvMerger(export) {
+    override val emptyValue: String = "_"
+
     override val columnIndices: MutableMap<Annotation, Int> = mutableMapOf(
         Annotation.TOKEN to 1,
         Annotation.LEMMA to 2,
@@ -22,21 +24,29 @@ class ConlluMerger(
         Annotation.NER to 9, // see GetNer
     )
 
+    override fun replaceColumns(columns: MutableList<String>) {
+        replaceMisc(columns)
+        super.replaceColumns(columns)
+    }
+
+    private fun replaceMisc(columns: MutableList<String>) {
+        // construct MISC by combining NER and MISC
+        val term: Term = termComparisons[termIndex].hyp
+        val ner: String? = term.annotations[Annotation.NER]?.let { "NamedEntity=$it" }
+        val spaceAfter: String? = if (term.spaceAfter == false) "SpaceAfter=No" else null
+        val miscField: String = listOfNotNull(spaceAfter, ner).joinToString("|")
+        columns[columnIndices[Annotation.NER]!!] = miscField.ifEmpty { "_" }
+    }
+
     override fun mergeSingleColumn(
         columns: MutableList<String>,
         annotation: Annotation,
         columnIndex: Int,
     ) {
         when (annotation) {
-            Annotation.NER -> { // TODO if no NER still export spaceAfter
-                // construct MISC by combining NER and MISC
-                val term: Term = termComparisons[termIndex].hyp
-                val ner: String? = term.annotations[Annotation.NER]?.let { "NamedEntity=$it" }
-                val spaceAfter: String? = if (term.spaceAfter == false) "SpaceAfter=No" else null
-                val miscField: String = listOfNotNull(ner, spaceAfter).joinToString("|")
-                columns[columnIndex] = miscField.ifEmpty { "_" }
+            Annotation.NER -> {
+                // handled in replaceMisc
             }
-
             Annotation.UPOS -> {
                 // Split UPOS into head and features
                 val term: Term = termComparisons[termIndex].hyp
@@ -45,7 +55,6 @@ class ConlluMerger(
                 columns[3] = head
                 columns[5] = features
             }
-
             else -> super.mergeSingleColumn(columns, annotation, columnIndex)
         }
     }

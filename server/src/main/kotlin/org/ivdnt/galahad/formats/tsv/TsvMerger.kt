@@ -10,8 +10,10 @@ open class TsvMerger(
     export: DocumentExport,
 ) : LayerMerger(export) {
     protected open val columnIndices: MutableMap<Annotation, Int> = mutableMapOf()
-    override fun merge(out: OutputStream): Unit = merge(PrintWriter(out.bufferedWriter()))
+    override fun merge(out: OutputStream): Unit = merge(PrintWriter(out))
     protected var termIndex: Int = 0
+    private var extraColumns: MutableList<Annotation> = mutableListOf()
+    protected open val emptyValue: String = ""
 
     /**
      * Merge uploaded raw file with tagger layer. Headers indices are already determined by TSVFile.
@@ -20,18 +22,25 @@ open class TsvMerger(
     fun merge(out: PrintWriter) {
         export.document.uploadedFile.forEachLine { line ->
             if (columnIndices.isEmpty()) {
-                getColumnIndices(line.split("\t"))
-            } else {
-                if (line.isBlank()) {
-                    out.println()
+                val headers = line.split("\t")
+                getColumnIndices(headers)
+                // Print header with any extra columns
+                if (columnIndices.isNotEmpty()) {
+                    out.println((headers + extraColumns).joinToString("\t"))
                 }
+            } else if (!line.startsWith("#") && line.isNotBlank()) {
                 val columns = line.split("\t").toMutableList()
-                // Swap out pos & lemma, keep the rest.
+                // Add extra columns.
+                columns.addAll(List(extraColumns.size) { "" })
+                // Swap out merging annotations, keep the rest.
                 replaceColumns(columns)
-                out.println(columns.joinToString("\t") + "\n")
+                out.println(columns.joinToString("\t"))
                 termIndex++
+            } else {
+                out.println(line)
             }
         }
+        out.flush()
     }
 
     private fun getColumnIndices(
@@ -47,15 +56,23 @@ open class TsvMerger(
                     columnIndices[annotation] = index
                 }
         }
+        if (headers.isEmpty()) return // This line was not yet the header.
+        // Add any missing columns.
+        Annotation.order(export.tagger.annotationSet).forEach { annotation ->
+            if (columnIndices[annotation] == null) {
+                columnIndices[annotation] = headers.size + extraColumns.size
+                extraColumns.add(annotation)
+            }
+        }
     }
 
     /*
      * Replace annotations in their previously indexed columns.
      */
-    private fun replaceColumns(
+    protected open fun replaceColumns(
         columns: MutableList<String>,
     ) {
-        export.tagger.annotationSet.forEach { annot ->
+        export.tagger.annotationSet.filter { it != Annotation.TOKEN }.forEach { annot ->
             val index = columnIndices[annot] ?: return@forEach // Skip if not in the file.
             mergeSingleColumn(columns, annot, index)
         }
@@ -67,6 +84,6 @@ open class TsvMerger(
         columnIndex: Int,
     ) {
         val term = termComparisons[termIndex].hyp
-        columns[columnIndex] = term.annotationOrMissing(annotation)
+        columns[columnIndex] = term.annotations[annotation] ?: emptyValue
     }
 }

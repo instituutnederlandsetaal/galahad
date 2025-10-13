@@ -66,7 +66,7 @@ class DocumentsControllerTest(
     @Test
     fun `Upload zip with all formats`() {
         val corpus = SpringUtil.createCorpus(config)
-        val files = TestUtil.get("formats/shared-converter").listFiles()
+        val files = TestUtil.get("formats/shared/converter").listFiles()
         val zip = zipped(files.asIterable())
         mvc.uploadFile(zip, corpus, MediaType.APPLICATION_OCTET_STREAM_VALUE)
         assertEquals(6, getDocs(corpus).size)
