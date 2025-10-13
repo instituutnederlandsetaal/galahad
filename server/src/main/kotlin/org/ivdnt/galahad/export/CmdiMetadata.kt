@@ -13,6 +13,7 @@ import org.w3c.dom.Node
 import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 
@@ -45,7 +46,7 @@ class CmdiMetadata(val export: DocumentExport) {
         writeCmdHeader()
         writeCmdResources()
         writeCmdComponents()
-        XmlUtil.transformer.transform(DOMSource(xml), StreamResult(out))
+        TransformerFactory.newInstance().newTransformer().transform(DOMSource(xml), StreamResult(out))
     }
 
     /**

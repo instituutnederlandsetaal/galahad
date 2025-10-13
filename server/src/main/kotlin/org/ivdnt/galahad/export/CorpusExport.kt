@@ -61,7 +61,7 @@ class CorpusExport private constructor(
             fileName to { out -> formatMapper(doc,out) }
         }
         val seqCmdi: Sequence<FileMapper> = docs.asSequence().map { doc ->
-            "metadata/CMDI-${doc.uploadedFile}.xml" to { out ->
+            "metadata/CMDI-${doc.uploadedFile.withoutFormatExt}.xml" to { out ->
                 DocumentExport.create(
                     this, doc
                 ).cmdi(out)
