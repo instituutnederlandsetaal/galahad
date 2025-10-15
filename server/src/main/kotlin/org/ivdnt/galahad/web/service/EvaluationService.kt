@@ -17,10 +17,11 @@ import org.ivdnt.galahad.evaluation.entities.JobEntities
 import org.ivdnt.galahad.evaluation.frequency.TokenFrequency
 import org.ivdnt.galahad.evaluation.metrics.*
 import org.ivdnt.galahad.exceptions.InvalidMetricsTypeException
-import org.ivdnt.galahad.export.csv.CSVFile
+import org.ivdnt.galahad.export.csv.CsvFile
 import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.util.setContentDisposition
 import org.ivdnt.galahad.util.toValidFileName
+import org.ivdnt.galahad.util.zipDir
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.io.File
@@ -146,44 +147,54 @@ class EvaluationService(val corpora: CorporaService) {
         reference: String?,
     ): ByteArray {
         val dir: File = createTempDirectory("evaluation").toFile()
-        createDistributionCsv(dir, corpus, job)
+        createDistributionCsv(dir.resolve("distribution"), corpus, job)
+        createEntitiesCsv(dir.resolve("entities"), corpus)
         if (reference != null) {
-            createMetricsCsv(dir, corpus, job, reference)
-            createConfusionCsv(dir, corpus, job, reference)
+//            createMetricsCsv(dir, corpus, job, reference)
+            createConfusionCsv(dir.resolve("confusion"), corpus, job, reference)
         }
         val metadata = writeMetadataToDir(corpus, job, reference, dir)
         response!!.contentType = "application/zip"
         response.setContentDisposition(metadata.name + "-evaluation.zip")
 
         // zip the directory
-        val zipFile = dir // createZipFile(dir.listFiles()!!.asSequence()) // TODO: Fix this
+        val zipFile = zipDir(dir)
         return zipFile.readBytes()
     }
 
-    private fun createDistributionCsv(dir: File, corpus: UUID, job: String) {
-//        val distributions = getDistribution(corpus, job)
-//        distributions.forEach { (annotation, distribution) ->
-//            val file = CSVFile(dir.resolve("distribution-${annotation.value}.csv"))
-//            file.appendText(distribution.toCSV())
-//        }
+    private fun createEntitiesCsv(dir: File, corpus: UUID) {
+        dir.mkdirs()
+        val entities = getCorpusEntities(corpus)
+        val file = CsvFile(dir.resolve("entities.csv"))
+        file.append(CorpusEntities.toCsv(entities))
     }
 
-    private fun createConfusionCsv(dir: File, corpus: UUID, job: String, reference: String?) {
-//        val confusions = getJobConfusion(corpus, job, reference)
-//        confusions.forEach { (annotation, confusion) ->
-//            val file = CSVFile(dir.resolve("confusion-${annotation.value}.csv"))
-//            file.appendText(confusion.countsToCSV())
-//        }
+    private fun createDistributionCsv(dir: File, corpus: UUID, job: String) {
+        dir.mkdirs()
+        val distributions = getJobDistribution(corpus, job)
+        distributions.typeTokens.forEach { (annotation, distribution) ->
+            val file = CsvFile(dir.resolve("distribution-${annotation.value}.csv"))
+            file.append(JobDistribution.toCsv(distribution))
+        }
+    }
+
+    private fun createConfusionCsv(dir: File, corpus: UUID, hypothesis: String, reference: String) {
+        dir.mkdirs()
+        val confusions = getJobConfusion(corpus, hypothesis, reference)
+        confusions.confusion.forEach { (annotation, confusion) ->
+            val file = CsvFile(dir.resolve("confusion-${annotation.value}.csv"))
+            file.append(JobConfusion.toCsv(confusion))
+        }
     }
 
     private fun createMetricsCsv(dir: File, corpus: UUID, job: String, reference: String?) {
         val metrics = getMetrics(corpus, job = job, reference = reference)
-        val globFile = CSVFile(dir.resolve("metrics-global.csv"))
-        globFile.appendText(metrics.toGlobalCsv())
+        val globFile = CsvFile(dir.resolve("metrics-global.csv"))
+        globFile.append(metrics.toGlobalCsv())
 
         metrics.metricTypes.values.forEach { mt ->
-            val file = CSVFile(dir.resolve("metrics-${mt.setting.id}.csv"))
-            file.appendText(mt.toGroupedCsv())
+            val file = CsvFile(dir.resolve("metrics-${mt.setting.id}.csv"))
+            file.append(mt.toGroupedCsv())
         }
     }
 
@@ -218,8 +229,8 @@ class EvaluationService(val corpora: CorporaService) {
         // Create csv file.
         val dir: File = createTempDirectory("samples").toFile()
         val validFileName = fileName.toValidFileName()
-        val file = CSVFile(dir.resolve(validFileName))
-        file.appendText(csvBody)
+        val file = CsvFile(dir.resolve(validFileName))
+        file.append(csvBody)
         // Write metadata & create zip
         val metadata = writeMetadataToDir(corpus, job, reference, dir)
         val zipFile = dir // createZipFile(dir.listFiles()!!.asSequence()) // TODO: Fix this
@@ -256,7 +267,7 @@ class EvaluationService(val corpora: CorporaService) {
         return jobEval.entities
     }
 
-    fun getJobsEntities(corpus: UUID): CorpusEntities {
+    fun getCorpusEntities(corpus: UUID): CorpusEntities {
         val corpusObj = corpora.readAsReaderOrThrow(corpus, user)
         return corpusObj.evaluation.entities
     }

@@ -3,8 +3,9 @@ package org.ivdnt.galahad.evaluation.metrics
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
-import org.ivdnt.galahad.export.csv.CSVFile
+import org.ivdnt.galahad.export.csv.CsvFile
 import org.ivdnt.galahad.export.csv.CSVHeader
+import org.ivdnt.galahad.export.csv.CsvString
 import org.ivdnt.galahad.jobs.Job
 import org.ivdnt.galahad.taggers.Tagger
 
@@ -44,8 +45,8 @@ open class Metrics(
     }
 
     companion object {
-        fun getCsvHeader(): CSVHeader {
-            return CSVFile.toCSVHeader(
+        fun getCsvHeader(): CsvString {
+            return CsvFile.toCsvString(
                 listOf(
                     "annotation",
                     "grouped by",

@@ -5,6 +5,9 @@ import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.evaluation.DocumentEvaluations
 import org.ivdnt.galahad.evaluation.EvaluationEntry
+import org.ivdnt.galahad.evaluation.comparison.TermComparison
+import org.ivdnt.galahad.export.csv.CsvFile
+import org.ivdnt.galahad.export.csv.CsvString
 import org.ivdnt.galahad.util.merge
 
 /**
@@ -28,5 +31,35 @@ class JobConfusion(
                     }
                 }
         )
+
+        fun toCsv(confusion: Map<String, Map<String, EvaluationEntry>>): CsvString = buildString {
+            val header = sortedHeader(confusion)
+            append(CsvFile.toCsvString(listOf("Hypothesis → Reference ↓").plus(header)))
+            sortedEntries(confusion).forEach { (group, entries) ->
+                val row = mutableListOf(group)
+                header.forEach { col -> row.add(entries[col]?.count?.toString() ?: "0") }
+                append(CsvFile.toCsvString(row))
+            }
+        }
+
+        private fun sortedHeader(confusion: Map<String, Map<String, EvaluationEntry>>): List<String> {
+            val sorted: MutableList<String> = confusion.values.flatMap { it.keys }.distinct().sorted().toMutableList()
+            // Move MISSING_MATCH to last.
+            if (sorted.remove(TermComparison.MISSING_MATCH)) { // true if it was present
+                sorted.add(TermComparison.MISSING_MATCH) // so add it last
+            }
+            return sorted
+        }
+
+        private fun sortedEntries(confusion: Map<String, Map<String, EvaluationEntry>>): List<Map.Entry<String, Map<String, EvaluationEntry>>> {
+            val sorted = confusion.entries.sortedBy { it.key }.toMutableList()
+            // Move MISSING_MATCH to last.
+            val missing = sorted.firstOrNull { it.key == TermComparison.MISSING_MATCH }
+            if (missing != null) {
+                sorted.remove(missing)
+                sorted.add(missing)
+            }
+            return sorted
+        }
     }
 }

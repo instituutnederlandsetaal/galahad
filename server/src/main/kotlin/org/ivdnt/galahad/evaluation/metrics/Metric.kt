@@ -5,9 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.evaluation.EvaluationEntry
-import org.ivdnt.galahad.export.csv.CSVFile
+import org.ivdnt.galahad.export.csv.CsvFile
 import org.ivdnt.galahad.export.csv.CSVHeader
-import org.ivdnt.galahad.export.csv.CSVRecord
+import org.ivdnt.galahad.export.csv.CsvString
 import org.ivdnt.galahad.util.toFixed
 
 /**
@@ -131,8 +131,8 @@ data class Metric(
         return this
     }
 
-    fun toCSVRecord(): CSVRecord {
-        return CSVFile.toCSVRecord(
+    fun toCSVRecord(): CsvString {
+        return CsvFile.toCsvString(
             listOf(
                 name,
                 clsMetrics.precision.toFixed(),
@@ -148,8 +148,8 @@ data class Metric(
     }
 
     companion object {
-        fun getCsvHeader(): CSVHeader {
-            return CSVFile.toCSVHeader(
+        fun getCsvHeader(): CsvString {
+            return CsvFile.toCsvString(
                 listOf(
                     "grouped by",
                     "precision",

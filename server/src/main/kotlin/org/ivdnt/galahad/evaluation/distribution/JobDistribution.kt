@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonValue
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.evaluation.DocumentEvaluations
+import org.ivdnt.galahad.export.csv.CsvFile
+import org.ivdnt.galahad.export.csv.CsvString
 import org.ivdnt.galahad.util.merge
 
 /**
@@ -25,6 +27,20 @@ class JobDistribution(
                         }.values.sortedByDescending { it.count }
                     })
                 })
+
+        fun toCsv(typeTokens: List<TypeToken>): CsvString = buildString {
+            append(CsvFile.toCsvString(listOf("lemma", "group", "count", "unique", "tokens")))
+            for (tt in typeTokens) {
+                append(
+                    CsvFile.toCsvString(
+                        listOf(
+                    tt.lemma,
+                    tt.group,
+                    tt.count,
+                    tt.tokens.size,
+                    tt.tokens.entries.joinToString { "${it.key} (${it.value})" })))
+            }
+        }
     }
 }
 

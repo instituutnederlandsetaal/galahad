@@ -2,7 +2,7 @@ package org.ivdnt.galahad.evaluation
 
 import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
-import org.ivdnt.galahad.export.csv.CSVFile
+import org.ivdnt.galahad.export.csv.CsvFile
 import org.ivdnt.galahad.taggers.Tagger
 
 interface CsvSampleExporter {
@@ -19,14 +19,14 @@ interface CsvSampleExporter {
         val columns: MutableList<String> = mutableListOf("token")
         columns.addAll(refColumns.map { "${refJob.id} ${it.value}" })
         columns.addAll(hypoColumns.map { "${hypoJob.id} ${it.value}" })
-        csv += CSVFile.toCSVHeader(columns)
+        csv += CsvFile.toCsvString(columns)
 
         // body
         comps?.forEach { termComp ->
             val literal = termComp.hyp.token.ifEmpty { termComp.ref.token }
             val refAnnots = refColumns.map { termComp.ref.annotations[it] ?: Term.missingName(it) }
             val hypoAnnots = hypoColumns.map { termComp.hyp.annotations[it] ?: Term.missingName(it) }
-            csv += CSVFile.toCSVRecord(listOf(literal) + refAnnots + hypoAnnots)
+            csv += CsvFile.toCsvString(listOf(literal) + refAnnots + hypoAnnots)
         }
         return csv
     }

@@ -6,7 +6,7 @@ import org.ivdnt.galahad.evaluation.CsvSampleExporter
 import org.ivdnt.galahad.evaluation.EvaluationEntry
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
 import org.ivdnt.galahad.exceptions.InvalidClassificationTypeException
-import org.ivdnt.galahad.export.csv.CSVFile
+import org.ivdnt.galahad.export.csv.CsvFile
 import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.util.toFixed
 
@@ -81,7 +81,7 @@ class MetricsType(
         val microMetrics = micro
         val macroMetrics = macro
 
-        return CSVFile.toCSVRecord(
+        return CsvFile.toCsvString(
             listOf(
                 setting.annotation,
                 setting.group,

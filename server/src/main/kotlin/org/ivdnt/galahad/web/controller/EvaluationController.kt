@@ -186,7 +186,7 @@ class EvaluationController(
     @GetMapping(Endpoints.Evaluation.ENTITIES)
     fun getJobEntities(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
-    ): CorpusEntities = evaluationService.getJobsEntities(corpus)
+    ): CorpusEntities = evaluationService.getCorpusEntities(corpus)
 
     @CrossOrigin
     @GetMapping(Endpoints.Evaluation.Document.DISTRIBUTION)

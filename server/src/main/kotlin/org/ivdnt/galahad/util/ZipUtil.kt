@@ -45,3 +45,21 @@ fun createZipFile(files: Sequence<FileMapper>, out: OutputStream? = null, includ
     return zipFile
 }
 
+fun zipDir(dir: File): File {
+    val zipFile = File.createTempFile("tmp", ".zip")
+    val stream = ZipOutputStream(BufferedOutputStream(FileOutputStream(zipFile)))
+    stream.use { zip ->
+        dir.walk().forEach { file ->
+            if (file.isFile) {
+                val entryName = file.relativeTo(dir).path
+                zip.putNextEntry(ZipEntry(entryName))
+                file.inputStream().use { input ->
+                    input.copyTo(zip)
+                }
+                zip.closeEntry()
+            }
+        }
+    }
+    return zipFile
+}
+

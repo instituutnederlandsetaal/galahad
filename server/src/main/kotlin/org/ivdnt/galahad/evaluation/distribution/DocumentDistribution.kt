@@ -9,7 +9,7 @@ class DocumentDistribution(
     @JsonValue val typeTokens: Map<Annotation, List<TypeToken>>
 ) {
     companion object {
-        private val ANNOTATIONS = arrayOf(Annotation.POS, Annotation.UPOS, Annotation.NER)
+        private val ANNOTATIONS = arrayOf(Annotation.POS, Annotation.UPOS, Annotation.NER, Annotation.DEPREL)
 
         fun create(layer: Layer): DocumentDistribution =
             DocumentDistribution(buildMap<Annotation, MutableMap<Pair<String, String>, MutableMap<String, Int>>> {
