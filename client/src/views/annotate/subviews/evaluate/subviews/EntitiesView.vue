@@ -88,7 +88,6 @@ const entityOptions = computed(() => {
         // in which indices of entittyLegend does this label occur?
         const occurence = []
         for (const [i, job] of Object.keys(entities.value.jobs).entries()) {
-            console.log("job", job, "i", i)
             if (entities.value.jobs[job].summary[label] !== undefined) {
                 occurence.push(i + 1) // +1 because we want to start from 1, not 0
             }

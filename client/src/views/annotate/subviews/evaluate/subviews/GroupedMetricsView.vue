@@ -16,10 +16,11 @@
                 </p>
             </template>
             <template #header v-if="metrics.metrics != null">
+                <GSelect :options="groupingOptions" v-model="selectedGrouping" />
                 <p>
                     <b> Only the 100 most frequent groups are shown. </b>
                 </p>
-                <MetricsFilter ref="metricsFilter" :annotations="metrics.metrics" />
+                <!-- <MetricsFilter ref="metricsFilter" :annotations="metrics.metrics" /> -->
             </template>
         </MetricsTable>
     </div>
@@ -42,6 +43,10 @@ const jobSelection = stores.useJobSelection()
 
 // Fields
 const downloading = ref<boolean>()
+const selectedGrouping = ref<string>("lemmaByLemma")
+const groupingOptions = computed(() =>
+    Object.keys(metrics.value?.metrics || {}).map((key) => ({ value: key, text: key })),
+)
 
 const columns = computed(() => metricsPerPosColumns)
 const metricsFilter = useTemplateRef<InstanceType<typeof MetricsFilter>>("metricsFilter")
@@ -50,13 +55,13 @@ const metricName = computed(() => {
 })
 
 const posMetrics = computed(() => {
-    if (metrics.value?.metrics?.[metricName.value] == null) return []
+    if (metrics.value?.metrics?.[selectedGrouping.value] == null) return []
     // Copy over the metrics (depending on selectedMetric.value) from:
     // { ADJ: { ADJ: { pos : { f1, recall, ... }, lemma : { f1, recall, ... } } } } }
     // to:
     // { ADJ: { ADJ: { f1, recall, ..., } } }
-    const ret = metrics.value.metrics[metricName.value].grouped.map((i) => ({
-        column: metricName.value.split("By")[1].toLowerCase(),
+    const ret = metrics.value.metrics[selectedGrouping.value].grouped.map((i) => ({
+        column: selectedGrouping.value.split("By")[1].toLowerCase(),
         name: i.name,
         count: i.classes.classCount,
         truePositive: i.classes.truePositive,

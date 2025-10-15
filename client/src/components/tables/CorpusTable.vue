@@ -41,7 +41,6 @@ const { loading, corpusId, corpus } = storeToRefs(stores.useCorpora())
 const selectedCorpus = computed<CorpusMetadata>({
     get: () => corpus.value,
     set: (value: CorpusMetadata) => {
-        console.log("Selected corpus", value)
         corpusId.value = value.uuid
     },
 })

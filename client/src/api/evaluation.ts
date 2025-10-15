@@ -64,7 +64,7 @@ export function getMetrics(corpus: UUID, hypothesis: string, reference: string):
  * @param reference  Tagger job name as reference layer.
  */
 export function getDownloadEvaluation(corpus: UUID, hypothesis: string, reference: string): Promise<BlobResponse> {
-    return getBlob(downloadPath(corpus, hypothesis), { params: { reference } })
+    return getBlob(downloadPath(corpus), { params: { reference, hypothesis } })
 }
 
 /**

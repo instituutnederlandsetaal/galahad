@@ -9,10 +9,7 @@
 </template>
 
 <script setup lang="ts">
-// Libraries & stores
-
 import stores from "@/stores"
-// Types & API
 import type { Term } from "@/types/evaluation"
 import type { Column } from "@/types/ui/table"
 
@@ -71,7 +68,7 @@ function cleanAnnotation(term) {
     background-color: rgba(255, 0, 0, 0.1);
 }
 
-.termCompTable :deep(td) {
-    padding: 0 !important;
-}
+//.termCompTable :deep(td) {
+//    padding: 0 !important;
+//}
 </style>

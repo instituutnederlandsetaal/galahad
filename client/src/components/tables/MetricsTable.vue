@@ -11,8 +11,8 @@
             <p>Generating metrics for large corpora may take a while...</p>
         </template>
 
-        <template #header>
-            <slot name="prepend"></slot>
+        <template #header v-else>
+            <slot name="header"></slot>
         </template>
 
         <template
