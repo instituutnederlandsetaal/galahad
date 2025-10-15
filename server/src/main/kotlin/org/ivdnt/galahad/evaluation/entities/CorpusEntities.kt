@@ -74,9 +74,12 @@ class CorpusEntities(
         fun toCsv(entities: CorpusEntities): CsvString = buildString {
             val header = getHeader(entities)
             append(CsvFile.toCsvString(header))
-
+            val total = getTotalDocument(entities)
+            append(CsvFile.toCsvString(total))
+            // add other docs
             getDocs(entities).forEach { doc ->
                 val row = mutableListOf<Any>(doc)
+                // labels of each job
                 getJobs(entities).forEach { job ->
                     getLabels(entities.jobs[job]!!).forEach { label ->
                         row.add(entities.jobs[job]!!.documents[doc]?.summary?.get(label) ?: 0)
@@ -94,6 +97,24 @@ class CorpusEntities(
                 append(CsvFile.toCsvString(row))
             }
 
+        }
+
+        private fun getTotalDocument(entities: CorpusEntities): MutableList<Any> {
+            // add a fake "total" document
+            val total = mutableListOf<Any>("total")
+            getJobs(entities).forEach { job ->
+                getLabels(entities.jobs[job]!!).forEach { label ->
+                    total.add(entities.jobs[job]!!.summary[label] ?: 0)
+                }
+                total.add(entities.jobs[job]?.total ?: 0)
+            }
+            // stddevs
+            getLabels(entities).forEach { label ->
+                total.add(entities.stddev.stddev[label]?.toFixed() ?: 0.0)
+            }
+            // stddev average
+            total.add(entities.stddev.average.toFixed())
+            return total
         }
 
         private fun getLabels(entities: CorpusEntities): List<String> = entities.stddev.stddev.keys.sorted()
