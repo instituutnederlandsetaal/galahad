@@ -15,7 +15,7 @@
                     on a percentage, a data sample is shown.
                 </p>
             </template>
-            <template #header v-if="metrics.metrics != null">
+            <template #header>
                 <GSelect :options="groupingOptions" v-model="selectedGrouping" />
                 <p>
                     <b> Only the 100 most frequent groups are shown. </b>
@@ -44,9 +44,7 @@ const jobSelection = stores.useJobSelection()
 // Fields
 const downloading = ref<boolean>()
 const selectedGrouping = ref<string>("lemmaByLemma")
-const groupingOptions = computed(() =>
-    Object.keys(metrics.value?.metrics || {}).map((key) => ({ value: key, text: key })),
-)
+const groupingOptions = computed(() => Object.keys(metrics.value || {}).map((key) => ({ value: key, text: key })))
 
 const columns = computed(() => metricsPerPosColumns)
 const metricsFilter = useTemplateRef<InstanceType<typeof MetricsFilter>>("metricsFilter")
@@ -55,19 +53,20 @@ const metricName = computed(() => {
 })
 
 const posMetrics = computed(() => {
-    if (metrics.value?.metrics?.[selectedGrouping.value] == null) return []
+    if (metrics.value?.[selectedGrouping.value] == null) return []
+    console.log(metrics.value[selectedGrouping.value])
     // Copy over the metrics (depending on selectedMetric.value) from:
     // { ADJ: { ADJ: { pos : { f1, recall, ... }, lemma : { f1, recall, ... } } } } }
     // to:
     // { ADJ: { ADJ: { f1, recall, ..., } } }
-    const ret = metrics.value.metrics[selectedGrouping.value].grouped.map((i) => ({
+    const ret = Object.entries(metrics.value[selectedGrouping.value]?.grouped || {}).map(([name, i]) => ({
         column: selectedGrouping.value.split("By")[1].toLowerCase(),
-        name: i.name,
-        count: i.classes.classCount,
-        truePositive: i.classes.truePositive,
-        falsePositive: i.classes.falsePositive,
-        falseNegative: i.classes.falseNegative,
-        noMatch: i.classes.noMatch,
+        name: name,
+        count: i.count,
+        truePositive: i.truePositive,
+        falsePositive: i.falsePositive,
+        falseNegative: i.falseNegative,
+        noMatch: i.noMatch,
         precision: i.metrics.precision,
         recall: i.metrics.recall,
         f1: i.metrics.f1,

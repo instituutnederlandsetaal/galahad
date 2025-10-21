@@ -301,4 +301,27 @@ class EvaluationService(val corpora: CorporaService) {
         val jobEval = corpusObj.evaluation.createOrThrow(JobPair(hypothesis, reference))
         return jobEval.confusion
     }
+
+
+    fun getDocumentMetric(
+        corpus: UUID,
+        document: String,
+        hypothesis: String,
+        reference: String
+    ): DocumentMetric {
+        val corpusObj = corpora.readAsReaderOrThrow(corpus, user)
+        val jobEval = corpusObj.evaluation.createOrThrow(JobPair(hypothesis, reference))
+        val docEval = jobEval.documents.createOrThrow(document)
+        return docEval.metrics
+    }
+
+    fun getJobMetric(
+        corpus: UUID,
+        hypothesis: String,
+        reference: String
+    ): JobMetric {
+        val corpusObj = corpora.readAsReaderOrThrow(corpus, user)
+        val jobEval = corpusObj.evaluation.createOrThrow(JobPair(hypothesis, reference))
+        return jobEval.metrics
+    }
 }

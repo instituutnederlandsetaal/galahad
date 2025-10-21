@@ -14,6 +14,8 @@ import org.ivdnt.galahad.evaluation.distribution.JobDistribution
 import org.ivdnt.galahad.evaluation.distribution.TypeToken
 import org.ivdnt.galahad.evaluation.entities.CorpusEntities
 import org.ivdnt.galahad.evaluation.metrics.CorpusMetrics
+import org.ivdnt.galahad.evaluation.metrics.DocumentMetric
+import org.ivdnt.galahad.evaluation.metrics.JobMetric
 import org.ivdnt.galahad.exceptions.ErrorResponse
 import org.ivdnt.galahad.web.service.EvaluationService
 import org.springframework.web.bind.annotation.*
@@ -128,7 +130,8 @@ class EvaluationController(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @RequestParam @Parameter(description = "Tagger name or sourceLayer") hypothesis: String,
         @RequestParam @Parameter(description = "Tagger name or sourceLayer") reference: String,
-    ): CorpusMetrics = evaluationService.getMetrics(corpus, hypothesis, reference)
+    ): JobMetric = evaluationService.getJobMetric(corpus, hypothesis, reference)
+
 
     @Operation(
         summary = "Get metrics samples",
@@ -196,4 +199,14 @@ class EvaluationController(
         @RequestParam @Parameter(description = "Tagger name or sourceLayer") hypothesis: String,
     ): Map<Annotation, List<TypeToken>> =
         evaluationService.getDocumentDistribution(corpus, hypothesis, document).typeTokens
+
+    @CrossOrigin
+    @GetMapping(Endpoints.Evaluation.Document.METRICS)
+    fun getDocumentMetric(
+        @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
+        @PathVariable @Parameter(description = "Document name") document: String,
+        @RequestParam @Parameter(description = "Tagger name or sourceLayer") hypothesis: String,
+        @RequestParam @Parameter(description = "Tagger name or sourceLayer") reference: String,
+    ): DocumentMetric =
+        evaluationService.getDocumentMetric(corpus, document, hypothesis, reference)
 }

@@ -32,7 +32,7 @@ class Term(
     val token: String = annotations[Annotation.TOKEN]!!
 
     @get:JsonIgnore
-    val lemma: String? get() = annotations[Annotation.LEMMA]
+    val lemma: String? = annotations[Annotation.LEMMA]
 
     @get:JsonIgnore
     val pos: String? = annotations[Annotation.POS]

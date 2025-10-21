@@ -6,6 +6,8 @@ import org.ivdnt.galahad.evaluation.comparison.LayerComparison
 import org.ivdnt.galahad.evaluation.confusion.DocumentConfusion
 import org.ivdnt.galahad.evaluation.distribution.DocumentDistribution
 import org.ivdnt.galahad.evaluation.entities.DocumentEntities
+import org.ivdnt.galahad.evaluation.metrics.DocumentMetric
+import org.ivdnt.galahad.evaluation.metrics.DocumentMetrics
 import org.ivdnt.galahad.files.GalahadFolder
 import org.ivdnt.galahad.files.ValidatedDiskValue
 import org.ivdnt.galahad.jobs.Job
@@ -44,12 +46,19 @@ class DocumentEvaluation(
     val confusion: DocumentConfusion
         get() = object : ValidatedDiskValue<DocumentConfusion>(dir.resolve(CONFUSION_FILE)) {
             override fun isValid(modified: Long) = modified >= lastModified
-            override fun set(): DocumentConfusion = DocumentConfusion.create(LayerComparison(refLayer, hypLayer))
+            override fun set(): DocumentConfusion = DocumentConfusion.create(LayerComparison(hypLayer, refLayer))
         }.readOrCreate<DocumentConfusion>()
+
+    val metrics: DocumentMetric
+        get() = object : ValidatedDiskValue<DocumentMetric>(dir.resolve(METRICS_FILE)) {
+            override fun isValid(modified: Long) = modified >= lastModified
+            override fun set(): DocumentMetric = DocumentMetric.create(LayerComparison(hypLayer, refLayer))
+        }.readOrCreate<DocumentMetric>()
 
     companion object {
         private const val ENTITIES_FILE = "entities.json"
         private const val DISTRIBUTION_FILE = "distribution.json"
         private const val CONFUSION_FILE = "confusion.json"
+        private const val METRICS_FILE = "metrics.json"
     }
 }

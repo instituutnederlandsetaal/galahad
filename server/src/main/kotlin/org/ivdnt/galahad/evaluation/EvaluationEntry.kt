@@ -32,5 +32,10 @@ data class EvaluationEntry(
             return EvaluationEntry(a.count + b.count, a.samples)
 
         }
+
+        fun from(a: EvaluationEntry, b: EvaluationEntry): EvaluationEntry {
+            val aCopy = EvaluationEntry(a.count, a.samples.toMutableList())
+            return EvaluationEntry.add(aCopy, b)
+        }
     }
 }

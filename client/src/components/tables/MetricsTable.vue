@@ -41,9 +41,8 @@
             #[cell]="data"
         >
             <div :key="cell">
-                <GButton :disabled="data.value.count === 0" @click="openModal(data)">
-                    {{ `${((data.value.count / data.item.count) * 100).toFixed(1)}%` }}
-                    <i>({{ data.value.count.toString() }})</i>
+                <GButton :disabled="data.value?.count === 0" @click="openModal(data)">
+                    {{ data.value?.count }}
                 </GButton>
             </div>
         </template>

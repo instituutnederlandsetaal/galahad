@@ -27,10 +27,10 @@ class DocumentDistribution(
                         merge(annotation, mutableMapOf(pair to tokens)) { oldTypeTokens, newTypeTokens ->
                             // merge this pair-tokencount mapping if needed
                             oldTypeTokens.apply {
-                                merge(pair, tokens) { oldTokens, newTokens ->
+                                this.merge(pair, tokens) { oldTokens, newTokens ->
                                     // In doing so, we only need to sum the token counts
                                     oldTokens.apply {
-                                        merge(t.token, 1, Integer::sum)
+                                        this.merge(t.token, 1, Integer::sum)
                                     }
                                 }
                             }

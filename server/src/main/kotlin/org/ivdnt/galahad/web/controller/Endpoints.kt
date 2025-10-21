@@ -73,6 +73,7 @@ object Endpoints {
             const val ENTITIES: String = "$BASE/entities"
             const val DISTRIBUTION: String = "$BASE/distribution"
             const val COMPARISON: String = "$BASE/comparison"
+            const val METRICS: String = "$BASE/metrics"
         }
     }
 }

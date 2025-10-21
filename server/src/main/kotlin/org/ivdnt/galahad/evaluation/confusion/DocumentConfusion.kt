@@ -27,9 +27,9 @@ class DocumentConfusion(
 
                         merge(annotation, groupedMap) { oldAnnotationMap, _ ->
                             oldAnnotationMap.apply {
-                                merge(reference, entryMap) { oldEntry, _ ->
+                                this.merge(reference, entryMap) { oldEntry, _ ->
                                     oldEntry.apply {
-                                        merge(hypothesis, entry) { e1, e2 -> EvaluationEntry.add(e1, e2) }
+                                        this.merge(hypothesis, entry) { e1, e2 -> EvaluationEntry.add(e1, e2) }
                                     }
                                 }
                             }

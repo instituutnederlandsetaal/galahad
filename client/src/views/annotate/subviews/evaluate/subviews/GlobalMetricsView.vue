@@ -74,29 +74,28 @@ const columns = computed(() => {
     return addColumns.concat(withoutName)
 })
 const items = computed(() => {
-    if (metrics.value?.metrics == null) return []
+    if (metrics.value == null) return []
 
     // metrics has the form
     // { pos: { f1, recall, ... }, lemma: { f1, recall, ... }, lemmaPos: { f1, recall, ... } }
     // We want to transform this to
     // [ { name: "PoS", f1, recall, ... }, { name: "Lemma", f1, recall, ... }, { name: "Lemma & PoS", f1, recall, ... } ]
-    const ret = Object.keys(metrics.value.metrics)
-        .map((key) => ({ name: key, ...metrics.value.metrics[key] }))
+    const ret = Object.keys(metrics.value)
+        .map((key) => ({ name: key, ...metrics.value[key] }))
         .map((i) => {
             const annoAndGroup = annotationAndGroupFromName(i.name)
             return {
-                id: i.setting.id,
-                column: i.setting.annotation,
-                name: i.setting.annotation,
-                group: i.setting.group,
-                count: i.classes.classCount,
+                id: i.name,
+                column: i.name,
+                name: i.name,
+                group: i.name,
+                count: i.classes.count,
                 truePositive: i.classes.truePositive,
                 falseNegative: i.classes.falseNegative,
                 noMatch: i.classes.noMatch,
                 macroPrecision: i.macro.precision,
                 macroRecall: i.macro.recall,
                 macroF1: i.macro.f1,
-                microAccuracy: i.micro.accuracy,
             }
         })
     return ret

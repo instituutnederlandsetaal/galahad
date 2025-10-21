@@ -6,7 +6,6 @@ import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.evaluation.EvaluationEntry
 import org.ivdnt.galahad.export.csv.CsvFile
-import org.ivdnt.galahad.export.csv.CSVHeader
 import org.ivdnt.galahad.export.csv.CsvString
 import org.ivdnt.galahad.util.toFixed
 
