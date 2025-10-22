@@ -21,18 +21,18 @@ export const metricsPerPosColumns = [
     { key: "recall", sortOn: (x: MetricsRow) => x.recall },
     { key: "f1", sortOn: (x: MetricsRow) => x.f1 },
     { key: "count", label: "count", sortOn: (x: MetricsRow) => x.count },
-    { key: "truePositive", label: "true positive", sortOn: (x: MetricsRow): number => x.truePositive.count / x.count },
+    { key: "truePositive", label: "true positive", sortOn: (x: MetricsRow): number => x.truePositive.count },
     {
         key: "falsePositive",
         label: "false positive",
-        sortOn: (x: MetricsRow): number => x.falsePositive.count / x.count,
+        sortOn: (x: MetricsRow): number => x.falsePositive.count,
     },
     {
         key: "falseNegative",
         label: "false negative",
-        sortOn: (x: MetricsRow): number => x.falseNegative.count / x.count,
+        sortOn: (x: MetricsRow): number => x.falseNegative.count,
     },
-    { key: "noMatch", label: "no match", sortOn: (x: MetricsRow): number => x.noMatch.count / x.count },
+    { key: "noMatch", label: "no match", sortOn: (x: MetricsRow): number => x.noMatch.count },
 ]
 
 /**

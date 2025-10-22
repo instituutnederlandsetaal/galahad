@@ -31,7 +31,7 @@
             ]"
             #[cell]="data"
         >
-            <div :key="cell">
+            <div :key="cell" style="text-align: right">
                 {{ `${data.value ? parseFloat(data.value).toString().slice(0, 4) : 0}` }}
             </div>
         </template>
@@ -41,7 +41,7 @@
             #[cell]="data"
         >
             <div :key="cell">
-                <GButton :disabled="data.value?.count === 0" @click="openModal(data)">
+                <GButton :disabled="data.value?.count === 0" @click="openModal(data)" style="text-align: right">
                     {{ data.value?.count }}
                 </GButton>
             </div>

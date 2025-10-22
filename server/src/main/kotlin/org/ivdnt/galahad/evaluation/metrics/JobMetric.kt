@@ -7,14 +7,14 @@ import org.ivdnt.galahad.util.merge
 
 class JobMetric(
     @JsonValue
-    val classesByGroup: MutableMap<String, NewMetric>
+    val classesByGroup: Map<String, NewMetric>
 ) {
     companion object {
         fun create(corpus: Corpus, docEvals: DocumentEvaluations): JobMetric = JobMetric(
             corpus.documents.readAllSequence().map { docEvals.createOrThrow(it.name).metrics.classesByGroup }
                 .reduce { map1, map2 ->
                     map1.merge(map2) { a, b -> a.apply { grouped.merge(b.grouped) { x, y -> x.add(y) } } } as MutableMap<String, NewMetric>
-                }
+                }.mapValues { NewMetric(it.value.settings, it.value.grouped) }
         )
     }
 }

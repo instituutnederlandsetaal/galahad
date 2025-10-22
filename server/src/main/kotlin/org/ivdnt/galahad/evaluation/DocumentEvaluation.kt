@@ -1,5 +1,6 @@
 package org.ivdnt.galahad.evaluation
 
+import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.evaluation.comparison.LayerComparison
@@ -7,7 +8,6 @@ import org.ivdnt.galahad.evaluation.confusion.DocumentConfusion
 import org.ivdnt.galahad.evaluation.distribution.DocumentDistribution
 import org.ivdnt.galahad.evaluation.entities.DocumentEntities
 import org.ivdnt.galahad.evaluation.metrics.DocumentMetric
-import org.ivdnt.galahad.evaluation.metrics.DocumentMetrics
 import org.ivdnt.galahad.files.GalahadFolder
 import org.ivdnt.galahad.files.ValidatedDiskValue
 import org.ivdnt.galahad.jobs.Job
@@ -30,6 +30,7 @@ class DocumentEvaluation(
     private val refModified: Long get() = refJob.results.readOrThrow(name).modified
     private val hypModified: Long get() = hypJob.results.readOrThrow(name).modified
     private val lastModified: Long get() = hypModified.coerceAtLeast(refModified)
+    private val availableAnnotations: Set<Annotation> get() = refJob.metadata.annotations.annotations.keys.intersect(hypJob.metadata.annotations.annotations.keys).filter{  it != Annotation.TOKEN }.toSet()
 
     val entities: DocumentEntities
         get() = object : ValidatedDiskValue<DocumentEntities>(dir.resolve(ENTITIES_FILE)) {
@@ -46,13 +47,13 @@ class DocumentEvaluation(
     val confusion: DocumentConfusion
         get() = object : ValidatedDiskValue<DocumentConfusion>(dir.resolve(CONFUSION_FILE)) {
             override fun isValid(modified: Long) = modified >= lastModified
-            override fun set(): DocumentConfusion = DocumentConfusion.create(LayerComparison(hypLayer, refLayer))
+            override fun set(): DocumentConfusion = DocumentConfusion.create(LayerComparison(hypLayer, refLayer), availableAnnotations)
         }.readOrCreate<DocumentConfusion>()
 
     val metrics: DocumentMetric
         get() = object : ValidatedDiskValue<DocumentMetric>(dir.resolve(METRICS_FILE)) {
             override fun isValid(modified: Long) = modified >= lastModified
-            override fun set(): DocumentMetric = DocumentMetric.create(LayerComparison(hypLayer, refLayer))
+            override fun set(): DocumentMetric = DocumentMetric.create(LayerComparison(hypLayer, refLayer), availableAnnotations)
         }.readOrCreate<DocumentMetric>()
 
     companion object {

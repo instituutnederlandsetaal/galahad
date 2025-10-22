@@ -1,10 +1,12 @@
 package org.ivdnt.galahad.evaluation.metrics
 
 import com.fasterxml.jackson.annotation.JsonValue
+import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.evaluation.EvaluationEntry
 import org.ivdnt.galahad.evaluation.comparison.LayerComparison
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
+import org.ivdnt.galahad.evaluation.metrics.ClsClasses.Companion.toMetrics
 
 class ClsMetrics(
     val precision: Float = 0f,
@@ -28,76 +30,74 @@ class ClsMetrics(
 }
 
 class NewMetric(
+    val settings: MetricsSettings,
     val grouped: MutableMap<String, ClsClasses> = mutableMapOf(),
-) {
-    val classes: ClsClasses
-        get() = grouped.filter { it.key != TermComparison.MISSING_MATCH }.values.reduce { a, b -> a + b }
-
-    val micro: ClsMetrics get() = classes.metrics
-
-    val macro: ClsMetrics
-        get() {
-            val validClasses = grouped.filter { it.key != TermComparison.MISSING_MATCH }
-            return validClasses.values.map { it.metrics }
-                .reduce { a, b -> a + b } / validClasses.size
-        }
-}
+    val classes: ClsClasses = grouped.filter { it.key != TermComparison.MISSING_MATCH }.values.reduce { a, b -> a + b },
+    val accuracy: Float = classes.truePositive.count / classes.count.toFloat(),
+    val macro: ClsMetrics = grouped.values.map { it.metrics }.reduce { a, b -> a + b } / grouped.size,
+)
 
 class ClsClasses(
     var truePositive: EvaluationEntry = EvaluationEntry(),
     var falsePositive: EvaluationEntry = EvaluationEntry(),
     var falseNegative: EvaluationEntry = EvaluationEntry(),
     var noMatch: EvaluationEntry = EvaluationEntry(),
+    var count: Int = truePositive.count + falseNegative.count + noMatch.count,
+    var metrics: ClsMetrics = toMetrics(truePositive, falsePositive, falseNegative, noMatch)
 ) {
     fun add(other: ClsClasses, truncate: Boolean = true): ClsClasses {
         truePositive = EvaluationEntry.add(truePositive, other.truePositive, truncate)
         falsePositive = EvaluationEntry.add(falsePositive, other.falsePositive, truncate)
         falseNegative = EvaluationEntry.add(falseNegative, other.falseNegative, truncate)
         noMatch = EvaluationEntry.add(noMatch, other.noMatch, truncate)
+        count = truePositive.count + falseNegative.count + noMatch.count
+        metrics = toMetrics(truePositive, falsePositive, falseNegative, noMatch)
         return this
     }
 
     operator fun plus(other: ClsClasses): ClsClasses = ClsClasses(
-        truePositive = EvaluationEntry.from(other.truePositive,truePositive),
-        falsePositive = EvaluationEntry.from(other.falsePositive,falsePositive),
-        falseNegative = EvaluationEntry.from(other.falseNegative,falseNegative),
-        noMatch = EvaluationEntry.from(other.noMatch,noMatch),
+        truePositive = EvaluationEntry.from(other.truePositive, truePositive),
+        falsePositive = EvaluationEntry.from(other.falsePositive, falsePositive),
+        falseNegative = EvaluationEntry.from(other.falseNegative, falseNegative),
+        noMatch = EvaluationEntry.from(other.noMatch, noMatch),
+        count = truePositive.count + falseNegative.count + noMatch.count,
+        metrics = toMetrics(truePositive, falsePositive, falseNegative, noMatch)
     )
-
-    val metrics: ClsMetrics
-        get() {
-            val precision = notNaN(truePositive.count / (truePositive.count + falsePositive.count).toFloat())
-            val recall = notNaN(truePositive.count / (truePositive.count + falsePositive.count + noMatch.count).toFloat())
-            val f1 = notNaN(2.0f * (precision * recall) / (precision + recall))
-            return ClsMetrics(precision, recall, f1)
-        }
-
-    val count: Int
-        get() = truePositive.count + falseNegative.count + noMatch.count
 
     companion object {
         fun notNaN(value: Float): Float = if (value.isNaN()) 0.0f else value
+        fun toMetrics(
+            truePositive: EvaluationEntry,
+            falsePositive: EvaluationEntry,
+            falseNegative: EvaluationEntry,
+            noMatch: EvaluationEntry
+        ): ClsMetrics {
+            val tp = truePositive.count.toFloat()
+            val fp = falsePositive.count.toFloat()
+            val fn = falseNegative.count.toFloat()
+            val mm = noMatch.count.toFloat()
+            val precision = notNaN(tp / (tp + fp))
+            val recall = notNaN(tp / (tp + fn + mm))
+            val f1 = notNaN(2.0f * (precision * recall) / (precision + recall))
+            return ClsMetrics(precision, recall, f1)
+        }
     }
 }
 
-
 class DocumentMetric(
-    @JsonValue
-    val classesByGroup: MutableMap<String, NewMetric>
+    @JsonValue val classesByGroup: MutableMap<String, NewMetric>
 ) {
     companion object {
-        fun create(layerComparison: LayerComparison): DocumentMetric = DocumentMetric(
-            buildMap<String, NewMetric> {
+        fun create(layerComparison: LayerComparison, annotations: Set<Annotation>): DocumentMetric = DocumentMetric(
+            buildMap<String, MutableMap<String, ClsClasses>> {
                 layerComparison.matches.forEach { tc ->
-                    METRIC_TYPES.forEach { metricType ->
+                    METRIC_TYPES.filter { annotations.containsAll(it.requiredAnnotations) }.forEach { metricType ->
                         if (!metricType.filterBy(tc)) return@forEach
                         val mapsToAdd = mutableListOf<MutableMap<String, ClsClasses>>()
                         if (tc.hyp == Term.EMPTY) {
                             // handle missing match
                             val cls = ClsClasses(noMatch = EvaluationEntry(1, mutableListOf(tc)))
-                            val group = TermComparison.MISSING_MATCH
-                            val classesMap = mutableMapOf(group to cls)
-                            mapsToAdd.add(classesMap)
+                            mapsToAdd.add(mutableMapOf(metricType.groupBy(tc.ref) to cls))
                         } else {
                             // handle true positive & false negative
                             val (trueEntry, falseEntry) = truesFalses(tc, metricType::termsEqual)
@@ -115,16 +115,18 @@ class DocumentMetric(
                         }
                         for (map in mapsToAdd) {
 
-                            merge(metricType.id, NewMetric(grouped=map)) { oldMetricMap, newMetricMap -> oldMetricMap.apply {
-                                this.grouped.merge(newMetricMap.grouped.keys.first(), newMetricMap.grouped.values.first()) { oldCls, newCls ->
-                                    oldCls.add(newCls)
-                                }
+                            merge(
+                                metricType.id,
+                                map
+                            ) {
+                                a, b ->
+                                a.apply { this.merge(b.keys.first(), b.values.first()) { x, y -> x.add(y) } }
                             }
-                            }
+
                         }
                     }
                 }
-            }.toMutableMap()
+            }.mapValues { NewMetric(METRIC_TYPES.first{mt -> mt.id == it.key}, it.value)}.toMutableMap()
         )
 
         private fun truesFalses(
