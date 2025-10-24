@@ -150,7 +150,7 @@ class EvaluationService(val corpora: CorporaService) {
         createDistributionCsv(dir.resolve("distribution"), corpus, job)
         createEntitiesCsv(dir.resolve("entities"), corpus)
         if (reference != null) {
-//            createMetricsCsv(dir, corpus, job, reference)
+            createMetricsCsv(dir.resolve("metrics"), corpus, job, reference)
             createConfusionCsv(dir.resolve("confusion"), corpus, job, reference)
         }
         val metadata = writeMetadataToDir(corpus, job, reference, dir)
@@ -187,14 +187,15 @@ class EvaluationService(val corpora: CorporaService) {
         }
     }
 
-    private fun createMetricsCsv(dir: File, corpus: UUID, job: String, reference: String?) {
-        val metrics = getMetrics(corpus, job = job, reference = reference)
+    private fun createMetricsCsv(dir: File, corpus: UUID, hypothesis: String, reference: String) {
+        dir.mkdirs()
+        val metrics = getJobMetric(corpus, hypothesis, reference)
         val globFile = CsvFile(dir.resolve("metrics-global.csv"))
         globFile.append(metrics.toGlobalCsv())
 
-        metrics.metricTypes.values.forEach { mt ->
-            val file = CsvFile(dir.resolve("metrics-${mt.setting.id}.csv"))
-            file.append(mt.toGroupedCsv())
+        metrics.classesByGroup.values.forEach { mt ->
+            val file = CsvFile(dir.resolve("metrics-${mt.settings.id}.csv"))
+            file.append(JobMetric.toCsv(mt))
         }
     }
 

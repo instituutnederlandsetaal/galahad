@@ -29,8 +29,16 @@ class ClsMetrics(
     )
 }
 
+class FlatMetricsSettings(
+    val id: String,
+    val annotation: String,
+    val group: String,
+) {
+    constructor(settings: MetricsSettings) : this(settings.id, settings.annotation, settings.group)
+}
+
 class NewMetric(
-    val settings: MetricsSettings,
+    val settings: FlatMetricsSettings,
     val grouped: MutableMap<String, ClsClasses> = mutableMapOf(),
     val classes: ClsClasses = grouped.filter { it.key != TermComparison.MISSING_MATCH }.values.reduce { a, b -> a + b },
     val accuracy: Float = classes.truePositive.count / classes.count.toFloat(),
@@ -126,7 +134,7 @@ class DocumentMetric(
                         }
                     }
                 }
-            }.mapValues { NewMetric(METRIC_TYPES.first{mt -> mt.id == it.key}, it.value)}.toMutableMap()
+            }.mapValues { NewMetric(FlatMetricsSettings(METRIC_TYPES.first{mt -> mt.id == it.key}), it.value)}.toMutableMap()
         )
 
         private fun truesFalses(
