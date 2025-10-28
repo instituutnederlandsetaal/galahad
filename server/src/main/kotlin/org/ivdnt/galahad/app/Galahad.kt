@@ -6,6 +6,7 @@ import io.swagger.v3.oas.models.info.Contact
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.info.License
 import io.swagger.v3.oas.models.servers.Server
+import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.documents.DocumentFormat
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationProperties
@@ -62,4 +63,9 @@ class Galahad {
 @Configuration
 class DocumentFormatConverter : Converter<String, DocumentFormat> {
     override fun convert(source: String): DocumentFormat = DocumentFormat.fromString(source)
+}
+
+@Configuration
+class AnnotationConverter : Converter<String, Annotation> {
+    override fun convert(source: String): Annotation = Annotation.fromString(source)
 }
