@@ -24,7 +24,7 @@ class FoliaReader(
             "wref" -> {
                 reader.getAttributeValue(null, "id")?.let {
                     when {
-                        "entity" in xmlPath -> nerTargets += it
+                        "entity" in xmlPath -> nerTargets += terms.indexOfFirst { t -> t.id == it }
                         "dep" in xmlPath -> deprelTo = it
                         "hd" in xmlPath -> deprelFrom = it
                     }

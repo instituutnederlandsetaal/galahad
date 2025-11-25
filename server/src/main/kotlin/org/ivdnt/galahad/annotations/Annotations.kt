@@ -12,7 +12,8 @@ enum class Annotation(@JsonValue val value: String) {
     UPOS("upos"),
     HEAD("head"),
     DEPREL("deprel"),
-    NER("ner");
+    NER("ner"),
+    GROUP("group");
 
     // Force lowercase and/or custom name.
     override fun toString(): String = value

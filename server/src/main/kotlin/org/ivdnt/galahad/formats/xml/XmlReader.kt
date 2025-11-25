@@ -12,11 +12,12 @@ import javax.xml.stream.XMLStreamReader
 abstract class XmlReader(stream: InputStream) : LayerReader() {
     protected var pos: String? = null
     protected var lemma: String? = null
+    protected var group: String? = null
     protected var literal: String = ""
     protected var spaceAfter: Boolean = true
 
     protected var nerValue: String? = null
-    protected var nerTargets: MutableList<String> = mutableListOf()
+    protected var nerTargets: MutableList<Int> = mutableListOf()
 
     protected var deprel: String? = null
     protected var deprelFrom: String? = null
@@ -142,8 +143,7 @@ abstract class XmlReader(stream: InputStream) : LayerReader() {
 
     private fun newSpan() {
         if (nerValue == null) return
-        val indices = nerTargets.map { id -> terms.indexOfFirst { t -> t.id == id } }
-        spans.getOrPut(Annotation.NER, ::mutableListOf) += TermSpan(indices, nerValue!!)
+        spans.getOrPut(Annotation.NER, ::mutableListOf) += TermSpan(nerTargets, nerValue!!)
         nerValue = null
         nerTargets.clear()
     }
@@ -182,6 +182,7 @@ abstract class XmlReader(stream: InputStream) : LayerReader() {
         val annotations = buildMap {
             lemma?.ifBlank { null }?.let { put(Annotation.LEMMA, it) }
             pos?.ifBlank { null }?.let { put(Annotation.POS, it) }
+            group?.ifBlank { null }?.let { put(Annotation.GROUP, it) }
             put(Annotation.TOKEN, literal)
         }
         terms += Term(wordID(), offset, annotations, spaceAfter)
@@ -190,6 +191,7 @@ abstract class XmlReader(stream: InputStream) : LayerReader() {
         literal = ""
         lemma = null
         pos = null
+        group = null
     }
 
     companion object {

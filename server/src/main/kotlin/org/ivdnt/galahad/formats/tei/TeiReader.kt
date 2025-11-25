@@ -28,8 +28,13 @@ class TeiReader(
                 spaceAfter = reader.getAttributeValue(null, "join") !in arrayOf("right", "both")
                 // if spanValue is not null, it means we are in a span tag
                 if (nerValue != null) {
-                    nerTargets.add(reader.getAttributeValue(XMLConstants.XML_NS_URI, "id"))
+                    nerTargets += terms.size
+                    //nerTargets.add(reader.getAttributeValue(XMLConstants.XML_NS_URI, "id"))
                 }
+            }
+
+            in GROUP_TAGS -> {
+                group = reader.getAttributeValue(null, "n")?.ifBlank { null }
             }
 
             in NER_TAGS -> {
@@ -48,11 +53,12 @@ class TeiReader(
 
     companion object {
         private val DOCUMENT_TAGS = arrayOf("text")
-        private val WORD_TAGS = arrayOf("w", "pc")
+        val WORD_TAGS = arrayOf("w", "pc")
+        private val GROUP_TAGS = arrayOf("join")
         private val WORD_DATA_TAGS = arrayOf("w", "pc")
         private val SENTENCE_TAGS = arrayOf("s", "l", "u")
-        private val IGNORABLE_TAGS =
-            arrayOf("note", "listBibl", "listWit", "figure", "xr", "fs", "del", "teiHeader", "incident")
+        val IGNORABLE_TAGS =
+            arrayOf("note", "listBibl", "listWit", "figure", "xr", "fs", "teiHeader", "incident")
         private val NER_TAGS = arrayOf("name")
         private val DEP_TAGS = arrayOf("link")
         private val PARAGRAPH_TAGS = arrayOf(
