@@ -37,7 +37,7 @@ enum class DocumentFormat(val identifier: String, val extension: String) {
             )
 
         /** Get format of a document based on its file extension or content (e.g. root XML node). */
-        fun fromFile(file: File): DocumentFormat = when (file.extension) {
+        fun fromFile(file: File): DocumentFormat = when (file.extension.lowercase()) {
             "tsv" -> Tsv
             "folia" -> Folia
             "conllu" -> Conllu
