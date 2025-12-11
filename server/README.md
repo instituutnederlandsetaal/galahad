@@ -8,16 +8,44 @@ This makes it so that:
 The src/ folder contains the following packages:
 
 ## app
-The base for spring boot and some application wide interfaces.
+The base for spring boot and spring configuration like handling special JSON serilization.
 
-## data
-All Galahad data is stored on disk. Hence why we have classes here like FileBackedCache and FileBackedValue.
+## web
+The Endpoints class lists all API endpoints.
 
-## data.corpus
+## files
+All Galahad data is stored on disk. For example, DiskValue<DocumentMetadata> stores document metadata in JSON on disk. 
+Similarly, ValidatedDiskValue<CorpusMetadata> stores CorpusMetadata. However, on retrieval it first performs a isValid() check (which checks disk modification).
+CorpusMetadata stores the number of documents, so if a new file has been added, it should not be valid and is recalculated
 
-## data.layer
-The annotations in a document (i.e. lemma and pos of each token) are collectively called a layer. A document can have multiple layers (as it can be tagged by multiple taggers). The original annotation layer is called the "sourceLayer".
-A layer consists of a list of terms. A term consists of a lemma, a part of speech, and a token. At some point, the system was designed for a term to be able to point to multiple token, hence why Term in reality has a list of tokens, called "word forms". But in reality there is only ever one token, and multi word terms were not fully developed.
+A corpus or document is represented by a folder on disk. This is the GalahadFolder class.
+
+## annotations
+The smallest unit of information in Galahad is an annotation, e.g. the part of speech "NOU-C(number=sg)".
+Annotations are bundled together on a Term. The TEI XML `<w lemma="hello" pos="INT">hello</w>` results in a Term with 3 annotations:
+- token: hello (token is also an annotation)
+- lemma: hello
+- pos: INT
+
+Terms are contained in a SentenceLayer (TEI XML `<s>`). Span annotations are defined on this level too. For example, the named entity "LOC" defined as a span over two tokens: "The", "Netherlands".
+
+Sentences are contained in a ParagraphLayer (TEI XML `<p>`). Paragraphs are contained in a DocumentLayer (TEI XML `<text>`).
+We are not done yet however, as a single _file_ can contain multiple _documents_ in formats like TEI and CoNLL-U. And so, documents are contained in a Layer. This is the main class that is used. 
+
+A Layer provides a summary: this is the number of annotations of each type. It also provides a preview of the first couple of terms.
+Converting a layer to plaintext is as simple as .toString().
+
+## corpora
+
+## documents
+
+## exceptions
+A bunch of Galahad-specific exceptions that include a HTTP status.
+
+## export
+
+## formats
+Contains all document readers, converters and mergers for the supported formats in Galahad.
 
 ## evaluation
 For evaluating a single layer (the frequency distribution) or comparing two layers (part of speech confusion and accuracy metrics), where one represents the absolute truth (called the "reference") and one is being tested against it (called the "hypothesis"). The main use case is setting the sourceLayer as the absolute truth reference.
@@ -50,8 +78,6 @@ In order to show a leaderboard of taggers on datasets, we have so-called 'assays
 ## jobs
 The process of a tagger tagging a document, which creates a new annotation layer, is called a job.
 
-## port
-Contains all document readers, converters and mergers for the supported formats in Galahad.
-
 ## tagset & tagger
 Both relatively simple packages. Read out yaml files in a folder and make them available in a singleton-like manner.
+
