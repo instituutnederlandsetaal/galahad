@@ -170,7 +170,7 @@ abstract class XmlReader(stream: InputStream) : LayerReader() {
     }
 
     private fun parseChars() {
-        val words = reader.text.ifBlank { null }?.split(whitespace) ?: emptyList()
+        val words = reader.text.ifBlank { null }?.trim()?.split(whitespace) ?: emptyList()
         for ((j, word) in words.withIndex()) {
             if (j > 0) newWordform()
             literal += word
