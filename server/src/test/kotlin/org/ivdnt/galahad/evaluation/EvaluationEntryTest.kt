@@ -14,7 +14,6 @@ class EvaluationEntryTest {
         val b = EvaluationEntry(1, mutableListOf())
         val result = EvaluationEntry.add(a, b)
         assertEquals(2, result.count)
-        assertEquals(0, result.jsonSamples.size)
         assertEquals(0, result.samples.size)
     }
 
@@ -24,7 +23,6 @@ class EvaluationEntryTest {
         val b = EvaluationEntry(4, mutableListOf(TermComparison(Term.EMPTY, Term.EMPTY)))
         val result = EvaluationEntry.add(a, b)
         assertEquals(7, result.count)
-        assertEquals(2, result.jsonSamples.size)
         assertEquals(2, result.samples.size)
     }
 
@@ -34,12 +32,10 @@ class EvaluationEntryTest {
         val b = EvaluationEntry(9, MutableList(9) { TermComparison(Term.EMPTY, Term.EMPTY) })
         var result = EvaluationEntry.add(a, b)
         assertEquals(16, result.count)
-        assertEquals(10, result.jsonSamples.size)
         assertEquals(16, result.samples.size)
         val c = EvaluationEntry(3, MutableList(3) { TermComparison(Term.EMPTY, Term.EMPTY) })
         result = EvaluationEntry.add(result, c)
         assertEquals(19, result.count)
-        assertEquals(10, result.jsonSamples.size)
         assertEquals(16, result.samples.size) // should not grow once the truncation limit is reached
     }
 

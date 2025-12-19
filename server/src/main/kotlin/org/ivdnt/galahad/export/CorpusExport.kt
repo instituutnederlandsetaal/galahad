@@ -24,14 +24,7 @@ class CorpusExport private constructor(
     val shouldMerge: Boolean,
     val posHeadOnly: Boolean,
 ) : Logging {
-    private fun mergeFormatMatches(it: Document, format: DocumentFormat): Boolean {
-        var otherFormat = it.metadata.format
-        // Overwrite the format for legacy formats that can in fact be merged.
-        if (otherFormat == DocumentFormat.TeiP5Legacy) {
-            otherFormat = DocumentFormat.TeiP5
-        }
-        return otherFormat == format
-    }
+    private fun mergeFormatMatches(it: Document, format: DocumentFormat): Boolean = it.metadata.format == format
 
     private fun formatMapper(doc: Document, out: OutputStream) {
         try {

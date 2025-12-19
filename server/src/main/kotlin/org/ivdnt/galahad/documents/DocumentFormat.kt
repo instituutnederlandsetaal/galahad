@@ -11,7 +11,6 @@ import javax.xml.stream.XMLStreamReader
 /** Format of a document. No 1-to-1 correspondence with extensions due to xml format overlap. */
 enum class DocumentFormat(val identifier: String, val extension: String) {
     TeiP4Legacy("tei-p4-legacy", "tei.xml"),
-    TeiP5Legacy("tei-p5-legacy", "tei.xml"),
     TeiP5("tei-p5", "tei.xml"),
     Naf("naf", "naf.xml"),
     Tsv("tsv", "tsv"),

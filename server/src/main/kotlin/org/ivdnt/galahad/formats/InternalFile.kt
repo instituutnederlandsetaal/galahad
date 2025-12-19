@@ -32,7 +32,6 @@ abstract class InternalFile protected constructor() {
                 DocumentFormat.Pdf -> PdfFile(file)
                 // Multiple TEI formats
                 DocumentFormat.TeiP4Legacy,
-                DocumentFormat.TeiP5Legacy,
                 DocumentFormat.TeiP5,
                     -> TeiFile(file, format)
             }

@@ -16,8 +16,8 @@ class TermComparisonTest {
             hypoLemma: String? = "school", refLemma: String? = "school",
             hypoPos: String? = "NOU", refPos: String? = "NOU",
         ) {
-            val hypoTerm = Term("", 0, mapOf(Annotation.LEMMA to hypoLemma, Annotation.POS to hypoPos))
-            val refTerm = Term("", 0, mapOf(Annotation.LEMMA to refLemma, Annotation.POS to refPos))
+            val hypoTerm = Term("", 0, mapOf(Annotation.TOKEN to "dummy", Annotation.LEMMA to hypoLemma, Annotation.POS to hypoPos))
+            val refTerm = Term("", 0, mapOf(Annotation.TOKEN to "dummy", Annotation.LEMMA to refLemma, Annotation.POS to refPos))
             TermComparison(hypoTerm, refTerm).apply {
                 assertEquals(lemmaEqual, equal(Annotation.LEMMA))
                 assertEquals(posEqual, equal(Annotation.POS))

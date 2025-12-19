@@ -18,28 +18,25 @@ class DocumentMetadataTest {
 
     @Test
     fun `Properties for an unannotated file`() {
-        val path = "formats/shared/converter/input.txt"
-        val file = TestUtil.get(path)
-        val plaintext = file.readText()
+        val path = "formats/shared/converter/karel_en_martijn.txt"
         val doc = TestUtil.getDoc(path)
         val meta = doc.metadata
-        assertEquals("input.txt", meta.name)
+        assertEquals("karel_en_martijn.txt", meta.name)
         assertEquals(DocumentFormat.Txt, meta.format)
-        assertEquals(plaintext, meta.text) // This works because the preview is < MAX_PREVIEW_LENGTH
+        assert(meta.text.contains("Fraaie historie ende alwaer"))
         val total = meta.annotations.annotations[Annotation.TOKEN]
-        assertEquals(0, total)
+        assertEquals(39, total)
     }
 
     @Test
     fun `Properties for an annotated file`() {
-        val path = "all-formats/input/input.tei.xml"
+        val path = "formats/shared/converter/karel_en_martijn.tei.xml"
         val doc = TestUtil.getDoc(path)
-        val plaintext = TestUtil.getLayer(doc).toString()
         val meta = doc.metadata
-        assertEquals("input.tei.xml", meta.name)
+        assertEquals("karel_en_martijn.tei.xml", meta.name)
         assertEquals(DocumentFormat.TeiP5, meta.format)
-        assertEquals(plaintext, meta.text) // This works because the preview is < MAX_PREVIEW_LENGTH
+        assert(meta.text.contains("Fraaie historie ende alwaer"))
         val total = meta.annotations.annotations[Annotation.TOKEN]
-        assertEquals(21, total)
+        assertEquals(52, total)
     }
 }

@@ -1,6 +1,7 @@
 package org.ivdnt.galahad.evaluation
 
 import org.ivdnt.galahad.annotations.Annotation
+import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.evaluation.comparison.*
 import org.ivdnt.galahad.util.LayerBuilder
 import org.junit.jupiter.api.Test
@@ -11,7 +12,7 @@ import org.junit.jupiter.api.Nested
 class LayerComparisonTest {
 
     @Nested
-    inner class PosFilter {
+    inner class TermFilter {
         @Test
         fun `Matching layers with pos filter`() {
             val builder =
@@ -26,10 +27,24 @@ class LayerComparisonTest {
             assertEquals(100, comparison.matches.size)
         }
 
+        @Test
+        fun `Layers with partial match`() {
+            val hypo = LayerBuilder().loadDummies(100, pos = "NOU").build()
+            val ref = LayerBuilder().loadDummies(50, pos = "NOU").loadDummies(20, pos = "VRB").loadDummies(30, pos = "ADJ").build()
+            val comparison = LayerComparison(
+                hypothesis = hypo,
+                reference = ref,
+                filter = NouVrbFilter()
+            )
+            assertEquals(20, comparison.matches.size)
+        }
+
         private fun NouNouFilter(): LayerFilter {
             val termFilter = HeadGroupTermFilter(Annotation.POS, "NOU")
             return ConfusionLayerFilter(termFilter, termFilter)
         }
+        private fun NouVrbFilter(): LayerFilter =
+            ConfusionLayerFilter(HeadGroupTermFilter(Annotation.POS, "NOU"), HeadGroupTermFilter(Annotation.POS, "VRB"))
 
         @Test
         fun `Matching layers with pos filter, but different pos`() {
@@ -49,10 +64,10 @@ class LayerComparisonTest {
     inner class Punctuation {
         @Test
         fun `Matching layers despite punctuation difference`() {
-            assertPunctuationDifference("dummy, dummy", 2, 1, 0)
-            assertPunctuationDifference("dummy dummy, dummy", 3, 1, 0)
-            assertPunctuationDifference("dummy dummy, dummy dummy", 4, 1, 0)
-            assertPunctuationDifference("dummy, dummy, dummy,", 3, 3, 0)
+            assertPunctuationDifference("dummy, dummy", 3, 0, 1)
+            assertPunctuationDifference("dummy dummy, dummy", 4, 0, 1)
+            assertPunctuationDifference("dummy dummy, dummy dummy", 5, 0, 1)
+            assertPunctuationDifference("dummy, dummy, dummy,", 6, 0, 3)
         }
 
         // Because we only fix for one punctuation mark at the end of a word. No more.
@@ -63,7 +78,9 @@ class LayerComparisonTest {
             val ref = LayerBuilder() // dummy":
                 .loadDummies(1, "dummy\":").build()
             val comparison = LayerComparison(hypothesis = hypo, reference = ref)
-            assertEquals(0, comparison.matches.size)
+            assertEquals(3, comparison.matches.size)
+            assertEquals(2, comparison.matches.filter { it.ref == Term.EMPTY }.size)
+            assertEquals(0, comparison.matches.filter { it.hyp == Term.EMPTY }.size)
         }
 
         /**
@@ -96,6 +113,8 @@ class LayerComparisonTest {
             // Compare
             val comparison = LayerComparison(hypothesis = hypo, reference = ref)
             assertEquals(numMatches, comparison.matches.size)
+            assertEquals(numHypoMissing, comparison.matches.filter { it.hyp == Term.EMPTY }.size)
+            assertEquals(numRefMissing, comparison.matches.filter { it.ref == Term.EMPTY }.size)
         }
     }
 
@@ -113,6 +132,10 @@ class LayerComparisonTest {
             val ref = LayerBuilder().loadDummies(numRefTerms).build()
             val comparison = LayerComparison(hypothesis = hypo, reference = ref)
             assertEquals(numMatches, comparison.matches.size)
+            val hypoNoMatch = comparison.matches.filter { it.hyp == Term.EMPTY }
+            val refNoMatch = comparison.matches.filter { it.ref == Term.EMPTY }
+            assertEquals(numHypoMissing, hypoNoMatch.size)
+            assertEquals(numRefMissing, refNoMatch.size)
         }
 
         @Test
@@ -122,15 +145,15 @@ class LayerComparisonTest {
 
         @Test
         fun `A layer is 1 term larger than the other`() {
-            assertLayers(numHypoTerms = 2, numRefTerms = 3, numMatches = 2, numHypoMissing = 0, numRefMissing = 1)
-            assertLayers(numHypoTerms = 100, numRefTerms = 101, numMatches = 100, numHypoMissing = 0, numRefMissing = 1)
-            assertLayers(numHypoTerms = 101, numRefTerms = 100, numMatches = 100, numHypoMissing = 1, numRefMissing = 0)
+            assertLayers(numHypoTerms = 2, numRefTerms = 3, numMatches = 3, numHypoMissing = 1, numRefMissing = 0)
+            assertLayers(numHypoTerms = 100, numRefTerms = 101, numMatches = 101, numHypoMissing = 1, numRefMissing = 0)
+            assertLayers(numHypoTerms = 101, numRefTerms = 100, numMatches = 101, numHypoMissing = 0, numRefMissing = 1)
         }
 
         @Test
         fun `A layer is empty`() {
-            assertLayers(numHypoTerms = 100, numRefTerms = 0, numMatches = 0, numHypoMissing = 100, numRefMissing = 0)
-            assertLayers(numHypoTerms = 0, numRefTerms = 100, numMatches = 0, numHypoMissing = 0, numRefMissing = 100)
+            assertLayers(numHypoTerms = 100, numRefTerms = 0, numMatches = 100, numHypoMissing = 0, numRefMissing = 100)
+            assertLayers(numHypoTerms = 0, numRefTerms = 100, numMatches = 100, numHypoMissing = 100, numRefMissing = 0)
         }
     }
 }

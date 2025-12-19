@@ -19,22 +19,22 @@ class DocumentsTest {
     @Test
     fun `Create and delete files`() {
         // Add two files
-        addFile("all-formats/input/input.folia.xml")
-        addFile("all-formats/input/input.conllu")
+        addFile("formats/shared/converter/karel_en_martijn.folia.xml")
+        addFile("formats/shared/converter/karel_en_martijn.conllu")
         // 2 files exist
-        assertDocsinDocuments(setOf("input.folia.xml", "input.conllu"))
+        assertDocsinDocuments(setOf("karel_en_martijn.folia.xml", "karel_en_martijn.conllu"))
         // Delete the first
-        deleteFile("input.folia.xml")
+        deleteFile("karel_en_martijn.folia.xml")
         // 1 is left
-        assertDocsinDocuments(setOf("input.conllu"))
+        assertDocsinDocuments(setOf("karel_en_martijn.conllu"))
         // Try to access deleted file
-        assertFileDeleted("input.folia.xml")
+        assertFileDeleted("karel_en_martijn.folia.xml")
         // Delete the last file
-        deleteFile("input.conllu")
+        deleteFile("karel_en_martijn.conllu")
         // 0 left
         assertDocsinDocuments(setOf())
         // Try to access deleted file
-        assertFileDeleted("input.conllu")
+        assertFileDeleted("karel_en_martijn.conllu")
     }
 
     private fun addFile(path: String) {

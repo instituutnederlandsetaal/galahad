@@ -25,6 +25,6 @@ class TaggerStoreControllerTest(
 
     @Test
     fun `Get health of invalid tagger`() {
-        assertEquals(TaggerHealthStatus.ERROR, ctrl.getTaggerHealth("invalid").status)
+        assertThrows<TaggerNotFoundException> { ctrl.getTaggerHealth("invalid").status }
     }
 }

@@ -20,7 +20,7 @@ abstract class LayerMerger protected constructor(protected val export: DocumentE
             DocumentFormat.Tsv -> TsvMerger(export)
             DocumentFormat.Folia -> FoliaMerger(export)
             DocumentFormat.Conllu -> ConlluMerger(export)
-            DocumentFormat.TeiP5Legacy, DocumentFormat.TeiP5 -> TeiMerger(export)
+            DocumentFormat.TeiP5 -> TeiMerger(export)
             else -> throw InvalidDocumentFormatException("Unsupported export conversion format: ${export.format}")
         }
     }
