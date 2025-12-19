@@ -29,7 +29,7 @@ object UserHeader {
 }
 object SpringUtil {
     fun createCorpus(config: Config): Corpus {
-        val workdir = config.getWorkingDirectory().resolve("corpora").resolve("custom")
+        val workdir = config.getWorkingDirectory().resolve("corpora").resolve("user")
         return TestUtil.createCorpus(workdir)
     }
 }

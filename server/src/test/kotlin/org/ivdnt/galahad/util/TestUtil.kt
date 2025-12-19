@@ -46,7 +46,7 @@ object TestUtil {
         val parent = workdir ?: createTempDirectory().toFile()
         val corpora = Corpora(parent)
         val meta = MutableCorpusMetadata(
-            "you",
+            "testUser",
             "testCorpus",
             1200,
             1300,

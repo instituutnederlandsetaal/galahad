@@ -4,6 +4,7 @@ import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.Galahad
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.documents.DocumentMetadata
+import org.ivdnt.galahad.exceptions.DocumentInvalidException
 import org.ivdnt.galahad.util.JSON
 import org.ivdnt.galahad.util.SpringUtil
 import org.ivdnt.galahad.util.TestConfig
@@ -39,7 +40,7 @@ class DocumentsControllerTest(
         val corpus = SpringUtil.createCorpus(config)
 
         // list files in directory
-        val dir: File = TestUtil.get("all-formats/input")
+        val dir: File = TestUtil.get("formats/shared/converter")
         for (file in dir.listFiles()) {
             // skip layer pie-tdn.tsv
             if (file.name != "pie-tdn.tsv") {
@@ -52,9 +53,9 @@ class DocumentsControllerTest(
         val doc = getDocs(corpus)[0]
         val uuid = corpus.immutableMetadata.uuid
         val result: MvcResult = mvc.perform(
-            MockMvcRequestBuilders.get("/corpora/$uuid/documents/${doc.name}/raw").headers(UserHeader.get())
+            MockMvcRequestBuilders.get("/corpora/$uuid/documents/${doc.name}/download").headers(UserHeader.get())
         ).andReturn()
-        assertEquals(TestUtil.get("all-formats/input/${doc.name}").readText(), result.response.contentAsString)
+        assertEquals(TestUtil.get("formats/shared/converter/${doc.name}").readText(), result.response.contentAsString)
         // Delete a doc
         mvc.perform(
             MockMvcRequestBuilders.delete("/corpora/$uuid/documents/${doc.name}").headers(UserHeader.get())
@@ -89,7 +90,8 @@ class DocumentsControllerTest(
     fun `Upload invalid file`() {
         val corpus = SpringUtil.createCorpus(config)
         val file = TestUtil.get("documents/invalid-root.xml")
-        assertThrows(Exception::class.java){ mvc.uploadFile(file, corpus, MediaType.APPLICATION_XML_VALUE) }
+        val res = mvc.uploadFile(file, corpus, MediaType.APPLICATION_XML_VALUE)
+        assertEquals(res.resolvedException::class, DocumentInvalidException::class)
     }
 
     private fun getDocs(corpus: Corpus): List<DocumentMetadata> {
