@@ -27,14 +27,12 @@ class DocumentJobTest {
         val job: Job = corpus.jobs.createOrThrow(TestConfig.TAGGER_NAME)
         // create a document job
         val dj: JobResult = job.results.createOrThrow(doc.name)
-        // set layer
-        dj.layer = Layer.EMPTY
         // verify
         assertEquals(doc.name, dj.name)
         assertNull(dj.error)
         assertNull(dj.processingID)
         assertFalse(dj.isProcessing)
-        assertEquals(Layer.EMPTY, dj.layer)
+        assertEquals(null, dj.layer)
         assertEquals(JobStatus.PENDING, dj.status)
 
         // set error

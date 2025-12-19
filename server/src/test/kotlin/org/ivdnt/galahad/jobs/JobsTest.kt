@@ -22,7 +22,7 @@ class JobsTest {
         val name = TestConfig.TAGGER_NAME
         // Check if empty
         assertEquals(0, corpus.jobs.readAll().size)
-        val numTaggers = Tagger.taggers.size + 1 // +1 for source layer
+        val numTaggers = Tagger.taggers.size // +1 for source layer
         assertEquals(numTaggers, corpus.jobs.readAllMetadata().size)
         assertNull(corpus.jobs.readOrNull(name))
         assertThrows(Exception::class.java) { corpus.jobs.readOrThrow(name) }
