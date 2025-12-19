@@ -1,0 +1,45 @@
+{
+  "documents" : [ {
+    "id" : "d1",
+    "paragraphs" : [ {
+      "id" : "d1.p1",
+      "sentences" : [ {
+        "id" : "d1.p1.s1",
+        "terms" : [ {
+          "annotations" : {
+            "token" : "fraaie",
+            "lemma" : "fraai",
+            "group" : "mw_fraai"
+          },
+          "id" : "d1.p1.s1.w1",
+          "offset" : 0
+        }, {
+          "annotations" : {
+            "token" : "historie",
+            "lemma" : "historie",
+            "group" : "mw_historie"
+          },
+          "id" : "d1.p1.s1.w2",
+          "offset" : 7
+        }, {
+          "annotations" : {
+            "token" : "ende",
+            "lemma" : "en",
+            "group" : "mw_en"
+          },
+          "id" : "d1.p1.s1.w3",
+          "offset" : 16
+        }, {
+          "annotations" : {
+            "token" : "alwaer",
+            "lemma" : "alwaar",
+            "group" : "mw_alwaar"
+          },
+          "id" : "d1.p1.s1.w4",
+          "offset" : 21
+        } ]
+      } ]
+    } ]
+  } ],
+  "id" : "UUID"
+}

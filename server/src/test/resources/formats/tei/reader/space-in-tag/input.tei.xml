@@ -1,0 +1,10 @@
+<TEI>
+    <text>
+        <p>
+            <w lemma="fraai"><join n="mw_fraai"/> fraaie</w>
+            <w lemma="historie">   historie   <join n="mw_historie"/></w>
+            <w lemma="en">   ende   <join n="mw_en"/></w>
+            <w lemma="alwaar"><join n="mw_alwaar"/> alwaer</w>
+        </p>
+    </text>
+</TEI>

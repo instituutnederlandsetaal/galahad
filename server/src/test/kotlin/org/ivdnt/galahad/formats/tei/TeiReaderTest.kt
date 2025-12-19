@@ -27,6 +27,11 @@ internal class TeiReaderTest : ReaderTest() {
         }
 
         @Test
+        fun `Import TEI with whitespace in w tags`() {
+            assertLayerAndText("formats/tei/reader/space-in-tag/")
+        }
+
+        @Test
         fun `Import TEI with w-tags without spaces in between`() {
             assertLayerAndText("formats/tei/reader/nospaces")
         }

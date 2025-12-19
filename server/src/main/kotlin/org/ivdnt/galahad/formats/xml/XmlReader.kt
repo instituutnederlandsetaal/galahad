@@ -30,6 +30,7 @@ abstract class XmlReader(stream: InputStream) : LayerReader() {
     private var ignoring: Boolean = false
     private var currentDepth: Int = 0
     private var ignoreDepth: Int? = null
+    private var insideWordTag: Boolean = false
 
     abstract val nerTags: Array<String>
     abstract val documentTags: Array<String>
@@ -66,7 +67,7 @@ abstract class XmlReader(stream: InputStream) : LayerReader() {
                         in documentTags -> docID = currentXmlID
                         in paragraphTags -> parID = currentXmlID
                         in sentenceTags -> sentID = currentXmlID
-                        in wordTags -> wordID = currentXmlID
+                        in wordTags -> { insideWordTag = true; wordID = currentXmlID }
                     }
                 }
 
@@ -170,14 +171,22 @@ abstract class XmlReader(stream: InputStream) : LayerReader() {
     }
 
     private fun parseChars() {
-        val words = reader.text.ifBlank { null }?.trim()?.split(whitespace) ?: emptyList()
-        for ((j, word) in words.withIndex()) {
-            if (j > 0) newWordform()
-            literal += word
+        // if we are within a word tag, simply add all text, given that there are no (valid) word boundaries
+        if (insideWordTag) {
+            reader.text.ifBlank { null }?.trim()?.let { literal += it}
+        }
+        // Outside a word tag, treat spaces as new words
+        else {
+            val words = reader.text.ifBlank { null }?.split(whitespace) ?: emptyList()
+            for ((j, word) in words.withIndex()) {
+                if (j > 0) newWordform()
+                literal += word
+            }
         }
     }
 
     override fun newWordform() {
+        insideWordTag = false
         if (literal.isBlank()) return
         val annotations = buildMap {
             lemma?.ifBlank { null }?.let { put(Annotation.LEMMA, it) }
