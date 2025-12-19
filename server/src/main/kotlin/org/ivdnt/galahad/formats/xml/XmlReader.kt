@@ -62,12 +62,18 @@ abstract class XmlReader(stream: InputStream) : LayerReader() {
         while (reader.hasNext()) {
             when (reader.next()) {
                 XMLStreamConstants.START_ELEMENT -> if (!shouldIgnore()) {
+                    // Entering a word or ner closes the previous wordform
+                    if (reader.localName in wordTags || reader.localName in nerTags) {
+                        newWordform()
+                        insideWordTag = reader.localName in wordTags
+                    }
+                    // Parse the new tag
                     parseAttrs()
                     when (reader.localName) {
                         in documentTags -> docID = currentXmlID
                         in paragraphTags -> parID = currentXmlID
                         in sentenceTags -> sentID = currentXmlID
-                        in wordTags -> { insideWordTag = true; wordID = currentXmlID }
+                        in wordTags -> { wordID = currentXmlID }
                     }
                 }
 
@@ -143,6 +149,7 @@ abstract class XmlReader(stream: InputStream) : LayerReader() {
     }
 
     private fun newSpan() {
+        newWordform();
         if (nerValue == null) return
         spans.getOrPut(Annotation.NER, ::mutableListOf) += TermSpan(nerTargets, nerValue!!)
         nerValue = null
@@ -193,6 +200,10 @@ abstract class XmlReader(stream: InputStream) : LayerReader() {
             pos?.ifBlank { null }?.let { put(Annotation.POS, it) }
             group?.ifBlank { null }?.let { put(Annotation.GROUP, it) }
             put(Annotation.TOKEN, literal)
+        }
+        // If inside span, set this term as a ner target
+        if (nerValue != null) {
+            nerTargets += terms.size
         }
         terms += Term(wordID(), offset, annotations, spaceAfter)
         offset += literal.length

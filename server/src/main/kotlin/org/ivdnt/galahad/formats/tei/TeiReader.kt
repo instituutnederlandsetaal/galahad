@@ -26,11 +26,6 @@ class TeiReader(
                     "type"
                 )?.ifBlank { null }
                 spaceAfter = reader.getAttributeValue(null, "join") !in arrayOf("right", "both")
-                // if spanValue is not null, it means we are in a span tag
-                if (nerValue != null) {
-                    nerTargets += terms.size
-                    //nerTargets.add(reader.getAttributeValue(XMLConstants.XML_NS_URI, "id"))
-                }
             }
 
             in GROUP_TAGS -> {
