@@ -1,14 +1,14 @@
 plugins {
-    kotlin("jvm") version "2.2.10"
-    kotlin("plugin.spring") version "2.2.10"
-    id("org.springframework.boot") version "3.5.5"
+    kotlin("jvm") version "2.3.0"
+    kotlin("plugin.spring") version "2.3.0"
+    id("org.springframework.boot") version "4.0.1"
     id("io.spring.dependency-management") version "1.1.7"
 }
 
 group = "org.ivdnt"
 
 kotlin {
-    jvmToolchain(21)
+    jvmToolchain(25)
 }
 
 repositories {
@@ -20,8 +20,9 @@ dependencies {
     // Spring
     // Versions controlled by Spring Boot plugin
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-devtools")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
+//    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
 
     // kotlin
     // Versions controlled by Kotlin jvm plugin
@@ -29,22 +30,22 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 
     // swagger
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.11")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1")
 
     // logging
     implementation("org.apache.logging.log4j:log4j-api-kotlin:1.5.0")
 
     // yaml
-    implementation("org.yaml:snakeyaml:2.4")
+    implementation("org.yaml:snakeyaml:2.5")
 
     // json
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     // xml
-    implementation("com.fasterxml:aalto-xml:1.3.3")
+    implementation("com.fasterxml:aalto-xml:1.3.4")
 
     // cache
-    implementation("com.github.ben-manes.caffeine:caffeine:3.2.2")
+    implementation("com.github.ben-manes.caffeine:caffeine:3.2.3")
 
     // reading microsoft word docx
     implementation("org.apache.poi:poi-ooxml:5.4.1")

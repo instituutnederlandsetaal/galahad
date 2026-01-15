@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
@@ -91,7 +91,7 @@ class DocumentsControllerTest(
         val corpus = SpringUtil.createCorpus(config)
         val file = TestUtil.get("documents/invalid-root.xml")
         val res = mvc.uploadFile(file, corpus, MediaType.APPLICATION_XML_VALUE)
-        assertEquals(res.resolvedException::class, DocumentInvalidException::class)
+        assertEquals(res.resolvedException!!::class, DocumentInvalidException::class)
     }
 
     private fun getDocs(corpus: Corpus): List<DocumentMetadata> {

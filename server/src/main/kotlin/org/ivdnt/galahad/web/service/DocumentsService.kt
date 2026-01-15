@@ -58,7 +58,7 @@ class DocumentsService(val corpora: CorporaService) : Logging {
             uploadZipFile(file, corpus)
         } else {
             createDocumentWithSourceLayer(
-                corpus, file.originalFilename, file.inputStream
+                corpus, file.originalFilename!!, file.inputStream
             )
         }
     }

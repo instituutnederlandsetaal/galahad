@@ -6,9 +6,10 @@ import jakarta.servlet.http.HttpServletResponse
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.exceptions.ErrorResponse
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.web.servlet.error.ErrorController
+import org.springframework.boot.webmvc.error.ErrorController
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.CrossOrigin
+import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -17,10 +18,13 @@ class ErrorController : ErrorController, Logging {
     @Autowired
     private val response: HttpServletResponse? = null
 
+
     @RequestMapping("/error")
     @Hidden
     @CrossOrigin
+    @ExceptionHandler
     fun handleError(request: HttpServletRequest): ErrorResponse {
+
         // Get the default status code (probably 500), or override it with the actual status code if it is a RESTException.
         var statusCode = HttpStatus.valueOf(request.getAttribute("jakarta.servlet.error.status_code") as Int? ?: 500)
         val jakartaException = request.getAttribute("jakarta.servlet.error.exception") as Exception?

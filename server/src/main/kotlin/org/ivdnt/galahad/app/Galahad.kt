@@ -12,12 +12,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.convert.converter.Converter
 import org.springframework.scheduling.annotation.EnableScheduling
 import java.io.File
 import java.util.*
+import java.util.logging.Logger
 
 var application_profile: String = System.getenv("spring.profiles.active") ?: "prod"
 
@@ -28,7 +28,6 @@ fun main(args: Array<String>) {
 
 @Configuration
 @ConfigurationProperties(prefix = "")
-@EnableScheduling
 class Config {
     lateinit var workDir: String
 
@@ -41,8 +40,8 @@ class Config {
     }
 }
 
-@ComponentScan("org.ivdnt.galahad")
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = ["org.ivdnt.galahad"])
+@EnableScheduling
 class Galahad {
     /** Customize OpenAPI documentation header. */
     @Bean
