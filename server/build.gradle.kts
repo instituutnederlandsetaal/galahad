@@ -48,7 +48,7 @@ dependencies {
     implementation("com.github.ben-manes.caffeine:caffeine:3.2.3")
 
     // reading microsoft word docx
-    implementation("org.apache.poi:poi-ooxml:5.4.1")
+    implementation("org.apache.poi:poi-ooxml:5.5.1")
 
     // reading pdf
     implementation("com.itextpdf:itextpdf:5.5.13.4")
