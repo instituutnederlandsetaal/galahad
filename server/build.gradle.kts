@@ -51,7 +51,7 @@ dependencies {
     implementation("org.apache.poi:poi-ooxml:5.4.1")
 
     // reading pdf
-    implementation("com.itextpdf:itextpdf:5.5.13.4")
+    implementation("com.itextpdf:itextpdf:5.5.13.5")
 
     // immutable arrays
     // implementation("com.danrusu.pods4k:pods4k:0.7.0")
