@@ -82,9 +82,18 @@ watch(selectedDoc, async (newVal) => {
 
 watch(termcomps, () => {
     if (!termcomps.value) return
-    annotationOptions.value = Object.keys(
-        documentsStore.documents.find((doc) => doc.name === selectedDoc.value)?.annotations,
-    ).map((key) => ({ value: key, text: key }))
+
+    const annotations: string[] = []
+    for (const tc of termcomps.value) {
+        for (const key in tc.ref.annotations) {
+            if (!annotations.includes(key)) annotations.push(key)
+        }
+        for (const key in tc.hyp.annotations) {
+            if (!annotations.includes(key)) annotations.push(key)
+        }
+    }
+
+    annotationOptions.value = annotations.map((key) => ({ value: key, text: key }))
 })
 
 // Methods
