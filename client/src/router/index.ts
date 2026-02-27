@@ -62,11 +62,7 @@ const routes = [
                     },
                     { meta: { title: "Evaluate" }, path: "grouped_metrics", component: GroupedMetricsView },
                     { meta: { title: "Evaluate" }, path: "confusion", component: ConfusionView },
-                    {
-                        meta: { title: "Evaluate" },
-                        path: "document_layer_comparison",
-                        component: DocumentLayerComparisonView,
-                    },
+                    { meta: { title: "Evaluate" }, path: "document", component: DocumentLayerComparisonView },
                     { meta: { title: "Evaluate" }, path: "entities", component: EntitiesView },
                 ],
             },

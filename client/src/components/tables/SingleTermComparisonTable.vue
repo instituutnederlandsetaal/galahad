@@ -43,7 +43,7 @@ const columns: Ref<Column[]> = computed(() => {
             return acc
         }, [] as string[])
         .filter((i) => !ignorableAnnotations.includes(i))
-        .map((key) => ({ key, label: key }))
+        .map((key) => ({ key, label: key, noSort: true }))
 })
 
 // Methods

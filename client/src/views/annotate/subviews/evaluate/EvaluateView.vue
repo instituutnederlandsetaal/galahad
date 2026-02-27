@@ -23,6 +23,7 @@
                 { id: 'grouped_metrics', title: 'Grouped Metrics' },
                 { id: 'confusion', title: 'Confusion' },
                 { id: 'entities', title: 'Entities' },
+                { id: 'document', title: 'Document' },
             ]"
         >
         </GTabs>

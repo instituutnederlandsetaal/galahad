@@ -1,6 +1,8 @@
 <template>
-    <label for="annotation-select">Annotation</label>
-    <GSelect id="annotation-select" :options v-model="model" />
+    <fieldset>
+        <label for="annotation-select">Annotation</label>
+        <GSelect id="annotation-select" :options v-model="model" />
+    </fieldset>
 </template>
 
 <script setup lang="ts">
