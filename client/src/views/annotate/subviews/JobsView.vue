@@ -22,6 +22,20 @@
                             :maxSelectedLabels="5"
                         />
                     </fieldset>
+
+                    <fieldset>
+                        <label for="period-select">Select period</label>
+                        <Slider
+                            style="width: 209px"
+                            range
+                            id="period-select"
+                            v-model="periodFilter"
+                            :min="periodStart"
+                            :max="2100"
+                            :step="100"
+                        />
+                        <output>{{ periodCorrected[0] }} – {{ periodCorrected[1] }}</output>
+                    </fieldset>
                 </GForm>
             </template>
 
@@ -69,6 +83,7 @@ import type { Column, TableData } from "@/types/ui/table"
 import { formatDate } from "@/ts/utils"
 import MultiSelect from "primevue/multiselect"
 import AnnotationItemsViewer from "@/components/modals/metadata/AnnotationItemsViewer.vue"
+import Slider from "primevue/slider"
 
 // #stores
 const { canWrite } = storeToRefs(stores.useUser())
@@ -82,7 +97,6 @@ reload()
 const jobId = ref<string>()
 // filters
 const taggerFilter = ref<string>("")
-const tagsetFilter = ref<string[]>([])
 const annotationFilter = ref<string[]>([])
 
 // #computed
@@ -90,14 +104,23 @@ const annotationFilter = ref<string[]>([])
 const annotations = computed<string[]>(() => [
     ...new Set(taggerJobs.value.flatMap((j: Job) => j.tagger.annotations.flatMap((a) => a.annotation))),
 ])
+const periodCorrected = computed<number[]>(() => [Math.min(...periodFilter.value), Math.max(...periodFilter.value)])
+const periodStart = computed<number>(() => Math.min(...taggerJobs.value.map((j: Job) => j.tagger.period.from)))
+const periodFilter = ref<number[]>([corpus.value.eraFrom, corpus.value.eraTo])
 // table data
 const items = computed(() =>
     taggerJobs.value
+        // filter tagger name
         .filter((j: Job) =>
             // Case insensitive string comparison.
             j.tagger.id.toLowerCase().includes(taggerFilter.value.toLowerCase()),
         )
-        .filter((j: Job) => (tagsetFilter.value?.length > 0 ? tagsetFilter.value.includes(j.tagger.tagset) : true))
+        // filter period
+        .filter(
+            (j: Job) =>
+                j.tagger.period.to >= periodCorrected.value[0] && j.tagger.period.from <= periodCorrected.value[1],
+        )
+        // filter annotations
         .filter((j: Job) =>
             annotationFilter.value?.length > 0
                 ? j.tagger.annotations.some((a: string) => annotationFilter.value.includes(a))
