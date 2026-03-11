@@ -44,26 +44,26 @@
             <editorialDecl resp="GaLAHaD">
                 <interpretation xml:id="A0001">
                     <ab type="linguisticAnnotation" subtype="POS-tagging_lemmatisation">
-                        <interGrp type="annotationStyle">
+                        <interpGrp type="annotationStyle">
                             <interp>inline</interp>
-                        </interGrp>
-                        <interGrp type="Documentation">
+                        </interpGrp>
+                        <interpGrp type="Documentation">
                             <interp/>
-                        </interGrp>
-                        <interGrp type="annotationSet">
+                        </interpGrp>
+                        <interpGrp type="annotationSet">
                             <interp>TDN-Core</interp>
-                        </interGrp>
-                        <interGrp type="annotationDescription">
+                        </interpGrp>
+                        <interpGrp type="annotationDescription">
                             <interp>The file was automatically annotated within the platform GaLAHaD, which is a central hub for enriching historical Dutch.</interp>
-                        </interGrp>
-                        <interGrp type="annotationFormat">
+                        </interpGrp>
+                        <interpGrp type="annotationFormat">
                             <interp>TEI xml</interp>
-                        </interGrp>
+                        </interpGrp>
                     </ab>
                     <ab type="linguisticAnnotation" subtype="POS-tagging_lemmatisationProvenance1">
-                        <interGrp type="annotationMode">
+                        <interpGrp type="annotationMode">
                             <interp>automatically annotated</interp>
-                        </interGrp>
+                        </interpGrp>
                         <interpGrp type="processor">
                             <interp sameAs="#sourceLayer"/>
                         </interpGrp>
@@ -76,9 +76,9 @@
             <langUsage>
                 <language ident="nld">
                     Dutch
-                    <interGrp type="dominantLanguage">
+                    <interpGrp type="dominantLanguage">
                         <interp>true</interp>
-                    </interGrp>
+                    </interpGrp>
                 </language>
             </langUsage>
         </profileDesc>

@@ -32,7 +32,7 @@
                     <cmdp:Tool>
                         <cmdp:toolName>GaLAHaD</cmdp:toolName>
                         <cmdp:toolVersion>GALAHAD_VERSION</cmdp:toolVersion>
-                        <cmdp:toolURL>https://portal.clarin.ivdnt.org/galahad/home</cmdp:toolURL>
+                        <cmdp:toolURL>https://portal.clarin.ivdnt.org/galahad/</cmdp:toolURL>
                     </cmdp:Tool>
                     <cmdp:Organisation>
                         <cmdp:organisationName>Dutch Language Institute</cmdp:organisationName>

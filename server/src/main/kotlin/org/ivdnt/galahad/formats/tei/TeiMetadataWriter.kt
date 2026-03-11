@@ -193,7 +193,7 @@ class TeiMetadataWriter(val writer: PrettyXMLWriter, val export: DocumentExport)
                 // <label>
                 writer.writeElement("label", "POS-tagger and lemmatiser")
                 // <ptr>
-                writer.writeEmptyElement("ptr", mapOf("target" to export.tagger.uri))
+                writer.writeEmptyElement("ptr", mapOf("target" to export.tagger.id))
             }
         }
     }
@@ -217,7 +217,7 @@ class TeiMetadataWriter(val writer: PrettyXMLWriter, val export: DocumentExport)
                         "subtype" to "POS-tagging_lemmatisation",
                     )
                 ) {
-                    addInterGrpTo(
+                    addInterpGrpTo(
                         mapOf(
                             "annotationStyle" to "inline",
                             "Documentation" to "",
@@ -252,7 +252,7 @@ class TeiMetadataWriter(val writer: PrettyXMLWriter, val export: DocumentExport)
                 "subtype" to "POS-tagging_lemmatisationProvenance1",
             )
         ) {
-            addInterGrpTo("annotationMode", "automatically annotated")
+            addInterpGrpTo("annotationMode", "automatically annotated")
             // processor interp is special, using @sameAs
             writer.wrapIn("interpGrp", "type" to "processor") {
                 writer.writeEmptyElement("interp", mapOf("sameAs" to "#${export.tagger.id}"))
@@ -286,7 +286,7 @@ class TeiMetadataWriter(val writer: PrettyXMLWriter, val export: DocumentExport)
                 writer.wrapIn("language", "ident" to langCode) {
                     writer.writeCharacters(language, true)
                     writer.writeNewLine()
-                    addInterGrpTo("dominantLanguage", "true")
+                    addInterpGrpTo("dominantLanguage", "true")
                 }
             }
         }
@@ -298,9 +298,9 @@ class TeiMetadataWriter(val writer: PrettyXMLWriter, val export: DocumentExport)
      *     <interp>[value]</interp>
      * </interpGrp>
      */
-    private fun addInterGrpTo(key: String, value: String?) {
+    private fun addInterpGrpTo(key: String, value: String?) {
         // <interpGrp type="[key]">
-        writer.wrapIn("interGrp", "type" to key) {
+        writer.wrapIn("interpGrp", "type" to key) {
             // <interp>
             if (value.isNullOrEmpty()) {
                 // only write key in self-closing tag
@@ -312,7 +312,7 @@ class TeiMetadataWriter(val writer: PrettyXMLWriter, val export: DocumentExport)
         }
     }
 
-    private fun addInterGrpTo(keyValues: Map<String, String>) {
-        keyValues.forEach { (key, value) -> addInterGrpTo(key, value) }
+    private fun addInterpGrpTo(keyValues: Map<String, String>) {
+        keyValues.forEach { (key, value) -> addInterpGrpTo(key, value) }
     }
 }
