@@ -38,7 +38,7 @@
             <appInfo resp="GaLAHaD">
                 <application xml:id="sourceLayer" ident="sourceLayer" version="">
                     <label>POS-tagger and lemmatiser</label>
-                    <ptr target=""/>
+                    <ptr target="sourceLayer"/>
                 </application>
             </appInfo>
             <editorialDecl resp="GaLAHaD">
