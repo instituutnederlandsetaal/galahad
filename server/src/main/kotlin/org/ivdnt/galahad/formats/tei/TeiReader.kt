@@ -48,7 +48,7 @@ class TeiReader(
 
     companion object {
         private val DOCUMENT_TAGS = arrayOf("text")
-        val WORD_TAGS = arrayOf("w", "pc")
+        val WORD_TAGS = arrayOf("w", "pc", "seg")
         private val GROUP_TAGS = arrayOf("join")
         private val WORD_DATA_TAGS = arrayOf("w", "pc")
         private val SENTENCE_TAGS = arrayOf("s", "l", "u")

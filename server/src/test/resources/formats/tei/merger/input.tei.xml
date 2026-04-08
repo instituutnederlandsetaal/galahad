@@ -1,0 +1,170 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+    <teiHeader>
+        <fileDesc>
+            <titleStmt>
+                <title>karel_en_martijn</title>
+                <respStmt>
+                    <resp>linguistic annotation by GaLAHaD (https://galahad.ivdnt.org)</resp>
+                    <orgName xml:lang="nl">Instituut voor de Nederlandse Taal</orgName>
+                    <orgName xml:lang="en">Dutch Language Institute</orgName>
+                </respStmt>
+                <respStmt>
+                    <resp>exported as tei-p5 by GaLAHaD (https://galahad.ivdnt.org)</resp>
+                    <orgName xml:lang="nl">Instituut voor de Nederlandse Taal</orgName>
+                    <orgName xml:lang="en">Dutch Language Institute</orgName>
+                </respStmt>
+            </titleStmt>
+            <publicationStmt>
+                <publisher>!Needs to be filled in!</publisher>
+                <idno type="sourceID">karel_en_martijn</idno>
+                <idno type="GaLAHaDPersistentIdentifier">e51560ff-81a2-4ddd-ba04-c7eb07af6d2b_tei</idno>
+            </publicationStmt>
+            <notesStmt>
+                <note resp="GaLAHaD" type="corpusName">testCorpus</note>
+                <note resp="GaLAHaD" type="sourceCollection">source name</note>
+                <note resp="GaLAHaD" type="sourceCollectionURL">http://source.url</note>
+            </notesStmt>
+            <sourceDesc>
+                <ab>
+                    <idno type="sourceID">karel_en_martijn</idno>
+                </ab>
+                <ab type="date">
+                    <date from="1200" to="1300"/>
+                </ab>
+            </sourceDesc>
+        </fileDesc>
+        <encodingDesc>
+            <appInfo resp="GaLAHaD">
+                <application>
+                    <label>POS-tagger and lemmatiser</label>
+                    <ptr target="sourceLayer"/>
+                </application>
+            </appInfo>
+            <editorialDecl resp="GaLAHaD">
+                <interpretation>
+                    <ab type="linguisticAnnotation" subtype="POS-tagging_lemmatisation">
+                        <interpGrp type="annotationStyle">
+                            <interp>inline</interp>
+                        </interpGrp>
+                        <interpGrp type="Documentation">
+                            <interp/>
+                        </interpGrp>
+                        <interpGrp type="annotationSet">
+                            <interp>TDN-Core</interp>
+                        </interpGrp>
+                        <interpGrp type="annotationDescription">
+                            <interp>The file was automatically annotated within the platform GaLAHaD, which is a central hub for enriching historical Dutch.</interp>
+                        </interpGrp>
+                        <interpGrp type="annotationFormat">
+                            <interp>TEI xml</interp>
+                        </interpGrp>
+                    </ab>
+                    <ab type="linguisticAnnotation" subtype="POS-tagging_lemmatisationProvenance1">
+                        <interpGrp type="annotationMode">
+                            <interp>automatically annotated</interp>
+                        </interpGrp>
+                        <interpGrp type="processor">
+                            <interp sameAs="#sourceLayer"/>
+                        </interpGrp>
+                        <date from="2025-07-30" to="2025-07-30"/>
+                    </ab>
+                </interpretation>
+            </editorialDecl>
+        </encodingDesc>
+        <profileDesc>
+            <langUsage>
+                <language ident="nld">
+                    Dutch
+                    <interpGrp type="dominantLanguage">
+                        <interp>true</interp>
+                    </interpGrp>
+                </language>
+            </langUsage>
+        </profileDesc>
+    </teiHeader>
+    <text>
+        <body>
+            <p>
+                <s>
+                    <w>Fraaie</w>
+                    <w>historie</w>
+                    <w>ende</w>
+                    <w>alwaer</w>
+                    <pc>.</pc>
+                </s>
+                <s>
+                    <w>Magh</w>
+                    <w>'k</w>
+                    <w>u</w>
+                    <w>vertellen</w>
+                    <pc>,</pc>
+                    <w>hoirt</w>
+                    <w>naer</w>
+                    <pc>.</pc>
+                </s>
+            </p>
+            <p>
+                <s>
+                    <w>'t</w>
+                    <w>Was</w>
+                    <w>op</w>
+                    <w>enen</w>
+                    <w>avondstonde</w>
+                    <pc>.</pc>
+                </s>
+                <s>
+                    <w>Dat</w>
+                    <w>koning</w>
+                    <w>Carel</w>
+                    <w>slaepen</w>
+                    <w>beghonde</w>
+                    <pc>.</pc>
+                </s>
+            </p>
+        </body>
+    </text>
+    <text>
+        <body>
+            <p>
+                <s>
+                    <pc>"</pc>
+                    <w>Martijn</w>
+                    <pc>,</pc>
+                    <w>slaepstu</w>
+                    <pc>?</pc>
+                    <w>slaept</w>
+                    <w>dijn</w>
+                    <w>sin</w>
+                    <pc>?</pc>
+                    <pc>"</pc>
+                </s>
+                <s>
+                    <w>Sprec</w>
+                    <pc>!</pc>
+                    <w>hebstu</w>
+                    <w>gheen</w>
+                    <w>spreken</w>
+                    <w>in</w>
+                    <pc>?</pc>
+                </s>
+            </p>
+            <p>
+                <s>
+                    <w>Du</w>
+                    <w>dinkes</w>
+                    <w>mi</w>
+                    <w>verdoren</w>
+                    <pc>.</pc>
+                </s>
+                <s>
+                    <w>Dune</w>
+                    <w>achtes</w>
+                    <w>meer</w>
+                    <w>no</w>
+                    <w>min</w>
+                </s>
+            </p>
+        </body>
+    </text>
+</TEI>

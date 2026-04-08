@@ -53,6 +53,11 @@ internal class TeiReaderTest : ReaderTest() {
         }
 
         @Test
+        fun `Import seg tags`() {
+            assertLayerAndText("formats/tei/reader/seg")
+        }
+
+        @Test
         fun `Import highly intertwined tags`() {
             assertLayerAndText("formats/tei/reader/twine")
         }

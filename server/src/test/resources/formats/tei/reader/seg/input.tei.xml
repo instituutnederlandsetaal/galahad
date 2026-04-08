@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='utf-8'?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0" xml:id="INT_3e1ef9a3-dcdb-4e05-afeb-cba75312ba4d">
+  <text>
+    <body>
+      <l>
+        <s>
+          <seg xml:id="INT_7a03aa8e-94b0-49ad-a05e-39a8d9901a3d.w.52244" type="context">So</seg>
+          <seg xml:id="INT_7a03aa8e-94b0-49ad-a05e-39a8d9901a3d.w.52245" type="context">voer</seg>
+          <seg xml:id="INT_7a03aa8e-94b0-49ad-a05e-39a8d9901a3d.w.52246" type="context">hi</seg>
+          <seg xml:id="INT_7a03aa8e-94b0-49ad-a05e-39a8d9901a3d.w.52247" type="context">geloft</seg>
+          <seg xml:id="INT_7a03aa8e-94b0-49ad-a05e-39a8d9901a3d.w.52248" type="context">mi</seg>
+          <seg xml:id="INT_7a03aa8e-94b0-49ad-a05e-39a8d9901a3d.w.52249" type="context">dys</seg>
+          </s>
+    </l>
+    </body>
+  </text>
+</TEI>
