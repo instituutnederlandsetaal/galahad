@@ -21,7 +21,7 @@ abstract class LayerMerger protected constructor(protected val export: DocumentE
             DocumentFormat.Folia -> FoliaMerger(export)
             DocumentFormat.Conllu -> ConlluMerger(export)
             DocumentFormat.TeiP5 -> TeiMerger(export)
-            else -> throw InvalidDocumentFormatException("Unsupported export conversion format: ${export.format}")
+            else -> throw InvalidDocumentFormatException("Unsupported merge format: ${export.format}")
         }
     }
 }
