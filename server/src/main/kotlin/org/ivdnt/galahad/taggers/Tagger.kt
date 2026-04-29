@@ -93,7 +93,7 @@ class Tagger(
             return Tagger(
                 id = SOURCE_LAYER_NAME,
                 description = "uploaded annotations",
-                period = Period(metadata.eraFrom, metadata.eraTo),
+                period = Period(metadata.eraFrom ?: 0, metadata.eraTo ?: 0), // TODO should probably also be nullable
                 language = metadata.language,
                 annotations = produces.map { AnnotationItem(it) },
             )

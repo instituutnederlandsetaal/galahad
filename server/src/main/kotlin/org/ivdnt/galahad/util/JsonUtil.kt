@@ -1,7 +1,6 @@
 package org.ivdnt.galahad.util
 
 import com.fasterxml.jackson.annotation.JsonInclude
-import tools.jackson.core.PrettyPrinter
 import tools.jackson.core.type.TypeReference
 import tools.jackson.core.util.DefaultIndenter
 import tools.jackson.core.util.DefaultPrettyPrinter

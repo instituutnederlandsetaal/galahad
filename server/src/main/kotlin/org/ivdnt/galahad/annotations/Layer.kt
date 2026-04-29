@@ -31,7 +31,7 @@ class Layer(
     val annotations: Set<Annotation> by lazy { Annotation.order(terms.flatMap { it.annotations.keys }.asIterable()) }
 
     @get:JsonIgnore
-    val summary: LayerAnnotations by lazy { LayerAnnotations(terms.asIterable()) }
+    val summary: LayerAnnotations by lazy { LayerAnnotations.fromTerms(terms.asIterable()) }
 
     @get:JsonIgnore
     val preview: LayerPreview by lazy { LayerPreview(terms.take(LAYER_PREVIEW_LENGTH).toList()) }

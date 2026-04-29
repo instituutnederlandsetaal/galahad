@@ -1,6 +1,5 @@
 package org.ivdnt.galahad.files
 
-import com.fasterxml.jackson.core.type.TypeReference
 import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +20,7 @@ open class DiskValue<T>(
         cache.getIfPresent(file.absolutePath)?.let { return it as T }
         // Else read from disk
         if (file.length() == 0L) return null // Just to be safe
-        return JsonUtil.mapper.readValue(file.readBytes(), object : TypeReference<T>() {})
+        return JsonUtil.mapper.readValue(file, T::class.java)
             // And cache it later, return now.
             .also { ThreadPoolUtil.pool.execute { cache.put(file.absolutePath, it as Any) } }
     }

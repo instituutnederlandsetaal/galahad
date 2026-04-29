@@ -9,12 +9,11 @@ data class LayerAnnotations(
     @JsonValue
     val annotations: Map<Annotation, Int>,
 ) {
-    constructor(terms: Iterable<Term>) : this(
-        annotations = terms.flatMap { it.annotations.keys }.groupingBy { it }
-            .eachCount().toSortedMap { a, b -> Annotation.entries.indexOf(a).compareTo(Annotation.entries.indexOf(b)) })
-
     companion object {
-        val EMPTY: LayerAnnotations = LayerAnnotations(emptyMap())
+        val EMPTY: LayerAnnotations = LayerAnnotations(emptyMap<Annotation, Int>())
+        fun fromTerms(terms: Iterable<Term>) = LayerAnnotations(
+            annotations = terms.flatMap { it.annotations.keys }.groupingBy { it }
+                .eachCount().toSortedMap { a, b -> Annotation.entries.indexOf(a).compareTo(Annotation.entries.indexOf(b)) })
     }
 }
 
