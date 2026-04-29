@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.text.SimpleDateFormat
 
 open class ConverterTest {
     private lateinit var corpus: Corpus

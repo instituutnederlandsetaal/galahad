@@ -34,4 +34,9 @@ class TeiConverterTest : ConverterTest() {
     fun `Tei to Naf`() {
         formatToFormat(DocumentFormat.TeiP5, DocumentFormat.Naf)
     }
+
+    @Test
+    fun `Tei to Json`() {
+        formatToFormat(DocumentFormat.TeiP5, DocumentFormat.Json)
+    }
 }

@@ -38,4 +38,9 @@ class ConlluConverterTest : ConverterTest() {
         formatToFormat(DocumentFormat.Conllu, DocumentFormat.Naf)
     }
 
+    @Test
+    fun `Conllu to Json`() {
+        formatToFormat(DocumentFormat.Conllu, DocumentFormat.Json)
+    }
+
 }

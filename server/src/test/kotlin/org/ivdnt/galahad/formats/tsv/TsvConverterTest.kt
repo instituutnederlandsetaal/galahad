@@ -37,4 +37,9 @@ class TsvConverterTest : ConverterTest() {
     fun `Tsv to Naf`() {
         formatToFormat(DocumentFormat.Tsv, DocumentFormat.Naf)
     }
+
+    @Test
+    fun `Tsv to Json`() {
+        formatToFormat(DocumentFormat.Tsv, DocumentFormat.Json)
+    }
 }
