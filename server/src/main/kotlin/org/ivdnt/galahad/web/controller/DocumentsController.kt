@@ -6,8 +6,10 @@ import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.apache.logging.log4j.kotlin.Logging
+import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.documents.DocumentMetadata
 import org.ivdnt.galahad.exceptions.ErrorResponse
 import org.ivdnt.galahad.util.setContentDisposition
@@ -30,6 +32,10 @@ class DocumentsController(
 
     @Autowired
     private val response: HttpServletResponse? = null
+    @Autowired
+    private val request: HttpServletRequest? = null
+
+    private val user get() = User.fromRequest(request)
 
     @Operation(
         summary = "List all documents metadata",
@@ -46,7 +52,7 @@ class DocumentsController(
     @CrossOrigin
     @GetMapping(Endpoints.Documents.BASE)
     fun getDocuments(@PathVariable @Parameter(description = "Corpus UUID") corpus: UUID): List<DocumentMetadata> =
-        documentsService.readAll(corpus)
+        documentsService.readAll(corpus, user)
 
     @Operation(
         summary = "Upload document or zip file",
@@ -78,7 +84,7 @@ class DocumentsController(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
     ) {
         response?.status = HttpServletResponse.SC_CREATED
-        documentsService.create(file, corpus)
+        documentsService.create(file, corpus, user)
     }
 
     @Operation(
@@ -106,7 +112,7 @@ class DocumentsController(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Document name") document: String,
     ): ByteArray {
-        val file = documentsService.read(corpus, document).uploadedFile
+        val file = documentsService.read(corpus, document, user).uploadedFile
         response?.contentType = "text/plain" // Default for text files. Even if it really means "unknown text file"
         response?.setContentDisposition(file.name)
         return file.readBytes()
@@ -136,7 +142,7 @@ class DocumentsController(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Document name") document: String,
     ): ResponseEntity<String> {
-        documentsService.delete(corpus, document)
+        documentsService.delete(corpus, document, user)
         return ResponseEntity.noContent().build()
     }
 }

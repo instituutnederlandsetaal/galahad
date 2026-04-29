@@ -26,51 +26,29 @@ val ZIP_TYPES: List<String> = listOf("application/zip", "application/x-zip-compr
 @Service
 class DocumentsService(val corpora: CorporaService) : Logging {
 
-    @Autowired
-    private val request: HttpServletRequest? = null
+    fun read(corpus: UUID, document: String, user: User): Document = corpora.readAsReaderOrThrow(corpus, user).documents.readOrThrow(document)
 
-    private val user get() = User.fromRequest(request)
+    fun readAll(corpus: UUID, user: User): List<DocumentMetadata> = corpora.readAsReaderOrThrow(corpus, user).documents.readAll().map { it.metadata }
 
-    fun UUID.writeJobs(): Jobs = corpora.readAsWriterOrThrow(this, user).jobs
-    fun UUID.readDocs(): Documents = corpora.readAsReaderOrThrow(this, user).documents
-    fun UUID.writeDocs(): Documents = corpora.readAsWriterOrThrow(this, user).documents
-    fun UUID.readJobs(): Jobs = corpora.readAsReaderOrThrow(this, user).jobs
-
-    fun read(corpus: UUID, document: String): Document = corpus.readDocs().readOrThrow(document)
-
-    fun readAll(corpus: UUID): List<DocumentMetadata> = corpus.readDocs().readAll().map { it.metadata }
-
-    // TODO: check if we still need to delete lost causes
-
-    // return corpus.readDocs().readAll().mapNotNull {
-    //     // Potentially, the uploaded file might no longer exist, so try.
-    //     try {
-    //         it.metadata
-    //     } catch (e: Exception) {
-    //         // Consider the document a lost cause.
-    //         delete(corpus, it.name)
-    //         null
-    //     }
-    // }.toSet()
-
-    fun create(file: MultipartFile, corpus: UUID) {
+    fun create(file: MultipartFile, corpus: UUID, user: User) {
         if (file.contentType in ZIP_TYPES) {
-            uploadZipFile(file, corpus)
+            uploadZipFile(file, corpus, user)
         } else {
             createDocumentWithSourceLayer(
-                corpus, file.originalFilename!!, file.inputStream
+                corpus, user, file.originalFilename!!, file.inputStream
             )
         }
     }
 
-    fun delete(corpus: UUID, document: String) {
+    fun delete(corpus: UUID, document: String, user: User) {
         // Delete all jobs and results of this document.
-        corpus.writeJobs().readAll().forEach { it.results.deleteOrNull(document) } // Doesn't matter if null.
-        // Now delete it
-        corpus.writeDocs().deleteOrThrow(document)
+        corpora.readAsWriterOrThrow(corpus, user).jobs.readAll().forEach { it.results.deleteOrNull(document) } // Doesn't matter if null.
+        // Now delete it as write access
+        val docs = corpora.readAsWriterOrThrow(corpus, user).documents
+        docs.deleteOrThrow(document)
     }
 
-    private fun uploadZipFile(file: MultipartFile, corpus: UUID) {
+    private fun uploadZipFile(file: MultipartFile, corpus: UUID, user: User) {
         logger.debug("Unzipping ${file.originalFilename}")
         val exceptions = HashMap<String, Exception>()
         val futures = ZipInputStream(BufferedInputStream(file.inputStream)).use { stream ->
@@ -80,7 +58,7 @@ class DocumentsService(val corpora: CorporaService) : Logging {
                 ThreadPoolUtil.pool.submit {
                     logger.debug("Unzipping ${entry.name} in thread ${Thread.currentThread().name}")
                     try {
-                        createDocumentWithSourceLayer(corpus, fileName, entryData.inputStream())
+                        createDocumentWithSourceLayer(corpus, user, fileName, entryData.inputStream())
                     } catch (e: Exception) {
                         exceptions[fileName] = e
                     }
@@ -101,13 +79,13 @@ class DocumentsService(val corpora: CorporaService) : Logging {
         }
     }
 
-    private fun createDocumentWithSourceLayer(corpus: UUID, fileName: String, input: InputStream) {
+    private fun createDocumentWithSourceLayer(corpus: UUID, user: User, fileName: String, input: InputStream) {
         // tmp file for processing
         val tmpDir: File = createTempDirectory("upload").toFile()
         val file = tmpDir.resolve(fileName)
         file.outputStream().use { input.copyTo(it) }
-        // access the corpus
-        val docs = corpus.writeDocs()
+        // access the corpus as writer
+        val docs = corpora.readAsWriterOrThrow(corpus, user).documents
         // create the document
         try {
             docs.createOrThrow(file)
