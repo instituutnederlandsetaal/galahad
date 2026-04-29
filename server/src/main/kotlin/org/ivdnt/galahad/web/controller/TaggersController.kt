@@ -44,7 +44,9 @@ class TaggersController(
     )
     @CrossOrigin
     @GetMapping(Endpoints.Taggers.HEALTH)
-    fun getTaggerHealth(@PathVariable @Parameter(description = "Tagger name") tagger: String): TaggerHealth =
+    fun getTaggerHealth(
+        @PathVariable @Parameter(description = "Tagger name") tagger: String
+    ): TaggerHealth =
         taggersService.taggerHealth(tagger)
 
 

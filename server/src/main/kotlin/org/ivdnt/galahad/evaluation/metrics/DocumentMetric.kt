@@ -6,7 +6,6 @@ import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.evaluation.EvaluationEntry
 import org.ivdnt.galahad.evaluation.comparison.LayerComparison
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
-import org.ivdnt.galahad.evaluation.metrics.ClsClasses.Companion.toMetrics
 
 class ClsMetrics(
     val precision: Float = 0f,

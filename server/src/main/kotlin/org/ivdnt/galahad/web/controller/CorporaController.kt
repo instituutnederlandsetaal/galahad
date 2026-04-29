@@ -23,7 +23,7 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody as SwaggerRequestBod
 
 @RestController
 class CorporaController(
-    private val corporaService: CorporaService,
+    @Autowired private val corporaService: CorporaService,
 ) : Logging {
     @Autowired
     private val response: HttpServletResponse? = null
@@ -67,8 +67,7 @@ class CorporaController(
     }
 
     @Operation(
-        summary = "Get single corpus metadata",
-        description = "Get the metadata of a corpus."
+        summary = "Get single corpus metadata", description = "Get the metadata of a corpus."
     )
     @ApiResponse(
         responseCode = "404",
@@ -125,8 +124,7 @@ class CorporaController(
         content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
     )
     @ApiResponse(
-        responseCode = "204",
-        description = "Corpus deleted."
+        responseCode = "204", description = "Corpus deleted."
     )
     @ApiResponse(
         responseCode = "403",

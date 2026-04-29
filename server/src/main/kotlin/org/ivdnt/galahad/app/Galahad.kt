@@ -17,7 +17,6 @@ import org.springframework.core.convert.converter.Converter
 import org.springframework.scheduling.annotation.EnableScheduling
 import java.io.File
 import java.util.*
-import java.util.logging.Logger
 
 var application_profile: String = System.getenv("spring.profiles.active") ?: "prod"
 

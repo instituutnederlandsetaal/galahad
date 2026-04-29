@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.jobs
 
-import org.ivdnt.galahad.annotations.LayerPreview
 import org.ivdnt.galahad.annotations.LayerAnnotations
+import org.ivdnt.galahad.annotations.LayerPreview
 import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.annotations.plus
 import org.ivdnt.galahad.taggers.Tagger

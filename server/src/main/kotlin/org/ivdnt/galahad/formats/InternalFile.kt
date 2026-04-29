@@ -3,7 +3,6 @@ package org.ivdnt.galahad.formats
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.LayerReader
 import org.ivdnt.galahad.documents.DocumentFormat
-import org.ivdnt.galahad.exceptions.InvalidDocumentFormatException
 import org.ivdnt.galahad.formats.conllu.ConlluFile
 import org.ivdnt.galahad.formats.docx.DocxFile
 import org.ivdnt.galahad.formats.folia.FoliaFile

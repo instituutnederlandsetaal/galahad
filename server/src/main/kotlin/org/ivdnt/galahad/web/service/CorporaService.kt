@@ -9,12 +9,14 @@ import org.ivdnt.galahad.corpora.MutableCorpusMetadata
 import org.ivdnt.galahad.exceptions.CorpusNotFoundException
 import org.ivdnt.galahad.exceptions.CorpusUnauthorizedException
 import org.ivdnt.galahad.files.GalahadFolder
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.io.File
 import java.util.*
 
 @Service
 class CorporaService(
+    @Autowired
     config: Config,
 ) : GalahadFolder(config.getWorkingDirectory().resolve("corpora")) {
 
@@ -22,7 +24,7 @@ class CorporaService(
     val presets: Corpora = Corpora(dir.resolve("datasets"))
 
     val all: List<Corpus> get() = custom.readAll() + presets.readAll()
-    val datasets: List<Corpus> get() = all.filter { it.mutableMetadata.dataset }
+    val datasets: List<Corpus> get() = all.filter { it.mutableMetadata.dataset == true }
     val assaysFile: File get() = dir.resolve("benchmarks.json")
 
     fun readAll(user: User): List<CorpusMetadata> =

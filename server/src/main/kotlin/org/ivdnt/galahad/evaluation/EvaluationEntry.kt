@@ -1,7 +1,5 @@
 package org.ivdnt.galahad.evaluation
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonProperty
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
 import kotlin.random.Random
 

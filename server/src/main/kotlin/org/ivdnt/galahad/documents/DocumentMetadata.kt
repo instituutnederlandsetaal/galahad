@@ -2,8 +2,8 @@ package org.ivdnt.galahad.documents
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.ivdnt.galahad.annotations.Annotation
-import org.ivdnt.galahad.annotations.LayerPreview
 import org.ivdnt.galahad.annotations.LayerAnnotations
+import org.ivdnt.galahad.annotations.LayerPreview
 import org.ivdnt.galahad.formats.InternalFile
 
 data class DocumentMetadata(
