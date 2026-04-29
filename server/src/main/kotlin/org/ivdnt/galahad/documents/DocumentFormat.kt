@@ -47,7 +47,7 @@ enum class DocumentFormat(val identifier: String, val extension: String) {
             "naf" -> Naf
             "pdf" -> Pdf
             "json" -> Json
-            else -> throw DocumentInvalidException(file.name, "Could not determine document format.")
+            else -> throw InvalidDocumentFormatException("Could not determine document format of ${file.name}.")
         }
 
         /** Determine xml format based on the root node. */
@@ -66,7 +66,7 @@ enum class DocumentFormat(val identifier: String, val extension: String) {
                     }
                 }
             }
-            throw DocumentInvalidException(file.name, "Could not determine document format.")
+            throw InvalidDocumentFormatException("Could not determine document format of ${file.name}.")
         }
     }
 }
