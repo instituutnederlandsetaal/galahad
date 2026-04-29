@@ -29,7 +29,7 @@ class DocumentConfusion(
                             oldAnnotationMap.apply {
                                 this.merge(reference, entryMap) { oldEntry, _ ->
                                     oldEntry.apply {
-                                        this.merge(hypothesis, entry) { e1, e2 -> EvaluationEntry.add(e1, e2) }
+                                        this.merge(hypothesis, entry) { e1, e2 -> EvaluationEntry.add(e1, e2, truncate = layerComparison.filter != null) }
                                     }
                                 }
                             }

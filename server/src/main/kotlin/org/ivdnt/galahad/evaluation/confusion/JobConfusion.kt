@@ -25,7 +25,7 @@ class JobConfusion(
                     map1.merge(map2) { v1, v2 ->
                         v1.merge(v2) { m1, m2 ->
                             m1.merge(m2) { e1, e2 ->
-                                EvaluationEntry.add(e1, e2)
+                                EvaluationEntry.add(e1, e2, truncate = docEvals.jobs.filter != null)
                             }
                         }
                     }

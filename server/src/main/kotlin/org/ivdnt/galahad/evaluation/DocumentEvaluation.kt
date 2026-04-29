@@ -47,13 +47,13 @@ class DocumentEvaluation(
     val confusion: DocumentConfusion
         get() = object : ValidatedDiskValue<DocumentConfusion>(dir.resolve(CONFUSION_FILE)) {
             override fun isValid(modified: Long) = modified >= lastModified
-            override fun set(): DocumentConfusion = DocumentConfusion.create(LayerComparison(hypLayer, refLayer), availableAnnotations)
+            override fun set(): DocumentConfusion = DocumentConfusion.create(LayerComparison(hypLayer, refLayer, jobs.filter), availableAnnotations)
         }.readOrCreate<DocumentConfusion>()
 
     val metrics: DocumentMetric
         get() = object : ValidatedDiskValue<DocumentMetric>(dir.resolve(METRICS_FILE)) {
             override fun isValid(modified: Long) = modified >= lastModified
-            override fun set(): DocumentMetric = DocumentMetric.create(LayerComparison(hypLayer, refLayer), availableAnnotations)
+            override fun set(): DocumentMetric = DocumentMetric.create(LayerComparison(hypLayer, refLayer, jobs.filter), availableAnnotations)
         }.readOrCreate<DocumentMetric>()
 
     companion object {

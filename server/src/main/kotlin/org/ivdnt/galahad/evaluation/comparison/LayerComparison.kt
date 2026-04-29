@@ -14,7 +14,7 @@ import org.ivdnt.galahad.util.TermIterator
 open class LayerComparison(
     hypothesis: Layer,
     reference: Layer,
-    private val filter: LayerFilter? = null,
+    val filter: LayerFilter? = null,
 ) {
     constructor(export: DocumentExport) : this(export.layer, export.sourceLayer)
 
