@@ -2,10 +2,9 @@ package org.ivdnt.galahad.documents
 
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.util.TestUtil
-import org.junit.jupiter.api.Test
-
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 class DocumentsTest {
 

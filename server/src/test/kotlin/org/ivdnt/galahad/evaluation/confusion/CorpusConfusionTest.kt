@@ -1,16 +1,8 @@
 package org.ivdnt.galahad.evaluation.confusion
 
 import org.ivdnt.galahad.corpora.Corpus
-import org.ivdnt.galahad.annotations.Annotation
-import org.ivdnt.galahad.evaluation.EvaluationUtil
-import org.ivdnt.galahad.evaluation.comparison.ConfusionLayerFilter
-import org.ivdnt.galahad.evaluation.comparison.HeadGroupTermFilter
-import org.ivdnt.galahad.evaluation.comparison.TermComparison
-import org.ivdnt.galahad.util.TestConfig
 import org.ivdnt.galahad.util.TestUtil
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
 
 class CorpusConfusionTest {
     lateinit var corpus: Corpus

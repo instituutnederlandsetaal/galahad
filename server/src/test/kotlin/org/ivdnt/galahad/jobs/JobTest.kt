@@ -1,10 +1,10 @@
 package org.ivdnt.galahad.jobs
 
 import org.ivdnt.galahad.annotations.Annotation
-import org.ivdnt.galahad.util.TestConfig
-import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.annotations.LayerPreview
+import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.util.LayerBuilder
+import org.ivdnt.galahad.util.TestConfig
 import org.ivdnt.galahad.util.TestUtil
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse

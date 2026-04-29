@@ -1,26 +1,21 @@
 package org.ivdnt.galahad.util
 
+import org.ivdnt.galahad.annotations.*
 import org.ivdnt.galahad.annotations.Annotation
-import org.ivdnt.galahad.annotations.DocumentLayer
-import org.ivdnt.galahad.annotations.Layer
-import org.ivdnt.galahad.annotations.ParagraphLayer
-import org.ivdnt.galahad.annotations.SentenceLayer
-import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.documents.DocumentFormat
 import org.ivdnt.galahad.export.CorpusExport
 import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.formats.tsv.TsvFile
+import org.junit.jupiter.api.Assertions.assertEquals
+import java.io.ByteArrayOutputStream
 import java.io.File
 import kotlin.io.path.createTempDirectory
-import org.junit.jupiter.api.Assertions.*
-import java.io.ByteArrayOutputStream
 
 class LayerBuilder {
 
     var terms: MutableList<Term> = mutableListOf()
-
 
     fun loadDummies(
         amount: Int, literal: String = "dummy", lemma: String? = "dummy", pos: String? = "pos",
@@ -30,7 +25,7 @@ class LayerBuilder {
             terms += Term(
                 id = "",
                 offset = baseOffset + i * literal.length,
-                annotations = mapOf (
+                annotations = mapOf(
                     Annotation.LEMMA to lemma,
                     Annotation.POS to pos,
                     Annotation.TOKEN to literal,
@@ -64,7 +59,14 @@ class LayerBuilder {
         return this
     }
 
-    fun build(): Layer = Layer(arrayOf(DocumentLayer("", arrayOf(ParagraphLayer("", arrayOf(SentenceLayer("", terms.toTypedArray(), emptyMap())))))))
+    fun build(): Layer = Layer(
+        arrayOf(
+            DocumentLayer(
+                "",
+                arrayOf(ParagraphLayer("", arrayOf(SentenceLayer("", terms.toTypedArray(), emptyMap()))))
+            )
+        )
+    )
 }
 
 class DocTest {
@@ -76,7 +78,8 @@ class DocTest {
 /**
  * n for null-check
  */
-fun <T> n(x: T?, desc: String = "PLACEHOLDER"): T = x ?: throw Exception("$desc is not set, please set it first before calling this operation.")
+fun <T> n(x: T?, desc: String = "PLACEHOLDER"): T =
+    x ?: throw Exception("$desc is not set, please set it first before calling this operation.")
 
 class DocTestBuilder(
     val corpus: Corpus,

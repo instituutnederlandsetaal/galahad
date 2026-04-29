@@ -1,7 +1,6 @@
 package org.ivdnt.galahad.jobs
 
 import org.ivdnt.galahad.corpora.Corpus
-import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.util.LayerBuilder
 import org.ivdnt.galahad.util.TestConfig
 import org.ivdnt.galahad.util.TestUtil
