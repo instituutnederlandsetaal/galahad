@@ -1,7 +1,10 @@
 plugins {
-    kotlin("jvm") version "2.3.0"
-    kotlin("plugin.spring") version "2.3.0"
-    id("org.springframework.boot") version "4.0.1"
+    // Source: https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-stdlib
+    kotlin("jvm") version "2.3.20"
+    kotlin("plugin.spring") version "2.3.20"
+    // Source: https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web
+    id("org.springframework.boot") version "4.0.5"
+    // Source: https://mvnrepository.com/artifact/io.spring.dependency-management/io.spring.dependency-management.gradle.plugin
     id("io.spring.dependency-management") version "1.1.7"
 }
 
@@ -36,15 +39,21 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-api-kotlin:1.5.0")
 
     // yaml
-    implementation("org.yaml:snakeyaml:2.5")
+    // Source: https://mvnrepository.com/artifact/org.yaml/snakeyaml
+    implementation("org.yaml:snakeyaml:2.6")
 
     // json
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    // Source: https://mvnrepository.com/artifact/tools.jackson.core/jackson-core
+    implementation("tools.jackson.core:jackson-databind:3.1.1")
+    implementation("tools.jackson.core:jackson-core:3.1.1")
+    implementation("tools.jackson.module:jackson-module-kotlin:3.1.1")
 
     // xml
+    // Source: https://mvnrepository.com/artifact/com.fasterxml/aalto-xml
     implementation("com.fasterxml:aalto-xml:1.3.4")
 
     // cache
+    // Source: https://mvnrepository.com/artifact/com.github.ben-manes.caffeine/caffeine
     implementation("com.github.ben-manes.caffeine:caffeine:3.2.3")
 
     // reading microsoft word docx
