@@ -2,7 +2,6 @@ package org.ivdnt.galahad.web.controller
 
 object Endpoints {
     const val BASE: String = "/"
-    const val TAGSETS: String = "/tagsets"
     const val VERSION: String = "/version"
     const val BENCHMARKS: String = "/benchmarks"
     const val USER: String = "/user"
@@ -57,6 +56,11 @@ object Endpoints {
         const val QUEUE: String = "$BASE/queue"
     }
 
+    object Tagsets {
+        const val BASE: String = "/tagsets"
+        const val TAGSET: String = "$BASE/{id}"
+    }
+
     object Evaluation {
         const val BASE: String = "${Corpora.CORPUS}/evaluation"
         const val DOWNLOAD: String = "$BASE/download"
@@ -74,6 +78,7 @@ object Endpoints {
             const val DISTRIBUTION: String = "$BASE/distribution"
             const val COMPARISON: String = "$BASE/comparison"
             const val METRICS: String = "$BASE/metrics"
+            const val SPANS: String = "$BASE/spans"
         }
     }
 }
