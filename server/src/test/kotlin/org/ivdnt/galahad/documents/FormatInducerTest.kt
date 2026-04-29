@@ -62,6 +62,6 @@ class FormatInducerTest {
 
     @Test
     fun `Parse unknown XML root node`() {
-        assertThrows(InvalidDocumentFormatException::class.java) { DocumentFormat.fromFile(TestUtil.get("documents/invalid-root.xml")) }
+        assertThrows(InvalidDocumentFormatException::class.java) { DocumentFormat.fromFile(TestUtil.get("formats/invalid/invalid.xml")) }
     }
 }
