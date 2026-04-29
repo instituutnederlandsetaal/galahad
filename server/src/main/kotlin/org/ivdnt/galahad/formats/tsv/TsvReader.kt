@@ -83,7 +83,7 @@ class TsvReader(
         }
         Term(wordID(), offset, annotations).also {
             terms += it
-            offset += it.token.length
+            offset += it.token.length + 1 // space
         }
     }
 
