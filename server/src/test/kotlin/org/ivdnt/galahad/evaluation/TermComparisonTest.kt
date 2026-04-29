@@ -3,7 +3,7 @@ package org.ivdnt.galahad.evaluation
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
@@ -16,8 +16,13 @@ class TermComparisonTest {
             hypoLemma: String? = "school", refLemma: String? = "school",
             hypoPos: String? = "NOU", refPos: String? = "NOU",
         ) {
-            val hypoTerm = Term("", 0, mapOf(Annotation.TOKEN to "dummy", Annotation.LEMMA to hypoLemma, Annotation.POS to hypoPos))
-            val refTerm = Term("", 0, mapOf(Annotation.TOKEN to "dummy", Annotation.LEMMA to refLemma, Annotation.POS to refPos))
+            val hypoTerm = Term(
+                "",
+                0,
+                mapOf(Annotation.TOKEN to "dummy", Annotation.LEMMA to hypoLemma, Annotation.POS to hypoPos)
+            )
+            val refTerm =
+                Term("", 0, mapOf(Annotation.TOKEN to "dummy", Annotation.LEMMA to refLemma, Annotation.POS to refPos))
             TermComparison(hypoTerm, refTerm).apply {
                 assertEquals(lemmaEqual, equal(Annotation.LEMMA))
                 assertEquals(posEqual, equal(Annotation.POS))
@@ -28,24 +33,24 @@ class TermComparisonTest {
         fun `Equal lemma-pos`() {
             assertTerm() // default values
             // That includes being equal as empty or null.
-            assertTerm(lemmaEqual = true, hypoLemma = "", refLemma = "")
-            assertTerm(lemmaEqual = true, hypoLemma = null, refLemma = null)
-            assertTerm(posEqual = true, hypoPos = "", refPos = "")
-            assertTerm(posEqual = true, hypoPos = null, refPos = null)
+            assertTerm(hypoLemma = "", refLemma = "")
+            assertTerm(hypoLemma = null, refLemma = null)
+            assertTerm(hypoPos = "", refPos = "")
+            assertTerm(hypoPos = null, refPos = null)
         }
 
         @Test
         fun `Different lemma-pos`() {
-            assertTerm(lemmaEqual = false, hypoLemma = "school", refLemma = "scholen")
-            assertTerm(posEqual = false, hypoPos = "NOU", refPos = "ADJ")
+            assertTerm(lemmaEqual = false, refLemma = "scholen")
+            assertTerm(posEqual = false, refPos = "ADJ")
         }
 
         @Test
         fun `Hypothesis lemma-pos is empty or null`() {
-            assertTerm(lemmaEqual = false, hypoLemma = "", refLemma = "school")
-            assertTerm(lemmaEqual = false, hypoLemma = null, refLemma = "school")
-            assertTerm(posEqual = false, hypoPos = "", refPos = "NOU")
-            assertTerm(posEqual = false, hypoPos = null, refPos = "NOU")
+            assertTerm(lemmaEqual = false, hypoLemma = "")
+            assertTerm(lemmaEqual = false, hypoLemma = null)
+            assertTerm(posEqual = false, hypoPos = "")
+            assertTerm(posEqual = false, hypoPos = null)
         }
 
         // If no reference lemma-pos is defined, any hypothesis is fine.
@@ -53,16 +58,16 @@ class TermComparisonTest {
         // Some taggers (=hypothesis) do add a lemma-pos. So we'll allow it.
         @Test
         fun `Reference lemma-pos is empty or null`() {
-            assertTerm(lemmaEqual = true, hypoLemma = "school", refLemma = "")
-            assertTerm(lemmaEqual = true, hypoLemma = "school", refLemma = null)
-            assertTerm(posEqual = true, hypoPos = "NOU", refPos = "")
-            assertTerm(posEqual = true, hypoPos = "NOU", refPos = null)
+            assertTerm(refLemma = "")
+            assertTerm(refLemma = null)
+            assertTerm(refPos = "")
+            assertTerm(refPos = null)
 
             // Note that the hypothesis can even be empty or null. Anything is fine.
-            assertTerm(lemmaEqual = true, hypoLemma = "", refLemma = null)
-            assertTerm(lemmaEqual = true, hypoLemma = null, refLemma = "")
-            assertTerm(posEqual = true, hypoPos = "", refPos = null)
-            assertTerm(posEqual = true, hypoPos = null, refPos = "")
+            assertTerm(hypoLemma = "", refLemma = null)
+            assertTerm(hypoLemma = null, refLemma = "")
+            assertTerm(hypoPos = "", refPos = null)
+            assertTerm(hypoPos = null, refPos = "")
         }
     }
 }

@@ -2,9 +2,8 @@ package org.ivdnt.galahad.evaluation
 
 import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-
-import org.junit.jupiter.api.Assertions.*
 
 class EvaluationEntryTest {
 
@@ -41,7 +40,9 @@ class EvaluationEntryTest {
 
     @Test
     fun `Add with samples above 10 without truncation`() {
-        fun samples(n: Int): EvaluationEntry = EvaluationEntry(samples = MutableList(n) { TermComparison(Term.EMPTY, Term.EMPTY) })
+        fun samples(n: Int): EvaluationEntry =
+            EvaluationEntry(samples = MutableList(n) { TermComparison(Term.EMPTY, Term.EMPTY) })
+
         val a = samples(7)
         val b = samples(9)
         val c = samples(3)

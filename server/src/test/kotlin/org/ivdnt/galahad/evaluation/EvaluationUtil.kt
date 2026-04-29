@@ -1,10 +1,10 @@
 package org.ivdnt.galahad.evaluation
 
-import org.ivdnt.galahad.util.TestConfig
-import org.ivdnt.galahad.corpora.Corpus
-import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.annotations.Layer
+import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
+import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.util.LayerBuilder
+import org.ivdnt.galahad.util.TestConfig
 import java.io.File
 
 object EvaluationUtil {
@@ -49,13 +49,13 @@ object EvaluationUtil {
      */
     fun addDocWithMissingMatches(corpus: Corpus) {
         val doc = corpus.documents.createOrThrow(File.createTempFile("tmp", ".txt"))
-        val hypo = LayerBuilder().loadDummies(1, "dummy", pos = "VRB")
+        val hypo = LayerBuilder().loadDummies(1, pos = "VRB")
             .loadDummies(1, ",", pos = "LET")
-            .loadDummies(1, "dummy", pos = "ADV")
+            .loadDummies(1, pos = "ADV")
             .loadDummies(3, ".", pos = "LET")
             .build()
         val ref = LayerBuilder().loadDummies(1, "dummy,", pos = "ADV")
-            .loadDummies(1, "dummy", pos = "ADV")
+            .loadDummies(1, pos = "ADV")
             .loadDummies(1, "...", pos = "LET").build()
         addLayersAsJobs(corpus, doc.name, hypo, ref)
     }
@@ -73,8 +73,8 @@ object EvaluationUtil {
         source: Layer,
     ) {
         val taggerJob = corpus.jobs.createOrThrow(TestConfig.TAGGER_NAME)
-        taggerJob.setLayer(docName,tagger)
+        taggerJob.setLayer(docName, tagger)
         val sourceJob = corpus.jobs.createOrThrow(SOURCE_LAYER_NAME)
-        sourceJob.setLayer(docName,source)
+        sourceJob.setLayer(docName, source)
     }
 }

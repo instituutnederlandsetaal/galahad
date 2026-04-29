@@ -2,12 +2,14 @@ package org.ivdnt.galahad.evaluation
 
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Term
-import org.ivdnt.galahad.evaluation.comparison.*
+import org.ivdnt.galahad.evaluation.comparison.ConfusionLayerFilter
+import org.ivdnt.galahad.evaluation.comparison.HeadGroupTermFilter
+import org.ivdnt.galahad.evaluation.comparison.LayerComparison
+import org.ivdnt.galahad.evaluation.comparison.LayerFilter
 import org.ivdnt.galahad.util.LayerBuilder
-import org.junit.jupiter.api.Test
-
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
 class LayerComparisonTest {
 
@@ -30,7 +32,9 @@ class LayerComparisonTest {
         @Test
         fun `Layers with partial match`() {
             val hypo = LayerBuilder().loadDummies(100, pos = "NOU").build()
-            val ref = LayerBuilder().loadDummies(50, pos = "NOU").loadDummies(20, pos = "VRB").loadDummies(30, pos = "ADJ").build()
+            val ref =
+                LayerBuilder().loadDummies(50, pos = "NOU").loadDummies(20, pos = "VRB").loadDummies(30, pos = "ADJ")
+                    .build()
             val comparison = LayerComparison(
                 hypothesis = hypo,
                 reference = ref,
@@ -43,6 +47,7 @@ class LayerComparisonTest {
             val termFilter = HeadGroupTermFilter(Annotation.POS, "NOU")
             return ConfusionLayerFilter(termFilter, termFilter)
         }
+
         private fun NouVrbFilter(): LayerFilter =
             ConfusionLayerFilter(HeadGroupTermFilter(Annotation.POS, "NOU"), HeadGroupTermFilter(Annotation.POS, "VRB"))
 

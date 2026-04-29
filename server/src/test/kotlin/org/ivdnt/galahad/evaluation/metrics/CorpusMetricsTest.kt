@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.evaluation.metrics
 
-import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.annotations.Annotation
+import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.evaluation.EvaluationUtil
 import org.ivdnt.galahad.evaluation.comparison.HeadGroupTermFilter
 import org.ivdnt.galahad.evaluation.comparison.MetricsLayerFilter
@@ -24,7 +24,11 @@ class CorpusMetricsTest {
         EvaluationUtil.add_two_docs_to_corpus(corpus)
 
         // Get the metrics
-        val metrics = CorpusMetrics(corpus, listOf(PosByPosMetricsSettings()), TestConfig.TAGGER_NAME) // default reference is SOURCE_LAYER_NAME
+        val metrics = CorpusMetrics(
+            corpus,
+            listOf(PosByPosMetricsSettings()),
+            TestConfig.TAGGER_NAME
+        ) // default reference is SOURCE_LAYER_NAME
         // Check the global metrics
         val global = metrics.metricTypes.values.first()
         assertEquals(10, global.classes.classCount)
@@ -55,8 +59,9 @@ class CorpusMetricsTest {
         EvaluationUtil.addDocWithMatchingMultiPosLemma(corpus)
 
         val termFilter = HeadGroupTermFilter(Annotation.POS, "PD+NOU-C")
-        val filter = MetricsLayerFilter(termFilter,termFilter)
-        val filteredMetrics = CorpusMetrics(corpus, listOf(PosByPosMetricsSettings()), TestConfig.TAGGER_NAME, layerFilter = filter)
+        val filter = MetricsLayerFilter(termFilter, termFilter)
+        val filteredMetrics =
+            CorpusMetrics(corpus, listOf(PosByPosMetricsSettings()), TestConfig.TAGGER_NAME, layerFilter = filter)
         val filteredGlobal = filteredMetrics.metricTypes.values.first()
         assertEquals(1, filteredGlobal.classes.classCount)
     }
