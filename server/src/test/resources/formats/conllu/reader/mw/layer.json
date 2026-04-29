@@ -1,81 +1,98 @@
 {
-  "documents" : [ {
-    "id" : "d1",
-    "paragraphs" : [ {
-      "id" : "d1.p1",
-      "sentences" : [ {
-        "id" : "s1",
-        "terms" : [ {
-          "annotations" : {
-            "token" : "Gas",
-            "lemma" : "gas",
-            "pos" : "S",
-            "upos" : "NOUN(Gender=Masc|Number=Sing)",
-            "head" : "0",
-            "deprel" : "root"
-          },
-          "id" : "s1.w1",
-          "offset" : 0
-        }, {
-          "annotations" : {
-            "token" : "dalla"
-          },
-          "id" : "s1.w2",
-          "offset" : 4
-        }, {
-          "annotations" : {
-            "token" : "statua",
-            "lemma" : "statua",
-            "pos" : "S",
-            "upos" : "NOUN(Gender=Fem|Number=Sing)",
-            "head" : "2",
-            "deprel" : "nmod"
-          },
-          "id" : "s1.w3",
-          "offset" : 10,
-          "spaceAfter" : false
-        }, {
-          "annotations" : {
-            "token" : ".",
-            "lemma" : ".",
-            "pos" : "FS",
-            "upos" : "PUNCT",
-            "head" : "1",
-            "deprel" : "punct"
-          },
-          "id" : "s1.w4",
-          "offset" : 16
-        } ]
-      }, {
-        "id" : "s2",
-        "terms" : [ {
-          "annotations" : {
-            "token" : "Ter"
-          },
-          "id" : "s2.w1",
-          "offset" : 18
-        }, {
-          "annotations" : {
-            "token" : "hoogte"
-          },
-          "id" : "s2.w2",
-          "offset" : 22
-        }, {
-          "annotations" : {
-            "token" : "van"
-          },
-          "id" : "s2.w3",
-          "offset" : 29,
-          "spaceAfter" : false
-        }, {
-          "annotations" : {
-            "token" : "."
-          },
-          "id" : "s2.w4",
-          "offset" : 32
-        } ]
-      } ]
-    } ]
-  } ],
-  "id" : "UUID"
+  "documents": [
+    {
+      "id": "d1",
+      "paragraphs": [
+        {
+          "id": "d1.p1",
+          "sentences": [
+            {
+              "id": "s1",
+              "terms": [
+                {
+                  "annotations": {
+                    "token": "Gas",
+                    "lemma": "gas",
+                    "pos": "S",
+                    "upos": "NOUN(Gender=Masc|Number=Sing)",
+                    "head": "0",
+                    "deprel": "root"
+                  },
+                  "id": "s1.w1",
+                  "offset": 0
+                },
+                {
+                  "annotations": {
+                    "token": "dalla"
+                  },
+                  "id": "s1.w2",
+                  "offset": 4
+                },
+                {
+                  "annotations": {
+                    "token": "statua",
+                    "lemma": "statua",
+                    "pos": "S",
+                    "upos": "NOUN(Gender=Fem|Number=Sing)",
+                    "head": "2",
+                    "deprel": "nmod"
+                  },
+                  "id": "s1.w3",
+                  "offset": 10,
+                  "spaceAfter": false
+                },
+                {
+                  "annotations": {
+                    "token": ".",
+                    "lemma": ".",
+                    "pos": "FS",
+                    "upos": "PUNCT",
+                    "head": "1",
+                    "deprel": "punct"
+                  },
+                  "id": "s1.w4",
+                  "offset": 16
+                }
+              ]
+            },
+            {
+              "id": "s2",
+              "terms": [
+                {
+                  "annotations": {
+                    "token": "Ter"
+                  },
+                  "id": "s2.w1",
+                  "offset": 18
+                },
+                {
+                  "annotations": {
+                    "token": "hoogte"
+                  },
+                  "id": "s2.w2",
+                  "offset": 22
+                },
+                {
+                  "annotations": {
+                    "token": "van"
+                  },
+                  "id": "s2.w3",
+                  "offset": 29,
+                  "spaceAfter": false
+                },
+                {
+                  "annotations": {
+                    "token": "."
+                  },
+                  "id": "s2.w4",
+                  "offset": 32
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "id": "UUID"
 }
