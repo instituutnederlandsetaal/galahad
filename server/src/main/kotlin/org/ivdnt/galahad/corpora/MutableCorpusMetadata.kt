@@ -1,11 +1,9 @@
 package org.ivdnt.galahad.corpora
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonProperty
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.exceptions.CorpusNameInvalidException
 import org.ivdnt.galahad.exceptions.CorpusUnauthorizedException
-import org.springframework.lang.Nullable
 import java.net.URL
 import java.util.*
 
@@ -14,17 +12,17 @@ import java.util.*
  * Although technically [owner] should only be set once.
  */
 open class MutableCorpusMetadata(
-    @JsonProperty("owner") var owner: String,
-    @JsonProperty("name") var name: String,
-    @JsonProperty("eraFrom") var eraFrom: Int,
-    @JsonProperty("eraTo") var eraTo: Int,
-    @JsonProperty("language") @Nullable var language: String?,
-    @JsonProperty("tagset") @Nullable var tagset: String?,
-    @JsonProperty("dataset") var dataset: Boolean,
-    @JsonProperty("collaborators") var collaborators: MutableSet<String>,
-    @JsonProperty("viewers") var viewers: MutableSet<String>,
-    @JsonProperty("sourceName") @Nullable var sourceName: String?,
-    @JsonProperty("sourceURL") @Nullable var sourceURL: URL?,
+    var name: String,
+    var owner: String? = null,
+    var eraFrom: Int? = null,
+    var eraTo: Int? = null,
+    var language: String? = null,
+    var tagset: String? = null,
+    var dataset: Boolean? = null,
+    var collaborators: MutableSet<String>? = null,
+    var viewers: MutableSet<String>? = null,
+    var sourceName: String? = null,
+    var sourceURL: URL? = null,
 ) {
 
     @JsonIgnore
@@ -42,13 +40,13 @@ open class MutableCorpusMetadata(
      * Whether the user is in the list of collaborators of this corpus.
      * Note that this is not the same as having write access: use [hasWriteAccess].
      */
-    fun isCollaborator(user: User): Boolean = user.id in collaborators
+    fun isCollaborator(user: User): Boolean = collaborators?.contains(user.id) == true
 
     /**
      * Whether the user is in the list of viewers of this corpus.
      * Note that this is not the same as having read access: use [hasReadAccess].
      */
-    fun isViewer(user: User): Boolean = user.id in viewers
+    fun isViewer(user: User): Boolean = viewers?.contains(user.id) == true
 
     /** To have write access, you need to be an owner, collaborator or admin. */
     fun hasWriteAccess(user: User): Boolean {
@@ -73,11 +71,11 @@ open class MutableCorpusMetadata(
     fun canDefineDataset(user: User): Boolean = user.isAdmin
 
     fun removeAsViewer(user: User) {
-        viewers.removeIf { i -> i == user.id }
+        viewers?.removeIf { i -> i == user.id }
     }
 
     fun removeAsCollaborator(user: User) {
-        collaborators.removeIf { i -> i == user.id }
+        collaborators?.removeIf { i -> i == user.id }
     }
 
     /**
@@ -89,7 +87,7 @@ open class MutableCorpusMetadata(
         if (!excludeAdmin) {
             if (user.isAdmin) return true
         }
-        if (dataset) return true // technically, datasets are always public, but still.
+        if (dataset == true) return true // technically, datasets are always public, but still.
         if (isCollaborator(user)) return true
         if (isViewer(user)) return true
         if (owner == user.id) return true
@@ -97,10 +95,8 @@ open class MutableCorpusMetadata(
     }
 
     companion object {
-        val validNameRegex: Regex = Regex("""^.{3,100}$""")
-
         private fun assertCorpusNameValidOrThrow(corpusName: String) {
-            if (!validNameRegex.matches(corpusName.trim())) {
+            if (corpusName.isBlank()) {
                 throw CorpusNameInvalidException(corpusName)
             }
         }
@@ -141,14 +137,14 @@ open class MutableCorpusMetadata(
 
             assertCorpusNameValidOrThrow(newMeta.name)
 
-            if (oldMeta?.dataset == false && newMeta.dataset) {
+            if (oldMeta?.dataset != true && newMeta.dataset == true) {
                 // Corpus is being set to public
                 if (!newMeta.canDefineDataset(user)) {
                     throw CorpusUnauthorizedException("Cannot create a dataset.")
                 }
             }
 
-            if (oldMeta?.collaborators != newMeta.collaborators || oldMeta.viewers != newMeta.viewers) {
+            if (oldMeta?.collaborators != newMeta.collaborators || oldMeta?.viewers != newMeta.viewers) {
                 // Collaborators have changed
                 if (!newMeta.canAddNewUsers(user)) {
                     throw CorpusUnauthorizedException("Cannot change collaborators or viewers.")
@@ -161,16 +157,16 @@ open class MutableCorpusMetadata(
                 sourceName = sourceName?.trim()
                 tagset = tagset?.trim()
                 language = language?.trim()
-                collaborators = collaborators.map { it.trim() }.toMutableSet()
-                viewers = viewers.map { it.trim() }.toMutableSet()
+                collaborators = collaborators?.map { it.trim() }?.toMutableSet()
+                viewers = viewers?.map { it.trim() }?.toMutableSet()
             }
 
             // Remove owner from list of collaborators & viewers
-            newMeta.collaborators.remove(newMeta.owner)
-            newMeta.viewers.remove(newMeta.owner)
+            newMeta.collaborators?.remove(newMeta.owner)
+            newMeta.viewers?.remove(newMeta.owner)
 
             // Remove collaborators from list of viewers
-            newMeta.viewers.removeIf { it in newMeta.collaborators }
+            newMeta.viewers?.removeIf { newMeta.collaborators?.contains(it) == true }
 
             return newMeta
         }

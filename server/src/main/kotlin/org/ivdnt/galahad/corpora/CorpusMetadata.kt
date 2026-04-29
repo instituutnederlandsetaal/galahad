@@ -33,8 +33,8 @@ class CorpusMetadata(
     val size: Long = 0,
     val modified: Long = 0,
 ) : MutableCorpusMetadata(
-    owner = owner,
     name = name,
+    owner = owner,
     eraFrom = eraFrom,
     eraTo = eraTo,
     language = language,
