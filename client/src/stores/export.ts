@@ -21,6 +21,7 @@ const useExport = defineStore("exportStore", () => {
         { value: Format.TEI_P5, text: "TEI P5 (Text Encoding Initiative)" },
         { value: Format.TSV, text: "TSV (Tab-separated values)" },
         { value: Format.TXT, text: "TXT (Plain text, tokens only)" },
+        { value: Format.JSON, text: "JSON (GaLAHaD internal format)" },
     ]
 
     // Methods
