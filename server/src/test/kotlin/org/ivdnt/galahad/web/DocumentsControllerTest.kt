@@ -44,11 +44,9 @@ class DocumentsControllerTest(
     @Test
     fun `Upload files of all formats`() {
         val corpus = TestUtil.createEmptyCorpus(config)
-        // list files in directory
         val dir: File = TestUtil.get("formats/shared/converter")
         val files = dir.listFiles()
         files.forEach { mvc.uploadFile(it, corpus) }
-        // check if all files are uploaded
         assertEquals(files.size, getDocs(corpus).size)
     }
 
@@ -107,7 +105,7 @@ class DocumentsControllerTest(
     fun `Upload invalid xml file`() {
         val corpus = TestUtil.createEmptyCorpus(config)
         val file = TestUtil.get("formats/invalid/invalid.xml")
-        val res = mvc.uploadFile(file, corpus, MediaType.APPLICATION_XML_VALUE)
+        val res = mvc.uploadFile(file, corpus)
         assertEquals(res.resolvedException!!::class, DocumentInvalidException::class)
     }
 

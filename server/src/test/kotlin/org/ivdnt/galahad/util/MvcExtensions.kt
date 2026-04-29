@@ -1,13 +1,11 @@
 package org.ivdnt.galahad.util
 
 import org.ivdnt.galahad.corpora.Corpus
+import org.ivdnt.galahad.util.TestUtil.assignHeaders
 import org.springframework.http.MediaType
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.web.servlet.*
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import java.io.File
-
-class MvcExtensions
 
 fun MockMvc.patchJson(uri: String, body: Any, dsl: MockHttpServletRequestDsl.() -> Unit = {}): ResultActionsDsl =
     patch(uri) {
@@ -31,8 +29,9 @@ fun MockMvc.uploadFile(file: File, corpus: Corpus, mediaType: String = MediaType
         "file", file.name, mediaType, file.readBytes()
     )
     // Perform request
-    val uuid = corpus.immutableMetadata.uuid
-    return this.perform(
-        MockMvcRequestBuilders.multipart("/corpora/$uuid/documents").file(mockFile).headers(TestUtil::assignHeaders)
-    ).andReturn()
+    val uuid = corpus.uuid
+    return multipart("/corpora/$uuid/documents") {
+        file(mockFile)
+        headers(::assignHeaders)
+    }.andReturn()
 }
