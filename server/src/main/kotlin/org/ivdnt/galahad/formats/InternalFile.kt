@@ -3,9 +3,11 @@ package org.ivdnt.galahad.formats
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.LayerReader
 import org.ivdnt.galahad.documents.DocumentFormat
+import org.ivdnt.galahad.exceptions.InvalidDocumentFormatException
 import org.ivdnt.galahad.formats.conllu.ConlluFile
 import org.ivdnt.galahad.formats.docx.DocxFile
 import org.ivdnt.galahad.formats.folia.FoliaFile
+import org.ivdnt.galahad.formats.json.JsonFile
 import org.ivdnt.galahad.formats.naf.NafFile
 import org.ivdnt.galahad.formats.pdf.PdfFile
 import org.ivdnt.galahad.formats.tei.TeiFile
@@ -30,6 +32,7 @@ abstract class InternalFile protected constructor() {
                 DocumentFormat.Conllu -> ConlluFile(file)
                 DocumentFormat.Docx -> DocxFile(file)
                 DocumentFormat.Pdf -> PdfFile(file)
+                DocumentFormat.Json -> JsonFile(file)
                 // Multiple TEI formats
                 DocumentFormat.TeiP4Legacy,
                 DocumentFormat.TeiP5,

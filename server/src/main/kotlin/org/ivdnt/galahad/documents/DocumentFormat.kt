@@ -18,7 +18,8 @@ enum class DocumentFormat(val identifier: String, val extension: String) {
     Folia("folia", "folia.xml"),
     Txt("txt", "txt"),
     Docx("docx", "docx"),
-    Pdf("pdf", "pdf");
+    Pdf("pdf", "pdf"),
+    Json("json", "json");
 
     // Force print identifier only.
     @JsonValue
@@ -45,6 +46,7 @@ enum class DocumentFormat(val identifier: String, val extension: String) {
             "txt" -> Txt
             "naf" -> Naf
             "pdf" -> Pdf
+            "json" -> Json
             else -> throw DocumentInvalidException(file.name, "Could not determine document format.")
         }
 
