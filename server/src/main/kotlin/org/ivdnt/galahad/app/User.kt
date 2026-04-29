@@ -3,11 +3,14 @@ package org.ivdnt.galahad.app
 import jakarta.servlet.http.HttpServletRequest
 import java.io.File
 
+
+
 class User(
     val id: String,
     val isAdmin: Boolean = false,
 ) {
     companion object {
+        const val USER_HEADER = "remote_user"
         private const val USERNAME: String = "user"
         private val ADMIN_FILE: File = File("data/admins/admins.txt")
         val DEFAULT_USER: User get() = User(id = USERNAME, isAdmin = isAdmin(USERNAME))
@@ -20,7 +23,7 @@ class User(
         fun fromRequest(request: HttpServletRequest?): User {
             return try {
                 // This is the header used by the portal. We cannot spoof it
-                val remoteUser = request!!.getHeader("remote_user")
+                val remoteUser = request!!.getHeader(USER_HEADER)
                 User(id = remoteUser, isAdmin = isAdmin(remoteUser))
             } catch (_: Exception) {
                 // happens when the application is run in prod mode, but without the portal
