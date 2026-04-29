@@ -1,8 +1,8 @@
 package org.ivdnt.galahad.web
 
 import org.ivdnt.galahad.app.Galahad
-import org.ivdnt.galahad.exceptions.TagsetNotFoundException
-import org.ivdnt.galahad.taggers.Tagset
+import org.ivdnt.galahad.exceptions.TaggerNotFoundException
+import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.util.TestConfig
 import org.ivdnt.galahad.util.andDeserialize
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -18,21 +18,22 @@ import org.springframework.test.web.servlet.get
 @SpringBootTest(properties = ["spring.main.allow-bean-definition-overriding=true"])
 @AutoConfigureMockMvc
 @ContextConfiguration(classes = [Galahad::class, TestConfig::class])
-class TagsetsControllerTest(
+class TaggersControllerTest(
     @Autowired val mvc: MockMvc,
 ) {
     @Test
-    fun `Get tagsets`() {
-        val tagsets: List<Tagset> = mvc.get("/tagsets").andReturn().andDeserialize()
-        assertEquals(1, tagsets.count { it.name == TestConfig.TAGSET_NAME })
-        assert(tagsets.sumOf { it.punctuation.size } > 0)
+    fun getTaggers() {
+        val taggers: List<Tagger> = mvc.get("/taggers").andReturn().andDeserialize()
+        assertEquals(1, taggers.count { it.id == TestConfig.TAGGER_NAME })
+        assert(taggers.sumOf { it.attributions.size } > 0)
+        assert(taggers.sumOf { it.annotations.sumOf { it.principles?.size ?: 0 } } > 0)
     }
 
     @Test
-    fun `Get invalid tagset`() {
-        mvc.get("/tagsets/invalid").andExpect {
+    fun `Get health of invalid tagger`() {
+        mvc.get("/taggers/invalid/health").andExpect {
             status { isNotFound() }
-            match { it.resolvedException is TagsetNotFoundException }
+            match { it.resolvedException is TaggerNotFoundException }
         }
     }
 }

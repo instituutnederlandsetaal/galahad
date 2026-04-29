@@ -1,19 +1,13 @@
 package org.ivdnt.galahad.web
 
-import org.ivdnt.galahad.util.TestConfig
-import org.ivdnt.galahad.util.UserHeader
-import org.ivdnt.galahad.util.uploadFile
+import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.Galahad
 import org.ivdnt.galahad.corpora.Corpus
-import org.ivdnt.galahad.annotations.Layer
-import org.ivdnt.galahad.util.LayerBuilder
-import org.ivdnt.galahad.util.SpringUtil
-import org.ivdnt.galahad.util.TestResult
-import org.ivdnt.galahad.util.TestUtil
+import org.ivdnt.galahad.util.*
+import org.ivdnt.galahad.util.TestUtil.assignHeaders
 import org.ivdnt.galahad.web.controller.ExportController
 import org.junit.jupiter.api.Test
-
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
 import org.springframework.test.context.ContextConfiguration
@@ -38,7 +32,7 @@ class ExportControllerTest(
         val bytes = mvc.perform(
             MockMvcRequestBuilders.get("/corpora/$uuid/jobs/${TestConfig.TAGGER_NAME}/export/convert")
                 .param("format", "folia").headers(
-                    UserHeader.get()
+                    ::assignHeaders
                 )
         ).andReturn().response.contentAsByteArray
         val files = unzip(bytes)
@@ -72,7 +66,7 @@ class ExportControllerTest(
 
     // Create and populate a corpus with a TEI and Folia document.
     private fun createAndPopulateCorpus(): Corpus {
-        val corpus = SpringUtil.createCorpus(config)
+        val corpus = TestUtil.createEmptyCorpus(config)
         mvc.uploadFile(TestUtil.get("all-formats/input/input.tei.xml"), corpus)
         // hardcode layer
         val layer: Layer = LayerBuilder().loadLayerFromTSV(
@@ -80,7 +74,7 @@ class ExportControllerTest(
             TestUtil.get("all-formats/input/input.txt").readText()
         ).build()
         val job = corpus.jobs.createOrThrow(TestConfig.TAGGER_NAME)
-        job.setLayer("input.tei.xml",layer)
+        job.setLayer("input.tei.xml", layer)
         //mvc.uploadFile(TestUtil.get("all-formats/input/input.folia.xml"), corpus)
         return corpus
     }

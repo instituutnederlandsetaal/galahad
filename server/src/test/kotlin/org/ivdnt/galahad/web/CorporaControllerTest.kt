@@ -1,27 +1,28 @@
 package org.ivdnt.galahad.web
 
-import org.ivdnt.galahad.util.JSON
-import org.ivdnt.galahad.util.TestConfig
-import org.ivdnt.galahad.util.UserHeader
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.Galahad
 import org.ivdnt.galahad.corpora.CorpusMetadata
-import org.ivdnt.galahad.corpora.MutableCorpusMetadata
+import org.ivdnt.galahad.exceptions.CorpusNameInvalidException
+import org.ivdnt.galahad.exceptions.CorpusNotFoundException
+import org.ivdnt.galahad.exceptions.CorpusUnauthorizedException
+import org.ivdnt.galahad.util.*
+import org.ivdnt.galahad.util.TestUtil.assignHeaders
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
-import org.springframework.http.HttpStatus
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.MvcResult
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import java.nio.charset.StandardCharsets
+import org.springframework.test.web.servlet.delete
+import org.springframework.test.web.servlet.get
 import java.util.*
 
-@WebMvcTest(properties = ["spring.main.allow-bean-definition-overriding=true"])
+/** Web controller tests for serialization, status, exception resolving and permissions if applicable. */
+@SpringBootTest(properties = ["spring.main.allow-bean-definition-overriding=true"])
+@AutoConfigureMockMvc
 @ContextConfiguration(classes = [Galahad::class, TestConfig::class])
 class CorporaControllerTest(
     @Autowired val mvc: MockMvc,
@@ -29,52 +30,96 @@ class CorporaControllerTest(
 ) {
 
     @Test
-    fun `Post unicode name corpora`() {
+    fun `retrieve non-existing corpus`() {
+        mvc.get("/corpora/${UUID.randomUUID()}").andExpect {
+            status { isNotFound() }
+            match { it.resolvedException is CorpusNotFoundException }
+        }
+    }
+
+    @Test
+    fun `Create corpus with invalid name`() {
+        val body = mapOf("name" to "   ") // blank string
+        mvc.postJson("/corpora", body) {
+            headers(::assignHeaders)
+        }.andExpect {
+            status { isBadRequest() }
+            match { it.resolvedException is CorpusNameInvalidException }
+        }
+    }
+
+    @Test
+    fun `accessing endpoints on non-owned corpus should throw`() {
+        val corpus = TestUtil.createEmptyCorpus(config)
+        mvc.get("/corpora/${corpus.uuid}/documents") {
+            headers { assignHeaders(this, "stranger") }
+        }.andExpect {
+            status { isForbidden() }
+            match { it.resolvedException is CorpusUnauthorizedException }
+        }
+    }
+
+    @Test
+    fun `Create dataset corpus`() {
+        val body = mapOf("name" to "test", "dataset" to true)
+        // try as nonadmin
+        mvc.postJson("/corpora", body) {
+            headers { assignHeaders(this, "nonadmin") }
+        }.andExpect {
+            status { isForbidden() }
+            match { it.resolvedException is CorpusUnauthorizedException }
+        }
+        // try as admin
+        postCorpus(body, "admin")
+    }
+
+    @Test
+    fun `Post and delete unicode corpus`() {
         val name = "日本語"
-        val meta = MutableCorpusMetadata("", name, 0, 0, "", null, false, mutableSetOf(), mutableSetOf(), null, null)
-
-        val uuid = postCorpus(meta)
-
-        val metaResponse = getCorpus(uuid)
-        assertEquals(name, metaResponse.name)
-
+        val body = mapOf("name" to name)
+        val uuid = postCorpus(body)
+        val corpus = getCorpus(uuid)
+        assertEquals(name, corpus.name)
+        assertEquals(TestConfig.TEST_USER, corpus.owner)
         assertEquals(1, getAllCorpora().size)
-        // Delete it
         deleteCorpus(uuid)
         assertEquals(0, getAllCorpora().size)
     }
 
     @Test
-    fun `Test owner, collaborators and viewers`() {
+    fun `Test owner, collaborators and viewers`() { // TODO: should split in separate tests
         val owner = "testUser"
         val collabs = mutableSetOf("collab1", owner)
         val viewers = mutableSetOf("viewer1", "collab1", owner)
 
         // Create
-        val meta = MutableCorpusMetadata(
-            owner = "", // Set by request header
-            "test", 0, 0, "", null, false, collabs, viewers, null, null
+        val meta = mutableMapOf(
+            "name" to "test",
+            "collaborators" to collabs,
+            "viewers" to viewers,
         )
         val uuid = postCorpus(meta)
 
         // Check if created correctly, i.e. no permission overlap.
         // first try to get it as a stranger
-        assertThrows(Exception::class.java) { getCorpus(uuid, "stranger") }
+        assertGetCorpusThrows(uuid, "stranger")
         // then as a viewer
-        val metaResponse = getCorpus(uuid)
+        val metaResponse = getCorpus(uuid, "viewer1")
+        // verify that collaborators does not contain user
         assertEquals(setOf("collab1"), metaResponse.collaborators)
+        // and viewers does not contain collab1 or owner
         assertEquals(setOf("viewer1"), metaResponse.viewers)
         assertEquals(owner, metaResponse.owner)
         assertEquals(1, getAllCorpora().size)
 
         // Update with new collaborators
         val moreSharers = meta.also {
-            it.collaborators = mutableSetOf("collab1", "collab2")
-            it.viewers = mutableSetOf("viewer1", "viewer2")
+            meta["collaborators"] = mutableSetOf("collab1", "collab2")
+            meta["viewers"] = mutableSetOf("viewer1", "viewer2")
         }
 
         // Try to update as viewer
-        assertThrows(Exception::class.java) { updateCorpus(uuid, moreSharers, "viewer1") }
+        assertUpdateCorpusThrows(uuid, moreSharers, "viewer1")
         // Try to update as collaborator
         val moreSharersResponse = updateCorpus(uuid, moreSharers)
 
@@ -84,17 +129,17 @@ class CorporaControllerTest(
 
         // Let viewer2 remove themselves
         val viewer2gone = meta.also {
-            it.collaborators = mutableSetOf("collab1", "collab2")
-            it.viewers = mutableSetOf("viewer1")
+            meta["collaborators"] = mutableSetOf("collab1", "collab2")
+            meta["viewers"] = mutableSetOf("viewer1")
         }
         assertDoesNotThrow { updateCorpus(uuid, viewer2gone, "viewer2") }
 
         // Try to delete it as viewer1
-        assertThrows(Exception::class.java) { deleteCorpus(uuid, "viewer1") }
+        assertDeleteCorpusThrows(uuid, "viewer1")
         assertEquals(1, getAllCorpora().size) // Should still be there
 
         // Delete it as collab1
-        assertThrows(Exception::class.java) { deleteCorpus(uuid, "collab1") }
+        assertDeleteCorpusThrows(uuid, "collab1")
         assertEquals(1, getAllCorpora().size) // Should still be there
 
         // Delete it as the owner
@@ -102,45 +147,60 @@ class CorporaControllerTest(
         assertEquals(0, getAllCorpora().size) // Gone
     }
 
-    private fun deleteCorpus(uuid: UUID?, username: String = "testUser") {
-        val result: MvcResult = mvc.perform(
-            MockMvcRequestBuilders.delete("/corpora/$uuid").headers(UserHeader.get(username))
-        ).andReturn()
-        if(result.response.status != HttpStatus.NO_CONTENT.value()) throw Exception()
+    private fun deleteCorpus(uuid: UUID?, user: String = "testUser") {
+        mvc.delete("/corpora/$uuid") {
+            headers { assignHeaders(this, user) }
+        }.andExpect {
+            status { isNoContent() }
+        }
     }
 
-    private fun postCorpus(meta: MutableCorpusMetadata): UUID? {
-        val result: MvcResult = mvc.perform(
-            MockMvcRequestBuilders.post("/corpora").headers(UserHeader.get())
-                // utf-8
-                .characterEncoding("utf-8").contentType("application/json").content(JSON.toStr(meta))
-        ).andReturn()
-        return UUID.fromString(JSON.fromStr<String>(result.response.getContentAsString(StandardCharsets.UTF_8)))
+    private fun assertDeleteCorpusThrows(uuid: UUID?, user: String = "testUser") {
+        mvc.delete("/corpora/$uuid") {
+            headers { assignHeaders(this, user) }
+        }.andExpect {
+            status { isForbidden() }
+            match { it.resolvedException is CorpusUnauthorizedException }
+        }
     }
 
-    private fun updateCorpus(uuid: UUID?, meta: MutableCorpusMetadata, username: String = "testUser"): CorpusMetadata? {
-        val result: MvcResult = mvc.perform(
-            MockMvcRequestBuilders.patch("/corpora/$uuid").headers(UserHeader.get(username))
-                // utf-8
-                .characterEncoding("utf-8").contentType("application/json").content(JSON.toStr(meta))
-        ).andReturn()
-        // Patch doesn't always return a value.
-        if(result.response.status != HttpStatus.OK.value()) throw Exception()
-        return JSON.fromStr<CorpusMetadata>(result.response.getContentAsString(StandardCharsets.UTF_8))
+    private fun postCorpus(body: Any, user: String = TestConfig.TEST_USER): UUID? = mvc.postJson("/corpora", body) {
+        headers { assignHeaders(this, user) }
+    }.andExpect {
+        status { isCreated() }
+    }.andReturn().andDeserialize()
+
+    private fun updateCorpus(uuid: UUID?, body: Any, user: String = TestConfig.TEST_USER): CorpusMetadata? =
+        mvc.patchJson("/corpora/$uuid", body) {
+            headers { assignHeaders(this, user) }
+        }.andExpect {
+            status { isOk() }
+        }.andReturn().andDeserialize()
+
+    private fun assertUpdateCorpusThrows(uuid: UUID?, body: Any, user: String = "testUser") {
+        mvc.patchJson("/corpora/$uuid", body) {
+            headers { assignHeaders(this, user) }
+        }.andExpect {
+            status { isForbidden() }
+            match { it.resolvedException is CorpusUnauthorizedException }
+        }
     }
 
+    private fun getCorpus(uuid: UUID?, user: String = "testUser"): CorpusMetadata = mvc.get("/corpora/$uuid") {
+        headers { assignHeaders(this, user) }
+    }.andExpect {
+        status { isOk() }
+    }.andReturn().andDeserialize()
 
-    private fun getCorpus(uuid: UUID?, username: String = "testUser"): CorpusMetadata {
-        val corpusResponse = mvc.perform(
-            MockMvcRequestBuilders.get("/corpora/$uuid").headers(UserHeader.get(username))
-        ).andReturn().response.getContentAsString(StandardCharsets.UTF_8)
-        return JSON.fromStr<CorpusMetadata>(corpusResponse)
+    private fun assertGetCorpusThrows(uuid: UUID?, user: String = "testUser") {
+        mvc.get("/corpora/$uuid") {
+            headers { assignHeaders(this, user) }
+        }.andExpect {
+            status { isForbidden() }
+            match { it.resolvedException is CorpusUnauthorizedException }
+        }
     }
 
-    private fun getAllCorpora(): List<CorpusMetadata> {
-        val result: MvcResult = mvc.perform(
-            MockMvcRequestBuilders.get("/corpora").headers(UserHeader.get())
-        ).andReturn()
-        return JSON.fromStr<List<CorpusMetadata>>(result.response.getContentAsString(StandardCharsets.UTF_8))
-    }
+    private fun getAllCorpora(): List<CorpusMetadata> =
+        mvc.get("/corpora") { headers(::assignHeaders) }.andExpect { status { isOk() } }.andReturn().andDeserialize()
 }

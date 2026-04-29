@@ -6,7 +6,6 @@ import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.Galahad
 import org.ivdnt.galahad.jobs.JobMetadata
 import org.ivdnt.galahad.jobs.Progress
-import org.ivdnt.galahad.util.SpringUtil
 import org.ivdnt.galahad.util.TestConfig
 import org.ivdnt.galahad.util.TestUtil
 import org.ivdnt.galahad.web.controller.JobsController
@@ -15,15 +14,15 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.resttestclient.TestRestTemplate
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
-import java.util.UUID
+import java.util.*
 
 @ContextConfiguration(classes = [Galahad::class, TestConfig::class])
 @SpringBootTest(
@@ -40,7 +39,7 @@ class JobsControllerTest(
     @Disabled
     @Test
     fun postJob() {
-        val corpus = SpringUtil.createCorpus(config)
+        val corpus = TestUtil.createEmptyCorpus(config)
         val doc = corpus.documents.createOrThrow(TestUtil.get("all-formats/input/input.tei.xml"))
         val uuid = corpus.immutableMetadata.uuid
 
@@ -53,12 +52,12 @@ class JobsControllerTest(
         Thread.sleep(3000)
 
         // poll progress
-        progress = pollProgress(uuid, TestConfig.Companion.TAGGER_NAME)
+        progress = pollProgress(uuid, TestConfig.TAGGER_NAME)
         Assertions.assertFalse(progress.busy)
         Assertions.assertEquals(1, progress.finished)
 
         // check result
-        val resultPreview = getDocumentJobResult(uuid, TestConfig.Companion.TAGGER_NAME, doc.name)
+        val resultPreview = getDocumentJobResult(uuid, TestConfig.TAGGER_NAME, doc.name)
         Assertions.assertTrue(resultPreview.summary.annotations[Annotation.TOKEN]!! > 0)
         Assertions.assertTrue(resultPreview.preview.terms.isNotEmpty())
     }
@@ -70,7 +69,8 @@ class JobsControllerTest(
     }
 
     private fun getJobs(uuid: UUID): Set<JobMetadata> {
-        return rest.exchange("/corpora/$uuid/jobs?includePotentialJobs=true",
+        return rest.exchange(
+            "/corpora/$uuid/jobs?includePotentialJobs=true",
             HttpMethod.GET,
             getHeaders(),
             object : ParameterizedTypeReference<Set<JobMetadata>>() {}).body!!

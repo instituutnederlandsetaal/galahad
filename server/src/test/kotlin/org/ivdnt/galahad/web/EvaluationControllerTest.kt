@@ -6,7 +6,6 @@ import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.evaluation.EvaluationUtil
 import org.ivdnt.galahad.util.TestConfig
 import org.ivdnt.galahad.util.TestUtil
-import org.ivdnt.galahad.util.UserHeader
 import org.ivdnt.galahad.util.addUrlParams
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -33,11 +32,11 @@ class EvaluationControllerTest(
 
         // url
         val uuid = corpus.immutableMetadata.uuid
-        val url = "/corpora/$uuid/jobs/${TestConfig.Companion.TAGGER_NAME}/evaluation/download?reference=sourceLayer"
+        val url = "/corpora/$uuid/jobs/${TestConfig.TAGGER_NAME}/evaluation/download?reference=sourceLayer"
         // /GET
         val bytes = mvc.perform(
             MockMvcRequestBuilders.get(url)
-                .headers(UserHeader.get())
+                .headers(TestUtil::assignHeaders)
         ).andReturn().response.contentAsByteArray
         assertEvalZip(bytes)
     }
@@ -53,10 +52,11 @@ class EvaluationControllerTest(
             "refFilter" to "ADJ",
             "hypoFilter" to "ADJ",
         )
-        val url = "/corpora/$uuid/jobs/${TestConfig.Companion.TAGGER_NAME}/evaluation/confusion/download".addUrlParams(params)
+        val url =
+            "/corpora/$uuid/jobs/${TestConfig.TAGGER_NAME}/evaluation/confusion/download".addUrlParams(params)
         val bytes = mvc.perform(
             MockMvcRequestBuilders.get(url)
-                .headers(UserHeader.get())
+                .headers(TestUtil::assignHeaders)
         ).andReturn().response.contentAsByteArray
         assertSingleFileZip(bytes, "confusion-samples.csv")
     }
@@ -72,10 +72,11 @@ class EvaluationControllerTest(
             "class" to "truePositive",
             "group" to "ADJ",
         )
-        val url = "/corpora/$uuid/jobs/${TestConfig.Companion.TAGGER_NAME}/evaluation/metrics/download".addUrlParams(params)
+        val url =
+            "/corpora/$uuid/jobs/${TestConfig.TAGGER_NAME}/evaluation/metrics/download".addUrlParams(params)
         val bytes = mvc.perform(
             MockMvcRequestBuilders.get(url)
-                .headers(UserHeader.get())
+                .headers(TestUtil::assignHeaders)
         ).andReturn().response.contentAsByteArray
         assertSingleFileZip(bytes, "metrics-samples.csv")
     }
@@ -94,7 +95,7 @@ class EvaluationControllerTest(
         val zipInputStream = ZipInputStream(byteArray.inputStream())
         var zipEntry = zipInputStream.nextEntry
         var evals = 0
-        while(zipEntry != null) {
+        while (zipEntry != null) {
             println("unzipped: " + (zipEntry.name ?: ""))
             val fileContent = String(zipInputStream.readAllBytes(), StandardCharsets.UTF_16LE)
             if (zipEntry.name.split(".")[1] == "csv") {
@@ -118,7 +119,7 @@ class EvaluationControllerTest(
         val zipInputStream = ZipInputStream(byteArray.inputStream())
         var zipEntry = zipInputStream.nextEntry
         var evals = 0
-        while(zipEntry != null) {
+        while (zipEntry != null) {
             println("unzipped: " + (zipEntry.name ?: ""))
             val fileContent = String(zipInputStream.readAllBytes(), StandardCharsets.UTF_16LE)
             if (zipEntry.name.split(".")[1] == "csv") {
