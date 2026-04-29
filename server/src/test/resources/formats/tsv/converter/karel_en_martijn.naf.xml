@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <NAF version="v3.3" xml:lang="nld">
     <nafHeader>
-        <fileDesc author="user" creationtime="1745591638145" filename="karel_en_martijn.conllu" filetype="conllu" title="karel_en_martijn"/>
+        <fileDesc author="user"    title="karel_en_martijn"/>
         <public publicId="e51560ff-81a2-4ddd-ba04-c7eb07af6d2b"/>
         <linguisticProcessors layer="terms">
-            <lp hostname="https://galahad.ivdnt.org" name="sourceLayer" timestamp="1745591638145"/>
+            <lp hostname="https://galahad.ivdnt.org" name="sourceLayer" />
         </linguisticProcessors>
         <linguisticProcessors layer="entities">
-            <lp hostname="https://galahad.ivdnt.org" name="sourceLayer" timestamp="1745591638145"/>
+            <lp hostname="https://galahad.ivdnt.org" name="sourceLayer" />
         </linguisticProcessors>
         <linguisticProcessors layer="deps">
-            <lp hostname="https://galahad.ivdnt.org" name="sourceLayer" timestamp="1745591638145"/>
+            <lp hostname="https://galahad.ivdnt.org" name="sourceLayer" />
         </linguisticProcessors>
     </nafHeader>
     <raw><![CDATA[Fraaie historie ende alwaer .
@@ -27,57 +27,57 @@ Dune achtes meer no min
 ]]></raw>
     <text>
         <wf id="d1.p1.s1.w1" length="6" offset="0" para="1" sent="1">Fraaie</wf>
-        <wf id="d1.p1.s1.w2" length="8" offset="6" para="1" sent="1">historie</wf>
-        <wf id="d1.p1.s1.w3" length="4" offset="14" para="1" sent="1">ende</wf>
-        <wf id="d1.p1.s1.w4" length="6" offset="18" para="1" sent="1">alwaer</wf>
-        <wf id="d1.p1.s1.w5" length="1" offset="24" para="1" sent="1">.</wf>
-        <wf id="d1.p1.s2.w1" length="4" offset="25" para="1" sent="2">Magh</wf>
-        <wf id="d1.p1.s2.w2" length="2" offset="29" para="1" sent="2">'k</wf>
-        <wf id="d1.p1.s2.w3" length="1" offset="31" para="1" sent="2">u</wf>
-        <wf id="d1.p1.s2.w4" length="9" offset="32" para="1" sent="2">vertellen</wf>
-        <wf id="d1.p1.s2.w5" length="1" offset="41" para="1" sent="2">,</wf>
-        <wf id="d1.p1.s2.w6" length="5" offset="42" para="1" sent="2">hoirt</wf>
-        <wf id="d1.p1.s2.w7" length="4" offset="47" para="1" sent="2">naer</wf>
-        <wf id="d1.p1.s2.w8" length="1" offset="51" para="1" sent="2">.</wf>
-        <wf id="d1.p2.s1.w1" length="2" offset="52" para="2" sent="3">'t</wf>
-        <wf id="d1.p2.s1.w2" length="3" offset="54" para="2" sent="3">Was</wf>
-        <wf id="d1.p2.s1.w3" length="2" offset="57" para="2" sent="3">op</wf>
-        <wf id="d1.p2.s1.w4" length="4" offset="59" para="2" sent="3">enen</wf>
-        <wf id="d1.p2.s1.w5" length="11" offset="63" para="2" sent="3">avondstonde</wf>
-        <wf id="d1.p2.s1.w6" length="1" offset="74" para="2" sent="3">.</wf>
-        <wf id="d1.p2.s2.w1" length="3" offset="75" para="2" sent="4">Dat</wf>
-        <wf id="d1.p2.s2.w2" length="6" offset="78" para="2" sent="4">koning</wf>
-        <wf id="d1.p2.s2.w3" length="5" offset="84" para="2" sent="4">Carel</wf>
-        <wf id="d1.p2.s2.w4" length="7" offset="89" para="2" sent="4">slaepen</wf>
-        <wf id="d1.p2.s2.w5" length="8" offset="96" para="2" sent="4">beghonde</wf>
-        <wf id="d1.p2.s2.w6" length="1" offset="104" para="2" sent="4">.</wf>
-        <wf id="d1.p3.s1.w1" length="1" offset="105" para="3" sent="5">"</wf>
-        <wf id="d1.p3.s1.w2" length="7" offset="106" para="3" sent="5">Martijn</wf>
-        <wf id="d1.p3.s1.w3" length="1" offset="113" para="3" sent="5">,</wf>
-        <wf id="d1.p3.s1.w4" length="8" offset="114" para="3" sent="5">slaepstu</wf>
-        <wf id="d1.p3.s1.w5" length="1" offset="122" para="3" sent="5">?</wf>
-        <wf id="d1.p3.s1.w6" length="6" offset="123" para="3" sent="5">slaept</wf>
-        <wf id="d1.p3.s1.w7" length="4" offset="129" para="3" sent="5">dijn</wf>
-        <wf id="d1.p3.s1.w8" length="3" offset="133" para="3" sent="5">sin</wf>
-        <wf id="d1.p3.s1.w9" length="1" offset="136" para="3" sent="5">?</wf>
-        <wf id="d1.p3.s1.w10" length="1" offset="137" para="3" sent="5">"</wf>
-        <wf id="d1.p3.s2.w1" length="5" offset="138" para="3" sent="6">Sprec</wf>
-        <wf id="d1.p3.s2.w2" length="1" offset="143" para="3" sent="6">!</wf>
-        <wf id="d1.p3.s2.w3" length="6" offset="144" para="3" sent="6">hebstu</wf>
-        <wf id="d1.p3.s2.w4" length="5" offset="150" para="3" sent="6">gheen</wf>
-        <wf id="d1.p3.s2.w5" length="7" offset="155" para="3" sent="6">spreken</wf>
-        <wf id="d1.p3.s2.w6" length="2" offset="162" para="3" sent="6">in</wf>
-        <wf id="d1.p3.s2.w7" length="1" offset="164" para="3" sent="6">?</wf>
-        <wf id="d1.p4.s1.w1" length="2" offset="165" para="4" sent="7">Du</wf>
-        <wf id="d1.p4.s1.w2" length="6" offset="167" para="4" sent="7">dinkes</wf>
-        <wf id="d1.p4.s1.w3" length="2" offset="173" para="4" sent="7">mi</wf>
-        <wf id="d1.p4.s1.w4" length="8" offset="175" para="4" sent="7">verdoren</wf>
-        <wf id="d1.p4.s1.w5" length="1" offset="183" para="4" sent="7">.</wf>
-        <wf id="d1.p4.s2.w1" length="4" offset="184" para="4" sent="8">Dune</wf>
-        <wf id="d1.p4.s2.w2" length="6" offset="188" para="4" sent="8">achtes</wf>
-        <wf id="d1.p4.s2.w3" length="4" offset="194" para="4" sent="8">meer</wf>
-        <wf id="d1.p4.s2.w4" length="2" offset="198" para="4" sent="8">no</wf>
-        <wf id="d1.p4.s2.w5" length="3" offset="200" para="4" sent="8">min</wf>
+        <wf id="d1.p1.s1.w2" length="8" offset="7" para="1" sent="1">historie</wf>
+        <wf id="d1.p1.s1.w3" length="4" offset="16" para="1" sent="1">ende</wf>
+        <wf id="d1.p1.s1.w4" length="6" offset="21" para="1" sent="1">alwaer</wf>
+        <wf id="d1.p1.s1.w5" length="1" offset="28" para="1" sent="1">.</wf>
+        <wf id="d1.p1.s2.w1" length="4" offset="30" para="1" sent="2">Magh</wf>
+        <wf id="d1.p1.s2.w2" length="2" offset="35" para="1" sent="2">'k</wf>
+        <wf id="d1.p1.s2.w3" length="1" offset="38" para="1" sent="2">u</wf>
+        <wf id="d1.p1.s2.w4" length="9" offset="40" para="1" sent="2">vertellen</wf>
+        <wf id="d1.p1.s2.w5" length="1" offset="50" para="1" sent="2">,</wf>
+        <wf id="d1.p1.s2.w6" length="5" offset="52" para="1" sent="2">hoirt</wf>
+        <wf id="d1.p1.s2.w7" length="4" offset="58" para="1" sent="2">naer</wf>
+        <wf id="d1.p1.s2.w8" length="1" offset="63" para="1" sent="2">.</wf>
+        <wf id="d1.p2.s1.w1" length="2" offset="65" para="2" sent="3">'t</wf>
+        <wf id="d1.p2.s1.w2" length="3" offset="68" para="2" sent="3">Was</wf>
+        <wf id="d1.p2.s1.w3" length="2" offset="72" para="2" sent="3">op</wf>
+        <wf id="d1.p2.s1.w4" length="4" offset="75" para="2" sent="3">enen</wf>
+        <wf id="d1.p2.s1.w5" length="11" offset="80" para="2" sent="3">avondstonde</wf>
+        <wf id="d1.p2.s1.w6" length="1" offset="92" para="2" sent="3">.</wf>
+        <wf id="d1.p2.s2.w1" length="3" offset="94" para="2" sent="4">Dat</wf>
+        <wf id="d1.p2.s2.w2" length="6" offset="98" para="2" sent="4">koning</wf>
+        <wf id="d1.p2.s2.w3" length="5" offset="105" para="2" sent="4">Carel</wf>
+        <wf id="d1.p2.s2.w4" length="7" offset="111" para="2" sent="4">slaepen</wf>
+        <wf id="d1.p2.s2.w5" length="8" offset="119" para="2" sent="4">beghonde</wf>
+        <wf id="d1.p2.s2.w6" length="1" offset="128" para="2" sent="4">.</wf>
+        <wf id="d1.p3.s1.w1" length="1" offset="130" para="3" sent="5">"</wf>
+        <wf id="d1.p3.s1.w2" length="7" offset="132" para="3" sent="5">Martijn</wf>
+        <wf id="d1.p3.s1.w3" length="1" offset="140" para="3" sent="5">,</wf>
+        <wf id="d1.p3.s1.w4" length="8" offset="142" para="3" sent="5">slaepstu</wf>
+        <wf id="d1.p3.s1.w5" length="1" offset="151" para="3" sent="5">?</wf>
+        <wf id="d1.p3.s1.w6" length="6" offset="153" para="3" sent="5">slaept</wf>
+        <wf id="d1.p3.s1.w7" length="4" offset="160" para="3" sent="5">dijn</wf>
+        <wf id="d1.p3.s1.w8" length="3" offset="165" para="3" sent="5">sin</wf>
+        <wf id="d1.p3.s1.w9" length="1" offset="169" para="3" sent="5">?</wf>
+        <wf id="d1.p3.s1.w10" length="1" offset="171" para="3" sent="5">"</wf>
+        <wf id="d1.p3.s2.w1" length="5" offset="173" para="3" sent="6">Sprec</wf>
+        <wf id="d1.p3.s2.w2" length="1" offset="179" para="3" sent="6">!</wf>
+        <wf id="d1.p3.s2.w3" length="6" offset="181" para="3" sent="6">hebstu</wf>
+        <wf id="d1.p3.s2.w4" length="5" offset="188" para="3" sent="6">gheen</wf>
+        <wf id="d1.p3.s2.w5" length="7" offset="194" para="3" sent="6">spreken</wf>
+        <wf id="d1.p3.s2.w6" length="2" offset="202" para="3" sent="6">in</wf>
+        <wf id="d1.p3.s2.w7" length="1" offset="205" para="3" sent="6">?</wf>
+        <wf id="d1.p4.s1.w1" length="2" offset="207" para="4" sent="7">Du</wf>
+        <wf id="d1.p4.s1.w2" length="6" offset="210" para="4" sent="7">dinkes</wf>
+        <wf id="d1.p4.s1.w3" length="2" offset="217" para="4" sent="7">mi</wf>
+        <wf id="d1.p4.s1.w4" length="8" offset="220" para="4" sent="7">verdoren</wf>
+        <wf id="d1.p4.s1.w5" length="1" offset="229" para="4" sent="7">.</wf>
+        <wf id="d1.p4.s2.w1" length="4" offset="231" para="4" sent="8">Dune</wf>
+        <wf id="d1.p4.s2.w2" length="6" offset="236" para="4" sent="8">achtes</wf>
+        <wf id="d1.p4.s2.w3" length="4" offset="243" para="4" sent="8">meer</wf>
+        <wf id="d1.p4.s2.w4" length="2" offset="248" para="4" sent="8">no</wf>
+        <wf id="d1.p4.s2.w5" length="3" offset="251" para="4" sent="8">min</wf>
     </text>
     <terms>
         <term id="t1" lemma="fraai" pos="AA(degree=pos,position=prenom)">
