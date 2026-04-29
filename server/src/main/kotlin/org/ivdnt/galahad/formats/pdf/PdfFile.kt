@@ -1,5 +1,6 @@
 package org.ivdnt.galahad.formats.pdf
 
+import org.ivdnt.galahad.annotations.LayerReader
 import org.ivdnt.galahad.documents.DocumentFormat
 import org.ivdnt.galahad.formats.InternalFile
 import java.io.BufferedInputStream
@@ -9,5 +10,5 @@ class PdfFile(
     override val file: File
 ) : InternalFile() {
     override val format: DocumentFormat = DocumentFormat.Pdf
-    override val reader: PdfReader by lazy { PdfReader(BufferedInputStream(file.inputStream())) }
+    override val reader: LayerReader by lazy { PdfReader(BufferedInputStream(file.inputStream())) }
 }
