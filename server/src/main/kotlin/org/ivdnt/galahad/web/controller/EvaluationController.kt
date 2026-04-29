@@ -13,9 +13,9 @@ import org.ivdnt.galahad.evaluation.confusion.JobConfusion
 import org.ivdnt.galahad.evaluation.distribution.JobDistribution
 import org.ivdnt.galahad.evaluation.distribution.TypeToken
 import org.ivdnt.galahad.evaluation.entities.CorpusEntities
-import org.ivdnt.galahad.evaluation.metrics.CorpusMetrics
 import org.ivdnt.galahad.evaluation.metrics.DocumentMetric
 import org.ivdnt.galahad.evaluation.metrics.JobMetric
+import org.ivdnt.galahad.evaluation.spans.DocumentSpanEvaluation
 import org.ivdnt.galahad.exceptions.ErrorResponse
 import org.ivdnt.galahad.web.service.EvaluationService
 import org.springframework.web.bind.annotation.*
@@ -209,4 +209,14 @@ class EvaluationController(
         @RequestParam @Parameter(description = "Tagger name or sourceLayer") reference: String,
     ): DocumentMetric =
         evaluationService.getDocumentMetric(corpus, document, hypothesis, reference)
+
+    @CrossOrigin
+    @GetMapping(Endpoints.Evaluation.Document.SPANS)
+    fun getDocumentSpanEvaluation(
+        @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
+        @PathVariable @Parameter(description = "Document name") document: String,
+        @RequestParam @Parameter(description = "Tagger name or sourceLayer") hypothesis: String,
+        @RequestParam @Parameter(description = "Tagger name or sourceLayer") reference: String,
+    ): DocumentSpanEvaluation =
+        evaluationService.getDocumentSpanEvaluation(corpus, document, hypothesis, reference)
 }

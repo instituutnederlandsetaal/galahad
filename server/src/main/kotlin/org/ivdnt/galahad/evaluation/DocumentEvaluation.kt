@@ -8,6 +8,7 @@ import org.ivdnt.galahad.evaluation.confusion.DocumentConfusion
 import org.ivdnt.galahad.evaluation.distribution.DocumentDistribution
 import org.ivdnt.galahad.evaluation.entities.DocumentEntities
 import org.ivdnt.galahad.evaluation.metrics.DocumentMetric
+import org.ivdnt.galahad.evaluation.spans.DocumentSpanEvaluation
 import org.ivdnt.galahad.files.GalahadFolder
 import org.ivdnt.galahad.files.ValidatedDiskValue
 import org.ivdnt.galahad.jobs.Job
@@ -56,10 +57,17 @@ class DocumentEvaluation(
             override fun set(): DocumentMetric = DocumentMetric.create(LayerComparison(hypLayer, refLayer, jobs.filter), availableAnnotations)
         }.readOrCreate<DocumentMetric>()
 
+    val spans: DocumentSpanEvaluation
+        get() = object : ValidatedDiskValue<DocumentSpanEvaluation>(dir.resolve(SPANS_FILE)) {
+            override fun isValid(modified: Long) = modified >= lastModified
+            override fun set(): DocumentSpanEvaluation = DocumentSpanEvaluation.create(LayerComparison(hypLayer, refLayer, jobs.filter), refLayer)
+        }.readOrCreate<DocumentSpanEvaluation>()
+
     companion object {
         private const val ENTITIES_FILE = "entities.json"
         private const val DISTRIBUTION_FILE = "distribution.json"
         private const val CONFUSION_FILE = "confusion.json"
         private const val METRICS_FILE = "metrics.json"
+        private const val SPANS_FILE = "spans.json"
     }
 }

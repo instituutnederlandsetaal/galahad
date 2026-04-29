@@ -16,6 +16,7 @@ import org.ivdnt.galahad.evaluation.entities.DocumentEntities
 import org.ivdnt.galahad.evaluation.entities.JobEntities
 import org.ivdnt.galahad.evaluation.frequency.TokenFrequency
 import org.ivdnt.galahad.evaluation.metrics.*
+import org.ivdnt.galahad.evaluation.spans.DocumentSpanEvaluation
 import org.ivdnt.galahad.exceptions.InvalidMetricsTypeException
 import org.ivdnt.galahad.export.csv.CsvFile
 import org.ivdnt.galahad.taggers.Tagger
@@ -48,25 +49,20 @@ class EvaluationService(val corpora: CorporaService) {
         job: String,
         reference: String,
     ): ByteArray {
-        return ByteArray(0)
-//        // Ensure the job has the required annotation types.
+        // Ensure the job has the required annotation types.
 //        if (annotation !in annotationTypesForTagger(job, corpus)) {
 //            throw AnnotationNotSupported(job, annotation)
 //        }
-//        var layerFilter: ConfusionLayerFilter? = ConfusionLayerFilter(
-//            HeadGroupTermFilter(annotation, hypoFilter),
-//            HeadGroupTermFilter(annotation, refFilter),
-//        )
-//        val cc = JobConfusion(
-//            corpus = corpora.readAsReaderOrThrow(corpus, user),
-//            hypothesis = job,
-//            reference = reference,
-//            layerFilter = layerFilter,
-//            annotation = annotation
-//        )
-//        val fileName = "confusion-${refFilter}-${hypoFilter}.csv"
-//        val csv = cc.samplesToCSV()
-//        return samplesToZip(corpus, job, reference, csv, fileName)
+        val filter = ConfusionLayerFilter(
+            HeadGroupTermFilter(annotation, hypoFilter),
+            HeadGroupTermFilter(annotation, refFilter),
+        )
+        val corpusObj = corpora.readAsReaderOrThrow(corpus, user)
+        val jobEval = corpusObj.evaluation.createOrThrow(JobPair(job, filter = filter))
+        val fileName = "confusion-${refFilter}-${hypoFilter}.csv"
+        val csv = jobEval.confusion.confusion
+        val something = csv.values.first()
+        return samplesToZip(corpus, job, reference, "a,b,c", fileName)
     }
 
     fun getMetrics(
@@ -234,12 +230,11 @@ class EvaluationService(val corpora: CorporaService) {
         file.append(csvBody)
         // Write metadata & create zip
         val metadata = writeMetadataToDir(corpus, job, reference, dir)
-        val zipFile = dir // createZipFile(dir.listFiles()!!.asSequence()) // TODO: Fix this
         // Configure response for zip.
         response!!.contentType = "application/zip"
         response.setContentDisposition(metadata.name + "-evaluation.zip")
         // zip the directory
-        return zipFile.readBytes()
+        return zipDir(dir).readBytes()
     }
 
     fun getTokenFrequency(corpus: UUID, job: String, reference: String?): CorpusMetrics {
@@ -324,5 +319,17 @@ class EvaluationService(val corpora: CorporaService) {
         val corpusObj = corpora.readAsReaderOrThrow(corpus, user)
         val jobEval = corpusObj.evaluation.createOrThrow(JobPair(hypothesis, reference))
         return jobEval.metrics
+    }
+
+    fun getDocumentSpanEvaluation(
+        corpus: UUID,
+        document: String,
+        hypothesis: String,
+        reference: String
+    ): DocumentSpanEvaluation {
+        val corpusObj = corpora.readAsReaderOrThrow(corpus, user)
+        val jobEval = corpusObj.evaluation.createOrThrow(JobPair(hypothesis, reference))
+        val docEval = jobEval.documents.createOrThrow(document)
+        return docEval.spans
     }
 }
