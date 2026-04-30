@@ -27,7 +27,7 @@ class CorpusMetricsTest {
         val metrics = CorpusMetrics(
             corpus,
             listOf(PosByPosMetricsSettings()),
-            TestConfig.TAGGER_NAME
+            TestUtil.TAGGER_NAME
         ) // default reference is SOURCE_LAYER_NAME
         // Check the global metrics
         val global = metrics.metricTypes.values.first()
@@ -61,7 +61,7 @@ class CorpusMetricsTest {
         val termFilter = HeadGroupTermFilter(Annotation.POS, "PD+NOU-C")
         val filter = MetricsLayerFilter(termFilter, termFilter)
         val filteredMetrics =
-            CorpusMetrics(corpus, listOf(PosByPosMetricsSettings()), TestConfig.TAGGER_NAME, layerFilter = filter)
+            CorpusMetrics(corpus, listOf(PosByPosMetricsSettings()), TestUtil.TAGGER_NAME, layerFilter = filter)
         val filteredGlobal = filteredMetrics.metricTypes.values.first()
         assertEquals(1, filteredGlobal.classes.classCount)
     }

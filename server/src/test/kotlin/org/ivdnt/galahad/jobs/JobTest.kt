@@ -22,9 +22,9 @@ class JobTest {
 
     @Test
     fun `Create a job`() {
-        val job: Job = corpus.jobs.createOrThrow(TestConfig.TAGGER_NAME)
+        val job: Job = corpus.jobs.createOrThrow(TestUtil.TAGGER_NAME)
         // verify
-        assertEquals(TestConfig.TAGGER_NAME, job.name)
+        assertEquals(TestUtil.TAGGER_NAME, job.name)
         assertFalse(job.isActive)
         assertEquals(0, job.progress.total)
         // verify from state cache
@@ -38,7 +38,7 @@ class JobTest {
         // add a doc
         val doc = corpus.documents.createOrThrow(File.createTempFile("tmp", ".txt"))
         // create a job
-        val job: Job = corpus.jobs.createOrThrow(TestConfig.TAGGER_NAME)
+        val job: Job = corpus.jobs.createOrThrow(TestUtil.TAGGER_NAME)
         // fake a tagger result
         val layer = LayerBuilder().loadDummies(100).build()
         job.setLayer(doc.name, layer)

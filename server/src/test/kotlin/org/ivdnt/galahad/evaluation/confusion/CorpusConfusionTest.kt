@@ -16,7 +16,7 @@ class CorpusConfusionTest {
 //    fun `Confusion of three docs summed`() {
 //        EvaluationUtil.add_two_docs_to_corpus(corpus)
 //        EvaluationUtil.addDocWithMissingMatches(corpus)
-//        val cc = JobConfusion(corpus, TestConfig.TAGGER_NAME) // default reference is SOURCE_LAYER_NAME
+//        val cc = JobConfusion(corpus, TestUtil.TAGGER_NAME) // default reference is SOURCE_LAYER_NAME
 //        // Table
 //        cc.table.forEach(::println)
 //        assertEquals(7, cc.table.size)
@@ -40,7 +40,7 @@ class CorpusConfusionTest {
 //    fun `To CSV`() {
 //        EvaluationUtil.add_two_docs_to_corpus(corpus)
 //        EvaluationUtil.addDocWithMissingMatches(corpus)
-//        val cc = JobConfusion(corpus, TestConfig.TAGGER_NAME) // default reference is SOURCE_LAYER_NAME
+//        val cc = JobConfusion(corpus, TestUtil.TAGGER_NAME) // default reference is SOURCE_LAYER_NAME
 //        val csv: String = cc.countsToCSV()
 //        assertEquals(TestUtil.get("evaluation/confusion/output.csv").readText(), csv)
 //    }
@@ -53,7 +53,7 @@ class CorpusConfusionTest {
 //            refTermFilter = HeadGroupTermFilter(Annotation.POS, TermComparison.MISSING_MATCH),
 //        )
 //
-//        val cc = JobConfusion(corpus, TestConfig.TAGGER_NAME, layerFilter = filter)
+//        val cc = JobConfusion(corpus, TestUtil.TAGGER_NAME, layerFilter = filter)
 //        assertEquals(TestUtil.get("evaluation/confusion/let-vs-missing.csv").readText(), cc.samplesToCSV())
 //    }
 }

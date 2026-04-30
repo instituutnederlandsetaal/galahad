@@ -5,6 +5,7 @@ import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.util.LayerBuilder
 import org.ivdnt.galahad.util.TestConfig
+import org.ivdnt.galahad.util.TestUtil
 import java.io.File
 
 object EvaluationUtil {
@@ -72,7 +73,7 @@ object EvaluationUtil {
         tagger: Layer,
         source: Layer,
     ) {
-        val taggerJob = corpus.jobs.createOrThrow(TestConfig.TAGGER_NAME)
+        val taggerJob = corpus.jobs.createOrThrow(TestUtil.TAGGER_NAME)
         taggerJob.setLayer(docName, tagger)
         val sourceJob = corpus.jobs.createOrThrow(SOURCE_LAYER_NAME)
         sourceJob.setLayer(docName, source)

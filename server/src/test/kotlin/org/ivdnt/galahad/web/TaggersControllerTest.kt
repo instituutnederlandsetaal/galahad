@@ -4,6 +4,7 @@ import org.ivdnt.galahad.app.Galahad
 import org.ivdnt.galahad.exceptions.TaggerNotFoundException
 import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.util.TestConfig
+import org.ivdnt.galahad.util.TestUtil
 import org.ivdnt.galahad.util.andDeserialize
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -22,15 +23,15 @@ class TaggersControllerTest(
     @Autowired val mvc: MockMvc,
 ) {
     @Test
-    fun getTaggers() {
+    fun `Can get taggers`() {
         val taggers: List<Tagger> = mvc.get("/taggers").andReturn().andDeserialize()
-        assertEquals(1, taggers.count { it.id == TestConfig.TAGGER_NAME })
+        assertEquals(1, taggers.count { it.id == TestUtil.TAGGER_NAME })
         assert(taggers.sumOf { it.attributions.size } > 0)
         assert(taggers.sumOf { it.annotations.sumOf { it.principles?.size ?: 0 } } > 0)
     }
 
     @Test
-    fun `Get health of invalid tagger`() {
+    fun `Can't get health of invalid tagger`() {
         mvc.get("/taggers/invalid/health").andExpect {
             status { isNotFound() }
             match { it.resolvedException is TaggerNotFoundException }

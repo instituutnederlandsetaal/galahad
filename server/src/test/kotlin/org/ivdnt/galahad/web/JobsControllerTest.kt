@@ -52,12 +52,12 @@ class JobsControllerTest(
         Thread.sleep(3000)
 
         // poll progress
-        progress = pollProgress(uuid, TestConfig.TAGGER_NAME)
+        progress = pollProgress(uuid, TestUtil.TAGGER_NAME)
         Assertions.assertFalse(progress.busy)
         Assertions.assertEquals(1, progress.finished)
 
         // check result
-        val resultPreview = getDocumentJobResult(uuid, TestConfig.TAGGER_NAME, doc.name)
+        val resultPreview = getDocumentJobResult(uuid, TestUtil.TAGGER_NAME, doc.name)
         Assertions.assertTrue(resultPreview.summary.annotations[Annotation.TOKEN]!! > 0)
         Assertions.assertTrue(resultPreview.preview.terms.isNotEmpty())
     }

@@ -4,6 +4,7 @@ import org.ivdnt.galahad.app.Galahad
 import org.ivdnt.galahad.exceptions.TagsetNotFoundException
 import org.ivdnt.galahad.taggers.Tagset
 import org.ivdnt.galahad.util.TestConfig
+import org.ivdnt.galahad.util.TestUtil
 import org.ivdnt.galahad.util.andDeserialize
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -22,14 +23,14 @@ class TagsetsControllerTest(
     @Autowired val mvc: MockMvc,
 ) {
     @Test
-    fun `Get tagsets`() {
+    fun `Can get tagsets`() {
         val tagsets: List<Tagset> = mvc.get("/tagsets").andReturn().andDeserialize()
-        assertEquals(1, tagsets.count { it.name == TestConfig.TAGSET_NAME })
+        assertEquals(1, tagsets.count { it.name == TestUtil.TAGSET_NAME })
         assert(tagsets.sumOf { it.punctuation.size } > 0)
     }
 
     @Test
-    fun `Get invalid tagset`() {
+    fun `Can't get invalid tagset`() {
         mvc.get("/tagsets/invalid").andExpect {
             status { isNotFound() }
             match { it.resolvedException is TagsetNotFoundException }

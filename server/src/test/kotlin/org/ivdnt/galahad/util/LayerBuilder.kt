@@ -106,9 +106,9 @@ class DocTestBuilder(
         val file = file ?: createTempDirectory().toFile().resolve("dummy.${format.extension}")
         file.createNewFile()
         val doc = corpus.documents.readOrNull(file.name) ?: corpus.documents.createOrThrow(file)
-        val job = corpus.jobs.createOrThrow(TestConfig.TAGGER_NAME)
+        val job = corpus.jobs.createOrThrow(TestUtil.TAGGER_NAME)
         job.setLayer(doc.name, layer)
-        val corpEx = CorpusExport.create(corpus, TestConfig.TAGGER_NAME, format, User.DEFAULT_USER, false, false)
+        val corpEx = CorpusExport.create(corpus, TestUtil.TAGGER_NAME, format, User.DEFAULT_USER, false, false)
         return corpEx.documentExport(doc)
     }
 

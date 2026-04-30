@@ -23,7 +23,7 @@ class DocumentJobTest {
         // add a doc
         val doc = corpus.documents.createOrThrow(File.createTempFile("tmp", ".txt"))
         // create a job
-        val job: Job = corpus.jobs.createOrThrow(TestConfig.TAGGER_NAME)
+        val job: Job = corpus.jobs.createOrThrow(TestUtil.TAGGER_NAME)
         // create a document job
         val dj: JobResult = job.results.createOrThrow(doc.name)
         // verify

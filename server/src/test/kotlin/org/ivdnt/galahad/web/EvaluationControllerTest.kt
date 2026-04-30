@@ -32,7 +32,7 @@ class EvaluationControllerTest(
 
         // url
         val uuid = corpus.immutableMetadata.uuid
-        val url = "/corpora/$uuid/jobs/${TestConfig.TAGGER_NAME}/evaluation/download?reference=sourceLayer"
+        val url = "/corpora/$uuid/jobs/${TestUtil.TAGGER_NAME}/evaluation/download?reference=sourceLayer"
         // /GET
         val bytes = mvc.perform(
             MockMvcRequestBuilders.get(url)
@@ -53,7 +53,7 @@ class EvaluationControllerTest(
             "hypoFilter" to "ADJ",
         )
         val url =
-            "/corpora/$uuid/jobs/${TestConfig.TAGGER_NAME}/evaluation/confusion/download".addUrlParams(params)
+            "/corpora/$uuid/jobs/${TestUtil.TAGGER_NAME}/evaluation/confusion/download".addUrlParams(params)
         val bytes = mvc.perform(
             MockMvcRequestBuilders.get(url)
                 .headers(TestUtil::assignHeaders)
@@ -73,7 +73,7 @@ class EvaluationControllerTest(
             "group" to "ADJ",
         )
         val url =
-            "/corpora/$uuid/jobs/${TestConfig.TAGGER_NAME}/evaluation/metrics/download".addUrlParams(params)
+            "/corpora/$uuid/jobs/${TestUtil.TAGGER_NAME}/evaluation/metrics/download".addUrlParams(params)
         val bytes = mvc.perform(
             MockMvcRequestBuilders.get(url)
                 .headers(TestUtil::assignHeaders)
