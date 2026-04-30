@@ -11,7 +11,6 @@ import org.ivdnt.galahad.exceptions.CorpusUnauthorizedException
 import org.ivdnt.galahad.files.GalahadFolder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.io.File
 import java.util.*
 
 @Service
@@ -24,31 +23,26 @@ class CorporaService(
     val presets: Corpora = Corpora(dir.resolve("datasets"))
 
     val all: List<Corpus> get() = custom.readAll() + presets.readAll()
-    val datasets: List<Corpus> get() = all.filter { it.mutableMetadata.dataset == true }
-    val assaysFile: File get() = dir.resolve("benchmarks.json")
 
     fun readAll(user: User): List<CorpusMetadata> =
-        all.map { it.immutableMetadata }.filter { it.hasReadAccess(user, excludeAdmin = true) }
-
-    fun readAllDatasets(): List<CorpusMetadata> = datasets.map { it.immutableMetadata }
+        all.map { it.immutableMetadata }.filter { it.canRead(user, excludeAdmin = true) }
 
     fun readAsReaderOrThrow(key: UUID, user: User): Corpus {
         val (corpus, _) = findOrThrow(key)
-        return corpus.also { if (!it.mutableMetadata.hasReadAccess(user)) throw CorpusUnauthorizedException("No read access to corpus.") }
+        return corpus.also { if (!it.mutableMetadata.canRead(user)) throw CorpusUnauthorizedException("Cannot read corpus.") }
     }
 
     fun readAsWriterOrThrow(key: UUID, user: User): Corpus {
         val (corpus, _) = findOrThrow(key)
-        return corpus.also { if (!it.mutableMetadata.hasWriteAccess(user)) throw CorpusUnauthorizedException("No write access to corpus.") }
+        return corpus.also { if (!it.mutableMetadata.canWrite(user)) throw CorpusUnauthorizedException("Cannot edit corpus.") }
     }
 
-    fun delete(key: UUID, user: User) {
+    fun deleteOrThrow(key: UUID, user: User) {
         val (corpus, corpora) = findOrThrow(key)
-
         if (corpus.mutableMetadata.canDelete(user)) {
             corpora.deleteOrThrow(key.toString())
         } else {
-            throw CorpusUnauthorizedException("No delete access to corpus.")
+            throw CorpusUnauthorizedException("Cannot delete corpus.")
         }
     }
 
@@ -64,8 +58,6 @@ class CorporaService(
         return Pair(corpus, corpora)
     }
 
-    internal fun readCorpusUnsafe(key: UUID): Corpus = findOrThrow(key).first
-
     fun createOrThrow(value: MutableCorpusMetadata, user: User): CorpusMetadata {
         // new corpora are always custom
         value.user = user
@@ -73,10 +65,13 @@ class CorporaService(
         return custom.createOrThrow(value).immutableMetadata
     }
 
-    fun update(key: UUID, value: MutableCorpusMetadata, user: User): CorpusMetadata {
-        val (_, corpora) = findOrThrow(key)
-        value.user = user
-        value.id = key
-        return corpora.updateOrThrow(value).immutableMetadata
+    fun updateOrThrow(key: UUID, value: MutableCorpusMetadata, user: User): CorpusMetadata {
+        val (corpus, corpora) = findOrThrow(key)
+        if (corpus.mutableMetadata.canRead(user)) {
+            value.user = user
+            value.id = key
+            return corpora.updateOrThrow(value).immutableMetadata
+        }
+        throw CorpusUnauthorizedException("Cannot edit corpus.")
     }
 }

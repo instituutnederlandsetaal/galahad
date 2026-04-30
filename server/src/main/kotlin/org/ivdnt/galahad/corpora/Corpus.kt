@@ -62,10 +62,11 @@ class Corpus(
         private const val EVALUATIONS_FOLDER = "evaluations"
 
         fun create(dir: File, metadata: MutableCorpusMetadata): Corpus {
+            // clean, trim, validate, and set owner; might throw
+            val cleanMetadata = MutableCorpusMetadata.clean(metadata)
+            // only create the corpus folder after the potential throw to avoid empty folder
             // dummy corpus to access the paths
             val corpus = Corpus(dir)
-            // clean, trim, validate, and set owner
-            val cleanMetadata = MutableCorpusMetadata.clean(metadata)
             // write metadata to disk
             DiskValue<MutableCorpusMetadata>(corpus.mutableMetadataFile).write(cleanMetadata)
             return corpus

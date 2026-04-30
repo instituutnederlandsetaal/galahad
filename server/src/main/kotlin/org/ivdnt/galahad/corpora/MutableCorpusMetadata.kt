@@ -2,7 +2,7 @@ package org.ivdnt.galahad.corpora
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import org.ivdnt.galahad.app.User
-import org.ivdnt.galahad.exceptions.CorpusNameInvalidException
+import org.ivdnt.galahad.exceptions.CorpusInvalidException
 import org.ivdnt.galahad.exceptions.CorpusUnauthorizedException
 import java.net.URL
 import java.util.*
@@ -38,18 +38,18 @@ open class MutableCorpusMetadata(
 
     /**
      * Whether the user is in the list of collaborators of this corpus.
-     * Note that this is not the same as having write access: use [hasWriteAccess].
+     * Note that this is not the same as having write access: use [canWrite].
      */
     fun isCollaborator(user: User): Boolean = collaborators?.contains(user.id) == true
 
     /**
      * Whether the user is in the list of viewers of this corpus.
-     * Note that this is not the same as having read access: use [hasReadAccess].
+     * Note that this is not the same as having read access: use [canRead].
      */
     fun isViewer(user: User): Boolean = viewers?.contains(user.id) == true
 
     /** To have write access, you need to be an owner, collaborator or admin. */
-    fun hasWriteAccess(user: User): Boolean {
+    fun canWrite(user: User): Boolean {
         if (user.isAdmin) return true
         if (owner == user.id) return true
         return isCollaborator(user)
@@ -83,7 +83,7 @@ open class MutableCorpusMetadata(
      * Although admins have access to everything, you might not want to see all corpora listed in your own view,
      * so optionally exclude them.
      */
-    fun hasReadAccess(user: User, excludeAdmin: Boolean = false): Boolean {
+    fun canRead(user: User, excludeAdmin: Boolean = false): Boolean {
         if (!excludeAdmin) {
             if (user.isAdmin) return true
         }
@@ -97,7 +97,7 @@ open class MutableCorpusMetadata(
     companion object {
         private fun assertCorpusNameValidOrThrow(corpusName: String) {
             if (corpusName.isBlank()) {
-                throw CorpusNameInvalidException(corpusName)
+                throw CorpusInvalidException("Corpus name is invalid.")
             }
         }
 
@@ -119,11 +119,17 @@ open class MutableCorpusMetadata(
             // unless it's empty, in which case it's a new corpus.
             newMeta.owner = oldMeta?.owner ?: user.id
 
-            // Viewers are allowed to remove themselves, but no more than that.
-            if (!newMeta.isViewer(user) && oldMeta?.isViewer(user) == true) {
-                oldMeta.removeAsViewer(user)
-                // ignore all other changes and return the old metadata, minus the viewer
-                return oldMeta
+            // Is this user a viewer?
+            if (oldMeta?.isViewer(user) == true) {
+                // Viewers are allowed to remove themselves, but no more than that.
+                if (!newMeta.isViewer(user)) {
+                    oldMeta.removeAsViewer(user)
+                    // ignore all other changes and return the old metadata, minus the viewer
+                    return oldMeta
+                } else {
+                    // If the viewer is not removing themselves, this action is unauthorized.
+                    throw CorpusUnauthorizedException("Cannot edit corpus.")
+                }
             }
 
             // Same for collaborators

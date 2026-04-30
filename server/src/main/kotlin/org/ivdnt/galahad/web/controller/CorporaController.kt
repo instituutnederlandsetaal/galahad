@@ -45,13 +45,10 @@ class CorporaController(
         summary = "Create a new corpus",
         description = "Create a new corpus with the provided CorpusMetadata. The user doing the request becomes owner.",
     )
-    @ApiResponse(
-        responseCode = "201",
-        description = "UUID of the created corpus.",
-    )
+    @ApiResponse(responseCode = "201", description = "UUID of the created corpus.")
     @ApiResponse(
         responseCode = "400",
-        description = "The corpus name is invalid.",
+        description = "The corpus is invalid.",
         content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
     )
     @ApiResponse(
@@ -66,17 +63,12 @@ class CorporaController(
         return corporaService.createOrThrow(value, user).uuid
     }
 
-    @Operation(
-        summary = "Get single corpus metadata", description = "Get the metadata of a corpus."
-    )
+    @Operation(summary = "Get single corpus metadata", description = "Get the metadata of a corpus.")
+    @ApiResponse(responseCode = "200", description = "CorpusMetadata of the requested corpus.")
     @ApiResponse(
         responseCode = "404",
         description = "The corpus was not found.",
         content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
-    )
-    @ApiResponse(
-        responseCode = "200",
-        description = "CorpusMetadata of the requested corpus.",
     )
     @CrossOrigin
     @GetMapping(Endpoints.Corpora.CORPUS)
@@ -109,32 +101,27 @@ class CorporaController(
     )
     @CrossOrigin
     @PatchMapping(Endpoints.Corpora.CORPUS)
-    fun patchCorpus(
+    fun updateCorpus(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @RequestBody @SwaggerRequestBody(description = "Corpus metadata.") value: MutableCorpusMetadata,
-    ): CorpusMetadata? = corporaService.update(corpus, value, user)
+    ): CorpusMetadata? = corporaService.updateOrThrow(corpus, value, user)
 
-    @Operation(
-        summary = "Delete single corpus",
-        description = "Delete a corpus, its documents and jobs.",
+    @Operation(summary = "Delete single corpus", description = "Delete a corpus, its documents and jobs.")
+    @ApiResponse(responseCode = "204", description = "Corpus deleted.")
+    @ApiResponse(
+        responseCode = "403",
+        description = "The user is not authorized to delete this corpus. Only the owner is.",
+        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
     )
     @ApiResponse(
         responseCode = "404",
         description = "The corpus was not found.",
         content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
     )
-    @ApiResponse(
-        responseCode = "204", description = "Corpus deleted."
-    )
-    @ApiResponse(
-        responseCode = "403",
-        description = "The user is not authorized to delete this corpus. Only the owner is.",
-        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
-    )
     @CrossOrigin
     @DeleteMapping(Endpoints.Corpora.CORPUS)
     fun deleteCorpus(@PathVariable @Parameter(description = "Corpus UUID") corpus: UUID): ResponseEntity<String> {
-        corporaService.delete(corpus, user)
+        corporaService.deleteOrThrow(corpus, user)
         return ResponseEntity.noContent().build()
     }
 }

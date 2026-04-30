@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 class CorpusNotFoundException(corpusID: String) : Exception("Corpus with ID $corpusID not found.")
 
 @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-class CorpusNameInvalidException(corpusName: String) : Exception("Corpus name $corpusName is invalid.")
+class CorpusInvalidException(message: String) : Exception(message)
 
 // HttpStatus UNAUTHORIZED is for login, FORBIDDEN is for access rights after login
 @ResponseStatus(value = HttpStatus.FORBIDDEN)
