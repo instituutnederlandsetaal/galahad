@@ -6,7 +6,7 @@
             <dd>
                 <b>{{ user.id }}</b>
             </dd>
-            <template v-if="user.isAdmin">
+            <template v-if="user.admin">
                 <dt>Admin:</dt>
                 <dd><b>true</b></dd>
             </template>

@@ -1,10 +1,6 @@
 /** Add content type header. */
 export function addContentTypeHeader(fd: FormData): Record<string, string> | null {
-    const exts_and_headers = {
-        tsv: "text/tab-separated-values",
-        conllu: "text/tab-separated-values",
-        naf: "text/xml",
-    }
+    const exts_and_headers = { tsv: "text/tab-separated-values", conllu: "text/tab-separated-values", naf: "text/xml" }
 
     let file = fd.get("file") as File
     const extension = fileExtension(file)
@@ -20,5 +16,5 @@ export function addContentTypeHeader(fd: FormData): Record<string, string> | nul
 }
 
 export function fileExtension(file: File): string {
-    return file.name.split(".").at(-1)
+    return file.name.toLowerCase().split(".").at(-1)
 }

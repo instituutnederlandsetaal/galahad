@@ -10,10 +10,10 @@
 
         <!-- source cell -->
         <template #cell-source="data: TableData<CorpusMetadata>">
-            <ExternalLink v-if="data.item.sourceUrl" :href="data.item.sourceUrl">
-                {{ data.item.sourceName ? data.item.sourceName : data.item.sourceUrl }}
+            <ExternalLink v-if="data.item.source?.url" :href="data.item.source?.url">
+                {{ data.item.source?.name ? data.item.source?.name : data.item.source?.url }}
             </ExternalLink>
-            <template v-else>{{ data.item.sourceName }}</template>
+            <template v-else>{{ data.item.source?.name }}</template>
         </template>
 
         <!-- jobs cell -->
@@ -52,8 +52,8 @@ const columns: Column<CorpusMetadata>[] = [
     {
         key: "period",
         align: "center",
-        sortOn: (c: CorpusMetadata): string => `${c.eraFrom} ${c.eraTo}`,
-        format: (c: CorpusMetadata): string => `${c.eraFrom} – ${c.eraTo}`,
+        sortOn: (c: CorpusMetadata): string => formatPeriod(c),
+        format: (c: CorpusMetadata): string => formatPeriod(c),
     },
     { key: "tagset" },
     { key: "source" },
@@ -81,7 +81,7 @@ const items = computed(() => {
 // --- methods ---
 function formatCollaborators(i: CorpusMetadata): string {
     if (i.dataset) return "Dataset"
-    const numPeople = i.collaborators.length + i.viewers.length
+    const numPeople = (i.collaborators?.length ?? 0) + (i.viewers?.length ?? 0)
     if (numPeople === 0) return "No one"
     return numPeople === 1 ? `${numPeople} person` : `${numPeople} people`
 }
@@ -89,5 +89,15 @@ function formatCollaborators(i: CorpusMetadata): string {
 function sortShared(i: CorpusMetadata): number {
     if (i.dataset) return -1
     return i.collaborators.length + i.viewers.length
+}
+
+function formatPeriod(meta: CorpusMetadata): string | undefined {
+    if (meta.period) {
+        const from = meta.period.from ?? 0
+        const to = meta.period.to ?? 0
+        return `${from} – ${to}`
+    } else {
+        return undefined
+    }
 }
 </script>
