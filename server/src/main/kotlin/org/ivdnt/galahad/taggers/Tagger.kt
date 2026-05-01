@@ -8,6 +8,7 @@ import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.app.application_profile
 import org.ivdnt.galahad.corpora.Corpus
+import org.ivdnt.galahad.corpora.CorpusMetadata
 import org.ivdnt.galahad.exceptions.TaggerNotFoundException
 import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
@@ -21,7 +22,7 @@ class Tagger(
     // So can only contain certain characters
     var id: String = "",
     var description: String = "",
-    var period: Period? = null,
+    var period: CorpusMetadata.Period? = null,
     var annotations: List<AnnotationItem> = emptyList(),
     var attributions: List<LinkItem> = emptyList(),
     var language: String? = "", // TODO multiple languages
@@ -53,8 +54,6 @@ class Tagger(
     class LinkItem(var name: String? = null, var details: String? = null, var href: String? = null)
 
     class AnnotationItem(var annotation: Annotation? = null, var principles: List<LinkItem>? = null)
-
-    class Period(var from: Int = 0, var to: Int = 0)
 
     companion object {
         private const val TAGGERS_DIR: String = "data/taggers"
@@ -89,11 +88,7 @@ class Tagger(
             return Tagger(
                 id = SOURCE_LAYER_NAME,
                 description = "uploaded annotations",
-                period =
-                    Period(
-                        metadata.eraFrom ?: 0,
-                        metadata.eraTo ?: 0,
-                    ), // TODO should probably also be nullable
+                period = metadata.period,
                 language = metadata.language,
                 annotations = produces.map { AnnotationItem(it) },
             )

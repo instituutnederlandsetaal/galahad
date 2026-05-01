@@ -55,12 +55,8 @@ class Corpus(dir: File) : GalahadFolder(dir) {
             // clean, trim, validate, and set owner; might throw
             val cleanMetadata = CorpusMetadata.clean(metadata)
             // only create the corpus folder after the potential throw to avoid empty folder
-            // dummy corpus to access the paths
-            val corpus = Corpus(dir)
-            // write metadata to disk
-            corpus
-            DiskValue<CorpusMetadata>(dir.resolve(METADATA_FILE)).write(cleanMetadata)
-            return corpus
+            // and write metadata to disk
+            return Corpus(dir).apply { this.metadata = cleanMetadata }
         }
     }
 }

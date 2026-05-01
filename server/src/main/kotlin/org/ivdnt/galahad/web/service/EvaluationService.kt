@@ -215,7 +215,7 @@ class EvaluationService(val corpora: CorporaService) {
         )
         metadataFile.appendText("Corpus: ${metadata.name}\n")
         metadataFile.appendText("Documents: ${metadata.numDocs}\n")
-        metadataFile.appendText("Era: ${metadata.eraFrom}-${metadata.eraTo}\n")
+        metadataFile.appendText("Era: ${metadata.period?.from}-${metadata.period?.to}\n")
         metadataFile.appendText("Hypothesis: $job\n")
         if (reference != null) metadataFile.appendText("Reference: $reference\n")
         return metadata

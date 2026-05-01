@@ -30,8 +30,9 @@ class CmdiMetadata(val export: DocumentExport) {
     private val tagset = export.tagger.principles.ifNullOrBlank { "!No tagset defined!" }
     private val tagger = export.tagger
     private val language = corpus.language.ifNullOrBlank { "Dutch" }
-    private val sourceName = corpus.sourceName.ifNullOrBlank { "!No source name defined!" }
-    private val sourceUrl = corpus.sourceURL?.toString().ifNullOrBlank { "!No source URL defined!" }
+    private val sourceName = corpus.source?.name?.ifNullOrBlank { "!No source name defined!" }
+    private val sourceUrl =
+        corpus.source?.url?.toString().ifNullOrBlank { "!No source URL defined!" }
 
     /** Write the CMDI file to the given [out]put stream. */
     fun write(out: OutputStream) {
@@ -154,8 +155,8 @@ class CmdiMetadata(val export: DocumentExport) {
         sourceGalahad.child("cmdp:sourceCollectionURI").textContent = sourceUrl
         // Components.Source_GaLAHaD.Date_Period
         sourceGalahad.child("cmdp:Date_Period").apply {
-            child("cmdp:yearFrom").textContent = "${corpus.eraFrom}"
-            child("cmdp:yearTo").textContent = "${corpus.eraTo}"
+            child("cmdp:yearFrom").textContent = "${corpus.period?.from}"
+            child("cmdp:yearTo").textContent = "${corpus.period?.to}"
         }
     }
 

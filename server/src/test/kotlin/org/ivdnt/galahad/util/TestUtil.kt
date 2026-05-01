@@ -35,15 +35,13 @@ object TestUtil {
             CorpusMetadata(
                 "testCorpus",
                 user.id,
-                1200,
-                1300,
+                dataset,
+                CorpusMetadata.Period(1200, 1300),
                 "Dutch",
                 "TDN-Core",
-                dataset,
+                CorpusMetadata.Source("source name", URL("http://source.url")),
                 mutableSetOf("collaborator"),
                 mutableSetOf("viewer"),
-                "source name",
-                URL("http://source.url"),
             )
         meta.user = user
         meta.id = UUID.randomUUID()

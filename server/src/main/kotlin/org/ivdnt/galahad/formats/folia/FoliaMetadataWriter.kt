@@ -11,11 +11,12 @@ class FoliaMetadataWriter(val writer: PrettyXMLWriter, val export: DocumentExpor
     val title = export.document.sourceFile.withoutFormatExt
     val pid = export.layer.id
     val corpusName = export.corpus.metadata.name
-    val sourceName = export.corpus.metadata.sourceName.ifNullOrBlank { "!No source name defined!" }
+    val sourceName =
+        export.corpus.metadata.source?.name.ifNullOrBlank { "!No source name defined!" }
     val sourceURL =
-        export.corpus.metadata.sourceURL?.toString().ifNullOrBlank { "!No source URL defined!" }
-    val eraFrom = export.corpus.metadata.eraFrom.toString()
-    val eraTo = export.corpus.metadata.eraTo.toString()
+        export.corpus.metadata.source?.url?.toString().ifNullOrBlank { "!No source URL defined!" }
+    val eraFrom = export.corpus.metadata.period?.from.toString()
+    val eraTo = export.corpus.metadata.period?.to.toString()
     val language = export.corpus.metadata.language.ifNullOrBlank { "!No language defined!" }
     val langCode = export.corpus.metadata.langCode
     val today = SimpleDateFormat("yyyy-MM-dd").format(System.currentTimeMillis())

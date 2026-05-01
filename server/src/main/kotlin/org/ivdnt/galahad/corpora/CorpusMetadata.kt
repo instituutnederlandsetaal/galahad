@@ -14,16 +14,17 @@ import org.ivdnt.galahad.exceptions.CorpusUnauthorizedException
 open class CorpusMetadata(
     var name: String,
     var owner: String? = null,
-    var eraFrom: Int? = null,
-    var eraTo: Int? = null,
+    var dataset: Boolean? = null,
+    var period: Period? = null,
     var language: String? = null,
     var tagset: String? = null,
-    var dataset: Boolean? = null,
+    var source: Source? = null,
     var collaborators: MutableSet<String>? = null,
     var viewers: MutableSet<String>? = null,
-    var sourceName: String? = null,
-    var sourceURL: URL? = null,
 ) {
+    class Source(var name: String?, var url: URL?)
+
+    class Period(var from: Int = 0, var to: Int = 0)
 
     @JsonIgnore var id: UUID? = null
 
@@ -162,7 +163,7 @@ open class CorpusMetadata(
             // Trim textual inputs
             newMeta.apply {
                 name = name.trim()
-                sourceName = sourceName?.trim()
+                source?.name = source?.name?.trim()
                 tagset = tagset?.trim()
                 language = language?.trim()
                 collaborators = collaborators?.map { it.trim() }?.toMutableSet()

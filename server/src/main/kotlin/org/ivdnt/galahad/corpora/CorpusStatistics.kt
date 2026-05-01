@@ -1,7 +1,5 @@
 package org.ivdnt.galahad.corpora
 
-import com.fasterxml.jackson.annotation.JsonProperty
-import java.net.URL
 import java.util.*
 
 /**
@@ -12,65 +10,52 @@ import java.util.*
  */
 class CorpusStatistics(
     // Mutable fields
-    @JsonProperty("owner") owner: String = "",
-    @JsonProperty("name") name: String = "",
-    @JsonProperty("eraTo") eraTo: Int = 0,
-    @JsonProperty("eraFrom") eraFrom: Int = 0,
-    @JsonProperty("language") language: String? = null,
-    @JsonProperty("tagset") tagset: String? = null,
-    @JsonProperty("dataset") dataset: Boolean = false,
-    @JsonProperty("collaborators") collaborators: Set<String> = setOf(),
-    @JsonProperty("viewers") viewers: Set<String> = setOf(),
-    @JsonProperty("sourceName") sourceName: String? = null,
-    @JsonProperty("sourceURL") sourceURL: URL? = null,
+    name: String,
+    owner: String?,
+    period: Period?,
+    language: String?,
+    tagset: String?,
+    dataset: Boolean?,
+    collaborators: MutableSet<String>?,
+    viewers: MutableSet<String>?,
+    source: Source?,
     // Immutable fields
-    val uuid: UUID = UUID(0, 0),
-    val activeJobs: Int = 0,
-    val numResults: Int = 0,
-    val numDocs: Int = 0,
-    val size: Long = 0,
-    val modified: Long = 0,
+    val uuid: UUID,
+    val numResults: Int,
+    val numDocs: Int,
+    val size: Long,
+    val modified: Long,
 ) :
     CorpusMetadata(
         name = name,
         owner = owner,
-        eraFrom = eraFrom,
-        eraTo = eraTo,
+        dataset = dataset,
+        period = period,
         language = language,
         tagset = tagset,
-        dataset = dataset,
-        collaborators = collaborators.toMutableSet(),
-        viewers = viewers.toMutableSet(),
-        sourceName = sourceName,
-        sourceURL = sourceURL,
+        source = source,
+        collaborators = collaborators,
+        viewers = viewers,
     ) {
     companion object {
-        fun create(corpus: Corpus): CorpusStatistics {
-            val meta =
-                CorpusStatistics(
-                    // Immutable/calculated fields
-                    // sourceAnnotationTypes = uniqueAnnotations,
-                    uuid = UUID.fromString(corpus.name),
-                    numResults = corpus.jobs.readAll().count { it.hasResult },
-                    numDocs = corpus.documents.readAll().size,
-                    size = corpus.size,
-                    modified = System.currentTimeMillis(),
-                )
-            // add mutable fields
-            with(corpus.metadata) {
-                meta.owner = owner
-                meta.name = name
-                meta.eraFrom = eraFrom
-                meta.eraTo = eraTo
-                meta.language = language
-                meta.tagset = tagset
-                meta.dataset = dataset
-                meta.collaborators = collaborators
-                meta.viewers = viewers
-                meta.sourceName = sourceName
-                meta.sourceURL = sourceURL
-            }
-            return meta
-        }
+        fun create(corpus: Corpus): CorpusStatistics =
+            CorpusStatistics(
+                // Mutable fields
+                name = corpus.metadata.name,
+                owner = corpus.metadata.owner,
+                dataset = corpus.metadata.dataset,
+                period = corpus.metadata.period,
+                language = corpus.metadata.language,
+                tagset = corpus.metadata.tagset,
+                source = corpus.metadata.source,
+                collaborators = corpus.metadata.collaborators,
+                viewers = corpus.metadata.viewers,
+                // Immutable fields
+                uuid = corpus.uuid,
+                numResults = corpus.jobs.readAll().count { it.hasResult },
+                numDocs = corpus.documents.readAll().size,
+                size = corpus.size,
+                modified = System.currentTimeMillis(),
+            )
     }
 }

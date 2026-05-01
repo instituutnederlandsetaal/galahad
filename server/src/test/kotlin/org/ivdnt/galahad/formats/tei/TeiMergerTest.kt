@@ -1,4 +1,4 @@
-package org.ivdnt.galahad.formats.tsv
+package org.ivdnt.galahad.formats.tei
 
 import org.ivdnt.galahad.documents.DocumentFormat
 import org.ivdnt.galahad.formats.MergerTest
