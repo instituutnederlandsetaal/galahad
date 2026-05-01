@@ -10,7 +10,7 @@ abstract class ReaderTest {
     protected abstract val format: DocumentFormat
 
     protected fun assertLayerAndText(folder: String) {
-        val layer = InternalFile.create(TestUtil.get("$folder/input.${format.extension}")).layer
+        val layer = ParsedFile.create(TestUtil.get("$folder/input.${format.extension}")).layer
         assertText(layer, folder)
         assertLayer(layer, folder)
     }
@@ -23,7 +23,8 @@ abstract class ReaderTest {
 
     private fun cleanUUIDs(text: String): String {
         // Simple regex to match UUIDs
-        val uuidRegex = Regex("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")
+        val uuidRegex =
+            Regex("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")
         return uuidRegex.replace(text, "UUID")
     }
 

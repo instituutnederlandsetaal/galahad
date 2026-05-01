@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.util
 
-import org.ivdnt.galahad.documents.DocumentFormat
 import java.io.File
+import org.ivdnt.galahad.documents.DocumentFormat
 
 val File.withoutFormatExt: String
     get() {

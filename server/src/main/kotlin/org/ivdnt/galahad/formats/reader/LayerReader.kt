@@ -1,4 +1,7 @@
-package org.ivdnt.galahad.annotations
+package org.ivdnt.galahad.formats.reader
+
+import org.ivdnt.galahad.annotations.*
+import org.ivdnt.galahad.annotations.Annotation
 
 abstract class LayerReader {
     val layer: Layer by lazy { read() }
@@ -17,14 +20,24 @@ abstract class LayerReader {
     protected var wordID: String? = null
 
     protected fun docID(): String = docID ?: "d$dIndex"
+
     protected fun parID(): String = parID ?: "${docID()}.p$pIndex"
+
     protected fun sentID(): String = sentID ?: "${parID()}.s$sIndex"
+
     protected fun wordID(): String = wordID ?: "${sentID()}.w$wIndex"
 
-    private val wIndex: Int get() = terms.size + 1
-    private val sIndex: Int get() = sentences.size + 1
-    private val pIndex: Int get() = paragraphs.size + 1
-    private val dIndex: Int get() = documents.size + 1
+    private val wIndex: Int
+        get() = terms.size + 1
+
+    private val sIndex: Int
+        get() = sentences.size + 1
+
+    private val pIndex: Int
+        get() = paragraphs.size + 1
+
+    private val dIndex: Int
+        get() = documents.size + 1
 
     protected abstract fun read(): Layer
 
@@ -51,7 +64,7 @@ abstract class LayerReader {
                 SentenceLayer(
                     sentID(),
                     terms.toTypedArray(),
-                    spans.mapValues { it.value.toTypedArray() }.toMap()
+                    spans.mapValues { it.value.toTypedArray() }.toMap(),
                 )
             )
             terms.clear()

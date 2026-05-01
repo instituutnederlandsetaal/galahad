@@ -21,25 +21,20 @@ interface MetricsSettings {
     fun filterBy(term: TermComparison): Boolean = true
 
     @get:JsonIgnore
-    val hasFalsePositive: Boolean get() = true
+    val hasFalsePositive: Boolean
+        get() = true
 
-    @get:JsonIgnore
-    val nullTerm: String
+    @get:JsonIgnore val nullTerm: String
 
-    @get:JsonIgnore
-    val requiredAnnotations: List<Annotation>
+    @get:JsonIgnore val requiredAnnotations: List<Annotation>
 
-    @get:JsonProperty("id")
-    val id: String
+    @get:JsonProperty("id") val id: String
 
-    @get:JsonProperty("annotation")
-    val annotation: String
+    @get:JsonProperty("annotation") val annotation: String
 
-    @get:JsonProperty("group")
-    val group: String
+    @get:JsonProperty("group") val group: String
 
-    @get:JsonIgnore
-    val groupAnnotation: Annotation
+    @get:JsonIgnore val groupAnnotation: Annotation
 }
 
 open class PosByPosMetricsSettings : MetricsSettings {
@@ -58,12 +53,14 @@ open class PosByPosMetricsSettings : MetricsSettings {
 class MultiPosByPosMetricsSettings : PosByPosMetricsSettings() {
     override val id: String = "multiPosByPos"
     override val annotation: String = "PoS (multiple)"
+
     override fun filterBy(term: TermComparison): Boolean = term.ref.isMulti(Annotation.POS)
 }
 
 class SinglePosByPosMetricsSettings : PosByPosMetricsSettings() {
     override val id: String = "singlePosByPos"
     override val annotation: String = "PoS (single)"
+
     override fun filterBy(term: TermComparison): Boolean = !term.ref.isMulti(Annotation.POS)
 }
 
@@ -75,7 +72,8 @@ open class LemmaByLemmaMetricsSettings : MetricsSettings {
     override val nullTerm: String = "NO_LEMMA"
     override val requiredAnnotations: List<Annotation> = listOf(Annotation.LEMMA)
 
-    override fun termsEqual(comp: TermComparison): Boolean = comp.equal(Annotation.LEMMA, LEMMA_REGEX)
+    override fun termsEqual(comp: TermComparison): Boolean =
+        comp.equal(Annotation.LEMMA, LEMMA_REGEX)
 
     override fun groupBy(term: Term): String = term.lemma ?: nullTerm
 }
@@ -109,12 +107,14 @@ class HeadByHead : MetricsSettings {
 class MultiLemmaByLemmaMetricsSettings : LemmaByLemmaMetricsSettings() {
     override val id: String = "multiLemmaByLemma"
     override val annotation: String = "Lemma (multiple)"
+
     override fun filterBy(term: TermComparison): Boolean = term.ref.isMulti(Annotation.LEMMA)
 }
 
 class SingleLemmaByLemmaMetricsSettings : LemmaByLemmaMetricsSettings() {
     override val id: String = "singleLemmaByLemma"
     override val annotation: String = "Lemma (single)"
+
     override fun filterBy(term: TermComparison): Boolean {
         val isMulti = term.ref.isMulti(Annotation.LEMMA)
         return !isMulti
@@ -126,7 +126,8 @@ class LemmaByPosMetricsSettings : PosByPosMetricsSettings() {
     override val annotation: String = "Lemma"
     override val requiredAnnotations: List<Annotation> = listOf(Annotation.LEMMA, Annotation.POS)
 
-    override fun termsEqual(comp: TermComparison): Boolean = comp.equal(Annotation.LEMMA, LEMMA_REGEX)
+    override fun termsEqual(comp: TermComparison): Boolean =
+        comp.equal(Annotation.LEMMA, LEMMA_REGEX)
 }
 
 class PosByLemmaMetricsSettings : LemmaByLemmaMetricsSettings() {
@@ -200,7 +201,8 @@ class FrequencyMetricsSettings(
     override val groupAnnotation: Annotation = metric.groupAnnotation
     override val nullTerm: String = metric.nullTerm
     override val requiredAnnotations: List<Annotation> = metric.requiredAnnotations
-    override val hasFalsePositive: Boolean get() = false
+    override val hasFalsePositive: Boolean
+        get() = false
 
     override fun termsEqual(comp: TermComparison): Boolean = metric.termsEqual(comp)
 
@@ -216,24 +218,25 @@ class FrequencyMetricsSettings(
 }
 
 /** Used by [Metrics] to instantiate a [MetricsType] for each setting. */
-val METRIC_TYPES: List<MetricsSettings> = listOf(
-    // Pos
-    PosByPosMetricsSettings(),
-    PosByLemmaMetricsSettings(),
-    MultiPosByPosMetricsSettings(),
-    SinglePosByPosMetricsSettings(),
-    // Lemma
-    LemmaByLemmaMetricsSettings(),
-    LemmaByPosMetricsSettings(),
-    MultiLemmaByLemmaMetricsSettings(),
-    SingleLemmaByLemmaMetricsSettings(),
-    // Lemma + Pos
-    LemmaPosByPosMetricsSettings(),
-    LemmaPosByLemmaMetricsSettings(),
-    // UD
-    DeprelByDeprel(),
-    HeadByHead(),
-    UposByUposMetricsSettings(),
-    DeprelHeadbyDeprelMetricsSettings(),
-    NerByNerMetricsSettings()
-)
+val METRIC_TYPES: List<MetricsSettings> =
+    listOf(
+        // Pos
+        PosByPosMetricsSettings(),
+        PosByLemmaMetricsSettings(),
+        MultiPosByPosMetricsSettings(),
+        SinglePosByPosMetricsSettings(),
+        // Lemma
+        LemmaByLemmaMetricsSettings(),
+        LemmaByPosMetricsSettings(),
+        MultiLemmaByLemmaMetricsSettings(),
+        SingleLemmaByLemmaMetricsSettings(),
+        // Lemma + Pos
+        LemmaPosByPosMetricsSettings(),
+        LemmaPosByLemmaMetricsSettings(),
+        // UD
+        DeprelByDeprel(),
+        HeadByHead(),
+        UposByUposMetricsSettings(),
+        DeprelHeadbyDeprelMetricsSettings(),
+        NerByNerMetricsSettings(),
+    )

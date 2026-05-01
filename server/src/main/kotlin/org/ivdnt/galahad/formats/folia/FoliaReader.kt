@@ -1,11 +1,9 @@
 package org.ivdnt.galahad.formats.folia
 
-import org.ivdnt.galahad.formats.xml.XmlReader
 import java.io.InputStream
+import org.ivdnt.galahad.formats.reader.XmlReader
 
-class FoliaReader(
-    stream: InputStream,
-) : XmlReader(stream) {
+class FoliaReader(stream: InputStream) : XmlReader(stream) {
     override val documentTags: Array<String> = DOCUMENT_TAGS
     override val paragraphTags: Array<String> = PARAGRAPH_TAGS
     override val sentenceTags: Array<String> = SENTENCE_TAGS

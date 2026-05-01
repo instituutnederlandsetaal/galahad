@@ -1,18 +1,19 @@
 package org.ivdnt.galahad.jobs
 
+import java.io.File
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.annotations.Layer
-import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
+import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.documents.Document
 import org.ivdnt.galahad.files.GalahadFolder
 import org.ivdnt.galahad.files.ValidatedDiskValue
-import java.io.File
 
 /**
  * A job is saved to disk as a folder under jobs/ (managed by [Jobs]), with the following files:
  *
- * - documents/: a folder containing all documents in the job. A single document is represented by [JobResult]. These can be retrieved with [readOrThrow].
+ * - documents/: a folder containing all documents in the job. A single document is represented by
+ *   [JobResult]. These can be retrieved with [readOrThrow].
  * - _isActive: a file that stores whether the job is currently being processed by the tagger.
  */
 class Job(
@@ -28,12 +29,11 @@ class Job(
 
     // Values
     val hasResult: Boolean
-        get() = name != SOURCE_LAYER_NAME && results.readAllSequence()
-            .any { it.status == JobStatus.FINISHED }
+        get() =
+            name != SOURCE_LAYER_NAME &&
+                results.readAllSequence().any { it.status == JobStatus.FINISHED }
 
-    /**
-     * Progress of the job based on the status of the [JobResult]s of this job.
-     */
+    /** Progress of the job based on the status of the [JobResult]s of this job. */
     val progress: Progress
         get() {
             // NOTE: The number of documents is not the same as the number of document jobs.
@@ -43,18 +43,20 @@ class Job(
             // If a document is not in the list of documentJobs, it is pending by default.
             val statuses = docs.map { results.readOrNull(it.name)?.status ?: JobStatus.PENDING }
             // For errors however, we can just look at the documentJobs.
-            val errors = results.readAll().mapNotNull { it.error?.let { error -> name to error } }.toMap()
+            val errors =
+                results.readAll().mapNotNull { it.error?.let { error -> name to error } }.toMap()
             return Progress(
                 pending = statuses.count { it == JobStatus.PENDING },
                 processing = (if (JobController.inQueue(this)) 1 else 0),
                 failed = statuses.count { it == JobStatus.ERROR },
                 finished = statuses.count { it == JobStatus.FINISHED },
-                errors = errors
+                errors = errors,
             )
         }
 
     /**
-     * Whether the job is currently being processed (i.e. has sent files to the tagger to become tagged at some point).
+     * Whether the job is currently being processed (i.e. has sent files to the tagger to become
+     * tagged at some point).
      */
     var isActive: Boolean
         get() = isActiveFile.exists()
@@ -70,24 +72,30 @@ class Job(
         get() = metadataCache.readOrCreate()
 
     /**
-     * The state of the job, which is cached in a file.
-     * This is a very expensive operation, so we want to cache it.
+     * The state of the job, which is cached in a file. This is a very expensive operation, so we
+     * want to cache it.
      */
-    private val metadataCache = object : ValidatedDiskValue<JobMetadata>(metadataFile) {
-        // NOTE: we also check against the last modified of the documents folder: adding new docs should invalidate the cache.
-        override fun isValid(modified: Long) =
-            modified >= this@Job.modified && modified >= corpus.documents.modified
+    private val metadataCache =
+        object : ValidatedDiskValue<JobMetadata>(metadataFile) {
+            // NOTE: we also check against the last modified of the documents folder: adding new
+            // docs
+            // should invalidate the cache.
+            override fun isValid(modified: Long) =
+                modified >= this@Job.modified && modified >= corpus.documents.modified
 
-        override fun set() = JobMetadata.create(this@Job)
-    }
+            override fun set() = JobMetadata.create(this@Job)
+        }
 
     fun getLayer(doc: Document): Layer = getLayer(doc.name)
+
     fun getLayer(key: String): Layer = results.readOrNull(key)?.layer ?: Layer.EMPTY
+
     fun setLayer(key: String, layer: Layer) {
         results.createOrThrow(key).layer = layer
     }
 
     fun setLayer(doc: Document, layer: Layer): Unit = setLayer(doc.name, layer)
+
     fun start() {
         JobController.queue(this)
     }

@@ -1,13 +1,15 @@
-package org.ivdnt.galahad.formats.xml
+package org.ivdnt.galahad.formats.reader
 
-import org.ivdnt.galahad.annotations.*
-import org.ivdnt.galahad.annotations.Annotation
-import org.ivdnt.galahad.util.XmlUtil
 import java.io.InputStream
 import java.util.*
 import javax.xml.XMLConstants
 import javax.xml.stream.XMLStreamConstants
 import javax.xml.stream.XMLStreamReader
+import org.ivdnt.galahad.annotations.Annotation
+import org.ivdnt.galahad.annotations.Layer
+import org.ivdnt.galahad.annotations.Term
+import org.ivdnt.galahad.annotations.TermSpan
+import org.ivdnt.galahad.util.XmlUtil
 
 abstract class XmlReader(stream: InputStream) : LayerReader() {
     protected var pos: String? = null
@@ -23,10 +25,13 @@ abstract class XmlReader(stream: InputStream) : LayerReader() {
     protected var deprelFrom: String? = null
     protected var deprelTo: String? = null
 
-    protected val reader: XMLStreamReader by lazy { XmlUtil.inputFactory.createXMLStreamReader(stream) }
+    protected val reader: XMLStreamReader by lazy {
+        XmlUtil.inputFactory.createXMLStreamReader(stream)
+    }
 
     private val currentXmlID: String?
         get() = reader.getAttributeValue(XMLConstants.XML_NS_URI, "id")?.ifBlank { null }
+
     private var ignoring: Boolean = false
     private var currentDepth: Int = 0
     private var ignoreDepth: Int? = null
@@ -61,33 +66,37 @@ abstract class XmlReader(stream: InputStream) : LayerReader() {
     private fun parseDocuments() {
         while (reader.hasNext()) {
             when (reader.next()) {
-                XMLStreamConstants.START_ELEMENT -> if (!shouldIgnore()) {
-                    // Entering a word or ner closes the previous wordform
-                    if (reader.localName in wordTags || reader.localName in nerTags) {
-                        newWordform()
-                        insideWordTag = reader.localName in wordTags
+                XMLStreamConstants.START_ELEMENT ->
+                    if (!shouldIgnore()) {
+                        // Entering a word or ner closes the previous wordform
+                        if (reader.localName in wordTags || reader.localName in nerTags) {
+                            newWordform()
+                            insideWordTag = reader.localName in wordTags
+                        }
+                        // Parse the new tag
+                        parseAttrs()
+                        when (reader.localName) {
+                            in documentTags -> docID = currentXmlID
+                            in paragraphTags -> parID = currentXmlID
+                            in sentenceTags -> sentID = currentXmlID
+                            in wordTags -> {
+                                wordID = currentXmlID
+                            }
+                        }
                     }
-                    // Parse the new tag
-                    parseAttrs()
-                    when (reader.localName) {
-                        in documentTags -> docID = currentXmlID
-                        in paragraphTags -> parID = currentXmlID
-                        in sentenceTags -> sentID = currentXmlID
-                        in wordTags -> { wordID = currentXmlID }
-                    }
-                }
 
                 XMLStreamConstants.CHARACTERS -> if (!ignoring) parseChars()
-                XMLStreamConstants.END_ELEMENT -> if (!shouldIgnore()) {
-                    when (reader.localName) {
-                        in documentTags -> newDocument()
-                        in paragraphTags -> newParagraph()
-                        in sentenceTags -> newSentence()
-                        in wordTags -> newWordform()
-                        in nerTags -> newSpan()
-                        in depTags -> newDep()
+                XMLStreamConstants.END_ELEMENT ->
+                    if (!shouldIgnore()) {
+                        when (reader.localName) {
+                            in documentTags -> newDocument()
+                            in paragraphTags -> newParagraph()
+                            in sentenceTags -> newSentence()
+                            in wordTags -> newWordform()
+                            in nerTags -> newSpan()
+                            in depTags -> newDep()
+                        }
                     }
-                }
             }
         }
     }
@@ -108,12 +117,7 @@ abstract class XmlReader(stream: InputStream) : LayerReader() {
                 put(Annotation.HEAD, (headI + 1).toString())
             }
 
-            terms[depI] = Term(
-                dep.id,
-                dep.offset,
-                annots,
-                dep.spaceAfter
-            )
+            terms[depI] = Term(dep.id, dep.offset, annots, dep.spaceAfter)
 
             // reset
             deprel = null
@@ -126,10 +130,12 @@ abstract class XmlReader(stream: InputStream) : LayerReader() {
         // edit the NER value of the terms if spans are present
         spans[Annotation.NER]?.forEach { span ->
             span.indices.forEachIndexed { spanI, termI ->
-                // Note the difference spanI and termI; e.g. span.indices = [4, 5]; so (0, 4) = (1, 5)
+                // Note the difference spanI and termI; e.g. span.indices = [4, 5]; so (0, 4) = (1,
+                // 5)
                 val t = terms[termI]
                 val iob = (if (spanI == 0) "B-" else "I-") + span.value
-                terms[termI] = Term(t.id, t.offset, t.annotations + (Annotation.NER to iob), t.spaceAfter)
+                terms[termI] =
+                    Term(t.id, t.offset, t.annotations + (Annotation.NER to iob), t.spaceAfter)
             }
         }
         // if there exists exactly one term without a DEPREL, it is the root
@@ -149,7 +155,7 @@ abstract class XmlReader(stream: InputStream) : LayerReader() {
     }
 
     private fun newSpan() {
-        newWordform();
+        newWordform()
         if (nerValue == null) return
         spans.getOrPut(Annotation.NER, ::mutableListOf) += TermSpan(nerTargets, nerValue!!)
         nerValue = null
@@ -178,9 +184,10 @@ abstract class XmlReader(stream: InputStream) : LayerReader() {
     }
 
     private fun parseChars() {
-        // if we are within a word tag, simply add all text, given that there are no (valid) word boundaries
+        // if we are within a word tag, simply add all text, given that there are no (valid) word
+        // boundaries
         if (insideWordTag) {
-            reader.text.ifBlank { null }?.trim()?.let { literal += it}
+            reader.text.ifBlank { null }?.trim()?.let { literal += it }
         }
         // Outside a word tag, treat spaces as new words
         else {

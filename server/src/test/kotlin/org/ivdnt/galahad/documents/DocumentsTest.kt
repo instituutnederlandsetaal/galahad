@@ -50,6 +50,7 @@ class DocumentsTest {
 
     /**
      * Assert the given docs are in documents
+     *
      * @param docs Docs as a set, because the order of documents is not guaranteed
      */
     private fun assertDocsinDocuments(docs: Set<String>) {

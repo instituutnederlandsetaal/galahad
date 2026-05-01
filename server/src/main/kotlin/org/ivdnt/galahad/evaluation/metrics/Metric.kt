@@ -10,40 +10,39 @@ import org.ivdnt.galahad.export.csv.CsvString
 import org.ivdnt.galahad.util.toFixed
 
 /**
- * The number of [Term]s between two [Layer]s that are equal, different or not present in the reference and hypothesis layers.
- * Based on lemma and part of speech.
+ * The number of [Term]s between two [Layer]s that are equal, different or not present in the
+ * reference and hypothesis layers. Based on lemma and part of speech.
  *
- * Note that normal [Metric]s always contain samples, which are cheap to get when we are calculating them anyway,
- * However for downstream applications like aggregates, we may want to omit the samples
+ * Note that normal [Metric]s always contain samples, which are cheap to get when we are calculating
+ * them anyway, However for downstream applications like aggregates, we may want to omit the samples
  * Therefore we can use this utility class
  */
-
 data class ClassificationMetrics(
     val precision: Float = 0f,
     val recall: Float = 0f,
     val f1: Float = 0f,
     val accuracy: Float = 0f,
 ) {
-    operator fun plus(other: ClassificationMetrics): ClassificationMetrics = ClassificationMetrics(
-        precision + other.precision,
-        recall + other.recall,
-        f1 + other.f1,
-        accuracy + other.accuracy,
-    )
+    operator fun plus(other: ClassificationMetrics): ClassificationMetrics =
+        ClassificationMetrics(
+            precision + other.precision,
+            recall + other.recall,
+            f1 + other.f1,
+            accuracy + other.accuracy,
+        )
 
     operator fun div(divisor: Int): ClassificationMetrics = this * (1.0f / divisor)
 
-    operator fun times(factor: Float): ClassificationMetrics = ClassificationMetrics(
-        precision * factor,
-        recall * factor,
-        f1 * factor,
-        accuracy * factor,
-    )
+    operator fun times(factor: Float): ClassificationMetrics =
+        ClassificationMetrics(precision * factor, recall * factor, f1 * factor, accuracy * factor)
 
     companion object {
         fun calculate(cls: ClassificationClasses): ClassificationMetrics = calculate(cls.flat)
 
-        fun calculate(cls: FlatClassificationClasses, micro: Boolean = false): ClassificationMetrics {
+        fun calculate(
+            cls: FlatClassificationClasses,
+            micro: Boolean = false,
+        ): ClassificationMetrics {
             val tp = cls.truePositive.toFloat()
             val fp = cls.falsePositive.toFloat()
             val fn = cls.falseNegative.toFloat()
@@ -52,7 +51,12 @@ data class ClassificationMetrics(
             return calculate(tp, fp, fn, total)
         }
 
-        private fun calculate(tp: Float, fp: Float, fn: Float, total: Float): ClassificationMetrics {
+        private fun calculate(
+            tp: Float,
+            fp: Float,
+            fn: Float,
+            total: Float,
+        ): ClassificationMetrics {
             fun notNaN(value: Float): Float = if (value.isNaN()) 0.0f else value
 
             val precision = notNaN(tp / (tp + fp))
@@ -77,13 +81,14 @@ open class FlatClassificationClasses(
     var noMatch: Int = 0,
     var count: Int = 0,
 ) {
-    operator fun plus(other: FlatClassificationClasses): FlatClassificationClasses = FlatClassificationClasses(
-        truePositive + other.truePositive,
-        falsePositive + other.falsePositive,
-        falseNegative + other.falseNegative,
-        noMatch + other.noMatch,
-        count + other.count,
-    )
+    operator fun plus(other: FlatClassificationClasses): FlatClassificationClasses =
+        FlatClassificationClasses(
+            truePositive + other.truePositive,
+            falsePositive + other.falsePositive,
+            falseNegative + other.falseNegative,
+            noMatch + other.noMatch,
+            count + other.count,
+        )
 }
 
 open class ClassificationClasses(
@@ -95,7 +100,8 @@ open class ClassificationClasses(
     /** sample count without duplicates, for calculating accuracy. */
     @JsonIgnore var count: Int = 1,
 ) {
-    open val classCount: Int get() = truePositive.count + falsePositive.count + falseNegative.count + noMatch.count
+    open val classCount: Int
+        get() = truePositive.count + falsePositive.count + falseNegative.count + noMatch.count
 
     fun add(other: ClassificationClasses, truncate: Boolean = true): ClassificationClasses {
         truePositive = EvaluationEntry.add(truePositive, other.truePositive, truncate)
@@ -108,13 +114,14 @@ open class ClassificationClasses(
 
     @get:JsonIgnore
     open val flat: FlatClassificationClasses
-        get() = FlatClassificationClasses(
-            truePositive = truePositive.count,
-            falsePositive = falsePositive.count,
-            falseNegative = falseNegative.count,
-            noMatch = noMatch.count,
-            count = count
-        )
+        get() =
+            FlatClassificationClasses(
+                truePositive = truePositive.count,
+                falsePositive = falsePositive.count,
+                falseNegative = falseNegative.count,
+                noMatch = noMatch.count,
+                count = count,
+            )
 }
 
 data class Metric(
@@ -158,7 +165,7 @@ data class Metric(
                     "true positive count",
                     "false positive count",
                     "false negative count",
-                    "no match count"
+                    "no match count",
                 )
             )
         }

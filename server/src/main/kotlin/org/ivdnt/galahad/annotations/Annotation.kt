@@ -22,12 +22,10 @@ enum class Annotation(@JsonValue val value: String) {
         // Used by Spring.
         @JsonCreator
         fun fromString(s: String): Annotation =
-            entries.firstOrNull { it.value == s.lowercase() } ?: throw InvalidAnnotationException(
-                "Invalid annotation type $s, valid types are $entries"
-            )
+            entries.firstOrNull { it.value == s.lowercase() } ?: throw InvalidAnnotationException(s)
 
         /** Get annotations in consistent enum declaration order. */
-        fun order(other: Iterable<Annotation>): Set<Annotation> = entries.filter { it in other }.toSet()
+        fun order(other: Iterable<Annotation>): Set<Annotation> =
+            entries.filter { it in other }.toSet()
     }
 }
-

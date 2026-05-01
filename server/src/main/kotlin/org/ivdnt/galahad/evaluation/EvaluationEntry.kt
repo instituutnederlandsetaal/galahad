@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.evaluation
 
-import org.ivdnt.galahad.evaluation.comparison.TermComparison
 import kotlin.random.Random
+import org.ivdnt.galahad.evaluation.comparison.TermComparison
 
 const val MAX_SAMPLE_LENGTH: Int = 10
 
@@ -9,13 +9,12 @@ data class EvaluationEntry(
     val count: Int = 0,
     val samples: MutableList<TermComparison> = mutableListOf(),
 ) {
-//    @get:JsonProperty("samples")
-//    val jsonSamples: List<TermComparison> get() = samples.asSequence().shuffled().take(MAX_SAMPLE_LENGTH).toList()
+    //    @get:JsonProperty("samples")
+    //    val jsonSamples: List<TermComparison> get() =
+    // samples.asSequence().shuffled().take(MAX_SAMPLE_LENGTH).toList()
 
     companion object {
-        /**
-         * Combine EvaluatationEntries, optionally truncating the number of samples.
-         */
+        /** Combine EvaluatationEntries, optionally truncating the number of samples. */
         fun add(a: EvaluationEntry, b: EvaluationEntry, truncate: Boolean = true): EvaluationEntry {
             if (a.samples.size >= MAX_SAMPLE_LENGTH && truncate) {
                 // Samples.size stays the same, but we randomly replace samples
@@ -28,12 +27,11 @@ data class EvaluationEntry(
                 a.samples.addAll(b.samples)
             }
             return EvaluationEntry(a.count + b.count, a.samples)
-
         }
 
         fun from(a: EvaluationEntry, b: EvaluationEntry): EvaluationEntry {
             val aCopy = EvaluationEntry(a.count, a.samples.toMutableList())
-            return EvaluationEntry.add(aCopy, b)
+            return add(aCopy, b)
         }
     }
 }

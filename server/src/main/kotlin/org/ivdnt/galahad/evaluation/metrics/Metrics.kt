@@ -11,8 +11,8 @@ import org.ivdnt.galahad.taggers.Tagger
 const val TRUNCATE: Int = 100
 
 /**
- * Generic class for benchmark [Metric]s of a corpus or document.
- * The idea is to sum up the distribution as we go through the terms one by one using [add].
+ * Generic class for benchmark [Metric]s of a corpus or document. The idea is to sum up the
+ * distribution as we go through the terms one by one using [add].
  */
 open class Metrics(
     @JsonIgnore val settings: List<MetricsSettings>,
@@ -22,11 +22,13 @@ open class Metrics(
     protected open val referenceJob: Job,
     truncate: Boolean = true,
 ) {
-    @JsonProperty("metrics")
-    val metricTypes: MutableMap<String, MetricsType> = HashMap()
+    @JsonProperty("metrics") val metricTypes: MutableMap<String, MetricsType> = HashMap()
 
     init {
-        settings.forEach { metricTypes[it.id] = MetricsType(it, hypoTagger, refTagger).also { it.truncate = truncate } }
+        settings.forEach {
+            metricTypes[it.id] =
+                MetricsType(it, hypoTagger, refTagger).also { it.truncate = truncate }
+        }
     }
 
     fun toGlobalCsv(): String {
@@ -56,7 +58,7 @@ open class Metrics(
                     "count",
                     "true positive count",
                     "false negative count",
-                    "no match count"
+                    "no match count",
                 )
             )
         }

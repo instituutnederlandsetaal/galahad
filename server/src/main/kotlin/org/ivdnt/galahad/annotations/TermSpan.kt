@@ -9,6 +9,5 @@ class TermSpan(
     /** Annotation value, e.g. a named entity label. */
     val value: String,
 ) {
-    @JsonCreator
-    constructor(indices: List<Int>, value: String) : this(indices.toIntArray(), value)
+    @JsonCreator constructor(indices: List<Int>, value: String) : this(indices.toIntArray(), value)
 }

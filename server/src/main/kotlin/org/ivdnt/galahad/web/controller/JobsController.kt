@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import java.util.*
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.exceptions.ErrorResponse
 import org.ivdnt.galahad.jobs.JobMetadata
@@ -17,21 +18,18 @@ import org.ivdnt.galahad.web.service.CorporaService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.util.*
 
 @RestController
-class JobsController(
-    val corpora: CorporaService,
-) {
-    @Autowired
-    private val request: HttpServletRequest? = null
+class JobsController(val corpora: CorporaService) {
+    @Autowired private val request: HttpServletRequest? = null
 
-    @Autowired
-    private val response: HttpServletResponse? = null
-    private val user get() = User.fromRequest(request)
+    @Autowired private val response: HttpServletResponse? = null
+    private val user
+        get() = User.fromRequest(request)
 
-    fun UUID.readJobs(): Jobs = corpora.readAsReaderOrThrow(this, user).jobs
-    fun UUID.writeJobs(): Jobs = corpora.readAsWriterOrThrow(this, user).jobs
+    fun UUID.readJobs(): Jobs = corpora.readOrThrow(this, user).jobs
+
+    fun UUID.writeJobs(): Jobs = corpora.readWriteOrThrow(this, user).jobs
 
     // TODO could this be replaced by /taggers?
     @Operation(
@@ -41,20 +39,19 @@ class JobsController(
     @CrossOrigin
     @GetMapping(Endpoints.Jobs.BASE)
     fun getJobs(
-        @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
+        @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID
     ): List<JobMetadata> = corpus.readJobs().readAllMetadata()
 
     @Operation(
         summary = "Get single job metadata",
         description = "Get a summary of the state of a tagger job.",
     )
-    @ApiResponse(
-        responseCode = "200", description = "The job state."
-    )
+    @ApiResponse(responseCode = "200", description = "The job state.")
     @ApiResponse(
         responseCode = "404",
         description = "Corpus or job was not found.",
-        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
     @CrossOrigin
     @GetMapping(Endpoints.Jobs.JOB)
@@ -67,23 +64,25 @@ class JobsController(
         summary = "Start job",
         description = "Start a job. Requires write access to the corpus.",
     )
-    @ApiResponse(
-        responseCode = "202", description = "The job progress."
-    )
+    @ApiResponse(responseCode = "202", description = "The job progress.")
     @ApiResponse(
         responseCode = "403",
-        description = "The user is not authorized to start jobs. Starting jobs requires write access to the corpus.",
-        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+        description =
+            "The user is not authorized to start jobs. Starting jobs requires write access to the corpus.",
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
     @ApiResponse(
         responseCode = "404",
         description = "Corpus or job was not found.",
-        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
     @ApiResponse(
         responseCode = "400",
         description = "The sourceLayer is not a tagger.",
-        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
     @CrossOrigin
     @PostMapping(Endpoints.Jobs.JOB)
@@ -100,23 +99,25 @@ class JobsController(
         summary = "Cancel or delete job",
         description = "Cancel or delete a job. Requires write access to the corpus.",
     )
-    @ApiResponse(
-        responseCode = "204", description = "Job cancelled or deleted."
-    )
+    @ApiResponse(responseCode = "204", description = "Job cancelled or deleted.")
     @ApiResponse(
         responseCode = "403",
-        description = "The user is not authorized to cancel or delete jobs. Cancelling or deleting jobs requires write access to the corpus.",
-        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+        description =
+            "The user is not authorized to cancel or delete jobs. Cancelling or deleting jobs requires write access to the corpus.",
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
     @ApiResponse(
         responseCode = "404",
         description = "Corpus or job was not found.",
-        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
     @ApiResponse(
         responseCode = "400",
         description = "The sourceLayer is not a tagger.",
-        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
     @CrossOrigin
     @PostMapping(Endpoints.Jobs.CANCEL)
@@ -126,7 +127,6 @@ class JobsController(
     ) {
         corpus.writeJobs().readOrThrow(job).stop()
     }
-
 
     @CrossOrigin
     @DeleteMapping(Endpoints.Jobs.JOB)
@@ -138,22 +138,19 @@ class JobsController(
         return ResponseEntity.noContent().build()
     }
 
-    @Operation(
-        summary = "Get job progress",
-        description = "Get the progress of a job.",
-    )
-    @ApiResponse(
-        responseCode = "200", description = "The job progress."
-    )
+    @Operation(summary = "Get job progress", description = "Get the progress of a job.")
+    @ApiResponse(responseCode = "200", description = "The job progress.")
     @ApiResponse(
         responseCode = "404",
         description = "Corpus or job was not found.",
-        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
     @ApiResponse(
         responseCode = "400",
         description = "The sourceLayer is not a tagger.",
-        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
     @CrossOrigin
     @GetMapping(Endpoints.Jobs.PROGRESS)

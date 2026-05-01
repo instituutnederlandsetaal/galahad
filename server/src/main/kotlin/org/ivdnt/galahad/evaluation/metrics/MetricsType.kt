@@ -18,9 +18,10 @@ enum class ClassificationType(val value: String) {
 
     companion object {
         fun fromString(s: String): ClassificationType =
-            entries.firstOrNull { it.value == s } ?: throw InvalidClassificationTypeException(
-                "Invalid value $s, valid values are ${entries.map { it.value }}"
-            )
+            entries.firstOrNull { it.value == s }
+                ?: throw InvalidClassificationTypeException(
+                    "Invalid value $s, valid values are ${entries.map { it.value }}"
+                )
     }
 }
 
@@ -37,25 +38,35 @@ class MetricsType(
     val reference: Tagger,
     @JsonIgnore var truncate: Boolean = true,
 ) : CsvSampleExporter {
-    @JsonIgnore
-    var map: MutableMap<String, Metric> = HashMap()
+    @JsonIgnore var map: MutableMap<String, Metric> = HashMap()
 
     /** Metrics separated per POS. */
     val grouped: Set<Metric>
         get() {
             return if (map.size > TRUNCATE) {
-                // sort mt.value.map on mt.value.map["someKey"].cls.classCount, take the first TRUNCATE elements, and then map
-                map.entries.asSequence()
-                    .sortedByDescending { it.value.cls.classCount }.take(TRUNCATE)
-                    .associateBy({ it.key }, { it.value }).values.toSet()
+                // sort mt.value.map on mt.value.map["someKey"].cls.classCount, take the first
+                // TRUNCATE
+                // elements, and then map
+                map.entries
+                    .asSequence()
+                    .sortedByDescending { it.value.cls.classCount }
+                    .take(TRUNCATE)
+                    .associateBy({ it.key }, { it.value })
+                    .values
+                    .toSet()
             } else {
                 map.values.toSet()
             }
         }
 
     val classes: ClassificationClasses
-        get() = map.values.map { it.cls }.toMutableList().apply { this.add(0, ClassificationClasses(count = 0)) }
-            .reduce { a, b -> a.add(b, truncate) }.apply { falsePositive = EvaluationEntry() }
+        get() =
+            map.values
+                .map { it.cls }
+                .toMutableList()
+                .apply { this.add(0, ClassificationClasses(count = 0)) }
+                .reduce { a, b -> a.add(b, truncate) }
+                .apply { falsePositive = EvaluationEntry() }
 
     val macro: ClassificationMetrics
         get() {
@@ -72,7 +83,7 @@ class MetricsType(
             }
             return ClassificationMetrics.calculate(
                 map.values.map { it.cls.flat }.reduce { a, b -> a + b },
-                micro = true
+                micro = true,
             )
         }
 
@@ -124,10 +135,11 @@ class MetricsType(
             add(
                 Metric(
                     name = setting.groupBy(comp.ref),
-                    cls = ClassificationClasses(
-                        noMatch = EvaluationEntry(1, mutableListOf(comp)),
-                        count = 0
-                    )
+                    cls =
+                        ClassificationClasses(
+                            noMatch = EvaluationEntry(1, mutableListOf(comp)),
+                            count = 0,
+                        ),
                 )
             )
             return // don't show no matches in false positives / true negatives.
@@ -135,26 +147,23 @@ class MetricsType(
 
         // One of these two will be empty, we don't know which.
         val (trues, falses) = truesFalses(comp, setting::termsEqual)
-        val cls = ClassificationClasses(
-            truePositive = trues,
-            falseNegative = falses,
-        )
-        add(
-            Metric(
-                name = setting.groupBy(comp.ref),
-                cls = cls
-            )
-        )
+        val cls = ClassificationClasses(truePositive = trues, falseNegative = falses)
+        add(Metric(name = setting.groupBy(comp.ref), cls = cls))
         if (falses.count != 0 && setting.hasFalsePositive) {
             // This term is also be someone else's false positive, so switch around.
-            val cls2 = ClassificationClasses(
-                falsePositive = EvaluationEntry(count = falses.samples.size, falses.samples.toMutableList()),
-                count = if (setting.groupBy(comp.hyp) == setting.groupBy(comp.ref)) 0 else 1
-            )
+            val cls2 =
+                ClassificationClasses(
+                    falsePositive =
+                        EvaluationEntry(
+                            count = falses.samples.size,
+                            falses.samples.toMutableList(),
+                        ),
+                    count = if (setting.groupBy(comp.hyp) == setting.groupBy(comp.ref)) 0 else 1,
+                )
             add(
                 Metric(
                     name = setting.groupBy(comp.hyp), // Terms are switched, so hypo.
-                    cls = cls2
+                    cls = cls2,
                 )
             )
         }
@@ -164,24 +173,28 @@ class MetricsType(
         comp: TermComparison,
         cond: (TermComparison) -> Boolean,
     ): Pair<EvaluationEntry, EvaluationEntry> {
-        val trues = if (cond(comp)) {
-            EvaluationEntry(1, mutableListOf(comp))
-        } else {
-            EvaluationEntry()
-        }
-        val falses = if (!cond(comp)) {
-            EvaluationEntry(1, mutableListOf(comp))
-        } else {
-            EvaluationEntry()
-        }
+        val trues =
+            if (cond(comp)) {
+                EvaluationEntry(1, mutableListOf(comp))
+            } else {
+                EvaluationEntry()
+            }
+        val falses =
+            if (!cond(comp)) {
+                EvaluationEntry(1, mutableListOf(comp))
+            } else {
+                EvaluationEntry()
+            }
         return Pair(trues, falses)
     }
 
     fun samplesToCsv(group: String, classType: ClassificationType): String {
         return when (classType) {
             ClassificationType.TRUE_POSITIVE -> samplesToCSV(map[group]?.cls?.truePositive?.samples)
-            ClassificationType.FALSE_POSITIVE -> samplesToCSV(map[group]?.cls?.falsePositive?.samples)
-            ClassificationType.FALSE_NEGATIVE -> samplesToCSV(map[group]?.cls?.falseNegative?.samples)
+            ClassificationType.FALSE_POSITIVE ->
+                samplesToCSV(map[group]?.cls?.falsePositive?.samples)
+            ClassificationType.FALSE_NEGATIVE ->
+                samplesToCSV(map[group]?.cls?.falseNegative?.samples)
             ClassificationType.NO_MATCH -> samplesToCSV(map[group]?.cls?.noMatch?.samples)
         }
     }
@@ -195,7 +208,8 @@ class MetricsType(
         }
     }
 
-    private fun samplesToCSV(comps: List<TermComparison>?): String = samplesToCSV(comps, hypothesis, reference)
+    private fun samplesToCSV(comps: List<TermComparison>?): String =
+        samplesToCSV(comps, hypothesis, reference)
 
     override fun samplesToCSV(): String {
         throw NotImplementedError()

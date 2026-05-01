@@ -1,16 +1,15 @@
 package org.ivdnt.galahad.jobs
 
+import java.io.File
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.LayerPreview
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.util.LayerBuilder
-import org.ivdnt.galahad.util.TestConfig
 import org.ivdnt.galahad.util.TestUtil
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.io.File
 
 class JobTest {
     lateinit var corpus: Corpus

@@ -12,17 +12,33 @@ class TermComparisonTest {
     inner class LemmaPosTest {
         // Default values would make the terms equal.
         private fun assertTerm(
-            lemmaEqual: Boolean = true, posEqual: Boolean = true,
-            hypoLemma: String? = "school", refLemma: String? = "school",
-            hypoPos: String? = "NOU", refPos: String? = "NOU",
+            lemmaEqual: Boolean = true,
+            posEqual: Boolean = true,
+            hypoLemma: String? = "school",
+            refLemma: String? = "school",
+            hypoPos: String? = "NOU",
+            refPos: String? = "NOU",
         ) {
-            val hypoTerm = Term(
-                "",
-                0,
-                mapOf(Annotation.TOKEN to "dummy", Annotation.LEMMA to hypoLemma, Annotation.POS to hypoPos)
-            )
+            val hypoTerm =
+                Term(
+                    "",
+                    0,
+                    mapOf(
+                        Annotation.TOKEN to "dummy",
+                        Annotation.LEMMA to hypoLemma,
+                        Annotation.POS to hypoPos,
+                    ),
+                )
             val refTerm =
-                Term("", 0, mapOf(Annotation.TOKEN to "dummy", Annotation.LEMMA to refLemma, Annotation.POS to refPos))
+                Term(
+                    "",
+                    0,
+                    mapOf(
+                        Annotation.TOKEN to "dummy",
+                        Annotation.LEMMA to refLemma,
+                        Annotation.POS to refPos,
+                    ),
+                )
             TermComparison(hypoTerm, refTerm).apply {
                 assertEquals(lemmaEqual, equal(Annotation.LEMMA))
                 assertEquals(posEqual, equal(Annotation.POS))

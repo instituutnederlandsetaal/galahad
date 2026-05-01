@@ -6,7 +6,7 @@ import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.evaluation.comparison.LayerComparison
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
 
-class SpanEvaluation(var correct: Int, var incorrect: Int) {}
+class SpanEvaluation(var correct: Int, var incorrect: Int)
 
 class DocumentSpanEvaluation(
     @JsonValue val spanEqualityByAnnotation: Map<Annotation, Map<String, SpanEvaluation>>
@@ -20,27 +20,32 @@ class DocumentSpanEvaluation(
                     paragraph.sentences.forEach { sentence ->
                         sentence.spans?.forEach { (annotation, spans) ->
                             spans.forEach { span ->
-                                val comparisons: List<TermComparison> = span.indices.map { index ->
-                                    val term = sentence.terms[index]
-                                    layerComparison.matches.find { it.ref.offset == term.offset }!!
-                                }
+                                val comparisons: List<TermComparison> =
+                                    span.indices.map { index ->
+                                        val term = sentence.terms[index]
+                                        layerComparison.matches.find {
+                                            it.ref.offset == term.offset
+                                        }!!
+                                    }
 
                                 val equal = comparisons.all { it.equal(annotation) }
                                 val spanValue: String = span.value
-                                val spanEvaluation = result
-                                    .getOrPut(annotation) { mutableMapOf() }
-                                    .getOrPut(spanValue) { SpanEvaluation(correct = 0, incorrect = 0) }
+                                val spanEvaluation =
+                                    result
+                                        .getOrPut(annotation) { mutableMapOf() }
+                                        .getOrPut(spanValue) {
+                                            SpanEvaluation(correct = 0, incorrect = 0)
+                                        }
 
-                                if (equal) spanEvaluation.correct += 1 else spanEvaluation.incorrect += 1
+                                if (equal) spanEvaluation.correct += 1
+                                else spanEvaluation.incorrect += 1
                             }
                         }
                     }
                 }
             }
 
-            return DocumentSpanEvaluation(
-                result
-            )
+            return DocumentSpanEvaluation(result)
         }
     }
 }

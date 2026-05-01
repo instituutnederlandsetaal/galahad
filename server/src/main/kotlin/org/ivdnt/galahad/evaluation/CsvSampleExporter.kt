@@ -7,6 +7,7 @@ import org.ivdnt.galahad.taggers.Tagger
 
 interface CsvSampleExporter {
     fun samplesToCSV(): String
+
     fun samplesToCSV(comps: List<TermComparison>?, hypoJob: Tagger, refJob: Tagger): String {
         var csv = ""
 
@@ -25,7 +26,9 @@ interface CsvSampleExporter {
         comps?.forEach { termComp ->
             val literal = termComp.hyp.token.ifEmpty { termComp.ref.token }
             val refAnnots = refColumns.map { termComp.ref.annotations[it] ?: Term.missingName(it) }
-            val hypoAnnots = hypoColumns.map { termComp.hyp.annotations[it] ?: Term.missingName(it) }
+            val hypoAnnots = hypoColumns.map {
+                termComp.hyp.annotations[it] ?: Term.missingName(it)
+            }
             csv += CsvFile.toCsvString(listOf(literal) + refAnnots + hypoAnnots)
         }
         return csv

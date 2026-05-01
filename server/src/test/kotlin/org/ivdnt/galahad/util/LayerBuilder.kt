@@ -1,5 +1,8 @@
 package org.ivdnt.galahad.util
 
+import java.io.ByteArrayOutputStream
+import java.io.File
+import kotlin.io.path.createTempDirectory
 import org.ivdnt.galahad.annotations.*
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.app.User
@@ -9,28 +12,30 @@ import org.ivdnt.galahad.export.CorpusExport
 import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.formats.tsv.TsvFile
 import org.junit.jupiter.api.Assertions.assertEquals
-import java.io.ByteArrayOutputStream
-import java.io.File
-import kotlin.io.path.createTempDirectory
 
 class LayerBuilder {
 
     var terms: MutableList<Term> = mutableListOf()
 
     fun loadDummies(
-        amount: Int, literal: String = "dummy", lemma: String? = "dummy", pos: String? = "pos",
+        amount: Int,
+        literal: String = "dummy",
+        lemma: String? = "dummy",
+        pos: String? = "pos",
     ): LayerBuilder {
         val baseOffset = terms.lastOrNull()?.offset ?: 0
         for (i in 0 until amount) {
-            terms += Term(
-                id = "",
-                offset = baseOffset + i * literal.length,
-                annotations = mapOf(
-                    Annotation.LEMMA to lemma,
-                    Annotation.POS to pos,
-                    Annotation.TOKEN to literal,
+            terms +=
+                Term(
+                    id = "",
+                    offset = baseOffset + i * literal.length,
+                    annotations =
+                        mapOf(
+                            Annotation.LEMMA to lemma,
+                            Annotation.POS to pos,
+                            Annotation.TOKEN to literal,
+                        ),
                 )
-            )
         }
         return this
     }
@@ -45,28 +50,36 @@ class LayerBuilder {
         val words: List<String> = text.split(" ")
         var offset = terms.lastOrNull()?.offset ?: 0
         for (i in words.indices) {
-            terms += Term(
-                id = "",
-                offset = offset,
-                annotations = mapOf(
-                    Annotation.TOKEN to words[i],
-                    Annotation.LEMMA to words[i],
-                    Annotation.POS to "pos",
+            terms +=
+                Term(
+                    id = "",
+                    offset = offset,
+                    annotations =
+                        mapOf(
+                            Annotation.TOKEN to words[i],
+                            Annotation.LEMMA to words[i],
+                            Annotation.POS to "pos",
+                        ),
                 )
-            )
             offset += words[i].length + 1 // + space
         }
         return this
     }
 
-    fun build(): Layer = Layer(
-        arrayOf(
-            DocumentLayer(
-                "",
-                arrayOf(ParagraphLayer("", arrayOf(SentenceLayer("", terms.toTypedArray(), emptyMap()))))
+    fun build(): Layer =
+        Layer(
+            arrayOf(
+                DocumentLayer(
+                    "",
+                    arrayOf(
+                        ParagraphLayer(
+                            "",
+                            arrayOf(SentenceLayer("", terms.toTypedArray(), emptyMap())),
+                        )
+                    ),
+                )
             )
         )
-    )
 }
 
 class DocTest {
@@ -75,15 +88,11 @@ class DocTest {
     }
 }
 
-/**
- * n for null-check
- */
+/** n for null-check */
 fun <T> n(x: T?, desc: String = "PLACEHOLDER"): T =
     x ?: throw Exception("$desc is not set, please set it first before calling this operation.")
 
-class DocTestBuilder(
-    val corpus: Corpus,
-) {
+class DocTestBuilder(val corpus: Corpus) {
 
     private var expected: String? = null
 
@@ -108,28 +117,41 @@ class DocTestBuilder(
         val doc = corpus.documents.readOrNull(file.name) ?: corpus.documents.createOrThrow(file)
         val job = corpus.jobs.createOrThrow(TestUtil.TAGGER_NAME)
         job.setLayer(doc.name, layer)
-        val corpEx = CorpusExport.create(corpus, TestUtil.TAGGER_NAME, format, User.DEFAULT_USER, false, false)
+        val corpEx =
+            CorpusExport.create(
+                corpus,
+                TestUtil.TAGGER_NAME,
+                format,
+                User.DEFAULT_USER,
+                false,
+                false,
+            )
         return corpEx.documentExport(doc)
     }
 
     // generic
 
-    private fun convertToFormat(
-        layer: Layer,
-        format: DocumentFormat,
-    ): TestResult {
+    private fun convertToFormat(layer: Layer, format: DocumentFormat): TestResult {
         val export = getDummyTransformMetadata(layer, format)
-        val text = ByteArrayOutputStream().also { export.convert(it); it.flush() }.toString()
+        val text =
+            ByteArrayOutputStream()
+                .also {
+                    export.convert(it)
+                    it.flush()
+                }
+                .toString()
         return got(text)
     }
 
-    private fun mergeToFormat(
-        layer: Layer,
-        format: DocumentFormat,
-        file: File,
-    ): TestResult {
+    private fun mergeToFormat(layer: Layer, format: DocumentFormat, file: File): TestResult {
         val export = getDummyTransformMetadata(layer, format, file)
-        val text = ByteArrayOutputStream().also { export.merge(it); it.flush() }.toString()
+        val text =
+            ByteArrayOutputStream()
+                .also {
+                    export.merge(it)
+                    it.flush()
+                }
+                .toString()
         return got(text)
     }
 
@@ -139,7 +161,8 @@ class DocTestBuilder(
 
     fun mergeTSV(path: String, layer: Layer): TestResult = mergeTSV(TestUtil.get(path), layer)
 
-    private fun mergeTSV(file: File, layer: Layer): TestResult = mergeToFormat(layer, DocumentFormat.Tsv, file)
+    private fun mergeTSV(file: File, layer: Layer): TestResult =
+        mergeToFormat(layer, DocumentFormat.Tsv, file)
 
     // Conllu
 
@@ -147,41 +170,45 @@ class DocTestBuilder(
 
     fun mergeConllu(path: String, layer: Layer): TestResult = mergeConllu(TestUtil.get(path), layer)
 
-    private fun mergeConllu(file: File, layer: Layer): TestResult = mergeToFormat(layer, DocumentFormat.Conllu, file)
+    private fun mergeConllu(file: File, layer: Layer): TestResult =
+        mergeToFormat(layer, DocumentFormat.Conllu, file)
 
     // NAF
 
-    fun convertToNaf(file: File, layer: Layer): TestResult = convertToFormat(layer, DocumentFormat.Naf)
+    fun convertToNaf(file: File, layer: Layer): TestResult =
+        convertToFormat(layer, DocumentFormat.Naf)
 
     // Folia
 
-    fun convertToFolia(file: File, layer: Layer): TestResult = convertToFormat(layer, DocumentFormat.Folia)
+    fun convertToFolia(file: File, layer: Layer): TestResult =
+        convertToFormat(layer, DocumentFormat.Folia)
 
-    fun mergeFolia(file: File, layer: Layer): TestResult = mergeToFormat(layer, DocumentFormat.Folia, file)
+    fun mergeFolia(file: File, layer: Layer): TestResult =
+        mergeToFormat(layer, DocumentFormat.Folia, file)
 
     // TEI
 
-    fun convertToTEI(file: File, layer: Layer): TestResult = convertToFormat(layer, DocumentFormat.TeiP5)
+    fun convertToTEI(file: File, layer: Layer): TestResult =
+        convertToFormat(layer, DocumentFormat.TeiP5)
 
     fun mergeTEI(path: String, layer: Layer): TestResult = mergeTEI(TestUtil.get(path), layer)
 
-    fun mergeTEI(file: File, layer: Layer): TestResult = mergeToFormat(layer, DocumentFormat.TeiP5, file)
+    fun mergeTEI(file: File, layer: Layer): TestResult =
+        mergeToFormat(layer, DocumentFormat.TeiP5, file)
 
-    /**
-     * Specify a custom result
-     */
+    /** Specify a custom result */
     fun got(result: String): TestResult {
         return TestResult(
-            expected ?: throw Exception("You forgot to set an expecting value, please to so before calling 'got'"),
-            result
+            expected
+                ?: throw Exception(
+                    "You forgot to set an expecting value, please to so before calling 'got'"
+                ),
+            result,
         )
     }
 }
 
-class TestResult(
-    private var expected: String,
-    private var actual: String,
-) {
+class TestResult(private var expected: String, private var actual: String) {
 
     fun ignoreDate(): TestResult {
         val date = Regex("\\d{4}-\\d{2}-\\d{2}")
@@ -211,7 +238,8 @@ class TestResult(
     }
 
     fun ignoreUUID(): TestResult {
-        val uuid = Regex("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")
+        val uuid =
+            Regex("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}")
         actual = uuid.replace(actual, "__UUID_IGNORED_BY_TEST__")
         expected = uuid.replace(expected, "__UUID_IGNORED_BY_TEST__")
         return this

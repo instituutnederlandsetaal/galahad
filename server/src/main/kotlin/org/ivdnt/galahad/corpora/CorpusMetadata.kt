@@ -1,76 +1,182 @@
 package org.ivdnt.galahad.corpora
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonIgnore
 import java.net.URL
 import java.util.*
+import org.ivdnt.galahad.app.User
+import org.ivdnt.galahad.exceptions.CorpusInvalidException
+import org.ivdnt.galahad.exceptions.CorpusUnauthorizedException
 
 /**
- * Metadata about a corpus, to be stored in a cache file,
- * as its immutable fields can become invalidated (e.g. [numDocs], [modified]),
- * and of course any [MutableCorpusMetadata] field.
- * This is the superset of [MutableCorpusMetadata], and contains,
- * in addition to the mutable fields of the latter, any immutable fields like [size].
- * [size] is expensive to calculate, hence the cache file.
+ * Corpus metadata that can be changed by the user. Although technically [owner] should only be set
+ * once.
  */
-class CorpusMetadata(
-    // Mutable fields
-    @JsonProperty("owner") owner: String = "",
-    @JsonProperty("name") name: String = "",
-    @JsonProperty("eraTo") eraTo: Int = 0,
-    @JsonProperty("eraFrom") eraFrom: Int = 0,
-    @JsonProperty("language") language: String? = null,
-    @JsonProperty("tagset") tagset: String? = null,
-    @JsonProperty("dataset") dataset: Boolean = false,
-    @JsonProperty("collaborators") collaborators: Set<String> = setOf(),
-    @JsonProperty("viewers") viewers: Set<String> = setOf(),
-    @JsonProperty("sourceName") sourceName: String? = null,
-    @JsonProperty("sourceURL") sourceURL: URL? = null,
-    // Immutable fields
-    val uuid: UUID = UUID(0, 0),
-    val activeJobs: Int = 0,
-    val numResults: Int = 0,
-    val numDocs: Int = 0,
-    val size: Long = 0,
-    val modified: Long = 0,
-) : MutableCorpusMetadata(
-    name = name,
-    owner = owner,
-    eraFrom = eraFrom,
-    eraTo = eraTo,
-    language = language,
-    tagset = tagset,
-    dataset = dataset,
-    collaborators = collaborators.toMutableSet(),
-    viewers = viewers.toMutableSet(),
-    sourceName = sourceName,
-    sourceURL = sourceURL
+open class CorpusMetadata(
+    var name: String,
+    var owner: String? = null,
+    var eraFrom: Int? = null,
+    var eraTo: Int? = null,
+    var language: String? = null,
+    var tagset: String? = null,
+    var dataset: Boolean? = null,
+    var collaborators: MutableSet<String>? = null,
+    var viewers: MutableSet<String>? = null,
+    var sourceName: String? = null,
+    var sourceURL: URL? = null,
 ) {
+
+    @JsonIgnore var id: UUID? = null
+
+    @JsonIgnore var user: User? = null
+
+    @get:JsonIgnore
+    val langCode: String
+        // iso 639 code. "und" for undefined.
+        get() =
+            Locale.getAvailableLocales()
+                .find { it.getDisplayLanguage(Locale.ENGLISH).equals(language, true) }
+                ?.isO3Language ?: "und"
+
+    /**
+     * Whether the user is in the list of collaborators of this corpus. Note that this is not the
+     * same as having write access: use [canWrite].
+     */
+    fun isCollaborator(user: User): Boolean = collaborators?.contains(user.id) == true
+
+    /**
+     * Whether the user is in the list of viewers of this corpus. Note that this is not the same as
+     * having read access: use [canRead].
+     */
+    fun isViewer(user: User): Boolean = viewers?.contains(user.id) == true
+
+    /** To have write access, you need to be an owner, collaborator or admin. */
+    fun canWrite(user: User): Boolean {
+        if (user.admin) return true
+        if (owner == user.id) return true
+        return isCollaborator(user)
+    }
+
+    /** Only the owner can delete a corpus, unless you are an admin. */
+    fun canDelete(user: User): Boolean {
+        if (user.admin) return true
+        return owner == user.id
+    }
+
+    /** Only the owner and admin can add new collaborators and viewers. */
+    fun canAddNewUsers(user: User): Boolean {
+        if (user.admin) return true
+        return owner == user.id
+    }
+
+    /** Only admins can make corpora into benchmark datasets. */
+    fun canDefineDataset(user: User): Boolean = user.admin
+
+    fun removeAsViewer(user: User) {
+        viewers?.removeIf { i -> i == user.id }
+    }
+
+    fun removeAsCollaborator(user: User) {
+        collaborators?.removeIf { i -> i == user.id }
+    }
+
+    /**
+     * You can view a corpus if you are a viewer, collaborator or owner of that corpus, or if it's
+     * public. Although admins have access to everything, you might not want to see all corpora
+     * listed in your own view, so optionally exclude them.
+     */
+    fun canRead(user: User, excludeAdmin: Boolean = false): Boolean {
+        if (!excludeAdmin) {
+            if (user.admin) return true
+        }
+        if (dataset == true) return true // technically, datasets are always public, but still.
+        if (isCollaborator(user)) return true
+        if (isViewer(user)) return true
+        if (owner == user.id) return true
+        return false
+    }
+
     companion object {
-        fun create(corpus: Corpus): CorpusMetadata {
-            val meta = CorpusMetadata(
-                // Immutable/calculated fields
-                // sourceAnnotationTypes = uniqueAnnotations,
-                uuid = UUID.fromString(corpus.name),
-                numResults = corpus.jobs.readAll().count { it.hasResult },
-                numDocs = corpus.documents.readAll().size,
-                size = corpus.size,
-                modified = System.currentTimeMillis(),
-            )
-            // add mutable fields
-            with(corpus.mutableMetadata) {
-                meta.owner = owner
-                meta.name = name
-                meta.eraFrom = eraFrom
-                meta.eraTo = eraTo
-                meta.language = language
-                meta.tagset = tagset
-                meta.dataset = dataset
-                meta.collaborators = collaborators
-                meta.viewers = viewers
-                meta.sourceName = sourceName
-                meta.sourceURL = sourceURL
+        private fun assertCorpusNameValidOrThrow(corpusName: String) {
+            if (corpusName.isBlank()) {
+                throw CorpusInvalidException("Corpus name is invalid.")
             }
-            return meta
+        }
+
+        /**
+         * Clean up certain values in [newMeta], checking against [oldMeta], namely:
+         * - overwrite [newMeta].owner with the original owner, unless it's a new corpus.
+         * - ignore metadata changes if a user is no longer a viewer or collaborator.
+         * - validate corpus name.
+         * - trim textual inputs.
+         * - validate permissions for changing collaborators, viewers, and dataset.
+         * - If a user appears multiple times in the permission hierarchy, only the upper level
+         *   remains.
+         */
+        fun clean(newMeta: CorpusMetadata, oldMeta: CorpusMetadata? = null): CorpusMetadata {
+            val user = newMeta.user!!
+            // Overwrite the owner with the original, so collaborators can't change it,
+            // unless it's empty, in which case it's a new corpus.
+            newMeta.owner = oldMeta?.owner ?: user.id
+
+            // Is this user a viewer?
+            if (oldMeta?.isViewer(user) == true) {
+                // Viewers are allowed to remove themselves, but no more than that.
+                if (!newMeta.isViewer(user)) {
+                    oldMeta.removeAsViewer(user)
+                    // ignore all other changes and return the old metadata, minus the viewer
+                    return oldMeta
+                } else {
+                    // If the viewer is not removing themselves, this action is unauthorized.
+                    throw CorpusUnauthorizedException("Cannot edit corpus.")
+                }
+            }
+
+            // Same for collaborators
+            if (!newMeta.isCollaborator(user) && oldMeta?.isCollaborator(user) == true) {
+                oldMeta.removeAsCollaborator(user)
+                // Although collaborators could change other metadata,
+                // if you have chosen to remove yourself as a collaborator,
+                // you probably don't want to change anything else.
+                return oldMeta
+            }
+
+            assertCorpusNameValidOrThrow(newMeta.name)
+
+            if (oldMeta?.dataset != true && newMeta.dataset == true) {
+                // Corpus is being set to public
+                if (!newMeta.canDefineDataset(user)) {
+                    throw CorpusUnauthorizedException("Cannot create a dataset.")
+                }
+            }
+
+            if (
+                oldMeta?.collaborators != newMeta.collaborators ||
+                    oldMeta?.viewers != newMeta.viewers
+            ) {
+                // Collaborators have changed
+                if (!newMeta.canAddNewUsers(user)) {
+                    throw CorpusUnauthorizedException("Cannot change collaborators or viewers.")
+                }
+            }
+
+            // Trim textual inputs
+            newMeta.apply {
+                name = name.trim()
+                sourceName = sourceName?.trim()
+                tagset = tagset?.trim()
+                language = language?.trim()
+                collaborators = collaborators?.map { it.trim() }?.toMutableSet()
+                viewers = viewers?.map { it.trim() }?.toMutableSet()
+            }
+
+            // Remove owner from list of collaborators & viewers
+            newMeta.collaborators?.remove(newMeta.owner)
+            newMeta.viewers?.remove(newMeta.owner)
+
+            // Remove collaborators from list of viewers
+            newMeta.viewers?.removeIf { newMeta.collaborators?.contains(it) == true }
+
+            return newMeta
         }
     }
 }

@@ -1,15 +1,20 @@
 package org.ivdnt.galahad.web
 
+import java.io.File
+import java.util.*
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.Galahad
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.documents.DocumentMetadata
+import org.ivdnt.galahad.exceptions.CorpusNotFoundException
 import org.ivdnt.galahad.exceptions.CorpusUnauthorizedException
 import org.ivdnt.galahad.exceptions.DocumentInvalidException
 import org.ivdnt.galahad.exceptions.DocumentNotFoundException
+import org.ivdnt.galahad.formats.ParsedFile
 import org.ivdnt.galahad.util.*
 import org.ivdnt.galahad.util.TestUtil.assignHeaders
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -17,108 +22,448 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.ResultActionsDsl
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
-import java.io.File
-import java.util.*
 
+/** Web controller tests for serialization, status, exception resolving and permissions. */
 @SpringBootTest(properties = ["spring.main.allow-bean-definition-overriding=true"])
 @AutoConfigureMockMvc
 @ContextConfiguration(classes = [Galahad::class, TestConfig::class])
-class DocumentsControllerTest(
-    @Autowired val mvc: MockMvc,
-    @Autowired val config: Config,
-) {
+class DocumentsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: Config) {
 
-    @Test
-    fun `download non-existing doc`() {
-        val corpus = TestUtil.createEmptyCorpus(config)
-        mvc.get("/corpora/${corpus.uuid}/documents/nonexisting/download") {
-            headers(::assignHeaders)
-        }.andExpect {
-            status { isNotFound() }
-            match { it.resolvedException is DocumentNotFoundException }
+    @Nested
+    inner class DocumentUploadTest {
+        @Test
+        fun `Owner can upload files`() {
+            val corpus = TestUtil.createCorpus(config)
+            val dir: File = TestUtil.get("formats/shared/converter")
+            val files = dir.listFiles()
+            assertEquals(0, getDocs(corpus).size)
+            files.forEach { uploadDoc(corpus.uuid, it) }
+            assertEquals(files.size, getDocs(corpus).size)
         }
-    }
 
-    @Test
-    fun `Upload files of all formats`() {
-        val corpus = TestUtil.createEmptyCorpus(config)
-        val dir: File = TestUtil.get("formats/shared/converter")
-        val files = dir.listFiles()
-        files.forEach { mvc.uploadFile(it, corpus) }
-        assertEquals(files.size, getDocs(corpus).size)
-    }
-
-    @Test
-    fun `Get raw files`() {
-        val corpus = TestUtil.createFilledCorpus(config)
-        val docs = getDocs(corpus)
-        val uuid = corpus.uuid
-        for (doc in docs) {
-            val result =
-                mvc.get("/corpora/$uuid/documents/${doc.name}/download") { headers(::assignHeaders) }.andReturn()
-            assertEquals(
-                TestUtil.get("formats/shared/converter/${doc.name}").readText(), result.response.contentAsString
-            )
+        private fun assertZipUpload(user: String, dataset: Boolean = false) {
+            val corpus = TestUtil.createCorpus(config, dataset)
+            val dir = TestUtil.get("formats/shared/converter")
+            val files = dir.listFiles()
+            val zip = zipDir(dir)
+            assertEquals(0, getDocs(corpus).size)
+            uploadDoc(corpus.uuid, zip, user, MediaType.APPLICATION_OCTET_STREAM_VALUE)
+            assertEquals(files.size, getDocs(corpus).size)
         }
-    }
 
-    @Test
-    fun `Test delete permissions`() {
-        val corpus = TestUtil.createFilledCorpus(config)
-        val uuid = corpus.uuid
-        val files = TestUtil.get("formats/shared/converter").listFiles()
-        val file = files.first()
-        // try to delete as stranger
-        assertDeleteDocThrows(uuid, file, "stranger")
-        // try to delete as viewer
-        assertDeleteDocThrows(uuid, file, "viewer")
-        // same number of files
-        assertEquals(files.size, getDocs(corpus).size)
-        // Delete as collaborator
-        mvc.delete("/corpora/$uuid/documents/${file.name}") { headers { assignHeaders(this, "collaborator") } }
-            .andExpect {
-                status { isNoContent() }
+        @Test
+        fun `Owner can upload zip to non-dataset`() {
+            assertZipUpload(TestUtil.TEST_USER)
+        }
+
+        @Test
+        fun `Admin can upload zip to non-dataset`() {
+            assertZipUpload("admin")
+        }
+
+        @Test
+        fun `Admin can upload zip to dataset`() {
+            assertZipUpload("admin", dataset = true)
+        }
+
+        @Test
+        fun `Collaborator can upload zip to non-dataset`() {
+            assertZipUpload("collaborator")
+        }
+
+        @Test
+        fun `Collaborator can upload zip to dataset`() {
+            assertZipUpload("collaborator", dataset = true)
+        }
+
+        private fun assertCantUploadFile(user: String, dataset: Boolean = false) {
+            val corpus = TestUtil.createCorpus(config, dataset = dataset)
+            val file = TestUtil.get("formats/shared/converter").listFiles().first()
+            assertEquals(0, getDocs(corpus).size)
+            performUploadDoc(corpus.uuid, file, user).andExpect {
+                status { isForbidden() }
+                match { it.resolvedException is CorpusUnauthorizedException }
             }
-        assertEquals(files.size - 1, getDocs(corpus).size)
-    }
+            assertEquals(0, getDocs(corpus).size)
+        }
 
-    private fun assertDeleteDocThrows(uuid: UUID, file: File, username: String) {
-        mvc.delete("/corpora/$uuid/documents/${file.name}") { headers { assignHeaders(this, username) } }.andExpect {
-            status { isForbidden() }
-            match { it.resolvedException is CorpusUnauthorizedException }
+        @Test
+        fun `Viewer can't upload to non-dataset`() {
+            assertCantUploadFile("viewer")
+        }
+
+        @Test
+        fun `Stranger can't upload to non-dataset`() {
+            assertCantUploadFile("stranger")
+        }
+
+        @Test
+        fun `Viewer can't upload to dataset`() {
+            assertCantUploadFile("viewer", dataset = true)
+        }
+
+        @Test
+        fun `Stranger can't upload to dataset`() {
+            assertCantUploadFile("stranger", dataset = true)
+        }
+
+        @Test
+        fun `Can't upload file to non-existing corpus`() {
+            val file = TestUtil.get("formats/shared/converter").listFiles().first()
+            performUploadDoc(UUID.randomUUID(), file).andExpect {
+                status { isNotFound() }
+                match { it.resolvedException is CorpusNotFoundException }
+            }
+        }
+
+        private fun assertCantUploadInvalidFile(file: File) {
+            val corpus = TestUtil.createCorpus(config)
+            assertEquals(0, getDocs(corpus).size)
+            performUploadDoc(corpus.uuid, file).andExpect {
+                status { isBadRequest() }
+                match { it.resolvedException is DocumentInvalidException }
+            }
+            assertEquals(0, getDocs(corpus).size)
+        }
+
+        @Test
+        fun `Can't upload invalid xml file`() {
+            val file = TestUtil.get("formats/invalid/invalid.xml")
+            assertCantUploadInvalidFile(file)
+        }
+
+        @Test
+        fun `Can't upload invalid other extension`() {
+            val file = TestUtil.get("formats/invalid/invalid.mp3")
+            assertCantUploadInvalidFile(file)
         }
     }
 
-    @Test
-    fun `Upload zip with all formats`() {
-        val corpus = TestUtil.createEmptyCorpus(config)
-        val dir = TestUtil.get("formats/shared/converter")
-        val files = dir.listFiles()
-        val zip = zipDir(dir)
-        mvc.uploadFile(zip, corpus, MediaType.APPLICATION_OCTET_STREAM_VALUE)
-        assertEquals(files.size, getDocs(corpus).size)
+    @Nested
+    inner class DocumentGetTest {
+        private fun assertDocumentMetadataEquals(
+            expectedMetadata: DocumentMetadata,
+            actualMetadata: DocumentMetadata,
+        ) {
+            assertEquals(expectedMetadata.name, actualMetadata.name)
+            assertEquals(expectedMetadata.format, actualMetadata.format)
+            assertEquals(expectedMetadata.text, actualMetadata.text)
+            assertEquals(expectedMetadata.annotations, actualMetadata.annotations)
+            for ((expectedTerm, actualTerm) in
+                expectedMetadata.preview.terms.zip(actualMetadata.preview.terms)) {
+                assertEquals(expectedTerm.id, actualTerm.id)
+                assertEquals(expectedTerm.offset, actualTerm.offset)
+                assertEquals(expectedTerm.annotations, actualTerm.annotations)
+            }
+        }
+
+        private fun assertGetDocument(user: String, dataset: Boolean = false) {
+            val corpus = TestUtil.createFilledCorpus(config, dataset)
+            val file = TestUtil.get("formats/shared/converter").listFiles().first()
+            val expectedMetadata = DocumentMetadata.create(ParsedFile.create(file))
+            val actualMetadata = getDoc(corpus.uuid, file.name, user)
+            assertDocumentMetadataEquals(expectedMetadata, actualMetadata)
+        }
+
+        @Test
+        fun `Owner can get document`() {
+            assertGetDocument(TestUtil.TEST_USER)
+        }
+
+        @Test
+        fun `Admin can get document`() {
+            assertGetDocument("admin")
+        }
+
+        @Test
+        fun `Admin can get document from dataset`() {
+            assertGetDocument("admin", dataset = true)
+        }
+
+        @Test
+        fun `Collaborator can get document`() {
+            assertGetDocument("collaborator")
+        }
+
+        @Test
+        fun `Collaborator can get document from dataset`() {
+            assertGetDocument("collaborator", dataset = true)
+        }
+
+        @Test
+        fun `Viewer can get document`() {
+            assertGetDocument("viewer")
+        }
+
+        @Test
+        fun `Viewer can get document from dataset`() {
+            assertGetDocument("viewer", dataset = true)
+        }
+
+        @Test
+        fun `Stranger can get document from dataset`() {
+            assertGetDocument("stranger", dataset = true)
+        }
+
+        @Test
+        fun `Stranger can't get document from non-dataset`() {
+            val corpus = TestUtil.createFilledCorpus(config)
+            val file = TestUtil.get("formats/shared/converter").listFiles().first()
+            performGetDoc(corpus.uuid, file.name, "stranger").andExpect {
+                status { isForbidden() }
+                match { it.resolvedException is CorpusUnauthorizedException }
+            }
+        }
+
+        @Test
+        fun `Can't get non-existing document`() {
+            val corpus = TestUtil.createCorpus(config)
+            performGetDoc(corpus.uuid, "non-existing.txt").andExpect {
+                status { isNotFound() }
+                match { it.resolvedException is DocumentNotFoundException }
+            }
+        }
+
+        @Test
+        fun `Can't get document in non-existing corpus`() {
+            performGetDoc(UUID.randomUUID(), "non-existing.txt").andExpect {
+                status { isNotFound() }
+                match { it.resolvedException is CorpusNotFoundException }
+            }
+        }
     }
 
-    @Test
-    fun `Upload invalid xml file`() {
-        val corpus = TestUtil.createEmptyCorpus(config)
-        val file = TestUtil.get("formats/invalid/invalid.xml")
-        val res = mvc.uploadFile(file, corpus)
-        assertEquals(res.resolvedException!!::class, DocumentInvalidException::class)
+    @Nested
+    inner class DocumentGetSourceTest {
+        private fun assertGetSourceDoc(user: String, dataset: Boolean = false) {
+            val corpus = TestUtil.createFilledCorpus(config, dataset)
+            val docs = getDocs(corpus)
+            val uuid = corpus.uuid
+            for (doc in docs) {
+                assertEquals(
+                    TestUtil.get("formats/shared/converter/${doc.name}").readText(),
+                    getSourceDoc(uuid, doc.name, user),
+                )
+            }
+        }
+
+        @Test
+        fun `Owner can get source files`() {
+            assertGetSourceDoc(TestUtil.TEST_USER)
+        }
+
+        @Test
+        fun `Admin can get source files from non-dataset`() {
+            assertGetSourceDoc("admin")
+        }
+
+        @Test
+        fun `Admin can get source files from dataset`() {
+            assertGetSourceDoc("admin", dataset = true)
+        }
+
+        @Test
+        fun `Collaborator can get source files from non-dataset`() {
+            assertGetSourceDoc("collaborator")
+        }
+
+        @Test
+        fun `Collaborator can get source files from dataset`() {
+            assertGetSourceDoc("collaborator", dataset = true)
+        }
+
+        @Test
+        fun `Viewer can get source files from non-dataset`() {
+            assertGetSourceDoc("viewer")
+        }
+
+        @Test
+        fun `Viewer can get source files from dataset`() {
+            assertGetSourceDoc("viewer", dataset = true)
+        }
+
+        @Test
+        fun `Stranger can get source files from dataset`() {
+            assertGetSourceDoc("stranger", dataset = true)
+        }
+
+        @Test
+        fun `Stranger can't get source files from non-dataset`() {
+            val corpus = TestUtil.createFilledCorpus(config)
+            val file = TestUtil.get("formats/shared/converter").listFiles().first()
+            performGetSourceDoc(corpus.uuid, file.name, "stranger").andExpect {
+                status { isForbidden() }
+                match { it.resolvedException is CorpusUnauthorizedException }
+            }
+        }
+
+        @Test
+        fun `Can't get non-existing source file`() {
+            val corpus = TestUtil.createCorpus(config)
+            performGetSourceDoc(corpus.uuid, "non-existing.txt").andExpect {
+                status { isNotFound() }
+                match { it.resolvedException is DocumentNotFoundException }
+            }
+        }
+
+        @Test
+        fun `Can't get source file in non-existing corpus`() {
+            performGetSourceDoc(UUID.randomUUID(), "non-existing.txt").andExpect {
+                status { isNotFound() }
+                match { it.resolvedException is CorpusNotFoundException }
+            }
+        }
     }
 
-    @Test
-    fun `Upload invalid other extension`() {
-        val corpus = TestUtil.createEmptyCorpus(config)
-        val file = TestUtil.get("formats/invalid/invalid.mp3")
-        val res = mvc.uploadFile(file, corpus, MediaType.ALL_VALUE)
-        assertEquals(res.resolvedException!!::class, DocumentInvalidException::class)
+    @Nested
+    inner class DocumentDeleteTest {
+        private fun assertDeleteDoc(user: String, dataset: Boolean = false) {
+            val corpus = TestUtil.createFilledCorpus(config, dataset)
+            val files = TestUtil.get("formats/shared/converter").listFiles()
+            val file = files.first()
+            assertEquals(files.size, getDocs(corpus).size)
+            deleteDoc(corpus.uuid, file.name, user)
+            assertEquals(files.size - 1, getDocs(corpus).size)
+        }
+
+        @Test
+        fun `Owner can delete document`() {
+            assertDeleteDoc(TestUtil.TEST_USER)
+        }
+
+        @Test
+        fun `Admin can delete document from non-dataset`() {
+            assertDeleteDoc("admin")
+        }
+
+        @Test
+        fun `Admin can delete document from dataset`() {
+            assertDeleteDoc("admin", dataset = true)
+        }
+
+        @Test
+        fun `Collaborator can delete document from non-dataset`() {
+            assertDeleteDoc("collaborator")
+        }
+
+        @Test
+        fun `Collaborator can delete document from dataset`() {
+            assertDeleteDoc("collaborator", dataset = true)
+        }
+
+        private fun assertCantDeleteDoc(user: String, dataset: Boolean = false) {
+            val corpus = TestUtil.createFilledCorpus(config, dataset)
+            val files = TestUtil.get("formats/shared/converter").listFiles()
+            val file = files.first()
+            assertEquals(files.size, getDocs(corpus).size)
+            performDeleteDoc(corpus.uuid, file.name, user).andExpect {
+                status { isForbidden() }
+                match { it.resolvedException is CorpusUnauthorizedException }
+            }
+            assertEquals(files.size, getDocs(corpus).size)
+        }
+
+        @Test
+        fun `Viewer can't delete document from non-dataset`() {
+            assertCantDeleteDoc("viewer")
+        }
+
+        @Test
+        fun `Stranger can't delete document from non-dataset`() {
+            assertCantDeleteDoc("stranger")
+        }
+
+        @Test
+        fun `Viewer can't delete document from dataset`() {
+            assertCantDeleteDoc("viewer", dataset = true)
+        }
+
+        @Test
+        fun `Stranger can't delete document from dataset`() {
+            assertCantDeleteDoc("stranger", dataset = true)
+        }
+
+        @Test
+        fun `Can't delete document in non-existing corpus`() {
+            performDeleteDoc(UUID.randomUUID(), "non-existing.txt").andExpect {
+                status { isNotFound() }
+                match { it.resolvedException is CorpusNotFoundException }
+            }
+        }
+
+        @Test
+        fun `Can't delete non-existing document`() {
+            val corpus = TestUtil.createCorpus(config)
+            performDeleteDoc(corpus.uuid, "non-existing.txt").andExpect {
+                status { isNotFound() }
+                match { it.resolvedException is DocumentNotFoundException }
+            }
+        }
+    }
+
+    private fun performUploadDoc(
+        uuid: UUID,
+        file: File,
+        user: String = TestUtil.TEST_USER,
+        mediaType: String = MediaType.TEXT_PLAIN_VALUE,
+    ): ResultActionsDsl =
+        mvc.uploadFile("/corpora/$uuid/documents", file, mediaType) {
+            headers { assignHeaders(this, user) }
+        }
+
+    private fun uploadDoc(
+        uuid: UUID,
+        file: File,
+        user: String = TestUtil.TEST_USER,
+        mediaType: String = MediaType.TEXT_PLAIN_VALUE,
+    ) {
+        performUploadDoc(uuid, file, user, mediaType).andExpect { status { isCreated() } }
+    }
+
+    private fun performGetDoc(
+        uuid: UUID,
+        doc: String,
+        user: String = TestUtil.TEST_USER,
+    ): ResultActionsDsl =
+        mvc.get("/corpora/$uuid/documents/$doc") { headers { assignHeaders(this, user) } }
+
+    private fun getDoc(
+        uuid: UUID,
+        doc: String,
+        user: String = TestUtil.TEST_USER,
+    ): DocumentMetadata =
+        performGetDoc(uuid, doc, user).andExpect { status { isOk() } }.andReturn().andDeserialize()
+
+    private fun performGetSourceDoc(
+        uuid: UUID,
+        doc: String,
+        user: String = TestUtil.TEST_USER,
+    ): ResultActionsDsl =
+        mvc.get("/corpora/$uuid/documents/$doc/download") { headers { assignHeaders(this, user) } }
+
+    private fun getSourceDoc(uuid: UUID, doc: String, user: String = TestUtil.TEST_USER): String =
+        performGetSourceDoc(uuid, doc, user)
+            .andExpect { status { isOk() } }
+            .andReturn()
+            .response
+            .contentAsString
+
+    private fun performDeleteDoc(
+        uuid: UUID,
+        doc: String,
+        user: String = TestUtil.TEST_USER,
+    ): ResultActionsDsl =
+        mvc.delete("/corpora/$uuid/documents/${doc}") { headers { assignHeaders(this, user) } }
+
+    private fun deleteDoc(uuid: UUID, doc: String, user: String = TestUtil.TEST_USER) {
+        performDeleteDoc(uuid, doc, user).andExpect { status { isNoContent() } }
     }
 
     private fun getDocs(corpus: Corpus): List<DocumentMetadata> =
-        mvc.get("/corpora/${corpus.uuid}/documents") {
-            headers(::assignHeaders)
-        }.andReturn().andDeserialize()
+        mvc.get("/corpora/${corpus.uuid}/documents") { headers(::assignHeaders) }
+            .andReturn()
+            .andDeserialize()
 }

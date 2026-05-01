@@ -10,16 +10,20 @@ import java.util.zip.ZipOutputStream
 typealias FileMapper = Pair<String, (OutputStream) -> Unit>
 
 /**
- * Create zip file for the given files, optionally to a specific stream.
- * Can be used as a streaming response zip, for when expensive transformations are applied to the Sequence<File>.
+ * Create zip file for the given files, optionally to a specific stream. Can be used as a streaming
+ * response zip, for when expensive transformations are applied to the Sequence<File>.
  *
- * @param files Sequence of files to be zipped. As it is a Sequence type,
- * you may want to perform some transformations to map data to a file.
+ * @param files Sequence of files to be zipped. As it is a Sequence type, you may want to perform
+ *   some transformations to map data to a file.
  * @param out If provided, used as a ZipOutputStream.
  * @param includeCMDI include the GaLAHaD CMDI template files in the zip.
  * @return The flushed and closed zipfile.
  */
-fun createZipFile(files: Sequence<FileMapper>, out: OutputStream? = null, includeCMDI: Boolean = false): File {
+fun createZipFile(
+    files: Sequence<FileMapper>,
+    out: OutputStream? = null,
+    includeCMDI: Boolean = false,
+): File {
     // Create zip and stream.
     val zipFile = File.createTempFile("tmp", ".zip")
     val zipStream = ZipOutputStream(BufferedOutputStream(out ?: FileOutputStream(zipFile)))
@@ -53,13 +57,10 @@ fun zipDir(dir: File): File {
             if (file.isFile) {
                 val entryName = file.relativeTo(dir).path
                 zip.putNextEntry(ZipEntry(entryName))
-                file.inputStream().use { input ->
-                    input.copyTo(zip)
-                }
+                file.inputStream().use { input -> input.copyTo(zip) }
                 zip.closeEntry()
             }
         }
     }
     return zipFile
 }
-

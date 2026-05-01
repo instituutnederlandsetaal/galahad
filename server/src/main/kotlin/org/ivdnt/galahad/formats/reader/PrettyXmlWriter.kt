@@ -1,7 +1,7 @@
-package org.ivdnt.galahad.formats.xml
+package org.ivdnt.galahad.formats.reader
 
-import org.codehaus.stax2.XMLStreamWriter2
 import javax.xml.XMLConstants
+import org.codehaus.stax2.XMLStreamWriter2
 
 class PrettyXMLWriter(private val writer: XMLStreamWriter2) : XMLStreamWriter2 by writer {
     private var indentLevel = 0
@@ -61,29 +61,22 @@ class PrettyXMLWriter(private val writer: XMLStreamWriter2) : XMLStreamWriter2 b
         newLine = true
     }
 
-    fun wrapIn(localName: String, attrs: Map<String,String>? = null, block: () -> Unit) {
+    fun wrapIn(localName: String, vararg attrs: Pair<String, String>, block: () -> Unit = {}) {
         writeStartElement(localName)
-        writeAttrs(attrs)
+        val attrsMap = attrs.takeIf { it.isNotEmpty() }?.toMap()
+        writeAttrs(attrsMap)
         block()
         writeEndElement()
     }
 
-    fun wrapIn(localName: String, attr: Pair<String,String>? = null, block: () -> Unit) {
-        wrapIn(localName, attr?.let { mapOf(it) }, block)
-    }
-
-    fun wrapIn(localName: String, block: () -> Unit) {
-        wrapIn(localName, attrs = null, block)
-    }
-
-    fun writeElement(localName: String, attrs: Map<String,String>? = null, text: String? = null) {
+    fun writeElement(localName: String, attrs: Map<String, String>? = null, text: String? = null) {
         wrapIn(localName) {
             writeAttrs(attrs)
             text?.let { writeCharacters(it) }
         }
     }
 
-    fun writeElement(localName: String, attr: Pair<String,String>? = null, text: String? = null) {
+    fun writeElement(localName: String, attr: Pair<String, String>? = null, text: String? = null) {
         writeElement(localName, attr?.let { mapOf(it) }, text)
     }
 

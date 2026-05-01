@@ -17,6 +17,8 @@ class CacheStatsReporter : Logging {
         val miss = stats.missCount()
         val evictions = stats.evictionCount()
         val entries = DiskValue.cache.estimatedSize()
-        logger.info("Cache: [rate: $rate; hits: $hits;  miss: $miss;  evictions: $evictions; entries: $entries]")
+        logger.info(
+            "Cache: [rate: $rate; hits: $hits;  miss: $miss;  evictions: $evictions; entries: $entries]"
+        )
     }
 }

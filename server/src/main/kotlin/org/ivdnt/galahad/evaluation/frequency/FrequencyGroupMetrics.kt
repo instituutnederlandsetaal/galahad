@@ -2,10 +2,7 @@ package org.ivdnt.galahad.evaluation.frequency
 
 import org.ivdnt.galahad.corpora.Corpus
 
-class TokenFrequency(
-    corpus: Corpus,
-    jobName: String,
-) {
+class TokenFrequency(corpus: Corpus, jobName: String) {
     private val tokenFrequency: Map<String, Int>
 
     init {

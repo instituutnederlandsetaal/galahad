@@ -1,19 +1,16 @@
 package org.ivdnt.galahad.formats.txt
 
+import java.io.File
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Layer
-import org.ivdnt.galahad.annotations.LayerReader
 import org.ivdnt.galahad.annotations.Term
-import java.io.File
+import org.ivdnt.galahad.formats.reader.LayerReader
 
 /**
- * Reads a .txt file and creates an [Layer] from it.
- * [SentenceLayer] and [ParagraphLayer] are supported.
- * .txt files don't support more than one document, so only 1 [DocumentLayer].
+ * Reads a .txt file and creates an [Layer] from it. [SentenceLayer] and [ParagraphLayer] are
+ * supported. .txt files don't support more than one document, so only 1 [DocumentLayer].
  */
-class TxtReader(
-    val file: File
-) : LayerReader() {
+class TxtReader(val file: File) : LayerReader() {
     override fun read(): Layer {
         file.forEachLine {
             if (it.isNotBlank()) {

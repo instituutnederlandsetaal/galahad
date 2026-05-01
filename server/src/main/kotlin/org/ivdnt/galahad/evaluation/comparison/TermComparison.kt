@@ -7,7 +7,10 @@ data class TermComparison(
     val hyp: Term, // Hypothesis
     val ref: Term, // True reference
 ) {
-    /** Apply a removal regex transformation to the annotation before comparing. E.g. removing _ from lemmas. */
+    /**
+     * Apply a removal regex transformation to the annotation before comparing. E.g. removing _ from
+     * lemmas.
+     */
     fun equal(annotation: Annotation, regex: Regex): Boolean {
         var refAnnot: String? = ref.annotations[annotation]
         var hypAnnot: String? = hyp.annotations[annotation]

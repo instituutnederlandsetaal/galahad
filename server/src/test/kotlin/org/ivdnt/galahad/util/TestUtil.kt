@@ -1,15 +1,15 @@
 package org.ivdnt.galahad.util
 
-import org.ivdnt.galahad.app.Config
-import org.ivdnt.galahad.app.User
-import org.ivdnt.galahad.corpora.Corpora
-import org.ivdnt.galahad.corpora.Corpus
-import org.ivdnt.galahad.corpora.MutableCorpusMetadata
-import org.springframework.http.HttpHeaders
 import java.io.File
 import java.net.URL
 import java.util.*
 import kotlin.io.path.createTempDirectory
+import org.ivdnt.galahad.app.Config
+import org.ivdnt.galahad.app.User
+import org.ivdnt.galahad.corpora.Corpora
+import org.ivdnt.galahad.corpora.Corpus
+import org.ivdnt.galahad.corpora.CorpusMetadata
+import org.springframework.http.HttpHeaders
 
 object TestUtil {
     const val TAGGER_NAME: String = "pie-tdn-all"
@@ -18,35 +18,34 @@ object TestUtil {
 
     fun get(path: String): File = File(this::class.java.classLoader.getResource(path)!!.toURI())
 
-    fun createEmptyCorpus(config: Config): Corpus {
-        val workdir = config.getWorkingDirectory().resolve("corpora").resolve("user")
-        return createCorpus(workdir)
-    }
-
-    fun createFilledCorpus(config: Config): Corpus {
-        val corpus = createEmptyCorpus(config)
+    fun createFilledCorpus(config: Config, dataset: Boolean = false): Corpus {
+        val corpus = createCorpus(config, dataset)
         val files = get("formats/shared/converter").listFiles()
         files.forEach { corpus.documents.createOrThrow(it) }
         return corpus
     }
 
-    fun createCorpus(workdir: File? = null, isDataset: Boolean = false, isAdmin: Boolean = false): Corpus {
-        val parent = workdir ?: createTempDirectory().toFile()
+    fun createCorpus(config: Config? = null, dataset: Boolean = false): Corpus {
+        val parent =
+            config?.getWorkingDirectory()?.resolve("corpora")?.resolve("user")
+                ?: createTempDirectory().toFile()
         val corpora = Corpora(parent)
-        val meta = MutableCorpusMetadata(
-            "testCorpus",
-            TEST_USER,
-            1200,
-            1300,
-            "Dutch",
-            "TDN-Core",
-            isDataset,
-            mutableSetOf("collaborator"),
-            mutableSetOf("viewer"),
-            "source name",
-            URL("http://source.url")
-        )
-        meta.user = User("testUser", isAdmin)
+        val user = if (dataset) User("admin") else User(TEST_USER)
+        val meta =
+            CorpusMetadata(
+                "testCorpus",
+                user.id,
+                1200,
+                1300,
+                "Dutch",
+                "TDN-Core",
+                dataset,
+                mutableSetOf("collaborator"),
+                mutableSetOf("viewer"),
+                "source name",
+                URL("http://source.url"),
+            )
+        meta.user = user
         meta.id = UUID.randomUUID()
         return corpora.createOrThrow(meta)
     }

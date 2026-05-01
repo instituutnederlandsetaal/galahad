@@ -6,16 +6,12 @@ import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.util.TermIterator
 
 /**
- * Match the [Layer.terms] of two layers based on their [WordForm] position (offset and length)
- * When filters are provided, only match [TermComparison] that match the filter (on annotation value).
- * In this way, matches only contain samples that you want to download.
- * (Still, aggregating these matches is up to the (corpus/documents) evaluation classes)
+ * Match the [Layer.terms] of two layers based on their [WordForm] position (offset and length) When
+ * filters are provided, only match [TermComparison] that match the filter (on annotation value). In
+ * this way, matches only contain samples that you want to download. (Still, aggregating these
+ * matches is up to the (corpus/documents) evaluation classes)
  */
-open class LayerComparison(
-    hypothesis: Layer,
-    reference: Layer,
-    val filter: LayerFilter? = null,
-) {
+open class LayerComparison(hypothesis: Layer, reference: Layer, val filter: LayerFilter? = null) {
     constructor(export: DocumentExport) : this(export.layer, export.sourceLayer)
 
     val matches: MutableList<TermComparison> = mutableListOf()

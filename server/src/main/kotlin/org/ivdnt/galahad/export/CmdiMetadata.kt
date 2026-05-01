@@ -1,26 +1,25 @@
 package org.ivdnt.galahad.export
 
-import org.ivdnt.galahad.app.Config
-import org.ivdnt.galahad.corpora.MutableCorpusMetadata
-import org.ivdnt.galahad.util.*
-import org.w3c.dom.Element
-import org.w3c.dom.Node
 import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
+import org.ivdnt.galahad.app.Config
+import org.ivdnt.galahad.corpora.CorpusMetadata
+import org.ivdnt.galahad.util.*
+import org.w3c.dom.Element
+import org.w3c.dom.Node
 
 /**
- * Constructs a CMDI file for the exported document.
- * Uses a template CMDI file (in resources/) and fills in the metadata.
- * That file only needs to be parsed once and can be reused, simply filling/overwriting
- * the metadata values in the DOM with each instance.
+ * Constructs a CMDI file for the exported document. Uses a template CMDI file (in resources/) and
+ * fills in the metadata. That file only needs to be parsed once and can be reused, simply
+ * filling/overwriting the metadata values in the DOM with each instance.
  */
 class CmdiMetadata(val export: DocumentExport) {
-    private val docTitle = export.document.uploadedFile.withoutFormatExt
-    private val corpus: MutableCorpusMetadata = export.corpus.mutableMetadata
+    private val docTitle = export.document.sourceFile.withoutFormatExt
+    private val corpus: CorpusMetadata = export.corpus.metadata
     private val format = export.format.identifier
     private val now = Date()
     private val year = SimpleDateFormat("yyyy").format(now)
@@ -34,18 +33,19 @@ class CmdiMetadata(val export: DocumentExport) {
     private val sourceName = corpus.sourceName.ifNullOrBlank { "!No source name defined!" }
     private val sourceUrl = corpus.sourceURL?.toString().ifNullOrBlank { "!No source URL defined!" }
 
-    /**
-     * Write the CMDI file to the given [out]put stream.
-     */
+    /** Write the CMDI file to the given [out]put stream. */
     fun write(out: OutputStream) {
         writeCmdHeader()
         writeCmdResources()
         writeCmdComponents()
-        TransformerFactory.newInstance().newTransformer().transform(DOMSource(xml), StreamResult(out))
+        TransformerFactory.newInstance()
+            .newTransformer()
+            .transform(DOMSource(xml), StreamResult(out))
     }
 
     /**
      * Write to CMDI Header.
+     *
      * ```xml
      * <cmd:Header>
      *     <cmd:MdCreationDate>DATE</cmd:MdCreationDate>
@@ -61,6 +61,7 @@ class CmdiMetadata(val export: DocumentExport) {
 
     /**
      * Write to CMDI Resources.
+     *
      * ```xml
      * <cmd:Resources>
      *     <cmd:ResourceProxyList>
@@ -80,6 +81,7 @@ class CmdiMetadata(val export: DocumentExport) {
 
     /**
      * Write to CMDI Components.
+     *
      * ```xml
      * <cmd:Components>
      *     <cmdp:TextProfileINT_GaLAHaD_v4>
@@ -109,6 +111,7 @@ class CmdiMetadata(val export: DocumentExport) {
 
     /**
      * Write to CMDI Components.TextFile_GaLAHaD.
+     *
      * ```xml
      * <cmdp:TextFile_GaLAHaD>
      *     <cmdp:GaLAHaDPersistentIdentifier>PID_tei</cmdp:GaLAHaDPersistentIdentifier>
@@ -125,12 +128,14 @@ class CmdiMetadata(val export: DocumentExport) {
         textFileGalahad.child("cmdp:GaLAHaDPersistentIdentifier").textContent = "${uuid}_$format"
         // Components.TextFile_GaLAHaD.Conversion_GaLAHaD
         val conversionGalahad = textFileGalahad.child("cmdp:Conversion_GaLAHaD")
-        conversionGalahad.child("cmdp:conversionDescription").textContent = "exported as $format by GaLAHaD"
+        conversionGalahad.child("cmdp:conversionDescription").textContent =
+            "exported as $format by GaLAHaD"
         conversionGalahad.child("cmdp:Tool").child("cmdp:toolVersion").textContent = version
     }
 
     /**
      * Write to CMDI Components.Source_GaLAHaD.
+     *
      * ```xml
      * <cmdp:Source_GaLAHaD>
      *     <cmdp:sourceID>TITLE</cmdp:sourceID>
@@ -156,6 +161,7 @@ class CmdiMetadata(val export: DocumentExport) {
 
     /**
      * Write to CMDI Components.Annotation_GaLAHaD.
+     *
      * ```xml
      * <cmdp:Annotation_GaLAHaD>
      *     <cmdp:annotationSet>TAGSET</cmdp:annotationSet>
@@ -179,6 +185,7 @@ class CmdiMetadata(val export: DocumentExport) {
 
     /**
      * Write to CMDI Components.Annotation_GaLAHaD.Provenance.AnnotationProcess.
+     *
      * ```xml
      * <cmdp:AnnotationProcess>
      *     <cmdp:ProcessorsAnnotators>
@@ -219,7 +226,8 @@ class CmdiMetadata(val export: DocumentExport) {
 
     companion object {
         // Load CMDI template
-        private val cmdiTemplate = CmdiMetadata::class.java.classLoader.getResourceAsStream("CMDI-template.xml")
+        private val cmdiTemplate =
+            CmdiMetadata::class.java.classLoader.getResourceAsStream("CMDI-template.xml")
         private val xml = XmlUtil.builder.parse(cmdiTemplate)
         private val root = xml.documentElement
 

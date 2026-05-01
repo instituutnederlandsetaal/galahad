@@ -11,21 +11,14 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class TagsetsController : Logging {
-    @Operation(
-        summary = "List all tagsets",
-        description = "List the metadata of all tagsets."
-    )
+    @Operation(summary = "List all tagsets", description = "List the metadata of all tagsets.")
     @CrossOrigin
     @GetMapping(Endpoints.Tagsets.BASE)
     fun getTagsets(): Iterable<Tagset> = Tagset.tagsets.values
 
-    @Operation(
-        summary = "Get tagset by id",
-        description = "Metadata of the tagset."
-    )
+    @Operation(summary = "Get tagset by id", description = "Metadata of the tagset.")
     @CrossOrigin
     @GetMapping(Endpoints.Tagsets.TAGSET)
-    fun getTagset(
-        @PathVariable @Parameter(description = "Tagset id") id: String
-    ): Tagset = Tagset.readOrThrow(id)
+    fun getTagset(@PathVariable @Parameter(description = "Tagset id") id: String): Tagset =
+        Tagset.readOrThrow(id)
 }

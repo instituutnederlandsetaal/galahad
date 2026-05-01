@@ -1,5 +1,6 @@
 package org.ivdnt.galahad.export
 
+import java.io.OutputStream
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.app.User
@@ -13,9 +14,9 @@ import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.util.FileMapper
 import org.ivdnt.galahad.util.createZipFile
 import org.ivdnt.galahad.util.withoutFormatExt
-import java.io.OutputStream
 
-class CorpusExport private constructor(
+class CorpusExport
+private constructor(
     val corpus: Corpus,
     val job: Job,
     val format: DocumentFormat,
@@ -24,7 +25,8 @@ class CorpusExport private constructor(
     val shouldMerge: Boolean,
     val posHeadOnly: Boolean,
 ) : Logging {
-    private fun mergeFormatMatches(it: Document, format: DocumentFormat): Boolean = it.metadata.format == format
+    private fun mergeFormatMatches(it: Document, format: DocumentFormat): Boolean =
+        it.metadata.format == format
 
     private fun formatMapper(doc: Document, out: OutputStream) {
         try {
@@ -45,21 +47,26 @@ class CorpusExport private constructor(
     }
 
     /**
-     * Maps all [Document] found in [Documents] to the desired [DocumentFormat] and zips them. [formatMapper] should perform the mapping.
+     * Maps all [Document] found in [Documents] to the desired [DocumentFormat] and zips them.
+     * [formatMapper] should perform the mapping.
      */
     fun export(out: OutputStream) {
-        val docs = corpus.documents.readAll().filter { DocumentExport.create(this, it).layer != Layer.EMPTY }
-        val seq: Sequence<FileMapper> = docs.asSequence().map { doc ->
-            val fileName = doc.uploadedFile.withoutFormatExt + "." + format.extension
-            fileName to { out -> formatMapper(doc,out) }
-        }
-        val seqCmdi: Sequence<FileMapper> = docs.asSequence().map { doc ->
-            "metadata/CMDI-${doc.uploadedFile.withoutFormatExt}.xml" to { out ->
-                DocumentExport.create(
-                    this, doc
-                ).cmdi(out)
+        val docs =
+            corpus.documents.readAll().filter {
+                DocumentExport.create(this, it).layer != Layer.EMPTY
             }
-        }
+        val seq: Sequence<FileMapper> =
+            docs.asSequence().map { doc ->
+                val fileName = doc.sourceFile.withoutFormatExt + "." + format.extension
+                fileName to { out -> formatMapper(doc, out) }
+            }
+        val seqCmdi: Sequence<FileMapper> =
+            docs.asSequence().map { doc ->
+                "metadata/CMDI-${doc.sourceFile.withoutFormatExt}.xml" to
+                    { out ->
+                        DocumentExport.create(this, doc).cmdi(out)
+                    }
+            }
         createZipFile(seq + seqCmdi, out, includeCMDI = true)
     }
 
@@ -72,15 +79,16 @@ class CorpusExport private constructor(
             format: DocumentFormat,
             user: User,
             shouldMerge: Boolean,
-            posHeadOnly: Boolean
-        ): CorpusExport = CorpusExport(
-            corpus = corpus,
-            job = corpus.jobs.readOrThrow(jobName),
-            format = format,
-            user = user,
-            tagger = Tagger.readOrThrow(jobName, corpus),
-            shouldMerge = shouldMerge,
-            posHeadOnly = posHeadOnly
-        )
+            posHeadOnly: Boolean,
+        ): CorpusExport =
+            CorpusExport(
+                corpus = corpus,
+                job = corpus.jobs.readOrThrow(jobName),
+                format = format,
+                user = user,
+                tagger = Tagger.readOrThrow(jobName, corpus),
+                shouldMerge = shouldMerge,
+                posHeadOnly = posHeadOnly,
+            )
     }
 }

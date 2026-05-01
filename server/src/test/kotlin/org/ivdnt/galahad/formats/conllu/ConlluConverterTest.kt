@@ -42,5 +42,4 @@ class ConlluConverterTest : ConverterTest() {
     fun `Conllu to Json`() {
         formatToFormat(DocumentFormat.Conllu, DocumentFormat.Json)
     }
-
 }

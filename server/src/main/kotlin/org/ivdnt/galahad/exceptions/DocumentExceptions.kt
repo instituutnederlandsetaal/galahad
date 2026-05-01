@@ -13,6 +13,4 @@ class DocumentInvalidException(document: String, details: String? = null) :
 @ResponseStatus(value = HttpStatus.BAD_REQUEST)
 class InvalidDocumentFormatException(details: String) : Exception(details)
 
-class FileUploadException(
-    override val message: String,
-) : Exception(message)
+class FileUploadException(override val message: String) : Exception(message)

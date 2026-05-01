@@ -1,13 +1,13 @@
 package org.ivdnt.galahad.evaluation.assays
 
 //
-//@WebMvcTest(properties = ["spring.main.allow-bean-definition-overriding=true"])
-//@ContextConfiguration(classes = [Galahad::class, TestConfig::class])
-//class BenchmarksControllerTest(
+// @WebMvcTest(properties = ["spring.main.allow-bean-definition-overriding=true"])
+// @ContextConfiguration(classes = [Galahad::class, TestConfig::class])
+// class BenchmarksControllerTest(
 //    @Autowired val mvc: MockMvc,
 //    @Autowired val config: Config,
 //    @Autowired val ctrl: BenchmarksController,
-//) {
+// ) {
 //    @Test
 //    fun getAssays() {
 //        // No assays should exist
@@ -33,7 +33,8 @@ package org.ivdnt.galahad.evaluation.assays
 //        EvaluationUtil.addLayersAsJobs(corpus, doc.name, layer, layer)
 //
 //        // job assay should exist
-//        assertNotNull(corpus.jobs.readOrThrow(TestUtil.TAGGER_NAME).assay.readOrCreate<Map<String, FlatMetricType>>())
+//        assertNotNull(corpus.jobs.readOrThrow(TestUtil.TAGGER_NAME).assay.readOrCreate<Map<String,
+// FlatMetricType>>())
 //
 //        // /GET
 //        val assaysRequest: MvcResult = mvc.perform(
@@ -41,8 +42,9 @@ package org.ivdnt.galahad.evaluation.assays
 //        ).andReturn()
 //        assays = JSON.fromStr<BenchmarksMatrix>(assaysRequest.response.contentAsString)
 //        assertEquals(1, assays.size)
-//        assertEquals(1f, assays["testCorpus"]!!["lemmaPosByPos"]!![TestUtil.TAGGER_NAME]!!.micro.accuracy, 0.00001f)
+//        assertEquals(1f,
+// assays["testCorpus"]!!["lemmaPosByPos"]!![TestUtil.TAGGER_NAME]!!.micro.accuracy, 0.00001f)
 //        // We don't want the source layer, as it would always 100% agree with itself.
 //        assertFalse(assays.containsKey("sourceLayer"))
 //    }
-//}
+// }

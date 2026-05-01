@@ -1,5 +1,6 @@
 package org.ivdnt.galahad.web
 
+import java.util.*
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.app.Config
@@ -22,13 +23,13 @@ import org.springframework.http.HttpMethod
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
-import java.util.*
 
 @ContextConfiguration(classes = [Galahad::class, TestConfig::class])
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
-    properties = ["server.port=8010", "spring.main.allow-bean-definition-overriding=true"]
+    properties = ["server.port=8010", "spring.main.allow-bean-definition-overriding=true"],
 )
+@Disabled
 class JobsControllerTest(
     @Autowired val rest: TestRestTemplate,
     @Autowired val config: Config,
@@ -36,16 +37,20 @@ class JobsControllerTest(
     @Autowired val taggers: TaggersController,
 ) {
 
-    @Disabled
     @Test
     fun postJob() {
-        val corpus = TestUtil.createEmptyCorpus(config)
+        val corpus = TestUtil.createCorpus(config)
         val doc = corpus.documents.createOrThrow(TestUtil.get("all-formats/input/input.tei.xml"))
-        val uuid = corpus.immutableMetadata.uuid
+        val uuid = corpus.uuid
 
-        Assertions.assertEquals(taggers.getTaggers().count() + 1, getJobs(uuid).size) // +1 for the sourceLayer
+        Assertions.assertEquals(
+            taggers.getTaggers().count() + 1,
+            getJobs(uuid).size,
+        ) // +1 for the sourceLayer
         var progress: Progress =
-            rest.postForEntity("/corpora/$uuid/jobs/pie-tdn", getHeaders(), Progress::class.java).body!!
+            rest
+                .postForEntity("/corpora/$uuid/jobs/pie-tdn", getHeaders(), Progress::class.java)
+                .body!!
         Assertions.assertEquals(1, progress.total)
         Assertions.assertTrue(progress.busy)
 
@@ -63,26 +68,36 @@ class JobsControllerTest(
     }
 
     private fun pollProgress(uuid: UUID, job: String): Progress {
-        return rest.exchange(
-            "/corpora/$uuid/jobs/$job/progress", HttpMethod.GET, getHeaders(), Progress::class.java
-        ).body!!
+        return rest
+            .exchange(
+                "/corpora/$uuid/jobs/$job/progress",
+                HttpMethod.GET,
+                getHeaders(),
+                Progress::class.java,
+            )
+            .body!!
     }
 
     private fun getJobs(uuid: UUID): Set<JobMetadata> {
-        return rest.exchange(
-            "/corpora/$uuid/jobs?includePotentialJobs=true",
-            HttpMethod.GET,
-            getHeaders(),
-            object : ParameterizedTypeReference<Set<JobMetadata>>() {}).body!!
+        return rest
+            .exchange(
+                "/corpora/$uuid/jobs?includePotentialJobs=true",
+                HttpMethod.GET,
+                getHeaders(),
+                object : ParameterizedTypeReference<Set<JobMetadata>>() {},
+            )
+            .body!!
     }
 
     private fun getDocumentJobResult(uuid: UUID, job: String, document: String): Layer {
-        return rest.exchange(
-            "/corpora/$uuid/jobs/$job/documents/$document/result",
-            HttpMethod.GET,
-            getHeaders(),
-            Layer::class.java
-        ).body!!
+        return rest
+            .exchange(
+                "/corpora/$uuid/jobs/$job/documents/$document/result",
+                HttpMethod.GET,
+                getHeaders(),
+                Layer::class.java,
+            )
+            .body!!
     }
 
     private fun getHeaders(): HttpEntity<Any> {

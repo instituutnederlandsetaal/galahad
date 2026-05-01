@@ -5,9 +5,11 @@ import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.parameters.RequestBody as SwaggerRequestBody
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import java.util.*
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.documents.DocumentMetadata
@@ -19,76 +21,107 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
-import java.util.*
-import io.swagger.v3.oas.annotations.parameters.RequestBody as SwaggerRequestBody
 
 // Note that some API responses have */* as content type.
 // For swagger to work, all media types have to be defined on the 200 response.
 @RestController
-class DocumentsController(
-    val corpora: CorporaService,
-    val documentsService: DocumentsService,
-) : Logging {
+class DocumentsController(val corpora: CorporaService, val documentsService: DocumentsService) :
+    Logging {
 
-    @Autowired
-    private val response: HttpServletResponse? = null
-    @Autowired
-    private val request: HttpServletRequest? = null
+    @Autowired private val response: HttpServletResponse? = null
 
-    private val user get() = User.fromRequest(request)
+    @Autowired private val request: HttpServletRequest? = null
+
+    private val user
+        get() = User.fromRequest(request)
 
     @Operation(
         summary = "List all documents metadata",
         description = "List all documents metadata in a corpus.",
     )
     @ApiResponse(
-        responseCode = "200", description = "DocumentMetadata of all documents in the corpus."
+        responseCode = "200",
+        description = "DocumentMetadata of all documents in the corpus.",
     )
     @ApiResponse(
         responseCode = "404",
         description = "Corpus not found.",
-        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
     @CrossOrigin
     @GetMapping(Endpoints.Documents.BASE)
-    fun getDocuments(@PathVariable @Parameter(description = "Corpus UUID") corpus: UUID): List<DocumentMetadata> =
-        documentsService.readAll(corpus, user)
+    fun getDocuments(
+        @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID
+    ): List<DocumentMetadata> = documentsService.readAll(corpus, user)
 
     @Operation(
         summary = "Upload document or zip file",
         description = "Upload a document or zip file (.zip) with documents.",
     )
-    @ApiResponse(
-        responseCode = "404",
-        description = "Corpus not found.",
-        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
-    )
+    @ApiResponse(responseCode = "201", description = "Document/zip uploaded.")
     @ApiResponse(
         responseCode = "400",
         description = "The uploaded file is invalid.",
-        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
     @ApiResponse(
         responseCode = "403",
-        description = "The user is not authorized to upload documents. Uploading documents requires write-access.",
-        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
+        description =
+            "The user is not authorized to upload documents. Uploading documents requires write-access.",
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
     @ApiResponse(
-        responseCode = "201",
-        description = "Document/zip uploaded.",
+        responseCode = "404",
+        description = "Corpus not found.",
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
     @CrossOrigin
     @PostMapping(Endpoints.Documents.BASE, consumes = ["multipart/form-data"])
     fun postDocument(
-        @RequestBody @SwaggerRequestBody(description = "Document or zip file to upload. See the GaLAHaD Help for the supported formats.") file: MultipartFile,
+        @RequestBody
+        @SwaggerRequestBody(description = "Document or zip file to upload.")
+        file: MultipartFile,
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
     ) {
         response?.status = HttpServletResponse.SC_CREATED
-        documentsService.create(file, corpus, user)
+        documentsService.createOrThrow(file, corpus, user)
     }
 
     @Operation(
-        summary = "Get raw uploaded document file",
+        summary = "Get single document",
+        description = "Get the metadata of a single document.",
+    )
+    @ApiResponse(
+        responseCode = "200",
+        description = "Document metadata.",
+        content = [Content(mediaType = "text/plain,*/*")],
+    )
+    @ApiResponse(
+        responseCode = "403",
+        description =
+            "The user is not authorized to view the document. Viewing documents requires read-access.",
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
+    )
+    @ApiResponse(
+        responseCode = "404",
+        description = "Corpus or document not found.",
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
+    )
+    @CrossOrigin
+    @GetMapping(Endpoints.Documents.DOCUMENT)
+    fun getDocument(
+        @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
+        @PathVariable @Parameter(description = "Document name") document: String,
+    ): DocumentMetadata = documentsService.readOrThrow(corpus, document, user).metadata
+
+    @Operation(
+        summary = "Get source document",
         description = "Get the raw file of a document, as originally uploaded by the user.",
     )
     @ApiResponse(
@@ -97,44 +130,45 @@ class DocumentsController(
         content = [Content(mediaType = "text/plain,*/*")],
     )
     @ApiResponse(
-        responseCode = "404",
-        description = "Corpus or document not found.",
-        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+        responseCode = "403",
+        description =
+            "The user is not authorized to download the raw file. Downloading the original files requires write-access.",
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
     @ApiResponse(
-        responseCode = "403",
-        description = "The user is not authorized to download the raw file. Downloading the original files requires write-access.",
-        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+        responseCode = "404",
+        description = "Corpus or document not found.",
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
     @CrossOrigin
     @GetMapping(Endpoints.Documents.DOWNLOAD)
-    fun getDownload(
+    fun getSourceDocument(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Document name") document: String,
     ): ByteArray {
-        val file = documentsService.read(corpus, document, user).uploadedFile
-        response?.contentType = "text/plain" // Default for text files. Even if it really means "unknown text file"
+        val file = documentsService.readOrThrow(corpus, document, user).sourceFile
+        response?.contentType =
+            "text/plain" // Default for text files. Even if it really means "unknown text file"
         response?.setContentDisposition(file.name)
         return file.readBytes()
     }
 
-    @Operation(
-        summary = "Delete single document",
-        description = "Delete a document and its jobs.",
+    @Operation(summary = "Delete single document", description = "Delete a document and its jobs.")
+    @ApiResponse(responseCode = "204", description = "Document deleted.")
+    @ApiResponse(
+        responseCode = "403",
+        description =
+            "The user is not authorized to delete documents. Deleting documents requires write-access.",
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
     @ApiResponse(
         responseCode = "404",
         description = "Corpus or document not found.",
-        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
-    )
-    @ApiResponse(
-        responseCode = "204",
-        description = "Document deleted.",
-    )
-    @ApiResponse(
-        responseCode = "403",
-        description = "The user is not authorized to delete documents. Deleting documents requires write-access.",
-        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
     @CrossOrigin
     @DeleteMapping(Endpoints.Documents.DOCUMENT)
@@ -142,7 +176,7 @@ class DocumentsController(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Document name") document: String,
     ): ResponseEntity<String> {
-        documentsService.delete(corpus, document, user)
+        documentsService.deleteOrThrow(corpus, document, user)
         return ResponseEntity.noContent().build()
     }
 }

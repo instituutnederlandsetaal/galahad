@@ -15,13 +15,11 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 
-/** Web controller tests for serialization, status, exception resolving and permissions if applicable. */
+/** Web controller tests for serialization, status, exception resolving and permissions. */
 @SpringBootTest(properties = ["spring.main.allow-bean-definition-overriding=true"])
 @AutoConfigureMockMvc
 @ContextConfiguration(classes = [Galahad::class, TestConfig::class])
-class TaggersControllerTest(
-    @Autowired val mvc: MockMvc,
-) {
+class TaggersControllerTest(@Autowired val mvc: MockMvc) {
     @Test
     fun `Can get taggers`() {
         val taggers: List<Tagger> = mvc.get("/taggers").andReturn().andDeserialize()

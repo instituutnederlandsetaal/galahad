@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import jakarta.servlet.http.HttpServletResponse
+import java.util.*
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.documents.DocumentFormat
 import org.ivdnt.galahad.exceptions.ErrorResponse
@@ -15,16 +16,11 @@ import org.ivdnt.galahad.web.service.CorporaService
 import org.ivdnt.galahad.web.service.ExportService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
-import java.util.*
 
 @RestController
-class ExportController(
-    val corpora: CorporaService,
-    val exportService: ExportService,
-) : Logging {
+class ExportController(val corpora: CorporaService, val exportService: ExportService) : Logging {
 
-    @Autowired
-    private val response: HttpServletResponse? = null
+    @Autowired private val response: HttpServletResponse? = null
 
     private fun setZipResponseHeader(corpus: UUID) {
         response!!.contentType = "application/json; application/zip"
@@ -38,23 +34,27 @@ class ExportController(
     )
     @ApiResponse(
         responseCode = "200",
-        description = "The converted documents in a zip file (.zip). Only includes tagged documents.",
+        description =
+            "The converted documents in a zip file (.zip). Only includes tagged documents.",
         content = [Content(mediaType = "application/zip,*/*")],
     )
     @ApiResponse(
         responseCode = "404",
         description = "Corpus or job not found",
-        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
     @ApiResponse(
         responseCode = "400",
         description = "Invalid format",
-        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
     @ApiResponse(
         responseCode = "403",
         description = "The user is not allowed to export files. Exporting requires write-access.",
-        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
     @CrossOrigin
     @ResponseBody
@@ -63,35 +63,48 @@ class ExportController(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,
         @RequestParam("format") @Parameter(description = "Export format") format: DocumentFormat,
-        @RequestParam(defaultValue = "false") @Parameter(description = "Only export the head of PoS (e.g. PD in PD(type=art))") posHeadOnly: Boolean = false,
+        @RequestParam(defaultValue = "false")
+        @Parameter(description = "Only export the head of PoS (e.g. PD in PD(type=art))")
+        posHeadOnly: Boolean = false,
     ) {
         setZipResponseHeader(corpus)
-        return exportService.exportCorpusJobInFormat(corpus, job, format, shouldMerge = false, posHeadOnly)
+        return exportService.exportCorpusJobInFormat(
+            corpus,
+            job,
+            format,
+            shouldMerge = false,
+            posHeadOnly,
+        )
     }
 
     @Operation(
         summary = "Merge all job document",
-        description = "Merge and export all document of a tagger job to a specific format. Any documents matching the selected format will be merged, others simply converted.",
+        description =
+            "Merge and export all document of a tagger job to a specific format. Any documents matching the selected format will be merged, others simply converted.",
     )
     @ApiResponse(
         responseCode = "200",
-        description = "The converted documents in a zip file (.zip). Only includes tagged documents.",
+        description =
+            "The converted documents in a zip file (.zip). Only includes tagged documents.",
         content = [Content(mediaType = "application/zip,*/*")],
     )
     @ApiResponse(
         responseCode = "404",
         description = "Corpus or job not found",
-        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
     @ApiResponse(
         responseCode = "400",
         description = "The format is not supported for merging.",
-        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
     @ApiResponse(
         responseCode = "403",
         description = "The user is not allowed to export files. Exporting requires write-access.",
-        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
     @CrossOrigin
     @ResponseBody
@@ -100,10 +113,18 @@ class ExportController(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,
         @RequestParam("format") @Parameter(description = "Export format") format: DocumentFormat,
-        @RequestParam(defaultValue = "false") @Parameter(description = "Only export the head of PoS (e.g. PD in PD(type=art))") posHeadOnly: Boolean = false,
+        @RequestParam(defaultValue = "false")
+        @Parameter(description = "Only export the head of PoS (e.g. PD in PD(type=art))")
+        posHeadOnly: Boolean = false,
     ) {
         setZipResponseHeader(corpus)
-        return exportService.exportCorpusJobInFormat(corpus, job, format, shouldMerge = true, posHeadOnly)
+        return exportService.exportCorpusJobInFormat(
+            corpus,
+            job,
+            format,
+            shouldMerge = true,
+            posHeadOnly,
+        )
     }
 
     @Operation(
@@ -118,17 +139,20 @@ class ExportController(
     @ApiResponse(
         responseCode = "404",
         description = "Corpus, job or document not found",
-        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
     @ApiResponse(
         responseCode = "400",
         description = "Invalid format",
-        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
     @ApiResponse(
         responseCode = "403",
         description = "The user is not allowed to export files. Exporting requires write-access.",
-        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
     @CrossOrigin
     @GetMapping(Endpoints.Export.Documents.CONVERT)
@@ -137,7 +161,9 @@ class ExportController(
         @PathVariable @Parameter(description = "Tagger name") job: String,
         @PathVariable @Parameter(description = "Document name") document: String,
         @RequestParam @Parameter(description = "Export format") format: DocumentFormat,
-        @RequestParam(defaultValue = "false") @Parameter(description = "Only export the head of PoS (e.g. PD in PD(type=art))") posHeadOnly: Boolean = false,
+        @RequestParam(defaultValue = "false")
+        @Parameter(description = "Only export the head of PoS (e.g. PD in PD(type=art))")
+        posHeadOnly: Boolean = false,
     ) {
         response?.contentType = "text/plain"
         exportService.convertDoc(corpus, job, document, format, posHeadOnly)
@@ -155,17 +181,20 @@ class ExportController(
     @ApiResponse(
         responseCode = "404",
         description = "Corpus, job or document not found",
-        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
     @ApiResponse(
         responseCode = "400",
         description = "The format of the original document is not supported for merging.",
-        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
     @ApiResponse(
         responseCode = "403",
         description = "The user is not allowed to export files. Exporting requires write-access.",
-        content = [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))]
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
     @CrossOrigin
     @GetMapping(Endpoints.Export.Documents.MERGE)
@@ -173,7 +202,9 @@ class ExportController(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,
         @PathVariable @Parameter(description = "Document name") document: String,
-        @RequestParam(defaultValue = "false") @Parameter(description = "Only export the head of PoS (e.g. PD in PD(type=art))") posHeadOnly: Boolean = false,
+        @RequestParam(defaultValue = "false")
+        @Parameter(description = "Only export the head of PoS (e.g. PD in PD(type=art))")
+        posHeadOnly: Boolean = false,
     ) {
         response?.contentType = "text/plain"
         return exportService.mergeDoc(corpus, job, document, posHeadOnly)

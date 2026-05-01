@@ -6,9 +6,7 @@ import org.ivdnt.galahad.evaluation.comparison.LayerFilter
 import org.ivdnt.galahad.jobs.Job
 import org.ivdnt.galahad.taggers.Tagger
 
-/**
- * The benchmark [Metric]s of a document for two different tagger layers.
- */
+/** The benchmark [Metric]s of a document for two different tagger layers. */
 class DocumentMetrics(
     doc: Document,
     hypoTagger: Tagger,
@@ -21,7 +19,8 @@ class DocumentMetrics(
 ) : Metrics(settings, hypoTagger, refTagger, hypothesisJob, referenceJob, truncate = truncate) {
 
     init {
-        val layerComparison = LayerComparison(hypothesisJob.getLayer(doc), referenceJob.getLayer(doc), layerFilter)
+        val layerComparison =
+            LayerComparison(hypothesisJob.getLayer(doc), referenceJob.getLayer(doc), layerFilter)
         layerComparison.matches.forEach(this::add)
     }
 }

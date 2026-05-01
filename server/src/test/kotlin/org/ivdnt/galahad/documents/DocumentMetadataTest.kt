@@ -1,18 +1,12 @@
 package org.ivdnt.galahad.documents
 
 import org.ivdnt.galahad.annotations.Annotation
-import org.ivdnt.galahad.app.Config
-import org.ivdnt.galahad.app.Galahad
 import org.ivdnt.galahad.corpora.Corpus
-import org.ivdnt.galahad.util.TestConfig
 import org.ivdnt.galahad.util.TestUtil
 import org.ivdnt.galahad.util.TestUtil.get
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ContextConfiguration
 
 class DocumentMetadataTest() {
     lateinit var corpus: Corpus

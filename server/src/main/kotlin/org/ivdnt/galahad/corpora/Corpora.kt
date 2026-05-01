@@ -1,12 +1,11 @@
 package org.ivdnt.galahad.corpora
 
+import java.io.File
 import org.ivdnt.galahad.exceptions.CorpusNotFoundException
 import org.ivdnt.galahad.files.GalahadFolderManager
-import java.io.File
 
 /**
- * Create, read and delete corpora.
- * Represents a corpora collection folder on the file system.
+ * Create, read and delete corpora. Represents a corpora collection folder on the file system.
  * Usage:
  * ```
  * val corpora = Corpora(File("corpora/"))
@@ -25,20 +24,20 @@ import java.io.File
  *
  * val corpus2 = folder.readOrNull(key) // returns null
  * // val corpus3 = folder.readOrThrow(key) // throws
- *
  */
-class Corpora(
-    dir: File,
-) : GalahadFolderManager<Corpus, MutableCorpusMetadata>(dir) {
-    override fun createOrThrow(key: MutableCorpusMetadata): Corpus = Corpus.create(dir.resolve(key.id.toString()), key)
+class Corpora(dir: File) : GalahadFolderManager<Corpus, CorpusMetadata>(dir) {
+    override fun createOrThrow(key: CorpusMetadata): Corpus =
+        Corpus.create(dir.resolve(key.id.toString()), key)
+
     override fun ctor(key: String): Corpus = Corpus(dir.resolve(key))
+
     override fun throwNotFound(key: String): Nothing = throw CorpusNotFoundException(key)
 
-    fun updateOrThrow(newMeta: MutableCorpusMetadata): Corpus {
+    fun updateOrThrow(newMeta: CorpusMetadata): Corpus {
         val corpus = readOrThrow(newMeta.id.toString())
-        val oldMeta = corpus.mutableMetadata
-        val cleanMetadata = MutableCorpusMetadata.clean(newMeta, oldMeta)
-        corpus.mutableMetadata = cleanMetadata
+        val oldMeta = corpus.metadata
+        val cleanMetadata = CorpusMetadata.clean(newMeta, oldMeta)
+        corpus.metadata = cleanMetadata
         return corpus
     }
 }

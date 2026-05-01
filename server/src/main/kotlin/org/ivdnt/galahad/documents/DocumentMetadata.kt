@@ -1,10 +1,8 @@
 package org.ivdnt.galahad.documents
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.LayerAnnotations
 import org.ivdnt.galahad.annotations.LayerPreview
-import org.ivdnt.galahad.formats.InternalFile
+import org.ivdnt.galahad.formats.ParsedFile
 
 data class DocumentMetadata(
     /** Name of the uploaded file including extension. Used as a working directory name. */
@@ -12,7 +10,7 @@ data class DocumentMetadata(
     /** Format of the uploaded file as induced by FormatInducer. */
     val format: DocumentFormat,
     /** A truncated preview of the parsed plaintext. */
-    val text: String,
+    val text: String, // TODO unnecessary if we have the layer preview
     /** A truncated preview of the annotated layer. */
     val preview: LayerPreview,
     /** Some statistics about the source annotations, if present */
@@ -20,14 +18,10 @@ data class DocumentMetadata(
     /** Last modified timestamp in milliseconds. */
     val modified: Long,
 ) {
-    @get:JsonIgnore
-    val annotationSet: List<Annotation>
-        get() = annotations.annotations.map { it.key }
-
     companion object {
         private const val PREVIEW_LENGTH: Int = 100
 
-        fun create(file: InternalFile): DocumentMetadata {
+        fun create(file: ParsedFile): DocumentMetadata {
             val text = file.layer.toString()
             return DocumentMetadata(
                 name = file.file.name,

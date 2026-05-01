@@ -15,9 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class ErrorController : ErrorController, Logging {
-    @Autowired
-    private val response: HttpServletResponse? = null
-
+    @Autowired private val response: HttpServletResponse? = null
 
     @RequestMapping("/error")
     @Hidden
@@ -25,8 +23,13 @@ class ErrorController : ErrorController, Logging {
     @ExceptionHandler
     fun handleError(request: HttpServletRequest): ErrorResponse {
 
-        // Get the default status code (probably 500), or override it with the actual status code if it is a RESTException.
-        var statusCode = HttpStatus.valueOf(request.getAttribute("jakarta.servlet.error.status_code") as Int? ?: 500)
+        // Get the default status code (probably 500), or override it with the actual status code if
+        // it
+        // is a RESTException.
+        var statusCode =
+            HttpStatus.valueOf(
+                request.getAttribute("jakarta.servlet.error.status_code") as Int? ?: 500
+            )
         val jakartaException = request.getAttribute("jakarta.servlet.error.exception") as Exception?
         response?.status = statusCode.value()
 
@@ -36,17 +39,22 @@ class ErrorController : ErrorController, Logging {
             jakartaErrorMsg = null
         }
         val springException =
-            request.getAttribute("org.springframework.web.servlet.DispatcherServlet.EXCEPTION") as Exception?
+            request.getAttribute("org.springframework.web.servlet.DispatcherServlet.EXCEPTION")
+                as Exception?
         var errorMsg =
-            jakartaErrorMsg ?: jakartaException?.cause?.message ?: springException?.message ?: jakartaException?.message
-            ?: "No error message available."
+            jakartaErrorMsg
+                ?: jakartaException?.cause?.message
+                ?: springException?.message
+                ?: jakartaException?.message
+                ?: "No error message available."
 
         // Is it our fault?
         if (statusCode.value() >= 500) {
             // Don't reveal the exception to the user
             errorMsg = "Internal server error"
             // Log the stack trace
-            val stackTrace = jakartaException?.stackTraceToString() ?: springException?.stackTraceToString()
+            val stackTrace =
+                jakartaException?.stackTraceToString() ?: springException?.stackTraceToString()
             stackTrace?.let(logger::error)
         }
 

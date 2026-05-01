@@ -1,17 +1,17 @@
 package org.ivdnt.galahad.taggers
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import java.io.File
+import java.net.URI
+import java.net.URL
 import org.ivdnt.galahad.annotations.Annotation
-import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
+import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.app.application_profile
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.exceptions.TaggerNotFoundException
 import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.Constructor
-import java.io.File
-import java.net.URI
-import java.net.URL
 
 class Tagger(
     // The id should be equal to the filename
@@ -29,18 +29,18 @@ class Tagger(
     var version: String = "",
     var uri: String = "",
 ) {
-    @JsonIgnore
-    var port: Int? = 0
+    @JsonIgnore var port: Int? = 0
 
     // Has to be a getter, because taggers are first initialized with an empty constructor,
     // and then filled from yaml, meaning that devport is 0 at the time of initialization
     @get:JsonIgnore
     val url: URL
-        get() = if ("dev" in application_profile) {
-            URI("http://localhost:$port").toURL()
-        } else {
-            URI("http://$id:8080").toURL()
-        }
+        get() =
+            if ("dev" in application_profile) {
+                URI("http://localhost:$port").toURL()
+            } else {
+                URI("http://$id:8080").toURL()
+            }
 
     @get:JsonIgnore
     val annotationSet: Set<Annotation>
@@ -50,50 +50,50 @@ class Tagger(
     val principles: String
         get() = annotations.mapNotNull { it.principles }.flatten().joinToString { it.name!! }
 
-    class LinkItem(
-        var name: String? = null,
-        var details: String? = null,
-        var href: String? = null,
-    )
+    class LinkItem(var name: String? = null, var details: String? = null, var href: String? = null)
 
-    class AnnotationItem(
-        var annotation: Annotation? = null,
-        var principles: List<LinkItem>? = null,
-    )
+    class AnnotationItem(var annotation: Annotation? = null, var principles: List<LinkItem>? = null)
 
-    class Period(
-        var from: Int = 0,
-        var to: Int = 0,
-    )
+    class Period(var from: Int = 0, var to: Int = 0)
 
     companion object {
         private const val TAGGERS_DIR: String = "data/taggers"
         private val dir: File = File(TAGGERS_DIR)
 
-        val taggers: Map<String, Tagger> = dir.listFiles()
-            .map {
-                Yaml(
-                    Constructor(
-                        Tagger::class.java,
-                        LoaderOptions().apply { isEnumCaseSensitive = false })
-                ).load<Tagger>(it.inputStream())
+        val taggers: Map<String, Tagger> =
+            dir.listFiles()
+                .map {
+                    Yaml(
+                            Constructor(
+                                Tagger::class.java,
+                                LoaderOptions().apply { isEnumCaseSensitive = false },
+                            )
+                        )
+                        .load<Tagger>(it.inputStream())
+                }
+                .associateBy { it.id }
+
+        fun readOrThrow(id: String, corpus: Corpus? = null): Tagger =
+            when (id) {
+                SOURCE_LAYER_NAME ->
+                    corpus?.jobs?.readOrThrow(SOURCE_LAYER_NAME)?.metadata?.tagger
+                        ?: throw TaggerNotFoundException(id)
+
+                else -> taggers[id] ?: throw TaggerNotFoundException(id)
             }
-            .associateBy { it.id }
-
-        fun readOrThrow(id: String, corpus: Corpus? = null): Tagger = when (id) {
-            SOURCE_LAYER_NAME -> corpus?.jobs?.readOrThrow(SOURCE_LAYER_NAME)?.metadata?.tagger
-                ?: throw TaggerNotFoundException(id)
-
-            else -> taggers[id] ?: throw TaggerNotFoundException(id)
-        }
 
         fun createSourceTagger(corpus: Corpus): Tagger {
-            val metadata = corpus.immutableMetadata
-            val produces = corpus.documents.readAll().flatMap { it.metadata.annotationSet }.toSet()
+            val metadata = corpus.metadata
+            val produces =
+                corpus.documents.readAll().flatMap { it.metadata.annotations.keys }.toSet()
             return Tagger(
                 id = SOURCE_LAYER_NAME,
                 description = "uploaded annotations",
-                period = Period(metadata.eraFrom ?: 0, metadata.eraTo ?: 0), // TODO should probably also be nullable
+                period =
+                    Period(
+                        metadata.eraFrom ?: 0,
+                        metadata.eraTo ?: 0,
+                    ), // TODO should probably also be nullable
                 language = metadata.language,
                 annotations = produces.map { AnnotationItem(it) },
             )

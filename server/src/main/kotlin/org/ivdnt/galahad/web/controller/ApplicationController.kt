@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Hidden
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import jakarta.servlet.http.HttpServletRequest
+import java.net.URI
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.User
@@ -13,17 +14,15 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
-import java.net.URI
 
 @RestController
 class ApplicationController : Logging {
-    @Autowired
-    private val request: HttpServletRequest? = null
+    @Autowired private val request: HttpServletRequest? = null
 
     @Operation(
         summary = "Get version information",
         description = "Get version information and GitHub build information and commit version.",
-        responses = [ApiResponse(description = "Version information.")]
+        responses = [ApiResponse(description = "Version information.")],
     )
     @CrossOrigin
     @GetMapping(Endpoints.VERSION)
@@ -35,14 +34,15 @@ class ApplicationController : Logging {
     @GetMapping(Endpoints.BASE)
     fun getApplication(): ResponseEntity<Void> {
         // Since we have nothing to show at this URL, we redirect to the API UI instead
-        return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(request?.contextPath + Endpoints.SWAGGER))
+        return ResponseEntity.status(HttpStatus.FOUND)
+            .location(URI.create(request?.contextPath + Endpoints.SWAGGER))
             .build()
     }
 
     @Operation(
         summary = "Get user information",
         description = "Get the username and whether the user is an admin.",
-        responses = [ApiResponse(description = "User information.")]
+        responses = [ApiResponse(description = "User information.")],
     )
     @CrossOrigin
     @GetMapping(Endpoints.USER)

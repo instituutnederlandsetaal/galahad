@@ -1,14 +1,12 @@
 package org.ivdnt.galahad.formats.conllu
 
+import java.io.File
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.Term
-import org.ivdnt.galahad.formats.LineReader
-import java.io.File
+import org.ivdnt.galahad.formats.reader.LineReader
 
-class ConlluReader(
-    val file: File
-) : LineReader() {
+class ConlluReader(val file: File) : LineReader() {
     private val ignorableMultiWordIds: MutableList<String> = mutableListOf()
 
     private val String.id: String?
@@ -69,7 +67,8 @@ class ConlluReader(
                 ignorableMultiWordIds.add(i.toString())
             }
         }
-        if (id in ignorableMultiWordIds) return parseMultiWordToken(string) // ignore multi-word tokens
+        if (id in ignorableMultiWordIds)
+            return parseMultiWordToken(string) // ignore multi-word tokens
 
         newTerm(fields)
     }
@@ -81,9 +80,7 @@ class ConlluReader(
         return getColumn(indices[annotation]!!, fields)
     }
 
-    /**
-     * Retrieve the NER from the MISC column and convert it to IOB.
-     */
+    /** Retrieve the NER from the MISC column and convert it to IOB. */
     private fun getNER(values: List<String>): String? {
         val misc = getColumn(9, values) ?: return null
 
@@ -103,13 +100,15 @@ class ConlluReader(
     }
 
     /** returns null on _ */
-    private fun getColumn(i: Int, fields: List<String>): String? = getColumnRaw(i, fields)?.takeIf { it != "_" }
+    private fun getColumn(i: Int, fields: List<String>): String? =
+        getColumnRaw(i, fields)?.takeIf { it != "_" }
 
     /** returns the raw value, even if it is "_" */
     private fun getColumnRaw(i: Int, fields: List<String>): String? = fields.getOrNull(i)
 
     private fun getUpos(fields: List<String>): String? {
-        val head: String = getColumn(3, fields) ?: return null // if no head, ignore features and return
+        val head: String =
+            getColumn(3, fields) ?: return null // if no head, ignore features and return
         val features: String? = getColumn(5, fields)
         return if (features != null) {
             "$head($features)"
@@ -135,14 +134,15 @@ class ConlluReader(
         private val nerAttrNames: List<String> = listOf("NamedEntity", "ner")
         private val idRegex = Regex("""id = (\S+)""")
 
-        private val indices: Map<Annotation, Int> = mapOf(
-            Annotation.TOKEN to 1,
-            Annotation.LEMMA to 2,
-            Annotation.POS to 4,
-            Annotation.HEAD to 6,
-            Annotation.DEPREL to 7,
-            Annotation.UPOS to -1, // see GetUpos
-            Annotation.NER to -1, // see GetNer
-        )
+        private val indices: Map<Annotation, Int> =
+            mapOf(
+                Annotation.TOKEN to 1,
+                Annotation.LEMMA to 2,
+                Annotation.POS to 4,
+                Annotation.HEAD to 6,
+                Annotation.DEPREL to 7,
+                Annotation.UPOS to -1, // see GetUpos
+                Annotation.NER to -1, // see GetNer
+            )
     }
 }

@@ -2,35 +2,26 @@ package org.ivdnt.galahad.app
 
 import jakarta.servlet.http.HttpServletRequest
 import java.io.File
+import org.ivdnt.galahad.app.User.Companion.DEFAULT_USER
+import org.ivdnt.galahad.app.User.Companion.USER_HEADER
 
+class User(val id: String) {
+    val admin: Boolean
+        get() = isAdmin(id)
 
-
-class User(
-    val id: String,
-    val isAdmin: Boolean = false,
-) {
     companion object {
-        const val USER_HEADER = "remote_user"
+        internal const val USER_HEADER: String = "remote_user"
         private const val USERNAME: String = "user"
         private val ADMIN_FILE: File = File("data/admins/admins.txt")
-        val DEFAULT_USER: User get() = User(id = USERNAME, isAdmin = isAdmin(USERNAME))
+        internal val DEFAULT_USER: User
+            get() = User(USERNAME)
 
-        private fun isAdmin(username: String): Boolean {
-            if (!ADMIN_FILE.exists()) return false // When no admins are set, no one is admin by default
-            return username in ADMIN_FILE.readLines().map { it.trim() } // Otherwise only declared admins are admins
-        }
+        /** Check if [username] is in [ADMIN_FILE]. */
+        private fun isAdmin(username: String): Boolean =
+            username in ADMIN_FILE.takeIf { it.exists() }?.readLines()?.map { it.trim() }.orEmpty()
 
-        fun fromRequest(request: HttpServletRequest?): User {
-            return try {
-                // This is the header used by the portal. We cannot spoof it
-                val remoteUser = request!!.getHeader(USER_HEADER)
-                User(id = remoteUser, isAdmin = isAdmin(remoteUser))
-            } catch (_: Exception) {
-                // happens when the application is run in prod mode, but without the portal
-                // In this case we default to a single user instance
-                // Note that admin status is not set here
-                DEFAULT_USER
-            }
-        }
+        /** Get [User] from [USER_HEADER] in [request], or [DEFAULT_USER] if missing. */
+        fun fromRequest(request: HttpServletRequest?): User =
+            request?.getHeader(USER_HEADER)?.let { User(it) } ?: DEFAULT_USER
     }
 }

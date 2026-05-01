@@ -14,7 +14,8 @@ class DocumentMetricsTest {
 
     // @Test
     // fun `Matching layers`() {
-    //     val builder = LayerBuilder().loadDummies(1, pos = "NOU").loadDummies(2, pos = "VRB").loadDummies(3, pos = "ADJ")
+    //     val builder = LayerBuilder().loadDummies(1, pos = "NOU").loadDummies(2, pos =
+    // "VRB").loadDummies(3, pos = "ADJ")
     //     val hypo = builder.build()
     //     val ref = builder.build()
     //     val metrics = DocumentMetrics(hypothesis = hypo, reference = ref)

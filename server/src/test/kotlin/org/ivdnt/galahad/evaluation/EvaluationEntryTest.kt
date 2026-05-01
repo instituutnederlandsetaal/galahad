@@ -35,7 +35,10 @@ class EvaluationEntryTest {
         val c = EvaluationEntry(3, MutableList(3) { TermComparison(Term.EMPTY, Term.EMPTY) })
         result = EvaluationEntry.add(result, c)
         assertEquals(19, result.count)
-        assertEquals(16, result.samples.size) // should not grow once the truncation limit is reached
+        assertEquals(
+            16,
+            result.samples.size,
+        ) // should not grow once the truncation limit is reached
     }
 
     @Test

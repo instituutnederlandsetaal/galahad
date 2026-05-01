@@ -1,25 +1,25 @@
 package org.ivdnt.galahad.formats.tei
 
+import java.io.OutputStream
+import javax.xml.transform.TransformerFactory
+import javax.xml.transform.dom.DOMSource
+import javax.xml.transform.stream.StreamResult
 import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.export.LayerMerger
 import org.ivdnt.galahad.util.XmlUtil
 import org.ivdnt.galahad.util.children
 import org.w3c.dom.Element
 import org.w3c.dom.Node
-import java.io.OutputStream
-import javax.xml.transform.TransformerFactory
-import javax.xml.transform.dom.DOMSource
-import javax.xml.transform.stream.StreamResult
 
-class TeiMerger(
-    export: DocumentExport,
-) : LayerMerger(export) {
-    val xml = XmlUtil.builder.parse(export.document.uploadedFile)
+class TeiMerger(export: DocumentExport) : LayerMerger(export) {
+    val xml = XmlUtil.builder.parse(export.document.sourceFile)
     val termIter = termComparisons.iterator()
 
     override fun merge(out: OutputStream) {
         parse(xml.documentElement as Node)
-        TransformerFactory.newInstance().newTransformer().transform(DOMSource(xml), StreamResult(out))
+        TransformerFactory.newInstance()
+            .newTransformer()
+            .transform(DOMSource(xml), StreamResult(out))
     }
 
     private fun parse(node: Node) {

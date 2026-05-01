@@ -1,25 +1,30 @@
 package org.ivdnt.galahad.formats.tei
 
-import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
+import java.text.SimpleDateFormat
+import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.documents.DocumentFormat
 import org.ivdnt.galahad.export.DocumentExport
-import org.ivdnt.galahad.formats.xml.PrettyXMLWriter
+import org.ivdnt.galahad.formats.reader.PrettyXMLWriter
 import org.ivdnt.galahad.util.ifNullOrBlank
+import org.ivdnt.galahad.util.toVarArg
 import org.ivdnt.galahad.util.withoutFormatExt
-import java.text.SimpleDateFormat
 
 class TeiMetadataWriter(val writer: PrettyXMLWriter, val export: DocumentExport) {
-    val title = export.document.uploadedFile.withoutFormatExt
+    val title = export.document.sourceFile.withoutFormatExt
     val pid = export.layer.id
-    val corpusName = export.corpus.mutableMetadata.name
-    val sourceName = export.corpus.mutableMetadata.sourceName.ifNullOrBlank { "!No source name defined!" }
-    val sourceURL = export.corpus.mutableMetadata.sourceURL?.toString().ifNullOrBlank { "!No source URL defined!" }
-    val eraFrom = export.corpus.mutableMetadata.eraFrom.toString()
-    val eraTo = export.corpus.mutableMetadata.eraTo.toString()
-    val language = export.corpus.mutableMetadata.language.ifNullOrBlank { "!No language defined!" }
-    val langCode = export.corpus.mutableMetadata.langCode
+    val corpusName = export.corpus.metadata.name
+    val sourceName = export.corpus.metadata.sourceName.ifNullOrBlank { "!No source name defined!" }
+    val sourceURL =
+        export.corpus.metadata.sourceURL?.toString().ifNullOrBlank { "!No source URL defined!" }
+    val eraFrom = export.corpus.metadata.eraFrom.toString()
+    val eraTo = export.corpus.metadata.eraTo.toString()
+    val language = export.corpus.metadata.language.ifNullOrBlank { "!No language defined!" }
+    val langCode = export.corpus.metadata.langCode
     val today = SimpleDateFormat("yyyy-MM-dd").format(System.currentTimeMillis())
-    val annotationSet = if (export.tagger.id == SOURCE_LAYER_NAME) export.corpus.mutableMetadata.tagset.ifNullOrBlank { "!No tagset defined!" } else export.tagger.principles
+    val annotationSet =
+        if (export.tagger.id == SOURCE_LAYER_NAME)
+            export.corpus.metadata.tagset.ifNullOrBlank { "!No tagset defined!" }
+        else export.tagger.principles
 
     fun write() {
         writer.wrapIn("teiHeader") {
@@ -30,13 +35,9 @@ class TeiMetadataWriter(val writer: PrettyXMLWriter, val export: DocumentExport)
     }
 
     /**
-     * Add a file description to [teiHeader]:
-     * <fileDesc>
-     *     <titleStmt>...</titleStmt>
-     *     <publicationStmt>...</publicationStmt>
-     *     <notesStmt>...</notesStmt>
-     *     <sourceDesc>...</sourceDesc>
-     * </fileDesc>
+     * Add a file description to [teiHeader]: <fileDesc> <titleStmt>...</titleStmt>
+     * <publicationStmt>...</publicationStmt> <notesStmt>...</notesStmt>
+     * <sourceDesc>...</sourceDesc> </fileDesc>
      */
     private fun addFileDescMetadata() {
         // <fileDesc>
@@ -53,28 +54,23 @@ class TeiMetadataWriter(val writer: PrettyXMLWriter, val export: DocumentExport)
     }
 
     /**
-     * Add title statement to [fileDesc]:
-     * <titleStmt>
-     *     <title>[title]</title>
-     *     <respStmt>...</respStmt>
-     *     <respStmt>...</respStmt>
-     * </titleStmt>
+     * Add title statement to [fileDesc]: <titleStmt> <title>[title]</title>
+     * <respStmt>...</respStmt> <respStmt>...</respStmt> </titleStmt>
      */
     private fun addTitleStmt() {
         writer.wrapIn("titleStmt") {
             writer.writeElement("title", title)
             addRespStmt("linguistic annotation by GaLAHaD (https://galahad.ivdnt.org)")
-            addRespStmt("exported as ${DocumentFormat.TeiP5.identifier} by GaLAHaD (https://galahad.ivdnt.org)")
+            addRespStmt(
+                "exported as ${DocumentFormat.TeiP5.identifier} by GaLAHaD (https://galahad.ivdnt.org)"
+            )
         }
     }
 
     /**
-     * Add a responsibility statement to [titleStmt]:
-     * <respStmt>
-     *     <resp>...</resp>
-     *     <orgName xml:lang="nl">Instituut voor de Nederlandse Taal</orgName>
-     *     <orgName xml:lang="en">Dutch Language Institute</orgName>
-     * </respStmt>
+     * Add a responsibility statement to [titleStmt]: <respStmt> <resp>...</resp> <orgName
+     * xml:lang="nl">Instituut voor de Nederlandse Taal</orgName> <orgName xml:lang="en">Dutch
+     * Language Institute</orgName> </respStmt>
      */
     private fun addRespStmt(resp: String) {
         writer.wrapIn("respStmt") {
@@ -86,12 +82,9 @@ class TeiMetadataWriter(val writer: PrettyXMLWriter, val export: DocumentExport)
     }
 
     /**
-     * Add publication statement to [fileDesc]:
-     * <publicationStmt>
-     *     <publisher>!Needs to be filled in!</publisher>
-     *     <idno type="sourceID">[title]</idno>
-     *     <idno type="internalPersistentIdentifier">[internalPid]</idno>
-     * </publicationStmt>
+     * Add publication statement to [fileDesc]: <publicationStmt> <publisher>!Needs to be filled
+     * in!</publisher> <idno type="sourceID">[title]</idno> <idno
+     * type="internalPersistentIdentifier">[internalPid]</idno> </publicationStmt>
      */
     private fun addPublicationStmt() {
         writer.wrapIn("publicationStmt") {
@@ -102,12 +95,9 @@ class TeiMetadataWriter(val writer: PrettyXMLWriter, val export: DocumentExport)
     }
 
     /**
-     * Add notes statement to [fileDesc]:
-     * <notesStmt>
-     *     <note type="corpusName">[name]</note>
-     *     <note type="sourceCollection">[sourceName]</note>
-     *     <note type="sourceCollectionURL">[sourceURL]</note>
-     * </notesStmt>
+     * Add notes statement to [fileDesc]: <notesStmt> <note type="corpusName">[name]</note> <note
+     * type="sourceCollection">[sourceName]</note> <note
+     * type="sourceCollectionURL">[sourceURL]</note> </notesStmt>
      */
     private fun addNotesStmt() {
         writer.wrapIn("notesStmt") {
@@ -118,47 +108,25 @@ class TeiMetadataWriter(val writer: PrettyXMLWriter, val export: DocumentExport)
     }
 
     private fun addNote(attrVal: String, text: String) {
-        writer.writeElement(
-            "note", mapOf(
-                "resp" to "GaLAHaD",
-                "type" to attrVal,
-            ), text
-        )
+        writer.writeElement("note", mapOf("resp" to "GaLAHaD", "type" to attrVal), text)
     }
 
     /**
-     * Add source description to [fileDesc]:
-     * <sourceDesc>
-     *     <ab>
-     *         <idno type="sourceID">[title]</idno>
-     *     </ab>
-     *     <ab type="date">
-     *         <date from="[eraFrom]" to="[eraTo]"/>
-     *     </ab>
-     * </sourceDesc>
+     * Add source description to [fileDesc]: <sourceDesc> <ab> <idno type="sourceID">[title]</idno>
+     * </ab> <ab type="date"> <date from="[eraFrom]" to="[eraTo]"/> </ab> </sourceDesc>
      */
     private fun addSourceDesc() {
         writer.wrapIn("sourceDesc") {
-            writer.wrapIn("ab") {
-                writer.writeElement("idno", "sourceID", title)
-            }
+            writer.wrapIn("ab") { writer.writeElement("idno", "sourceID", title) }
             writer.wrapIn("ab", "type" to "date") {
-                writer.writeEmptyElement(
-                    "date", mapOf(
-                        "from" to eraFrom,
-                        "to" to eraTo,
-                    )
-                )
+                writer.writeEmptyElement("date", mapOf("from" to eraFrom, "to" to eraTo))
             }
         }
     }
 
     /**
-     * Add encoding description to [teiHeader]:
-     * <encodingDesc>
-     *    <appInfo>...</appInfo>
-     *    <editorialDecl>...</editorialDecl>
-     * </encodingDesc>
+     * Add encoding description to [teiHeader]: <encodingDesc> <appInfo>...</appInfo>
+     * <editorialDecl>...</editorialDecl> </encodingDesc>
      */
     private fun addEncodingDescMetadata() {
         // <encodingDesc>
@@ -171,24 +139,22 @@ class TeiMetadataWriter(val writer: PrettyXMLWriter, val export: DocumentExport)
     }
 
     /**
-     * Add app information to [encodingDesc]:
-     * <appInfo resp="GaLAHaD">
-     *     <application @ident @version @xml:id>
-     *         <label>POS-tagger and lemmatiser</label>
-     *         <ptr @target>
-     *     </application>
-     * </appInfo>
+     * Add app information to [encodingDesc]: <appInfo resp="GaLAHaD">
+     * <application @ident @version @xml:id> <label>POS-tagger and lemmatiser</label> <ptr @target>
+     * </application> </appInfo>
      */
     private fun addAppInfo() {
         // <appInfo>
         writer.wrapIn("appInfo", "resp" to "GaLAHaD") {
             // <application>
             writer.wrapIn(
-                "application", mapOf(
-                    "xml:id" to export.tagger.id,
-                    "ident" to export.tagger.id,
-                    "version" to export.tagger.version,
-                )
+                "application",
+                *mapOf(
+                        "xml:id" to export.tagger.id,
+                        "ident" to export.tagger.id,
+                        "version" to export.tagger.version,
+                    )
+                    .toVarArg(),
             ) {
                 // <label>
                 writer.writeElement("label", "POS-tagger and lemmatiser")
@@ -199,30 +165,28 @@ class TeiMetadataWriter(val writer: PrettyXMLWriter, val export: DocumentExport)
     }
 
     /**
-     * Add editorial declaration to [encodingDesc]:
-     * <editorialDecl resp="GaLAHaD">
-     *     <interpretation>
-     *         <ab>...</ab> // regular
-     *         <ab>...</ab> // provenance
-     *     </interpretation>
-     * </editorialDecl>
+     * Add editorial declaration to [encodingDesc]: <editorialDecl resp="GaLAHaD"> <interpretation>
+     * <ab>...</ab> // regular <ab>...</ab> // provenance </interpretation> </editorialDecl>
      */
     private fun addEditorialDecl() {
         writer.wrapIn("editorialDecl", "resp" to "GaLAHaD") {
             writer.wrapIn("interpretation", "xml:id" to "A0001") {
                 // Regular <ab>
                 writer.wrapIn(
-                    "ab", mapOf(
-                        "type" to "linguisticAnnotation",
-                        "subtype" to "POS-tagging_lemmatisation",
-                    )
+                    "ab",
+                    *mapOf(
+                            "type" to "linguisticAnnotation",
+                            "subtype" to "POS-tagging_lemmatisation",
+                        )
+                        .toVarArg(),
                 ) {
                     addInterpGrpTo(
                         mapOf(
                             "annotationStyle" to "inline",
                             "Documentation" to "",
                             "annotationSet" to annotationSet,
-                            "annotationDescription" to "The file was automatically annotated within the platform GaLAHaD, which is a central hub for enriching historical Dutch.",
+                            "annotationDescription" to
+                                "The file was automatically annotated within the platform GaLAHaD, which is a central hub for enriching historical Dutch.",
                             "annotationFormat" to "TEI xml",
                         )
                     )
@@ -234,23 +198,19 @@ class TeiMetadataWriter(val writer: PrettyXMLWriter, val export: DocumentExport)
     }
 
     /**
-     * Add provenance <ab> to [interpretation]:
-     * <ab type="linguisticAnnotation" subtype="POS-tagging_lemmatisationProvenance1">
-     *     <interpGrp type="annotationMode">
-     *         <interp>automatically annotated</interp>
-     *     </interpGrp>
-     *     <interpGrp type="processor">
-     *         <interp sameAs="#[export.tagger.id]"/>
-     *     </interpGrp>
-     *     <date from="[date]" to="[date]"/>
-     * </ab>
+     * Add provenance <ab> to [interpretation]: <ab type="linguisticAnnotation"
+     * subtype="POS-tagging_lemmatisationProvenance1"> <interpGrp type="annotationMode">
+     * <interp>automatically annotated</interp> </interpGrp> <interpGrp type="processor"> <interp
+     * sameAs="#[export.tagger.id]"/> </interpGrp> <date from="[date]" to="[date]"/> </ab>
      */
     private fun addProvenanceAb() {
         writer.wrapIn(
-            "ab", mapOf(
-                "type" to "linguisticAnnotation",
-                "subtype" to "POS-tagging_lemmatisationProvenance1",
-            )
+            "ab",
+            *mapOf(
+                    "type" to "linguisticAnnotation",
+                    "subtype" to "POS-tagging_lemmatisationProvenance1",
+                )
+                .toVarArg(),
         ) {
             addInterpGrpTo("annotationMode", "automatically annotated")
             // processor interp is special, using @sameAs
@@ -258,27 +218,14 @@ class TeiMetadataWriter(val writer: PrettyXMLWriter, val export: DocumentExport)
                 writer.writeEmptyElement("interp", mapOf("sameAs" to "#${export.tagger.id}"))
             }
             // Provenance also has a <date>
-            writer.writeEmptyElement(
-                "date", mapOf(
-                    "from" to today,
-                    "to" to today,
-                )
-            )
+            writer.writeEmptyElement("date", mapOf("from" to today, "to" to today))
         }
     }
 
     /**
-     * Add profile description to [teiHeader]:
-     * <profileDesc>
-     *     <langUsage>
-     *         <language ident="nl">
-     *             Dutch
-     *             <interpGrp type="dominantLanguage">
-     *                 <interp>true</interp>
-     *             </interpGrp>
-     *         </language>
-     *     </langUsage>
-     * </profileDesc>
+     * Add profile description to [teiHeader]: <profileDesc> <langUsage> <language ident="nl"> Dutch
+     * <interpGrp type="dominantLanguage"> <interp>true</interp> </interpGrp> </language>
+     * </langUsage> </profileDesc>
      */
     private fun addProfileDescMetadata() {
         writer.wrapIn("profileDesc") {
@@ -293,9 +240,7 @@ class TeiMetadataWriter(val writer: PrettyXMLWriter, val export: DocumentExport)
     }
 
     /**
-     * Add interpretation group to [node]:
-     * <interpGrp type="[key]">
-     *     <interp>[value]</interp>
+     * Add interpretation group to [node]: <interpGrp type="[key]"> <interp>[value]</interp>
      * </interpGrp>
      */
     private fun addInterpGrpTo(key: String, value: String?) {
@@ -307,7 +252,6 @@ class TeiMetadataWriter(val writer: PrettyXMLWriter, val export: DocumentExport)
                 writer.writeEmptyElement("interp")
             } else {
                 writer.writeElement("interp", value)
-
             }
         }
     }
