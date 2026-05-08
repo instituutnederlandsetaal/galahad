@@ -4,10 +4,8 @@ import org.ivdnt.galahad.documents.DocumentFormat
 import org.ivdnt.galahad.exceptions.DocumentInvalidException
 import org.ivdnt.galahad.formats.ReaderTest
 import org.ivdnt.galahad.util.TestUtil
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.io.File
 
 class TsvReaderTest : ReaderTest() {
     override val format: DocumentFormat = DocumentFormat.Tsv

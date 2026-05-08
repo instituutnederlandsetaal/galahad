@@ -2,12 +2,14 @@ package org.ivdnt.galahad.evaluation
 
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Term
-import org.ivdnt.galahad.evaluation.comparison.*
+import org.ivdnt.galahad.evaluation.comparison.ConfusionLayerFilter
+import org.ivdnt.galahad.evaluation.comparison.HeadGroupTermFilter
+import org.ivdnt.galahad.evaluation.comparison.LayerComparison
+import org.ivdnt.galahad.evaluation.comparison.LayerFilter
 import org.ivdnt.galahad.util.LayerBuilder
-import org.junit.jupiter.api.Test
-
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 
 class LayerComparisonTest {
 
@@ -16,26 +18,28 @@ class LayerComparisonTest {
         @Test
         fun `Matching layers with pos filter`() {
             val builder =
-                LayerBuilder().loadDummies(100, pos = "NOU").loadDummies(20, pos = "VRB").loadDummies(30, pos = "ADJ")
+                LayerBuilder()
+                    .loadDummies(100, pos = "NOU")
+                    .loadDummies(20, pos = "VRB")
+                    .loadDummies(30, pos = "ADJ")
             val hypo = builder.build()
             val ref = builder.build()
-            val comparison = LayerComparison(
-                hypothesis = hypo,
-                reference = ref,
-                filter = NouNouFilter()
-            )
+            val comparison =
+                LayerComparison(hypothesis = hypo, reference = ref, filter = NouNouFilter())
             assertEquals(100, comparison.matches.size)
         }
 
         @Test
         fun `Layers with partial match`() {
             val hypo = LayerBuilder().loadDummies(100, pos = "NOU").build()
-            val ref = LayerBuilder().loadDummies(50, pos = "NOU").loadDummies(20, pos = "VRB").loadDummies(30, pos = "ADJ").build()
-            val comparison = LayerComparison(
-                hypothesis = hypo,
-                reference = ref,
-                filter = NouVrbFilter()
-            )
+            val ref =
+                LayerBuilder()
+                    .loadDummies(50, pos = "NOU")
+                    .loadDummies(20, pos = "VRB")
+                    .loadDummies(30, pos = "ADJ")
+                    .build()
+            val comparison =
+                LayerComparison(hypothesis = hypo, reference = ref, filter = NouVrbFilter())
             assertEquals(20, comparison.matches.size)
         }
 
@@ -43,18 +47,19 @@ class LayerComparisonTest {
             val termFilter = HeadGroupTermFilter(Annotation.POS, "NOU")
             return ConfusionLayerFilter(termFilter, termFilter)
         }
+
         private fun NouVrbFilter(): LayerFilter =
-            ConfusionLayerFilter(HeadGroupTermFilter(Annotation.POS, "NOU"), HeadGroupTermFilter(Annotation.POS, "VRB"))
+            ConfusionLayerFilter(
+                HeadGroupTermFilter(Annotation.POS, "NOU"),
+                HeadGroupTermFilter(Annotation.POS, "VRB"),
+            )
 
         @Test
         fun `Matching layers with pos filter, but different pos`() {
             val hypo = LayerBuilder().loadDummies(100, pos = "NOU").build()
             val ref = LayerBuilder().loadDummies(100, pos = "VRB").build()
-            val comparison = LayerComparison(
-                hypothesis = hypo,
-                reference = ref,
-                filter = NouNouFilter()
-            )
+            val comparison =
+                LayerComparison(hypothesis = hypo, reference = ref, filter = NouNouFilter())
             // The filter will not match any TermComparisons, because none are NOU-NOU.
             assertEquals(0, comparison.matches.size)
         }
@@ -73,10 +78,16 @@ class LayerComparisonTest {
         // Because we only fix for one punctuation mark at the end of a word. No more.
         @Test
         fun `Non-matching layers due to punctuation difference`() {
-            val hypo = LayerBuilder() // dummy " :
-                .loadDummies(1).loadDummies(1, "\"").loadDummies(1, ":").build()
-            val ref = LayerBuilder() // dummy":
-                .loadDummies(1, "dummy\":").build()
+            val hypo =
+                LayerBuilder() // dummy " :
+                    .loadDummies(1)
+                    .loadDummies(1, "\"")
+                    .loadDummies(1, ":")
+                    .build()
+            val ref =
+                LayerBuilder() // dummy":
+                    .loadDummies(1, "dummy\":")
+                    .build()
             val comparison = LayerComparison(hypothesis = hypo, reference = ref)
             assertEquals(3, comparison.matches.size)
             assertEquals(2, comparison.matches.filter { it.ref == Term.EMPTY }.size)
@@ -84,11 +95,14 @@ class LayerComparisonTest {
         }
 
         /**
-         * Creates a reference layer based on the text, split on spaces.
-         * Then creates a hypothesis layer based on the same text, but with punctuation split from the word.
+         * Creates a reference layer based on the text, split on spaces. Then creates a hypothesis
+         * layer based on the same text, but with punctuation split from the word.
          */
         private fun assertPunctuationDifference(
-            text: String, numMatches: Int, numHypoMissing: Int, numRefMissing: Int,
+            text: String,
+            numMatches: Int,
+            numHypoMissing: Int,
+            numRefMissing: Int,
         ) {
             val words = text.split(" ")
             val hypoBuilder = LayerBuilder()
@@ -118,7 +132,8 @@ class LayerComparisonTest {
         }
     }
 
-    // Layers that all have the same terms with the same word forms with the same offsets and length.
+    // Layers that all have the same terms with the same word forms with the same offsets and
+    // length.
     @Nested
     inner class BasicLayersTest {
         private fun assertLayers(
@@ -140,20 +155,56 @@ class LayerComparisonTest {
 
         @Test
         fun `Matching layers`() {
-            assertLayers(numHypoTerms = 100, numRefTerms = 100, numMatches = 100, numHypoMissing = 0, numRefMissing = 0)
+            assertLayers(
+                numHypoTerms = 100,
+                numRefTerms = 100,
+                numMatches = 100,
+                numHypoMissing = 0,
+                numRefMissing = 0,
+            )
         }
 
         @Test
         fun `A layer is 1 term larger than the other`() {
-            assertLayers(numHypoTerms = 2, numRefTerms = 3, numMatches = 3, numHypoMissing = 1, numRefMissing = 0)
-            assertLayers(numHypoTerms = 100, numRefTerms = 101, numMatches = 101, numHypoMissing = 1, numRefMissing = 0)
-            assertLayers(numHypoTerms = 101, numRefTerms = 100, numMatches = 101, numHypoMissing = 0, numRefMissing = 1)
+            assertLayers(
+                numHypoTerms = 2,
+                numRefTerms = 3,
+                numMatches = 3,
+                numHypoMissing = 1,
+                numRefMissing = 0,
+            )
+            assertLayers(
+                numHypoTerms = 100,
+                numRefTerms = 101,
+                numMatches = 101,
+                numHypoMissing = 1,
+                numRefMissing = 0,
+            )
+            assertLayers(
+                numHypoTerms = 101,
+                numRefTerms = 100,
+                numMatches = 101,
+                numHypoMissing = 0,
+                numRefMissing = 1,
+            )
         }
 
         @Test
         fun `A layer is empty`() {
-            assertLayers(numHypoTerms = 100, numRefTerms = 0, numMatches = 100, numHypoMissing = 0, numRefMissing = 100)
-            assertLayers(numHypoTerms = 0, numRefTerms = 100, numMatches = 100, numHypoMissing = 100, numRefMissing = 0)
+            assertLayers(
+                numHypoTerms = 100,
+                numRefTerms = 0,
+                numMatches = 100,
+                numHypoMissing = 0,
+                numRefMissing = 100,
+            )
+            assertLayers(
+                numHypoTerms = 0,
+                numRefTerms = 100,
+                numMatches = 100,
+                numHypoMissing = 100,
+                numRefMissing = 0,
+            )
         }
     }
 }

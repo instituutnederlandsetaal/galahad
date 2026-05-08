@@ -33,7 +33,8 @@ const documents = defineStore("documents", () => {
 
     /** Reload documents and corpora (number of docs in corpusmetadata can change). */
     function reload(): void {
-        reloadCorpora()
+        //reloadCorpora()
+        if (!corpusId.value) return
         loading.value = true
         API.getDocuments(corpusId.value)
             .then((res) => (documents.value = res.data))
@@ -43,15 +44,13 @@ const documents = defineStore("documents", () => {
     /** Delete a document. */
     function remove(name: string): void {
         plausible.documentDeleted(corpus.value, getDocument(name))
-        API.deleteDocument(corpusId.value, name)
-            .finally(reload)
+        API.deleteDocument(corpusId.value, name).finally(reload)
     }
 
     /** Download original source document. */
     function download(name: string): void {
         plausible.documentDownloaded(corpus.value, getDocument(name))
-        API.getRawDocument(corpusId.value, name)
-            .then(Utils.browserDownloadResponseFile)
+        API.getRawDocument(corpusId.value, name).then(Utils.browserDownloadResponseFile)
     }
 
     function getDocument(name: string): DocumentMetadata {

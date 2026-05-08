@@ -18,11 +18,10 @@ import java.net.http.HttpResponse
 @Service
 class TaggersService : Logging {
 
-    fun readAll(): Collection<Tagger> = Tagger.taggers.values
     fun read(tagger: String): Tagger? = Tagger.readOrThrow(tagger)
+
+    // TODO: could do with a refactor sometime
     fun taggerHealth(tagger: String): TaggerHealth {
-        // If there are multiple replicas for the same service, we only get health check response from one replica.
-        // However, we still think it is representative/informative
         val client = HttpClient.newBuilder().build()
         val tagger = Tagger.readOrThrow(tagger)
         val request = HttpRequest.newBuilder().uri(URI.create("${tagger.url}/health")).build()
@@ -32,37 +31,49 @@ class TaggersService : Logging {
             val json = JsonUtil.mapper.readTree(response.body())
             val healthy = json.get("healthy").asBoolean()
 
-            // Note that this queuesize only represents the queue present at a single instance of the tagger,
+            // Note that this queuesize only represents the queue present at a single instance of
+            // the
+            // tagger,
             // also the processing speed is of a single tagger
             // not any pending documents on the server
             // We could get this by count all pending document for this tagger in all corpora
             TaggerHealth(
-                status = if (healthy) TaggerHealthStatus.HEALTHY else TaggerHealthStatus.NOT_HEALTHY,
-                message = "Can connect to tagger. Taggers health response: ${response.body()}"
+                status =
+                    if (healthy) TaggerHealthStatus.HEALTHY else TaggerHealthStatus.NOT_HEALTHY,
+                message = "Can connect to tagger. Taggers health response: ${response.body()}",
             )
         } catch (e: Exception) {
-            logger.error("Failed to connect to tagger ${tagger.id} on url ${request.uri()}. Error: $e")
+            logger.error(
+                "Failed to connect to tagger ${tagger.name} on url ${request.uri()}. Error: $e"
+            )
             // If we cannot connect, there is no use in tagging, so just return
-            return TaggerHealth(status = TaggerHealthStatus.ERROR, message = "Cannot connect to tagger")
+            return TaggerHealth(
+                status = TaggerHealthStatus.ERROR,
+                message = "Cannot connect to tagger",
+            )
         }
     }
 
     /**
-     * Get the number of documents actively being tagged by retrieving the taggers' status dicts
-     * and counting the number of pending and busy docs.
+     * Get the number of documents actively being tagged by retrieving the taggers' status dicts and
+     * counting the number of pending and busy docs.
      */
     fun numActiveDocuments(): Int {
         var count = 0
         for (tagger in Tagger.taggers.values) {
-            val name = tagger.id
+            val name = tagger.name
 
             val restTemplate = RestTemplate()
             val endpoint = URL("${tagger.url}/status")
             val builder = UriComponentsBuilder.fromUri(endpoint.toURI())
             try {
-                val res = restTemplate.exchange(
-                    builder.build().encode().toUri(), HttpMethod.GET, null, String::class.java
-                )
+                val res =
+                    restTemplate.exchange(
+                        builder.build().encode().toUri(),
+                        HttpMethod.GET,
+                        null,
+                        String::class.java,
+                    )
                 val jsonStr: String? = res.body
                 val json = JsonUtil.mapper.readTree(jsonStr)
                 json.forEach {

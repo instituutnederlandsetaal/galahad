@@ -1,12 +1,11 @@
 package org.ivdnt.galahad.formats.txt
 
 import org.ivdnt.galahad.documents.DocumentFormat
-import org.ivdnt.galahad.formats.InternalFile
+import org.ivdnt.galahad.formats.ParsedFile
+import org.ivdnt.galahad.formats.reader.LayerReader
 import java.io.File
 
-class TxtFile(
-    override val file: File,
-) : InternalFile() {
+class TxtFile(override val file: File) : ParsedFile() {
     override val format: DocumentFormat = DocumentFormat.Txt
-    override val reader: TxtReader by lazy { TxtReader(file) }
+    override val reader: LayerReader by lazy { TxtReader(file) }
 }

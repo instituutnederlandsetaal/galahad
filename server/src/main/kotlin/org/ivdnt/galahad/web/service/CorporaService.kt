@@ -1,52 +1,76 @@
 package org.ivdnt.galahad.web.service
 
+import jakarta.servlet.http.HttpServletRequest
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.corpora.Corpora
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.corpora.CorpusMetadata
-import org.ivdnt.galahad.corpora.MutableCorpusMetadata
+import org.ivdnt.galahad.corpora.CorpusStatistics
 import org.ivdnt.galahad.exceptions.CorpusNotFoundException
 import org.ivdnt.galahad.exceptions.CorpusUnauthorizedException
 import org.ivdnt.galahad.files.GalahadFolder
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.io.File
 import java.util.*
 
 @Service
-class CorporaService(
-    config: Config,
-) : GalahadFolder(config.getWorkingDirectory().resolve("corpora")) {
+class CorporaService(@Autowired config: Config) :
+    GalahadFolder(config.getWorkingDirectory().resolve("corpora")) {
 
-    val custom: Corpora = Corpora(dir.resolve("user"))
-    val presets: Corpora = Corpora(dir.resolve("datasets"))
+    @Autowired private val request: HttpServletRequest? = null
 
-    val all: List<Corpus> get() = custom.readAll() + presets.readAll()
-    val datasets: List<Corpus> get() = all.filter { it.mutableMetadata.dataset }
-    val assaysFile: File get() = dir.resolve("benchmarks.json")
+    private val user
+        get() = User.fromRequest(request)
 
-    fun readAll(user: User): List<CorpusMetadata> =
-        all.map { it.immutableMetadata }.filter { it.hasReadAccess(user, excludeAdmin = true) }
+    private val custom: Corpora = Corpora(dir.resolve("user"))
+    private val presets: Corpora = Corpora(dir.resolve("datasets"))
 
-    fun readAllDatasets(): List<CorpusMetadata> = datasets.map { it.immutableMetadata }
+    private val all: List<Corpus>
+        get() = custom.readAll() + presets.readAll()
 
-    fun readAsReaderOrThrow(key: UUID, user: User): Corpus {
+    fun readAll(): List<CorpusStatistics> =
+        all.map { it.statistics }.filter { it.canRead(user, excludeAdmin = true) }
+
+    fun readOrThrow(key: UUID): Corpus {
         val (corpus, _) = findOrThrow(key)
-        return corpus.also { if (!it.mutableMetadata.hasReadAccess(user)) throw CorpusUnauthorizedException("No read access to corpus.") }
+        return corpus.also {
+            if (!it.metadata.canRead(user)) throw CorpusUnauthorizedException("Cannot read corpus.")
+        }
     }
 
-    fun readAsWriterOrThrow(key: UUID, user: User): Corpus {
+    fun writeOrThrow(key: UUID): Corpus {
         val (corpus, _) = findOrThrow(key)
-        return corpus.also { if (!it.mutableMetadata.hasWriteAccess(user)) throw CorpusUnauthorizedException("No write access to corpus.") }
+        return corpus.also {
+            if (!it.metadata.canWrite(user))
+                throw CorpusUnauthorizedException("Cannot edit corpus.")
+        }
     }
 
-    fun delete(key: UUID, user: User) {
+    fun createOrThrow(value: CorpusMetadata): CorpusStatistics {
+        // new corpora are always custom
+        value.user = user
+        value.id = UUID.randomUUID()
+        return custom.createOrThrow(value).statistics
+    }
+
+    fun updateOrThrow(key: UUID, value: CorpusMetadata): CorpusStatistics {
         val (corpus, corpora) = findOrThrow(key)
+        // Read access, because reader should be able to remove themselves
+        if (corpus.metadata.canRead(user)) {
+            value.user = user
+            value.id = key
+            return corpora.updateOrThrow(value).statistics
+        }
+        throw CorpusUnauthorizedException("Cannot edit corpus.")
+    }
 
-        if (corpus.mutableMetadata.canDelete(user)) {
+    fun deleteOrThrow(key: UUID) {
+        val (corpus, corpora) = findOrThrow(key)
+        if (corpus.metadata.canDelete(user)) {
             corpora.deleteOrThrow(key.toString())
         } else {
-            throw CorpusUnauthorizedException("No delete access to corpus.")
+            throw CorpusUnauthorizedException("Cannot delete corpus.")
         }
     }
 
@@ -58,23 +82,9 @@ class CorporaService(
 
         val corpus = customCorpus ?: presetCorpus ?: throw CorpusNotFoundException(key)
         val corpora =
-            customCorpus?.let { custom } ?: presetCorpus?.let { presets } ?: throw CorpusNotFoundException(key)
+            customCorpus?.let { custom }
+                ?: presetCorpus?.let { presets }
+                ?: throw CorpusNotFoundException(key)
         return Pair(corpus, corpora)
-    }
-
-    internal fun readCorpusUnsafe(key: UUID): Corpus = findOrThrow(key).first
-
-    fun createOrThrow(value: MutableCorpusMetadata, user: User): CorpusMetadata {
-        // new corpora are always custom
-        value.user = user
-        value.id = UUID.randomUUID()
-        return custom.createOrThrow(value).immutableMetadata
-    }
-
-    fun update(key: UUID, value: MutableCorpusMetadata, user: User): CorpusMetadata {
-        val (_, corpora) = findOrThrow(key)
-        value.user = user
-        value.id = key
-        return corpora.updateOrThrow(value).immutableMetadata
     }
 }

@@ -9,6 +9,7 @@ export const Format = {
     TSV: "tsv",
     TXT: "txt",
     CONLLU: "conllu",
+    JSON: "json",
 } as const
 export type Format = (typeof Format)[keyof typeof Format]
 

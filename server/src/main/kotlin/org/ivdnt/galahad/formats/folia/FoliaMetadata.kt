@@ -7,11 +7,7 @@ import org.ivdnt.galahad.util.nextElementSibling
 import org.w3c.dom.Document
 import org.w3c.dom.Node
 
-class FoliaMetadata(
-    xml: Document,
-    val root: Node,
-    val export: DocumentExport
-) : XmlUtil(xml) {
+class FoliaMetadata(xml: Document, val root: Node, val export: DocumentExport) : XmlUtil(xml) {
     init {
         val meta = root.getOrCreateChild("metadata")
         val annotations: Node = meta.getOrCreateChild("annotations")
@@ -37,10 +33,13 @@ class FoliaMetadata(
         }
 
         val processor = xml.createElement("processor")
-        processor.setAttribute("xml:id", export.tagger.id)
-        processor.setAttribute("name", export.tagger.id)
+        processor.setAttribute("xml:id", export.tagger.name)
+        processor.setAttribute("name", export.tagger.name)
         processor.setAttribute("type", "auto")
-        processor.setAttribute("src", "https://github.com/instituutnederlandsetaal/galahad-taggers-dockerized")
+        processor.setAttribute(
+            "src",
+            "https://github.com/instituutnederlandsetaal/galahad-taggers-dockerized",
+        )
         processor.setAttribute("host", "https://galahad.ivdnt.org")
         processor.setAttribute("user", export.user.id)
 
@@ -49,9 +48,9 @@ class FoliaMetadata(
 
     private fun addAnnotationDefinition(annotations: Node, name: String) {
         val anot = xml.createElement("$name-annotation")
-        anot.setAttribute("set", export.tagger.id)
+        anot.setAttribute("set", export.tagger.name)
         val annotator = xml.createElement("annotator")
-        annotator.setAttribute("processor", export.tagger.id)
+        annotator.setAttribute("processor", export.tagger.name)
         anot.appendChild(annotator)
         annotations.appendChild(anot)
     }

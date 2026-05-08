@@ -1,8 +1,11 @@
 package org.ivdnt.galahad.evaluation
 
+import org.ivdnt.galahad.evaluation.comparison.LayerFilter
+
 class JobPair(
     val hypothesis: String,
     val reference: String = hypothesis,
+    val filter: LayerFilter? = null,
 ) {
     override fun toString(): String = "$hypothesis/$reference"
 

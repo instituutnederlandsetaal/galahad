@@ -6,11 +6,11 @@ import org.ivdnt.galahad.export.LayerMerger
 import java.io.OutputStream
 import java.io.PrintWriter
 
-open class TsvMerger(
-    export: DocumentExport,
-) : LayerMerger(export) {
+open class TsvMerger(export: DocumentExport) : LayerMerger(export) {
     protected open val columnIndices: MutableMap<Annotation, Int> = mutableMapOf()
+
     override fun merge(out: OutputStream): Unit = merge(PrintWriter(out))
+
     protected var termIndex: Int = 0
     private var extraColumns: MutableList<Annotation> = mutableListOf()
     protected open val emptyValue: String = ""
@@ -20,7 +20,7 @@ open class TsvMerger(
      * Read in per line, split on tabs, swap out pos & lemma and commit to new file
      */
     fun merge(out: PrintWriter) {
-        export.document.uploadedFile.forEachLine { line ->
+        export.sourceDocument.sourceFile.forEachLine { line ->
             if (columnIndices.isEmpty()) {
                 val headers = line.split("\t")
                 getColumnIndices(headers)
@@ -43,22 +43,21 @@ open class TsvMerger(
         out.flush()
     }
 
-    private fun getColumnIndices(
-        headers: List<String>,
-    ) {
+    private fun getColumnIndices(headers: List<String>) {
         headers.forEachIndexed { index, header ->
             TsvReader.columnNames.entries
-                // from the columnNames, find the first AnnotationType that has a name that matches the header.
+                // from the columnNames, find the first AnnotationType that has a name that matches
+                // the
+                // header.
                 .firstOrNull { (_, names) ->
                     names.any { name -> header.equals(name, ignoreCase = true) }
                     // if it exists, register the index
-                }?.let { (annotation, _) ->
-                    columnIndices[annotation] = index
                 }
+                ?.let { (annotation, _) -> columnIndices[annotation] = index }
         }
         if (headers.isEmpty()) return // This line was not yet the header.
         // Add any missing columns.
-        Annotation.order(export.tagger.annotationSet).forEach { annotation ->
+        export.document.metadata.annotations.keys.forEach { annotation ->
             if (columnIndices[annotation] == null) {
                 columnIndices[annotation] = headers.size + extraColumns.size
                 extraColumns.add(annotation)
@@ -69,13 +68,13 @@ open class TsvMerger(
     /*
      * Replace annotations in their previously indexed columns.
      */
-    protected open fun replaceColumns(
-        columns: MutableList<String>,
-    ) {
-        export.tagger.annotationSet.filter { it != Annotation.TOKEN }.forEach { annot ->
-            val index = columnIndices[annot] ?: return@forEach // Skip if not in the file.
-            mergeSingleColumn(columns, annot, index)
-        }
+    protected open fun replaceColumns(columns: MutableList<String>) {
+        export.document.metadata.annotations.keys
+            .filter { it != Annotation.TOKEN }
+            .forEach { annot ->
+                val index = columnIndices[annot] ?: return@forEach // Skip if not in the file.
+                mergeSingleColumn(columns, annot, index)
+            }
     }
 
     protected open fun mergeSingleColumn(

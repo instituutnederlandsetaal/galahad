@@ -28,17 +28,32 @@ class ConlluWriter(export: DocumentExport) : LayerWriter(export) {
                         val deps = "_"
                         val head = t.head ?: "_"
 
-                        // Misc in the form spaceAfter=NO|NamedEntity=ORG (depending on the nullable values)
+                        // Misc in the form spaceAfter=NO|NamedEntity=ORG (depending on the nullable
+                        // values)
                         val spaceAfter = if (t.spaceAfter == false) "SpaceAfter=No" else null
                         val ner = t.ner?.let { "NamedEntity=$it" }
                         val misc = listOfNotNull(spaceAfter, ner).joinToString("|").ifEmpty { "_" }
 
-                        val fields = listOf(termI + 1, token, lemma, upos, xpos, feats, head, deprel, deps, misc)
+                        val fields =
+                            listOf(
+                                termI + 1,
+                                token,
+                                lemma,
+                                upos,
+                                xpos,
+                                feats,
+                                head,
+                                deprel,
+                                deps,
+                                misc,
+                            )
                         out.println(fields.joinToString("\t"))
                     }
                     // empty line between sentences
                     val isLastSentence =
-                        docI == documents.lastIndex && parI == doc.paragraphs.lastIndex && sentI == par.sentences.lastIndex
+                        docI == documents.lastIndex &&
+                            parI == doc.paragraphs.lastIndex &&
+                            sentI == par.sentences.lastIndex
                     if (!isLastSentence) out.println()
                 }
             }

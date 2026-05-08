@@ -4,12 +4,10 @@ import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.exceptions.DocumentInvalidException
-import org.ivdnt.galahad.formats.LineReader
+import org.ivdnt.galahad.formats.reader.LineReader
 import java.io.File
 
-class TsvReader(
-    val file: File
-) : LineReader() {
+class TsvReader(val file: File) : LineReader() {
     private val columnIndices: MutableMap<Annotation, Int> = mutableMapOf()
     private var lastLineWasBlank: Boolean = false
 
@@ -26,8 +24,9 @@ class TsvReader(
     }
 
     /**
-     * Retrieve the indices of the literal, lemma and PoS columns from the header.
-     * If any were not found, throw.
+     * Retrieve the indices of the literal, lemma and PoS columns from the header. If any were not
+     * found, throw.
+     *
      * @param line Header line read from the tsv file.
      */
     private fun parseHeader(line: String) {
@@ -42,21 +41,20 @@ class TsvReader(
     }
 
     /**
-     * Set up columnIndices to reflect the header.
-     * For each header column, check if it is the name of any of the AnnotationTypes.
+     * Set up columnIndices to reflect the header. For each header column, check if it is the name
+     * of any of the AnnotationTypes.
      */
-    private fun getColumnIndices(
-        headers: List<String>,
-    ) {
+    private fun getColumnIndices(headers: List<String>) {
         headers.forEachIndexed { index, header ->
             columnNames.entries
-                // from the columnNames, find the first AnnotationType that has a name that matches the header.
+                // from the columnNames, find the first AnnotationType that has a name that matches
+                // the
+                // header.
                 .firstOrNull { (_, names) ->
                     names.any { name -> header.equals(name, ignoreCase = true) }
                     // if it exists, register the index
-                }?.let { (annotation, _) ->
-                    columnIndices[annotation] = index
                 }
+                ?.let { (annotation, _) -> columnIndices[annotation] = index }
         }
     }
 
@@ -83,22 +81,24 @@ class TsvReader(
         }
         Term(wordID(), offset, annotations).also {
             terms += it
-            offset += it.token.length
+            offset += it.token.length + 1 // space
         }
     }
 
     // Retrieves a column with bounds checking.
-    private fun columnOrNull(i: Int, values: List<String>): String? = values.getOrNull(i)?.ifBlank { null }
+    private fun columnOrNull(i: Int, values: List<String>): String? =
+        values.getOrNull(i)?.ifBlank { null }
 
     companion object {
-        val columnNames: Map<Annotation, List<String>> = mapOf(
-            Annotation.TOKEN to listOf("word", "token", "literal", "term", "form"),
-            Annotation.LEMMA to listOf("lemma"),
-            Annotation.POS to listOf("pos", "xpos"),
-            Annotation.UPOS to listOf("upos"),
-            Annotation.DEPREL to listOf("deprel", "dependency"),
-            Annotation.HEAD to listOf("head"),
-            Annotation.NER to listOf("entity", "ner", "named-entity", "NamedEntity"),
-        )
+        val columnNames: Map<Annotation, List<String>> =
+            mapOf(
+                Annotation.TOKEN to listOf("word", "token", "literal", "term", "form"),
+                Annotation.LEMMA to listOf("lemma"),
+                Annotation.POS to listOf("pos", "xpos"),
+                Annotation.UPOS to listOf("upos"),
+                Annotation.DEPREL to listOf("deprel", "dependency"),
+                Annotation.HEAD to listOf("head"),
+                Annotation.NER to listOf("entity", "ner", "named-entity", "NamedEntity"),
+            )
     }
 }

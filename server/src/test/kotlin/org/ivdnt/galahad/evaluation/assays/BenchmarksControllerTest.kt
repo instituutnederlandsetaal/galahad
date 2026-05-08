@@ -1,30 +1,13 @@
 package org.ivdnt.galahad.evaluation.assays
 
-import org.ivdnt.galahad.app.Config
-import org.ivdnt.galahad.app.Galahad
-import org.ivdnt.galahad.evaluation.EvaluationUtil
-import org.ivdnt.galahad.evaluation.metrics.FlatMetricType
-import org.ivdnt.galahad.util.JSON
-import org.ivdnt.galahad.util.LayerBuilder
-import org.ivdnt.galahad.util.TestConfig
-import org.ivdnt.galahad.util.TestUtil
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.MvcResult
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import java.io.File
 //
-//@WebMvcTest(properties = ["spring.main.allow-bean-definition-overriding=true"])
-//@ContextConfiguration(classes = [Galahad::class, TestConfig::class])
-//class BenchmarksControllerTest(
+// @WebMvcTest(properties = ["spring.main.allow-bean-definition-overriding=true"])
+// @ContextConfiguration(classes = [Galahad::class, TestConfig::class])
+// class BenchmarksControllerTest(
 //    @Autowired val mvc: MockMvc,
 //    @Autowired val config: Config,
 //    @Autowired val ctrl: BenchmarksController,
-//) {
+// ) {
 //    @Test
 //    fun getAssays() {
 //        // No assays should exist
@@ -50,7 +33,8 @@ import java.io.File
 //        EvaluationUtil.addLayersAsJobs(corpus, doc.name, layer, layer)
 //
 //        // job assay should exist
-//        assertNotNull(corpus.jobs.readOrThrow(TestConfig.TAGGER_NAME).assay.readOrCreate<Map<String, FlatMetricType>>())
+//        assertNotNull(corpus.jobs.readOrThrow(TestUtil.TAGGER_NAME).assay.readOrCreate<Map<String,
+// FlatMetricType>>())
 //
 //        // /GET
 //        val assaysRequest: MvcResult = mvc.perform(
@@ -58,8 +42,9 @@ import java.io.File
 //        ).andReturn()
 //        assays = JSON.fromStr<BenchmarksMatrix>(assaysRequest.response.contentAsString)
 //        assertEquals(1, assays.size)
-//        assertEquals(1f, assays["testCorpus"]!!["lemmaPosByPos"]!![TestConfig.TAGGER_NAME]!!.micro.accuracy, 0.00001f)
+//        assertEquals(1f,
+// assays["testCorpus"]!!["lemmaPosByPos"]!![TestUtil.TAGGER_NAME]!!.micro.accuracy, 0.00001f)
 //        // We don't want the source layer, as it would always 100% agree with itself.
 //        assertFalse(assays.containsKey("sourceLayer"))
 //    }
-//}
+// }

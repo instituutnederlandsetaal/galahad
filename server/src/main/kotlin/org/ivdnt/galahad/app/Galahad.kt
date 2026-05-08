@@ -8,19 +8,23 @@ import io.swagger.v3.oas.models.info.License
 import io.swagger.v3.oas.models.servers.Server
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.documents.DocumentFormat
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.convert.converter.Converter
+import org.springframework.core.env.Environment
 import org.springframework.scheduling.annotation.EnableScheduling
 import java.io.File
 import java.util.*
 
-var application_profile: String = System.getenv("spring.profiles.active") ?: "prod"
+//@Autowired val env: Environment? = null
+//val application_profile: String get() = env!!.activeProfiles.takeIf { it.isNotEmpty() }?.first() ?: "prod"
 
+val application_profile: String = System.getenv("spring.profiles.active") ?: "prod"
 
 fun main(args: Array<String>) {
     runApplication<Galahad>(*args)
@@ -28,35 +32,53 @@ fun main(args: Array<String>) {
 
 @Configuration
 @ConfigurationProperties(prefix = "")
-@EnableScheduling
 class Config {
     lateinit var workDir: String
 
-    @Bean
-    fun getWorkingDirectory(): File = File(workDir)
+
+    @Bean fun getWorkingDirectory(): File = File(workDir)
 
     companion object {
-        val galahadVersionYaml: Properties by lazy { Properties().apply { load(Config::class.java.getResourceAsStream("/version.yml")) } }
+        val galahadVersionYaml: Properties by lazy {
+            Properties().apply { load(Config::class.java.getResourceAsStream("/version.yml")) }
+        }
         val galahadVersion: String by lazy { galahadVersionYaml.getProperty("GITHUB_REF_NAME") }
     }
 }
 
-@ComponentScan("org.ivdnt.galahad")
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = ["org.ivdnt.galahad"])
+@EnableScheduling
 class Galahad {
+
+
     /** Customize OpenAPI documentation header. */
     @Bean
     fun customOpenAPI(): OpenAPI {
-        var api = OpenAPI().components(Components()).info(
-            Info().title("GaLAHaD API").version(Config.galahadVersion)
-                .license(License().name("Apache 2.0").url("https://www.apache.org/licenses/"))
-                .description("Generating Linguistic Annotations for Historical Dutch")
-                .contact(Contact().name("GaLAHaD GitHub").url("https://github.com/instituutnederlandsetaal/galahad"))
-        )
+        var api =
+            OpenAPI()
+                .components(Components())
+                .info(
+                    Info()
+                        .title("GaLAHaD API")
+                        .version(Config.galahadVersion)
+                        .license(
+                            License().name("Apache 2.0").url("https://www.apache.org/licenses/")
+                        )
+                        .description("Generating Linguistic Annotations for Historical Dutch")
+                        .contact(
+                            Contact()
+                                .name("GaLAHaD GitHub")
+                                .url("https://github.com/instituutnederlandsetaal/galahad")
+                        )
+                )
         if ("prod" in application_profile) {
             api = api.servers(listOf(Server().url("/galahad/api").description("GaLAHaD API")))
         }
         return api
+    }
+
+    companion object {
+
     }
 }
 

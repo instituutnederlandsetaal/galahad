@@ -1,7 +1,9 @@
 package org.ivdnt.galahad.exceptions
 
+import org.ivdnt.galahad.annotations.Annotation.entries
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ResponseStatus
 
 @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-class InvalidAnnotationException(message: String) : Exception(message)
+class InvalidAnnotationException(annotation: String) :
+    Exception("Invalid annotation $annotation, valid values are $entries")

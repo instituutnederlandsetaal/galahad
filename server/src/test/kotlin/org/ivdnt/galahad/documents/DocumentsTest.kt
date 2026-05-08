@@ -2,10 +2,9 @@ package org.ivdnt.galahad.documents
 
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.util.TestUtil
-import org.junit.jupiter.api.Test
-
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 class DocumentsTest {
 
@@ -51,6 +50,7 @@ class DocumentsTest {
 
     /**
      * Assert the given docs are in documents
+     *
      * @param docs Docs as a set, because the order of documents is not guaranteed
      */
     private fun assertDocsinDocuments(docs: Set<String>) {

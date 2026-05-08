@@ -1,10 +1,9 @@
 package org.ivdnt.galahad.annotations
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import org.ivdnt.galahad.annotations.LayerPreview.Companion.LAYER_PREVIEW_LENGTH
+import org.ivdnt.galahad.annotations.Term.Companion.toSpacedString
 import java.util.*
-
-/** Name of the layer containing the annotations of the uploaded source document as if it were a tagger. */
-const val SOURCE_LAYER_NAME: String = "sourceLayer"
 
 /** Annotation layer of a file. */
 class Layer(
@@ -20,28 +19,25 @@ class Layer(
     /** Sentences in this layer. Documents, paragraphs flattened. */
     private val sentences: Sequence<SentenceLayer> by lazy {
         documents.asSequence().flatMap { doc ->
-            doc.paragraphs.asSequence().flatMap { par ->
-                par.sentences.asSequence()
-            }
+            doc.paragraphs.asSequence().flatMap { par -> par.sentences.asSequence() }
         }
     }
 
-    /** Unique annotation types in this layer. */
     @get:JsonIgnore
-    val annotations: Set<Annotation> by lazy { Annotation.order(terms.flatMap { it.annotations.keys }.asIterable()) }
-
-    @get:JsonIgnore
-    val summary: LayerAnnotations by lazy { LayerAnnotations(terms.asIterable()) }
+    val summary: LayerAnnotations by lazy { LayerAnnotations.fromTerms(terms.asIterable()) }
 
     @get:JsonIgnore
     val preview: LayerPreview by lazy { LayerPreview(terms.take(LAYER_PREVIEW_LENGTH).toList()) }
 
-    /** Layer as string, concatenating all documents with a newline in between. Unix EOF terminated (\n). */
+    /**
+     * Layer as string, concatenating all documents with a newline in between. Unix EOF terminated
+     * (\n).
+     */
     override fun toString(): String = documents.joinToString("\n\n") + "\n"
 
     companion object {
-        /** Default empty layer **/
         val EMPTY: Layer = Layer(emptyArray(), "")
+        const val SOURCE_LAYER: String = "sourceLayer"
     }
 }
 
@@ -67,7 +63,10 @@ class ParagraphLayer(
     override fun toString(): String = sentences.joinToString("\n")
 }
 
-/** Layer storing a single sentence with its ID, terms, and spans over terms. Annotations in [spans] are present in [terms] */
+/**
+ * Layer storing a single sentence with its ID, terms, and spans over terms. Annotations in [spans]
+ * are present in [terms]
+ */
 class SentenceLayer(
     /** Sentence ID. (E.g. conllu: "sent_id".) */
     val id: String,
@@ -79,6 +78,8 @@ class SentenceLayer(
     /** TermSpans in this sentence per annotation type. */
     val spans: Map<Annotation, Array<TermSpan>>? = spans?.ifEmpty { null }
 
-    /** Sentence as string, concatenating all terms with spaces when [Term.spaceAfter] isn't falsy. */
+    /**
+     * Sentence as string, concatenating all terms with spaces when [Term.spaceAfter] isn't falsy.
+     */
     override fun toString(): String = terms.toSpacedString()
 }

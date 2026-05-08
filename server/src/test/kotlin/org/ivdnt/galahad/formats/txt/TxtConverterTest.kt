@@ -37,4 +37,9 @@ class TxtConverterTest : ConverterTest() {
     fun `Txt to Naf`() {
         formatToFormat(DocumentFormat.Txt, DocumentFormat.Naf)
     }
+
+    @Test
+    fun `Txt to Json`() {
+        formatToFormat(DocumentFormat.Txt, DocumentFormat.Json)
+    }
 }

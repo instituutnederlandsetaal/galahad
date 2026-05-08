@@ -6,6 +6,7 @@ import org.ivdnt.galahad.annotations.Term
 class TermIterator : Iterator<Term?> {
     var current: Term? = null
         private set
+
     var chars: Int = 0
         private set
 

@@ -22,8 +22,7 @@ export const distributionPath = (corpus: UUID): string => `${evaluationPath(corp
 export const metricsPath = (corpus: UUID): string => `${evaluationPath(corpus)}/metrics`
 const metricsSamplesPath = (corpus: UUID): string => `${metricsPath(corpus)}/download`
 const downloadPath = (corpus: UUID): string => `${evaluationPath(corpus)}/download`
-const documentLayerComparisonPath = (corpus: UUID, job: string, document: string): string =>
-    `/corpora/${corpus}/jobs/${job}/documents/${document}/evaluation`
+const documentLayerComparisonPath = (corpus: UUID, document: string): string => `/corpora/${corpus}/documents/${document}/evaluation/comparison`
 const documentEntitiesPath = (corpus: UUID, job: string, document: string): string =>
     `/corpora/${corpus}/jobs/${job}/documents/${document}/entities`
 const jobEntitiesPath = (corpus: UUID, job: string): string => `${evaluationPath(corpus, job)}/entities`
@@ -81,10 +80,10 @@ export function getConfusionSamples(
     reference: string,
     hypoFilter: string,
     refFilter: string,
-    annotationType: string,
+    annotation: string,
 ): Promise<BlobResponse> {
-    return getBlob(confusionSamplesPath(corpus, hypothesis), {
-        params: { reference, hypoFilter, refFilter, annotationType },
+    return getBlob(confusionSamplesPath(corpus), {
+        params: { hypothesis, reference, hypoFilter, refFilter, annotation },
     })
 }
 
@@ -126,7 +125,7 @@ export function getDocumentLayerComparison(
     document: string,
     reference: string,
 ): Promise<AxiosResponse<TermComparison[]>> {
-    return axios.get(documentLayerComparisonPath(corpus, job, document), { params: { reference } })
+    return axios.get(documentLayerComparisonPath(corpus, document), { params: { reference, hypothesis: job } })
 }
 
 export function getDocumentEntities(corpus: UUID, job: string, document: string): Promise<DocumentEntitiesResponse> {

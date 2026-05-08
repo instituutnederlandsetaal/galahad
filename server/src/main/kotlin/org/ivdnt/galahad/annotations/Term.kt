@@ -2,70 +2,48 @@ package org.ivdnt.galahad.annotations
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 
-fun Array<Term>.toSpacedString(): String = buildString {
-    this@toSpacedString.forEachIndexed { i, t ->
-        append(t.token)
-        // Never add a space for the last term
-        if (i != this@toSpacedString.lastIndex) append(t.space)
-    }
-}
-
-fun List<Term>.toSpacedString(): String = buildString {
-    this@toSpacedString.forEachIndexed { i, t ->
-        append(t.token)
-        if (i != this@toSpacedString.lastIndex) append(t.space)
-    }
-}
-
 class Term(
     val id: String,
     val offset: Int,
     val annotations: Map<Annotation, String?>,
-    spaceAfter: Boolean? = null
+    spaceAfter: Boolean? = null,
 ) {
     val spaceAfter: Boolean? = if (spaceAfter == false) false else null
 
-    @get:JsonIgnore
-    val space: String = if (spaceAfter == false) "" else " "
+    @get:JsonIgnore val space: String = if (spaceAfter == false) "" else " "
 
-    @get:JsonIgnore
-    val token: String = annotations[Annotation.TOKEN]!!
+    @get:JsonIgnore val token: String = annotations[Annotation.TOKEN]!!
 
-    @get:JsonIgnore
-    val lemma: String? = annotations[Annotation.LEMMA]
+    @get:JsonIgnore val lemma: String? = annotations[Annotation.LEMMA]
 
-    @get:JsonIgnore
-    val pos: String? = annotations[Annotation.POS]
+    @get:JsonIgnore val pos: String? = annotations[Annotation.POS]
 
-    @get:JsonIgnore
-    val upos: String? = annotations[Annotation.UPOS]
+    @get:JsonIgnore val upos: String? = annotations[Annotation.UPOS]
 
-    @get:JsonIgnore
-    val head: String? = annotations[Annotation.HEAD]
+    @get:JsonIgnore val head: String? = annotations[Annotation.HEAD]
 
-    @get:JsonIgnore
-    val deprel: String? = annotations[Annotation.DEPREL]
+    @get:JsonIgnore val deprel: String? = annotations[Annotation.DEPREL]
 
-    @get:JsonIgnore
-    val ner: String? = annotations[Annotation.NER]
+    @get:JsonIgnore val ner: String? = annotations[Annotation.NER]
 
     fun isMulti(annotation: Annotation): Boolean = annotations[annotation]?.contains("+") == true
 
     /**
-     * Returns the annotation head or NO_[annotation] if it is missing.
-     * E.g. NOU-C for NOU-c(num=sg); or NO_POS.
+     * Returns the annotation head or NO_[annotation] if it is missing. E.g. NOU-C for
+     * NOU-c(num=sg); or NO_POS.
      */
-    fun annotationHeadOrMissing(annotation: Annotation): String = annotationHead(annotation) ?: missingName(annotation)
+    fun annotationHeadOrMissing(annotation: Annotation): String =
+        annotationHead(annotation) ?: missingName(annotation)
 
     /**
-     * Returns the annotation or NO_[annotation] if it is missing.
-     * E.g. NOU-C(num=sg); or NO_POS.
+     * Returns the annotation or NO_[annotation] if it is missing. E.g. NOU-C(num=sg); or NO_POS.
      */
-    fun annotationOrMissing(annotation: Annotation): String = annotations[annotation] ?: missingName(annotation)
+    fun annotationOrMissing(annotation: Annotation): String =
+        annotations[annotation] ?: missingName(annotation)
 
     /**
-     * The head of [annotation]. E.g. "PD+NOU" for "PD(type=art)+NOU(num=sg)"
-     * or "VG" for "VG|neven" or ORG for B-ORG.
+     * The head of [annotation]. E.g. "PD+NOU" for "PD(type=art)+NOU(num=sg)" or "VG" for "VG|neven"
+     * or ORG for B-ORG.
      */
     fun annotationHead(annotation: Annotation): String? {
         // get annotation
@@ -117,6 +95,21 @@ class Term(
                 }
             }
             return pos
+        }
+
+        fun Array<Term>.toSpacedString(): String = buildString {
+            this@toSpacedString.forEachIndexed { i, t ->
+                append(t.token)
+                // Never add a space for the last term
+                if (i != this@toSpacedString.lastIndex) append(t.space)
+            }
+        }
+
+        fun List<Term>.toSpacedString(): String = buildString {
+            this@toSpacedString.forEachIndexed { i, t ->
+                append(t.token)
+                if (i != this@toSpacedString.lastIndex) append(t.space)
+            }
         }
     }
 }

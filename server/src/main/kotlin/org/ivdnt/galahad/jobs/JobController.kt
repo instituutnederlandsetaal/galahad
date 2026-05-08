@@ -1,9 +1,6 @@
 package org.ivdnt.galahad.jobs
 
-import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.documents.Document
-import org.ivdnt.galahad.exceptions.SourceLayerNotATaggerException
-import org.ivdnt.galahad.formats.InternalFile
 import org.ivdnt.galahad.taggers.Tagger
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.HttpEntity
@@ -24,12 +21,12 @@ import kotlin.io.path.createTempFile
 object JobController {
     private val queue: ArrayDeque<Job> = ArrayDeque<Job>()
     private var task: Task? = null
-    val queueSize: Int get() = queue.size
+    val queueSize: Int
+        get() = queue.size
 
     fun inQueue(job: Job): Boolean = job in queue
 
     fun queue(job: Job) {
-        if (job.name == SOURCE_LAYER_NAME) throw SourceLayerNotATaggerException()
         if (job in queue) {
             return // Already in queue, nothing to do.
         }
@@ -38,7 +35,6 @@ object JobController {
     }
 
     fun dequeue(job: Job) {
-        if (job.name == SOURCE_LAYER_NAME) throw SourceLayerNotATaggerException()
         if (job in queue) {
             queue -= job
         }
@@ -56,7 +52,10 @@ object JobController {
         }
         task!!.finish(file)
         // if no untagged documents are left, remove the job from the queue and terminate the tagger
-        val numUntagged = task!!.job.corpus.documents.readAll().count { task!!.job.results.readOrNull(it.name) == null }
+        val numUntagged =
+            task!!.job.corpus.documents.readAll().count {
+                task!!.job.results.readOrNull(it.name) == null
+            }
         if (numUntagged == 0) {
             dequeue(task!!.job)
         }
@@ -90,14 +89,14 @@ object JobController {
 
     private fun tag(job: Job, doc: Document): UUID {
         val url = "${Tagger.readOrThrow(job.name).url}/input"
-        val text = job.corpus.jobs.readOrThrow(SOURCE_LAYER_NAME).results.readOrThrow(doc.name).layer.toString()
+        val text = doc.layer.toString()
         val file = createTempFile().toFile().also { it.writeText(text) }
-        val entity = HttpEntity(LinkedMultiValueMap<String, Any>().apply {
-            add("file", FileSystemResource(file))
-        }, HttpHeaders().apply { contentType = MediaType.MULTIPART_FORM_DATA })
-        val response = RestTemplate().postForEntity<String>(
-            url, entity
-        )
+        val entity =
+            HttpEntity(
+                LinkedMultiValueMap<String, Any>().apply { add("file", FileSystemResource(file)) },
+                HttpHeaders().apply { contentType = MediaType.MULTIPART_FORM_DATA },
+            )
+        val response = RestTemplate().postForEntity<String>(url, entity)
         if (response.statusCode != HttpStatus.OK) {
             throw Exception("Error while tagging: ${response.statusCode}")
         }
@@ -109,15 +108,18 @@ object JobController {
         try {
             val url = "${Tagger.readOrThrow(job.name).url}/terminate"
             RestTemplate().postForEntity<String>(url, null)
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             // Ignore. Can only hope tagger has terminated.
         }
     }
 
     private class Task(val uuid: UUID, val job: Job, val doc: String) {
         fun finish(file: File) {
-            job.results.createOrThrow(doc).layer = InternalFile.create(file).layer
+            try {
+                job.corpus.layers.readOrThrow(job.name).documents.createOrThrow(file)
+            } catch (exception: Exception) {
+                job.results.createOrThrow(doc).error = exception.message
+            }
         }
     }
 }

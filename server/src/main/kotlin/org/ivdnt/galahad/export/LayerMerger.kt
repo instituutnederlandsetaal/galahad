@@ -16,12 +16,16 @@ abstract class LayerMerger protected constructor(protected val export: DocumentE
     abstract fun merge(out: OutputStream)
 
     companion object {
-        fun create(export: DocumentExport): LayerMerger = when (export.format) {
-            DocumentFormat.Tsv -> TsvMerger(export)
-            DocumentFormat.Folia -> FoliaMerger(export)
-            DocumentFormat.Conllu -> ConlluMerger(export)
-            DocumentFormat.TeiP5 -> TeiMerger(export)
-            else -> throw InvalidDocumentFormatException("Unsupported export conversion format: ${export.format}")
-        }
+        fun create(export: DocumentExport): LayerMerger =
+            when (export.format) {
+                DocumentFormat.Tsv -> TsvMerger(export)
+                DocumentFormat.Folia -> FoliaMerger(export)
+                DocumentFormat.Conllu -> ConlluMerger(export)
+                DocumentFormat.TeiP5 -> TeiMerger(export)
+                else ->
+                    throw InvalidDocumentFormatException(
+                        "Unsupported merge format: ${export.format}"
+                    )
+            }
     }
 }

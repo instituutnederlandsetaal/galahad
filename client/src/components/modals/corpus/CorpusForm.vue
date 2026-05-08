@@ -9,7 +9,7 @@
                 <template v-if="userStore.canWrite || !initial">
                     <tr>
                         <td>
-                            <label>Name</label> <span class="warning"><small>(Required)</small></span>
+                            <label>Name</label>
                         </td>
                         <td>
                             <GInput
@@ -17,7 +17,7 @@
                                 focus
                                 placeholder="Corpus name"
                                 :validator="validateCorpusName"
-                                validityDescriptor="3-100 characters"
+                                validityDescriptor="Name required"
                             />
                         </td>
                     </tr>
@@ -69,7 +69,7 @@
                         </td>
                     </tr>
 
-                    <template v-if="userStore.user.isAdmin">
+                    <template v-if="userStore.user.admin">
                         <tr>
                             <td colspan="2">
                                 <hr />
@@ -130,15 +130,15 @@ const emit = defineEmits<{ hide: []; confirm: [metadata: CorpusMetadata] }>()
 
 // --- data ---
 const dataset = ref<boolean>()
-const name = ref<string>("")
+const name = ref<string>()
 const eraFrom = ref<number>()
 const eraTo = ref<number>()
-const tagset = ref<string>("")
-const language = ref<string>("")
-const sourceName = ref<string>("")
-const sourceUrl = ref<string>("")
-const collaborators = ref<string[]>([])
-const viewers = ref<string[]>([])
+const tagset = ref<string>()
+const language = ref<string>()
+const sourceName = ref<string>()
+const sourceUrl = ref<string>()
+const collaborators = ref<string[]>()
+const viewers = ref<string[]>()
 
 // --- computed ---
 const showAddDialog = computed(() => {
@@ -194,24 +194,26 @@ watch(
 // --- methods ---
 function confirm(): void {
     const value: CorpusMetadata = {
-        owner: "", // this is set by the server for security reasons
         name: name.value,
-        eraFrom: eraFrom.value,
-        eraTo: eraTo.value,
+        period: [eraFrom.value, eraTo.value].some((i) => i != undefined)
+            ? { from: eraFrom.value, to: eraTo.value }
+            : undefined,
         tagset: tagset.value,
         language: language.value,
         dataset: dataset.value,
         collaborators: collaborators.value,
         viewers: viewers.value,
-        sourceName: sourceName.value,
-        sourceUrl: validatesourceUrl(sourceUrl.value),
+        source: [sourceName.value, sourceUrl.value].some((i) => i != undefined)
+            ? { name: sourceName.value, url: validatesourceUrl(sourceUrl.value) }
+            : undefined,
         uuid: initial?.uuid,
     }
     emit("confirm", value)
     emit("hide")
 }
 function validateCorpusName(name: string) {
-    return name.toString().match(/^.{3,100}$/)
+    // simply has to be non blank
+    return name?.trim()?.length > 0
 }
 function validatesourceUrl(url: string): string {
     if (!url) return url

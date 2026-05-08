@@ -1,17 +1,11 @@
 package org.ivdnt.galahad.annotations
 
-/**
- * The minimum length in chars of a [LayerPreview].
- */
-const val LAYER_PREVIEW_LENGTH: Int = 15
+import org.ivdnt.galahad.annotations.LayerPreview.Companion.LAYER_PREVIEW_LENGTH
 
-/**
- * A preview of a [Layer] in terms of the first N [WordForm] and [Term], where N is in chars and ruled by [LAYER_PREVIEW_LENGTH].
- */
-data class LayerPreview(
-    val terms: List<Term>,
-) {
+/** Preview of a [LAYER_PREVIEW_LENGTH] [Term]s of [Layer]. */
+data class LayerPreview(val terms: List<Term>) {
     companion object {
+        const val LAYER_PREVIEW_LENGTH: Int = 15
         val EMPTY: LayerPreview = LayerPreview(emptyList())
     }
 }

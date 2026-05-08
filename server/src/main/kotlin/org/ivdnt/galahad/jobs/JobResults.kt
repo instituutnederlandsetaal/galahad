@@ -5,9 +5,8 @@ import org.ivdnt.galahad.files.GalahadFolderManager
 import java.io.File
 
 /**
- * Create, read and delete document jobs for a job.
- * Represents the "documents/" folder in a job folder.
- * Usage:
+ * Create, read and delete document jobs for a job. Represents the "documents/" folder in a job
+ * folder. Usage:
  * ```
  * val documentJobs = job.documentJobs // some existing job
  * val key = "..."
@@ -23,9 +22,8 @@ import java.io.File
  * // val docJob3 = documentJobs.readOrThrow(key) // throws
  * ```
  */
-class JobResults(
-    dir: File,
-) : GalahadFolderManager<JobResult, String>(dir) {
+class JobResults(dir: File) : GalahadFolderManager<JobResult, String>(dir) {
     override fun ctor(key: String): JobResult = JobResult(dir.resolve(key))
+
     override fun throwNotFound(key: String): Nothing = throw DocumentJobNotFoundException(key)
 }

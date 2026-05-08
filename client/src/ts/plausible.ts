@@ -22,9 +22,10 @@ if (location.hostname.includes("localhost")) {
 
 function corpusParams(corpus: CorpusMetadata): Record<string, number | string | boolean> {
     return {
-        shared: corpus.dataset ? "dataset" : (corpus.collaborators.length + corpus.viewers.length),
+        shared: corpus.dataset ? "dataset" : (corpus.collaborators?.length ?? 0) + (corpus.viewers?.length ?? 0),
         period: `${corpus.eraFrom} - ${corpus.eraTo}`,
-        source: Boolean(corpus.sourceName) || Boolean(corpus.sourceUrl),
+        language: corpus.language
+        source: Boolean(corpus.source)
         numDocs: corpus.numDocs,
     }
 }
@@ -111,5 +112,5 @@ export const plausible = {
     jobStopped(corpus: CorpusMetadata, taggerJob: Job): void {
         const props = { ...jobParams(taggerJob, JobType.Tagger), ...corpusParams(corpus) }
         window.plausible("job-stopped", { props })
-    }
+    },
 }

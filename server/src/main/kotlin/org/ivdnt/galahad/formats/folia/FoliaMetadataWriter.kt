@@ -2,27 +2,29 @@ package org.ivdnt.galahad.formats.folia
 
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.export.DocumentExport
-import org.ivdnt.galahad.formats.xml.PrettyXMLWriter
+import org.ivdnt.galahad.formats.reader.PrettyXMLWriter
 import org.ivdnt.galahad.util.ifNullOrBlank
 import org.ivdnt.galahad.util.withoutFormatExt
 import java.text.SimpleDateFormat
 
 class FoliaMetadataWriter(val writer: PrettyXMLWriter, val export: DocumentExport) {
-    val title = export.document.uploadedFile.withoutFormatExt
+    val title = export.document.sourceFile.withoutFormatExt
     val pid = export.layer.id
-    val corpusName = export.corpus.mutableMetadata.name
-    val sourceName = export.corpus.mutableMetadata.sourceName.ifNullOrBlank { "!No source name defined!" }
-    val sourceURL = export.corpus.mutableMetadata.sourceURL?.toString().ifNullOrBlank { "!No source URL defined!" }
-    val eraFrom = export.corpus.mutableMetadata.eraFrom.toString()
-    val eraTo = export.corpus.mutableMetadata.eraTo.toString()
-    val language = export.corpus.mutableMetadata.language.ifNullOrBlank { "!No language defined!" }
-    val langCode = export.corpus.mutableMetadata.langCode
+    val corpusName = export.corpus.metadata.name
+    val sourceName =
+        export.corpus.metadata.source?.name.ifNullOrBlank { "!No source name defined!" }
+    val sourceURL =
+        export.corpus.metadata.source?.url?.toString().ifNullOrBlank { "!No source URL defined!" }
+    val eraFrom = export.corpus.metadata.period?.from.toString()
+    val eraTo = export.corpus.metadata.period?.to.toString()
+    val language = export.corpus.metadata.language.ifNullOrBlank { "!No language defined!" }
+    val langCode = export.corpus.metadata.langCode
     val today = SimpleDateFormat("yyyy-MM-dd").format(System.currentTimeMillis())
-    val annotations = export.layer.annotations
-    val taggerName = export.tagger.id
+    val annotations = export.document.metadata.annotations.keys
+    val taggerName = export.tagger.name
 
     fun write() {
-        writer.wrapIn("metadata", mapOf("type" to "native")) {
+        writer.wrapIn("metadata", "type" to "native") {
             writeAnnotations()
             writeProvenance()
             writeMeta()
@@ -36,28 +38,33 @@ class FoliaMetadataWriter(val writer: PrettyXMLWriter, val export: DocumentExpor
             writer.writeEmptyElement("sentence-annotation")
             writer.writeEmptyElement("token-annotation")
             if (Annotation.LEMMA in annotations) writeAnnotation("lemma")
-            if (Annotation.POS in annotations || Annotation.UPOS in annotations) writeAnnotation("pos")
+            if (Annotation.POS in annotations || Annotation.UPOS in annotations)
+                writeAnnotation("pos")
             if (Annotation.NER in annotations) writeAnnotation("entity")
             if (Annotation.DEPREL in annotations) writeAnnotation("dependency")
         }
     }
 
     private fun writeAnnotation(annotation: String) {
-        writer.wrapIn("$annotation-annotation", mapOf("set" to taggerName)) {
+        writer.wrapIn("$annotation-annotation", "set" to taggerName) {
             writer.writeEmptyElement("annotator", mapOf("processor" to taggerName))
         }
     }
 
     private fun writeProvenance() {
         writer.wrapIn("provenance") {
-            writer.writeEmptyElement("processor", mapOf(
-                "xml:id" to taggerName,
-                "name" to taggerName,
-                "type" to "auto",
-                "src" to "https://github.com/instituutnederlandsetaal/galahad-taggers-dockerized",
-                "host" to "https://galahad.ivdnt.org",
-                "user" to export.user.id,
-            ))
+            writer.writeEmptyElement(
+                "processor",
+                mapOf(
+                    "xml:id" to taggerName,
+                    "name" to taggerName,
+                    "type" to "auto",
+                    "src" to
+                        "https://github.com/instituutnederlandsetaal/galahad-taggers-dockerized",
+                    "host" to "https://galahad.ivdnt.org",
+                    "user" to export.user.id,
+                ),
+            )
         }
     }
 

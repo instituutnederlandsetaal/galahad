@@ -36,7 +36,6 @@ internal class TeiReaderTest : ReaderTest() {
             assertLayerAndText("formats/tei/reader/nospaces")
         }
 
-
         @Test
         fun `Note tag should be ignored`() {
             assertLayerAndText("formats/tei/reader/note/")
@@ -50,6 +49,11 @@ internal class TeiReaderTest : ReaderTest() {
         @Test
         fun `Import teicorpus`() {
             assertLayerAndText("formats/tei/reader/teicorpus")
+        }
+
+        @Test
+        fun `Import seg tags`() {
+            assertLayerAndText("formats/tei/reader/seg")
         }
 
         @Test

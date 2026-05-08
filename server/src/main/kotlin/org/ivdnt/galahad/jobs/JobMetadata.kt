@@ -1,45 +1,34 @@
 package org.ivdnt.galahad.jobs
 
-import org.ivdnt.galahad.annotations.LayerPreview
-import org.ivdnt.galahad.annotations.LayerAnnotations
-import org.ivdnt.galahad.annotations.SOURCE_LAYER_NAME
-import org.ivdnt.galahad.annotations.plus
+import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.taggers.Tagger
 
-/**
- * Cache-able job metadata.
- */
 class JobMetadata(
     val tagger: Tagger,
     val progress: Progress,
-    val preview: LayerPreview,
-    val annotations: LayerAnnotations,
-    var modified: Long,
 ) {
     companion object {
-        fun create(job: Job): JobMetadata {
-            val djs = job.results.readAll()
-            // sum up the number of tokens/lemmas/etc of all documents
-            val summary: LayerAnnotations =
-                djs.mapNotNull { it.layer?.summary }.reduceOrNull { a, b -> a + b } ?: LayerAnnotations.EMPTY
-            // Preview of the resulting terms of this job.
-            // Show the first preview of the first document that isn't LayerPreview.EMPTY.
-            val preview = djs.firstNotNullOfOrNull { it.layer?.preview } ?: LayerPreview.EMPTY
-
-            // When job.name == SOURCE_LAYER_NAME, calling Tagger.readOrThrow will try to read the tagger from the job metadata
-            // But we are building that very metadata right now! Instead, we create a dummy tagger.
-            val tagger = if (job.name == SOURCE_LAYER_NAME) {
-                Tagger.createSourceTagger(job.corpus)
-            } else {
-                Tagger.readOrThrow(job.name, job.corpus)
-            }
-
+        fun create(job: Job, corpus: Corpus): JobMetadata {
+            /** Progress of the job based on the status of the [JobResult]s of this job. */
+            // NOTE: The number of documents is not the same as the number of document jobs.
+            // Example: after running a job, a user has added more documents to the corpus.
+            // So for calculating progress, we need to look at the number of corpus documents.
+            val docs = corpus.documents.readAll()
+            // If a document is not in the list of documentJobs, it is pending by default.
+            val statuses = docs.map { job.results.readOrNull(it.name)?.status ?: JobStatus.PENDING }
+            // For errors however, we can just look at the documentJobs.
+            val errors =
+                job.results.readAll().mapNotNull { result -> result.error?.let { error -> result.name to error } }.toMap()
+            val progress = Progress(
+                pending = statuses.count { it == JobStatus.PENDING },
+                processing = (if (JobController.inQueue(job)) 1 else 0),
+                failed = statuses.count { it == JobStatus.ERROR },
+                finished = statuses.count { it == JobStatus.FINISHED },
+                errors = errors,
+            )
             return JobMetadata(
-                tagger = tagger,
-                progress = job.progress,
-                preview = preview,
-                annotations = summary,
-                modified = System.currentTimeMillis()
+                tagger = Tagger.readOrThrow(job.name),
+                progress = progress
             )
         }
     }

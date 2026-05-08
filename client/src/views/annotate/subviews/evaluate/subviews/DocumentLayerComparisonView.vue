@@ -36,11 +36,8 @@
 </template>
 
 <script setup lang="ts">
-// Library & API
-
 import * as API from "@/api/evaluation"
 import stores from "@/stores"
-// Types & Stores
 import type { Term, TermComparison } from "@/types/evaluation"
 import type { SelectOption } from "@/types/ui/select"
 
@@ -85,9 +82,18 @@ watch(selectedDoc, async (newVal) => {
 
 watch(termcomps, () => {
     if (!termcomps.value) return
-    annotationOptions.value = documentsStore.documents
-        .find((doc) => doc.name === selectedDoc.value)
-        ?.annotations.map((key) => ({ value: key, text: key }))
+
+    const annotations: string[] = []
+    for (const tc of termcomps.value) {
+        for (const key in tc.ref.annotations) {
+            if (!annotations.includes(key)) annotations.push(key)
+        }
+        for (const key in tc.hyp.annotations) {
+            if (!annotations.includes(key)) annotations.push(key)
+        }
+    }
+
+    annotationOptions.value = annotations.map((key) => ({ value: key, text: key }))
 })
 
 // Methods
@@ -107,11 +113,6 @@ function cleanAnnotation(term: Term) {
     padding: 2rem;
 }
 
-.tooltip {
-    min-width: fit-content;
-    min-height: fit-content;
-}
-
 .wordComparison {
     display: inline-block;
     position: relative;
@@ -120,25 +121,26 @@ function cleanAnnotation(term: Term) {
     text-align: center;
     font-size: 0.8rem;
     line-height: 0.8rem;
-}
+    &.incorrect {
+        background-color: rgba(255, 0, 0, 0.1);
+    }
 
-.incorrect {
-    background-color: rgba(255, 0, 0, 0.1);
-}
+    .tooltip {
+        min-width: fit-content;
+        min-height: fit-content;
+        visibility: hidden;
+        position: absolute;
+        z-index: 1;
+        width: max-content;
+        bottom: 100%;
+        text-align: left;
+        padding: 0;
+        margin: 0;
+    }
 
-.wordComparison .tooltip {
-    visibility: hidden;
-    position: absolute;
-    z-index: 1;
-    width: max-content;
-    bottom: 100%;
-    text-align: left;
-    padding: 0;
-    margin: 0;
-}
-
-.wordComparison:hover .tooltip {
-    visibility: visible;
+    &:hover .tooltip {
+        visibility: visible;
+    }
 }
 
 .table-controls {

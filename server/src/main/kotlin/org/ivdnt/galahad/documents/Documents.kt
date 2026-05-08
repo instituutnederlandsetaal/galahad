@@ -1,14 +1,12 @@
 package org.ivdnt.galahad.documents
 
-import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.exceptions.DocumentNotFoundException
 import org.ivdnt.galahad.files.GalahadFolderManager
 import java.io.File
 
 /**
- * Create, read and delete documents in a corpus.
- * Represents the "documents/" folder in a corpus folder.
- * Usage:
+ * Create, read and delete documents in a corpus. Represents the "documents/" folder in a corpus
+ * folder. Usage:
  * ```
  * val documents = corpus.documents // some existing corpus
  * val file = File("annotations.tsv")
@@ -25,11 +23,10 @@ import java.io.File
  * // val doc3 = documents.readOrThrow(key) // throws
  * ```
  */
-class Documents(
-    dir: File,
-    val corpus: Corpus,
-) : GalahadFolderManager<Document, File>(dir) {
-    override fun createOrThrow(key: File): Document = Document.create(dir.resolve(key.name), key, corpus)
+class Documents(dir: File) : GalahadFolderManager<Document, File>(dir) {
+    override fun createOrThrow(key: File): Document = Document.create(dir.resolve(key.name), key)
+
     override fun ctor(key: String): Document = Document(dir.resolve(key))
+
     override fun throwNotFound(key: String): Nothing = throw DocumentNotFoundException(key)
 }

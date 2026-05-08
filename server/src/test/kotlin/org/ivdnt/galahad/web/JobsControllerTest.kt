@@ -1,93 +1,45 @@
 package org.ivdnt.galahad.web
 
-import org.ivdnt.galahad.annotations.Annotation
-import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.app.Config
+import java.io.File
+import java.util.*
 import org.ivdnt.galahad.app.Galahad
-import org.ivdnt.galahad.jobs.JobMetadata
-import org.ivdnt.galahad.jobs.Progress
-import org.ivdnt.galahad.util.SpringUtil
-import org.ivdnt.galahad.util.TestConfig
-import org.ivdnt.galahad.util.TestUtil
-import org.ivdnt.galahad.web.controller.JobsController
-import org.ivdnt.galahad.web.controller.TaggersController
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Disabled
+import org.ivdnt.galahad.corpora.CorpusStatistics
+import org.ivdnt.galahad.exceptions.CorpusInvalidException
+import org.ivdnt.galahad.exceptions.CorpusNotFoundException
+import org.ivdnt.galahad.exceptions.CorpusUnauthorizedException
+import org.ivdnt.galahad.util.*
+import org.ivdnt.galahad.util.TestUtil.assignHeaders
+import org.ivdnt.galahad.web.controller.ErrorController
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.core.ParameterizedTypeReference
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpMethod
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
+import org.springframework.context.annotation.Import
+import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.util.LinkedMultiValueMap
-import org.springframework.util.MultiValueMap
-import java.util.UUID
+import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.ResultActionsDsl
+import org.springframework.test.web.servlet.delete
+import org.springframework.test.web.servlet.get
+import org.springframework.test.web.servlet.post
+import tools.jackson.module.kotlin.convertValue
 
+/** Web controller tests for serialization, status, exception resolving and permissions. */
+@SpringBootTest(properties = ["spring.main.allow-bean-definition-overriding=true"])
+@AutoConfigureMockMvc
+@Import(ErrorController::class)
 @ContextConfiguration(classes = [Galahad::class, TestConfig::class])
-@SpringBootTest(
-    webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
-    properties = ["server.port=8010", "spring.main.allow-bean-definition-overriding=true"]
-)
-class JobsControllerTest(
-    @Autowired val rest: TestRestTemplate,
-    @Autowired val config: Config,
-    @Autowired val ctrl: JobsController,
-    @Autowired val taggers: TaggersController,
-) {
-
-    @Disabled
-    @Test
-    fun postJob() {
-        val corpus = SpringUtil.createCorpus(config)
-        val doc = corpus.documents.createOrThrow(TestUtil.get("all-formats/input/input.tei.xml"))
-        val uuid = corpus.immutableMetadata.uuid
-
-        Assertions.assertEquals(taggers.getTaggers().count() + 1, getJobs(uuid).size) // +1 for the sourceLayer
-        var progress: Progress =
-            rest.postForEntity("/corpora/$uuid/jobs/pie-tdn", getHeaders(), Progress::class.java).body!!
-        Assertions.assertEquals(1, progress.total)
-        Assertions.assertTrue(progress.busy)
-
-        Thread.sleep(3000)
-
-        // poll progress
-        progress = pollProgress(uuid, TestConfig.Companion.TAGGER_NAME)
-        Assertions.assertFalse(progress.busy)
-        Assertions.assertEquals(1, progress.finished)
-
-        // check result
-        val resultPreview = getDocumentJobResult(uuid, TestConfig.Companion.TAGGER_NAME, doc.name)
-        Assertions.assertTrue(resultPreview.summary.annotations[Annotation.TOKEN]!! > 0)
-        Assertions.assertTrue(resultPreview.preview.terms.isNotEmpty())
-    }
-
-    private fun pollProgress(uuid: UUID, job: String): Progress {
-        return rest.exchange(
-            "/corpora/$uuid/jobs/$job/progress", HttpMethod.GET, getHeaders(), Progress::class.java
-        ).body!!
-    }
-
-    private fun getJobs(uuid: UUID): Set<JobMetadata> {
-        return rest.exchange("/corpora/$uuid/jobs?includePotentialJobs=true",
-            HttpMethod.GET,
-            getHeaders(),
-            object : ParameterizedTypeReference<Set<JobMetadata>>() {}).body!!
-    }
-
-    private fun getDocumentJobResult(uuid: UUID, job: String, document: String): Layer {
-        return rest.exchange(
-            "/corpora/$uuid/jobs/$job/documents/$document/result",
-            HttpMethod.GET,
-            getHeaders(),
-            Layer::class.java
-        ).body!!
-    }
-
-    private fun getHeaders(): HttpEntity<Any> {
-        val headers: MultiValueMap<String, String> = LinkedMultiValueMap()
-        headers.add("remote_user", "testUser")
-        return HttpEntity(null, headers)
+class JobsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: Config) {
+    @Nested
+    inner class JobCreationTest {
+        @Test
+        fun `Can create job`() {
+            val corpus = TestUtil.createFilledCorpus(config)
+            mvc.post("/corpora/${corpus.uuid}/jobs/${TestUtil.TAGGER_NAME}") { headers(::assignHeaders) } .andExpect { status { isAccepted() } }
+        }
     }
 }

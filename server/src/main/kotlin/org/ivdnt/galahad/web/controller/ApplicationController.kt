@@ -17,13 +17,12 @@ import java.net.URI
 
 @RestController
 class ApplicationController : Logging {
-    @Autowired
-    private val request: HttpServletRequest? = null
+    @Autowired private val request: HttpServletRequest? = null
 
     @Operation(
         summary = "Get version information",
         description = "Get version information and GitHub build information and commit version.",
-        responses = [ApiResponse(description = "Version information.")]
+        responses = [ApiResponse(description = "Version information.")],
     )
     @CrossOrigin
     @GetMapping(Endpoints.VERSION)
@@ -33,16 +32,16 @@ class ApplicationController : Logging {
     @Hidden
     @CrossOrigin
     @GetMapping(Endpoints.BASE)
-    fun getApplication(): ResponseEntity<Void> {
+    fun getApplication(): ResponseEntity<Void> =
         // Since we have nothing to show at this URL, we redirect to the API UI instead
-        return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(request?.contextPath + Endpoints.SWAGGER))
+        ResponseEntity.status(HttpStatus.FOUND)
+            .location(URI.create(request?.contextPath + Endpoints.SWAGGER))
             .build()
-    }
 
     @Operation(
         summary = "Get user information",
         description = "Get the username and whether the user is an admin.",
-        responses = [ApiResponse(description = "User information.")]
+        responses = [ApiResponse(description = "User information.")],
     )
     @CrossOrigin
     @GetMapping(Endpoints.USER)

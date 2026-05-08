@@ -13,18 +13,22 @@ fun NodeList.deepcopy(): ArrayList<Node> {
 }
 
 val Node.children: Sequence<Node>
-    get() = object : Sequence<Node> {
-        override fun iterator(): Iterator<Node> = object : Iterator<Node> {
-            var index = 0
-            override fun hasNext(): Boolean = index < childNodes.length
-            override fun next(): Node = childNodes.item(index++)
+    get() =
+        object : Sequence<Node> {
+            override fun iterator(): Iterator<Node> =
+                object : Iterator<Node> {
+                    var index = 0
+
+                    override fun hasNext(): Boolean = index < childNodes.length
+
+                    override fun next(): Node = childNodes.item(index++)
+                }
         }
-    }
 
 val Node.childElements: Sequence<Element>
     get() = children.mapNotNull { it.takeIf { it.nodeType == Node.ELEMENT_NODE } as Element? }
 
-/** Whether this node is contained in a node with name [tagName]*/
+/** Whether this node is contained in a node with name [tagName] */
 fun Node.containedIn(tagName: String): Boolean {
     if (this.parentNode == null) return false
     if (this.parentNode?.localName == tagName) return true
@@ -56,5 +60,7 @@ fun Node.nextElementSibling(): Element? {
 }
 
 fun Node.child(tag: String): Node = childElements.first { it.tagName == tag }
+
 fun Node.childOrNull(tag: String): Node? = childElements.firstOrNull { it.tagName == tag }
+
 fun Element.childOrNull(tag: String): Element? = (this as Node).childOrNull(tag) as Element?

@@ -34,4 +34,9 @@ class FoliaConverterTest : ConverterTest() {
     fun `Folia to Naf`() {
         formatToFormat(DocumentFormat.Folia, DocumentFormat.Naf)
     }
+
+    @Test
+    fun `Folia to Json`() {
+        formatToFormat(DocumentFormat.Folia, DocumentFormat.Json)
+    }
 }

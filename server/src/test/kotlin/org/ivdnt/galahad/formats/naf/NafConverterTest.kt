@@ -36,4 +36,9 @@ class NafConverterTest : ConverterTest() {
     fun `Naf to Naf`() {
         formatToFormat(DocumentFormat.Naf, DocumentFormat.Naf)
     }
+
+    @Test
+    fun `Naf to Json`() {
+        formatToFormat(DocumentFormat.Naf, DocumentFormat.Json)
+    }
 }

@@ -42,6 +42,7 @@ const useCorpora = defineStore("corpora", () => {
     /** Delete and unselect corpus. */
     function remove(metadata: CorpusMetadata): void {
         plausible.corpusDeleted(metadata)
+        loading.value = true
         API.deleteCorpus(metadata.uuid)
             .then(() => (corpusId.value = undefined))
             .finally(reload)

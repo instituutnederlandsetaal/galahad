@@ -9,5 +9,5 @@ enum class TaggerHealthStatus {
     ERROR,
     HEALTHY,
     NOT_HEALTHY,
-    UNKNOWN
+    UNKNOWN,
 }
