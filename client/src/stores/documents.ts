@@ -44,7 +44,10 @@ const documents = defineStore("documents", () => {
     /** Delete a document. */
     function remove(name: string): void {
         plausible.documentDeleted(corpus.value, getDocument(name))
-        API.deleteDocument(corpusId.value, name).finally(reload)
+        API.deleteDocument(corpusId.value, name).finally(() => {
+            reload()
+            reloadCorpora()
+        })
     }
 
     /** Download original source document. */
@@ -100,11 +103,15 @@ const documents = defineStore("documents", () => {
             .finally(() => {
                 if (uploadBusyCount.value === 0) {
                     reload()
+                    reloadCorpora()
                 }
             })
     }
 
+    watch(corpusId, reload)
+
     reload()
+
 
     // Exports
     return {

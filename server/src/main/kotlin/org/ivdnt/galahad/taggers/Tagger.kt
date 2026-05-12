@@ -1,9 +1,11 @@
 package org.ivdnt.galahad.taggers
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import java.io.File
+import java.net.URI
+import java.net.URL
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER
-import org.ivdnt.galahad.app.Galahad
 import org.ivdnt.galahad.app.application_profile
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.corpora.CorpusMetadata
@@ -11,9 +13,6 @@ import org.ivdnt.galahad.exceptions.TaggerNotFoundException
 import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.Constructor
-import java.io.File
-import java.net.URI
-import java.net.URL
 
 class Tagger(
     // The id should be equal to the filename
@@ -76,6 +75,7 @@ class Tagger(
                 .associateBy { it.name }
 
         // TODO remove parameter corpus, given that each corpusLayer now has a tagger
+        // TODO remove the when SOURCE_LAYER all together
         fun readOrThrow(id: String, corpus: Corpus? = null): Tagger =
             when (id) {
                 SOURCE_LAYER ->

@@ -15,13 +15,13 @@ const useCorpora = defineStore("corpora", () => {
     const corpora = ref<CorpusMetadata[]>([])
     const datasets = computed<CorpusMetadata[]>((): CorpusMetadata[] => corpora.value?.filter((i) => i.dataset) ?? [])
     const sharedCorpora = computed<CorpusMetadata[]>(
-        (): CorpusMetadata[] => corpora.value?.filter((i) => !i.dataset && i.owner !== user.user?.id) ?? [],
+        (): CorpusMetadata[] => corpora.value?.filter((i) => !i.dataset && i.owner !== user.user?.name) ?? [],
     )
     const corpus = computed<CorpusMetadata>(
         (): CorpusMetadata => corpora.value?.find((i) => i.uuid === corpusId.value) as CorpusMetadata,
     )
-    const isCollaborator = computed((): boolean => corpus.value?.collaborators.includes(user.user?.id) ?? false)
-    const isOwner = computed<boolean>((): boolean => corpus.value?.owner === user.user?.id)
+    const isCollaborator = computed((): boolean => corpus.value?.collaborators.includes(user.user?.name) ?? false)
+    const isOwner = computed<boolean>((): boolean => corpus.value?.owner === user.user?.name)
 
     /** Reload all corpora. */
     function reload(): void {
@@ -34,6 +34,7 @@ const useCorpora = defineStore("corpora", () => {
     /** Create a new corpus with the given metadata and set it as active. */
     function create(metadata: MutableCorpusMetadata): void {
         plausible.corpusCreated(metadata)
+        loading.value = true
         API.postCorpus(metadata)
             .then((res) => (corpusId.value = res.data))
             .finally(reload)
@@ -51,6 +52,7 @@ const useCorpora = defineStore("corpora", () => {
     /** Update metadata of existing corpus. */
     function update(metadata: CorpusMetadata): void {
         plausible.corpusUpdated(metadata)
+        loading.value = true
         API.patchCorpus(metadata.uuid, metadata).finally(reload)
     }
 

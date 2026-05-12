@@ -46,8 +46,8 @@
 
             <!-- id cell -->
             <template #cell-id="d: TableData<Job>">
-                <ExternalLink :href="`/galahad/overview/taggers#${d.item.tagger.id}`">
-                    {{ d.item.tagger.id }}
+                <ExternalLink :href="`/galahad/overview/taggers#${d.item.tagger.name}`">
+                    {{ d.item.tagger.name }}
                 </ExternalLink>
             </template>
 
@@ -60,13 +60,13 @@
 
             <!-- actions cell -->
             <template v-slot:cell-actions="d: TableData<Job>">
-                <GButton plain @click="jobId = d.item.tagger.id">View &amp; Tag</GButton>
+                <GButton plain @click="jobId = d.item.tagger.name">View &amp; Tag</GButton>
             </template>
 
             <!-- annotations cell -->
             <template #cell-annotations="d: TableData<Job>">
                 <AnnotationItemsViewer :items="d.item.tagger.annotations">
-                    <template #title>Annotations and principles of {{ d.item.tagger.id }}</template>
+                    <template #title>Annotations and principles of {{ d.item.tagger.name }}</template>
                 </AnnotationItemsViewer>
             </template>
         </GTable>
@@ -113,7 +113,7 @@ const items = computed(() =>
         // filter tagger name
         .filter((j: Job) =>
             // Case insensitive string comparison.
-            j.tagger.id.toLowerCase().includes(taggerFilter.value.toLowerCase()),
+            j.tagger.name.toLowerCase().includes(taggerFilter.value.toLowerCase()),
         )
         // filter period
         .filter(
@@ -128,7 +128,7 @@ const items = computed(() =>
         ),
 )
 const columns = computed<Column<Job>[]>((): Column<Job>[] => [
-    { key: "id", label: "tagger", sortOn: (j: Job): string => j.tagger.id, align: "left" },
+    { key: "id", label: "tagger", sortOn: (j: Job): string => j.tagger.name, align: "left" },
     { key: "language", sortOn: (j: Job): string => j.tagger.language, format: (j: Job): string => j.tagger.language },
     {
         key: "period",

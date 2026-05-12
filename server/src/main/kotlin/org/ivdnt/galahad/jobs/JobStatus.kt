@@ -1,8 +1,8 @@
 package org.ivdnt.galahad.jobs
 
 enum class JobStatus {
-    PENDING,
-    ERROR,
+    UNTAGGED,
     PROCESSING,
+    ERROR,
     FINISHED,
 }

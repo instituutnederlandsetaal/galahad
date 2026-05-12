@@ -1,5 +1,7 @@
 package org.ivdnt.galahad.corpora
 
+import java.io.File
+import java.util.*
 import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER
 import org.ivdnt.galahad.documents.Documents
 import org.ivdnt.galahad.evaluation.CorpusEvaluation
@@ -9,8 +11,6 @@ import org.ivdnt.galahad.files.ValidatedDiskValue
 import org.ivdnt.galahad.jobs.Jobs
 import org.ivdnt.galahad.layers.CorpusLayer.Companion.DOCUMENTS_FOLDER
 import org.ivdnt.galahad.layers.CorpusLayers
-import java.io.File
-import java.util.*
 
 /**
  * A corpus is a collection of documents, metadata and jobs, saved to a folder. The folder contents
@@ -28,7 +28,8 @@ import java.util.*
 class Corpus(dir: File) : GalahadFolder(dir) {
     val uuid: UUID = UUID.fromString(dir.name)
     // TODO still used in quite a lot of evaluations when they should use layers
-    val documents: Documents = Documents(dir.resolve(LAYERS_FOLDER).resolve(SOURCE_LAYER).resolve(DOCUMENTS_FOLDER))
+    val documents: Documents =
+        Documents(dir.resolve(LAYERS_FOLDER).resolve(SOURCE_LAYER).resolve(DOCUMENTS_FOLDER))
     val layers: CorpusLayers = CorpusLayers(dir.resolve(LAYERS_FOLDER), this)
     val jobs: Jobs = Jobs(dir.resolve(JOBS_FOLDER), this)
     val evaluation: CorpusEvaluation = CorpusEvaluation(dir.resolve(EVALUATIONS_FOLDER), this)
@@ -42,7 +43,8 @@ class Corpus(dir: File) : GalahadFolder(dir) {
     val statistics: CorpusStatistics
         get() =
             object : ValidatedDiskValue<CorpusStatistics>(dir.resolve(STATISTICS_FILE)) {
-                    override fun isValid(modified: Long) = modified >= this@Corpus.modified
+                    override fun isValid(modified: Long) =
+                        modified >= maxOf(this@Corpus.documents.modified, this@Corpus.jobs.modified)
 
                     override fun set(): CorpusStatistics = CorpusStatistics.create(this@Corpus)
                 }

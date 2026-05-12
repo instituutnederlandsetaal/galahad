@@ -13,6 +13,7 @@ import useTaggers from "@/stores/taggers"
 import useTagsets from "@/stores/tagsets"
 import useUser from "@/stores/user"
 import useEntities from "@/stores/evaluation/entities"
+import useLayers from "@/stores/layers"
 
 export default {
     useErrors,
@@ -30,4 +31,5 @@ export default {
     useTaggers,
     useTagsets,
     useEntities,
+    useLayers,
 }

@@ -102,7 +102,6 @@ function download(data: Any) {
         .then((response) => {
             Utils.browserDownloadResponseFile(response)
         })
-        .catch((res) => Utils.handleBlobError(res, "download grouped metrics samples", app))
         .finally(() => (downloading.value = false))
 }
 </script>

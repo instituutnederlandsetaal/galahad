@@ -30,7 +30,7 @@ class ApplicationControllerTest(@Autowired val mvc: MockMvc) {
                 }
                 .andReturn()
                 .andDeserialize()
-        assertEquals(username, user.id)
+        assertEquals(username, user.name)
         assertEquals(admin, user.admin)
     }
 
@@ -47,11 +47,14 @@ class ApplicationControllerTest(@Autowired val mvc: MockMvc) {
     @Test
     fun `Get default user when user header is missing`() {
         val user: User =
-            mvc.get("/user").andExpect {
-                status { isOk() }
-                content { contentType(MediaType.APPLICATION_JSON) }
-            }.andReturn().andDeserialize()
-        assertEquals(User.DEFAULT_USER.id, user.id)
+            mvc.get("/user")
+                .andExpect {
+                    status { isOk() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                }
+                .andReturn()
+                .andDeserialize()
+        assertEquals(User.DEFAULT_USER.name, user.name)
         assertEquals(User.DEFAULT_USER.admin, user.admin)
     }
 }

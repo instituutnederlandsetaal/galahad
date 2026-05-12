@@ -41,7 +41,7 @@ class FoliaMetadata(xml: Document, val root: Node, val export: DocumentExport) :
             "https://github.com/instituutnederlandsetaal/galahad-taggers-dockerized",
         )
         processor.setAttribute("host", "https://galahad.ivdnt.org")
-        processor.setAttribute("user", export.user.id)
+        processor.setAttribute("user", export.user.name)
 
         provenance.appendChild(processor)
     }

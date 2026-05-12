@@ -1,9 +1,9 @@
 package org.ivdnt.galahad.annotations
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import java.util.*
 import org.ivdnt.galahad.annotations.LayerPreview.Companion.LAYER_PREVIEW_LENGTH
 import org.ivdnt.galahad.annotations.Term.Companion.toSpacedString
-import java.util.*
 
 /** Annotation layer of a file. */
 class Layer(
@@ -37,7 +37,7 @@ class Layer(
 
     companion object {
         val EMPTY: Layer = Layer(emptyArray(), "")
-        const val SOURCE_LAYER: String = "sourceLayer"
+        const val SOURCE_LAYER: String = "source"
     }
 }
 

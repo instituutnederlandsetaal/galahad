@@ -1,11 +1,11 @@
 package org.ivdnt.galahad.formats.folia
 
+import java.text.SimpleDateFormat
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.formats.reader.PrettyXMLWriter
 import org.ivdnt.galahad.util.ifNullOrBlank
 import org.ivdnt.galahad.util.withoutFormatExt
-import java.text.SimpleDateFormat
 
 class FoliaMetadataWriter(val writer: PrettyXMLWriter, val export: DocumentExport) {
     val title = export.document.sourceFile.withoutFormatExt
@@ -62,7 +62,7 @@ class FoliaMetadataWriter(val writer: PrettyXMLWriter, val export: DocumentExpor
                     "src" to
                         "https://github.com/instituutnederlandsetaal/galahad-taggers-dockerized",
                     "host" to "https://galahad.ivdnt.org",
-                    "user" to export.user.id,
+                    "user" to export.user.name,
                 ),
             )
         }

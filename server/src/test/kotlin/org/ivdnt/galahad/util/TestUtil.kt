@@ -34,7 +34,7 @@ object TestUtil {
         val meta =
             CorpusMetadata(
                 "testCorpus",
-                user.id,
+                user.name,
                 dataset,
                 CorpusMetadata.Period(1200, 1300),
                 "Dutch",

@@ -124,7 +124,7 @@ const jobsStore = stores.useJobs()
 // Fields
 const { jobId } = defineProps<{ jobId: string }>()
 /** The job of this modal */
-const job = computed<Job>((): Job => jobsStore.jobs.find((j: Job) => j.tagger.id === jobId))
+const job = computed<Job>((): Job => jobsStore.jobs.find((j: Job) => j.tagger.name === jobId))
 /** Returns null while we are waiting on the first getHealth request. */
 const taggerIsAvailable = computed<boolean | null>(() => {
     if (!health.value) return null

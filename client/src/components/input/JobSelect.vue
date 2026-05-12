@@ -16,13 +16,21 @@
 <script setup lang="ts">
 import stores from "@/stores"
 import type { Job } from "@/types/jobs"
+import { SelectOption } from "@/types/ui/select";
 
 // #props
 const { isReference = false, displayName } = defineProps<{ isReference?: boolean; displayName?: string }>()
 
 // #stores
-const { loading, jobs } = storeToRefs(stores.useJobs())
-const { hypothesisId, referenceId, options } = storeToRefs(stores.useJobSelection())
+const { loading, layers } = storeToRefs(stores.useLayers())
+const options = computed<SelectOption[]>(() =>
+    layers.value.map((l) => ({
+        value: l.tagger.name,
+        text: `${l.tagger.name} (${l.tagger.description})`,
+    })),
+)
+const { jobs } = storeToRefs(stores.useJobs())
+const { hypothesisId, referenceId } = storeToRefs(stores.useJobSelection())
 
 // #computed
 const label = computed<string>(() => displayName ?? (isReference ? "Reference" : "Hypothesis"))
@@ -38,7 +46,7 @@ const jobId = computed<string>({
         }
     },
 })
-const job = computed<Job | undefined>(() => jobs.value.find((j: Job) => j.tagger.id === jobId.value))
+const job = computed<Job | undefined>(() => jobs.value.find((j: Job) => j.tagger.name === jobId.value))
 const untaggedDocsExist = computed<boolean>(() =>
     job.value ? job.value.progress.finished < job.value.progress.total : false,
 )

@@ -85,8 +85,6 @@ const { create, remove, update, reload } = stores.useCorpora()
 const { corpora, sharedCorpora, datasets, corpus } = storeToRefs(stores.useCorpora())
 const { canWrite, canDelete } = storeToRefs(stores.useUser())
 
-reload()
-
 // Once not falsy, respective modal is shown.
 const newCorpus = ref<boolean>()
 const deleteCorpus = ref<CorpusMetadata>()
@@ -96,4 +94,7 @@ const editCorpus = ref<CorpusMetadata>()
 function copy(corpus: CorpusMetadata): CorpusMetadata {
     return structuredClone(toRaw(corpus))
 }
+
+// #lifecycle
+onMounted(reload)
 </script>

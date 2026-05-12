@@ -41,7 +41,7 @@ export function browserDownloadResponseFile(response: BlobResponse): void {
  * @param intent Human readable explanation.
  * @param errors errorStore.
  */
-export function handleBlobError(error: AxiosError<Blob>, intent: string, errors: any): void {
+export function handleBlobError(error: AxiosError<Blob>, errors: any): void {
     // If no response, handle the NETWORK_ERROR.
     if (!error.response) errors.handle(error)
 

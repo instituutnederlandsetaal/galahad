@@ -1,5 +1,8 @@
 package org.ivdnt.galahad.formats.naf
 
+import java.io.OutputStream
+import javax.xml.transform.dom.DOMSource
+import javax.xml.transform.stream.StreamResult
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.LayerAnnotations.Companion.contains
 import org.ivdnt.galahad.export.DocumentExport
@@ -8,9 +11,6 @@ import org.ivdnt.galahad.util.XmlUtil
 import org.ivdnt.galahad.util.withoutFormatExt
 import org.w3c.dom.Document
 import org.w3c.dom.Element
-import java.io.OutputStream
-import javax.xml.transform.dom.DOMSource
-import javax.xml.transform.stream.StreamResult
 
 class NafWriter(export: DocumentExport) : LayerWriter(export) {
     val now: Long = System.currentTimeMillis()
@@ -45,7 +45,7 @@ class NafWriter(export: DocumentExport) : LayerWriter(export) {
         val fileDesc =
             xml.createElement("fileDesc").apply {
                 setAttribute("title", export.document.sourceFile.withoutFormatExt)
-                setAttribute("author", export.user.id)
+                setAttribute("author", export.user.name)
                 setAttribute("creationtime", now.toString())
                 setAttribute("filename", export.document.name)
                 setAttribute("filetype", export.document.metadata.format.identifier)

@@ -73,7 +73,7 @@ const columns: Column<CorpusMetadata>[] = [
 // --- computed ---
 const items = computed(() => {
     if (type === CorpusTableType.user) {
-        return corpora.filter((i) => i.owner === userStore.user.id)
+        return corpora.filter((i) => i.owner === userStore.user.name)
     }
     return corpora
 })

@@ -27,20 +27,6 @@
     <GCard v-else-if="jobsStore.loading && !hideAnnotationsError" title="Loading jobs">
         <GSpinner />
     </GCard>
-    <!-- No non-empty jobs-->
-    <GCard v-else-if="jobSelectionStore.options.length == 0 && !hideAnnotationsError" title="No annotations">
-        <GInfo error>
-            <p>None of the documents have annotations. Either:</p>
-            <ul>
-                <li>
-                    <router-link to="/annotate/documents">Upload documents</router-link> to this corpus that contain
-                    source annotations
-                </li>
-                <li><router-link to="/annotate/jobs">Start a tagger job</router-link> to create annotations</li>
-                <li>Or wait for an existing job to finish</li>
-            </ul>
-        </GInfo>
-    </GCard>
 
     <!-- content -->
     <GCard v-else>

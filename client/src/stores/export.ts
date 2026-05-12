@@ -10,6 +10,7 @@ const useExport = defineStore("exportStore", () => {
     // Stores
     const corporaStore = stores.useCorpora()
     const jobSelection = stores.useJobSelection()
+    const errors = stores.useErrors()
 
     // Fields
     const loading = ref<boolean>()

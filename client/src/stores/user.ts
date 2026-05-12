@@ -7,7 +7,7 @@ import { useAxios } from "@/api/useAxios"
 const useUser = defineStore("user", () => {
     const corpora = stores.useCorpora()
 
-    const { data: user } = useAxios<User>(userPath, { id: "NO USER", admin: false }, {}, true)
+    const { data: user } = useAxios<User>(userPath, { name: "NO USER", admin: false }, {}, true)
 
     const canWrite = computed<boolean>((): boolean => user.value?.admin || corpora.isOwner || corpora.isCollaborator)
     const canDelete = computed<boolean>((): boolean => user.value?.admin || corpora.isOwner)
