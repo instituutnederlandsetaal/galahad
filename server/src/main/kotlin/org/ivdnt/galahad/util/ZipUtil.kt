@@ -6,6 +6,7 @@ import java.io.FileOutputStream
 import java.io.OutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
+import kotlin.io.path.createTempFile
 
 typealias FileMapper = Pair<String, (OutputStream) -> Unit>
 
@@ -19,12 +20,9 @@ typealias FileMapper = Pair<String, (OutputStream) -> Unit>
  * @param includeCMDI include the GaLAHaD CMDI template files in the zip.
  * @return The flushed and closed zipfile.
  */
-fun createZipFile(
-    files: Sequence<FileMapper>,
-    out: OutputStream,
-): File {
+fun createZipFile(files: Sequence<FileMapper>, out: OutputStream): File {
     // Create zip and stream.
-    val zipFile = File.createTempFile("tmp", ".zip")
+    val zipFile = createTempFile(suffix = ".zip").toFile()
     val zipStream = ZipOutputStream(BufferedOutputStream(out))
     // Loop through the Sequence of files
     // Any transformations occur on demand.
@@ -48,7 +46,7 @@ fun createZipFile(
 }
 
 fun zipDir(dir: File): File {
-    val zipFile = File.createTempFile("tmp", ".zip")
+    val zipFile = createTempFile(suffix = ".zip").toFile()
     val stream = ZipOutputStream(BufferedOutputStream(FileOutputStream(zipFile)))
     stream.use { zip ->
         dir.walk().forEach { file ->

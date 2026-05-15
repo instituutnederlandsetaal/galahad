@@ -2,13 +2,14 @@ package org.ivdnt.galahad.web.service
 
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import java.util.*
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.documents.DocumentFormat
 import org.ivdnt.galahad.export.CorpusExport
+import org.ivdnt.galahad.util.asFormat
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.util.*
 
 @Service
 class ExportService(private val corpora: CorporaService) : Logging {
@@ -53,4 +54,11 @@ class ExportService(private val corpora: CorporaService) : Logging {
     }
 
     fun getCorpusName(corpus: UUID): String = corpora.readOrThrow(corpus).metadata.name
+
+    fun getDocumentName(corpus: UUID, doc: String, format: DocumentFormat? = null): String {
+        val doc = corpora.readOrThrow(corpus).documents.readOrThrow(doc)
+        val source = doc.sourceFile
+        val format = format ?: doc.metadata.format
+        return source.asFormat(format)
+    }
 }

@@ -220,23 +220,23 @@ class FrequencyMetricsSettings(
 /** Used by [DocumentMetric] to instantiate each setting. */
 val METRIC_TYPES: List<MetricsSettings> =
     listOf(
-        // Pos
-        PosByPosMetricsSettings(),
-        PosByLemmaMetricsSettings(),
-        MultiPosByPosMetricsSettings(),
-        SinglePosByPosMetricsSettings(),
-        // Lemma
-        LemmaByLemmaMetricsSettings(),
-        LemmaByPosMetricsSettings(),
-        MultiLemmaByLemmaMetricsSettings(),
-        SingleLemmaByLemmaMetricsSettings(),
-        // Lemma + Pos
-        LemmaPosByPosMetricsSettings(),
-        LemmaPosByLemmaMetricsSettings(),
-        // UD
-        DeprelByDeprel(),
-        HeadByHead(),
-        UposByUposMetricsSettings(),
-        DeprelHeadbyDeprelMetricsSettings(),
-        NerByNerMetricsSettings(),
+        //        // Pos
+        //        PosByPosMetricsSettings(),
+        //        PosByLemmaMetricsSettings(),
+        //        MultiPosByPosMetricsSettings(),
+        //        SinglePosByPosMetricsSettings(),
+        //        // Lemma
+        //        LemmaByLemmaMetricsSettings(),
+        LemmaByPosMetricsSettings()
+        //        MultiLemmaByLemmaMetricsSettings(),
+        //        SingleLemmaByLemmaMetricsSettings(),
+        //        // Lemma + Pos
+        //        LemmaPosByPosMetricsSettings(),
+        //        LemmaPosByLemmaMetricsSettings(),
+        //        // UD
+        //        DeprelByDeprel(),
+        //        HeadByHead(),
+        //        UposByUposMetricsSettings(),
+        //        DeprelHeadbyDeprelMetricsSettings(),
+        //        NerByNerMetricsSettings(),
     )

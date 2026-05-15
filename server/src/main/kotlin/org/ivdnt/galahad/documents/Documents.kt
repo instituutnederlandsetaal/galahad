@@ -1,8 +1,8 @@
 package org.ivdnt.galahad.documents
 
+import java.io.File
 import org.ivdnt.galahad.exceptions.DocumentNotFoundException
 import org.ivdnt.galahad.files.GalahadFolderManager
-import java.io.File
 
 /**
  * Create, read and delete documents in a corpus. Represents the "documents/" folder in a corpus
@@ -29,4 +29,6 @@ class Documents(dir: File) : GalahadFolderManager<Document, File>(dir) {
     override fun ctor(key: String): Document = Document(dir.resolve(key))
 
     override fun throwNotFound(key: String): Nothing = throw DocumentNotFoundException(key)
+
+    // TODO should overwrite deleteOrThrow to delete jobs, (non-user-uploaded) layers & evals
 }

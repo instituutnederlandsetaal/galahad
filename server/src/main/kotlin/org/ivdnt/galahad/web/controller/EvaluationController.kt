@@ -7,19 +7,20 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import jakarta.servlet.http.HttpServletResponse
+import java.util.*
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER
 import org.ivdnt.galahad.evaluation.confusion.JobConfusion
 import org.ivdnt.galahad.evaluation.distribution.JobDistribution
 import org.ivdnt.galahad.evaluation.distribution.TypeToken
+import org.ivdnt.galahad.evaluation.metrics.DocumentMetric
 import org.ivdnt.galahad.evaluation.metrics.JobMetric
 import org.ivdnt.galahad.exceptions.ErrorResponse
 import org.ivdnt.galahad.util.setContentDisposition
 import org.ivdnt.galahad.web.service.EvaluationService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
-import java.util.*
 
 @RestController
 class EvaluationController(private val evaluationService: EvaluationService) : Logging {
@@ -53,7 +54,10 @@ class EvaluationController(private val evaluationService: EvaluationService) : L
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Layer name") layer: String,
         @RequestParam @Parameter(description = "Layer name") reference: String = SOURCE_LAYER,
-    ): ByteArray = evaluationService.getEvaluation(corpus, layer, reference).also { setZipResponseHeader(corpus) }
+    ): ByteArray =
+        evaluationService.getEvaluation(corpus, layer, reference).also {
+            setZipResponseHeader(corpus)
+        }
 
     private fun setZipResponseHeader(corpus: UUID) {
         response!!.contentType = "application/json; application/zip"
@@ -75,13 +79,21 @@ class EvaluationController(private val evaluationService: EvaluationService) : L
             responseCode = "403",
             description = "User needs read-access.",
             content =
-                [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
+                [
+                    Content(
+                        array = ArraySchema(schema = Schema(implementation = ErrorResponse::class))
+                    )
+                ],
         )
         @ApiResponse(
             responseCode = "404",
             description = "The corpus or layer was not found.",
             content =
-                [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
+                [
+                    Content(
+                        array = ArraySchema(schema = Schema(implementation = ErrorResponse::class))
+                    )
+                ],
         )
         @CrossOrigin
         @GetMapping(Endpoints.Evaluation.Distribution.BASE)
@@ -102,13 +114,21 @@ class EvaluationController(private val evaluationService: EvaluationService) : L
             responseCode = "403",
             description = "User needs read-access.",
             content =
-                [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
+                [
+                    Content(
+                        array = ArraySchema(schema = Schema(implementation = ErrorResponse::class))
+                    )
+                ],
         )
         @ApiResponse(
             responseCode = "404",
             description = "The corpus, document or layer was not found.",
             content =
-                [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
+                [
+                    Content(
+                        array = ArraySchema(schema = Schema(implementation = ErrorResponse::class))
+                    )
+                ],
         )
         @CrossOrigin
         @GetMapping(Endpoints.Evaluation.Document.Distribution.BASE)
@@ -135,13 +155,21 @@ class EvaluationController(private val evaluationService: EvaluationService) : L
             responseCode = "403",
             description = "User needs read-access.",
             content =
-                [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
+                [
+                    Content(
+                        array = ArraySchema(schema = Schema(implementation = ErrorResponse::class))
+                    )
+                ],
         )
         @ApiResponse(
             responseCode = "404",
             description = "The corpus or job was not found.",
             content =
-                [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
+                [
+                    Content(
+                        array = ArraySchema(schema = Schema(implementation = ErrorResponse::class))
+                    )
+                ],
         )
         @CrossOrigin
         @GetMapping(Endpoints.Evaluation.Confusion.BASE)
@@ -166,19 +194,31 @@ class EvaluationController(private val evaluationService: EvaluationService) : L
             description =
                 "The annotation type does not exist (or misspelled) or is not present in the layer.",
             content =
-                [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
+                [
+                    Content(
+                        array = ArraySchema(schema = Schema(implementation = ErrorResponse::class))
+                    )
+                ],
         )
         @ApiResponse(
             responseCode = "403",
             description = "User needs read-access.",
             content =
-                [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
+                [
+                    Content(
+                        array = ArraySchema(schema = Schema(implementation = ErrorResponse::class))
+                    )
+                ],
         )
         @ApiResponse(
             responseCode = "404",
             description = "The corpus or job was not found.",
             content =
-                [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
+                [
+                    Content(
+                        array = ArraySchema(schema = Schema(implementation = ErrorResponse::class))
+                    )
+                ],
         )
         @CrossOrigin
         @GetMapping(Endpoints.Evaluation.Confusion.DOWNLOAD)
@@ -189,17 +229,14 @@ class EvaluationController(private val evaluationService: EvaluationService) : L
             @RequestParam
             @Parameter(description = "Annotation type for which to generate the confusion")
             annotation: Annotation,
-            @RequestParam @Parameter(description = "Annotation head to filter on") hypoFilter: String,
+            @RequestParam
+            @Parameter(description = "Annotation head to filter on")
+            hypoFilter: String,
             @RequestParam @Parameter(description = "Annotation head to filter on") refFilter: String,
         ): ByteArray =
-            evaluationService.getConfusionSamples(
-                hypoFilter,
-                refFilter,
-                annotation,
-                corpus,
-                layer,
-                reference,
-            ).also { setZipResponseHeader(corpus) }
+            evaluationService
+                .getConfusionSamples(hypoFilter, refFilter, annotation, corpus, layer, reference)
+                .also { setZipResponseHeader(corpus) }
     }
 
     @RestController
@@ -214,13 +251,21 @@ class EvaluationController(private val evaluationService: EvaluationService) : L
             responseCode = "403",
             description = "User needs read-access.",
             content =
-                [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
+                [
+                    Content(
+                        array = ArraySchema(schema = Schema(implementation = ErrorResponse::class))
+                    )
+                ],
         )
         @ApiResponse(
             responseCode = "404",
             description = "The corpus or job was not found.",
             content =
-                [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
+                [
+                    Content(
+                        array = ArraySchema(schema = Schema(implementation = ErrorResponse::class))
+                    )
+                ],
         )
         @CrossOrigin
         @GetMapping(Endpoints.Evaluation.Metrics.BASE)
@@ -229,6 +274,15 @@ class EvaluationController(private val evaluationService: EvaluationService) : L
             @PathVariable @Parameter(description = "Layer name") layer: String,
             @RequestParam @Parameter(description = "Layer name") reference: String = SOURCE_LAYER,
         ): JobMetric = evaluationService.getJobMetric(corpus, layer, reference)
+
+        @CrossOrigin
+        @GetMapping(Endpoints.Evaluation.Document.Metrics.BASE)
+        fun getDocumentMetric(
+            @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
+            @PathVariable @Parameter(description = "Layer name") layer: String,
+            @PathVariable @Parameter(description = "Document name") document: String,
+            @RequestParam @Parameter(description = "Layer name") reference: String = SOURCE_LAYER,
+        ): DocumentMetric = evaluationService.getDocumentMetric(corpus, document, layer, reference)
 
         @Operation(
             summary = "Get metrics samples",
@@ -244,19 +298,31 @@ class EvaluationController(private val evaluationService: EvaluationService) : L
             responseCode = "400",
             description = "The setting or classification type does not exist.",
             content =
-                [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
+                [
+                    Content(
+                        array = ArraySchema(schema = Schema(implementation = ErrorResponse::class))
+                    )
+                ],
         )
         @ApiResponse(
             responseCode = "403",
             description = "User needs read-access.",
             content =
-                [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
+                [
+                    Content(
+                        array = ArraySchema(schema = Schema(implementation = ErrorResponse::class))
+                    )
+                ],
         )
         @ApiResponse(
             responseCode = "404",
             description = "The corpus or job was not found.",
             content =
-                [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
+                [
+                    Content(
+                        array = ArraySchema(schema = Schema(implementation = ErrorResponse::class))
+                    )
+                ],
         )
         @CrossOrigin
         @GetMapping(Endpoints.Evaluation.Metrics.DOWNLOAD)
@@ -270,15 +336,13 @@ class EvaluationController(private val evaluationService: EvaluationService) : L
             @RequestParam("class")
             @Parameter(description = "Classification type(e.g. true positive)")
             classType: String,
-            @RequestParam @Parameter(description = "Annotation head (e.g. NOU-C)") group: String? = null,
-        ): ByteArray = // TODO should this return unit and should we stream into the response out stream?
-            evaluationService.getMetricsSamples(
-                metricsType,
-                group,
-                corpus,
-                layer,
-                reference,
-                classType,
-            ).also { setZipResponseHeader(corpus) }
+            @RequestParam
+            @Parameter(description = "Annotation head (e.g. NOU-C)")
+            group: String? = null,
+        ): ByteArray = // TODO should this return unit and should we stream into the response out
+            // stream?
+            evaluationService
+                .getMetricsSamples(metricsType, group, corpus, layer, reference, classType)
+                .also { setZipResponseHeader(corpus) }
     }
 }

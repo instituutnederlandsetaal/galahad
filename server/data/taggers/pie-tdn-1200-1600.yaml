@@ -1,4 +1,4 @@
-id: pie-tdn-1200-1600
+name: pie-tdn-1200-1600
 uri: https://github.com/instituutnederlandsetaal/galahad-taggers/tree/2.0.0/pie/TDN-1200-1600
 version: 1.1.0
 description: PIE trained on DBNL excerpts, GTB dictionary quotations, CLVN & Gysseling (1200-1600)

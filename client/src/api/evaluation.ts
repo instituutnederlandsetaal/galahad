@@ -16,10 +16,11 @@ type JobEntitiesResponse = AxiosResponse<JobEntities>
 type JobsEntitiesResponse = AxiosResponse<JobsEntities>
 
 const evaluationPath = (corpus: UUID): string => `/corpora/${corpus}/evaluation`
+const layerPath = (corpus: UUID, layer: string): string => `/corpora/${corpus}/layers/${layer}/evaluation`
 export const confusionPath = (corpus: UUID): string => `${evaluationPath(corpus)}/confusion`
 const confusionSamplesPath = (corpus: UUID): string => `${confusionPath(corpus)}/download`
-export const distributionPath = (corpus: UUID): string => `${evaluationPath(corpus)}/distribution`
-export const metricsPath = (corpus: UUID): string => `${evaluationPath(corpus)}/metrics`
+export const distributionPath = (corpus: UUID, layer: string): string => `${layerPath(corpus, layer)}/distribution`
+export const metricsPath = (corpus: UUID, layer: string): string => `${layerPath(corpus, layer)}/metrics`
 const metricsSamplesPath = (corpus: UUID): string => `${metricsPath(corpus)}/download`
 const downloadPath = (corpus: UUID): string => `${evaluationPath(corpus)}/download`
 const documentLayerComparisonPath = (corpus: UUID, document: string): string => `/corpora/${corpus}/documents/${document}/evaluation/comparison`
@@ -33,7 +34,7 @@ export const jobsEntitiesPath = (corpus: UUID): string => `/corpora/${corpus}/ev
  * @param hypothesis Tagging job name as hypothesis layer.
  */
 export function getDistribution(corpus: UUID, hypothesis: string): Promise<DistributionResponse> {
-    return axios.get(distributionPath(corpus), { params: { hypothesis } })
+    return axios.get(distributionPath(corpus, hypothesis))
 }
 
 /**
@@ -53,7 +54,7 @@ export function getConfusion(corpus: UUID, hypothesis: string, reference: string
  * @param reference Tagger job name as reference layer.
  */
 export function getMetrics(corpus: UUID, hypothesis: string, reference: string): Promise<MetricsResponse> {
-    return axios.get(metricsPath(corpus), { params: { hypothesis, reference } })
+    return axios.get(metricsPath(corpus, hypothesis), { params: { reference } })
 }
 
 /**

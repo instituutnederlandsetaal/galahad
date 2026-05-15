@@ -17,6 +17,7 @@ class Term(
     @get:JsonIgnore val lemma: String? = annotations[Annotation.LEMMA]
 
     @get:JsonIgnore val pos: String? = annotations[Annotation.POS]
+    @get:JsonIgnore val group: String? = annotations[Annotation.GROUP]
 
     @get:JsonIgnore val upos: String? = annotations[Annotation.UPOS]
 

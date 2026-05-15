@@ -276,11 +276,10 @@ class CorporaControllerTest(@Autowired val mvc: MockMvc) {
 
     @Nested
     inner class CorpusDeletionTest {
-        @Test
-        fun `Owner can delete corpus`() {
+        private fun assertDeleteCorpus(user: String) {
             val uuid = postCorpus(mapOf("name" to "test"))
             assertEquals(1, getAllCorpora().size)
-            deleteCorpus(uuid)
+            deleteCorpus(uuid, user)
             performGetCorpus(uuid).andExpect {
                 status { isNotFound() }
                 match { it.resolvedException is CorpusNotFoundException }
@@ -289,15 +288,13 @@ class CorporaControllerTest(@Autowired val mvc: MockMvc) {
         }
 
         @Test
+        fun `Owner can delete corpus`() {
+            assertDeleteCorpus(TestUtil.TEST_USER)
+        }
+
+        @Test
         fun `Admin can delete corpus`() {
-            val uuid = postCorpus(mapOf("name" to "test"))
-            assertEquals(1, getAllCorpora().size)
-            deleteCorpus(uuid, "admin")
-            performGetCorpus(uuid).andExpect {
-                status { isNotFound() }
-                match { it.resolvedException is CorpusNotFoundException }
-            }
-            assertEquals(0, getAllCorpora().size)
+            assertDeleteCorpus("admin")
         }
 
         @Test
@@ -308,37 +305,35 @@ class CorporaControllerTest(@Autowired val mvc: MockMvc) {
             }
         }
 
+        private fun assertCantDeleteCorpus(corpus: UUID, user: String) {
+            assertEquals(1, getAllCorpora().size)
+            assertDeleteCorpusForbidden(corpus, user)
+            assertEquals(1, getAllCorpora().size)
+        }
+
         @Test
         fun `Stranger can't delete corpus`() {
             val corpus = postCorpus(mapOf("name" to "test"))
-            assertEquals(1, getAllCorpora().size)
-            assertDeleteCorpusForbidden(corpus, "stranger")
-            assertEquals(1, getAllCorpora().size)
+            assertCantDeleteCorpus(corpus, "stranger")
         }
 
         @Test
         fun `Stranger can't delete database corpus`() {
             val corpus = postCorpus(mapOf("name" to "test", "dataset" to true), "admin")
-            assertEquals(1, getAllCorpora().size)
-            assertDeleteCorpusForbidden(corpus, "stranger")
-            assertEquals(1, getAllCorpora().size)
+            assertCantDeleteCorpus(corpus, "stranger")
         }
 
         @Test
         fun `Viewer can't delete corpus`() {
             val corpus = postCorpus(mapOf("name" to "test", "viewers" to setOf("viewer")))
-            assertEquals(1, getAllCorpora().size)
-            assertDeleteCorpusForbidden(corpus, "viewer")
-            assertEquals(1, getAllCorpora().size)
+            assertCantDeleteCorpus(corpus, "viewer")
         }
 
         @Test
         fun `Collaborator can't delete corpus`() {
             val corpus =
                 postCorpus(mapOf("name" to "test", "collaborators" to setOf("collaborator")))
-            assertEquals(1, getAllCorpora().size)
-            assertDeleteCorpusForbidden(corpus, "collaborator")
-            assertEquals(1, getAllCorpora().size)
+            assertCantDeleteCorpus(corpus, "collaborator")
         }
     }
 
@@ -358,10 +353,13 @@ class CorporaControllerTest(@Autowired val mvc: MockMvc) {
         mvc.get("/corpora/$uuid") { headers { assignHeaders(this, user) } }
 
     private fun getCorpus(uuid: UUID?, user: String = TestUtil.TEST_USER): CorpusStatistics =
-        performGetCorpus(uuid, user).andExpect {
-            status { isOk() }
-            content { contentType(MediaType.APPLICATION_JSON) }
-        }.andReturn().andDeserialize()
+        performGetCorpus(uuid, user)
+            .andExpect {
+                status { isOk() }
+                content { contentType(MediaType.APPLICATION_JSON) }
+            }
+            .andReturn()
+            .andDeserialize()
 
     private fun getAllCorpora(): List<CorpusStatistics> =
         mvc.get("/corpora") { headers(::assignHeaders) }
@@ -378,9 +376,7 @@ class CorporaControllerTest(@Autowired val mvc: MockMvc) {
     ): ResultActionsDsl = mvc.delete("/corpora/$uuid") { headers { assignHeaders(this, user) } }
 
     private fun deleteCorpus(uuid: UUID?, user: String = TestUtil.TEST_USER) {
-        performDeleteCorpus(uuid, user).andExpect {
-            status { isNoContent() }
-        }
+        performDeleteCorpus(uuid, user).andExpect { status { isNoContent() } }
     }
 
     private fun assertDeleteCorpusForbidden(uuid: UUID?, user: String = TestUtil.TEST_USER) {

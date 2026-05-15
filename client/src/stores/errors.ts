@@ -9,7 +9,12 @@ const useErrors = defineStore("errors", () => {
         axios.interceptors.response.use(
             (response) => response,
             async (error) => {
-                const message = JSON.parse(await error.response?.data?.text() ?? "{}").message;
+                let message = undefined
+                try {
+                    message = JSON.parse(await error.response?.data?.text() ?? "{}").message;
+                } catch (e) {
+                    message = error.response?.data?.message
+                }
                 errors.value.push(`${error.config?.url}: ${message ?? error.message}`)
                 return Promise.reject(error)
             },

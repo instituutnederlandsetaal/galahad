@@ -44,7 +44,7 @@ const useMetrics = defineStore("metrics", () => {
     const url = computed<string>(() => {
         if (!(hypothesisId.value && referenceId.value)) return undefined
         plausible.metricsEvaluated(corpus.value, hypothesisJob.value, referenceJob.value)
-        return metricsPath(corpusId.value)
+        return metricsPath(corpusId.value, hypothesisId.value)
     })
     const { loading, data: metrics } = useAxios<Metrics>(
         url,

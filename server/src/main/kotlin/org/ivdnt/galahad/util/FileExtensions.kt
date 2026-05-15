@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.util
 
-import org.ivdnt.galahad.documents.DocumentFormat
 import java.io.File
+import org.ivdnt.galahad.documents.DocumentFormat
 
 val File.withoutFormatExt: String
     get() {
@@ -12,3 +12,5 @@ val File.withoutFormatExt: String
         }
         return this.nameWithoutExtension
     }
+
+fun File.asFormat(format: DocumentFormat): String = this.withoutFormatExt + "." + format.extension

@@ -1,5 +1,7 @@
 package org.ivdnt.galahad.formats.tei
 
+import java.io.OutputStream
+import javax.xml.XMLConstants
 import org.codehaus.stax2.XMLStreamWriter2
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.LayerAnnotations.Companion.contains
@@ -8,8 +10,6 @@ import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.export.LayerWriter
 import org.ivdnt.galahad.formats.reader.PrettyXMLWriter
 import org.ivdnt.galahad.util.XmlUtil.Companion.outputFactory
-import java.io.OutputStream
-import javax.xml.XMLConstants
 
 class TeiWriter(export: DocumentExport) : LayerWriter(export) {
     override fun convert(out: OutputStream) {
@@ -49,7 +49,7 @@ class TeiWriter(export: DocumentExport) : LayerWriter(export) {
                             }
 
                         val tag =
-                            if (t.pos == "PC" && !t.token.contains(alphaNumeric)) "pc" else "w"
+                            if (t.pos in punct && !t.token.contains(alphaNumeric)) "pc" else "w"
                         writer.writeStartElement(tag)
                         writer.writeAttribute(XMLConstants.XML_NS_URI, "id", t.id)
                         if (tag == "w") {
@@ -57,7 +57,14 @@ class TeiWriter(export: DocumentExport) : LayerWriter(export) {
                         }
                         t.pos?.let { writer.writeAttribute("pos", it) }
                         if (t.spaceAfter == false) writer.writeAttribute("join", "right")
-                        writer.writeCharacters(t.token)
+
+                        if (t.group != null) {
+                            writer.writeCharacters(t.token, true)
+                            writer.writeNewLine()
+                            writer.writeEmptyElement("join", mapOf("n" to t.group))
+                        } else {
+                            writer.writeCharacters(t.token)
+                        }
                         writer.writeEndElement()
                         if (ners?.any { termI == it.indices.last() } == true) {
                             writer.writeEndElement() // name
@@ -101,6 +108,7 @@ class TeiWriter(export: DocumentExport) : LayerWriter(export) {
     }
 
     companion object {
+        private val punct = arrayOf("PC", "LET")
         private val alphaNumeric = Regex("""[a-zA-Z0-9]""")
     }
 }

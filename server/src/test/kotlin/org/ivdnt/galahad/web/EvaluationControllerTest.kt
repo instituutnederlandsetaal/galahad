@@ -1,29 +1,32 @@
 package org.ivdnt.galahad.web
+
+// TODO check content disposition header
+
 //
-//import java.io.File
-//import java.nio.charset.StandardCharsets
-//import java.util.zip.ZipInputStream
-//import org.ivdnt.galahad.app.Config
-//import org.ivdnt.galahad.app.Galahad
-//import org.ivdnt.galahad.corpora.Corpus
-//import org.ivdnt.galahad.evaluation.EvaluationUtil
-//import org.ivdnt.galahad.util.TestConfig
-//import org.ivdnt.galahad.util.TestUtil
-//import org.ivdnt.galahad.util.addUrlParams
-//import org.junit.jupiter.api.Assertions
-//import org.junit.jupiter.api.Disabled
-//import org.junit.jupiter.api.Test
-//import org.junit.jupiter.api.fail
-//import org.springframework.beans.factory.annotation.Autowired
-//import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
-//import org.springframework.test.context.ContextConfiguration
-//import org.springframework.test.web.servlet.MockMvc
-//import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+// import java.io.File
+// import java.nio.charset.StandardCharsets
+// import java.util.zip.ZipInputStream
+// import org.ivdnt.galahad.app.Config
+// import org.ivdnt.galahad.app.Galahad
+// import org.ivdnt.galahad.corpora.Corpus
+// import org.ivdnt.galahad.evaluation.EvaluationUtil
+// import org.ivdnt.galahad.util.TestConfig
+// import org.ivdnt.galahad.util.TestUtil
+// import org.ivdnt.galahad.util.addUrlParams
+// import org.junit.jupiter.api.Assertions
+// import org.junit.jupiter.api.Disabled
+// import org.junit.jupiter.api.Test
+// import org.junit.jupiter.api.fail
+// import org.springframework.beans.factory.annotation.Autowired
+// import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
+// import org.springframework.test.context.ContextConfiguration
+// import org.springframework.test.web.servlet.MockMvc
+// import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 //
-//@WebMvcTest(properties = ["spring.main.allow-bean-definition-overriding=true"])
-//@ContextConfiguration(classes = [Galahad::class, TestConfig::class])
-//@Disabled
-//class EvaluationControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: Config) {
+// @WebMvcTest(properties = ["spring.main.allow-bean-definition-overriding=true"])
+// @ContextConfiguration(classes = [Galahad::class, TestConfig::class])
+// @Disabled
+// class EvaluationControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: Config) {
 //    @Test
 //    fun `Download evaluation zip of all 3`() {
 //        val corpus = corpus()
@@ -32,7 +35,8 @@ package org.ivdnt.galahad.web
 //        // url
 //        val uuid = corpus.uuid
 //        val url =
-//            "/corpora/$uuid/jobs/${TestUtil.TAGGER_NAME}/evaluation/download?reference=sourceLayer"
+//
+// "/corpora/$uuid/jobs/${TestUtil.TAGGER_NAME}/evaluation/download?reference=sourceLayer"
 //        // /GET
 //        val bytes =
 //            mvc.perform(MockMvcRequestBuilders.get(url).headers(TestUtil::assignHeaders))
@@ -138,4 +142,4 @@ package org.ivdnt.galahad.web
 //        }
 //        Assertions.assertEquals(1, evals)
 //    }
-//}
+// }

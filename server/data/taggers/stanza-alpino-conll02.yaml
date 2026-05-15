@@ -1,4 +1,4 @@
-id: stanza-alpino-conll02
+name: stanza-alpino-conll02
 uri: https://stanfordnlp.github.io/stanza/
 version: 1.10.1
 description: Stanza trained on conll02 for NER and alpino for the rest
@@ -57,5 +57,5 @@ attributions:
   - name: Trained by
     details: Stanford NLP Group
     href: https://stanfordnlp.github.io/stanza/
-port: 8122
+port: 8121
 

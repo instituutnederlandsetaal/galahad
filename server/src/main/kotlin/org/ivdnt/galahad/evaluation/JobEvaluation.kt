@@ -1,5 +1,6 @@
 package org.ivdnt.galahad.evaluation
 
+import java.io.File
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.evaluation.confusion.JobConfusion
 import org.ivdnt.galahad.evaluation.distribution.JobDistribution
@@ -7,8 +8,7 @@ import org.ivdnt.galahad.evaluation.entities.JobEntities
 import org.ivdnt.galahad.evaluation.metrics.JobMetric
 import org.ivdnt.galahad.files.GalahadFolder
 import org.ivdnt.galahad.files.ValidatedDiskValue
-import org.ivdnt.galahad.jobs.Job
-import java.io.File
+import org.ivdnt.galahad.layers.CorpusLayer
 
 /**
  * Defines evaluations at the level of a job pair, i.e. where all documents of a hypothesis is
@@ -16,11 +16,11 @@ import java.io.File
  */
 class JobEvaluation(dir: File, private val corpus: Corpus, private val jobs: JobPair) :
     GalahadFolder(dir) {
-    val refJob: Job
-        get() = corpus.jobs.readOrThrow(jobs.reference)
+    val refJob: CorpusLayer
+        get() = corpus.layers.readOrThrow(jobs.reference)
 
-    val hypJob: Job
-        get() = corpus.jobs.readOrThrow(jobs.hypothesis)
+    val hypJob: CorpusLayer
+        get() = corpus.layers.readOrThrow(jobs.hypothesis)
 
     /** Access evaluations of individual documents in this job pair. */
     val documents: DocumentEvaluations =

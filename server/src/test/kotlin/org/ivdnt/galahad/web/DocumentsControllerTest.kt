@@ -422,9 +422,7 @@ class DocumentsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config
         user: String = TestUtil.TEST_USER,
         mediaType: String = MediaType.TEXT_PLAIN_VALUE,
     ) {
-        performUploadDoc(uuid, file, user, mediaType).andExpect {
-            status { isCreated() }
-        }
+        performUploadDoc(uuid, file, user, mediaType).andExpect { status { isCreated() } }
     }
 
     private fun performGetDoc(
@@ -439,10 +437,13 @@ class DocumentsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config
         doc: String,
         user: String = TestUtil.TEST_USER,
     ): DocumentMetadata =
-        performGetDoc(uuid, doc, user).andExpect {
-            status { isOk() }
-            content { contentType(MediaType.APPLICATION_JSON) }
-        }.andReturn().andDeserialize()
+        performGetDoc(uuid, doc, user)
+            .andExpect {
+                status { isOk() }
+                content { contentType(MediaType.APPLICATION_JSON) }
+            }
+            .andReturn()
+            .andDeserialize()
 
     private fun performGetSourceDoc(
         uuid: UUID,
@@ -455,7 +456,7 @@ class DocumentsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config
         performGetSourceDoc(uuid, doc, user)
             .andExpect {
                 status { isOk() }
-                // TODO should be plain text
+                header { exists("Content-Disposition") }
                 content { contentType(MediaType.TEXT_PLAIN) }
             }
             .andReturn()
@@ -470,9 +471,7 @@ class DocumentsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config
         mvc.delete("/corpora/$uuid/documents/${doc}") { headers { assignHeaders(this, user) } }
 
     private fun deleteDoc(uuid: UUID, doc: String, user: String = TestUtil.TEST_USER) {
-        performDeleteDoc(uuid, doc, user).andExpect {
-            status { isNoContent() }
-        }
+        performDeleteDoc(uuid, doc, user).andExpect { status { isNoContent() } }
     }
 
     private fun getDocs(corpus: Corpus): List<DocumentMetadata> =

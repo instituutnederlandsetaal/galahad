@@ -1,4 +1,4 @@
-id: stanza-lassysmall-wikiner
+name: stanza-lassysmall-wikiner
 uri: https://stanfordnlp.github.io/stanza/
 version: 1.10.1
 description: Stanza trained on wikiner for NER and lassysmall for the rest

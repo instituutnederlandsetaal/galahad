@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.files
 
-import org.apache.logging.log4j.kotlin.logger
 import java.io.File
+import org.apache.logging.log4j.kotlin.logger
 
 /**
  * Generic base class for file system operations. Create, read and delete GalahadFiles in a folder.
@@ -36,7 +36,7 @@ abstract class GalahadFolderManager<ReadType : GalahadFolder, CreateType : Any>(
         dir.list()?.asSequence()?.map { readOrThrow(it) } ?: emptySequence()
 
     // TODO resolve in folder only?
-    open fun readOrNull(key: String): ReadType? = if (dir.resolve(key).exists()) ctor(key) else null
+    fun readOrNull(key: String): ReadType? = if (dir.resolve(key).exists()) ctor(key) else null
 
     fun readOrThrow(key: String): ReadType = readOrNull(key) ?: throwNotFound(key)
 

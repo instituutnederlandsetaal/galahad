@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import jakarta.servlet.http.HttpServletResponse
+import java.util.*
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.documents.DocumentFormat
 import org.ivdnt.galahad.exceptions.ErrorResponse
@@ -14,7 +15,6 @@ import org.ivdnt.galahad.util.setContentDisposition
 import org.ivdnt.galahad.web.service.ExportService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
-import java.util.*
 
 @RestController
 class ExportController(private val exportService: ExportService) : Logging {
@@ -59,7 +59,10 @@ class ExportController(private val exportService: ExportService) : Logging {
         @RequestParam(defaultValue = "false")
         @Parameter(description = "Only export the head of PoS (e.g. PD in PD(type=art))")
         posHeadOnly: Boolean = false,
-    ): Unit = exportService.convertOrMergeCorpus(corpus, layer, format, merge = false, posHeadOnly).also { setZipResponseHeader(corpus) }
+    ) {
+        setZipResponseHeader(corpus)
+        exportService.convertOrMergeCorpus(corpus, layer, format, merge = false, posHeadOnly)
+    }
 
     @Operation(
         summary = "Merge all layer document",
@@ -100,7 +103,10 @@ class ExportController(private val exportService: ExportService) : Logging {
         @RequestParam(defaultValue = "false")
         @Parameter(description = "Only export the head of PoS (e.g. PD in PD(type=art))")
         posHeadOnly: Boolean = false,
-    ): Unit = exportService.convertOrMergeCorpus(corpus, layer, format, merge = true, posHeadOnly).also { setZipResponseHeader(corpus) }
+    ) {
+        setZipResponseHeader(corpus)
+        exportService.convertOrMergeCorpus(corpus, layer, format, merge = true, posHeadOnly)
+    }
 
     @Operation(
         summary = "Convert document of a layer",
@@ -141,6 +147,7 @@ class ExportController(private val exportService: ExportService) : Logging {
         posHeadOnly: Boolean = false,
     ) {
         response?.contentType = "text/plain"
+        response?.setContentDisposition(exportService.getDocumentName(corpus, document, format))
         exportService.convertDocument(corpus, layer, document, format, posHeadOnly)
     }
 
@@ -182,6 +189,7 @@ class ExportController(private val exportService: ExportService) : Logging {
         posHeadOnly: Boolean = false,
     ) {
         response?.contentType = "text/plain"
+        response?.setContentDisposition(exportService.getDocumentName(corpus, document))
         return exportService.mergeDocument(corpus, layer, document, posHeadOnly)
     }
 
