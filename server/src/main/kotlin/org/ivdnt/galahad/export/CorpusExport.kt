@@ -14,6 +14,7 @@ import org.ivdnt.galahad.layers.CorpusLayer
 import org.ivdnt.galahad.util.FileMapper
 import org.ivdnt.galahad.util.asFormat
 import org.ivdnt.galahad.util.createZipFile
+import org.ivdnt.galahad.util.dedupeFilenames
 import org.ivdnt.galahad.util.withoutFormatExt
 
 class CorpusExport(
@@ -34,17 +35,23 @@ class CorpusExport(
     fun export(out: OutputStream) {
         val docs = layers.documents.readAll().filter { it.layer != Layer.EMPTY }
         val seq: Sequence<FileMapper> =
-            docs.asSequence().map { doc ->
-                val fileName = doc.sourceFile.asFormat(format)
-                fileName to { out -> formatMapper(doc, out) }
-            }
+            docs
+                .asSequence()
+                .map<Document, Pair<String, (OutputStream) -> Unit>> { doc ->
+                    val fileName = doc.sourceFile.asFormat(format)
+                    fileName to { out -> formatMapper(doc, out) }
+                }
+                .dedupeFilenames()
         val seqCmdi: Sequence<FileMapper> =
-            docs.asSequence().map { doc ->
-                "metadata/CMDI-${doc.sourceFile.withoutFormatExt}.xml" to
-                    { out ->
-                        document(doc).cmdi(out)
-                    }
-            }
+            docs
+                .asSequence()
+                .map<Document, Pair<String, (OutputStream) -> Unit>> { doc ->
+                    "metadata/CMDI-${doc.sourceFile.withoutFormatExt}.xml" to
+                        { out ->
+                            document(doc).cmdi(out)
+                        }
+                }
+                .dedupeFilenames()
         createZipFile(seq + seqCmdi, out)
     }
 
