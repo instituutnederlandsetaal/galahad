@@ -165,19 +165,74 @@ class ExportControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: C
                     .andReturn()
                     .response
                     .contentAsByteArray
-            // assert that unzipping results in the same number of files with matching file names
+            // assert that unzipping results in the same number of files (+metadata)
             // we have other tests for matching content
             val expectedFiles = TestUtil.get("formats/shared/converter").listFiles()
             val actualFiles = unzip(exportedBytes)
             assertEquals(expectedFiles.size * 2 + 2, actualFiles.size)
-            //            for ((expectedFile, actualFile) in expectedFiles.zip(actualFiles)) {
-            //                assertEquals(expectedFile.name, actualFile.name)
-            //            }
         }
 
         @Test
         fun `Owner can convert corpus`() {
             assertConvertCorpus(TestUtil.TEST_USER)
+        }
+
+        @Test
+        fun `Admin can convert corpus`() {
+            assertConvertCorpus("admin")
+        }
+
+        @Test
+        fun `Collaborator can convert corpus`() {
+            assertConvertCorpus("collaborator")
+        }
+
+        @Test
+        fun `Viewer can convert corpus`() {
+            assertConvertCorpus("viewer")
+        }
+
+        @Test
+        fun `Stranger can't convert corpus`() {
+            val corpus = TestUtil.createFilledCorpus(config)
+            performConvertCorpus(
+                    corpus.uuid,
+                    SOURCE_LAYER,
+                    DocumentFormat.Tsv.identifier,
+                    "stranger",
+                )
+                .andExpect {
+                    status { isForbidden() }
+                    match { it.resolvedException is UserUnauthorizedException }
+                }
+        }
+
+        @Test
+        fun `Can't convert non-existing corpus`() {
+            performConvertCorpus(UUID.randomUUID(), "non-existing", DocumentFormat.Tsv.identifier)
+                .andExpect {
+                    status { isNotFound() }
+                    match { it.resolvedException is CorpusNotFoundException }
+                }
+        }
+
+        @Test
+        fun `Can't convert non-existing layer`() {
+            val corpus = TestUtil.createCorpus(config)
+            performConvertCorpus(corpus.uuid, "non-existing", DocumentFormat.Tsv.identifier)
+                .andExpect {
+                    status { isNotFound() }
+                    match { it.resolvedException is LayerNotFoundException }
+                }
+        }
+
+        @Test
+        fun `Can't convert non-existing format`() {
+            val corpus = TestUtil.createFilledCorpus(config)
+            performConvertCorpus(corpus.uuid, SOURCE_LAYER, "non-existing").andExpect {
+                status { isBadRequest() }
+                match { it.resolvedException is InvalidDocumentFormatException }
+            }
         }
     }
 
