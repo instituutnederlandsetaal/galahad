@@ -9,6 +9,7 @@ import org.ivdnt.galahad.exceptions.CorpusNotFoundException
 import org.ivdnt.galahad.exceptions.DocumentNotFoundException
 import org.ivdnt.galahad.exceptions.InvalidDocumentFormatException
 import org.ivdnt.galahad.exceptions.LayerNotFoundException
+import org.ivdnt.galahad.exceptions.UserUnauthorizedException
 import org.ivdnt.galahad.util.*
 import org.ivdnt.galahad.util.TestUtil.assignHeaders
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -41,6 +42,7 @@ class ExportControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: C
                         SOURCE_LAYER,
                         file.name,
                         DocumentFormat.Tsv.identifier,
+                        user,
                     )
                     .andExpect {
                         status { isOk() }
@@ -74,7 +76,22 @@ class ExportControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: C
             canConvertDocument("viewer")
         }
 
-        @Test fun `Stranger can't convert document`() {}
+        @Test
+        fun `Stranger can't convert document`() {
+            val corpus = TestUtil.createFilledCorpus(config)
+            val file = TestUtil.get("formats/shared/converter").listFiles().first()
+            performConvertDoc(
+                    corpus.uuid,
+                    SOURCE_LAYER,
+                    file.name,
+                    DocumentFormat.Tsv.identifier,
+                    "stranger",
+                )
+                .andExpect {
+                    status { isForbidden() }
+                    match { it.resolvedException is UserUnauthorizedException }
+                }
+        }
 
         @Test
         fun `Can't convert non-existing corpus`() {
@@ -123,8 +140,7 @@ class ExportControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: C
         @Test
         fun `Can't convert non-existing format`() {
             val corpus = TestUtil.createFilledCorpus(config)
-            val files = TestUtil.get("formats/shared/converter").listFiles()
-            val file = files.first()
+            val file = TestUtil.get("formats/shared/converter").listFiles().first()
             performConvertDoc(corpus.uuid, SOURCE_LAYER, file.name, "non-existing").andExpect {
                 status { isBadRequest() }
                 match { it.resolvedException is InvalidDocumentFormatException }
