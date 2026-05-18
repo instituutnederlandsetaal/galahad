@@ -5,7 +5,7 @@ import java.net.URL
 import java.util.*
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.exceptions.CorpusInvalidException
-import org.ivdnt.galahad.exceptions.CorpusUnauthorizedException
+import org.ivdnt.galahad.exceptions.UserUnauthorizedException
 
 /**
  * Corpus metadata that can be changed by the user. Although technically [owner] should only be set
@@ -125,7 +125,7 @@ open class CorpusMetadata(
                     return oldMeta
                 } else {
                     // If the viewer is not removing themselves, this action is unauthorized.
-                    throw CorpusUnauthorizedException("Cannot edit corpus.")
+                    throw UserUnauthorizedException("Cannot edit corpus.")
                 }
             }
 
@@ -143,7 +143,7 @@ open class CorpusMetadata(
             if (oldMeta?.dataset != true && newMeta.dataset == true) {
                 // Corpus is being set to public
                 if (!user.admin) {
-                    throw CorpusUnauthorizedException("Cannot create a dataset.")
+                    throw UserUnauthorizedException("Cannot create a dataset.")
                 }
             }
 
@@ -153,7 +153,7 @@ open class CorpusMetadata(
             ) {
                 // Collaborators have changed
                 if (!newMeta.canAddNewUsers(user)) {
-                    throw CorpusUnauthorizedException("Cannot change collaborators or viewers.")
+                    throw UserUnauthorizedException("Cannot change collaborators or viewers.")
                 }
             }
 

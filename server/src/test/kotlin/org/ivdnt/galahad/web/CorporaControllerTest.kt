@@ -6,7 +6,7 @@ import org.ivdnt.galahad.app.Galahad
 import org.ivdnt.galahad.corpora.CorpusStatistics
 import org.ivdnt.galahad.exceptions.CorpusInvalidException
 import org.ivdnt.galahad.exceptions.CorpusNotFoundException
-import org.ivdnt.galahad.exceptions.CorpusUnauthorizedException
+import org.ivdnt.galahad.exceptions.UserUnauthorizedException
 import org.ivdnt.galahad.util.*
 import org.ivdnt.galahad.util.TestUtil.assignHeaders
 import org.ivdnt.galahad.web.controller.ErrorController
@@ -117,7 +117,7 @@ class CorporaControllerTest(@Autowired val mvc: MockMvc) {
                 }
                 .andExpect {
                     status { isForbidden() }
-                    match { it.resolvedException is CorpusUnauthorizedException }
+                    match { it.resolvedException is UserUnauthorizedException }
                 }
             assertEquals(0, getAllCorpora().size)
         }
@@ -168,7 +168,7 @@ class CorporaControllerTest(@Autowired val mvc: MockMvc) {
             val uuid = postCorpus(mapOf("name" to "test"))
             performGetCorpus(uuid, "stranger").andExpect {
                 status { isForbidden() }
-                match { it.resolvedException is CorpusUnauthorizedException }
+                match { it.resolvedException is UserUnauthorizedException }
             }
         }
     }
@@ -209,7 +209,7 @@ class CorporaControllerTest(@Autowired val mvc: MockMvc) {
             val uuid = postCorpus(mapOf("name" to "original"))
             performUpdateCorpus(uuid, mapOf("name" to "updated"), "stranger").andExpect {
                 status { isForbidden() }
-                match { it.resolvedException is CorpusUnauthorizedException }
+                match { it.resolvedException is UserUnauthorizedException }
             }
             val corpus = getCorpus(uuid)
             assertEquals("original", corpus.name)
@@ -221,7 +221,7 @@ class CorporaControllerTest(@Autowired val mvc: MockMvc) {
             val updated = mapOf("name" to "updated", "viewers" to setOf("viewer"))
             performUpdateCorpus(uuid, updated, "viewer").andExpect {
                 status { isForbidden() }
-                match { it.resolvedException is CorpusUnauthorizedException }
+                match { it.resolvedException is UserUnauthorizedException }
             }
             val corpus = getCorpus(uuid)
             assertEquals("original", corpus.name)
@@ -255,7 +255,7 @@ class CorporaControllerTest(@Autowired val mvc: MockMvc) {
                 )
                 .andExpect {
                     status { isForbidden() }
-                    match { it.resolvedException is CorpusUnauthorizedException }
+                    match { it.resolvedException is UserUnauthorizedException }
                 }
             val corpus = getCorpus(uuid)
             assertEquals(setOf("collaborator1", "collaborator2"), corpus.collaborators)
@@ -382,7 +382,7 @@ class CorporaControllerTest(@Autowired val mvc: MockMvc) {
     private fun assertDeleteCorpusForbidden(uuid: UUID?, user: String = TestUtil.TEST_USER) {
         performDeleteCorpus(uuid, user).andExpect {
             status { isForbidden() }
-            match { it.resolvedException is CorpusUnauthorizedException }
+            match { it.resolvedException is UserUnauthorizedException }
         }
     }
 

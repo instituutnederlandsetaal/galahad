@@ -1,6 +1,7 @@
 package org.ivdnt.galahad.web.service
 
 import jakarta.servlet.http.HttpServletRequest
+import java.util.*
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.corpora.Corpora
@@ -8,11 +9,10 @@ import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.corpora.CorpusMetadata
 import org.ivdnt.galahad.corpora.CorpusStatistics
 import org.ivdnt.galahad.exceptions.CorpusNotFoundException
-import org.ivdnt.galahad.exceptions.CorpusUnauthorizedException
+import org.ivdnt.galahad.exceptions.UserUnauthorizedException
 import org.ivdnt.galahad.files.GalahadFolder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.util.*
 
 @Service
 class CorporaService(@Autowired config: Config) :
@@ -35,15 +35,14 @@ class CorporaService(@Autowired config: Config) :
     fun readOrThrow(key: UUID): Corpus {
         val (corpus, _) = findOrThrow(key)
         return corpus.also {
-            if (!it.metadata.canRead(user)) throw CorpusUnauthorizedException("Cannot read corpus.")
+            if (!it.metadata.canRead(user)) throw UserUnauthorizedException("Cannot read corpus.")
         }
     }
 
     fun writeOrThrow(key: UUID): Corpus {
         val (corpus, _) = findOrThrow(key)
         return corpus.also {
-            if (!it.metadata.canWrite(user))
-                throw CorpusUnauthorizedException("Cannot edit corpus.")
+            if (!it.metadata.canWrite(user)) throw UserUnauthorizedException("Cannot edit corpus.")
         }
     }
 
@@ -62,7 +61,7 @@ class CorporaService(@Autowired config: Config) :
             value.id = key
             return corpora.updateOrThrow(value).statistics
         }
-        throw CorpusUnauthorizedException("Cannot edit corpus.")
+        throw UserUnauthorizedException("Cannot edit corpus.")
     }
 
     fun deleteOrThrow(key: UUID) {
@@ -70,7 +69,7 @@ class CorporaService(@Autowired config: Config) :
         if (corpus.metadata.canDelete(user)) {
             corpora.deleteOrThrow(key.toString())
         } else {
-            throw CorpusUnauthorizedException("Cannot delete corpus.")
+            throw UserUnauthorizedException("Cannot delete corpus.")
         }
     }
 

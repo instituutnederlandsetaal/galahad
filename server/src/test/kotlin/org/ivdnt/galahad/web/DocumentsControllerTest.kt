@@ -7,9 +7,9 @@ import org.ivdnt.galahad.app.Galahad
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.documents.DocumentMetadata
 import org.ivdnt.galahad.exceptions.CorpusNotFoundException
-import org.ivdnt.galahad.exceptions.CorpusUnauthorizedException
 import org.ivdnt.galahad.exceptions.DocumentInvalidException
 import org.ivdnt.galahad.exceptions.DocumentNotFoundException
+import org.ivdnt.galahad.exceptions.UserUnauthorizedException
 import org.ivdnt.galahad.formats.ParsedFile
 import org.ivdnt.galahad.util.*
 import org.ivdnt.galahad.util.TestUtil.assignHeaders
@@ -87,7 +87,7 @@ class DocumentsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config
             assertEquals(0, getDocs(corpus).size)
             performUploadDoc(corpus.uuid, file, user).andExpect {
                 status { isForbidden() }
-                match { it.resolvedException is CorpusUnauthorizedException }
+                match { it.resolvedException is UserUnauthorizedException }
             }
             assertEquals(0, getDocs(corpus).size)
         }
@@ -216,7 +216,7 @@ class DocumentsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config
             val file = TestUtil.get("formats/shared/converter").listFiles().first()
             performGetDoc(corpus.uuid, file.name, "stranger").andExpect {
                 status { isForbidden() }
-                match { it.resolvedException is CorpusUnauthorizedException }
+                match { it.resolvedException is UserUnauthorizedException }
             }
         }
 
@@ -298,7 +298,7 @@ class DocumentsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config
             val file = TestUtil.get("formats/shared/converter").listFiles().first()
             performGetSourceDoc(corpus.uuid, file.name, "stranger").andExpect {
                 status { isForbidden() }
-                match { it.resolvedException is CorpusUnauthorizedException }
+                match { it.resolvedException is UserUnauthorizedException }
             }
         }
 
@@ -363,7 +363,7 @@ class DocumentsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config
             assertEquals(files.size, getDocs(corpus).size)
             performDeleteDoc(corpus.uuid, file.name, user).andExpect {
                 status { isForbidden() }
-                match { it.resolvedException is CorpusUnauthorizedException }
+                match { it.resolvedException is UserUnauthorizedException }
             }
             assertEquals(files.size, getDocs(corpus).size)
         }
