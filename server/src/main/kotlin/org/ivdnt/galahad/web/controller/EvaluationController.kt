@@ -60,7 +60,7 @@ class EvaluationController(private val evaluationService: EvaluationService) : L
         }
 
     private fun setZipResponseHeader(corpus: UUID) {
-        response!!.contentType = "application/json; application/zip"
+        response!!.contentType = "application/zip"
         val corpusName = evaluationService.getCorpusName(corpus)
         response.setContentDisposition("$corpusName-evaluation.zip")
     }

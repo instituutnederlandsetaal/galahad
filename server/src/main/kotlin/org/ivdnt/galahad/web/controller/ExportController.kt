@@ -194,7 +194,7 @@ class ExportController(private val exportService: ExportService) : Logging {
     }
 
     private fun setZipResponseHeader(corpus: UUID) {
-        response!!.contentType = "application/json; application/zip"
+        response!!.contentType = "application/zip"
         val corpusName = exportService.getCorpusName(corpus)
         response.setContentDisposition("$corpusName.zip")
     }
