@@ -35,6 +35,7 @@ function docParams(doc: DocumentMetadata): Record<string, string> {
 }
 
 function jobParams(job: Job, type: JobType): Record<string, any> {
+    return {}
     return {
         [`${type}-id`]: job.tagger.name,
         [`${type}-annotations`]: job.tagger.annotations.map((a) => a.annotation).join(),
