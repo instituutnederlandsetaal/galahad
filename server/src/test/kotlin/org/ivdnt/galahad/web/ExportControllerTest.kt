@@ -1,6 +1,9 @@
 package org.ivdnt.galahad.web
 
+import java.io.File
 import java.util.UUID
+import java.util.zip.ZipInputStream
+import kotlin.io.path.createTempDirectory
 import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.Galahad
@@ -148,6 +151,36 @@ class ExportControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: C
         }
     }
 
+    @Nested
+    inner class ConvertCorpusTest {
+        private fun assertConvertCorpus(user: String) {
+            val corpus = TestUtil.createFilledCorpus(config)
+            val exportedBytes =
+                performConvertCorpus(corpus.uuid, SOURCE_LAYER, DocumentFormat.Tsv.identifier, user)
+                    .andExpect {
+                        status { isOk() }
+                        header { exists("Content-Disposition") }
+                        content { contentType("application/zip") }
+                    }
+                    .andReturn()
+                    .response
+                    .contentAsByteArray
+            // assert that unzipping results in the same number of files with matching file names
+            // we have other tests for matching content
+            val expectedFiles = TestUtil.get("formats/shared/converter").listFiles()
+            val actualFiles = unzip(exportedBytes)
+            assertEquals(expectedFiles.size * 2 + 2, actualFiles.size)
+            //            for ((expectedFile, actualFile) in expectedFiles.zip(actualFiles)) {
+            //                assertEquals(expectedFile.name, actualFile.name)
+            //            }
+        }
+
+        @Test
+        fun `Owner can convert corpus`() {
+            assertConvertCorpus(TestUtil.TEST_USER)
+        }
+    }
+
     private fun performConvertDoc(
         corpus: UUID,
         layer: String = SOURCE_LAYER,
@@ -161,63 +194,29 @@ class ExportControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: C
         ) {
             headers { assignHeaders(this, user) }
         }
-    //
-    //    @Test
-    //    fun convertAndExportJob() {
-    //        val corpus = TestUtil.createFilledCorpus(config)
-    //
-    //        val uuid = corpus.uuid
-    //        val bytes =
-    //            mvc.perform(
-    //                    MockMvcRequestBuilders.get(
-    //                            "/corpora/$uuid/jobs/${TestUtil.TAGGER_NAME}/export/convert"
-    //                        )
-    //                        .param("format", "folia")
-    //                        .headers(::assignHeaders)
-    //                )
-    //                .andReturn()
-    //                .response
-    //                .contentAsByteArray
-    //        val files = unzip(bytes)
-    //        val teiToFolia: File = files.first { it.name.endsWith("tei.folia.xml") }
-    //        val result =
-    //            TestResult(
-    //                TestUtil.get("all-formats/output/from-TeiP5-to-Folia.folia.xml").readText(),
-    //                teiToFolia.readText(),
-    //            )
-    //        result.ignoreLineEndings().ignoreWhiteSpaceDocumentWide().result()
-    //    }
-    //
-    //    private fun unzip(bytes: ByteArray): List<File> {
-    //        val zipInputStream = ZipInputStream(bytes.inputStream())
-    //        var zipEntry = zipInputStream.nextEntry
-    //        val files = mutableListOf<File>()
-    //
-    //        while (zipEntry != null) {
-    //            println("unzipped: " + (zipEntry.name ?: ""))
-    //            val file = File.createTempFile("export", zipEntry.name)
-    //            file.writeBytes(zipInputStream.readBytes())
-    //            files.add(file)
-    //            zipEntry = zipInputStream.nextEntry
-    //        }
-    //
-    //        return files
-    //    }
-    //
-    //    @Test fun mergeAndExportJob() {}
-    //
-    //    //    // Create and populate a corpus with a TEI and Folia document.
-    //    //    private fun createAndPopulateCorpus(): Corpus {
-    //    //        val corpus = TestUtil.createEmptyCorpus(config)
-    //    //        mvc.uploadFile(TestUtil.get("all-formats/input/input.tei.xml"), corpus)
-    //    //        // hardcode layer
-    //    //        val layer: Layer = LayerBuilder().loadLayerFromTSV(
-    //    //            "all-formats/input/pie-tdn.tsv",
-    //    //            TestUtil.get("all-formats/input/input.txt").readText()
-    //    //        ).build()
-    //    //        val job = corpus.jobs.createOrThrow(TestUtil.TAGGER_NAME)
-    //    //        job.setLayer("input.tei.xml", layer)
-    //    //        //mvc.uploadFile(TestUtil.get("all-formats/input/input.folia.xml"), corpus)
-    //    //        return corpus
-    //    //    }
+
+    private fun performConvertCorpus(
+        corpus: UUID,
+        layer: String = SOURCE_LAYER,
+        format: String,
+        user: String = TestUtil.TEST_USER,
+    ): ResultActionsDsl =
+        mvc.get("/corpora/$corpus/layers/$layer/export/convert?format={format}", format) {
+            headers { assignHeaders(this, user) }
+        }
+
+    private fun unzip(bytes: ByteArray): List<File> {
+        val tmpDir = createTempDirectory().toFile()
+        return ZipInputStream(bytes.inputStream()).use { stream ->
+            generateSequence { stream.nextEntry }
+                .filterNot { it.isDirectory }
+                .map {
+                    tmpDir.resolve(it.name).apply {
+                        parentFile.mkdirs()
+                        writeBytes(stream.readBytes())
+                    }
+                }
+                .toList()
+        }
+    }
 }
