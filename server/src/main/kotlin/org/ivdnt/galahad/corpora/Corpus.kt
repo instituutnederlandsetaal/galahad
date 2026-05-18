@@ -43,8 +43,14 @@ class Corpus(dir: File) : GalahadFolder(dir) {
     val statistics: CorpusStatistics
         get() =
             object : ValidatedDiskValue<CorpusStatistics>(dir.resolve(STATISTICS_FILE)) {
+                    // statistics is invalid if any of the data it depends on changes, including:
                     override fun isValid(modified: Long) =
-                        modified >= maxOf(this@Corpus.documents.modified, this@Corpus.jobs.modified)
+                        modified >=
+                            maxOf(
+                                this@Corpus.documents.modified, // documents changed
+                                this@Corpus.jobs.modified, // jobs changed
+                                this@Corpus.modified, // modifications to metadata.json
+                            ) // Note the absence of layers: we don't depend on its data
 
                     override fun set(): CorpusStatistics = CorpusStatistics.create(this@Corpus)
                 }
