@@ -32,7 +32,7 @@ class ExportControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: C
 
     @Nested
     inner class ConvertDocumentTest {
-        private fun canConvertDocument(user: String) {
+        private fun assertConvertDocument(user: String) {
             val corpus = TestUtil.createFilledCorpus(config)
             val files = TestUtil.get("formats/shared/converter").listFiles()
             val file = files.first { it.name.endsWith(DocumentFormat.TeiP5.extension) }
@@ -58,22 +58,22 @@ class ExportControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: C
 
         @Test
         fun `Owner can convert document`() {
-            canConvertDocument(TestUtil.TEST_USER)
+            assertConvertDocument(TestUtil.TEST_USER)
         }
 
         @Test
         fun `Admin can convert document`() {
-            canConvertDocument("admin")
+            assertConvertDocument("admin")
         }
 
         @Test
         fun `Collaborator can convert document`() {
-            canConvertDocument("collaborator")
+            assertConvertDocument("collaborator")
         }
 
         @Test
         fun `Viewer can convert document`() {
-            canConvertDocument("viewer")
+            assertConvertDocument("viewer")
         }
 
         @Test
