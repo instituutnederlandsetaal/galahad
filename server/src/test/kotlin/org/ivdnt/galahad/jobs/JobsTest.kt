@@ -17,7 +17,7 @@ class JobsTest {
 
     @Test
     fun `Create a job`() {
-        val name = TestUtil.TAGGER_NAME
+        val name = TestUtil.TAGGER
         // Check if empty
         assertEquals(0, corpus.jobs.readAll().size)
         val numTaggers = Tagger.taggers.size // +1 for source layer

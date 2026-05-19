@@ -59,7 +59,7 @@ class CorporaControllerTest(@Autowired val mvc: MockMvc) {
         fun `Can create corpus with metadata`() {
             val body =
                 mapOf(
-                    "owner" to TestUtil.TEST_USER,
+                    "owner" to TestUtil.USER,
                     "name" to "test",
                     "language" to "Dutch",
                     "tagset" to "TDN-Core",
@@ -90,8 +90,8 @@ class CorporaControllerTest(@Autowired val mvc: MockMvc) {
             val body =
                 mapOf(
                     "name" to "test",
-                    "viewers" to setOf("viewer", "collaborator", TestUtil.TEST_USER),
-                    "collaborators" to setOf("collaborator", TestUtil.TEST_USER),
+                    "viewers" to setOf("viewer", "collaborator", TestUtil.USER),
+                    "collaborators" to setOf("collaborator", TestUtil.USER),
                 )
             val uuid = postCorpus(body)
             val corpus = getCorpus(uuid)
@@ -289,7 +289,7 @@ class CorporaControllerTest(@Autowired val mvc: MockMvc) {
 
         @Test
         fun `Owner can delete corpus`() {
-            assertDeleteCorpus(TestUtil.TEST_USER)
+            assertDeleteCorpus(TestUtil.USER)
         }
 
         @Test
@@ -337,10 +337,10 @@ class CorporaControllerTest(@Autowired val mvc: MockMvc) {
         }
     }
 
-    private fun performPostCorpus(body: Any, user: String = TestUtil.TEST_USER): ResultActionsDsl =
+    private fun performPostCorpus(body: Any, user: String = TestUtil.USER): ResultActionsDsl =
         mvc.postJson("/corpora", body) { headers { assignHeaders(this, user) } }
 
-    private fun postCorpus(body: Any, user: String = TestUtil.TEST_USER): UUID =
+    private fun postCorpus(body: Any, user: String = TestUtil.USER): UUID =
         performPostCorpus(body, user)
             .andExpect {
                 status { isCreated() }
@@ -349,10 +349,10 @@ class CorporaControllerTest(@Autowired val mvc: MockMvc) {
             .andReturn()
             .andDeserialize()
 
-    private fun performGetCorpus(uuid: UUID?, user: String = TestUtil.TEST_USER): ResultActionsDsl =
+    private fun performGetCorpus(uuid: UUID?, user: String = TestUtil.USER): ResultActionsDsl =
         mvc.get("/corpora/$uuid") { headers { assignHeaders(this, user) } }
 
-    private fun getCorpus(uuid: UUID?, user: String = TestUtil.TEST_USER): CorpusStatistics =
+    private fun getCorpus(uuid: UUID?, user: String = TestUtil.USER): CorpusStatistics =
         performGetCorpus(uuid, user)
             .andExpect {
                 status { isOk() }
@@ -370,16 +370,14 @@ class CorporaControllerTest(@Autowired val mvc: MockMvc) {
             .andReturn()
             .andDeserialize()
 
-    private fun performDeleteCorpus(
-        uuid: UUID?,
-        user: String = TestUtil.TEST_USER,
-    ): ResultActionsDsl = mvc.delete("/corpora/$uuid") { headers { assignHeaders(this, user) } }
+    private fun performDeleteCorpus(uuid: UUID?, user: String = TestUtil.USER): ResultActionsDsl =
+        mvc.delete("/corpora/$uuid") { headers { assignHeaders(this, user) } }
 
-    private fun deleteCorpus(uuid: UUID?, user: String = TestUtil.TEST_USER) {
+    private fun deleteCorpus(uuid: UUID?, user: String = TestUtil.USER) {
         performDeleteCorpus(uuid, user).andExpect { status { isNoContent() } }
     }
 
-    private fun assertDeleteCorpusForbidden(uuid: UUID?, user: String = TestUtil.TEST_USER) {
+    private fun assertDeleteCorpusForbidden(uuid: UUID?, user: String = TestUtil.USER) {
         performDeleteCorpus(uuid, user).andExpect {
             status { isForbidden() }
             match { it.resolvedException is UserUnauthorizedException }
@@ -389,14 +387,14 @@ class CorporaControllerTest(@Autowired val mvc: MockMvc) {
     private fun performUpdateCorpus(
         uuid: UUID?,
         body: Any,
-        user: String = TestUtil.TEST_USER,
+        user: String = TestUtil.USER,
     ): ResultActionsDsl =
         mvc.patchJson("/corpora/$uuid", body) { headers { assignHeaders(this, user) } }
 
     private fun updateCorpus(
         uuid: UUID?,
         body: Any,
-        user: String = TestUtil.TEST_USER,
+        user: String = TestUtil.USER,
     ): CorpusStatistics =
         performUpdateCorpus(uuid, body, user)
             .andExpect {

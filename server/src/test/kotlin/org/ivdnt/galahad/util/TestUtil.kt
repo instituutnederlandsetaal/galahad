@@ -12,9 +12,9 @@ import org.ivdnt.galahad.corpora.CorpusMetadata
 import org.springframework.http.HttpHeaders
 
 object TestUtil {
-    const val TAGGER_NAME: String = "pie-tdn-all"
+    const val TAGGER: String = "pie-tdn-all"
     const val TAGSET_NAME: String = "TDN-Core"
-    const val TEST_USER: String = "testUser"
+    const val USER: String = "testUser"
 
     fun get(path: String): File = File(this::class.java.classLoader.getResource(path)!!.toURI())
 
@@ -30,7 +30,7 @@ object TestUtil {
             config?.getWorkingDirectory()?.resolve("corpora")?.resolve("user")
                 ?: createTempDirectory().toFile()
         val corpora = Corpora(parent)
-        val user = if (dataset) User("admin") else User(TEST_USER)
+        val user = if (dataset) User("admin") else User(USER)
         val meta =
             CorpusMetadata(
                 "testCorpus",
@@ -48,7 +48,7 @@ object TestUtil {
         return corpora.createOrThrow(meta)
     }
 
-    fun assignHeaders(headers: HttpHeaders, user: String = TEST_USER) {
+    fun assignHeaders(headers: HttpHeaders, user: String = USER) {
         headers.set(User.USER_HEADER, user)
     }
 }

@@ -61,7 +61,7 @@ class ExportControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: C
 
         @Test
         fun `Owner can convert document`() {
-            assertConvertDocument(TestUtil.TEST_USER)
+            assertConvertDocument(TestUtil.USER)
         }
 
         @Test
@@ -174,7 +174,7 @@ class ExportControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: C
 
         @Test
         fun `Owner can convert corpus`() {
-            assertConvertCorpus(TestUtil.TEST_USER)
+            assertConvertCorpus(TestUtil.USER)
         }
 
         @Test
@@ -241,7 +241,7 @@ class ExportControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: C
         layer: String = SOURCE_LAYER,
         doc: String,
         format: String,
-        user: String = TestUtil.TEST_USER,
+        user: String = TestUtil.USER,
     ): ResultActionsDsl =
         mvc.get(
             "/corpora/$corpus/layers/$layer/documents/$doc/export/convert?format={format}",
@@ -254,7 +254,7 @@ class ExportControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: C
         corpus: UUID,
         layer: String = SOURCE_LAYER,
         format: String,
-        user: String = TestUtil.TEST_USER,
+        user: String = TestUtil.USER,
     ): ResultActionsDsl =
         mvc.get("/corpora/$corpus/layers/$layer/export/convert?format={format}", format) {
             headers { assignHeaders(this, user) }

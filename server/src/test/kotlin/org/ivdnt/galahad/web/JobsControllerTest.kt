@@ -52,7 +52,7 @@ class JobsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: Con
 
         @Test
         fun `Owner can create job`() {
-            assertCreateJob(TestUtil.TEST_USER)
+            assertCreateJob(TestUtil.USER)
         }
 
         @Test
@@ -103,18 +103,15 @@ class JobsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: Con
 
     private fun performCreateJob(
         corpus: UUID,
-        user: String = TestUtil.TEST_USER,
-        tagger: String = TestUtil.TAGGER_NAME,
+        user: String = TestUtil.USER,
+        tagger: String = TestUtil.TAGGER,
     ): ResultActionsDsl =
         mvc.post("/corpora/${corpus}/jobs/$tagger") { headers { assignHeaders(this, user) } }
 
-    private fun performGetJobs(
-        corpus: Corpus,
-        user: String = TestUtil.TEST_USER,
-    ): ResultActionsDsl =
+    private fun performGetJobs(corpus: Corpus, user: String = TestUtil.USER): ResultActionsDsl =
         mvc.get("/corpora/${corpus.uuid}/jobs") { headers { assignHeaders(this, user) } }
 
-    private fun getJobs(corpus: Corpus, user: String = TestUtil.TEST_USER): List<JobMetadata> =
+    private fun getJobs(corpus: Corpus, user: String = TestUtil.USER): List<JobMetadata> =
         performGetJobs(corpus, user)
             .andExpect {
                 status { isOk() }

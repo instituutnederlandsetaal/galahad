@@ -48,7 +48,7 @@ class TaggersControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: 
                 }
                 .andReturn()
                 .andDeserialize()
-        assertEquals(1, taggers.count { it.name == TestUtil.TAGGER_NAME })
+        assertEquals(1, taggers.count { it.name == TestUtil.TAGGER })
         assert(taggers.sumOf { it.attributions.size } > 0)
         assert(taggers.sumOf { it.annotations.sumOf { it.principles?.size ?: 0 } } > 0)
     }
@@ -56,14 +56,14 @@ class TaggersControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: 
     @Test
     fun `Can get single tagger`() {
         val tagger: Tagger =
-            mvc.get("/taggers/${TestUtil.TAGGER_NAME}")
+            mvc.get("/taggers/${TestUtil.TAGGER}")
                 .andExpect {
                     status { isOk() }
                     content { contentType(MediaType.APPLICATION_JSON) }
                 }
                 .andReturn()
                 .andDeserialize()
-        assertEquals(TestUtil.TAGGER_NAME, tagger.name)
+        assertEquals(TestUtil.TAGGER, tagger.name)
     }
 
     @Test
@@ -100,9 +100,7 @@ class TaggersControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: 
     fun `Queue increases`() {
         stubFor(WireMock.post("/input").willReturn(ok().withBody(UUID.randomUUID().toString())))
         val corpus = TestUtil.createFilledCorpus(config)
-        mvc.post("/corpora/${corpus.uuid}/jobs/${TestUtil.TAGGER_NAME}") {
-                headers(::assignHeaders)
-            }
+        mvc.post("/corpora/${corpus.uuid}/jobs/${TestUtil.TAGGER}") { headers(::assignHeaders) }
             .andExpect { status { isAccepted() } }
             .andReturn()
         assertEquals(1, getQueue())

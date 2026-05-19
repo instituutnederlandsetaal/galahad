@@ -58,7 +58,7 @@ class DocumentsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config
 
         @Test
         fun `Owner can upload zip to non-dataset`() {
-            assertZipUpload(TestUtil.TEST_USER)
+            assertZipUpload(TestUtil.USER)
         }
 
         @Test
@@ -172,7 +172,7 @@ class DocumentsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config
 
         @Test
         fun `Owner can get document`() {
-            assertGetDocument(TestUtil.TEST_USER)
+            assertGetDocument(TestUtil.USER)
         }
 
         @Test
@@ -254,7 +254,7 @@ class DocumentsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config
 
         @Test
         fun `Owner can get source files`() {
-            assertGetSourceDoc(TestUtil.TEST_USER)
+            assertGetSourceDoc(TestUtil.USER)
         }
 
         @Test
@@ -333,7 +333,7 @@ class DocumentsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config
 
         @Test
         fun `Owner can delete document`() {
-            assertDeleteDoc(TestUtil.TEST_USER)
+            assertDeleteDoc(TestUtil.USER)
         }
 
         @Test
@@ -409,7 +409,7 @@ class DocumentsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config
     private fun performUploadDoc(
         uuid: UUID,
         file: File,
-        user: String = TestUtil.TEST_USER,
+        user: String = TestUtil.USER,
         mediaType: String = MediaType.TEXT_PLAIN_VALUE,
     ): ResultActionsDsl =
         mvc.uploadFile("/corpora/$uuid/documents", file, mediaType) {
@@ -419,7 +419,7 @@ class DocumentsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config
     private fun uploadDoc(
         uuid: UUID,
         file: File,
-        user: String = TestUtil.TEST_USER,
+        user: String = TestUtil.USER,
         mediaType: String = MediaType.TEXT_PLAIN_VALUE,
     ) {
         performUploadDoc(uuid, file, user, mediaType).andExpect { status { isCreated() } }
@@ -428,15 +428,11 @@ class DocumentsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config
     private fun performGetDoc(
         uuid: UUID,
         doc: String,
-        user: String = TestUtil.TEST_USER,
+        user: String = TestUtil.USER,
     ): ResultActionsDsl =
         mvc.get("/corpora/$uuid/documents/$doc") { headers { assignHeaders(this, user) } }
 
-    private fun getDoc(
-        uuid: UUID,
-        doc: String,
-        user: String = TestUtil.TEST_USER,
-    ): DocumentMetadata =
+    private fun getDoc(uuid: UUID, doc: String, user: String = TestUtil.USER): DocumentMetadata =
         performGetDoc(uuid, doc, user)
             .andExpect {
                 status { isOk() }
@@ -448,11 +444,11 @@ class DocumentsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config
     private fun performGetSourceDoc(
         uuid: UUID,
         doc: String,
-        user: String = TestUtil.TEST_USER,
+        user: String = TestUtil.USER,
     ): ResultActionsDsl =
         mvc.get("/corpora/$uuid/documents/$doc/download") { headers { assignHeaders(this, user) } }
 
-    private fun getSourceDoc(uuid: UUID, doc: String, user: String = TestUtil.TEST_USER): String =
+    private fun getSourceDoc(uuid: UUID, doc: String, user: String = TestUtil.USER): String =
         performGetSourceDoc(uuid, doc, user)
             .andExpect {
                 status { isOk() }
@@ -466,11 +462,11 @@ class DocumentsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config
     private fun performDeleteDoc(
         uuid: UUID,
         doc: String,
-        user: String = TestUtil.TEST_USER,
+        user: String = TestUtil.USER,
     ): ResultActionsDsl =
         mvc.delete("/corpora/$uuid/documents/${doc}") { headers { assignHeaders(this, user) } }
 
-    private fun deleteDoc(uuid: UUID, doc: String, user: String = TestUtil.TEST_USER) {
+    private fun deleteDoc(uuid: UUID, doc: String, user: String = TestUtil.USER) {
         performDeleteDoc(uuid, doc, user).andExpect { status { isNoContent() } }
     }
 
