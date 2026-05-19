@@ -8,6 +8,7 @@ import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.Galahad
 import org.ivdnt.galahad.exceptions.TaggerNotFoundException
+import org.ivdnt.galahad.jobs.JobController
 import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.util.TestConfig
 import org.ivdnt.galahad.util.TestUtil
@@ -93,11 +94,13 @@ class TaggersControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: 
 
     @Test
     fun `Can get queue`() {
+        JobController.reset()
         assertEquals(0, getQueue())
     }
 
     @Test
     fun `Queue increases`() {
+        JobController.reset()
         stubFor(WireMock.post("/input").willReturn(ok().withBody(UUID.randomUUID().toString())))
         val corpus = TestUtil.createFilledCorpus(config)
         mvc.post("/corpora/${corpus.uuid}/jobs/${TestUtil.TAGGER}") { headers(::assignHeaders) }

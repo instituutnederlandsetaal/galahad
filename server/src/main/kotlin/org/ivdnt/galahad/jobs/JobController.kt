@@ -1,5 +1,12 @@
 package org.ivdnt.galahad.jobs
 
+import java.io.File
+import java.util.UUID
+import kotlin.collections.ArrayDeque
+import kotlin.collections.count
+import kotlin.collections.minusAssign
+import kotlin.collections.plusAssign
+import kotlin.io.path.createTempFile
 import org.ivdnt.galahad.documents.Document
 import org.ivdnt.galahad.taggers.Tagger
 import org.springframework.core.io.FileSystemResource
@@ -10,13 +17,6 @@ import org.springframework.http.MediaType
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.postForEntity
-import java.io.File
-import java.util.UUID
-import kotlin.collections.ArrayDeque
-import kotlin.collections.count
-import kotlin.collections.minusAssign
-import kotlin.collections.plusAssign
-import kotlin.io.path.createTempFile
 
 object JobController {
     private val queue: ArrayDeque<Job> = ArrayDeque<Job>()
@@ -32,6 +32,11 @@ object JobController {
         }
         queue += job
         start()
+    }
+
+    fun reset() {
+        queue.clear()
+        task = null
     }
 
     fun dequeue(job: Job) {
