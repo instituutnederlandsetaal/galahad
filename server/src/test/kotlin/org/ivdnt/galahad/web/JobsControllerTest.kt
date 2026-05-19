@@ -4,6 +4,10 @@ import com.github.tomakehurst.wiremock.client.WireMock.*
 import java.util.*
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.Galahad
+import org.ivdnt.galahad.corpora.Corpus
+import org.ivdnt.galahad.exceptions.CorpusNotFoundException
+import org.ivdnt.galahad.exceptions.TaggerNotFoundException
+import org.ivdnt.galahad.exceptions.UserUnauthorizedException
 import org.ivdnt.galahad.jobs.JobMetadata
 import org.ivdnt.galahad.util.*
 import org.ivdnt.galahad.util.TestUtil.assignHeaders
@@ -18,6 +22,7 @@ import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.ResultActionsDsl
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.wiremock.spring.ConfigureWireMock
@@ -31,34 +36,90 @@ import org.wiremock.spring.EnableWireMock
 @EnableWireMock(ConfigureWireMock(name = "my-mock", port = 8102))
 class JobsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: Config) {
 
+    @Nested inner class JobGetTest {}
+
     @Nested
     inner class JobCreationTest {
-        @Test
-        fun `Can create job`() {
+        private fun assertCreateJob(user: String) {
             stubFor(post("/input").willReturn(ok().withBody(UUID.randomUUID().toString())))
             val corpus = TestUtil.createFilledCorpus(config)
-            var jobs: List<JobMetadata> =
-                mvc.get("/corpora/${corpus.uuid}/jobs") { headers(::assignHeaders) }
-                    .andExpect {
-                        status { isOk() }
-                        content { contentType(MediaType.APPLICATION_JSON) }
-                    }
-                    .andReturn()
-                    .andDeserialize()
+            var jobs: List<JobMetadata> = getJobs(corpus)
             assertEquals(0, jobs.sumOf { it.progress.processing })
-            mvc.post("/corpora/${corpus.uuid}/jobs/${TestUtil.TAGGER_NAME}") {
-                    headers(::assignHeaders)
-                }
-                .andExpect { status { isAccepted() } }
-            jobs =
-                mvc.get("/corpora/${corpus.uuid}/jobs") { headers(::assignHeaders) }
-                    .andExpect {
-                        status { isOk() }
-                        content { contentType(MediaType.APPLICATION_JSON) }
-                    }
-                    .andReturn()
-                    .andDeserialize()
+            performCreateJob(corpus.uuid, user).andExpect { status { isAccepted() } }
+            jobs = getJobs(corpus)
             assert(0 != jobs.sumOf { it.progress.processing })
         }
+
+        @Test
+        fun `Owner can create job`() {
+            assertCreateJob(TestUtil.TEST_USER)
+        }
+
+        @Test
+        fun `Admin can create job`() {
+            assertCreateJob("admin")
+        }
+
+        @Test
+        fun `Collaborator can create job`() {
+            assertCreateJob("collaborator")
+        }
+
+        private fun assertCantCreateJob(user: String) {
+            val corpus = TestUtil.createFilledCorpus(config)
+            performCreateJob(corpus.uuid, user).andExpect {
+                status { isForbidden() }
+                match { it.resolvedException is UserUnauthorizedException }
+            }
+        }
+
+        @Test
+        fun `Viewer can't create job`() {
+            assertCantCreateJob("viewer")
+        }
+
+        @Test
+        fun `Stranger can't create job`() {
+            assertCantCreateJob("stranger")
+        }
+
+        @Test
+        fun `Can't create job in non-existing corpus`() {
+            performCreateJob(UUID.randomUUID()).andExpect {
+                status { isNotFound() }
+                match { it.resolvedException is CorpusNotFoundException }
+            }
+        }
+
+        @Test
+        fun `Can't create job for non-existing tagger`() {
+            val corpus = TestUtil.createFilledCorpus(config)
+            performCreateJob(corpus.uuid, tagger = "non-existing").andExpect {
+                status { isNotFound() }
+                match { it.resolvedException is TaggerNotFoundException }
+            }
+        }
     }
+
+    private fun performCreateJob(
+        corpus: UUID,
+        user: String = TestUtil.TEST_USER,
+        tagger: String = TestUtil.TAGGER_NAME,
+    ): ResultActionsDsl =
+        mvc.post("/corpora/${corpus}/jobs/$tagger") { headers { assignHeaders(this, user) } }
+
+    private fun performGetJobs(
+        corpus: Corpus,
+        user: String = TestUtil.TEST_USER,
+    ): ResultActionsDsl =
+        mvc.get("/corpora/${corpus.uuid}/jobs") { headers { assignHeaders(this, user) } }
+
+    private fun getJobs(corpus: Corpus, user: String = TestUtil.TEST_USER): List<JobMetadata> =
+        performGetJobs(corpus, user)
+            .andExpect {
+                status { isOk() }
+                content { contentType(MediaType.APPLICATION_JSON) }
+            }
+            .andReturn()
+            .andDeserialize()
 }
