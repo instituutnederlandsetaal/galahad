@@ -9,6 +9,7 @@ import org.ivdnt.galahad.exceptions.CorpusNotFoundException
 import org.ivdnt.galahad.exceptions.TaggerNotFoundException
 import org.ivdnt.galahad.exceptions.UserUnauthorizedException
 import org.ivdnt.galahad.jobs.JobMetadata
+import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.util.*
 import org.ivdnt.galahad.util.TestUtil.assignHeaders
 import org.ivdnt.galahad.web.controller.ErrorController
@@ -36,7 +37,44 @@ import org.wiremock.spring.EnableWireMock
 @EnableWireMock(ConfigureWireMock(name = "my-mock", port = 8102))
 class JobsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: Config) {
 
-    @Nested inner class JobGetTest {}
+    @Nested
+    inner class JobGetTest {
+        private fun assertCanGetJob(user: String) {
+            val corpus = TestUtil.createFilledCorpus(config)
+            val metadata: JobMetadata =
+                performGetJob(corpus.uuid, user)
+                    .andExpect {
+                        status { isOk() }
+                        content { contentType(MediaType.APPLICATION_JSON) }
+                    }
+                    .andReturn()
+                    .andDeserialize()
+            val expectedTagger = Tagger.readOrThrow(TestUtil.TAGGER)
+            val untagged = TestUtil.get("formats/shared/converter").listFiles().size
+            assertEquals(expectedTagger, metadata.tagger)
+            assertEquals(untagged, metadata.progress.untagged)
+        }
+
+        @Test
+        fun `Owner can get job`() {
+            assertCanGetJob(TestUtil.USER)
+        }
+
+        @Test
+        fun `Admin can get job`() {
+            assertCanGetJob("admin")
+        }
+
+        @Test
+        fun `Collaborator can get job`() {
+            assertCanGetJob("collaborator")
+        }
+
+        @Test
+        fun `Viewer can get job`() {
+            assertCanGetJob("viewer")
+        }
+    }
 
     @Nested
     inner class JobCreationTest {
@@ -100,6 +138,13 @@ class JobsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: Con
             }
         }
     }
+
+    private fun performGetJob(
+        corpus: UUID,
+        user: String = TestUtil.USER,
+        tagger: String = TestUtil.TAGGER,
+    ): ResultActionsDsl =
+        mvc.get("/corpora/${corpus}/jobs/$tagger") { headers { assignHeaders(this, user) } }
 
     private fun performCreateJob(
         corpus: UUID,

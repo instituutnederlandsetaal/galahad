@@ -22,9 +22,9 @@ open class CorpusMetadata(
     var collaborators: MutableSet<String>? = null,
     var viewers: MutableSet<String>? = null,
 ) {
-    class Source(var name: String?, var url: URL?)
+    data class Source(var name: String?, var url: URL?)
 
-    class Period(var from: Int = 0, var to: Int = 0)
+    data class Period(var from: Int = 0, var to: Int = 0)
 
     @JsonIgnore var id: UUID? = null
 
