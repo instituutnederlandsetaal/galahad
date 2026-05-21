@@ -32,8 +32,8 @@ class ExportControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: C
 
     @Nested
     inner class ConvertDocumentTest {
-        private fun assertConvertDocument(user: String) {
-            val corpus = TestUtil.createFilledCorpus(config)
+        private fun assertConvertDocument(user: String, dataset: Boolean = false) {
+            val corpus = TestUtil.createFilledCorpus(config, dataset)
             val files = TestUtil.get("formats/shared/converter").listFiles()
             val file = files.first { it.name.endsWith(DocumentFormat.TeiP5.extension) }
             val exported =
@@ -73,6 +73,11 @@ class ExportControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: C
         @Test
         fun `Viewer can convert document`() {
             assertConvertDocument("viewer")
+        }
+
+        @Test
+        fun `Stranger can convert document from dataset`() {
+            assertConvertDocument("stranger", dataset = true)
         }
 
         @Test
@@ -147,8 +152,8 @@ class ExportControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: C
 
     @Nested
     inner class ConvertCorpusTest {
-        private fun assertConvertCorpus(user: String) {
-            val corpus = TestUtil.createFilledCorpus(config)
+        private fun assertConvertCorpus(user: String, dataset: Boolean = false) {
+            val corpus = TestUtil.createFilledCorpus(config, dataset)
             val exportedBytes =
                 performConvertCorpus(
                         corpus.uuid,
@@ -188,6 +193,11 @@ class ExportControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: C
         @Test
         fun `Viewer can convert corpus`() {
             assertConvertCorpus("viewer")
+        }
+
+        @Test
+        fun `Stranger can convert dataset corpus`() {
+            assertConvertCorpus("stranger", dataset = true)
         }
 
         @Test

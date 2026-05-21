@@ -18,9 +18,9 @@ object TestUtil {
 
     fun get(path: String): File = File(this::class.java.classLoader.getResource(path)!!.toURI())
 
-    fun createJobbedCorpus(config: Config): Corpus {
+    fun createJobbedCorpus(config: Config, dataset: Boolean = false): Corpus {
         // contains docs
-        val corpus = createFilledCorpus(config)
+        val corpus = createFilledCorpus(config, dataset)
         // add layer
         val file = get("formats/shared/converter").listFiles().first()
         corpus.layers.createOrThrow(TAGGER)

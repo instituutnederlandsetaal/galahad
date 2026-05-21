@@ -40,8 +40,8 @@ class JobsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: Con
 
     @Nested
     inner class JobGetTest {
-        private fun assertGetJob(user: String) {
-            val corpus = TestUtil.createFilledCorpus(config)
+        private fun assertGetJob(user: String, dataset: Boolean = false) {
+            val corpus = TestUtil.createFilledCorpus(config, dataset)
             val metadata: JobMetadata =
                 performGetJob(corpus.uuid, user)
                     .andExpect {
@@ -74,6 +74,11 @@ class JobsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: Con
         @Test
         fun `Viewer can get job`() {
             assertGetJob("viewer")
+        }
+
+        @Test
+        fun `Stranger can get job from dataset`() {
+            assertGetJob("viewer", dataset = true)
         }
 
         @Test
@@ -168,8 +173,8 @@ class JobsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: Con
 
     @Nested
     inner class JobProgressTest {
-        private fun assertGetJobProgress(user: String) {
-            val corpus = TestUtil.createJobbedCorpus(config)
+        private fun assertGetJobProgress(user: String, dataset: Boolean = false) {
+            val corpus = TestUtil.createJobbedCorpus(config, dataset)
             val progress: Progress =
                 performGetJobProgress(corpus.uuid, user)
                     .andExpect {
@@ -199,6 +204,11 @@ class JobsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: Con
         @Test
         fun `Viewer can get job progress`() {
             assertGetJobProgress("viewer")
+        }
+
+        @Test
+        fun `Stranger can get job progress from dataset`() {
+            assertGetJobProgress("viewer", dataset = true)
         }
 
         @Test
