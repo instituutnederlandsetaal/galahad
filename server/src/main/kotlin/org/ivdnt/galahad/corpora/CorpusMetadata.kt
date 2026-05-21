@@ -1,11 +1,11 @@
 package org.ivdnt.galahad.corpora
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import java.net.URL
-import java.util.*
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.exceptions.CorpusInvalidException
 import org.ivdnt.galahad.exceptions.UserUnauthorizedException
+import java.net.URL
+import java.util.*
 
 /**
  * Corpus metadata that can be changed by the user. Although technically [owner] should only be set

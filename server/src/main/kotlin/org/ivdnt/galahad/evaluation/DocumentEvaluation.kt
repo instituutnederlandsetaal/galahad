@@ -1,9 +1,9 @@
 package org.ivdnt.galahad.evaluation
 
+import java.io.File
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.corpora.Corpus
-import org.ivdnt.galahad.documents.Documents
 import org.ivdnt.galahad.evaluation.comparison.LayerComparison
 import org.ivdnt.galahad.evaluation.confusion.DocumentConfusion
 import org.ivdnt.galahad.evaluation.distribution.DocumentDistribution
@@ -13,8 +13,6 @@ import org.ivdnt.galahad.evaluation.spans.DocumentSpanEvaluation
 import org.ivdnt.galahad.files.GalahadFolder
 import org.ivdnt.galahad.files.ValidatedDiskValue
 import org.ivdnt.galahad.layers.CorpusLayer
-import org.ivdnt.galahad.layers.CorpusLayers
-import java.io.File
 
 /**
  * Defines evaluations at the level of a document, i.e. where a single document hypothesis is

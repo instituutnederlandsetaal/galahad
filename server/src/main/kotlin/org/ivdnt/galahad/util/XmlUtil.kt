@@ -2,14 +2,14 @@ package org.ivdnt.galahad.util
 
 import com.fasterxml.aalto.stax.InputFactoryImpl
 import com.fasterxml.aalto.stax.OutputFactoryImpl
+import org.w3c.dom.Document
+import org.w3c.dom.Element
+import org.w3c.dom.Node
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.OutputKeys
 import javax.xml.transform.Transformer
 import javax.xml.transform.TransformerFactory
-import org.w3c.dom.Document
-import org.w3c.dom.Element
-import org.w3c.dom.Node
 
 abstract class XmlUtil(val xml: Document) {
     protected fun Node.getOrCreateChild(childTag: String, prepend: Boolean = false): Element {

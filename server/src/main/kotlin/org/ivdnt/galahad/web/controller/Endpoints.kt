@@ -36,10 +36,10 @@ object Endpoints {
         const val JOB: String = "$BASE/{job}"
 
         // TODO retrieve job status (Jobmetadata) of individual documents?
-//        object Documents {
-//            const val BASE: String = "$JOB/documents"
-//            const val DOCUMENT: String = "$BASE/{document}"
-//        }
+        //        object Documents {
+        //            const val BASE: String = "$JOB/documents"
+        //            const val DOCUMENT: String = "$BASE/{document}"
+        //        }
     }
 
     object Internal {

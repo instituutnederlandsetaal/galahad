@@ -1,9 +1,9 @@
 package org.ivdnt.galahad.formats.tsv
 
-import org.ivdnt.galahad.export.DocumentExport
-import org.ivdnt.galahad.export.LayerWriter
 import java.io.OutputStream
 import java.io.PrintWriter
+import org.ivdnt.galahad.export.DocumentExport
+import org.ivdnt.galahad.export.LayerWriter
 
 class TsvWriter(export: DocumentExport) : LayerWriter(export) {
     override fun convert(out: OutputStream): Unit = convert(PrintWriter(out))

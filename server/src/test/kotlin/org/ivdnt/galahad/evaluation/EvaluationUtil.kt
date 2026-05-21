@@ -1,15 +1,16 @@
 package org.ivdnt.galahad.evaluation
 //
-//import java.io.File
-//import org.ivdnt.galahad.annotations.Layer
-//import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER
-//import org.ivdnt.galahad.corpora.Corpus
-//import org.ivdnt.galahad.util.LayerBuilder
-//import org.ivdnt.galahad.util.TestUtil
+// import java.io.File
+// import org.ivdnt.galahad.annotations.Layer
+// import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER
+// import org.ivdnt.galahad.corpora.Corpus
+// import org.ivdnt.galahad.util.LayerBuilder
+// import org.ivdnt.galahad.util.TestUtil
 //
-//object EvaluationUtil {
+// object EvaluationUtil {
 //    /**
-//     * Add two documents to the corpus, each with two layers, one source, one pie-tdn. The first doc
+//     * Add two documents to the corpus, each with two layers, one source, one pie-tdn. The first
+// doc
 //     * has equivalent layers, the second has different layers (i.e. with mistakes).
 //     *
 //     * First doc: 1 NOU, 2 VRB (in both layers) Second doc:
@@ -83,4 +84,4 @@ package org.ivdnt.galahad.evaluation
 //        val sourceJob = corpus.jobs.createOrThrow(SOURCE_LAYER)
 //        sourceJob.setLayer(docName, source)
 //    }
-//}
+// }

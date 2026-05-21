@@ -1,15 +1,15 @@
 package org.ivdnt.galahad.formats.tei
 
+import java.io.OutputStream
+import javax.xml.transform.TransformerFactory
+import javax.xml.transform.dom.DOMSource
+import javax.xml.transform.stream.StreamResult
 import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.export.LayerMerger
 import org.ivdnt.galahad.util.XmlUtil
 import org.ivdnt.galahad.util.children
 import org.w3c.dom.Element
 import org.w3c.dom.Node
-import java.io.OutputStream
-import javax.xml.transform.TransformerFactory
-import javax.xml.transform.dom.DOMSource
-import javax.xml.transform.stream.StreamResult
 
 class TeiMerger(export: DocumentExport) : LayerMerger(export) {
     val xml = XmlUtil.builder.parse(export.document.sourceFile)

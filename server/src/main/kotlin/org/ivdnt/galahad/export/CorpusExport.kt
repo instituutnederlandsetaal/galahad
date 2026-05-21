@@ -1,6 +1,5 @@
 package org.ivdnt.galahad.export
 
-import java.io.OutputStream
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER
@@ -11,11 +10,8 @@ import org.ivdnt.galahad.documents.DocumentFormat
 import org.ivdnt.galahad.documents.Documents
 import org.ivdnt.galahad.exceptions.MergeNotImplementedException
 import org.ivdnt.galahad.layers.CorpusLayer
-import org.ivdnt.galahad.util.FileMapper
-import org.ivdnt.galahad.util.asFormat
-import org.ivdnt.galahad.util.createZipFile
-import org.ivdnt.galahad.util.dedupeFilenames
-import org.ivdnt.galahad.util.withoutFormatExt
+import org.ivdnt.galahad.util.*
+import java.io.OutputStream
 
 class CorpusExport(
     val corpus: Corpus,

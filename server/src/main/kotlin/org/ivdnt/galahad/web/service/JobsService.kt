@@ -1,11 +1,11 @@
 package org.ivdnt.galahad.web.service
 
-import java.util.*
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.jobs.JobMetadata
 import org.ivdnt.galahad.jobs.Progress
 import org.ivdnt.galahad.taggers.Tagger
 import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
 class JobsService(private val corpora: CorporaService) : Logging {

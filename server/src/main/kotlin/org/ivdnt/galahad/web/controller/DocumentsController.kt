@@ -63,8 +63,7 @@ class DocumentsController(private val documentsService: DocumentsService) : Logg
     )
     @ApiResponse(
         responseCode = "403",
-        description =
-            "User needs read-access.",
+        description = "User needs read-access.",
         content =
             [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
@@ -92,8 +91,7 @@ class DocumentsController(private val documentsService: DocumentsService) : Logg
     )
     @ApiResponse(
         responseCode = "403",
-        description =
-            "User needs read-access.",
+        description = "User needs read-access.",
         content =
             [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
@@ -129,8 +127,7 @@ class DocumentsController(private val documentsService: DocumentsService) : Logg
     )
     @ApiResponse(
         responseCode = "403",
-        description =
-            "User needs write-access.",
+        description = "User needs write-access.",
         content =
             [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
@@ -156,8 +153,7 @@ class DocumentsController(private val documentsService: DocumentsService) : Logg
     @ApiResponse(responseCode = "204", description = "Document deleted.")
     @ApiResponse(
         responseCode = "403",
-        description =
-            "User needs write-access.",
+        description = "User needs write-access.",
         content =
             [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )

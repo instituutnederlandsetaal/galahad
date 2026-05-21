@@ -1,10 +1,10 @@
 package org.ivdnt.galahad.app
 
 import jakarta.servlet.http.HttpServletRequest
-import java.io.File
 import org.ivdnt.galahad.app.User.Companion.ADMIN_FILE
 import org.ivdnt.galahad.app.User.Companion.DEFAULT_USER
 import org.ivdnt.galahad.app.User.Companion.USER_HEADER
+import java.io.File
 
 class User(val name: String) {
     val admin: Boolean

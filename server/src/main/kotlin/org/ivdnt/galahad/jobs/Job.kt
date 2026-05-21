@@ -23,10 +23,10 @@ class Job(
     val metadata: JobMetadata
         get() =
             object : ValidatedDiskValue<JobMetadata>(dir.resolve(METADATA_FILE)) {
-                override fun isValid(modified: Long) = modified >= this@Job.modified
+                    override fun isValid(modified: Long) = modified >= this@Job.modified
 
-                override fun set(): JobMetadata = JobMetadata.create(this@Job, corpus)
-            }
+                    override fun set(): JobMetadata = JobMetadata.create(this@Job, corpus)
+                }
                 .readOrCreate()
 
     override fun equals(other: Any?): Boolean {

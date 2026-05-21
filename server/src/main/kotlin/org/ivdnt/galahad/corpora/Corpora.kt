@@ -1,8 +1,8 @@
 package org.ivdnt.galahad.corpora
 
-import java.io.File
 import org.ivdnt.galahad.exceptions.CorpusNotFoundException
 import org.ivdnt.galahad.files.GalahadFolderManager
+import java.io.File
 
 /**
  * Create, read and delete corpora. Represents a corpora collection folder on the file system.

@@ -1,11 +1,11 @@
 package org.ivdnt.galahad.jobs
 
-import java.io.File
-import java.util.*
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.files.DiskValue
 import org.ivdnt.galahad.files.GalahadFolder
+import java.io.File
+import java.util.*
 
 /**
  * Represents a job that processes a single document in a corpus. Corresponds to a directory in

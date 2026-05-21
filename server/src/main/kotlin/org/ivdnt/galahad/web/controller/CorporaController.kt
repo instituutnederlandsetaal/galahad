@@ -37,9 +37,12 @@ class CorporaController(@Autowired private val corporaService: CorporaService) :
         description = "Get the metadata of a corpus.",
     )
     @ApiResponse(responseCode = "200", description = "CorpusMetadata of the requested corpus.")
-    @ApiResponse(responseCode = "403", description = "User needs read-access.",
-            content =
-        [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],)
+    @ApiResponse(
+        responseCode = "403",
+        description = "User needs read-access.",
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
+    )
     @ApiResponse(
         responseCode = "404",
         description = "The corpus was not found.",
@@ -73,7 +76,12 @@ class CorporaController(@Autowired private val corporaService: CorporaService) :
     @CrossOrigin
     @PostMapping(Endpoints.Corpora.BASE, consumes = [MediaType.APPLICATION_JSON_VALUE])
     fun postCorpus(
-        @RequestBody @SwaggerRequestBody(description = "Corpus metadata.", content = [Content(schema = Schema(implementation = CorpusMetadata::class))]) value: CorpusMetadata
+        @RequestBody
+        @SwaggerRequestBody(
+            description = "Corpus metadata.",
+            content = [Content(schema = Schema(implementation = CorpusMetadata::class))],
+        )
+        value: CorpusMetadata
     ): UUID {
         response?.status = HttpServletResponse.SC_CREATED
         return corporaService.createOrThrow(value).uuid

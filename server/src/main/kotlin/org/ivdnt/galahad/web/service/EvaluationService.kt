@@ -1,23 +1,25 @@
 package org.ivdnt.galahad.web.service
 
-import java.io.File
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
-import kotlin.io.path.createTempDirectory
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.corpora.CorpusStatistics
 import org.ivdnt.galahad.evaluation.JobPair
-import org.ivdnt.galahad.evaluation.comparison.*
+import org.ivdnt.galahad.evaluation.comparison.ConfusionLayerFilter
+import org.ivdnt.galahad.evaluation.comparison.HeadGroupTermFilter
 import org.ivdnt.galahad.evaluation.confusion.JobConfusion
 import org.ivdnt.galahad.evaluation.csv.CsvFile
 import org.ivdnt.galahad.evaluation.distribution.DocumentDistribution
 import org.ivdnt.galahad.evaluation.distribution.JobDistribution
 import org.ivdnt.galahad.evaluation.entities.CorpusEntities
-import org.ivdnt.galahad.evaluation.metrics.*
+import org.ivdnt.galahad.evaluation.metrics.DocumentMetric
+import org.ivdnt.galahad.evaluation.metrics.JobMetric
 import org.ivdnt.galahad.util.toValidFileName
 import org.ivdnt.galahad.util.zipDir
 import org.springframework.stereotype.Service
+import java.io.File
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.io.path.createTempDirectory
 
 @Service
 class EvaluationService(private val corpora: CorporaService) {
@@ -140,7 +142,7 @@ class EvaluationService(private val corpora: CorporaService) {
             createMetricsCsv(dir.resolve("metrics"), corpus, job, reference)
             createConfusionCsv(dir.resolve("confusion"), corpus, job, reference)
         }
-        val metadata = writeMetadataToDir(corpus, job, reference, dir)
+        writeMetadataToDir(corpus, job, reference, dir)
         // zip the directory
         val zipFile = zipDir(dir)
         return zipFile.readBytes()
@@ -222,7 +224,7 @@ class EvaluationService(private val corpora: CorporaService) {
         val file = CsvFile(dir.resolve(validFileName))
         file.append(csvBody)
         // Write metadata & create zip
-        val metadata = writeMetadataToDir(corpus, job, reference, dir)
+        writeMetadataToDir(corpus, job, reference, dir)
         // zip the directory
         return zipDir(dir).readBytes()
     }

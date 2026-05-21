@@ -1,6 +1,5 @@
 package org.ivdnt.galahad.export
 
-import java.io.OutputStream
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.corpora.Corpus
@@ -8,6 +7,7 @@ import org.ivdnt.galahad.documents.Document
 import org.ivdnt.galahad.documents.DocumentFormat
 import org.ivdnt.galahad.layers.CorpusLayer
 import org.ivdnt.galahad.taggers.Tagger
+import java.io.OutputStream
 
 class DocumentExport(
     val corpus: Corpus,

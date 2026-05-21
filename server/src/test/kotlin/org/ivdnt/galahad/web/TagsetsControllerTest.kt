@@ -24,10 +24,13 @@ class TagsetsControllerTest(@Autowired val mvc: MockMvc) {
     @Test
     fun `Can get tagsets`() {
         val tagsets: List<Tagset> =
-            mvc.get("/tagsets").andExpect {
-                status { isOk() }
-                content { contentType(MediaType.APPLICATION_JSON) }
-            }.andReturn().andDeserialize()
+            mvc.get("/tagsets")
+                .andExpect {
+                    status { isOk() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                }
+                .andReturn()
+                .andDeserialize()
         assertEquals(1, tagsets.count { it.name == TestUtil.TAGSET_NAME })
         assert(tagsets.sumOf { it.punctuation.size } > 0)
     }

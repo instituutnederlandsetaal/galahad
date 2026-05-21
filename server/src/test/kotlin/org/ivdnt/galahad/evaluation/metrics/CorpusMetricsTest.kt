@@ -1,16 +1,16 @@
 package org.ivdnt.galahad.evaluation.metrics
 //
-//import org.ivdnt.galahad.annotations.Annotation
-//import org.ivdnt.galahad.corpora.Corpus
-//import org.ivdnt.galahad.evaluation.EvaluationUtil
-//import org.ivdnt.galahad.evaluation.comparison.HeadGroupTermFilter
-//import org.ivdnt.galahad.evaluation.comparison.MetricsLayerFilter
-//import org.ivdnt.galahad.util.TestUtil
-//import org.junit.jupiter.api.Assertions.assertEquals
-//import org.junit.jupiter.api.BeforeEach
-//import org.junit.jupiter.api.Test
+// import org.ivdnt.galahad.annotations.Annotation
+// import org.ivdnt.galahad.corpora.Corpus
+// import org.ivdnt.galahad.evaluation.EvaluationUtil
+// import org.ivdnt.galahad.evaluation.comparison.HeadGroupTermFilter
+// import org.ivdnt.galahad.evaluation.comparison.MetricsLayerFilter
+// import org.ivdnt.galahad.util.TestUtil
+// import org.junit.jupiter.api.Assertions.assertEquals
+// import org.junit.jupiter.api.BeforeEach
+// import org.junit.jupiter.api.Test
 //
-//class CorpusMetricsTest {
+// class CorpusMetricsTest {
 //    lateinit var corpus: Corpus
 //
 //    @BeforeEach
@@ -70,4 +70,4 @@ package org.ivdnt.galahad.evaluation.metrics
 //        val filteredGlobal = filteredMetrics.metricTypes.values.first()
 //        assertEquals(1, filteredGlobal.classes.classCount)
 //    }
-//}
+// }

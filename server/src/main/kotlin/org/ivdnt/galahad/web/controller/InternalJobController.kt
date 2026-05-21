@@ -1,9 +1,6 @@
 package org.ivdnt.galahad.web.controller
 
 import io.swagger.v3.oas.annotations.Hidden
-import java.util.*
-import kotlin.io.path.createTempFile
-import kotlin.io.path.outputStream
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.jobs.JobController
@@ -13,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
+import java.util.*
+import kotlin.io.path.createTempFile
 
 typealias ProcessingID = UUID
 

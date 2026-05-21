@@ -1,10 +1,10 @@
 package org.ivdnt.galahad.formats.tsv
 
+import java.io.OutputStream
+import java.io.PrintWriter
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.export.LayerMerger
-import java.io.OutputStream
-import java.io.PrintWriter
 
 open class TsvMerger(export: DocumentExport) : LayerMerger(export) {
     protected open val columnIndices: MutableMap<Annotation, Int> = mutableMapOf()

@@ -1,19 +1,16 @@
 package org.ivdnt.galahad.web
 
 import java.io.File
-import java.util.UUID
+import java.util.*
 import java.util.zip.ZipInputStream
 import kotlin.io.path.createTempDirectory
 import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.Galahad
 import org.ivdnt.galahad.documents.DocumentFormat
-import org.ivdnt.galahad.exceptions.CorpusNotFoundException
-import org.ivdnt.galahad.exceptions.DocumentNotFoundException
-import org.ivdnt.galahad.exceptions.InvalidDocumentFormatException
-import org.ivdnt.galahad.exceptions.LayerNotFoundException
-import org.ivdnt.galahad.exceptions.UserUnauthorizedException
-import org.ivdnt.galahad.util.*
+import org.ivdnt.galahad.exceptions.*
+import org.ivdnt.galahad.util.TestConfig
+import org.ivdnt.galahad.util.TestUtil
 import org.ivdnt.galahad.util.TestUtil.assignHeaders
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Nested
@@ -42,10 +39,9 @@ class ExportControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: C
             val exported =
                 performConvertDoc(
                         corpus.uuid,
-                        SOURCE_LAYER,
-                        file.name,
-                        DocumentFormat.Tsv.identifier,
-                        user,
+                        doc = file.name,
+                        format = DocumentFormat.Tsv.identifier,
+                        user = user,
                     )
                     .andExpect {
                         status { isOk() }
@@ -85,10 +81,9 @@ class ExportControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: C
             val file = TestUtil.get("formats/shared/converter").listFiles().first()
             performConvertDoc(
                     corpus.uuid,
-                    SOURCE_LAYER,
-                    file.name,
-                    DocumentFormat.Tsv.identifier,
-                    "stranger",
+                    doc = file.name,
+                    format = DocumentFormat.Tsv.identifier,
+                    user = "stranger",
                 )
                 .andExpect {
                     status { isForbidden() }
@@ -130,9 +125,8 @@ class ExportControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: C
             val corpus = TestUtil.createFilledCorpus(config)
             performConvertDoc(
                     corpus.uuid,
-                    SOURCE_LAYER,
-                    "non-existing.txt",
-                    DocumentFormat.Tsv.identifier,
+                    doc = "non-existing.txt",
+                    format = DocumentFormat.Tsv.identifier,
                 )
                 .andExpect {
                     status { isNotFound() }
@@ -144,7 +138,7 @@ class ExportControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: C
         fun `Can't convert non-existing format`() {
             val corpus = TestUtil.createFilledCorpus(config)
             val file = TestUtil.get("formats/shared/converter").listFiles().first()
-            performConvertDoc(corpus.uuid, SOURCE_LAYER, file.name, "non-existing").andExpect {
+            performConvertDoc(corpus.uuid, doc = file.name, format = "non-existing").andExpect {
                 status { isBadRequest() }
                 match { it.resolvedException is InvalidDocumentFormatException }
             }
@@ -156,7 +150,11 @@ class ExportControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: C
         private fun assertConvertCorpus(user: String) {
             val corpus = TestUtil.createFilledCorpus(config)
             val exportedBytes =
-                performConvertCorpus(corpus.uuid, SOURCE_LAYER, DocumentFormat.Tsv.identifier, user)
+                performConvertCorpus(
+                        corpus.uuid,
+                        format = DocumentFormat.Tsv.identifier,
+                        user = user,
+                    )
                     .andExpect {
                         status { isOk() }
                         header { exists("Content-Disposition") }
@@ -197,9 +195,8 @@ class ExportControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: C
             val corpus = TestUtil.createFilledCorpus(config)
             performConvertCorpus(
                     corpus.uuid,
-                    SOURCE_LAYER,
-                    DocumentFormat.Tsv.identifier,
-                    "stranger",
+                    format = DocumentFormat.Tsv.identifier,
+                    user = "stranger",
                 )
                 .andExpect {
                     status { isForbidden() }
@@ -229,7 +226,7 @@ class ExportControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: C
         @Test
         fun `Can't convert non-existing format`() {
             val corpus = TestUtil.createFilledCorpus(config)
-            performConvertCorpus(corpus.uuid, SOURCE_LAYER, "non-existing").andExpect {
+            performConvertCorpus(corpus.uuid, format = "non-existing").andExpect {
                 status { isBadRequest() }
                 match { it.resolvedException is InvalidDocumentFormatException }
             }

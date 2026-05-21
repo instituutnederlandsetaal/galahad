@@ -10,8 +10,10 @@ import org.ivdnt.galahad.exceptions.TaggerNotFoundException
 import org.ivdnt.galahad.exceptions.UserUnauthorizedException
 import org.ivdnt.galahad.jobs.JobMetadata
 import org.ivdnt.galahad.taggers.Tagger
-import org.ivdnt.galahad.util.*
+import org.ivdnt.galahad.util.TestConfig
+import org.ivdnt.galahad.util.TestUtil
 import org.ivdnt.galahad.util.TestUtil.assignHeaders
+import org.ivdnt.galahad.util.andDeserialize
 import org.ivdnt.galahad.web.controller.ErrorController
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Nested
@@ -22,11 +24,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.ResultActionsDsl
-import org.springframework.test.web.servlet.delete
-import org.springframework.test.web.servlet.get
-import org.springframework.test.web.servlet.post
+import org.springframework.test.web.servlet.*
 import org.wiremock.spring.ConfigureWireMock
 import org.wiremock.spring.EnableWireMock
 

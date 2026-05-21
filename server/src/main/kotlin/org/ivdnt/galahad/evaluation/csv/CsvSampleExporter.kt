@@ -1,10 +1,10 @@
 package org.ivdnt.galahad.evaluation.csv
 //
-//import org.ivdnt.galahad.annotations.Term
-//import org.ivdnt.galahad.evaluation.comparison.TermComparison
-//import org.ivdnt.galahad.taggers.Tagger
+// import org.ivdnt.galahad.annotations.Term
+// import org.ivdnt.galahad.evaluation.comparison.TermComparison
+// import org.ivdnt.galahad.taggers.Tagger
 //
-//interface CsvSampleExporter {
+// interface CsvSampleExporter {
 //    fun samplesToCSV(): String
 //
 //    fun samplesToCSV(comps: List<TermComparison>?, hypoJob: Tagger, refJob: Tagger): String {
@@ -24,7 +24,8 @@ package org.ivdnt.galahad.evaluation.csv
 //        // body
 //        comps?.forEach { termComp ->
 //            val literal = termComp.hyp.token.ifEmpty { termComp.ref.token }
-//            val refAnnots = refColumns.map { termComp.ref.annotations[it] ?: Term.missingName(it) }
+//            val refAnnots = refColumns.map { termComp.ref.annotations[it] ?: Term.missingName(it)
+// }
 //            val hypoAnnots = hypoColumns.map {
 //                termComp.hyp.annotations[it] ?: Term.missingName(it)
 //            }
@@ -32,4 +33,4 @@ package org.ivdnt.galahad.evaluation.csv
 //        }
 //        return csv
 //    }
-//}
+// }

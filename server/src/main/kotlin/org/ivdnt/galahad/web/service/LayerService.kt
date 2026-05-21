@@ -8,7 +8,7 @@ import java.util.*
 @Service
 class LayerService(private val corpora: CorporaService) : Logging {
     fun readAll(corpus: UUID): List<CorpusLayerMetadata> =
-        corpora.readOrThrow(corpus).layers.readAll().map { it.metadata}
+        corpora.readOrThrow(corpus).layers.readAll().map { it.metadata }
 
     fun readOrThrow(corpus: UUID, layer: String): CorpusLayerMetadata =
         corpora.readOrThrow(corpus).layers.readOrThrow(layer).metadata

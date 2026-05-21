@@ -1,6 +1,5 @@
 package org.ivdnt.galahad.export
 
-import java.io.OutputStream
 import org.ivdnt.galahad.documents.DocumentFormat
 import org.ivdnt.galahad.evaluation.comparison.LayerComparison
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
@@ -9,6 +8,7 @@ import org.ivdnt.galahad.formats.conllu.ConlluMerger
 import org.ivdnt.galahad.formats.folia.FoliaMerger
 import org.ivdnt.galahad.formats.tei.TeiMerger
 import org.ivdnt.galahad.formats.tsv.TsvMerger
+import java.io.OutputStream
 
 abstract class LayerMerger protected constructor(protected val export: DocumentExport) {
     protected val termComparisons: List<TermComparison> = LayerComparison(export).matches

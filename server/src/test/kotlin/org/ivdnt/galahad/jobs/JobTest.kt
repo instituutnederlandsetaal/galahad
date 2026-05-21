@@ -1,17 +1,17 @@
 package org.ivdnt.galahad.jobs
 //
-//import java.io.File
-//import org.ivdnt.galahad.annotations.Annotation
-//import org.ivdnt.galahad.annotations.LayerPreview
-//import org.ivdnt.galahad.corpora.Corpus
-//import org.ivdnt.galahad.util.LayerBuilder
-//import org.ivdnt.galahad.util.TestUtil
-//import org.junit.jupiter.api.Assertions.assertEquals
-//import org.junit.jupiter.api.Assertions.assertFalse
-//import org.junit.jupiter.api.BeforeEach
-//import org.junit.jupiter.api.Test
+// import java.io.File
+// import org.ivdnt.galahad.annotations.Annotation
+// import org.ivdnt.galahad.annotations.LayerPreview
+// import org.ivdnt.galahad.corpora.Corpus
+// import org.ivdnt.galahad.util.LayerBuilder
+// import org.ivdnt.galahad.util.TestUtil
+// import org.junit.jupiter.api.Assertions.assertEquals
+// import org.junit.jupiter.api.Assertions.assertFalse
+// import org.junit.jupiter.api.BeforeEach
+// import org.junit.jupiter.api.Test
 //
-//class JobTest {
+// class JobTest {
 //    lateinit var corpus: Corpus
 //
 //    @BeforeEach
@@ -45,4 +45,4 @@ package org.ivdnt.galahad.jobs
 //        assertEquals(100, job.getLayer(doc).terms.count())
 //        assertEquals(1, job.progress.finished)
 //    }
-//}
+// }

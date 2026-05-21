@@ -1,8 +1,8 @@
 package org.ivdnt.galahad.jobs
 
-import java.io.File
 import org.ivdnt.galahad.exceptions.DocumentJobNotFoundException
 import org.ivdnt.galahad.files.GalahadFolderManager
+import java.io.File
 
 /**
  * Create, read and delete document jobs for a job. Represents the "documents/" folder in a job

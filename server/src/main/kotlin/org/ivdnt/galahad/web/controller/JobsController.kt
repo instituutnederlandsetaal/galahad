@@ -20,7 +20,6 @@ class JobsController(private val jobsService: JobsService) {
 
     @Autowired private val response: HttpServletResponse? = null
 
-
     @Operation(
         summary = "Get all job metadata",
         description = "Get a summary of the state of all tagger jobs.",
@@ -74,8 +73,7 @@ class JobsController(private val jobsService: JobsService) {
     @ApiResponse(responseCode = "202", description = "The job progress.")
     @ApiResponse(
         responseCode = "403",
-        description =
-            "User needs write-access.",
+        description = "User needs write-access.",
         content =
             [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
@@ -102,8 +100,7 @@ class JobsController(private val jobsService: JobsService) {
     @ApiResponse(responseCode = "204", description = "Job cancelled or deleted.")
     @ApiResponse(
         responseCode = "403",
-        description =
-            "User needs write-access.",
+        description = "User needs write-access.",
         content =
             [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )

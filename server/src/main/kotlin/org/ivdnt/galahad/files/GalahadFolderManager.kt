@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.files
 
-import java.io.File
 import org.apache.logging.log4j.kotlin.logger
+import java.io.File
 
 /**
  * Generic base class for file system operations. Create, read and delete GalahadFiles in a folder.

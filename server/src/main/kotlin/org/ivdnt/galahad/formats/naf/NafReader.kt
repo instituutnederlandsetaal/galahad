@@ -1,5 +1,7 @@
 package org.ivdnt.galahad.formats.naf
 
+import java.io.File
+import java.util.*
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.Term
@@ -8,8 +10,6 @@ import org.ivdnt.galahad.formats.reader.LayerReader
 import org.ivdnt.galahad.util.XmlUtil
 import org.ivdnt.galahad.util.childElements
 import org.ivdnt.galahad.util.childOrNull
-import java.io.File
-import java.util.*
 
 typealias WordformID = String
 

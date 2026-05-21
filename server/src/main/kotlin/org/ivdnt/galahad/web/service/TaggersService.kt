@@ -1,10 +1,5 @@
 package org.ivdnt.galahad.web.service
 
-import java.net.URI
-import java.net.URL
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.taggers.TaggerHealth
@@ -14,6 +9,11 @@ import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.util.UriComponentsBuilder
+import java.net.URI
+import java.net.URL
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
 
 @Service
 class TaggersService : Logging {
