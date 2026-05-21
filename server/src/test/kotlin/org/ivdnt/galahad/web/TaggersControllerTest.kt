@@ -7,6 +7,7 @@ import java.util.*
 import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.Galahad
+import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.exceptions.TaggerNotFoundException
 import org.ivdnt.galahad.jobs.JobController
 import org.ivdnt.galahad.taggers.Tagger
@@ -23,6 +24,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.wiremock.spring.ConfigureWireMock
@@ -98,13 +100,31 @@ class TaggersControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: 
         assertEquals(0, getQueue())
     }
 
+    private fun increaseQueue(corpus: Corpus) {
+        stubFor(WireMock.post("/input").willReturn(ok().withBody(UUID.randomUUID().toString())))
+        mvc.post("/corpora/${corpus.uuid}/jobs/${TestUtil.TAGGER}") { headers(::assignHeaders) }
+            .andExpect { status { isAccepted() } }
+    }
+
+    private fun decreaseQueue(corpus: Corpus) {
+        mvc.delete("/corpora/${corpus.uuid}/jobs/${TestUtil.TAGGER}") { headers(::assignHeaders) }
+    }
+
     @Test
     fun `Queue increases`() {
         JobController.reset()
-        stubFor(WireMock.post("/input").willReturn(ok().withBody(UUID.randomUUID().toString())))
         val corpus = TestUtil.createFilledCorpus(config)
-        mvc.post("/corpora/${corpus.uuid}/jobs/${TestUtil.TAGGER}") { headers(::assignHeaders) }
-            .andExpect { status { isAccepted() } }
+        increaseQueue(corpus)
         assertEquals(1, getQueue())
+    }
+
+    @Test
+    fun `Queue decreases`() {
+        JobController.reset()
+        val corpus = TestUtil.createFilledCorpus(config)
+        increaseQueue(corpus)
+        assertEquals(1, getQueue())
+        decreaseQueue(corpus)
+        assertEquals(0, getQueue())
     }
 }

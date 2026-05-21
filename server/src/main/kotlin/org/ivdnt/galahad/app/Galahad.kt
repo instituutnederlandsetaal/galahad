@@ -18,10 +18,6 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.core.convert.converter.Converter
 import org.springframework.scheduling.annotation.EnableScheduling
 
-// @Autowired val env: Environment? = null
-// val application_profile: String get() = env!!.activeProfiles.takeIf { it.isNotEmpty() }?.first()
-// ?: "prod"
-
 val application_profile: String = System.getenv("spring.profiles.active") ?: "prod"
 
 fun main(args: Array<String>) {
