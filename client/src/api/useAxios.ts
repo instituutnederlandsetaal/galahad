@@ -24,7 +24,6 @@ export function useAxios<T>(
 
         const controller = new AbortController()
         onWatcherCleanup(() => {
-            console.log("Aborting request to", url)
             controller.abort()
         })
 
