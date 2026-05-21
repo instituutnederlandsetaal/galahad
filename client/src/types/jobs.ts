@@ -1,20 +1,14 @@
-import type { Term } from "@/types/evaluation"
-import type { Tagger } from "@/types/taggers"
+import type { LayerMetadata } from "@/types/layers"
 
-export const SOURCE_LAYER: string = "sourceLayer"
+export const SOURCE_LAYER: string = "source"
 
-export type Job = { tagger: Tagger; progress: Progress; preview: LayerPreview; modified: number; annotations: Record<string, number> }
+export type Job = { layer: LayerMetadata; progress: Progress }
 
 export type Progress = {
-    pending: number
+    untagged: number
     processing: number
     failed: number
     finished: number
     total: number
-    untagged: number
-    busy: boolean
-    hasError: boolean
     errors: { [document: string]: string }
 }
-
-export type LayerPreview = { terms: Term[] }
