@@ -6,19 +6,25 @@ import io.swagger.v3.oas.models.info.Contact
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.info.License
 import io.swagger.v3.oas.models.servers.Server
-import java.io.File
-import java.util.*
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.documents.DocumentFormat
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.convert.converter.Converter
+import org.springframework.core.env.Environment
 import org.springframework.scheduling.annotation.EnableScheduling
+import java.io.File
+import java.util.*
 
-var application_profile: String = System.getenv("spring.profiles.active") ?: "prod"
+//@Autowired val env: Environment? = null
+//val application_profile: String get() = env!!.activeProfiles.takeIf { it.isNotEmpty() }?.first() ?: "prod"
+
+val application_profile: String = System.getenv("spring.profiles.active") ?: "prod"
 
 fun main(args: Array<String>) {
     runApplication<Galahad>(*args)
@@ -28,6 +34,7 @@ fun main(args: Array<String>) {
 @ConfigurationProperties(prefix = "")
 class Config {
     lateinit var workDir: String
+
 
     @Bean fun getWorkingDirectory(): File = File(workDir)
 
@@ -42,6 +49,8 @@ class Config {
 @SpringBootApplication(scanBasePackages = ["org.ivdnt.galahad"])
 @EnableScheduling
 class Galahad {
+
+
     /** Customize OpenAPI documentation header. */
     @Bean
     fun customOpenAPI(): OpenAPI {
@@ -66,6 +75,10 @@ class Galahad {
             api = api.servers(listOf(Server().url("/galahad/api").description("GaLAHaD API")))
         }
         return api
+    }
+
+    companion object {
+
     }
 }
 

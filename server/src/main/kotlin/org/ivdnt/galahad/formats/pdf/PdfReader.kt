@@ -1,12 +1,12 @@
 package org.ivdnt.galahad.formats.pdf
 
-import com.itextpdf.text.pdf.PdfReader as PdfReaderIText
 import com.itextpdf.text.pdf.parser.PdfTextExtractor
-import java.io.InputStream
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.formats.reader.LayerReader
+import java.io.InputStream
+import com.itextpdf.text.pdf.PdfReader as PdfReaderIText
 
 class PdfReader(stream: InputStream) : LayerReader() {
     val reader = PdfReaderIText(stream)

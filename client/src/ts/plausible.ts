@@ -24,8 +24,8 @@ function corpusParams(corpus: CorpusMetadata): Record<string, number | string | 
     return {
         shared: corpus.dataset ? "dataset" : (corpus.collaborators?.length ?? 0) + (corpus.viewers?.length ?? 0),
         period: `${corpus.eraFrom} - ${corpus.eraTo}`,
-        language: corpus.language
-        source: Boolean(corpus.source)
+        language: corpus.language,
+        source: Boolean(corpus.source),
         numDocs: corpus.numDocs,
     }
 }
@@ -35,8 +35,9 @@ function docParams(doc: DocumentMetadata): Record<string, string> {
 }
 
 function jobParams(job: Job, type: JobType): Record<string, any> {
+    return {}
     return {
-        [`${type}-id`]: job.tagger.id,
+        [`${type}-id`]: job.tagger.name,
         [`${type}-annotations`]: job.tagger.annotations.map((a) => a.annotation).join(),
     }
 }

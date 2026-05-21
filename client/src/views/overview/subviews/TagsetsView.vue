@@ -19,9 +19,7 @@
 <script setup lang="ts">
 import stores from "@/stores"
 
-// #stores
 const { tagsets: items, loading } = storeToRefs(stores.useTagsets())
 
-// #data
 const columns = [{ key: "name" }, { key: "description" }]
 </script>

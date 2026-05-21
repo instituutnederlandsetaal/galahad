@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
+import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
@@ -23,10 +24,13 @@ class ApplicationControllerTest(@Autowired val mvc: MockMvc) {
     fun assertGetUser(username: String, admin: Boolean) {
         val user: User =
             mvc.get("/user") { headers { assignHeaders(this, username) } }
-                .andExpect { status { isOk() } }
+                .andExpect {
+                    status { isOk() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                }
                 .andReturn()
                 .andDeserialize()
-        assertEquals(username, user.id)
+        assertEquals(username, user.name)
         assertEquals(admin, user.admin)
     }
 
@@ -43,8 +47,14 @@ class ApplicationControllerTest(@Autowired val mvc: MockMvc) {
     @Test
     fun `Get default user when user header is missing`() {
         val user: User =
-            mvc.get("/user").andExpect { status { isOk() } }.andReturn().andDeserialize()
-        assertEquals(User.DEFAULT_USER.id, user.id)
+            mvc.get("/user")
+                .andExpect {
+                    status { isOk() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                }
+                .andReturn()
+                .andDeserialize()
+        assertEquals(User.DEFAULT_USER.name, user.name)
         assertEquals(User.DEFAULT_USER.admin, user.admin)
     }
 }

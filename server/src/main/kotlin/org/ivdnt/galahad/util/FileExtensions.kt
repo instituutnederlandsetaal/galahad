@@ -12,3 +12,5 @@ val File.withoutFormatExt: String
         }
         return this.nameWithoutExtension
     }
+
+fun File.asFormat(format: DocumentFormat): String = this.withoutFormatExt + "." + format.extension

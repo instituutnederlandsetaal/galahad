@@ -4,13 +4,13 @@
         <fileDesc author="user"    title="karel_en_martijn"/>
         <public publicId="e51560ff-81a2-4ddd-ba04-c7eb07af6d2b"/>
         <linguisticProcessors layer="terms">
-            <lp hostname="https://galahad.ivdnt.org" name="sourceLayer" />
+            <lp hostname="https://galahad.ivdnt.org" name="source" />
         </linguisticProcessors>
         <linguisticProcessors layer="entities">
-            <lp hostname="https://galahad.ivdnt.org" name="sourceLayer" />
+            <lp hostname="https://galahad.ivdnt.org" name="source" />
         </linguisticProcessors>
         <linguisticProcessors layer="deps">
-            <lp hostname="https://galahad.ivdnt.org" name="sourceLayer" />
+            <lp hostname="https://galahad.ivdnt.org" name="source" />
         </linguisticProcessors>
     </nafHeader>
     <raw><![CDATA[Fraaie historie ende alwaer .

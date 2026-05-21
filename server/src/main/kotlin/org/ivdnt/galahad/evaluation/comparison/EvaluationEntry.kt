@@ -1,9 +1,6 @@
-package org.ivdnt.galahad.evaluation
+package org.ivdnt.galahad.evaluation.comparison
 
 import kotlin.random.Random
-import org.ivdnt.galahad.evaluation.comparison.TermComparison
-
-const val MAX_SAMPLE_LENGTH: Int = 10
 
 data class EvaluationEntry(
     val count: Int = 0,
@@ -14,6 +11,8 @@ data class EvaluationEntry(
     // samples.asSequence().shuffled().take(MAX_SAMPLE_LENGTH).toList()
 
     companion object {
+        private const val MAX_SAMPLE_LENGTH: Int = 10
+
         /** Combine EvaluatationEntries, optionally truncating the number of samples. */
         fun add(a: EvaluationEntry, b: EvaluationEntry, truncate: Boolean = true): EvaluationEntry {
             if (a.samples.size >= MAX_SAMPLE_LENGTH && truncate) {

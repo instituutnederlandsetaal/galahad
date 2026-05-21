@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonValue
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.evaluation.DocumentEvaluations
-import org.ivdnt.galahad.export.csv.CsvFile
-import org.ivdnt.galahad.export.csv.CsvString
+import org.ivdnt.galahad.evaluation.csv.CsvFile
+import org.ivdnt.galahad.evaluation.csv.CsvString
 import org.ivdnt.galahad.util.merge
 
 /**

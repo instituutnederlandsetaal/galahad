@@ -1,31 +1,55 @@
 package org.ivdnt.galahad.web
 
+import com.github.tomakehurst.wiremock.client.WireMock
+import com.github.tomakehurst.wiremock.client.WireMock.ok
+import com.github.tomakehurst.wiremock.client.WireMock.stubFor
+import java.util.UUID
 import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER
+import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.Galahad
 import org.ivdnt.galahad.exceptions.TaggerNotFoundException
+import org.ivdnt.galahad.jobs.JobController
 import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.util.TestConfig
 import org.ivdnt.galahad.util.TestUtil
+import org.ivdnt.galahad.util.TestUtil.assignHeaders
 import org.ivdnt.galahad.util.andDeserialize
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
+import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
+import org.springframework.test.web.servlet.post
+import org.wiremock.spring.ConfigureWireMock
+import org.wiremock.spring.EnableWireMock
 
 /** Web controller tests for serialization, status, exception resolving and permissions. */
 @SpringBootTest(properties = ["spring.main.allow-bean-definition-overriding=true"])
 @AutoConfigureMockMvc
 @ContextConfiguration(classes = [Galahad::class, TestConfig::class])
-class TaggersControllerTest(@Autowired val mvc: MockMvc) {
+@EnableWireMock(ConfigureWireMock(name = "my-mock", port = 8102))
+class TaggersControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: Config) {
+    @BeforeEach
+    fun setUp() {
+        TestConfig.reset()
+    }
+
     @Test
     fun `Can get taggers`() {
         val taggers: List<Tagger> =
-            mvc.get("/taggers").andExpect { status { isOk() } }.andReturn().andDeserialize()
-        assertEquals(1, taggers.count { it.name == TestUtil.TAGGER_NAME })
+            mvc.get("/taggers")
+                .andExpect {
+                    status { isOk() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                }
+                .andReturn()
+                .andDeserialize()
+        assertEquals(1, taggers.count { it.name == TestUtil.TAGGER })
         assert(taggers.sumOf { it.attributions.size } > 0)
         assert(taggers.sumOf { it.annotations.sumOf { it.principles?.size ?: 0 } } > 0)
     }
@@ -33,11 +57,14 @@ class TaggersControllerTest(@Autowired val mvc: MockMvc) {
     @Test
     fun `Can get single tagger`() {
         val tagger: Tagger =
-            mvc.get("/taggers/${TestUtil.TAGGER_NAME}")
-                .andExpect { status { isOk() } }
+            mvc.get("/taggers/${TestUtil.TAGGER}")
+                .andExpect {
+                    status { isOk() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                }
                 .andReturn()
                 .andDeserialize()
-        assertEquals(TestUtil.TAGGER_NAME, tagger.name)
+        assertEquals(TestUtil.TAGGER, tagger.name)
     }
 
     @Test
@@ -54,5 +81,30 @@ class TaggersControllerTest(@Autowired val mvc: MockMvc) {
             status { isNotFound() }
             match { it.resolvedException is TaggerNotFoundException }
         }
+    }
+
+    private fun getQueue(): Int =
+        mvc.get("/taggers/queue")
+            .andExpect {
+                status { isOk() }
+                content { contentType(MediaType.APPLICATION_JSON) }
+            }
+            .andReturn()
+            .andDeserialize()
+
+    @Test
+    fun `Can get queue`() {
+        JobController.reset()
+        assertEquals(0, getQueue())
+    }
+
+    @Test
+    fun `Queue increases`() {
+        JobController.reset()
+        stubFor(WireMock.post("/input").willReturn(ok().withBody(UUID.randomUUID().toString())))
+        val corpus = TestUtil.createFilledCorpus(config)
+        mvc.post("/corpora/${corpus.uuid}/jobs/${TestUtil.TAGGER}") { headers(::assignHeaders) }
+            .andExpect { status { isAccepted() } }
+        assertEquals(1, getQueue())
     }
 }

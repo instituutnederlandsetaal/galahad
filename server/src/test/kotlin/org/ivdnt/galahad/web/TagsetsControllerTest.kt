@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
+import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
@@ -23,7 +24,10 @@ class TagsetsControllerTest(@Autowired val mvc: MockMvc) {
     @Test
     fun `Can get tagsets`() {
         val tagsets: List<Tagset> =
-            mvc.get("/tagsets").andExpect { status { isOk() } }.andReturn().andDeserialize()
+            mvc.get("/tagsets").andExpect {
+                status { isOk() }
+                content { contentType(MediaType.APPLICATION_JSON) }
+            }.andReturn().andDeserialize()
         assertEquals(1, tagsets.count { it.name == TestUtil.TAGSET_NAME })
         assert(tagsets.sumOf { it.punctuation.size } > 0)
     }
@@ -32,7 +36,10 @@ class TagsetsControllerTest(@Autowired val mvc: MockMvc) {
     fun `Can get single tagset`() {
         val tagset: Tagset =
             mvc.get("/tagsets/${TestUtil.TAGSET_NAME}")
-                .andExpect { status { isOk() } }
+                .andExpect {
+                    status { isOk() }
+                    content { contentType(MediaType.APPLICATION_JSON) }
+                }
                 .andReturn()
                 .andDeserialize()
         assertEquals(TestUtil.TAGSET_NAME, tagset.name)

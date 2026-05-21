@@ -1,15 +1,15 @@
 package org.ivdnt.galahad.formats.reader
 
-import java.io.InputStream
-import java.util.*
-import javax.xml.XMLConstants
-import javax.xml.stream.XMLStreamConstants
-import javax.xml.stream.XMLStreamReader
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.annotations.TermSpan
 import org.ivdnt.galahad.util.XmlUtil
+import java.io.InputStream
+import java.util.*
+import javax.xml.XMLConstants
+import javax.xml.stream.XMLStreamConstants
+import javax.xml.stream.XMLStreamReader
 
 abstract class XmlReader(stream: InputStream) : LayerReader() {
     protected var pos: String? = null

@@ -6,8 +6,38 @@ import java.io.FileOutputStream
 import java.io.OutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
+import kotlin.io.path.createTempFile
 
 typealias FileMapper = Pair<String, (OutputStream) -> Unit>
+
+fun Sequence<FileMapper>.dedupeFilenames(): Sequence<FileMapper> {
+    val seen = mutableMapOf<String, Int>()
+
+    fun nextName(name: String): String {
+        val dot = name.lastIndexOf('.')
+        val base = if (dot >= 0) name.substring(0, dot) else name
+        val ext = if (dot >= 0) name.substring(dot) else ""
+
+        val count = seen.getOrDefault(name, 0)
+        if (count == 0) {
+            seen[name] = 1
+            return name
+        }
+
+        var i = count
+        var candidate: String
+        do {
+            i++
+            candidate = "$base-${i - 1}$ext"
+        } while (candidate in seen)
+
+        seen[name] = i
+        seen[candidate] = 1
+        return candidate
+    }
+
+    return map { (name, writer) -> nextName(name) to writer }
+}
 
 /**
  * Create zip file for the given files, optionally to a specific stream. Can be used as a streaming
@@ -19,29 +49,24 @@ typealias FileMapper = Pair<String, (OutputStream) -> Unit>
  * @param includeCMDI include the GaLAHaD CMDI template files in the zip.
  * @return The flushed and closed zipfile.
  */
-fun createZipFile(
-    files: Sequence<FileMapper>,
-    out: OutputStream? = null,
-    includeCMDI: Boolean = false,
-): File {
+fun createZipFile(files: Sequence<FileMapper>, out: OutputStream): File {
     // Create zip and stream.
-    val zipFile = File.createTempFile("tmp", ".zip")
-    val zipStream = ZipOutputStream(BufferedOutputStream(out ?: FileOutputStream(zipFile)))
+    val zipFile = createTempFile(suffix = ".zip").toFile()
+    val zipStream = ZipOutputStream(BufferedOutputStream(out))
     // Loop through the Sequence of files
     // Any transformations occur on demand.
+    // TODO execute in threadpool
     for (f in files) {
         zipStream.putNextEntry(ZipEntry(f.first))
         f.second(BufferedOutputStream(zipStream))
         zipStream.closeEntry()
     }
 
-    if (includeCMDI) {
-        val cmdis = arrayOf("TextProfileINT_GaLAHaD.xml", "TextProfileINT_GaLAHaD.xsd")
-        for (cmdi in cmdis) {
-            val cmdiFile = getResourceStream(cmdi)
-            zipStream.putNextEntry(ZipEntry("metadata/$cmdi"))
-            zipStream.write(cmdiFile!!.readBytes())
-        }
+    val cmdis = arrayOf("TextProfileINT_GaLAHaD.xml", "TextProfileINT_GaLAHaD.xsd")
+    for (cmdi in cmdis) {
+        val cmdiFile = getResourceStream(cmdi)
+        zipStream.putNextEntry(ZipEntry("metadata/$cmdi"))
+        zipStream.write(cmdiFile!!.readBytes())
     }
     // Close
     zipStream.flush()
@@ -50,7 +75,7 @@ fun createZipFile(
 }
 
 fun zipDir(dir: File): File {
-    val zipFile = File.createTempFile("tmp", ".zip")
+    val zipFile = createTempFile(suffix = ".zip").toFile()
     val stream = ZipOutputStream(BufferedOutputStream(FileOutputStream(zipFile)))
     stream.use { zip ->
         dir.walk().forEach { file ->

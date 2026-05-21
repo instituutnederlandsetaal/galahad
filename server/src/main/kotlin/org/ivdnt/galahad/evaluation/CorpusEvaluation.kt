@@ -1,11 +1,11 @@
 package org.ivdnt.galahad.evaluation
 
-import java.io.File
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.evaluation.entities.CorpusEntities
 import org.ivdnt.galahad.exceptions.JobNotFoundException
 import org.ivdnt.galahad.files.GalahadFolderManager
 import org.ivdnt.galahad.files.ValidatedDiskValue
+import java.io.File
 
 /**
  * Defines evaluations at the level of a corpus, i.e. where all jobs (and their documents) are
@@ -13,7 +13,7 @@ import org.ivdnt.galahad.files.ValidatedDiskValue
  */
 class CorpusEvaluation(dir: File, private val corpus: Corpus) :
     GalahadFolderManager<JobEvaluation, JobPair>(dir) {
-    fun ctor(key: JobPair): JobEvaluation = JobEvaluation(dir.resolve(key.toString()), corpus, key)
+    private fun ctor(key: JobPair): JobEvaluation = JobEvaluation(dir.resolve(key.toString()), corpus, key)
 
     override fun ctor(key: String): JobEvaluation = ctor(JobPair.fromString(key))
 

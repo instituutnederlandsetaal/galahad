@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonValue
 
 /** Stores the size of the [Layer] in terms of number of [WordForm], [Term], lemma and pos. */
 data class LayerAnnotations(@JsonValue val annotations: Map<Annotation, Int>) {
-    val keys: Iterable<Annotation>
+    val keys: Set<Annotation>
         get() = Annotation.order(annotations.keys)
 
     companion object {

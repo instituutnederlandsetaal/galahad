@@ -14,7 +14,7 @@ import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.Constructor
 
-class Tagger(
+data class Tagger(
     // The id should be equal to the filename
     // i.e. mytagger.yaml should have id 'mytagger'
     // This ought te be set when loading from file
@@ -53,9 +53,16 @@ class Tagger(
     val principles: String
         get() = annotations.mapNotNull { it.principles }.flatten().joinToString { it.name!! }
 
-    class LinkItem(var name: String? = null, var details: String? = null, var href: String? = null)
+    data class LinkItem(
+        var name: String? = null,
+        var details: String? = null,
+        var href: String? = null,
+    )
 
-    class AnnotationItem(var annotation: Annotation? = null, var principles: List<LinkItem>? = null)
+    data class AnnotationItem(
+        var annotation: Annotation? = null,
+        var principles: List<LinkItem>? = null,
+    )
 
     companion object {
         private const val TAGGERS_DIR: String = "data/taggers"
@@ -74,14 +81,9 @@ class Tagger(
                 }
                 .associateBy { it.name }
 
-        fun readOrThrow(id: String, corpus: Corpus? = null): Tagger =
-            when (id) {
-                SOURCE_LAYER ->
-                    corpus?.jobs?.readOrThrow(SOURCE_LAYER)?.metadata?.tagger
-                        ?: throw TaggerNotFoundException(id)
-
-                else -> taggers[id] ?: throw TaggerNotFoundException(id)
-            }
+        // TODO remove parameter corpus, given that each corpusLayer now has a tagger
+        // TODO remove the when SOURCE_LAYER all together
+        fun readOrThrow(id: String): Tagger = taggers[id] ?: throw TaggerNotFoundException(id)
 
         fun createSourceTagger(corpus: Corpus): Tagger {
             val metadata = corpus.metadata

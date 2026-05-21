@@ -1,11 +1,11 @@
 package org.ivdnt.galahad.formats.tsv
 
-import java.io.File
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.exceptions.DocumentInvalidException
 import org.ivdnt.galahad.formats.reader.LineReader
+import java.io.File
 
 class TsvReader(val file: File) : LineReader() {
     private val columnIndices: MutableMap<Annotation, Int> = mutableMapOf()

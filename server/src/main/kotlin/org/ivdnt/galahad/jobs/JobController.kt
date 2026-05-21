@@ -7,10 +7,7 @@ import kotlin.collections.count
 import kotlin.collections.minusAssign
 import kotlin.collections.plusAssign
 import kotlin.io.path.createTempFile
-import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER
 import org.ivdnt.galahad.documents.Document
-import org.ivdnt.galahad.exceptions.SourceLayerNotATaggerException
-import org.ivdnt.galahad.formats.ParsedFile
 import org.ivdnt.galahad.taggers.Tagger
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.HttpEntity
@@ -30,7 +27,6 @@ object JobController {
     fun inQueue(job: Job): Boolean = job in queue
 
     fun queue(job: Job) {
-        if (job.name == SOURCE_LAYER) throw SourceLayerNotATaggerException()
         if (job in queue) {
             return // Already in queue, nothing to do.
         }
@@ -38,8 +34,12 @@ object JobController {
         start()
     }
 
+    fun reset() {
+        queue.clear()
+        task = null
+    }
+
     fun dequeue(job: Job) {
-        if (job.name == SOURCE_LAYER) throw SourceLayerNotATaggerException()
         if (job in queue) {
             queue -= job
         }
@@ -94,8 +94,7 @@ object JobController {
 
     private fun tag(job: Job, doc: Document): UUID {
         val url = "${Tagger.readOrThrow(job.name).url}/input"
-        val text =
-            job.corpus.jobs.readOrThrow(SOURCE_LAYER).results.readOrThrow(doc.name).layer.toString()
+        val text = doc.layer.toString()
         val file = createTempFile().toFile().also { it.writeText(text) }
         val entity =
             HttpEntity(
@@ -121,7 +120,11 @@ object JobController {
 
     private class Task(val uuid: UUID, val job: Job, val doc: String) {
         fun finish(file: File) {
-            job.results.createOrThrow(doc).layer = ParsedFile.create(file).layer
+            try {
+                job.corpus.layers.readOrThrow(job.name).documents.createOrThrow(file)
+            } catch (exception: Exception) {
+                job.results.createOrThrow(doc).error = exception.message
+            }
         }
     }
 }

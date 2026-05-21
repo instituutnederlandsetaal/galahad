@@ -27,6 +27,12 @@ dependencies {
 //    testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
 
+    // mock taggers with wiremock
+    // Source: https://mvnrepository.com/artifact/org.wiremock/wiremock-jetty12
+    testImplementation("org.wiremock:wiremock-jetty12:3.13.2")
+    // Source: https://mvnrepository.com/artifact/org.wiremock.integrations/wiremock-spring-boot
+    testImplementation("org.wiremock.integrations:wiremock-spring-boot:4.2.1")
+
     // kotlin
     // Versions controlled by Kotlin jvm plugin
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -67,7 +73,7 @@ dependencies {
 }
 
 tasks.withType<Test> {
-    environment(mapOf("profile" to "dev"))
+    environment(mapOf("spring.profiles.active" to "dev"))
     systemProperty("line.separator", "\n")
     useJUnitPlatform()
 }

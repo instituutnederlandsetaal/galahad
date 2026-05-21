@@ -3,7 +3,7 @@ package org.ivdnt.galahad.evaluation.confusion
 import com.fasterxml.jackson.annotation.JsonValue
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Term
-import org.ivdnt.galahad.evaluation.EvaluationEntry
+import org.ivdnt.galahad.evaluation.comparison.EvaluationEntry
 import org.ivdnt.galahad.evaluation.comparison.LayerComparison
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
 

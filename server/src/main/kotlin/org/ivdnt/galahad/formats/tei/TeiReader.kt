@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.formats.tei
 
-import java.io.InputStream
 import org.ivdnt.galahad.formats.reader.XmlReader
+import java.io.InputStream
 
 class TeiReader(stream: InputStream) : XmlReader(stream) {
     override val nerTags: Array<String> = NER_TAGS

@@ -5,7 +5,7 @@ import java.net.URL
 import java.util.*
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.exceptions.CorpusInvalidException
-import org.ivdnt.galahad.exceptions.CorpusUnauthorizedException
+import org.ivdnt.galahad.exceptions.UserUnauthorizedException
 
 /**
  * Corpus metadata that can be changed by the user. Although technically [owner] should only be set
@@ -22,9 +22,9 @@ open class CorpusMetadata(
     var collaborators: MutableSet<String>? = null,
     var viewers: MutableSet<String>? = null,
 ) {
-    class Source(var name: String?, var url: URL?)
+    data class Source(var name: String?, var url: URL?)
 
-    class Period(var from: Int = 0, var to: Int = 0)
+    data class Period(var from: Int = 0, var to: Int = 0)
 
     @JsonIgnore var id: UUID? = null
 
@@ -42,39 +42,39 @@ open class CorpusMetadata(
      * Whether the user is in the list of collaborators of this corpus. Note that this is not the
      * same as having write access: use [canWrite].
      */
-    private fun isCollaborator(user: User): Boolean = collaborators?.contains(user.id) == true
+    private fun isCollaborator(user: User): Boolean = collaborators?.contains(user.name) == true
 
     /**
      * Whether the user is in the list of viewers of this corpus. Note that this is not the same as
      * having read access: use [canRead].
      */
-    private fun isViewer(user: User): Boolean = viewers?.contains(user.id) == true
+    private fun isViewer(user: User): Boolean = viewers?.contains(user.name) == true
 
     /** To have write access, you need to be an owner, collaborator or admin. */
     fun canWrite(user: User): Boolean {
         if (user.admin) return true
-        if (owner == user.id) return true
+        if (owner == user.name) return true
         return isCollaborator(user)
     }
 
     /** Only the owner can delete a corpus, unless you are an admin. */
     fun canDelete(user: User): Boolean {
         if (user.admin) return true
-        return owner == user.id
+        return owner == user.name
     }
 
     /** Only the owner and admin can add new collaborators and viewers. */
     private fun canAddNewUsers(user: User): Boolean {
         if (user.admin) return true
-        return owner == user.id
+        return owner == user.name
     }
 
     private fun removeAsViewer(user: User) {
-        viewers?.removeIf { i -> i == user.id }
+        viewers?.removeIf { i -> i == user.name }
     }
 
     private fun removeAsCollaborator(user: User) {
-        collaborators?.removeIf { i -> i == user.id }
+        collaborators?.removeIf { i -> i == user.name }
     }
 
     /**
@@ -89,7 +89,7 @@ open class CorpusMetadata(
         if (dataset == true) return true
         if (isCollaborator(user)) return true
         if (isViewer(user)) return true
-        if (owner == user.id) return true
+        if (owner == user.name) return true
         return false
     }
 
@@ -114,7 +114,7 @@ open class CorpusMetadata(
             val user = newMeta.user!!
             // Overwrite the owner with the original, so collaborators can't change it,
             // unless it's empty, in which case it's a new corpus.
-            newMeta.owner = oldMeta?.owner ?: user.id
+            newMeta.owner = oldMeta?.owner ?: user.name
 
             // Is this user a viewer?
             if (oldMeta?.isViewer(user) == true) {
@@ -125,7 +125,7 @@ open class CorpusMetadata(
                     return oldMeta
                 } else {
                     // If the viewer is not removing themselves, this action is unauthorized.
-                    throw CorpusUnauthorizedException("Cannot edit corpus.")
+                    throw UserUnauthorizedException("Cannot edit corpus.")
                 }
             }
 
@@ -143,7 +143,7 @@ open class CorpusMetadata(
             if (oldMeta?.dataset != true && newMeta.dataset == true) {
                 // Corpus is being set to public
                 if (!user.admin) {
-                    throw CorpusUnauthorizedException("Cannot create a dataset.")
+                    throw UserUnauthorizedException("Cannot create a dataset.")
                 }
             }
 
@@ -153,7 +153,7 @@ open class CorpusMetadata(
             ) {
                 // Collaborators have changed
                 if (!newMeta.canAddNewUsers(user)) {
-                    throw CorpusUnauthorizedException("Cannot change collaborators or viewers.")
+                    throw UserUnauthorizedException("Cannot change collaborators or viewers.")
                 }
             }
 

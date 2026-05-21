@@ -1,0 +1,22 @@
+package org.ivdnt.galahad.web.service
+
+import org.apache.logging.log4j.kotlin.Logging
+import org.ivdnt.galahad.layers.CorpusLayerMetadata
+import org.springframework.stereotype.Service
+import java.util.*
+
+@Service
+class LayerService(private val corpora: CorporaService) : Logging {
+    fun readAll(corpus: UUID): List<CorpusLayerMetadata> =
+        corpora.readOrThrow(corpus).layers.readAll().map { it.metadata}
+
+    fun readOrThrow(corpus: UUID, layer: String): CorpusLayerMetadata =
+        corpora.readOrThrow(corpus).layers.readOrThrow(layer).metadata
+
+    fun deleteOrThrow(corpus: UUID, layer: String) {
+        // Delete all jobs for this layer
+        corpora.writeOrThrow(corpus).jobs.deleteOrThrow(layer) // TODO: delete all evaluations
+        // Now delete it as write access
+        corpora.writeOrThrow(corpus).layers.deleteOrThrow(layer)
+    }
+}

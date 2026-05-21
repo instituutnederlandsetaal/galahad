@@ -5,8 +5,8 @@ import kotlin.math.sqrt
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.evaluation.CorpusEvaluation
 import org.ivdnt.galahad.evaluation.JobPair
-import org.ivdnt.galahad.export.csv.CsvFile
-import org.ivdnt.galahad.export.csv.CsvString
+import org.ivdnt.galahad.evaluation.csv.CsvFile
+import org.ivdnt.galahad.evaluation.csv.CsvString
 import org.ivdnt.galahad.util.toFixed
 
 class CorpusEntities(val jobs: Map<String, JobEntities>, val stddev: JobsEntitiesStddev) {

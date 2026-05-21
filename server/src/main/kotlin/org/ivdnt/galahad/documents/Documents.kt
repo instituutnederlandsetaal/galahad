@@ -29,4 +29,6 @@ class Documents(dir: File) : GalahadFolderManager<Document, File>(dir) {
     override fun ctor(key: String): Document = Document(dir.resolve(key))
 
     override fun throwNotFound(key: String): Nothing = throw DocumentNotFoundException(key)
+
+    // TODO should overwrite deleteOrThrow to delete jobs, (non-user-uploaded) layers & evals
 }

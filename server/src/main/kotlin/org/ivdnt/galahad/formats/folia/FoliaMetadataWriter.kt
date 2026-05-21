@@ -62,7 +62,7 @@ class FoliaMetadataWriter(val writer: PrettyXMLWriter, val export: DocumentExpor
                     "src" to
                         "https://github.com/instituutnederlandsetaal/galahad-taggers-dockerized",
                     "host" to "https://galahad.ivdnt.org",
-                    "user" to export.user.id,
+                    "user" to export.user.name,
                 ),
             )
         }

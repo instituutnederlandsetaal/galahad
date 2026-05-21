@@ -12,8 +12,9 @@ abstract class GalahadFolder(protected val dir: File) {
     val name: String = dir.name
     val modified: Long
         get() =
-            dir.listFiles().maxOfOrNull { Files.getLastModifiedTime(it.toPath()).toMillis() } ?: -1
+            dir.listFiles().maxOfOrNull { Files.getLastModifiedTime(it.toPath()).toMillis() }
+                ?: dir.lastModified()
 
     val size: Long
-        get() = dir.walkTopDown().filter { it.isFile }.map { it.length() }.sum()
+        get() = dir.walkTopDown().filter { it.isFile }.sumOf { it.length() }
 }

@@ -14,7 +14,8 @@ class DocumentSpanEvaluation(
     companion object {
         fun create(layerComparison: LayerComparison, reference: Layer): DocumentSpanEvaluation {
             val result = mutableMapOf<Annotation, MutableMap<String, SpanEvaluation>>()
-
+            // TODO this should absolutely not go through all paragraphs, sentences, etc.
+            // TODO layer comparsion should match spans or something. Perhaps LayerSpanComparison
             reference.documents.forEach { document ->
                 document.paragraphs.forEach { paragraph ->
                     paragraph.sentences.forEach { sentence ->

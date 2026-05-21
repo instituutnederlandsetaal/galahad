@@ -8,8 +8,14 @@ const useErrors = defineStore("errors", () => {
     function setupErrorHandler() {
         axios.interceptors.response.use(
             (response) => response,
-            (error) => {
-                errors.value.push(`${error.config?.url}: ${error.response?.data?.message ?? error.message}`)
+            async (error) => {
+                let message = undefined
+                try {
+                    message = JSON.parse(await error.response?.data?.text() ?? "{}").message;
+                } catch (e) {
+                    message = error.response?.data?.message
+                }
+                errors.value.push(`${error.config?.url}: ${message ?? error.message}`)
                 return Promise.reject(error)
             },
         )

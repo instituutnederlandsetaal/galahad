@@ -8,9 +8,9 @@ import type { UUID } from "@/types/corpora"
 import type { Format } from "@/types/documents"
 
 const convertCorpusPath = (corpus: UUID, job: string, format: Format, posHeadOnly: boolean): string =>
-    `/corpora/${corpus}/jobs/${job}/export/convert?format=${format}&posHeadOnly=${posHeadOnly}`
+    `/corpora/${corpus}/layers/${job}/export/convert?format=${format}&posHeadOnly=${posHeadOnly}`
 const mergeCorpusPath = (corpus: UUID, job: string, format: Format, posHeadOnly: boolean): string =>
-    `/corpora/${corpus}/jobs/${job}/export/merge?format=${format}&posHeadOnly=${posHeadOnly}`
+    `/corpora/${corpus}/layers/${job}/export/merge?format=${format}&posHeadOnly=${posHeadOnly}`
 
 /**
  * Download a corpus converted to the desired format.

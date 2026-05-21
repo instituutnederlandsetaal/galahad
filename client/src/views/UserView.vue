@@ -1,10 +1,10 @@
 <template>
-    <GCard article :title="`Logged in as ${user.id}`">
+    <GCard article :title="`Logged in as ${user.name}`">
         <p>Find information about your account here.</p>
         <dl>
             <dt>Username:</dt>
             <dd>
-                <b>{{ user.id }}</b>
+                <b>{{ user.name }}</b>
             </dd>
             <template v-if="user.admin">
                 <dt>Admin:</dt>
@@ -17,6 +17,5 @@
 <script setup lang="ts">
 import stores from "@/stores"
 
-// #stores
 const { user } = storeToRefs(stores.useUser())
 </script>

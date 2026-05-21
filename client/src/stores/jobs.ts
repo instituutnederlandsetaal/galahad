@@ -30,7 +30,7 @@ const useJobs = defineStore("jobs", () => {
                 jobs.value = res.data
                 jobs.value
                     .filter((j: Job) => j.progress.busy)
-                    .forEach((j: Job) => { startPolling(j.tagger.id, corpusId.value) })
+                    .forEach((j: Job) => { startPolling(j.tagger.name, corpusId.value) })
             })
             .finally(() => (loading.value = false))
     }
@@ -45,7 +45,7 @@ const useJobs = defineStore("jobs", () => {
         if (response.request.responseURL.includes(corporaStore.corpusId)) {
             // Only commit the response if it corresponds to the correct corpus
             // This prevents late responses overwriting responses to newer requests
-            jobs.value.find((j: Job) => j.tagger.id === job).progress = response.data
+            jobs.value.find((j: Job) => j.tagger.name === job).progress = response.data
             // Stop polling if the job is done.
             if (!response.data.busy) {
                 stopPolling(job)

@@ -52,7 +52,7 @@ class CorpusStatistics(
                 viewers = corpus.metadata.viewers,
                 // Immutable fields
                 uuid = corpus.uuid,
-                numResults = corpus.jobs.readAll().count { it.hasResult },
+                numResults = corpus.jobs.readAll().size,
                 numDocs = corpus.documents.readAll().size,
                 size = corpus.size,
                 modified = System.currentTimeMillis(),

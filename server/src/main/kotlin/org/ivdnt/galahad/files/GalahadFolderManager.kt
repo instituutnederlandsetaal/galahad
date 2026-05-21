@@ -35,7 +35,8 @@ abstract class GalahadFolderManager<ReadType : GalahadFolder, CreateType : Any>(
     open fun readAllSequence(): Sequence<ReadType> =
         dir.list()?.asSequence()?.map { readOrThrow(it) } ?: emptySequence()
 
-    open fun readOrNull(key: String): ReadType? = if (dir.resolve(key).exists()) ctor(key) else null
+    // TODO resolve in folder only?
+    fun readOrNull(key: String): ReadType? = if (dir.resolve(key).exists()) ctor(key) else null
 
     fun readOrThrow(key: String): ReadType = readOrNull(key) ?: throwNotFound(key)
 

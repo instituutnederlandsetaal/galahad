@@ -1,15 +1,15 @@
 package org.ivdnt.galahad.export
 
+import org.ivdnt.galahad.app.Config
+import org.ivdnt.galahad.util.*
+import org.w3c.dom.Element
+import org.w3c.dom.Node
 import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
-import org.ivdnt.galahad.app.Config
-import org.ivdnt.galahad.util.*
-import org.w3c.dom.Element
-import org.w3c.dom.Node
 
 /**
  * Constructs a CMDI file for the exported document. Uses a template CMDI file (in resources/) and

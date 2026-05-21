@@ -12,7 +12,9 @@ import org.ivdnt.galahad.documents.Documents
 import org.ivdnt.galahad.exceptions.MergeNotImplementedException
 import org.ivdnt.galahad.layers.CorpusLayer
 import org.ivdnt.galahad.util.FileMapper
+import org.ivdnt.galahad.util.asFormat
 import org.ivdnt.galahad.util.createZipFile
+import org.ivdnt.galahad.util.dedupeFilenames
 import org.ivdnt.galahad.util.withoutFormatExt
 
 class CorpusExport(
@@ -31,35 +33,40 @@ class CorpusExport(
      * [formatMapper] should perform the mapping.
      */
     fun export(out: OutputStream) {
-        val docs = corpus.documents.readAll().filter { document(it).layer != Layer.EMPTY }
+        val docs = layers.documents.readAll().filter { it.layer != Layer.EMPTY }
         val seq: Sequence<FileMapper> =
-            docs.asSequence().map { doc ->
-                val fileName = doc.sourceFile.withoutFormatExt + "." + format.extension
-                fileName to { out -> formatMapper(doc, out) }
-            }
+            docs
+                .asSequence()
+                .map<Document, Pair<String, (OutputStream) -> Unit>> { doc ->
+                    val fileName = doc.sourceFile.asFormat(format)
+                    fileName to { out -> formatMapper(doc, out) }
+                }
+                .dedupeFilenames()
         val seqCmdi: Sequence<FileMapper> =
-            docs.asSequence().map { doc ->
-                "metadata/CMDI-${doc.sourceFile.withoutFormatExt}.xml" to
-                    { out ->
-                        document(doc).cmdi(out)
-                    }
-            }
-        createZipFile(seq + seqCmdi, out, includeCMDI = true)
+            docs
+                .asSequence()
+                .map<Document, Pair<String, (OutputStream) -> Unit>> { doc ->
+                    "metadata/CMDI-${doc.sourceFile.withoutFormatExt}.xml" to
+                        { out ->
+                            document(doc).cmdi(out)
+                        }
+                }
+                .dedupeFilenames()
+        createZipFile(seq + seqCmdi, out)
     }
 
-    fun document(document: Document): DocumentExport =
+    fun document(document: Document): DocumentExport = document(document.name)
+
+    fun document(document: String): DocumentExport =
         DocumentExport(
             corpus = corpus,
             layers = layers,
             sourceLayers = sourceLayers,
-            document = document.name,
+            document = document,
             user = user,
             format = format,
             posHead = posHead,
         )
-
-    fun document(document: String): DocumentExport =
-        document(corpus.documents.readOrThrow(document))
 
     // TODO should this match for teip5 == tei p4 legacy?
     private fun mergeFormatMatches(it: Document, format: DocumentFormat): Boolean =

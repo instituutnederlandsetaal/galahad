@@ -2,10 +2,10 @@ package org.ivdnt.galahad.documents
 
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonValue
-import java.io.File
-import javax.xml.stream.XMLStreamReader
 import org.ivdnt.galahad.exceptions.InvalidDocumentFormatException
 import org.ivdnt.galahad.util.XmlUtil
+import java.io.File
+import javax.xml.stream.XMLStreamReader
 
 /** Format of a document. No 1-to-1 correspondence with extensions due to xml format overlap. */
 enum class DocumentFormat(val identifier: String, val extension: String) {

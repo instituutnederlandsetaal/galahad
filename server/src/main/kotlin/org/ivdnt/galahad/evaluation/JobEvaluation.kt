@@ -8,7 +8,7 @@ import org.ivdnt.galahad.evaluation.entities.JobEntities
 import org.ivdnt.galahad.evaluation.metrics.JobMetric
 import org.ivdnt.galahad.files.GalahadFolder
 import org.ivdnt.galahad.files.ValidatedDiskValue
-import org.ivdnt.galahad.jobs.Job
+import org.ivdnt.galahad.layers.CorpusLayer
 
 /**
  * Defines evaluations at the level of a job pair, i.e. where all documents of a hypothesis is
@@ -16,11 +16,11 @@ import org.ivdnt.galahad.jobs.Job
  */
 class JobEvaluation(dir: File, private val corpus: Corpus, private val jobs: JobPair) :
     GalahadFolder(dir) {
-    val refJob: Job
-        get() = corpus.jobs.readOrThrow(jobs.reference)
+    val refJob: CorpusLayer
+        get() = corpus.layers.readOrThrow(jobs.reference)
 
-    val hypJob: Job
-        get() = corpus.jobs.readOrThrow(jobs.hypothesis)
+    val hypJob: CorpusLayer
+        get() = corpus.layers.readOrThrow(jobs.hypothesis)
 
     /** Access evaluations of individual documents in this job pair. */
     val documents: DocumentEvaluations =
@@ -30,7 +30,7 @@ class JobEvaluation(dir: File, private val corpus: Corpus, private val jobs: Job
         get() =
             object : ValidatedDiskValue<JobEntities>(dir.resolve(ENTITIES_FILE)) {
                     override fun isValid(modified: Long) =
-                        modified >= Math.max(refJob.modified, hypJob.modified)
+                        modified >= maxOf(refJob.modified, hypJob.modified)
 
                     override fun set(): JobEntities = JobEntities.create(corpus, documents)
                 }
@@ -40,7 +40,7 @@ class JobEvaluation(dir: File, private val corpus: Corpus, private val jobs: Job
         get() =
             object : ValidatedDiskValue<JobDistribution>(dir.resolve(DISTRIBUTION_FILE)) {
                     override fun isValid(modified: Long) =
-                        modified >= Math.max(refJob.modified, hypJob.modified)
+                        modified >= maxOf(refJob.modified, hypJob.modified)
 
                     override fun set(): JobDistribution = JobDistribution.create(corpus, documents)
                 }
@@ -50,7 +50,7 @@ class JobEvaluation(dir: File, private val corpus: Corpus, private val jobs: Job
         get() =
             object : ValidatedDiskValue<JobConfusion>(dir.resolve(CONFUSION_FILE)) {
                     override fun isValid(modified: Long) =
-                        modified >= Math.max(refJob.modified, hypJob.modified)
+                        modified >= maxOf(refJob.modified, hypJob.modified)
 
                     override fun set(): JobConfusion = JobConfusion.create(corpus, documents)
                 }
@@ -60,7 +60,7 @@ class JobEvaluation(dir: File, private val corpus: Corpus, private val jobs: Job
         get() =
             object : ValidatedDiskValue<JobMetric>(dir.resolve(METRICS_FILE)) {
                     override fun isValid(modified: Long) =
-                        modified >= Math.max(refJob.modified, hypJob.modified)
+                        modified >= maxOf(refJob.modified, hypJob.modified)
 
                     override fun set(): JobMetric = JobMetric.create(corpus, documents)
                 }

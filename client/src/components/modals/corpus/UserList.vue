@@ -66,7 +66,7 @@ export default defineComponent({
     methods: {
         canDelete(username: string): boolean {
             if (!this.showAddDialog) {
-                return this.userStore.user.id === username
+                return this.userStore.user.name === username
             }
             return true
         },

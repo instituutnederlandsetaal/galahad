@@ -38,7 +38,7 @@
             <appInfo resp="GaLAHaD">
                 <application>
                     <label>POS-tagger and lemmatiser</label>
-                    <ptr target="sourceLayer"/>
+                    <ptr target="source"/>
                 </application>
             </appInfo>
             <editorialDecl resp="GaLAHaD">
@@ -65,7 +65,7 @@
                             <interp>automatically annotated</interp>
                         </interpGrp>
                         <interpGrp type="processor">
-                            <interp sameAs="#sourceLayer"/>
+                            <interp sameAs="#source"/>
                         </interpGrp>
                         <date from="2025-07-30" to="2025-07-30"/>
                     </ab>

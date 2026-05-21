@@ -37,7 +37,7 @@ class Layer(
 
     companion object {
         val EMPTY: Layer = Layer(emptyArray(), "")
-        const val SOURCE_LAYER: String = "sourceLayer"
+        const val SOURCE_LAYER: String = "source"
     }
 }
 

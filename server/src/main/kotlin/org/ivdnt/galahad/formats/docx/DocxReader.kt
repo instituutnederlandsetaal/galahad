@@ -1,11 +1,11 @@
 package org.ivdnt.galahad.formats.docx
 
-import java.io.InputStream
 import org.apache.poi.xwpf.usermodel.XWPFDocument
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.formats.reader.LayerReader
+import java.io.InputStream
 
 class DocxReader(stream: InputStream) : LayerReader() {
     val doc: XWPFDocument = XWPFDocument(stream)

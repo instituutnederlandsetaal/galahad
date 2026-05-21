@@ -6,9 +6,10 @@ import org.ivdnt.galahad.app.Galahad
 import org.ivdnt.galahad.corpora.CorpusStatistics
 import org.ivdnt.galahad.exceptions.CorpusInvalidException
 import org.ivdnt.galahad.exceptions.CorpusNotFoundException
-import org.ivdnt.galahad.exceptions.CorpusUnauthorizedException
+import org.ivdnt.galahad.exceptions.UserUnauthorizedException
 import org.ivdnt.galahad.util.*
 import org.ivdnt.galahad.util.TestUtil.assignHeaders
+import org.ivdnt.galahad.web.controller.ErrorController
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -16,6 +17,8 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
+import org.springframework.context.annotation.Import
+import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActionsDsl
@@ -26,6 +29,7 @@ import tools.jackson.module.kotlin.convertValue
 /** Web controller tests for serialization, status, exception resolving and permissions. */
 @SpringBootTest(properties = ["spring.main.allow-bean-definition-overriding=true"])
 @AutoConfigureMockMvc
+@Import(ErrorController::class)
 @ContextConfiguration(classes = [Galahad::class, TestConfig::class])
 class CorporaControllerTest(@Autowired val mvc: MockMvc) {
     @BeforeEach
@@ -55,7 +59,7 @@ class CorporaControllerTest(@Autowired val mvc: MockMvc) {
         fun `Can create corpus with metadata`() {
             val body =
                 mapOf(
-                    "owner" to TestUtil.TEST_USER,
+                    "owner" to TestUtil.USER,
                     "name" to "test",
                     "language" to "Dutch",
                     "tagset" to "TDN-Core",
@@ -86,8 +90,8 @@ class CorporaControllerTest(@Autowired val mvc: MockMvc) {
             val body =
                 mapOf(
                     "name" to "test",
-                    "viewers" to setOf("viewer", "collaborator", TestUtil.TEST_USER),
-                    "collaborators" to setOf("collaborator", TestUtil.TEST_USER),
+                    "viewers" to setOf("viewer", "collaborator", TestUtil.USER),
+                    "collaborators" to setOf("collaborator", TestUtil.USER),
                 )
             val uuid = postCorpus(body)
             val corpus = getCorpus(uuid)
@@ -113,7 +117,7 @@ class CorporaControllerTest(@Autowired val mvc: MockMvc) {
                 }
                 .andExpect {
                     status { isForbidden() }
-                    match { it.resolvedException is CorpusUnauthorizedException }
+                    match { it.resolvedException is UserUnauthorizedException }
                 }
             assertEquals(0, getAllCorpora().size)
         }
@@ -155,6 +159,7 @@ class CorporaControllerTest(@Autowired val mvc: MockMvc) {
 
         @Test
         fun `Getting non-uuid corpus is bad request`() {
+            // Spring does this for us
             mvc.get("/corpora/non-uuid").andExpect { status { isBadRequest() } }
         }
 
@@ -163,7 +168,7 @@ class CorporaControllerTest(@Autowired val mvc: MockMvc) {
             val uuid = postCorpus(mapOf("name" to "test"))
             performGetCorpus(uuid, "stranger").andExpect {
                 status { isForbidden() }
-                match { it.resolvedException is CorpusUnauthorizedException }
+                match { it.resolvedException is UserUnauthorizedException }
             }
         }
     }
@@ -204,7 +209,7 @@ class CorporaControllerTest(@Autowired val mvc: MockMvc) {
             val uuid = postCorpus(mapOf("name" to "original"))
             performUpdateCorpus(uuid, mapOf("name" to "updated"), "stranger").andExpect {
                 status { isForbidden() }
-                match { it.resolvedException is CorpusUnauthorizedException }
+                match { it.resolvedException is UserUnauthorizedException }
             }
             val corpus = getCorpus(uuid)
             assertEquals("original", corpus.name)
@@ -216,7 +221,7 @@ class CorporaControllerTest(@Autowired val mvc: MockMvc) {
             val updated = mapOf("name" to "updated", "viewers" to setOf("viewer"))
             performUpdateCorpus(uuid, updated, "viewer").andExpect {
                 status { isForbidden() }
-                match { it.resolvedException is CorpusUnauthorizedException }
+                match { it.resolvedException is UserUnauthorizedException }
             }
             val corpus = getCorpus(uuid)
             assertEquals("original", corpus.name)
@@ -250,7 +255,7 @@ class CorporaControllerTest(@Autowired val mvc: MockMvc) {
                 )
                 .andExpect {
                     status { isForbidden() }
-                    match { it.resolvedException is CorpusUnauthorizedException }
+                    match { it.resolvedException is UserUnauthorizedException }
                 }
             val corpus = getCorpus(uuid)
             assertEquals(setOf("collaborator1", "collaborator2"), corpus.collaborators)
@@ -271,11 +276,10 @@ class CorporaControllerTest(@Autowired val mvc: MockMvc) {
 
     @Nested
     inner class CorpusDeletionTest {
-        @Test
-        fun `Owner can delete corpus`() {
+        private fun assertDeleteCorpus(user: String) {
             val uuid = postCorpus(mapOf("name" to "test"))
             assertEquals(1, getAllCorpora().size)
-            deleteCorpus(uuid)
+            deleteCorpus(uuid, user)
             performGetCorpus(uuid).andExpect {
                 status { isNotFound() }
                 match { it.resolvedException is CorpusNotFoundException }
@@ -284,15 +288,13 @@ class CorporaControllerTest(@Autowired val mvc: MockMvc) {
         }
 
         @Test
+        fun `Owner can delete corpus`() {
+            assertDeleteCorpus(TestUtil.USER)
+        }
+
+        @Test
         fun `Admin can delete corpus`() {
-            val uuid = postCorpus(mapOf("name" to "test"))
-            assertEquals(1, getAllCorpora().size)
-            deleteCorpus(uuid, "admin")
-            performGetCorpus(uuid).andExpect {
-                status { isNotFound() }
-                match { it.resolvedException is CorpusNotFoundException }
-            }
-            assertEquals(0, getAllCorpora().size)
+            assertDeleteCorpus("admin")
         }
 
         @Test
@@ -303,91 +305,102 @@ class CorporaControllerTest(@Autowired val mvc: MockMvc) {
             }
         }
 
+        private fun assertCantDeleteCorpus(corpus: UUID, user: String) {
+            assertEquals(1, getAllCorpora().size)
+            assertDeleteCorpusForbidden(corpus, user)
+            assertEquals(1, getAllCorpora().size)
+        }
+
         @Test
         fun `Stranger can't delete corpus`() {
             val corpus = postCorpus(mapOf("name" to "test"))
-            assertEquals(1, getAllCorpora().size)
-            assertDeleteCorpusForbidden(corpus, "stranger")
-            assertEquals(1, getAllCorpora().size)
+            assertCantDeleteCorpus(corpus, "stranger")
         }
 
         @Test
         fun `Stranger can't delete database corpus`() {
             val corpus = postCorpus(mapOf("name" to "test", "dataset" to true), "admin")
-            assertEquals(1, getAllCorpora().size)
-            assertDeleteCorpusForbidden(corpus, "stranger")
-            assertEquals(1, getAllCorpora().size)
+            assertCantDeleteCorpus(corpus, "stranger")
         }
 
         @Test
         fun `Viewer can't delete corpus`() {
             val corpus = postCorpus(mapOf("name" to "test", "viewers" to setOf("viewer")))
-            assertEquals(1, getAllCorpora().size)
-            assertDeleteCorpusForbidden(corpus, "viewer")
-            assertEquals(1, getAllCorpora().size)
+            assertCantDeleteCorpus(corpus, "viewer")
         }
 
         @Test
         fun `Collaborator can't delete corpus`() {
             val corpus =
                 postCorpus(mapOf("name" to "test", "collaborators" to setOf("collaborator")))
-            assertEquals(1, getAllCorpora().size)
-            assertDeleteCorpusForbidden(corpus, "collaborator")
-            assertEquals(1, getAllCorpora().size)
+            assertCantDeleteCorpus(corpus, "collaborator")
         }
     }
 
-    private fun performPostCorpus(body: Any, user: String = TestUtil.TEST_USER): ResultActionsDsl =
+    private fun performPostCorpus(body: Any, user: String = TestUtil.USER): ResultActionsDsl =
         mvc.postJson("/corpora", body) { headers { assignHeaders(this, user) } }
 
-    private fun postCorpus(body: Any, user: String = TestUtil.TEST_USER): UUID =
+    private fun postCorpus(body: Any, user: String = TestUtil.USER): UUID =
         performPostCorpus(body, user)
-            .andExpect { status { isCreated() } }
+            .andExpect {
+                status { isCreated() }
+                content { contentType(MediaType.APPLICATION_JSON) }
+            }
             .andReturn()
             .andDeserialize()
 
-    private fun performGetCorpus(uuid: UUID?, user: String = TestUtil.TEST_USER): ResultActionsDsl =
+    private fun performGetCorpus(uuid: UUID?, user: String = TestUtil.USER): ResultActionsDsl =
         mvc.get("/corpora/$uuid") { headers { assignHeaders(this, user) } }
 
-    private fun getCorpus(uuid: UUID?, user: String = TestUtil.TEST_USER): CorpusStatistics =
-        performGetCorpus(uuid, user).andExpect { status { isOk() } }.andReturn().andDeserialize()
+    private fun getCorpus(uuid: UUID?, user: String = TestUtil.USER): CorpusStatistics =
+        performGetCorpus(uuid, user)
+            .andExpect {
+                status { isOk() }
+                content { contentType(MediaType.APPLICATION_JSON) }
+            }
+            .andReturn()
+            .andDeserialize()
 
     private fun getAllCorpora(): List<CorpusStatistics> =
         mvc.get("/corpora") { headers(::assignHeaders) }
-            .andExpect { status { isOk() } }
+            .andExpect {
+                status { isOk() }
+                content { contentType(MediaType.APPLICATION_JSON) }
+            }
             .andReturn()
             .andDeserialize()
 
-    private fun performDeleteCorpus(
-        uuid: UUID?,
-        user: String = TestUtil.TEST_USER,
-    ): ResultActionsDsl = mvc.delete("/corpora/$uuid") { headers { assignHeaders(this, user) } }
+    private fun performDeleteCorpus(uuid: UUID?, user: String = TestUtil.USER): ResultActionsDsl =
+        mvc.delete("/corpora/$uuid") { headers { assignHeaders(this, user) } }
 
-    private fun deleteCorpus(uuid: UUID?, user: String = TestUtil.TEST_USER) {
+    private fun deleteCorpus(uuid: UUID?, user: String = TestUtil.USER) {
         performDeleteCorpus(uuid, user).andExpect { status { isNoContent() } }
     }
 
-    private fun assertDeleteCorpusForbidden(uuid: UUID?, user: String = TestUtil.TEST_USER) {
+    private fun assertDeleteCorpusForbidden(uuid: UUID?, user: String = TestUtil.USER) {
         performDeleteCorpus(uuid, user).andExpect {
             status { isForbidden() }
-            match { it.resolvedException is CorpusUnauthorizedException }
+            match { it.resolvedException is UserUnauthorizedException }
         }
     }
 
     private fun performUpdateCorpus(
         uuid: UUID?,
         body: Any,
-        user: String = TestUtil.TEST_USER,
+        user: String = TestUtil.USER,
     ): ResultActionsDsl =
         mvc.patchJson("/corpora/$uuid", body) { headers { assignHeaders(this, user) } }
 
     private fun updateCorpus(
         uuid: UUID?,
         body: Any,
-        user: String = TestUtil.TEST_USER,
+        user: String = TestUtil.USER,
     ): CorpusStatistics =
         performUpdateCorpus(uuid, body, user)
-            .andExpect { status { isOk() } }
+            .andExpect {
+                status { isOk() }
+                content { contentType(MediaType.APPLICATION_JSON) }
+            }
             .andReturn()
             .andDeserialize()
 }

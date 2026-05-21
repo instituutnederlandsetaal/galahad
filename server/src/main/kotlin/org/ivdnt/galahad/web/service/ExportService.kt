@@ -7,6 +7,7 @@ import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.documents.DocumentFormat
 import org.ivdnt.galahad.export.CorpusExport
+import org.ivdnt.galahad.util.asFormat
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -22,12 +23,12 @@ class ExportService(private val corpora: CorporaService) : Logging {
     /** Export corpus in a stream for longer response times, because converting takes time. */
     fun convertOrMergeCorpus(
         corpus: UUID,
-        job: String,
+        layer: String,
         format: DocumentFormat,
         merge: Boolean,
         posHead: Boolean,
     ): Unit =
-        CorpusExport(corpora.readOrThrow(corpus, user), job, format, user, merge, posHead)
+        CorpusExport(corpora.readOrThrow(corpus), layer, format, user, merge, posHead)
             .export(response!!.outputStream)
 
     fun convertDocument(
@@ -38,19 +39,26 @@ class ExportService(private val corpora: CorporaService) : Logging {
         posHead: Boolean,
     ): Unit =
         corpora
-            .readOrThrow(corpus, user)
+            .readOrThrow(corpus)
             .let { corpus -> CorpusExport(corpus, layer, format, user, false, posHead) }
             .document(document)
             .convert(response!!.outputStream)
 
     fun mergeDocument(corpus: UUID, layer: String, document: String, posHead: Boolean) {
-        val doc = corpora.readOrThrow(corpus, user).documents.readOrThrow(document)
+        val doc = corpora.readOrThrow(corpus).documents.readOrThrow(document)
         corpora
-            .readOrThrow(corpus, user)
+            .readOrThrow(corpus)
             .let { corpus -> CorpusExport(corpus, layer, doc.metadata.format, user, true, posHead) }
             .document(document)
             .merge(response!!.outputStream)
     }
 
-    fun getCorpusName(corpus: UUID): String = corpora.readOrThrow(corpus, user).metadata.name
+    fun getCorpusName(corpus: UUID): String = corpora.readOrThrow(corpus).metadata.name
+
+    fun getDocumentName(corpus: UUID, doc: String, format: DocumentFormat? = null): String {
+        val doc = corpora.readOrThrow(corpus).documents.readOrThrow(doc)
+        val source = doc.sourceFile
+        val format = format ?: doc.metadata.format
+        return source.asFormat(format)
+    }
 }

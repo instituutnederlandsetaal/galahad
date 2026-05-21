@@ -1,6 +1,5 @@
 package org.ivdnt.galahad.evaluation
 
-import java.io.File
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.corpora.Corpus
@@ -13,6 +12,9 @@ import org.ivdnt.galahad.evaluation.metrics.DocumentMetric
 import org.ivdnt.galahad.evaluation.spans.DocumentSpanEvaluation
 import org.ivdnt.galahad.files.GalahadFolder
 import org.ivdnt.galahad.files.ValidatedDiskValue
+import org.ivdnt.galahad.layers.CorpusLayer
+import org.ivdnt.galahad.layers.CorpusLayers
+import java.io.File
 
 /**
  * Defines evaluations at the level of a document, i.e. where a single document hypothesis is
@@ -22,31 +24,31 @@ import org.ivdnt.galahad.files.ValidatedDiskValue
  */
 class DocumentEvaluation(dir: File, private val corpus: Corpus, private val jobs: JobPair) :
     GalahadFolder(dir) {
-    private val referenceDocuments: Documents
+    private val referenceDocuments: CorpusLayer
         get() = corpus.layers.readOrThrow(jobs.reference)
 
-    private val hypothesisDocuments: Documents
+    private val hypothesisDocuments: CorpusLayer
         get() = corpus.layers.readOrThrow(jobs.hypothesis)
 
     private val refLayer: Layer
-        get() = referenceDocuments.readOrThrow(name).layer
+        get() = referenceDocuments.documents.readOrThrow(name).layer
 
     private val hypLayer: Layer
-        get() = hypothesisDocuments.readOrThrow(name).layer
+        get() = hypothesisDocuments.documents.readOrThrow(name).layer
 
     private val refModified: Long
-        get() = referenceDocuments.readOrThrow(name).modified
+        get() = referenceDocuments.documents.readOrThrow(name).modified
 
     private val hypModified: Long
-        get() = hypothesisDocuments.readOrThrow(name).modified
+        get() = hypothesisDocuments.documents.readOrThrow(name).modified
 
     private val lastModified: Long
         get() = maxOf(hypModified, refModified)
 
     private val availableAnnotations: Set<Annotation>
         get() =
-            referenceDocuments.metadata.annotations.annotations.keys
-                .intersect(hypothesisDocuments.metadata.annotations.annotations.keys)
+            referenceDocuments.metadata.annotations.keys
+                .intersect(hypothesisDocuments.metadata.annotations.keys)
                 .filter { it != Annotation.TOKEN }
                 .toSet()
 

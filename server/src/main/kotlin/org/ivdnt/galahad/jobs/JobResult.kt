@@ -15,60 +15,19 @@ import org.ivdnt.galahad.files.GalahadFolder
  * - error: a plaintext error message: when present, [JobStatus.ERROR]
  */
 class JobResult(dir: File) : GalahadFolder(dir), Logging {
-    // Files in the document job folder.
-    private val processingIDFile = dir.resolve(PID_FILE)
-    private val errorFile = dir.resolve(ERROR_FILE)
-    private val layerFile = dir.resolve(LAYER_FILE)
-
-    // Values in those files.
-
-    var layer: Layer?
-        get() = DiskValue<Layer?>(layerFile).readOrNull()
-        set(value) {
-            if (value == null) throw IllegalArgumentException("Layer cannot be set to null")
-            DiskValue<Layer>(layerFile).write(value)
-            processingIDFile.delete()
-        }
-
-    val isProcessing: Boolean
-        get() = processingIDFile.exists() // TODO check if resolving the file does not create it
-
-    var processingID: UUID?
-        get() =
-            if (processingIDFile.exists()) UUID.fromString(processingIDFile.readText()) else null
-        set(value) {
-            if (value == null) throw IllegalArgumentException("Processing ID cannot be set to null")
-            processingIDFile.writeText(value.toString())
-            // If you are processing, we will reset any previous errors
-            errorFile.delete()
-        }
 
     var error: String?
-        get() = if (errorFile.exists()) errorFile.readText() else null
+        get() = DiskValue<String>(dir.resolve(ERROR_FILE)).readOrNull()
         set(value) {
             if (value == null) throw IllegalArgumentException("Error cannot be set to null")
-            errorFile.writeText(value)
-            processingIDFile.delete()
+            DiskValue<String>(dir.resolve(ERROR_FILE)).write(value)
         }
 
-    // /** Determines the status based on the presence of the processing ID, error file, or result
-    // file. */
+    /** Status based on error file, or result file. */
     val status: JobStatus
-        get() {
-            if (errorFile.exists()) return JobStatus.ERROR
-            if (processingIDFile.exists()) return JobStatus.PROCESSING
-            if (layer != null) return JobStatus.FINISHED
-            return JobStatus.PENDING
-        }
-
-    /** Cancels a job by deleting the processing ID. The [status] is updated accordingly. */
-    fun cancel() { // TODO should be in DocumentJobs, i.e. Job
-        processingIDFile.delete()
-    }
+        get() = if (error != null) JobStatus.ERROR else JobStatus.FINISHED
 
     companion object {
-        private const val PID_FILE = "pid.txt"
         private const val ERROR_FILE = "error.txt"
-        private const val LAYER_FILE = "layer.json"
     }
 }

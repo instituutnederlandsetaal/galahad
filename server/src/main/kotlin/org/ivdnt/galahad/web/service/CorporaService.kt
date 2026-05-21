@@ -1,5 +1,6 @@
 package org.ivdnt.galahad.web.service
 
+import jakarta.servlet.http.HttpServletRequest
 import java.util.*
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.User
@@ -8,7 +9,7 @@ import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.corpora.CorpusMetadata
 import org.ivdnt.galahad.corpora.CorpusStatistics
 import org.ivdnt.galahad.exceptions.CorpusNotFoundException
-import org.ivdnt.galahad.exceptions.CorpusUnauthorizedException
+import org.ivdnt.galahad.exceptions.UserUnauthorizedException
 import org.ivdnt.galahad.files.GalahadFolder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -17,38 +18,42 @@ import org.springframework.stereotype.Service
 class CorporaService(@Autowired config: Config) :
     GalahadFolder(config.getWorkingDirectory().resolve("corpora")) {
 
+    @Autowired private val request: HttpServletRequest? = null
+
+    private val user
+        get() = User.fromRequest(request)
+
     private val custom: Corpora = Corpora(dir.resolve("user"))
     private val presets: Corpora = Corpora(dir.resolve("datasets"))
 
     private val all: List<Corpus>
         get() = custom.readAll() + presets.readAll()
 
-    fun readAll(user: User): List<CorpusStatistics> =
+    fun readAll(): List<CorpusStatistics> =
         all.map { it.statistics }.filter { it.canRead(user, excludeAdmin = true) }
 
-    fun readOrThrow(key: UUID, user: User): Corpus {
+    fun readOrThrow(key: UUID): Corpus {
         val (corpus, _) = findOrThrow(key)
         return corpus.also {
-            if (!it.metadata.canRead(user)) throw CorpusUnauthorizedException("Cannot read corpus.")
+            if (!it.metadata.canRead(user)) throw UserUnauthorizedException("Cannot read corpus.")
         }
     }
 
-    fun writeOrThrow(key: UUID, user: User): Corpus {
+    fun writeOrThrow(key: UUID): Corpus {
         val (corpus, _) = findOrThrow(key)
         return corpus.also {
-            if (!it.metadata.canWrite(user))
-                throw CorpusUnauthorizedException("Cannot edit corpus.")
+            if (!it.metadata.canWrite(user)) throw UserUnauthorizedException("Cannot edit corpus.")
         }
     }
 
-    fun createOrThrow(value: CorpusMetadata, user: User): CorpusStatistics {
+    fun createOrThrow(value: CorpusMetadata): CorpusStatistics {
         // new corpora are always custom
         value.user = user
         value.id = UUID.randomUUID()
         return custom.createOrThrow(value).statistics
     }
 
-    fun updateOrThrow(key: UUID, value: CorpusMetadata, user: User): CorpusStatistics {
+    fun updateOrThrow(key: UUID, value: CorpusMetadata): CorpusStatistics {
         val (corpus, corpora) = findOrThrow(key)
         // Read access, because reader should be able to remove themselves
         if (corpus.metadata.canRead(user)) {
@@ -56,15 +61,15 @@ class CorporaService(@Autowired config: Config) :
             value.id = key
             return corpora.updateOrThrow(value).statistics
         }
-        throw CorpusUnauthorizedException("Cannot edit corpus.")
+        throw UserUnauthorizedException("Cannot edit corpus.")
     }
 
-    fun deleteOrThrow(key: UUID, user: User) {
+    fun deleteOrThrow(key: UUID) {
         val (corpus, corpora) = findOrThrow(key)
         if (corpus.metadata.canDelete(user)) {
             corpora.deleteOrThrow(key.toString())
         } else {
-            throw CorpusUnauthorizedException("Cannot delete corpus.")
+            throw UserUnauthorizedException("Cannot delete corpus.")
         }
     }
 

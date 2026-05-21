@@ -9,6 +9,7 @@ import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.documents.Document
 import org.ivdnt.galahad.documents.DocumentFormat
 import org.ivdnt.galahad.export.CorpusExport
+import org.ivdnt.galahad.files.DiskValue
 import org.ivdnt.galahad.util.TestUtil
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -44,8 +45,8 @@ open class ConverterTest {
         }
 
         val corpusExport =
-            CorpusExport.create(corpus, SOURCE_LAYER, output, User.DEFAULT_USER, false, false)
-        val docExport = corpusExport.documentExport(doc)
+            CorpusExport(corpus, SOURCE_LAYER, output, User.DEFAULT_USER, false, false)
+        val docExport = corpusExport.document(doc)
         val convertedText =
             ByteArrayOutputStream()
                 .also {
@@ -66,9 +67,9 @@ open class ConverterTest {
         TEXT_CLEANING.fold(text) { clean, regex -> regex.replace(clean, "") }
 
     private fun setLayerId(doc: Document) {
-        val layer = corpus.jobs.createOrThrow(SOURCE_LAYER).getLayer(doc)
+        val layer = doc.layer
         val fixedLayer = Layer(layer.documents, uuid)
-        corpus.jobs.createOrThrow(SOURCE_LAYER).setLayer(doc, fixedLayer)
+        DiskValue<Layer>(doc.sourceFile.resolve("../../layer.json").normalize()).write(fixedLayer)
     }
 
     companion object {

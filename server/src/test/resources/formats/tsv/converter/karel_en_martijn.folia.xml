@@ -6,21 +6,21 @@
             <paragraph-annotation/>
             <sentence-annotation/>
             <token-annotation/>
-            <lemma-annotation set="sourceLayer">
-                <annotator processor="sourceLayer"/>
+            <lemma-annotation set="source">
+                <annotator processor="source"/>
             </lemma-annotation>
-            <pos-annotation set="sourceLayer">
-                <annotator processor="sourceLayer"/>
+            <pos-annotation set="source">
+                <annotator processor="source"/>
             </pos-annotation>
-            <entity-annotation set="sourceLayer">
-                <annotator processor="sourceLayer"/>
+            <entity-annotation set="source">
+                <annotator processor="source"/>
             </entity-annotation>
-            <dependency-annotation set="sourceLayer">
-                <annotator processor="sourceLayer"/>
+            <dependency-annotation set="source">
+                <annotator processor="source"/>
             </dependency-annotation>
         </annotations>
         <provenance>
-            <processor xml:id="sourceLayer" name="sourceLayer" type="auto" src="https://github.com/instituutnederlandsetaal/galahad-taggers-dockerized" host="https://galahad.ivdnt.org" user="user"/>
+            <processor xml:id="source" name="source" type="auto" src="https://github.com/instituutnederlandsetaal/galahad-taggers-dockerized" host="https://galahad.ivdnt.org" user="user"/>
         </provenance>
         <meta id="title">karel_en_martijn</meta>
         <meta id="language">Dutch</meta>

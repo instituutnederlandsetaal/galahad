@@ -1,6 +1,7 @@
 package org.ivdnt.galahad.evaluation
 
 import org.ivdnt.galahad.annotations.Term
+import org.ivdnt.galahad.evaluation.comparison.EvaluationEntry
 import org.ivdnt.galahad.evaluation.comparison.TermComparison
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

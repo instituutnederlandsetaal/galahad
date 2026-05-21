@@ -2,11 +2,12 @@ package org.ivdnt.galahad.files
 
 import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
-import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
+import org.ivdnt.galahad.files.DiskValue.Companion.cache
 import org.ivdnt.galahad.util.JsonUtil
 import org.ivdnt.galahad.util.ThreadPoolUtil
+import java.io.File
 
 /**
  * Wrapper around serializable value stored on disk to retain between sessions. Implements a cache.
@@ -22,11 +23,11 @@ open class DiskValue<T>(val file: File) {
             return it as T
         }
         // Else read from disk
-        if (file.length() == 0L) return null // Just to be safe
+        if (file.length() == 0L) return null // Not on disk
         return JsonUtil.mapper
             .readValue(file, T::class.java)
-            // And cache it later, return now.
-            .also { ThreadPoolUtil.pool.execute { cache.put(file.absolutePath, it as Any) } }
+            // And cache it
+            .also { cache.put(file.absolutePath, it as Any) }
     }
 
     /** Try to read value from [cache] or disk, else throw [IllegalStateException]. */
@@ -38,8 +39,8 @@ open class DiskValue<T>(val file: File) {
         val bytes = JsonUtil.mapper.writeValueAsBytes(value)
         // Write to file as blocking.
         runBlocking(Dispatchers.IO) { file.writeBytes(bytes) }
-        // Cache it later and return now.
-        ThreadPoolUtil.pool.execute { cache.put(file.absolutePath, value as Any) }
+        // Cache it.
+        cache.put(file.absolutePath, value as Any)
         return value
     }
 

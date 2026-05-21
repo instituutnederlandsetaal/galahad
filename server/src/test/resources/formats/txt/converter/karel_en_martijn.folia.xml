@@ -8,7 +8,7 @@
             <token-annotation/>
         </annotations>
         <provenance>
-            <processor xml:id="sourceLayer" name="sourceLayer" type="auto" src="https://github.com/instituutnederlandsetaal/galahad-taggers-dockerized" host="https://galahad.ivdnt.org" user="user"/>
+            <processor xml:id="source" name="source" type="auto" src="https://github.com/instituutnederlandsetaal/galahad-taggers-dockerized" host="https://galahad.ivdnt.org" user="user"/>
         </provenance>
         <meta id="title">karel_en_martijn</meta>
         <meta id="language">Dutch</meta>

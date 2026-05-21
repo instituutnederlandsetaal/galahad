@@ -1,45 +1,26 @@
 package org.ivdnt.galahad.web.service
 
-import jakarta.servlet.http.HttpServletRequest
-import jakarta.servlet.http.HttpServletResponse
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.io.path.createTempDirectory
 import org.ivdnt.galahad.annotations.Annotation
-import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER
-import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.corpora.CorpusStatistics
 import org.ivdnt.galahad.evaluation.JobPair
 import org.ivdnt.galahad.evaluation.comparison.*
 import org.ivdnt.galahad.evaluation.confusion.JobConfusion
+import org.ivdnt.galahad.evaluation.csv.CsvFile
 import org.ivdnt.galahad.evaluation.distribution.DocumentDistribution
 import org.ivdnt.galahad.evaluation.distribution.JobDistribution
 import org.ivdnt.galahad.evaluation.entities.CorpusEntities
-import org.ivdnt.galahad.evaluation.entities.DocumentEntities
-import org.ivdnt.galahad.evaluation.entities.JobEntities
-import org.ivdnt.galahad.evaluation.frequency.TokenFrequency
 import org.ivdnt.galahad.evaluation.metrics.*
-import org.ivdnt.galahad.evaluation.spans.DocumentSpanEvaluation
-import org.ivdnt.galahad.exceptions.InvalidMetricsTypeException
-import org.ivdnt.galahad.export.csv.CsvFile
-import org.ivdnt.galahad.taggers.Tagger
-import org.ivdnt.galahad.util.setContentDisposition
 import org.ivdnt.galahad.util.toValidFileName
 import org.ivdnt.galahad.util.zipDir
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
 class EvaluationService(private val corpora: CorporaService) {
-    @Autowired private val request: HttpServletRequest? = null
-
-    @Autowired private val response: HttpServletResponse? = null
-
-    private val user: User
-        get() = User.fromRequest(request)
-
     fun getConfusionSamples(
         hypoFilter: String,
         refFilter: String,
@@ -57,7 +38,7 @@ class EvaluationService(private val corpora: CorporaService) {
                 HeadGroupTermFilter(annotation, hypoFilter),
                 HeadGroupTermFilter(annotation, refFilter),
             )
-        val corpusObj = corpora.readOrThrow(corpus, user)
+        val corpusObj = corpora.readOrThrow(corpus)
         val jobEval = corpusObj.evaluation.createOrThrow(JobPair(job, filter = filter))
         val fileName = "confusion-${refFilter}-${hypoFilter}.csv"
         val csv = jobEval.confusion.confusion
@@ -65,23 +46,24 @@ class EvaluationService(private val corpora: CorporaService) {
         return samplesToZip(corpus, job, reference, "a,b,c", fileName)
     }
 
-    fun getMetrics(corpus: UUID, job: String, reference: String?): CorpusMetrics {
-        val corpusObj = corpora.readOrThrow(corpus, user)
-        val allAnnots = annotationTypesForTagger(job, corpus)
-        val settings =
-            METRIC_TYPES.filter { it.requiredAnnotations.all { it in allAnnots } }.toMutableList()
-        //        val freq = TokenFrequency(corpusObj, job)
-        //        val freqSettings = settings.map { FrequencyMetricsSettings(freq, it) }
-        //        settings.addAll(freqSettings)
-        val cm =
-            CorpusMetrics(
-                corpusObj,
-                settings = settings,
-                hypothesis = job,
-                reference = if (reference.isNullOrBlank()) SOURCE_LAYER else reference,
-            )
-        return cm
-    }
+    //    fun getMetrics(corpus: UUID, job: String, reference: String?): CorpusMetrics {
+    //        val corpusObj = corpora.readOrThrow(corpus, user)
+    //        val allAnnots = annotationTypesForTagger(job, corpus)
+    //        val settings =
+    //            METRIC_TYPES.filter { it.requiredAnnotations.all { it in allAnnots }
+    // }.toMutableList()
+    //        //        val freq = TokenFrequency(corpusObj, job)
+    //        //        val freqSettings = settings.map { FrequencyMetricsSettings(freq, it) }
+    //        //        settings.addAll(freqSettings)
+    //        val cm =
+    //            CorpusMetrics(
+    //                corpusObj,
+    //                settings = settings,
+    //                hypothesis = job,
+    //                reference = if (reference.isNullOrBlank()) SOURCE_LAYER else reference,
+    //            )
+    //        return cm
+    //    }
 
     fun getMetricsSamples(
         metricsTypeStr: String,
@@ -91,60 +73,64 @@ class EvaluationService(private val corpora: CorporaService) {
         reference: String,
         classType: String,
     ): ByteArray {
-        val metricsType = METRIC_TYPES.firstOrNull { it.id == metricsTypeStr }
-        if (metricsType == null) {
-            val validMetricsTypes = METRIC_TYPES.map { it.id }
-            throw InvalidMetricsTypeException(
-                "Metrics type $metricsTypeStr does not exist. Valid types are $validMetricsTypes"
-            )
-        }
-        val classType = ClassificationType.fromString(classType)
-
-        val layerFilter =
-            if (group == null) null
-            else {
-                val hypoFilter = HeadGroupTermFilter(metricsType.groupAnnotation, group)
-                val refFilter = HeadGroupTermFilter(metricsType.groupAnnotation, group)
-                MetricsLayerFilter(hypoFilter, refFilter)
-            }
-
-        val cm =
-            CorpusMetrics(
-                corpus = corpora.readOrThrow(corpus, user),
-                hypothesis = job,
-                reference = reference,
-                layerFilter = layerFilter,
-                truncate = false,
-                settings = listOf(metricsType),
-            )
-        val mt = cm.metricTypes.values.first()
-
-        if (group != null) {
-            val fileName = "metrics-$reference-$job-${classType}-${group}.csv"
-            val csv = mt.samplesToCsv(group, classType)
-            return samplesToZip(corpus, job, reference, csv, fileName)
-        } else {
-            val fileName = "metrics-$reference-$job-${mt.setting.id}-${classType}.csv"
-            val csv = mt.samplesToCsv(classType)
-            return samplesToZip(corpus, job, reference, csv, fileName)
-        }
+        return samplesToZip(corpus, job, reference, "a,b,c", "dummy.csv")
+        //        val metricsType = METRIC_TYPES.firstOrNull { it.id == metricsTypeStr }
+        //        if (metricsType == null) {
+        //            val validMetricsTypes = METRIC_TYPES.map { it.id }
+        //            throw InvalidMetricsTypeException(
+        //                "Metrics type $metricsTypeStr does not exist. Valid types are
+        // $validMetricsTypes"
+        //            )
+        //        }
+        //        val classType = ClassificationType.fromString(classType)
+        //
+        //        val layerFilter =
+        //            if (group == null) null
+        //            else {
+        //                val hypoFilter = HeadGroupTermFilter(metricsType.groupAnnotation, group)
+        //                val refFilter = HeadGroupTermFilter(metricsType.groupAnnotation, group)
+        //                MetricsLayerFilter(hypoFilter, refFilter)
+        //            }
+        //
+        //        val cm =
+        //            CorpusMetrics(
+        //                corpus = corpora.readOrThrow(corpus),
+        //                hypothesis = job,
+        //                reference = reference,
+        //                layerFilter = layerFilter,
+        //                truncate = false,
+        //                settings = listOf(metricsType),
+        //            )
+        //        val mt = cm.metricTypes.values.first()
+        //
+        //        if (group != null) {
+        //            val fileName = "metrics-$reference-$job-${classType}-${group}.csv"
+        //            val csv = mt.samplesToCsv(group, classType)
+        //            return samplesToZip(corpus, job, reference, csv, fileName)
+        //        } else {
+        //            val fileName = "metrics-$reference-$job-${mt.setting.id}-${classType}.csv"
+        //            val csv = mt.samplesToCsv(classType)
+        //            return samplesToZip(corpus, job, reference, csv, fileName)
+        //        }
     }
 
-    fun getLayerComparison(
-        corpus: UUID,
-        document: String,
-        job: String,
-        reference: String?,
-    ): List<TermComparison> {
-        val reference: String = reference ?: SOURCE_LAYER
-        return LayerComparison(
-                hypothesis =
-                    corpora.readOrThrow(corpus, user).jobs.readOrThrow(job).getLayer(document),
-                reference =
-                    corpora.readOrThrow(corpus, user).jobs.readOrThrow(reference).getLayer(document),
-            )
-            .matches
-    }
+    //    fun getLayerComparison(
+    //        corpus: UUID,
+    //        document: String,
+    //        job: String,
+    //        reference: String?,
+    //    ): List<TermComparison> {
+    //        val reference: String = reference ?: SOURCE_LAYER
+    //        return LayerComparison(
+    //                hypothesis =
+    //                    corpora.readOrThrow(corpus,
+    // user).jobs.readOrThrow(job).getLayer(document),
+    //                reference =
+    //                    corpora.readOrThrow(corpus,
+    // user).jobs.readOrThrow(reference).getLayer(document),
+    //            )
+    //            .matches
+    //    }
 
     fun getEvaluation(corpus: UUID, job: String, reference: String?): ByteArray {
         val dir: File = createTempDirectory().toFile()
@@ -155,9 +141,6 @@ class EvaluationService(private val corpora: CorporaService) {
             createConfusionCsv(dir.resolve("confusion"), corpus, job, reference)
         }
         val metadata = writeMetadataToDir(corpus, job, reference, dir)
-        response!!.contentType = "application/zip"
-        response.setContentDisposition(metadata.name + "-evaluation.zip")
-
         // zip the directory
         val zipFile = zipDir(dir)
         return zipFile.readBytes()
@@ -172,7 +155,7 @@ class EvaluationService(private val corpora: CorporaService) {
 
     private fun createDistributionCsv(dir: File, corpus: UUID, job: String) {
         dir.mkdirs()
-        val distributions = getJobDistribution(corpus, job)
+        val distributions = getLayerDistribution(corpus, job)
         distributions.typeTokens.forEach { (annotation, distribution) ->
             val file = CsvFile(dir.resolve("distribution-${annotation.value}.csv"))
             file.append(JobDistribution.toCsv(distribution))
@@ -206,7 +189,7 @@ class EvaluationService(private val corpora: CorporaService) {
         reference: String?,
         dir: File,
     ): CorpusStatistics {
-        val metadata = corpora.readOrThrow(corpus, user).statistics
+        val metadata = corpora.readOrThrow(corpus).statistics
 
         val metadataFile = File(dir.resolve("metadata.txt").toURI())
         metadataFile.appendText("Evaluation generated by Galahad\n")
@@ -221,10 +204,10 @@ class EvaluationService(private val corpora: CorporaService) {
         return metadata
     }
 
-    private fun annotationTypesForTagger(job: String, corpus: UUID): Set<Annotation> {
-        val corpusObj = corpora.readOrThrow(corpus, user)
-        return Tagger.readOrThrow(job, corpusObj).annotationSet
-    }
+    //    private fun annotationTypesForTagger(job: String, corpus: UUID): Set<Annotation> {
+    //        val corpusObj = corpora.readOrThrow(corpus, user)
+    //        return Tagger.readOrThrow(job, corpusObj).annotationSet
+    //    }
 
     fun samplesToZip(
         corpus: UUID,
@@ -240,61 +223,60 @@ class EvaluationService(private val corpora: CorporaService) {
         file.append(csvBody)
         // Write metadata & create zip
         val metadata = writeMetadataToDir(corpus, job, reference, dir)
-        // Configure response for zip.
-        response!!.contentType = "application/zip"
-        response.setContentDisposition(metadata.name + "-evaluation.zip")
         // zip the directory
         return zipDir(dir).readBytes()
     }
 
-    fun getTokenFrequency(corpus: UUID, job: String, reference: String?): CorpusMetrics {
-        val corpusObj = corpora.readOrThrow(corpus, user)
-        val setting =
-            FrequencyMetricsSettings(TokenFrequency(corpusObj, job), LemmaByLemmaMetricsSettings())
-        val settings = listOf(setting)
-        val cm =
-            CorpusMetrics(
-                corpusObj,
-                settings = settings,
-                hypothesis = job,
-                reference = if (reference.isNullOrBlank()) SOURCE_LAYER else reference,
-            )
-        return cm
-    }
-
-    fun getDocumentEntities(corpus: UUID, document: String, job: String): DocumentEntities {
-        val corpus = corpora.readOrThrow(corpus, user)
-        val jobEval = corpus.evaluation.createOrThrow(JobPair(job))
-        val docEval = jobEval.documents.createOrThrow(document)
-        return docEval.entities
-    }
-
-    fun getJobEntities(corpus: UUID, job: String): JobEntities {
-        val corpusObj = corpora.readOrThrow(corpus, user)
-        val jobEval = corpusObj.evaluation.createOrThrow(JobPair(job))
-        return jobEval.entities
-    }
+    //
+    //    fun getTokenFrequency(corpus: UUID, job: String, reference: String?): CorpusMetrics {
+    //        val corpusObj = corpora.readOrThrow(corpus, user)
+    //        val setting =
+    //            FrequencyMetricsSettings(TokenFrequency(corpusObj, job),
+    // LemmaByLemmaMetricsSettings())
+    //        val settings = listOf(setting)
+    //        val cm =
+    //            CorpusMetrics(
+    //                corpusObj,
+    //                settings = settings,
+    //                hypothesis = job,
+    //                reference = if (reference.isNullOrBlank()) SOURCE_LAYER else reference,
+    //            )
+    //        return cm
+    //    }
+    //
+    //    fun getDocumentEntities(corpus: UUID, document: String, job: String): DocumentEntities {
+    //        val corpus = corpora.readOrThrow(corpus, user)
+    //        val jobEval = corpus.evaluation.createOrThrow(JobPair(job))
+    //        val docEval = jobEval.documents.createOrThrow(document)
+    //        return docEval.entities
+    //    }
+    //
+    //    fun getJobEntities(corpus: UUID, job: String): JobEntities {
+    //        val corpusObj = corpora.readOrThrow(corpus, user)
+    //        val jobEval = corpusObj.evaluation.createOrThrow(JobPair(job))
+    //        return jobEval.entities
+    //    }
 
     fun getCorpusEntities(corpus: UUID): CorpusEntities {
-        val corpusObj = corpora.readOrThrow(corpus, user)
+        val corpusObj = corpora.readOrThrow(corpus)
         return corpusObj.evaluation.entities
     }
 
     fun getDocumentDistribution(corpus: UUID, job: String, document: String): DocumentDistribution {
-        val corpusObj = corpora.readOrThrow(corpus, user)
+        val corpusObj = corpora.readOrThrow(corpus)
         val jobEval = corpusObj.evaluation.createOrThrow(JobPair(job))
         val docEval = jobEval.documents.createOrThrow(document)
         return docEval.distribution
     }
 
-    fun getJobDistribution(corpus: UUID, job: String): JobDistribution {
-        val corpusObj = corpora.readOrThrow(corpus, user)
+    fun getLayerDistribution(corpus: UUID, job: String): JobDistribution {
+        val corpusObj = corpora.readOrThrow(corpus)
         val jobEval = corpusObj.evaluation.createOrThrow(JobPair(job))
         return jobEval.distribution
     }
 
     fun getJobConfusion(corpus: UUID, hypothesis: String, reference: String): JobConfusion {
-        val corpusObj = corpora.readOrThrow(corpus, user)
+        val corpusObj = corpora.readOrThrow(corpus)
         val jobEval = corpusObj.evaluation.createOrThrow(JobPair(hypothesis, reference))
         return jobEval.confusion
     }
@@ -305,27 +287,31 @@ class EvaluationService(private val corpora: CorporaService) {
         hypothesis: String,
         reference: String,
     ): DocumentMetric {
-        val corpusObj = corpora.readOrThrow(corpus, user)
+        val corpusObj = corpora.readOrThrow(corpus)
         val jobEval = corpusObj.evaluation.createOrThrow(JobPair(hypothesis, reference))
         val docEval = jobEval.documents.createOrThrow(document)
         return docEval.metrics
     }
 
     fun getJobMetric(corpus: UUID, hypothesis: String, reference: String): JobMetric {
-        val corpusObj = corpora.readOrThrow(corpus, user)
+        val corpusObj = corpora.readOrThrow(corpus)
         val jobEval = corpusObj.evaluation.createOrThrow(JobPair(hypothesis, reference))
         return jobEval.metrics
     }
 
-    fun getDocumentSpanEvaluation(
-        corpus: UUID,
-        document: String,
-        hypothesis: String,
-        reference: String,
-    ): DocumentSpanEvaluation {
-        val corpusObj = corpora.readOrThrow(corpus, user)
-        val jobEval = corpusObj.evaluation.createOrThrow(JobPair(hypothesis, reference))
-        val docEval = jobEval.documents.createOrThrow(document)
-        return docEval.spans
-    }
+    //
+    //    fun getDocumentSpanEvaluation(
+    //        corpus: UUID,
+    //        document: String,
+    //        hypothesis: String,
+    //        reference: String,
+    //    ): DocumentSpanEvaluation {
+    //        val corpusObj = corpora.readOrThrow(corpus, user)
+    //        val jobEval = corpusObj.evaluation.createOrThrow(JobPair(hypothesis, reference))
+    //        val docEval = jobEval.documents.createOrThrow(document)
+    //        return docEval.spans
+    //    }
+
+    // TODO duplicate code with export service
+    fun getCorpusName(corpus: UUID): String = corpora.readOrThrow(corpus).metadata.name
 }

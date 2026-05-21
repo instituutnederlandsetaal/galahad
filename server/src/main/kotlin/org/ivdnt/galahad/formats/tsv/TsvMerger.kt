@@ -1,10 +1,10 @@
 package org.ivdnt.galahad.formats.tsv
 
-import java.io.OutputStream
-import java.io.PrintWriter
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.export.LayerMerger
+import java.io.OutputStream
+import java.io.PrintWriter
 
 open class TsvMerger(export: DocumentExport) : LayerMerger(export) {
     protected open val columnIndices: MutableMap<Annotation, Int> = mutableMapOf()
@@ -20,7 +20,7 @@ open class TsvMerger(export: DocumentExport) : LayerMerger(export) {
      * Read in per line, split on tabs, swap out pos & lemma and commit to new file
      */
     fun merge(out: PrintWriter) {
-        export.document.sourceFile.forEachLine { line ->
+        export.sourceDocument.sourceFile.forEachLine { line ->
             if (columnIndices.isEmpty()) {
                 val headers = line.split("\t")
                 getColumnIndices(headers)
@@ -57,7 +57,7 @@ open class TsvMerger(export: DocumentExport) : LayerMerger(export) {
         }
         if (headers.isEmpty()) return // This line was not yet the header.
         // Add any missing columns.
-        Annotation.order(export.tagger.annotationSet).forEach { annotation ->
+        export.document.metadata.annotations.keys.forEach { annotation ->
             if (columnIndices[annotation] == null) {
                 columnIndices[annotation] = headers.size + extraColumns.size
                 extraColumns.add(annotation)
@@ -69,7 +69,7 @@ open class TsvMerger(export: DocumentExport) : LayerMerger(export) {
      * Replace annotations in their previously indexed columns.
      */
     protected open fun replaceColumns(columns: MutableList<String>) {
-        export.tagger.annotationSet
+        export.document.metadata.annotations.keys
             .filter { it != Annotation.TOKEN }
             .forEach { annot ->
                 val index = columnIndices[annot] ?: return@forEach // Skip if not in the file.

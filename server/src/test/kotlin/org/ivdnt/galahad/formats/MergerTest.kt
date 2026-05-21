@@ -27,13 +27,13 @@ abstract class MergerTest {
 
         val doc = corpus.documents.createOrThrow(input)
         // set merge layer as a job
-        val job = corpus.jobs.createOrThrow("spacy")
-        job.setLayer(doc, ParsedFile.create(merge).layer)
+//        val job = corpus.jobs.createOrThrow("spacy")
+//        job.setLayer(doc, ParsedFile.create(merge).layer)
 
         // merge
         val corpusExport =
-            CorpusExport.create(corpus, "spacy", format, User.DEFAULT_USER, true, false)
-        val docExport = corpusExport.documentExport(doc)
+            CorpusExport(corpus, "spacy", format, User.DEFAULT_USER, true, false)
+        val docExport = corpusExport.document(doc)
 
         val convertedText =
             ByteArrayOutputStream()

@@ -45,7 +45,7 @@ class NafWriter(export: DocumentExport) : LayerWriter(export) {
         val fileDesc =
             xml.createElement("fileDesc").apply {
                 setAttribute("title", export.document.sourceFile.withoutFormatExt)
-                setAttribute("author", export.user.id)
+                setAttribute("author", export.user.name)
                 setAttribute("creationtime", now.toString())
                 setAttribute("filename", export.document.name)
                 setAttribute("filetype", export.document.metadata.format.identifier)

@@ -1,44 +1,37 @@
 package org.ivdnt.galahad.web.service
 
-import java.util.UUID
+import java.util.*
 import org.apache.logging.log4j.kotlin.Logging
-import org.ivdnt.galahad.annotations.LayerAnnotations
-import org.ivdnt.galahad.annotations.LayerPreview
-import org.ivdnt.galahad.app.User
+import org.ivdnt.galahad.jobs.JobMetadata
 import org.ivdnt.galahad.jobs.Progress
-import org.ivdnt.galahad.layers.CorpusLayerMetadata
 import org.ivdnt.galahad.taggers.Tagger
 import org.springframework.stereotype.Service
 
 @Service
 class JobsService(private val corpora: CorporaService) : Logging {
-    fun readAll(corpus: UUID, user: User): List<CorpusLayerMetadata> {
+    fun readAll(corpus: UUID): List<JobMetadata> {
         // Create a map of all taggers with empty metadata
-        val corpus = corpora.readOrThrow(corpus, user)
+        val corpus = corpora.readOrThrow(corpus)
         val numDocs = corpus.statistics.numDocs
-        val allJobs =
-            Tagger.taggers.mapValues {
-                CorpusLayerMetadata(
-                    it.value,
-                    Progress(numDocs),
-                    LayerPreview.EMPTY,
-                    LayerAnnotations.EMPTY,
-                    0,
-                )
-            }
+        val allJobs = Tagger.taggers.mapValues { JobMetadata(it.value, Progress(numDocs)) }
         // replace the entries for which a job exists
         val jobs = corpus.jobs.readAll().map { it.metadata }.associateBy { it.tagger.name }
         // Replacement is simply plus
         return (allJobs + jobs).values.toList()
     }
 
-    fun readOrThrow(corpus: UUID, job: String, user: User): CorpusLayerMetadata =
-        corpora.readOrThrow(corpus, user).jobs.readOrThrow(job).metadata
+    fun readOrThrow(corpus: UUID, job: String): JobMetadata {
+        val corpus = corpora.readOrThrow(corpus)
+        val tagger = Tagger.readOrThrow(job)
+        return corpus.jobs.readOrNull(job)?.metadata
+            ?: JobMetadata(tagger, Progress(corpus.statistics.numDocs))
+    }
 
-    fun createOrThrow(corpus: UUID, job: String, user: User): CorpusLayerMetadata =
-        corpora.writeOrThrow(corpus, user).jobs.createOrThrow(job).metadata
+    fun createOrThrow(corpus: UUID, job: String) {
+        corpora.writeOrThrow(corpus).jobs.createOrThrow(job)
+    }
 
-    fun deleteOrThrow(corpus: UUID, job: String, user: User) {
-        corpora.writeOrThrow(corpus, user).jobs.deleteOrThrow(job)
+    fun deleteOrThrow(corpus: UUID, job: String) {
+        corpora.writeOrThrow(corpus).jobs.deleteOrThrow(job)
     }
 }

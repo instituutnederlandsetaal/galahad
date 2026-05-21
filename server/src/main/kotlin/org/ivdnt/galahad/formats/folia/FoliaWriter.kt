@@ -1,7 +1,5 @@
 package org.ivdnt.galahad.formats.folia
 
-import java.io.OutputStream
-import javax.xml.XMLConstants
 import org.codehaus.stax2.XMLStreamWriter2
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.LayerAnnotations.Companion.contains
@@ -9,6 +7,8 @@ import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.export.LayerWriter
 import org.ivdnt.galahad.formats.reader.PrettyXMLWriter
 import org.ivdnt.galahad.util.XmlUtil.Companion.outputFactory
+import java.io.OutputStream
+import javax.xml.XMLConstants
 
 class FoliaWriter(export: DocumentExport) : LayerWriter(export) {
     override fun convert(out: OutputStream) {

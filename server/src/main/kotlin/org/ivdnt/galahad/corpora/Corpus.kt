@@ -9,6 +9,7 @@ import org.ivdnt.galahad.files.DiskValue
 import org.ivdnt.galahad.files.GalahadFolder
 import org.ivdnt.galahad.files.ValidatedDiskValue
 import org.ivdnt.galahad.jobs.Jobs
+import org.ivdnt.galahad.layers.CorpusLayer.Companion.DOCUMENTS_FOLDER
 import org.ivdnt.galahad.layers.CorpusLayers
 
 /**
@@ -26,8 +27,9 @@ import org.ivdnt.galahad.layers.CorpusLayers
  */
 class Corpus(dir: File) : GalahadFolder(dir) {
     val uuid: UUID = UUID.fromString(dir.name)
-
-    val documents: Documents = Documents(dir.resolve(LAYERS_FOLDER).resolve(SOURCE_LAYER))
+    // TODO still used in quite a lot of evaluations when they should use layers
+    val documents: Documents =
+        Documents(dir.resolve(LAYERS_FOLDER).resolve(SOURCE_LAYER).resolve(DOCUMENTS_FOLDER))
     val layers: CorpusLayers = CorpusLayers(dir.resolve(LAYERS_FOLDER), this)
     val jobs: Jobs = Jobs(dir.resolve(JOBS_FOLDER), this)
     val evaluation: CorpusEvaluation = CorpusEvaluation(dir.resolve(EVALUATIONS_FOLDER), this)
@@ -41,7 +43,14 @@ class Corpus(dir: File) : GalahadFolder(dir) {
     val statistics: CorpusStatistics
         get() =
             object : ValidatedDiskValue<CorpusStatistics>(dir.resolve(STATISTICS_FILE)) {
-                    override fun isValid(modified: Long) = modified >= this@Corpus.modified
+                    // statistics is invalid if any of the data it depends on changes, including:
+                    override fun isValid(modified: Long) =
+                        modified >=
+                            maxOf(
+                                this@Corpus.documents.modified, // documents changed
+                                this@Corpus.jobs.modified, // jobs changed
+                                this@Corpus.modified, // modifications to metadata.json
+                            ) // Note the absence of layers: we don't depend on its data
 
                     override fun set(): CorpusStatistics = CorpusStatistics.create(this@Corpus)
                 }

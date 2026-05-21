@@ -17,19 +17,19 @@
             </template>
 
             <template #cell-id="d: TableData<Tagger>">
-                <span :id="d.item.id" :class="markActive(d.item.id)">{{ d.value }}</span>
+                <span :id="d.item.name" :class="markActive(d.item.name)">{{ d.value }}</span>
             </template>
 
             <template #cell-annotations="d: TableData<Tagger>">
                 <AnnotationItemsViewer :items="d.item.annotations">
-                    <template #title>Annotations and principles of {{ d.item.id }}</template>
+                    <template #title>Annotations and principles of {{ d.item.name }}</template>
                 </AnnotationItemsViewer>
             </template>
 
             <template #cell-attributions="d: TableData<Tagger>">
                 {{ Object.keys(d.item.attributions).length }} attributions
                 <AttributionsViewer :items="d.item.attributions" :version="d.item.version">
-                    <template #title>Attributions of {{ d.item.id }}</template>
+                    <template #title>Attributions of {{ d.item.name }}</template>
                 </AttributionsViewer>
             </template>
         </GTable>
@@ -44,7 +44,7 @@ import type { Column, TableData } from "@/types/ui/table"
 const { taggers: items, loading } = storeToRefs(stores.useTaggers())
 
 const columns: Column<Tagger>[] = [
-    { key: "id", label: "name" },
+    { key: "name" },
     { key: "description" },
     { key: "language" },
     {

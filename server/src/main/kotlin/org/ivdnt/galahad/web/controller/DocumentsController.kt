@@ -5,13 +5,9 @@ import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
-import io.swagger.v3.oas.annotations.parameters.RequestBody as SwaggerRequestBody
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import java.util.*
 import org.apache.logging.log4j.kotlin.Logging
-import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.documents.DocumentMetadata
 import org.ivdnt.galahad.exceptions.ErrorResponse
 import org.ivdnt.galahad.util.setContentDisposition
@@ -20,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
+import java.util.*
+import io.swagger.v3.oas.annotations.parameters.RequestBody as SwaggerRequestBody
 
 // Note that some API responses have */* as content type.
 // For swagger to work, all media types have to be defined on the 200 response.
@@ -28,11 +26,6 @@ class DocumentsController(private val documentsService: DocumentsService) : Logg
 
     @Autowired private val response: HttpServletResponse? = null
 
-    @Autowired private val request: HttpServletRequest? = null
-
-    private val user
-        get() = User.fromRequest(request)
-
     @Operation(
         summary = "List all documents metadata",
         description = "List all documents metadata in a corpus.",
@@ -40,6 +33,12 @@ class DocumentsController(private val documentsService: DocumentsService) : Logg
     @ApiResponse(
         responseCode = "200",
         description = "DocumentMetadata of all documents in the corpus.",
+    )
+    @ApiResponse(
+        responseCode = "403",
+        description = "User needs read-access.",
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
     @ApiResponse(
         responseCode = "404",
@@ -51,7 +50,7 @@ class DocumentsController(private val documentsService: DocumentsService) : Logg
     @GetMapping(Endpoints.Documents.BASE)
     fun getDocuments(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID
-    ): List<DocumentMetadata> = documentsService.readAll(corpus, user)
+    ): List<DocumentMetadata> = documentsService.readAll(corpus)
 
     @Operation(
         summary = "Get single document",
@@ -65,7 +64,7 @@ class DocumentsController(private val documentsService: DocumentsService) : Logg
     @ApiResponse(
         responseCode = "403",
         description =
-            "The user is not authorized to view the document. Viewing documents requires read-access.",
+            "User needs read-access.",
         content =
             [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
@@ -80,7 +79,7 @@ class DocumentsController(private val documentsService: DocumentsService) : Logg
     fun getDocument(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Document name") document: String,
-    ): DocumentMetadata = documentsService.readOrThrow(corpus, document, user).metadata
+    ): DocumentMetadata = documentsService.readOrThrow(corpus, document).metadata
 
     @Operation(
         summary = "Get source document",
@@ -94,7 +93,7 @@ class DocumentsController(private val documentsService: DocumentsService) : Logg
     @ApiResponse(
         responseCode = "403",
         description =
-            "The user is not authorized to download the raw file. Downloading the original files requires write-access.",
+            "User needs read-access.",
         content =
             [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
@@ -110,7 +109,7 @@ class DocumentsController(private val documentsService: DocumentsService) : Logg
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Document name") document: String,
     ): ByteArray {
-        val file = documentsService.readOrThrow(corpus, document, user).sourceFile
+        val file = documentsService.readOrThrow(corpus, document).sourceFile
         response?.contentType =
             "text/plain" // Default for text files. Even if it really means "unknown text file"
         response?.setContentDisposition(file.name)
@@ -131,7 +130,7 @@ class DocumentsController(private val documentsService: DocumentsService) : Logg
     @ApiResponse(
         responseCode = "403",
         description =
-            "The user is not authorized to upload documents. Uploading documents requires write-access.",
+            "User needs write-access.",
         content =
             [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
@@ -150,7 +149,7 @@ class DocumentsController(private val documentsService: DocumentsService) : Logg
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
     ) {
         response?.status = HttpServletResponse.SC_CREATED
-        documentsService.createOrThrow(corpus, file, user)
+        documentsService.createOrThrow(corpus, file)
     }
 
     @Operation(summary = "Delete single document", description = "Delete a document and its jobs.")
@@ -158,7 +157,7 @@ class DocumentsController(private val documentsService: DocumentsService) : Logg
     @ApiResponse(
         responseCode = "403",
         description =
-            "The user is not authorized to delete documents. Deleting documents requires write-access.",
+            "User needs write-access.",
         content =
             [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
@@ -174,7 +173,7 @@ class DocumentsController(private val documentsService: DocumentsService) : Logg
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Document name") document: String,
     ): ResponseEntity<String> {
-        documentsService.deleteOrThrow(corpus, document, user)
+        documentsService.deleteOrThrow(corpus, document)
         return ResponseEntity.noContent().build()
     }
 }

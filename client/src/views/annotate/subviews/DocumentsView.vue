@@ -21,5 +21,6 @@ const { canWrite } = storeToRefs(stores.useUser())
 const { documents, loading } = storeToRefs(stores.useDocuments())
 const { reload } = stores.useDocuments()
 
-reload()
+// #lifecycle
+onMounted(reload)
 </script>

@@ -36,7 +36,7 @@ export function useAxios<T>(
             })
             .catch((err) => {
                 if (pageReloadOnError) {
-                    setTimeout(() => location.reload(), 2000)
+                    setTimeout(() => location.reload(), 5000)
                 }
             })
             .finally(() => {

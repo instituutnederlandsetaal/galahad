@@ -1,5 +1,5 @@
 export type Tagger = {
-    id: string
+    name: string
     version: string
     uri: string
     description: string

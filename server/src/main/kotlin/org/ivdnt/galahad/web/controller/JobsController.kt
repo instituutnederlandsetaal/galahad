@@ -6,41 +6,54 @@ import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import java.util.*
-import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.exceptions.ErrorResponse
-import org.ivdnt.galahad.layers.CorpusLayerMetadata
+import org.ivdnt.galahad.jobs.JobMetadata
 import org.ivdnt.galahad.web.service.JobsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.util.*
 
 @RestController
 class JobsController(private val jobsService: JobsService) {
-    @Autowired private val request: HttpServletRequest? = null
 
     @Autowired private val response: HttpServletResponse? = null
 
-    private val user
-        get() = User.fromRequest(request)
 
     @Operation(
         summary = "Get all job metadata",
         description = "Get a summary of the state of all tagger jobs.",
     )
+    @ApiResponse(
+        responseCode = "403",
+        description = "User needs read-access.",
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
+    )
+    @ApiResponse(
+        responseCode = "404",
+        description = "Corpus not found.",
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
+    )
     @CrossOrigin
     @GetMapping(Endpoints.Jobs.BASE)
     fun getJobs(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID
-    ): List<CorpusLayerMetadata> = jobsService.readAll(corpus, user)
+    ): List<JobMetadata> = jobsService.readAll(corpus)
 
     @Operation(
         summary = "Get single job metadata",
         description = "Get a summary of the state of a tagger job.",
     )
     @ApiResponse(responseCode = "200", description = "The job state.")
+    @ApiResponse(
+        responseCode = "403",
+        description = "User needs read-access.",
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
+    )
     @ApiResponse(
         responseCode = "404",
         description = "Corpus or job was not found.",
@@ -52,7 +65,7 @@ class JobsController(private val jobsService: JobsService) {
     fun getJob(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,
-    ): CorpusLayerMetadata = jobsService.readOrThrow(corpus, job, user)
+    ): JobMetadata = jobsService.readOrThrow(corpus, job)
 
     @Operation(
         summary = "Start job",
@@ -62,7 +75,7 @@ class JobsController(private val jobsService: JobsService) {
     @ApiResponse(
         responseCode = "403",
         description =
-            "The user is not authorized to start jobs. Starting jobs requires write access to the corpus.",
+            "User needs write-access.",
         content =
             [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
@@ -79,18 +92,18 @@ class JobsController(private val jobsService: JobsService) {
         @PathVariable @Parameter(description = "Tagger name") job: String,
     ) {
         response?.status = HttpServletResponse.SC_ACCEPTED
-        jobsService.createOrThrow(corpus, job, user)
+        jobsService.createOrThrow(corpus, job)
     }
 
     @Operation(
-        summary = "Cancel or delete job",
-        description = "Cancel or delete a job. Requires write access to the corpus.",
+        summary = "Cancel job",
+        description = "Cancel a job. Requires write access to the corpus.",
     )
     @ApiResponse(responseCode = "204", description = "Job cancelled or deleted.")
     @ApiResponse(
         responseCode = "403",
         description =
-            "The user is not authorized to cancel or delete jobs. Cancelling or deleting jobs requires write access to the corpus.",
+            "User needs write-access.",
         content =
             [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
@@ -106,7 +119,7 @@ class JobsController(private val jobsService: JobsService) {
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,
     ): ResponseEntity<String> {
-        jobsService.deleteOrThrow(corpus, job, user)
+        jobsService.deleteOrThrow(corpus, job)
         return ResponseEntity.noContent().build()
     }
 }

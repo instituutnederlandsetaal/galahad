@@ -76,6 +76,7 @@ class ConlluReader(val file: File) : LineReader() {
     private fun getColumn(annotation: Annotation, fields: List<String>): String? {
         if (annotation == Annotation.UPOS) return getUpos(fields)
         if (annotation == Annotation.NER) return getNER(fields)
+        if (annotation == Annotation.GROUP) return getGroup(fields)
         if (annotation == Annotation.TOKEN) return getColumnRaw(indices[Annotation.TOKEN]!!, fields)
         return getColumn(indices[annotation]!!, fields)
     }
@@ -97,6 +98,17 @@ class ConlluReader(val file: File) : LineReader() {
         val nerIOB = nerValue.replace(replaceS, "B-").replace(replaceE, "I-")
 
         return nerIOB
+    }
+
+    /** Retrieve the GROUP from the MISC column */
+    private fun getGroup(values: List<String>): String? {
+        val misc = getColumn(9, values) ?: return null
+
+        // groupKeyValue is for example "NamedEntity=S-LOC"
+        val groupKeyValue: String =
+            misc.split("|").firstOrNull { it.split("=").first() in groupAttrNames } ?: return null
+        val groupValue: String = groupKeyValue.substringAfter('=')
+        return groupValue
     }
 
     /** returns null on _ */
@@ -132,6 +144,7 @@ class ConlluReader(val file: File) : LineReader() {
     companion object {
         /** Supported names for the ner attribute in the MISC column. */
         private val nerAttrNames: List<String> = listOf("NamedEntity", "ner")
+        private val groupAttrNames: List<String> = listOf("group")
         private val idRegex = Regex("""id = (\S+)""")
 
         private val indices: Map<Annotation, Int> =
@@ -143,6 +156,7 @@ class ConlluReader(val file: File) : LineReader() {
                 Annotation.DEPREL to 7,
                 Annotation.UPOS to -1, // see GetUpos
                 Annotation.NER to -1, // see GetNer
+                Annotation.GROUP to -1, // see GetGroup
             )
     }
 }

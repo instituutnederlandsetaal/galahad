@@ -1,7 +1,5 @@
 package org.ivdnt.galahad.web.controller
 
-import org.ivdnt.galahad.web.controller.Endpoints.Jobs.JOB
-
 object Endpoints {
     const val BASE: String = "/"
     const val VERSION: String = "/version"
@@ -14,21 +12,11 @@ object Endpoints {
         const val CORPUS: String = "$BASE/{corpus}"
     }
 
-    object Internal {
-        const val BASE: String = "/internal"
-        const val JOBS: String = "$BASE/jobs"
-        const val RESULT: String = "$JOBS/result"
-        const val ERROR: String = "$JOBS/error"
-    }
-
-    object Jobs {
-        const val BASE: String = "${Corpora.CORPUS}/jobs"
-        const val JOB: String = "$BASE/{job}"
-
-        object Documents {
-            const val BASE: String = "$JOB/documents"
-            const val DOCUMENT: String = "$BASE/{document}"
-        }
+    // Currently a shortcut to the source layer
+    object Documents {
+        const val BASE: String = "${Corpora.CORPUS}/documents"
+        const val DOCUMENT: String = "$BASE/{document}"
+        const val DOWNLOAD: String = "$DOCUMENT/download"
     }
 
     object Layers {
@@ -38,7 +26,27 @@ object Endpoints {
         object Documents {
             const val BASE: String = "$LAYER/documents"
             const val DOCUMENT: String = "$BASE/{document}"
+            // TODO download source document
+            const val DOWNLOAD: String = "${DOCUMENT}/download"
         }
+    }
+
+    object Jobs {
+        const val BASE: String = "${Corpora.CORPUS}/jobs"
+        const val JOB: String = "$BASE/{job}"
+
+        // TODO retrieve job status (Jobmetadata) of individual documents?
+//        object Documents {
+//            const val BASE: String = "$JOB/documents"
+//            const val DOCUMENT: String = "$BASE/{document}"
+//        }
+    }
+
+    object Internal {
+        const val BASE: String = "/internal"
+        const val JOBS: String = "$BASE/jobs"
+        const val RESULT: String = "$JOBS/result"
+        const val ERROR: String = "$JOBS/error"
     }
 
     object Export {
@@ -53,10 +61,48 @@ object Endpoints {
         }
     }
 
-    object Documents {
-        const val BASE: String = "${Corpora.CORPUS}/documents"
-        const val DOCUMENT: String = "$BASE/{document}"
-        const val DOWNLOAD: String = "$DOCUMENT/download"
+    object Evaluation {
+        const val BASE: String = "${Layers.LAYER}/evaluation"
+        const val DOWNLOAD: String = "${BASE}/download"
+
+        object Metrics {
+            const val BASE: String = "${Evaluation.BASE}/metrics"
+            const val DOWNLOAD: String = "${BASE}/download"
+        }
+
+        object Confusion {
+            const val BASE: String = "${Evaluation.BASE}/confusion"
+            const val DOWNLOAD: String = "${BASE}/download"
+        }
+
+        object Distribution {
+            const val BASE: String = "${Evaluation.BASE}/distribution"
+            const val DOWNLOAD: String = "${BASE}/download"
+        }
+
+        object Document {
+            const val BASE: String = "${Layers.Documents.DOCUMENT}/evaluation"
+
+            object Metrics {
+                const val BASE: String = "${Document.BASE}/metrics"
+                const val DOWNLOAD: String = "${BASE}/download"
+            }
+
+            object Confusion {
+                const val BASE: String = "${Document.BASE}/confusion"
+                const val DOWNLOAD: String = "${BASE}/download"
+            }
+
+            object Distribution {
+                const val BASE: String = "${Document.BASE}/distribution"
+                const val DOWNLOAD: String = "${BASE}/download"
+            }
+        }
+
+        object Corpus {
+            const val BASE: String = "${Corpora.CORPUS}/evaluation"
+            // TODO: /entities lives here
+        }
     }
 
     object Taggers {
@@ -69,26 +115,5 @@ object Endpoints {
     object Tagsets {
         const val BASE: String = "/tagsets"
         const val TAGSET: String = "$BASE/{tagset}"
-    }
-
-    object Evaluation {
-        const val BASE: String = "${Corpora.CORPUS}/evaluation"
-        const val DOWNLOAD: String = "$BASE/download"
-        const val ENTITIES: String = "$BASE/entities"
-        const val METRICS: String = "$BASE/metrics"
-        const val METRICS_DOWNLOAD: String = "$METRICS/download"
-        const val CONFUSION: String = "$BASE/confusion"
-        const val CONFUSION_DOWNLOAD: String = "$CONFUSION/download"
-        const val DISTRIBUTION: String = "$BASE/distribution"
-        const val DISTRIBUTION_DOWNLOAD: String = "$DISTRIBUTION/download"
-
-        object Document {
-            const val BASE: String = "${Documents.DOCUMENT}/evaluation"
-            const val ENTITIES: String = "$BASE/entities"
-            const val DISTRIBUTION: String = "$BASE/distribution"
-            const val COMPARISON: String = "$BASE/comparison"
-            const val METRICS: String = "$BASE/metrics"
-            const val SPANS: String = "$BASE/spans"
-        }
     }
 }
