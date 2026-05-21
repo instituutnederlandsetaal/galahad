@@ -1,4 +1,4 @@
-id: spacy
+name: spacy
 uri: https://github.com/explosion/spacy-models/releases/tag/nl_core_news_lg-3.8.0
 version: 3.8.5
 description: Dutch spaCy pipeline with  tok2vec, morphologizer, tagger, parser, lemmatizer, senter & ner.
@@ -30,9 +30,9 @@ annotations:
         href: https://www.let.rug.nl/~vannoord/Lassy/sa-man_lassy.pdf
   - annotation: deprel
     principles:
-        - name: Universal Dependencies
-          details: Lassy Syntactic Annotation Manual
-          href: https://www.let.rug.nl/~vannoord/Lassy/sa-man_lassy.pdf
+      - name: Universal Dependencies
+        details: Lassy Syntactic Annotation Manual
+        href: https://www.let.rug.nl/~vannoord/Lassy/sa-man_lassy.pdf
   - annotation: ner
     principles:
       - name: OntoNotes named entities
@@ -46,7 +46,7 @@ attributions:
     details: spaCy 3.8.5
     href: https://spacy.io/
   - name: Model
-    details:  nl_core_news_lg-3.8.0
+    details: nl_core_news_lg-3.8.0
     href: https://github.com/explosion/spacy-models/releases/tag/nl_core_news_lg-3.8.0
   - name: Trained by
     details: spaCy
