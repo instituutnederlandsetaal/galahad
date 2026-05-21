@@ -17,9 +17,9 @@
 </template>
 
 <script setup lang="ts">
-import stores from "@/stores"
+import useTagsets from "@/stores/tagsets"
 
-const { tagsets: items, loading } = storeToRefs(stores.useTagsets())
+const { tagsets: items, loading } = storeToRefs(useTagsets())
 
 const columns = [{ key: "name" }, { key: "description" }]
 </script>

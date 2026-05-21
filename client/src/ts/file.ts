@@ -15,6 +15,6 @@ export function addContentTypeHeader(fd: FormData): Record<string, string> | nul
     return header
 }
 
-export function fileExtension(file: File): string {
+export function fileExtension(file: File): string | undefined {
     return file.name.toLowerCase().split(".").at(-1)
 }

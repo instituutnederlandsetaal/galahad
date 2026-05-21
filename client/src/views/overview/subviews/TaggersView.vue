@@ -16,7 +16,7 @@
                 <MailAddress />.
             </template>
 
-            <template #cell-id="d: TableData<Tagger>">
+            <template #cell-name="d: TableData<Tagger>">
                 <span :id="d.item.name" :class="markActive(d.item.name)">{{ d.value }}</span>
             </template>
 
@@ -37,11 +37,11 @@
 </template>
 
 <script setup lang="ts">
-import stores from "@/stores"
-import type { Tagger } from "@/types/taggers"
+import useTaggers from "@/stores/taggers"
+import type { Period, Tagger } from "@/types/taggers"
 import type { Column, TableData } from "@/types/ui/table"
 
-const { taggers: items, loading } = storeToRefs(stores.useTaggers())
+const { taggers: items, loading } = storeToRefs(useTaggers())
 
 const columns: Column<Tagger>[] = [
     { key: "name" },
@@ -49,17 +49,21 @@ const columns: Column<Tagger>[] = [
     { key: "language" },
     {
         key: "period",
-        sortOn: (t: Tagger): string => `${t.period.from} ${t.period.to}`,
-        format: (t: Tagger): string => `${t.period.from} – ${t.period.to}`,
+        sortOn: (t: Tagger): string => formatPeriod(t.period),
+        format: (t: Tagger): string => formatPeriod(t.period),
     },
     { key: "annotations", sortOn: (t: Tagger): string => t.annotations.map((a) => a.annotation).join() },
     { key: "attributions", noSort: true },
 ]
 
+function formatPeriod(period: Period): string {
+    return `${period.from} – ${period.to}`
+}
+
 /** Mark the active row, retrieved from the url anchor. */
-function markActive(id: string): string {
+function markActive(name: string): string {
     const hash = window.location.hash.substring(1)
-    return id === hash ? "active" : ""
+    return name === hash ? "active" : ""
 }
 </script>
 

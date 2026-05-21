@@ -14,6 +14,5 @@
 </template>
 
 <script setup lang="ts">
-// #data
 const href = `${window.location.protocol}//${window.location.hostname}/galahad/api/swagger-ui/index.html`
 </script>

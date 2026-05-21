@@ -18,7 +18,7 @@ const documents = defineStore("documents", () => {
     const { reload: reloadCorpora } = stores.useCorpora()
 
     // Fields
-    const loading = ref<boolean>()
+    const loading = ref<boolean>(false)
     const documents = ref<DocumentMetadata[]>([])
     const uploading: Record<string, FileStatus> = reactive({})
     const uploadBusyCount = computed(() => Object.values(uploading).filter((i) => i.status === "busy").length)
@@ -111,7 +111,6 @@ const documents = defineStore("documents", () => {
     watch(corpusId, reload)
 
     reload()
-
 
     // Exports
     return {

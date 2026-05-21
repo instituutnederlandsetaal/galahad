@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import stores from "@/stores"
+import useUser from "@/stores/user"
 
-const { user } = storeToRefs(stores.useUser())
+const { user } = storeToRefs(useUser())
 </script>

@@ -17,22 +17,20 @@
 </template>
 
 <script setup lang="ts">
-import stores from "@/stores"
+import useCorpora from "@/stores/corpora"
+import useDocuments from "@/stores/documents"
 import type { CorpusMetadata } from "@/types/corpora"
 import type { DocumentMetadata } from "@/types/documents"
 import { CorpusTableType, DocsTableType } from "@/types/ui/table"
 
-// #stores
-const { datasets, corpus } = storeToRefs(stores.useCorpora())
-const { reload } = stores.useCorpora()
-const { documents, loading } = storeToRefs(stores.useDocuments())
+const { datasets, corpus } = storeToRefs(useCorpora())
+const { reload } = useCorpora()
+const { documents, loading } = storeToRefs(useDocuments())
 
-// #computed
 const dataset = computed<CorpusMetadata | undefined>((): CorpusMetadata | undefined =>
     corpus.value?.dataset ? corpus.value : undefined,
 )
 const datasetDocs = computed<DocumentMetadata[]>((): DocumentMetadata[] => (dataset.value ? documents.value : []))
 
-// #lifecycle
 onMounted(reload)
 </script>

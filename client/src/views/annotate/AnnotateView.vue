@@ -5,16 +5,15 @@
         :tabs="[
             { id: 'corpora', title: 'Corpora' },
             { id: 'documents', title: 'Documents', disabled: !corpus },
-            { id: 'jobs', title: 'Jobs', disabled: !corpus?.numDocs },
-            { id: 'evaluate', title: 'Evaluate', disabled: !corpus?.numDocs },
-            { id: 'export', title: 'Export', disabled: !corpus?.numDocs },
+            { id: 'jobs', title: 'Jobs', disabled: !corpus?.documents },
+            { id: 'evaluate', title: 'Evaluate', disabled: !corpus?.documents },
+            { id: 'export', title: 'Export', disabled: !corpus?.documents },
         ]"
     />
 </template>
 
 <script setup lang="ts">
-import stores from "@/stores"
+import useCorpora from "@/stores/corpora"
 
-// #stores
-const { corpus } = storeToRefs(stores.useCorpora())
+const { corpus } = storeToRefs(useCorpora())
 </script>
