@@ -15,18 +15,19 @@ class Tagset(
     companion object {
         val UNKNOWN: Tagset = Tagset(name = "UNKNOWN", description = "Unknown Tagset")
         private const val TAGSETS_DIR: String = "data/tagsets"
-        private val dir = File(TAGSETS_DIR)
 
         val tagsets: Map<String, Tagset> =
-            dir.listFiles()
+            File(TAGSETS_DIR)
+                .listFiles()
                 .map {
                     Yaml(Constructor(Tagset::class.java, LoaderOptions()))
                         .load<Tagset>(it.inputStream())
                 }
                 .associateBy { it.name }
 
-        fun readOrNull(id: String?): Tagset? = tagsets[id]
+        fun readOrNull(name: String?): Tagset? = tagsets[name]
 
-        fun readOrThrow(id: String): Tagset = readOrNull(id) ?: throw TagsetNotFoundException(id)
+        fun readOrThrow(name: String): Tagset =
+            readOrNull(name) ?: throw TagsetNotFoundException(name)
     }
 }

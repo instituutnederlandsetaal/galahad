@@ -42,13 +42,13 @@ open class CorpusMetadata(
      * Whether the user is in the list of collaborators of this corpus. Note that this is not the
      * same as having write access: use [canWrite].
      */
-    fun isCollaborator(user: User): Boolean = collaborators?.contains(user.id) == true
+    private fun isCollaborator(user: User): Boolean = collaborators?.contains(user.id) == true
 
     /**
      * Whether the user is in the list of viewers of this corpus. Note that this is not the same as
      * having read access: use [canRead].
      */
-    fun isViewer(user: User): Boolean = viewers?.contains(user.id) == true
+    private fun isViewer(user: User): Boolean = viewers?.contains(user.id) == true
 
     /** To have write access, you need to be an owner, collaborator or admin. */
     fun canWrite(user: User): Boolean {
@@ -64,19 +64,16 @@ open class CorpusMetadata(
     }
 
     /** Only the owner and admin can add new collaborators and viewers. */
-    fun canAddNewUsers(user: User): Boolean {
+    private fun canAddNewUsers(user: User): Boolean {
         if (user.admin) return true
         return owner == user.id
     }
 
-    /** Only admins can make corpora into benchmark datasets. */
-    fun canDefineDataset(user: User): Boolean = user.admin
-
-    fun removeAsViewer(user: User) {
+    private fun removeAsViewer(user: User) {
         viewers?.removeIf { i -> i == user.id }
     }
 
-    fun removeAsCollaborator(user: User) {
+    private fun removeAsCollaborator(user: User) {
         collaborators?.removeIf { i -> i == user.id }
     }
 
@@ -89,7 +86,7 @@ open class CorpusMetadata(
         if (!excludeAdmin) {
             if (user.admin) return true
         }
-        if (dataset == true) return true // technically, datasets are always public, but still.
+        if (dataset == true) return true
         if (isCollaborator(user)) return true
         if (isViewer(user)) return true
         if (owner == user.id) return true
@@ -145,7 +142,7 @@ open class CorpusMetadata(
 
             if (oldMeta?.dataset != true && newMeta.dataset == true) {
                 // Corpus is being set to public
-                if (!newMeta.canDefineDataset(user)) {
+                if (!user.admin) {
                     throw CorpusUnauthorizedException("Cannot create a dataset.")
                 }
             }

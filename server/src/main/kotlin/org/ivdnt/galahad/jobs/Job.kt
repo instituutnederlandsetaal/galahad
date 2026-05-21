@@ -2,12 +2,11 @@ package org.ivdnt.galahad.jobs
 
 import java.io.File
 import org.apache.logging.log4j.kotlin.Logging
-import org.ivdnt.galahad.annotations.Layer
-import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER_NAME
+import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER
 import org.ivdnt.galahad.corpora.Corpus
-import org.ivdnt.galahad.documents.Document
 import org.ivdnt.galahad.files.GalahadFolder
 import org.ivdnt.galahad.files.ValidatedDiskValue
+import org.ivdnt.galahad.layers.CorpusLayerMetadata
 
 /**
  * A job is saved to disk as a folder under jobs/ (managed by [Jobs]), with the following files:
@@ -30,7 +29,7 @@ class Job(
     // Values
     val hasResult: Boolean
         get() =
-            name != SOURCE_LAYER_NAME &&
+            name != SOURCE_LAYER &&
                 results.readAllSequence().any { it.status == JobStatus.FINISHED }
 
     /** Progress of the job based on the status of the [JobResult]s of this job. */
@@ -68,7 +67,7 @@ class Job(
             }
         }
 
-    val metadata: JobMetadata
+    val metadata: CorpusLayerMetadata
         get() = metadataCache.readOrCreate()
 
     /**
@@ -76,25 +75,25 @@ class Job(
      * want to cache it.
      */
     private val metadataCache =
-        object : ValidatedDiskValue<JobMetadata>(metadataFile) {
+        object : ValidatedDiskValue<CorpusLayerMetadata>(metadataFile) {
             // NOTE: we also check against the last modified of the documents folder: adding new
             // docs
             // should invalidate the cache.
             override fun isValid(modified: Long) =
                 modified >= this@Job.modified && modified >= corpus.documents.modified
 
-            override fun set() = JobMetadata.create(this@Job)
+            override fun set() = CorpusLayerMetadata.create(this@Job)
         }
 
-    fun getLayer(doc: Document): Layer = getLayer(doc.name)
+    // fun getLayer(doc: Document): Layer = getLayer(doc.name)
 
-    fun getLayer(key: String): Layer = results.readOrNull(key)?.layer ?: Layer.EMPTY
+    // fun getLayer(key: String): Layer = results.readOrNull(key)?.layer ?: Layer.EMPTY
 
-    fun setLayer(key: String, layer: Layer) {
-        results.createOrThrow(key).layer = layer
-    }
+    //    fun setLayer(key: String, layer: Layer) {
+    //        results.createOrThrow(key).layer = layer
+    //    }
 
-    fun setLayer(doc: Document, layer: Layer): Unit = setLayer(doc.name, layer)
+    // fun setLayer(doc: Document, layer: Layer): Unit = setLayer(doc.name, layer)
 
     fun start() {
         JobController.queue(this)

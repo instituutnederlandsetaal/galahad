@@ -7,7 +7,6 @@ import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 import org.ivdnt.galahad.app.Config
-import org.ivdnt.galahad.corpora.CorpusMetadata
 import org.ivdnt.galahad.util.*
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -19,7 +18,7 @@ import org.w3c.dom.Node
  */
 class CmdiMetadata(val export: DocumentExport) {
     private val docTitle = export.document.sourceFile.withoutFormatExt
-    private val corpus: CorpusMetadata = export.corpus.metadata
+    private val corpus = export.corpus.metadata
     private val format = export.format.identifier
     private val now = Date()
     private val year = SimpleDateFormat("yyyy").format(now)
@@ -27,8 +26,8 @@ class CmdiMetadata(val export: DocumentExport) {
     private val day = SimpleDateFormat("dd").format(now)
     private val date = "$year-$month-$day"
     private val uuid = export.layer.id
-    private val tagset = export.tagger.principles.ifNullOrBlank { "!No tagset defined!" }
-    private val tagger = export.tagger
+    private val tagger = export.layers.metadata.tagger
+    private val tagset = tagger.principles.ifNullOrBlank { "!No tagset defined!" }
     private val language = corpus.language.ifNullOrBlank { "Dutch" }
     private val sourceName = corpus.source?.name?.ifNullOrBlank { "!No source name defined!" }
     private val sourceUrl =
@@ -210,7 +209,7 @@ class CmdiMetadata(val export: DocumentExport) {
     private fun writeCmdComponentsAnnotationProcess(annotationProcess: Node) {
         // Components.Annotation_GaLAHaD.Provenance.AnnotationProcess.ProcessorsAnnotators.Tool
         annotationProcess.child("cmdp:ProcessorsAnnotators").child("cmdp:Tool").apply {
-            child("cmdp:toolName").textContent = tagger.id
+            child("cmdp:toolName").textContent = tagger.name
             child("cmdp:toolVersion").textContent = tagger.version
             child("cmdp:toolURL").textContent = tagger.uri
         }

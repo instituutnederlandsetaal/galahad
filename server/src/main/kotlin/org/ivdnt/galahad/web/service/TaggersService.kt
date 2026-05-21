@@ -18,15 +18,10 @@ import org.springframework.web.util.UriComponentsBuilder
 @Service
 class TaggersService : Logging {
 
-    fun readAll(): Collection<Tagger> = Tagger.taggers.values
-
     fun read(tagger: String): Tagger? = Tagger.readOrThrow(tagger)
 
+    // TODO: could do with a refactor sometime
     fun taggerHealth(tagger: String): TaggerHealth {
-        // If there are multiple replicas for the same service, we only get health check response
-        // from
-        // one replica.
-        // However, we still think it is representative/informative
         val client = HttpClient.newBuilder().build()
         val tagger = Tagger.readOrThrow(tagger)
         val request = HttpRequest.newBuilder().uri(URI.create("${tagger.url}/health")).build()
@@ -49,7 +44,7 @@ class TaggersService : Logging {
             )
         } catch (e: Exception) {
             logger.error(
-                "Failed to connect to tagger ${tagger.id} on url ${request.uri()}. Error: $e"
+                "Failed to connect to tagger ${tagger.name} on url ${request.uri()}. Error: $e"
             )
             // If we cannot connect, there is no use in tagging, so just return
             return TaggerHealth(
@@ -66,7 +61,7 @@ class TaggersService : Logging {
     fun numActiveDocuments(): Int {
         var count = 0
         for (tagger in Tagger.taggers.values) {
-            val name = tagger.id
+            val name = tagger.name
 
             val restTemplate = RestTemplate()
             val endpoint = URL("${tagger.url}/status")

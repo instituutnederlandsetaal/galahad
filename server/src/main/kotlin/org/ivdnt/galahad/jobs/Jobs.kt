@@ -1,9 +1,7 @@
 package org.ivdnt.galahad.jobs
 
 import java.io.File
-import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER_NAME
-import org.ivdnt.galahad.annotations.LayerAnnotations
-import org.ivdnt.galahad.annotations.LayerPreview
+import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.exceptions.JobNotFoundException
 import org.ivdnt.galahad.exceptions.TaggerNotFoundException
@@ -31,7 +29,7 @@ import org.ivdnt.galahad.taggers.Tagger
 class Jobs(dir: File, private val corpus: Corpus) : GalahadFolderManager<Job, String>(dir) {
     override fun createOrThrow(key: String): Job {
         // Throw if the key is not a tagger name (treat source layer as tagger)
-        if (key !in Tagger.taggers && key != SOURCE_LAYER_NAME) throw TaggerNotFoundException(key)
+        if (key !in Tagger.taggers && key != SOURCE_LAYER) throw TaggerNotFoundException(key)
         // Safe to create it now
         return ctor(key)
     }
@@ -43,24 +41,5 @@ class Jobs(dir: File, private val corpus: Corpus) : GalahadFolderManager<Job, St
     override fun deleteOrThrow(key: String) {
         JobController.dequeue(readOrThrow(key))
         super.deleteOrThrow(key)
-    }
-
-    fun readAllMetadata(): List<JobMetadata> {
-        // Create a map of all taggers with empty metadata
-        val numDocs = corpus.statistics.numDocs
-        val allJobs =
-            Tagger.taggers.mapValues {
-                JobMetadata(
-                    it.value,
-                    Progress(numDocs),
-                    LayerPreview.EMPTY,
-                    LayerAnnotations.EMPTY,
-                    0,
-                )
-            }
-        // replace the entries for which a job exists
-        val jobs = readAll().map { it.metadata }.associateBy { it.tagger.id }
-        // Replacement is simply plus
-        return (allJobs + jobs).values.toList()
     }
 }

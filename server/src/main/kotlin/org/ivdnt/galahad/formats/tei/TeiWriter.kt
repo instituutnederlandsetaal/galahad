@@ -4,6 +4,7 @@ import java.io.OutputStream
 import javax.xml.XMLConstants
 import org.codehaus.stax2.XMLStreamWriter2
 import org.ivdnt.galahad.annotations.Annotation
+import org.ivdnt.galahad.annotations.LayerAnnotations.Companion.contains
 import org.ivdnt.galahad.annotations.TermSpan
 import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.export.LayerWriter
@@ -67,7 +68,7 @@ class TeiWriter(export: DocumentExport) : LayerWriter(export) {
                     //     <link target="#d1.p1.s1.w1 #d1.p1.s1.w2" ana="ud-syn:det"/>
                     // </linkGrp>
                     if (
-                        Annotation.DEPREL in export.tagger.annotationSet &&
+                        Annotation.DEPREL in export.document.metadata.annotations &&
                             sentence.terms.any { it.deprel != null }
                     ) {
                         writer.writeStartElement("linkGrp")

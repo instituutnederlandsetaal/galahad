@@ -21,7 +21,7 @@ class ErrorController : ErrorController, Logging {
     @Hidden
     @CrossOrigin
     @ExceptionHandler
-    fun handleError(request: HttpServletRequest): ErrorResponse {
+    private fun handleError(request: HttpServletRequest): ErrorResponse {
 
         // Get the default status code (probably 500), or override it with the actual status code if
         // it

@@ -22,7 +22,7 @@ import org.ivdnt.galahad.web.service.EvaluationService
 import org.springframework.web.bind.annotation.*
 
 @RestController
-class EvaluationController(val evaluationService: EvaluationService) : Logging {
+class EvaluationController(private val evaluationService: EvaluationService) : Logging {
 
     @Operation(
         summary = "Get distribution",

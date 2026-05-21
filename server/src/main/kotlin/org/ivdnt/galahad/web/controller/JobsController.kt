@@ -11,27 +11,21 @@ import jakarta.servlet.http.HttpServletResponse
 import java.util.*
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.exceptions.ErrorResponse
-import org.ivdnt.galahad.jobs.JobMetadata
-import org.ivdnt.galahad.jobs.Jobs
-import org.ivdnt.galahad.jobs.Progress
-import org.ivdnt.galahad.web.service.CorporaService
+import org.ivdnt.galahad.layers.CorpusLayerMetadata
+import org.ivdnt.galahad.web.service.JobsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-class JobsController(val corpora: CorporaService) {
+class JobsController(private val jobsService: JobsService) {
     @Autowired private val request: HttpServletRequest? = null
 
     @Autowired private val response: HttpServletResponse? = null
+
     private val user
         get() = User.fromRequest(request)
 
-    fun UUID.readJobs(): Jobs = corpora.readOrThrow(this, user).jobs
-
-    fun UUID.writeJobs(): Jobs = corpora.readWriteOrThrow(this, user).jobs
-
-    // TODO could this be replaced by /taggers?
     @Operation(
         summary = "Get all job metadata",
         description = "Get a summary of the state of all tagger jobs.",
@@ -40,7 +34,7 @@ class JobsController(val corpora: CorporaService) {
     @GetMapping(Endpoints.Jobs.BASE)
     fun getJobs(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID
-    ): List<JobMetadata> = corpus.readJobs().readAllMetadata()
+    ): List<CorpusLayerMetadata> = jobsService.readAll(corpus, user)
 
     @Operation(
         summary = "Get single job metadata",
@@ -58,7 +52,7 @@ class JobsController(val corpora: CorporaService) {
     fun getJob(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,
-    ): JobMetadata = corpus.readJobs().readOrThrow(job).metadata
+    ): CorpusLayerMetadata = jobsService.readOrThrow(corpus, job, user)
 
     @Operation(
         summary = "Start job",
@@ -78,21 +72,14 @@ class JobsController(val corpora: CorporaService) {
         content =
             [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
-    @ApiResponse(
-        responseCode = "400",
-        description = "The sourceLayer is not a tagger.",
-        content =
-            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
-    )
     @CrossOrigin
     @PostMapping(Endpoints.Jobs.JOB)
     fun postJob(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,
-    ): Progress {
-        corpus.writeJobs().createOrThrow(job).start()
+    ) {
         response?.status = HttpServletResponse.SC_ACCEPTED
-        return progress(corpus, job)
+        jobsService.createOrThrow(corpus, job, user)
     }
 
     @Operation(
@@ -113,49 +100,13 @@ class JobsController(val corpora: CorporaService) {
         content =
             [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
     )
-    @ApiResponse(
-        responseCode = "400",
-        description = "The sourceLayer is not a tagger.",
-        content =
-            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
-    )
-    @CrossOrigin
-    @PostMapping(Endpoints.Jobs.CANCEL)
-    fun postCancel(
-        @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
-        @PathVariable @Parameter(description = "Tagger name") job: String,
-    ) {
-        corpus.writeJobs().readOrThrow(job).stop()
-    }
-
     @CrossOrigin
     @DeleteMapping(Endpoints.Jobs.JOB)
     fun deleteJob(
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,
     ): ResponseEntity<String> {
-        corpus.writeJobs().deleteOrThrow(job)
+        jobsService.deleteOrThrow(corpus, job, user)
         return ResponseEntity.noContent().build()
     }
-
-    @Operation(summary = "Get job progress", description = "Get the progress of a job.")
-    @ApiResponse(responseCode = "200", description = "The job progress.")
-    @ApiResponse(
-        responseCode = "404",
-        description = "Corpus or job was not found.",
-        content =
-            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
-    )
-    @ApiResponse(
-        responseCode = "400",
-        description = "The sourceLayer is not a tagger.",
-        content =
-            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
-    )
-    @CrossOrigin
-    @GetMapping(Endpoints.Jobs.PROGRESS)
-    fun progress(
-        @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
-        @PathVariable @Parameter(description = "Tagger name") job: String,
-    ): Progress = corpus.readJobs().readOrThrow(job).progress
 }

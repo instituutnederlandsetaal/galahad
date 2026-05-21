@@ -4,6 +4,7 @@ import java.io.OutputStream
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 import org.ivdnt.galahad.annotations.Annotation
+import org.ivdnt.galahad.annotations.LayerAnnotations.Companion.contains
 import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.export.LayerWriter
 import org.ivdnt.galahad.util.XmlUtil
@@ -27,10 +28,10 @@ class NafWriter(export: DocumentExport) : LayerWriter(export) {
         addRaw(xml, root)
         addText(xml, root)
         addTerms(xml, root)
-        if (Annotation.NER in export.tagger.annotationSet) {
+        if (Annotation.NER in export.document.metadata.annotations) {
             addEntities(xml, root)
         }
-        if (Annotation.DEPREL in export.tagger.annotationSet) {
+        if (Annotation.DEPREL in export.document.metadata.annotations) {
             addDependencies(xml, root)
         }
 
@@ -55,7 +56,7 @@ class NafWriter(export: DocumentExport) : LayerWriter(export) {
 
         val lp =
             xml.createElement("lp").apply {
-                setAttribute("name", export.tagger.id)
+                setAttribute("name", export.tagger.name)
                 setAttribute("timestamp", now.toString())
                 setAttribute("hostname", "https://galahad.ivdnt.org")
                 export.tagger.version.ifBlank { null }?.let { setAttribute("version", it) }
@@ -65,7 +66,7 @@ class NafWriter(export: DocumentExport) : LayerWriter(export) {
         lpTerms.appendChild(lp)
         nafHeader.appendChild(lpTerms)
 
-        if (Annotation.NER in export.tagger.annotationSet) {
+        if (Annotation.NER in export.document.metadata.annotations) {
             val lpNer =
                 xml.createElement("linguisticProcessors").apply {
                     setAttribute("layer", "entities")
@@ -74,7 +75,7 @@ class NafWriter(export: DocumentExport) : LayerWriter(export) {
             nafHeader.appendChild(lpNer)
         }
 
-        if (Annotation.DEPREL in export.tagger.annotationSet) {
+        if (Annotation.DEPREL in export.document.metadata.annotations) {
             val lpDep =
                 xml.createElement("linguisticProcessors").apply { setAttribute("layer", "deps") }
             lpDep.appendChild(lp.cloneNode(true))

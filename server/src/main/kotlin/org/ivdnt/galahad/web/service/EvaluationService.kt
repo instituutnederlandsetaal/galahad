@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.io.path.createTempDirectory
 import org.ivdnt.galahad.annotations.Annotation
-import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER_NAME
+import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.corpora.CorpusStatistics
 import org.ivdnt.galahad.evaluation.JobPair
@@ -32,7 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class EvaluationService(val corpora: CorporaService) {
+class EvaluationService(private val corpora: CorporaService) {
     @Autowired private val request: HttpServletRequest? = null
 
     @Autowired private val response: HttpServletResponse? = null
@@ -78,7 +78,7 @@ class EvaluationService(val corpora: CorporaService) {
                 corpusObj,
                 settings = settings,
                 hypothesis = job,
-                reference = if (reference.isNullOrBlank()) SOURCE_LAYER_NAME else reference,
+                reference = if (reference.isNullOrBlank()) SOURCE_LAYER else reference,
             )
         return cm
     }
@@ -136,7 +136,7 @@ class EvaluationService(val corpora: CorporaService) {
         job: String,
         reference: String?,
     ): List<TermComparison> {
-        val reference: String = reference ?: SOURCE_LAYER_NAME
+        val reference: String = reference ?: SOURCE_LAYER
         return LayerComparison(
                 hypothesis =
                     corpora.readOrThrow(corpus, user).jobs.readOrThrow(job).getLayer(document),
@@ -257,7 +257,7 @@ class EvaluationService(val corpora: CorporaService) {
                 corpusObj,
                 settings = settings,
                 hypothesis = job,
-                reference = if (reference.isNullOrBlank()) SOURCE_LAYER_NAME else reference,
+                reference = if (reference.isNullOrBlank()) SOURCE_LAYER else reference,
             )
         return cm
     }

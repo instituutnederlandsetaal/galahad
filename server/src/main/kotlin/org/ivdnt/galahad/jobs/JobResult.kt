@@ -16,7 +16,7 @@ import org.ivdnt.galahad.files.GalahadFolder
  */
 class JobResult(dir: File) : GalahadFolder(dir), Logging {
     // Files in the document job folder.
-    private val processingIDFile = dir.resolve(PROCESSING_ID_File)
+    private val processingIDFile = dir.resolve(PID_FILE)
     private val errorFile = dir.resolve(ERROR_FILE)
     private val layerFile = dir.resolve(LAYER_FILE)
 
@@ -67,7 +67,7 @@ class JobResult(dir: File) : GalahadFolder(dir), Logging {
     }
 
     companion object {
-        private const val PROCESSING_ID_File = "pid.txt"
+        private const val PID_FILE = "pid.txt"
         private const val ERROR_FILE = "error.txt"
         private const val LAYER_FILE = "layer.json"
     }

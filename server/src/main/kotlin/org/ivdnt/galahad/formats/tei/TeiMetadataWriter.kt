@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.formats.tei
 
 import java.text.SimpleDateFormat
-import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER_NAME
+import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER
 import org.ivdnt.galahad.documents.DocumentFormat
 import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.formats.reader.PrettyXMLWriter
@@ -23,7 +23,7 @@ class TeiMetadataWriter(val writer: PrettyXMLWriter, val export: DocumentExport)
     val langCode = export.corpus.metadata.langCode
     val today = SimpleDateFormat("yyyy-MM-dd").format(System.currentTimeMillis())
     val annotationSet =
-        if (export.tagger.id == SOURCE_LAYER_NAME)
+        if (export.tagger.name == SOURCE_LAYER)
             export.corpus.metadata.tagset.ifNullOrBlank { "!No tagset defined!" }
         else export.tagger.principles
 
@@ -151,8 +151,8 @@ class TeiMetadataWriter(val writer: PrettyXMLWriter, val export: DocumentExport)
             writer.wrapIn(
                 "application",
                 *mapOf(
-                        "xml:id" to export.tagger.id,
-                        "ident" to export.tagger.id,
+                        "xml:id" to export.tagger.name,
+                        "ident" to export.tagger.name,
                         "version" to export.tagger.version,
                     )
                     .toVarArg(),
@@ -160,7 +160,7 @@ class TeiMetadataWriter(val writer: PrettyXMLWriter, val export: DocumentExport)
                 // <label>
                 writer.writeElement("label", "POS-tagger and lemmatiser")
                 // <ptr>
-                writer.writeEmptyElement("ptr", mapOf("target" to export.tagger.id))
+                writer.writeEmptyElement("ptr", mapOf("target" to export.tagger.name))
             }
         }
     }
@@ -216,7 +216,7 @@ class TeiMetadataWriter(val writer: PrettyXMLWriter, val export: DocumentExport)
             addInterpGrpTo("annotationMode", "automatically annotated")
             // processor interp is special, using @sameAs
             writer.wrapIn("interpGrp", "type" to "processor") {
-                writer.writeEmptyElement("interp", mapOf("sameAs" to "#${export.tagger.id}"))
+                writer.writeEmptyElement("interp", mapOf("sameAs" to "#${export.tagger.name}"))
             }
             // Provenance also has a <date>
             writer.writeEmptyElement("date", mapOf("from" to today, "to" to today))

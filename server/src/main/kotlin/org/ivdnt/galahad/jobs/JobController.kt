@@ -7,7 +7,7 @@ import kotlin.collections.count
 import kotlin.collections.minusAssign
 import kotlin.collections.plusAssign
 import kotlin.io.path.createTempFile
-import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER_NAME
+import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER
 import org.ivdnt.galahad.documents.Document
 import org.ivdnt.galahad.exceptions.SourceLayerNotATaggerException
 import org.ivdnt.galahad.formats.ParsedFile
@@ -30,7 +30,7 @@ object JobController {
     fun inQueue(job: Job): Boolean = job in queue
 
     fun queue(job: Job) {
-        if (job.name == SOURCE_LAYER_NAME) throw SourceLayerNotATaggerException()
+        if (job.name == SOURCE_LAYER) throw SourceLayerNotATaggerException()
         if (job in queue) {
             return // Already in queue, nothing to do.
         }
@@ -39,7 +39,7 @@ object JobController {
     }
 
     fun dequeue(job: Job) {
-        if (job.name == SOURCE_LAYER_NAME) throw SourceLayerNotATaggerException()
+        if (job.name == SOURCE_LAYER) throw SourceLayerNotATaggerException()
         if (job in queue) {
             queue -= job
         }
@@ -95,12 +95,7 @@ object JobController {
     private fun tag(job: Job, doc: Document): UUID {
         val url = "${Tagger.readOrThrow(job.name).url}/input"
         val text =
-            job.corpus.jobs
-                .readOrThrow(SOURCE_LAYER_NAME)
-                .results
-                .readOrThrow(doc.name)
-                .layer
-                .toString()
+            job.corpus.jobs.readOrThrow(SOURCE_LAYER).results.readOrThrow(doc.name).layer.toString()
         val file = createTempFile().toFile().also { it.writeText(text) }
         val entity =
             HttpEntity(

@@ -18,11 +18,24 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class TaggersController(val taggersService: TaggersService) : Logging {
+class TaggersController(private val taggersService: TaggersService) : Logging {
     @Operation(summary = "List all taggers", description = "List the metadata of all taggers.")
     @CrossOrigin
     @GetMapping(Endpoints.Taggers.BASE)
-    fun getTaggers(): Iterable<Tagger> = taggersService.readAll()
+    fun getTaggers(): Iterable<Tagger> = Tagger.taggers.values
+
+    @Operation(summary = "Get single tagger", description = "Metadata of the tagger.")
+    @ApiResponse(responseCode = "200", description = "Metadata of the tagger.")
+    @ApiResponse(
+        responseCode = "404",
+        description = "The tagger was not found.",
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
+    )
+    @CrossOrigin
+    @GetMapping(Endpoints.Taggers.TAGGER)
+    fun getTagger(@PathVariable @Parameter(description = "Tagger name") tagger: String): Tagger =
+        Tagger.readOrThrow(tagger)
 
     @Operation(summary = "Get tagger health", description = "Get the health of a tagger service.")
     @ApiResponse(responseCode = "200", description = "Health of the requested tagger.")

@@ -4,7 +4,6 @@ import java.io.OutputStream
 import javax.xml.XMLConstants
 import org.codehaus.stax2.XMLStreamWriter2
 import org.ivdnt.galahad.annotations.Annotation
-import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER_NAME
 import org.ivdnt.galahad.annotations.LayerAnnotations.Companion.contains
 import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.export.LayerWriter
@@ -86,14 +85,7 @@ class FoliaWriter(export: DocumentExport) : LayerWriter(export) {
                         writer.writeEndElement() // entities
                     }
 
-                    val containsDeprel: Boolean =
-                        if (export.tagger.id == SOURCE_LAYER_NAME) {
-                            Annotation.DEPREL in export.document.metadata.annotations
-                        } else {
-                            Annotation.DEPREL in export.tagger.annotationSet
-                        }
-
-                    if (containsDeprel) {
+                    if (Annotation.DEPREL in export.document.metadata.annotations) {
                         writer.writeStartElement("dependencies")
                         sentence.terms.forEach { t ->
                             if (t.deprel?.lowercase() != "root") {

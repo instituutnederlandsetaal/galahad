@@ -23,12 +23,6 @@ class Layer(
         }
     }
 
-    /** Unique annotation types in this layer. */
-    @get:JsonIgnore
-    val annotations: Set<Annotation> by lazy {
-        Annotation.order(terms.flatMap { it.annotations.keys }.asIterable())
-    }
-
     @get:JsonIgnore
     val summary: LayerAnnotations by lazy { LayerAnnotations.fromTerms(terms.asIterable()) }
 
@@ -43,7 +37,7 @@ class Layer(
 
     companion object {
         val EMPTY: Layer = Layer(emptyArray(), "")
-        const val SOURCE_LAYER_NAME: String = "sourceLayer"
+        const val SOURCE_LAYER: String = "sourceLayer"
     }
 }
 

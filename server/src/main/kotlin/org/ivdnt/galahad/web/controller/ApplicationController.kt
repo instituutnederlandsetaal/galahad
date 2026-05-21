@@ -32,12 +32,11 @@ class ApplicationController : Logging {
     @Hidden
     @CrossOrigin
     @GetMapping(Endpoints.BASE)
-    fun getApplication(): ResponseEntity<Void> {
+    fun getApplication(): ResponseEntity<Void> =
         // Since we have nothing to show at this URL, we redirect to the API UI instead
-        return ResponseEntity.status(HttpStatus.FOUND)
+        ResponseEntity.status(HttpStatus.FOUND)
             .location(URI.create(request?.contextPath + Endpoints.SWAGGER))
             .build()
-    }
 
     @Operation(
         summary = "Get user information",

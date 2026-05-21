@@ -3,7 +3,7 @@ package org.ivdnt.galahad.files
 import java.io.File
 import java.nio.file.Files
 
-abstract class GalahadFolder(open val dir: File) {
+abstract class GalahadFolder(protected val dir: File) {
     // Note the Kotlin initialization order. Make the dir before access.
     init {
         dir.mkdirs()

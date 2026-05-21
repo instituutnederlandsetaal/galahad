@@ -15,7 +15,7 @@ open class DiskValue<T>(val file: File) {
     val modified: Long
         get() = file.lastModified()
 
-    /** Try to read value from cache or disk, else return null. */
+    /** Try to read value from [cache] or disk, else return null. */
     inline fun <reified T> readOrNull(): T? {
         // First try cache
         cache.getIfPresent(file.absolutePath)?.let {
@@ -29,7 +29,7 @@ open class DiskValue<T>(val file: File) {
             .also { ThreadPoolUtil.pool.execute { cache.put(file.absolutePath, it as Any) } }
     }
 
-    /** Try to read value from cache or disk, else throw exception. */
+    /** Try to read value from [cache] or disk, else throw [IllegalStateException]. */
     inline fun <reified T> readOrThrow(): T =
         readOrNull() ?: throw IllegalStateException("$file is missing or empty.")
 

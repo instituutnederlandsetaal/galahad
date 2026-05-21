@@ -1,5 +1,7 @@
 package org.ivdnt.galahad.web.controller
 
+import org.ivdnt.galahad.web.controller.Endpoints.Jobs.JOB
+
 object Endpoints {
     const val BASE: String = "/"
     const val VERSION: String = "/version"
@@ -22,8 +24,6 @@ object Endpoints {
     object Jobs {
         const val BASE: String = "${Corpora.CORPUS}/jobs"
         const val JOB: String = "$BASE/{job}"
-        const val CANCEL: String = "$JOB/cancel"
-        const val PROGRESS: String = "$JOB/progress"
 
         object Documents {
             const val BASE: String = "$JOB/documents"
@@ -31,13 +31,23 @@ object Endpoints {
         }
     }
 
+    object Layers {
+        const val BASE: String = "${Corpora.CORPUS}/layers"
+        const val LAYER: String = "$BASE/{layer}"
+
+        object Documents {
+            const val BASE: String = "$LAYER/documents"
+            const val DOCUMENT: String = "$BASE/{document}"
+        }
+    }
+
     object Export {
-        const val BASE: String = "${Jobs.JOB}/export"
+        const val BASE: String = "${Layers.LAYER}/export"
         const val CONVERT: String = "$BASE/convert"
         const val MERGE: String = "$BASE/merge"
 
         object Documents {
-            const val BASE: String = "${Jobs.Documents.DOCUMENT}/export"
+            const val BASE: String = "${Layers.Documents.DOCUMENT}/export"
             const val CONVERT: String = "$BASE/convert"
             const val MERGE: String = "$BASE/merge"
         }
@@ -52,13 +62,13 @@ object Endpoints {
     object Taggers {
         const val BASE: String = "/taggers"
         const val TAGGER: String = "$BASE/{tagger}"
-        const val HEALTH: String = "$TAGGER/health"
         const val QUEUE: String = "$BASE/queue"
+        const val HEALTH: String = "$TAGGER/health"
     }
 
     object Tagsets {
         const val BASE: String = "/tagsets"
-        const val TAGSET: String = "$BASE/{id}"
+        const val TAGSET: String = "$BASE/{tagset}"
     }
 
     object Evaluation {

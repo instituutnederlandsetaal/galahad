@@ -18,8 +18,8 @@ interface CsvSampleExporter {
 
         // header
         val columns: MutableList<String> = mutableListOf("token")
-        columns.addAll(refColumns.map { "${refJob.id} ${it.value}" })
-        columns.addAll(hypoColumns.map { "${hypoJob.id} ${it.value}" })
+        columns.addAll(refColumns.map { "${refJob.name} ${it.value}" })
+        columns.addAll(hypoColumns.map { "${hypoJob.name} ${it.value}" })
         csv += CsvFile.toCsvString(columns)
 
         // body

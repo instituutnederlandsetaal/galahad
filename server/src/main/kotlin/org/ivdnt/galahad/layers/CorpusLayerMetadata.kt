@@ -1,13 +1,15 @@
-package org.ivdnt.galahad.jobs
+package org.ivdnt.galahad.layers
 
-import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER_NAME
+import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.annotations.LayerAnnotations
 import org.ivdnt.galahad.annotations.LayerAnnotations.Companion.plus
 import org.ivdnt.galahad.annotations.LayerPreview
+import org.ivdnt.galahad.jobs.Job
+import org.ivdnt.galahad.jobs.Progress
 import org.ivdnt.galahad.taggers.Tagger
 
 /** Cache-able job metadata. */
-class JobMetadata(
+class CorpusLayerMetadata(
     val tagger: Tagger,
     val progress: Progress,
     val preview: LayerPreview,
@@ -15,7 +17,7 @@ class JobMetadata(
     var modified: Long,
 ) {
     companion object {
-        fun create(job: Job): JobMetadata {
+        fun create(job: Job): CorpusLayerMetadata {
             val djs = job.results.readAll()
             // sum up the number of tokens/lemmas/etc of all documents
             val summary: LayerAnnotations =
@@ -30,13 +32,13 @@ class JobMetadata(
             // from the job metadata
             // But we are building that very metadata right now! Instead, we create a dummy tagger.
             val tagger =
-                if (job.name == SOURCE_LAYER_NAME) {
+                if (job.name == Layer.SOURCE_LAYER) {
                     Tagger.createSourceTagger(job.corpus)
                 } else {
                     Tagger.readOrThrow(job.name, job.corpus)
                 }
 
-            return JobMetadata(
+            return CorpusLayerMetadata(
                 tagger = tagger,
                 progress = job.progress,
                 preview = preview,

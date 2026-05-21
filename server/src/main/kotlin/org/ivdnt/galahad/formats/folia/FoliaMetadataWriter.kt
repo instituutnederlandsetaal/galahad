@@ -20,8 +20,8 @@ class FoliaMetadataWriter(val writer: PrettyXMLWriter, val export: DocumentExpor
     val language = export.corpus.metadata.language.ifNullOrBlank { "!No language defined!" }
     val langCode = export.corpus.metadata.langCode
     val today = SimpleDateFormat("yyyy-MM-dd").format(System.currentTimeMillis())
-    val annotations = export.layer.annotations
-    val taggerName = export.tagger.id
+    val annotations = export.document.metadata.annotations.keys
+    val taggerName = export.tagger.name
 
     fun write() {
         writer.wrapIn("metadata", "type" to "native") {

@@ -33,8 +33,8 @@ class FoliaMetadata(xml: Document, val root: Node, val export: DocumentExport) :
         }
 
         val processor = xml.createElement("processor")
-        processor.setAttribute("xml:id", export.tagger.id)
-        processor.setAttribute("name", export.tagger.id)
+        processor.setAttribute("xml:id", export.tagger.name)
+        processor.setAttribute("name", export.tagger.name)
         processor.setAttribute("type", "auto")
         processor.setAttribute(
             "src",
@@ -48,9 +48,9 @@ class FoliaMetadata(xml: Document, val root: Node, val export: DocumentExport) :
 
     private fun addAnnotationDefinition(annotations: Node, name: String) {
         val anot = xml.createElement("$name-annotation")
-        anot.setAttribute("set", export.tagger.id)
+        anot.setAttribute("set", export.tagger.name)
         val annotator = xml.createElement("annotator")
-        annotator.setAttribute("processor", export.tagger.id)
+        annotator.setAttribute("processor", export.tagger.name)
         anot.appendChild(annotator)
         annotations.appendChild(anot)
     }

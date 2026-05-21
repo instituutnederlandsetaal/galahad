@@ -4,6 +4,7 @@ import java.io.File
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.corpora.Corpus
+import org.ivdnt.galahad.documents.Documents
 import org.ivdnt.galahad.evaluation.comparison.LayerComparison
 import org.ivdnt.galahad.evaluation.confusion.DocumentConfusion
 import org.ivdnt.galahad.evaluation.distribution.DocumentDistribution
@@ -12,7 +13,6 @@ import org.ivdnt.galahad.evaluation.metrics.DocumentMetric
 import org.ivdnt.galahad.evaluation.spans.DocumentSpanEvaluation
 import org.ivdnt.galahad.files.GalahadFolder
 import org.ivdnt.galahad.files.ValidatedDiskValue
-import org.ivdnt.galahad.jobs.Job
 
 /**
  * Defines evaluations at the level of a document, i.e. where a single document hypothesis is
@@ -22,31 +22,31 @@ import org.ivdnt.galahad.jobs.Job
  */
 class DocumentEvaluation(dir: File, private val corpus: Corpus, private val jobs: JobPair) :
     GalahadFolder(dir) {
-    private val refJob: Job
-        get() = corpus.jobs.readOrThrow(jobs.reference)
+    private val referenceDocuments: Documents
+        get() = corpus.layers.readOrThrow(jobs.reference)
 
-    private val hypJob: Job
-        get() = corpus.jobs.readOrThrow(jobs.hypothesis)
+    private val hypothesisDocuments: Documents
+        get() = corpus.layers.readOrThrow(jobs.hypothesis)
 
     private val refLayer: Layer
-        get() = refJob.getLayer(name)
+        get() = referenceDocuments.readOrThrow(name).layer
 
     private val hypLayer: Layer
-        get() = hypJob.getLayer(name)
+        get() = hypothesisDocuments.readOrThrow(name).layer
 
     private val refModified: Long
-        get() = refJob.results.readOrThrow(name).modified
+        get() = referenceDocuments.readOrThrow(name).modified
 
     private val hypModified: Long
-        get() = hypJob.results.readOrThrow(name).modified
+        get() = hypothesisDocuments.readOrThrow(name).modified
 
     private val lastModified: Long
-        get() = hypModified.coerceAtLeast(refModified)
+        get() = maxOf(hypModified, refModified)
 
     private val availableAnnotations: Set<Annotation>
         get() =
-            refJob.metadata.annotations.annotations.keys
-                .intersect(hypJob.metadata.annotations.annotations.keys)
+            referenceDocuments.metadata.annotations.annotations.keys
+                .intersect(hypothesisDocuments.metadata.annotations.annotations.keys)
                 .filter { it != Annotation.TOKEN }
                 .toSet()
 

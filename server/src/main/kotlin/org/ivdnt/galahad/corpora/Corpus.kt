@@ -2,12 +2,14 @@ package org.ivdnt.galahad.corpora
 
 import java.io.File
 import java.util.*
+import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER
 import org.ivdnt.galahad.documents.Documents
 import org.ivdnt.galahad.evaluation.CorpusEvaluation
 import org.ivdnt.galahad.files.DiskValue
 import org.ivdnt.galahad.files.GalahadFolder
 import org.ivdnt.galahad.files.ValidatedDiskValue
 import org.ivdnt.galahad.jobs.Jobs
+import org.ivdnt.galahad.layers.CorpusLayers
 
 /**
  * A corpus is a collection of documents, metadata and jobs, saved to a folder. The folder contents
@@ -25,8 +27,9 @@ import org.ivdnt.galahad.jobs.Jobs
 class Corpus(dir: File) : GalahadFolder(dir) {
     val uuid: UUID = UUID.fromString(dir.name)
 
-    val documents: Documents = Documents(dir.resolve(DOCUMENTS_FOLDER), this)
-    val jobs: Jobs = Jobs(dir.resolve(LAYERS_FOLDER), this)
+    val documents: Documents = Documents(dir.resolve(LAYERS_FOLDER).resolve(SOURCE_LAYER))
+    val layers: CorpusLayers = CorpusLayers(dir.resolve(LAYERS_FOLDER), this)
+    val jobs: Jobs = Jobs(dir.resolve(JOBS_FOLDER), this)
     val evaluation: CorpusEvaluation = CorpusEvaluation(dir.resolve(EVALUATIONS_FOLDER), this)
 
     var metadata: CorpusMetadata
@@ -47,8 +50,8 @@ class Corpus(dir: File) : GalahadFolder(dir) {
     companion object {
         private const val METADATA_FILE = "metadata.json"
         private const val STATISTICS_FILE = "statistics.json"
+        private const val JOBS_FOLDER = "jobs"
         private const val LAYERS_FOLDER = "layers"
-        private const val DOCUMENTS_FOLDER = "documents"
         private const val EVALUATIONS_FOLDER = "evaluations"
 
         fun create(dir: File, metadata: CorpusMetadata): Corpus {

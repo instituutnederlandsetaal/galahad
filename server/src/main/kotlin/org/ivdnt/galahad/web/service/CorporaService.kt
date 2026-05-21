@@ -17,10 +17,10 @@ import org.springframework.stereotype.Service
 class CorporaService(@Autowired config: Config) :
     GalahadFolder(config.getWorkingDirectory().resolve("corpora")) {
 
-    val custom: Corpora = Corpora(dir.resolve("user"))
-    val presets: Corpora = Corpora(dir.resolve("datasets"))
+    private val custom: Corpora = Corpora(dir.resolve("user"))
+    private val presets: Corpora = Corpora(dir.resolve("datasets"))
 
-    val all: List<Corpus>
+    private val all: List<Corpus>
         get() = custom.readAll() + presets.readAll()
 
     fun readAll(user: User): List<CorpusStatistics> =
@@ -33,20 +33,11 @@ class CorporaService(@Autowired config: Config) :
         }
     }
 
-    fun readWriteOrThrow(key: UUID, user: User): Corpus {
+    fun writeOrThrow(key: UUID, user: User): Corpus {
         val (corpus, _) = findOrThrow(key)
         return corpus.also {
             if (!it.metadata.canWrite(user))
                 throw CorpusUnauthorizedException("Cannot edit corpus.")
-        }
-    }
-
-    fun deleteOrThrow(key: UUID, user: User) {
-        val (corpus, corpora) = findOrThrow(key)
-        if (corpus.metadata.canDelete(user)) {
-            corpora.deleteOrThrow(key.toString())
-        } else {
-            throw CorpusUnauthorizedException("Cannot delete corpus.")
         }
     }
 
@@ -59,12 +50,22 @@ class CorporaService(@Autowired config: Config) :
 
     fun updateOrThrow(key: UUID, value: CorpusMetadata, user: User): CorpusStatistics {
         val (corpus, corpora) = findOrThrow(key)
+        // Read access, because reader should be able to remove themselves
         if (corpus.metadata.canRead(user)) {
             value.user = user
             value.id = key
             return corpora.updateOrThrow(value).statistics
         }
         throw CorpusUnauthorizedException("Cannot edit corpus.")
+    }
+
+    fun deleteOrThrow(key: UUID, user: User) {
+        val (corpus, corpora) = findOrThrow(key)
+        if (corpus.metadata.canDelete(user)) {
+            corpora.deleteOrThrow(key.toString())
+        } else {
+            throw CorpusUnauthorizedException("Cannot delete corpus.")
+        }
     }
 
     private fun findOrThrow(uuid: UUID): Pair<Corpus, Corpora> {

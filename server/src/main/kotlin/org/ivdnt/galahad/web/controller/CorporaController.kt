@@ -40,6 +40,23 @@ class CorporaController(@Autowired private val corporaService: CorporaService) :
     fun getCorpora(): List<CorpusStatistics> = corporaService.readAll(user)
 
     @Operation(
+        summary = "Get single corpus metadata",
+        description = "Get the metadata of a corpus.",
+    )
+    @ApiResponse(responseCode = "200", description = "CorpusMetadata of the requested corpus.")
+    @ApiResponse(
+        responseCode = "404",
+        description = "The corpus was not found.",
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
+    )
+    @CrossOrigin
+    @GetMapping(Endpoints.Corpora.CORPUS)
+    fun getCorpus(
+        @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID
+    ): CorpusStatistics = corporaService.readOrThrow(corpus, user).statistics
+
+    @Operation(
         summary = "Create a new corpus",
         description =
             "Create a new corpus with the provided CorpusMetadata. The user doing the request becomes owner.",
@@ -65,23 +82,6 @@ class CorporaController(@Autowired private val corporaService: CorporaService) :
         response?.status = HttpServletResponse.SC_CREATED
         return corporaService.createOrThrow(value, user).uuid
     }
-
-    @Operation(
-        summary = "Get single corpus metadata",
-        description = "Get the metadata of a corpus.",
-    )
-    @ApiResponse(responseCode = "200", description = "CorpusMetadata of the requested corpus.")
-    @ApiResponse(
-        responseCode = "404",
-        description = "The corpus was not found.",
-        content =
-            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
-    )
-    @CrossOrigin
-    @GetMapping(Endpoints.Corpora.CORPUS)
-    fun getCorpus(
-        @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID
-    ): CorpusStatistics = corporaService.readOrThrow(corpus, user).statistics
 
     @Operation(
         summary = "Update corpus metadata",

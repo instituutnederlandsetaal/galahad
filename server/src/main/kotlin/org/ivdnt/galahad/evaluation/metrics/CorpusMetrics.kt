@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.evaluation.metrics
 
 import java.util.concurrent.ExecutorCompletionService
-import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER_NAME
+import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.evaluation.comparison.LayerFilter
 import org.ivdnt.galahad.jobs.Job
@@ -16,7 +16,7 @@ class CorpusMetrics(
     corpus: Corpus,
     settings: List<MetricsSettings>,
     hypothesis: String,
-    reference: String = SOURCE_LAYER_NAME,
+    reference: String = SOURCE_LAYER,
     layerFilter: LayerFilter? = null,
     truncate: Boolean = true,
     hypoTagger2: Tagger = Tagger.readOrThrow(hypothesis, corpus),
