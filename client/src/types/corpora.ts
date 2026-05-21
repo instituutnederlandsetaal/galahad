@@ -1,3 +1,5 @@
+import type { Period } from "@/types/taggers"
+
 export type UUID = string
 
 export type CorpusMetadata = MutableCorpusMetadata & {
@@ -11,17 +13,16 @@ export type CorpusMetadata = MutableCorpusMetadata & {
     uuid: UUID
 }
 
+export type Source = { name: string; url: string }
+
 export type MutableCorpusMetadata = {
     name: string
     owner: string
-    eraFrom: number
-    eraTo: number
-    tagset: string
-    language: string
     dataset: boolean
-    public: boolean
+    period: Period
+    language: string
+    tagset: string
+    source: Source
     collaborators: string[]
     viewers: string[]
-    sourceName: string
-    sourceUrl: string
 }

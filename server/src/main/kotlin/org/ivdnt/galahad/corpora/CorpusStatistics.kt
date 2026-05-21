@@ -4,7 +4,7 @@ import java.util.*
 
 /**
  * Metadata about a corpus, to be stored in a cache file, as its immutable fields can become
- * invalidated (e.g. [numDocs], [modified]), and of course any [CorpusMetadata] field. This is the
+ * invalidated (e.g. [documents], [modified]), and of course any [CorpusMetadata] field. This is the
  * superset of [CorpusMetadata], and contains, in addition to the mutable fields of the latter, any
  * immutable fields like [size]. [size] is expensive to calculate, hence the cache file.
  */
@@ -21,8 +21,8 @@ class CorpusStatistics(
     source: Source?,
     // Immutable fields
     val uuid: UUID,
-    val numResults: Int,
-    val numDocs: Int,
+    val jobs: Int,
+    val documents: Int,
     val size: Long,
     val modified: Long,
 ) :
@@ -52,8 +52,8 @@ class CorpusStatistics(
                 viewers = corpus.metadata.viewers,
                 // Immutable fields
                 uuid = corpus.uuid,
-                numResults = corpus.jobs.readAll().size,
-                numDocs = corpus.documents.readAll().size,
+                jobs = corpus.jobs.readAll().size,
+                documents = corpus.documents.readAll().size,
                 size = corpus.size,
                 modified = System.currentTimeMillis(),
             )

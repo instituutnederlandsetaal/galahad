@@ -1,5 +1,10 @@
 package org.ivdnt.galahad.web.service
 
+import java.io.File
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.io.path.createTempDirectory
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.corpora.CorpusStatistics
 import org.ivdnt.galahad.evaluation.JobPair
@@ -15,11 +20,6 @@ import org.ivdnt.galahad.evaluation.metrics.JobMetric
 import org.ivdnt.galahad.util.toValidFileName
 import org.ivdnt.galahad.util.zipDir
 import org.springframework.stereotype.Service
-import java.io.File
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
-import kotlin.io.path.createTempDirectory
 
 @Service
 class EvaluationService(private val corpora: CorporaService) {
@@ -199,7 +199,7 @@ class EvaluationService(private val corpora: CorporaService) {
             "${LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))}\n"
         )
         metadataFile.appendText("Corpus: ${metadata.name}\n")
-        metadataFile.appendText("Documents: ${metadata.numDocs}\n")
+        metadataFile.appendText("Documents: ${metadata.documents}\n")
         metadataFile.appendText("Era: ${metadata.period?.from}-${metadata.period?.to}\n")
         metadataFile.appendText("Hypothesis: $job\n")
         if (reference != null) metadataFile.appendText("Reference: $reference\n")

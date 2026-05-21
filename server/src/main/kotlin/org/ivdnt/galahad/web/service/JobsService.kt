@@ -13,7 +13,7 @@ class JobsService(private val corpora: CorporaService) : Logging {
     fun readAll(corpus: UUID): List<JobMetadata> {
         // Create a map of all taggers with empty metadata
         val corpus = corpora.readOrThrow(corpus)
-        val numDocs = corpus.statistics.numDocs
+        val numDocs = corpus.statistics.documents
         val allJobs =
             Tagger.taggers.mapValues {
                 JobMetadata(CorpusLayerMetadata(it.value), Progress(numDocs))
@@ -32,7 +32,7 @@ class JobsService(private val corpora: CorporaService) : Logging {
         val corpus = corpora.readOrThrow(corpus)
         val tagger = Tagger.readOrThrow(job)
         return corpus.jobs.readOrNull(job)?.metadata
-            ?: JobMetadata(CorpusLayerMetadata(tagger), Progress(corpus.statistics.numDocs))
+            ?: JobMetadata(CorpusLayerMetadata(tagger), Progress(corpus.statistics.documents))
     }
 
     fun createOrThrow(corpus: UUID, job: String) {
