@@ -21,14 +21,10 @@ class JobsService(private val corpora: CorporaService) : Logging {
     }
 
     fun readOrThrow(corpus: UUID, job: String): JobMetadata {
-        val tagger = Tagger.readOrThrow(job)
         val corpus = corpora.readOrThrow(corpus)
-        val metadata = corpus.jobs.readOrNull(job)?.metadata
-        if (metadata == null) {
-            val untagged = corpus.documents.readAll().size
-            return JobMetadata(tagger, Progress(untagged))
-        }
-        return metadata
+        val tagger = Tagger.readOrThrow(job)
+        return corpus.jobs.readOrNull(job)?.metadata
+            ?: JobMetadata(tagger, Progress(corpus.statistics.numDocs))
     }
 
     fun createOrThrow(corpus: UUID, job: String) {
