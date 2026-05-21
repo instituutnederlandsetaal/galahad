@@ -1,5 +1,12 @@
 package org.ivdnt.galahad.jobs
 
+import java.io.File
+import java.util.UUID
+import kotlin.collections.ArrayDeque
+import kotlin.collections.count
+import kotlin.collections.minusAssign
+import kotlin.collections.plusAssign
+import kotlin.io.path.createTempFile
 import org.ivdnt.galahad.documents.Document
 import org.ivdnt.galahad.taggers.Tagger
 import org.springframework.core.io.FileSystemResource
@@ -10,13 +17,6 @@ import org.springframework.http.MediaType
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.postForEntity
-import java.io.File
-import java.util.UUID
-import kotlin.collections.ArrayDeque
-import kotlin.collections.count
-import kotlin.collections.minusAssign
-import kotlin.collections.plusAssign
-import kotlin.io.path.createTempFile
 
 object JobController {
     private val queue: ArrayDeque<Job> = ArrayDeque<Job>()
@@ -121,6 +121,7 @@ object JobController {
     private class Task(val uuid: UUID, val job: Job, val doc: String) {
         fun finish(file: File) {
             try {
+                job.corpus.jobs.readOrThrow(job.name).results.createOrThrow(doc)
                 job.corpus.layers.readOrThrow(job.name).documents.createOrThrow(file)
             } catch (exception: Exception) {
                 job.results.createOrThrow(doc).error = exception.message

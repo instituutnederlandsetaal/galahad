@@ -19,10 +19,20 @@ object TestUtil {
     fun get(path: String): File = File(this::class.java.classLoader.getResource(path)!!.toURI())
 
     fun createJobbedCorpus(config: Config): Corpus {
+        // contains docs
         val corpus = createFilledCorpus(config)
-        val files = get("formats/shared/converter").listFiles()
+        // add layer
+        val file = get("formats/shared/converter").listFiles().first()
         corpus.layers.createOrThrow(TAGGER)
-        files.forEach { corpus.layers.readOrThrow(TAGGER).documents.createOrThrow(it) }
+        // create job in progress with 1 finished
+        config
+            .getWorkingDirectory()
+            .resolve("corpora/user/${corpus.uuid}")
+            .resolve("jobs")
+            .resolve(TAGGER)
+            .resolve("documents")
+            .resolve(file.name)
+            .mkdirs()
         return corpus
     }
 

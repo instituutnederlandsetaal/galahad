@@ -7,13 +7,14 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import jakarta.servlet.http.HttpServletResponse
+import java.util.*
 import org.ivdnt.galahad.exceptions.ErrorResponse
 import org.ivdnt.galahad.jobs.JobMetadata
+import org.ivdnt.galahad.jobs.Progress
 import org.ivdnt.galahad.web.service.JobsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.util.*
 
 @RestController
 class JobsController(private val jobsService: JobsService) {
@@ -65,6 +66,30 @@ class JobsController(private val jobsService: JobsService) {
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Tagger name") job: String,
     ): JobMetadata = jobsService.readOrThrow(corpus, job)
+
+    @Operation(
+        summary = "Get progress of job",
+        description = "Get progress of the documents of the job.",
+    )
+    @ApiResponse(responseCode = "200", description = "The documents progress.")
+    @ApiResponse(
+        responseCode = "403",
+        description = "User needs read-access.",
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
+    )
+    @ApiResponse(
+        responseCode = "404",
+        description = "Corpus or job was not found.",
+        content =
+            [Content(array = ArraySchema(schema = Schema(implementation = ErrorResponse::class)))],
+    )
+    @CrossOrigin
+    @GetMapping(Endpoints.Jobs.PROGRESS)
+    fun getJobProgress(
+        @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
+        @PathVariable @Parameter(description = "Tagger name") job: String,
+    ): Progress = jobsService.readOrThrowProgress(corpus, job)
 
     @Operation(
         summary = "Start job",

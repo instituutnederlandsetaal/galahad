@@ -34,6 +34,7 @@ object Endpoints {
     object Jobs {
         const val BASE: String = "${Corpora.CORPUS}/jobs"
         const val JOB: String = "$BASE/{job}"
+        const val PROGRESS: String = "$JOB/progress"
 
         // TODO retrieve job status (Jobmetadata) of individual documents?
         //        object Documents {

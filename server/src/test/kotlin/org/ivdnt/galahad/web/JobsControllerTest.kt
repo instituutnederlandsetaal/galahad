@@ -6,9 +6,11 @@ import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.Galahad
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.exceptions.CorpusNotFoundException
+import org.ivdnt.galahad.exceptions.JobNotFoundException
 import org.ivdnt.galahad.exceptions.TaggerNotFoundException
 import org.ivdnt.galahad.exceptions.UserUnauthorizedException
 import org.ivdnt.galahad.jobs.JobMetadata
+import org.ivdnt.galahad.jobs.Progress
 import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.util.TestConfig
 import org.ivdnt.galahad.util.TestUtil
@@ -38,7 +40,7 @@ class JobsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: Con
 
     @Nested
     inner class JobGetTest {
-        private fun assertCanGetJob(user: String) {
+        private fun assertGetJob(user: String) {
             val corpus = TestUtil.createFilledCorpus(config)
             val metadata: JobMetadata =
                 performGetJob(corpus.uuid, user)
@@ -50,28 +52,28 @@ class JobsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: Con
                     .andDeserialize()
             val expectedTagger = Tagger.readOrThrow(TestUtil.TAGGER)
             val untagged = TestUtil.get("formats/shared/converter").listFiles().size
-            assertEquals(expectedTagger, metadata.tagger)
+            assertEquals(expectedTagger, metadata.layer.tagger)
             assertEquals(untagged, metadata.progress.untagged)
         }
 
         @Test
         fun `Owner can get job`() {
-            assertCanGetJob(TestUtil.USER)
+            assertGetJob(TestUtil.USER)
         }
 
         @Test
         fun `Admin can get job`() {
-            assertCanGetJob("admin")
+            assertGetJob("admin")
         }
 
         @Test
         fun `Collaborator can get job`() {
-            assertCanGetJob("collaborator")
+            assertGetJob("collaborator")
         }
 
         @Test
         fun `Viewer can get job`() {
-            assertCanGetJob("viewer")
+            assertGetJob("viewer")
         }
 
         @Test
@@ -93,7 +95,8 @@ class JobsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: Con
 
         @Test
         fun `Can't get job for non-existing tagger`() {
-            performGetJob(UUID.randomUUID(), tagger = "non-existing").andExpect {
+            val corpus = TestUtil.createFilledCorpus(config)
+            performGetJob(corpus.uuid, tagger = "non-existing").andExpect {
                 status { isNotFound() }
                 match { it.resolvedException is TaggerNotFoundException }
             }
@@ -164,29 +167,144 @@ class JobsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: Con
     }
 
     @Nested
-    inner class JobDeletionTest {
-        private fun assertCanDeleteJob(user: String) {
+    inner class JobProgressTest {
+        private fun assertGetJobProgress(user: String) {
             val corpus = TestUtil.createJobbedCorpus(config)
-            assertEquals(0, getJobs(corpus).sumOf { it.progress.untagged })
-            assert(0 != getJobs(corpus).sumOf { it.progress.finished })
+            val progress: Progress =
+                performGetJobProgress(corpus.uuid, user)
+                    .andExpect {
+                        status { isOk() }
+                        content { contentType(MediaType.APPLICATION_JSON) }
+                    }
+                    .andReturn()
+                    .andDeserialize()
+            assertEquals(1, progress.finished)
+        }
+
+        @Test
+        fun `Owner can get job progress`() {
+            assertGetJobProgress(TestUtil.USER)
+        }
+
+        @Test
+        fun `Admin can get job progress`() {
+            assertGetJobProgress("admin")
+        }
+
+        @Test
+        fun `Collaborator can get job progress`() {
+            assertGetJobProgress("collaborator")
+        }
+
+        @Test
+        fun `Viewer can get job progress`() {
+            assertGetJobProgress("viewer")
+        }
+
+        @Test
+        fun `Stranger can't get job progress`() {
+            val corpus = TestUtil.createJobbedCorpus(config)
+            performGetJobProgress(corpus.uuid, "stranger").andExpect {
+                status { isForbidden() }
+                match { it.resolvedException is UserUnauthorizedException }
+            }
+        }
+
+        @Test
+        fun `Can't get job progress for non-existing corpus`() {
+            performGetJobProgress(UUID.randomUUID()).andExpect {
+                status { isNotFound() }
+                match { it.resolvedException is CorpusNotFoundException }
+            }
+        }
+
+        @Test
+        fun `Can't get job progress for non-existing tagger`() {
+            val corpus = TestUtil.createJobbedCorpus(config)
+            performGetJobProgress(corpus.uuid, tagger = "non-existing").andExpect {
+                status { isNotFound() }
+                match { it.resolvedException is TaggerNotFoundException }
+            }
+        }
+
+        @Test
+        fun `Can't get job progress for existing tagger without job`() {
+            val corpus = TestUtil.createFilledCorpus(config)
+            performGetJobProgress(corpus.uuid, tagger = TestUtil.TAGGER).andExpect {
+                status { isNotFound() }
+                match { it.resolvedException is JobNotFoundException }
+            }
+        }
+    }
+
+    @Nested
+    inner class JobDeletionTest {
+        private fun assertDeleteJob(user: String) {
+            val corpus = TestUtil.createJobbedCorpus(config)
+            assertEquals(1, getJobs(corpus).sumOf { it.progress.finished })
             performDeleteJob(corpus.uuid, user).andExpect { status { isNoContent() } }
             assertEquals(0, getJobs(corpus).sumOf { it.progress.finished })
-            assert(0 != getJobs(corpus).sumOf { it.progress.untagged })
         }
 
         @Test
         fun `Owner can delete job`() {
-            assertCanDeleteJob(TestUtil.USER)
+            assertDeleteJob(TestUtil.USER)
         }
 
         @Test
         fun `Admin can delete job`() {
-            assertCanDeleteJob("admin")
+            assertDeleteJob("admin")
         }
 
         @Test
         fun `Collaborator can delete job`() {
-            assertCanDeleteJob("collaborator")
+            assertDeleteJob("collaborator")
+        }
+
+        private fun assertCantDeleteJob(user: String) {
+            val corpus = TestUtil.createJobbedCorpus(config)
+            assert(0 != getJobs(corpus).sumOf { it.progress.finished })
+            performDeleteJob(corpus.uuid, user).andExpect {
+                status { isForbidden() }
+                match { it.resolvedException is UserUnauthorizedException }
+            }
+            assert(0 != getJobs(corpus).sumOf { it.progress.finished })
+        }
+
+        @Test
+        fun `Viewer can't delete job`() {
+            assertCantDeleteJob("viewer")
+        }
+
+        @Test
+        fun `Stranger can't delete job`() {
+            assertCantDeleteJob("stranger")
+        }
+
+        @Test
+        fun `Can't delete job for non-existing corpus`() {
+            performDeleteJob(UUID.randomUUID()).andExpect {
+                status { isNotFound() }
+                match { it.resolvedException is CorpusNotFoundException }
+            }
+        }
+
+        @Test
+        fun `Can't delete job for non-existing tagger`() {
+            val corpus = TestUtil.createJobbedCorpus(config)
+            performDeleteJob(corpus.uuid, tagger = "non-existing").andExpect {
+                status { isNotFound() }
+                match { it.resolvedException is TaggerNotFoundException }
+            }
+        }
+
+        @Test
+        fun `Can't delete job for existing tagger without job`() {
+            val corpus = TestUtil.createFilledCorpus(config)
+            performDeleteJob(corpus.uuid, tagger = TestUtil.TAGGER).andExpect {
+                status { isNotFound() }
+                match { it.resolvedException is JobNotFoundException }
+            }
         }
     }
 
@@ -196,6 +314,15 @@ class JobsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: Con
         tagger: String = TestUtil.TAGGER,
     ): ResultActionsDsl =
         mvc.get("/corpora/${corpus}/jobs/$tagger") { headers { assignHeaders(this, user) } }
+
+    private fun performGetJobProgress(
+        corpus: UUID,
+        user: String = TestUtil.USER,
+        tagger: String = TestUtil.TAGGER,
+    ): ResultActionsDsl =
+        mvc.get("/corpora/${corpus}/jobs/$tagger/progress") {
+            headers { assignHeaders(this, user) }
+        }
 
     private fun performCreateJob(
         corpus: UUID,

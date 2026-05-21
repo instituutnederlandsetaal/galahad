@@ -10,9 +10,9 @@ import org.ivdnt.galahad.taggers.Tagger
 /** Cache-able layer metadata. */
 class CorpusLayerMetadata(
     val tagger: Tagger,
-    val preview: LayerPreview,
-    val annotations: LayerAnnotations,
-    var modified: Long,
+    val preview: LayerPreview = LayerPreview.EMPTY,
+    val annotations: LayerAnnotations = LayerAnnotations.EMPTY,
+    var modified: Long = 0,
 ) {
     companion object {
         fun create(layers: CorpusLayer, corpus: Corpus): CorpusLayerMetadata {

@@ -1,11 +1,11 @@
 package org.ivdnt.galahad.jobs
 
+import java.io.File
+import java.util.*
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.files.DiskValue
 import org.ivdnt.galahad.files.GalahadFolder
-import java.io.File
-import java.util.*
 
 /**
  * Represents a job that processes a single document in a corpus. Corresponds to a directory in
@@ -23,7 +23,7 @@ class JobResult(dir: File) : GalahadFolder(dir), Logging {
             DiskValue<String>(dir.resolve(ERROR_FILE)).write(value)
         }
 
-    /** Status based on error file, or result file. */
+    /** Status based on error file. */
     val status: JobStatus
         get() = if (error != null) JobStatus.ERROR else JobStatus.FINISHED
 
