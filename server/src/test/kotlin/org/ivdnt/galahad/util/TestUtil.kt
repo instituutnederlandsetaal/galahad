@@ -18,6 +18,14 @@ object TestUtil {
 
     fun get(path: String): File = File(this::class.java.classLoader.getResource(path)!!.toURI())
 
+    fun createJobbedCorpus(config: Config): Corpus {
+        val corpus = createFilledCorpus(config)
+        val files = get("formats/shared/converter").listFiles()
+        corpus.layers.createOrThrow(TAGGER)
+        files.forEach { corpus.layers.readOrThrow(TAGGER).documents.createOrThrow(it) }
+        return corpus
+    }
+
     fun createFilledCorpus(config: Config, dataset: Boolean = false): Corpus {
         val corpus = createCorpus(config, dataset)
         val files = get("formats/shared/converter").listFiles()

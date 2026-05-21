@@ -105,7 +105,6 @@ class TaggersControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: 
         val corpus = TestUtil.createFilledCorpus(config)
         mvc.post("/corpora/${corpus.uuid}/jobs/${TestUtil.TAGGER}") { headers(::assignHeaders) }
             .andExpect { status { isAccepted() } }
-            .andReturn()
         assertEquals(1, getQueue())
     }
 }
