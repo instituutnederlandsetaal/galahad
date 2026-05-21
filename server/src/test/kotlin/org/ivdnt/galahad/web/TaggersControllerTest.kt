@@ -1,5 +1,6 @@
 package org.ivdnt.galahad.web
 
+import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER
 import org.ivdnt.galahad.app.Galahad
 import org.ivdnt.galahad.exceptions.TaggerNotFoundException
 import org.ivdnt.galahad.taggers.Tagger
@@ -22,10 +23,29 @@ import org.springframework.test.web.servlet.get
 class TaggersControllerTest(@Autowired val mvc: MockMvc) {
     @Test
     fun `Can get taggers`() {
-        val taggers: List<Tagger> = mvc.get("/taggers").andReturn().andDeserialize()
-        assertEquals(1, taggers.count { it.id == TestUtil.TAGGER_NAME })
+        val taggers: List<Tagger> =
+            mvc.get("/taggers").andExpect { status { isOk() } }.andReturn().andDeserialize()
+        assertEquals(1, taggers.count { it.name == TestUtil.TAGGER_NAME })
         assert(taggers.sumOf { it.attributions.size } > 0)
         assert(taggers.sumOf { it.annotations.sumOf { it.principles?.size ?: 0 } } > 0)
+    }
+
+    @Test
+    fun `Can get single tagger`() {
+        val tagger: Tagger =
+            mvc.get("/taggers/${TestUtil.TAGGER_NAME}")
+                .andExpect { status { isOk() } }
+                .andReturn()
+                .andDeserialize()
+        assertEquals(TestUtil.TAGGER_NAME, tagger.name)
+    }
+
+    @Test
+    fun `Can't get source tagger`() {
+        mvc.get("/taggers/$SOURCE_LAYER").andExpect {
+            status { isNotFound() }
+            match { it.resolvedException is TaggerNotFoundException }
+        }
     }
 
     @Test

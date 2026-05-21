@@ -6,7 +6,6 @@ import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.Galahad
 import org.ivdnt.galahad.util.*
 import org.ivdnt.galahad.util.TestUtil.assignHeaders
-import org.ivdnt.galahad.web.controller.ExportController
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,11 +17,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 @WebMvcTest(properties = ["spring.main.allow-bean-definition-overriding=true"])
 @ContextConfiguration(classes = [Galahad::class, TestConfig::class])
 @Disabled
-class ExportControllerTest(
-    @Autowired val mvc: MockMvc,
-    @Autowired val config: Config,
-    @Autowired val ctrl: ExportController,
-) {
+class ExportControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: Config) {
 
     @Test
     fun convertAndExportJob() {

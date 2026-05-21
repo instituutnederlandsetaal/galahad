@@ -1,5 +1,6 @@
 package org.ivdnt.galahad.web
 
+import java.io.File
 import java.util.*
 import org.ivdnt.galahad.app.Galahad
 import org.ivdnt.galahad.corpora.CorpusStatistics
@@ -92,6 +93,7 @@ class CorporaControllerTest(@Autowired val mvc: MockMvc) {
             val corpus = getCorpus(uuid)
             assertEquals(setOf("viewer"), corpus.viewers)
             assertEquals(setOf("collaborator"), corpus.collaborators)
+            assertEquals(1, File(TestConfig.workDir).listFiles().size)
         }
 
         @Test

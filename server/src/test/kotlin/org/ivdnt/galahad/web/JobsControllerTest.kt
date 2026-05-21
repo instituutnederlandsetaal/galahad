@@ -5,8 +5,8 @@ import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Layer
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.Galahad
-import org.ivdnt.galahad.jobs.JobMetadata
 import org.ivdnt.galahad.jobs.Progress
+import org.ivdnt.galahad.layers.CorpusLayerMetadata
 import org.ivdnt.galahad.util.TestConfig
 import org.ivdnt.galahad.util.TestUtil
 import org.ivdnt.galahad.web.controller.JobsController
@@ -78,13 +78,13 @@ class JobsControllerTest(
             .body!!
     }
 
-    private fun getJobs(uuid: UUID): Set<JobMetadata> {
+    private fun getJobs(uuid: UUID): Set<CorpusLayerMetadata> {
         return rest
             .exchange(
                 "/corpora/$uuid/jobs?includePotentialJobs=true",
                 HttpMethod.GET,
                 getHeaders(),
-                object : ParameterizedTypeReference<Set<JobMetadata>>() {},
+                object : ParameterizedTypeReference<Set<CorpusLayerMetadata>>() {},
             )
             .body!!
     }

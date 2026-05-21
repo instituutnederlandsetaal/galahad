@@ -3,7 +3,7 @@ package org.ivdnt.galahad.formats
 import java.io.ByteArrayOutputStream
 import java.io.File
 import org.ivdnt.galahad.annotations.Layer
-import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER_NAME
+import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.documents.Document
@@ -44,7 +44,7 @@ open class ConverterTest {
         }
 
         val corpusExport =
-            CorpusExport.create(corpus, SOURCE_LAYER_NAME, output, User.DEFAULT_USER, false, false)
+            CorpusExport.create(corpus, SOURCE_LAYER, output, User.DEFAULT_USER, false, false)
         val docExport = corpusExport.documentExport(doc)
         val convertedText =
             ByteArrayOutputStream()
@@ -66,9 +66,9 @@ open class ConverterTest {
         TEXT_CLEANING.fold(text) { clean, regex -> regex.replace(clean, "") }
 
     private fun setLayerId(doc: Document) {
-        val layer = corpus.jobs.createOrThrow(SOURCE_LAYER_NAME).getLayer(doc)
+        val layer = corpus.jobs.createOrThrow(SOURCE_LAYER).getLayer(doc)
         val fixedLayer = Layer(layer.documents, uuid)
-        corpus.jobs.createOrThrow(SOURCE_LAYER_NAME).setLayer(doc, fixedLayer)
+        corpus.jobs.createOrThrow(SOURCE_LAYER).setLayer(doc, fixedLayer)
     }
 
     companion object {

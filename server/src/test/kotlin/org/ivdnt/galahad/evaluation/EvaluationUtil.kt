@@ -2,7 +2,7 @@ package org.ivdnt.galahad.evaluation
 
 import java.io.File
 import org.ivdnt.galahad.annotations.Layer
-import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER_NAME
+import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.util.LayerBuilder
 import org.ivdnt.galahad.util.TestUtil
@@ -80,7 +80,7 @@ object EvaluationUtil {
     private fun addLayersAsJobs(corpus: Corpus, docName: String, tagger: Layer, source: Layer) {
         val taggerJob = corpus.jobs.createOrThrow(TestUtil.TAGGER_NAME)
         taggerJob.setLayer(docName, tagger)
-        val sourceJob = corpus.jobs.createOrThrow(SOURCE_LAYER_NAME)
+        val sourceJob = corpus.jobs.createOrThrow(SOURCE_LAYER)
         sourceJob.setLayer(docName, source)
     }
 }

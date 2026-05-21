@@ -22,9 +22,20 @@ import org.springframework.test.web.servlet.get
 class TagsetsControllerTest(@Autowired val mvc: MockMvc) {
     @Test
     fun `Can get tagsets`() {
-        val tagsets: List<Tagset> = mvc.get("/tagsets").andReturn().andDeserialize()
+        val tagsets: List<Tagset> =
+            mvc.get("/tagsets").andExpect { status { isOk() } }.andReturn().andDeserialize()
         assertEquals(1, tagsets.count { it.name == TestUtil.TAGSET_NAME })
         assert(tagsets.sumOf { it.punctuation.size } > 0)
+    }
+
+    @Test
+    fun `Can get single tagset`() {
+        val tagset: Tagset =
+            mvc.get("/tagsets/${TestUtil.TAGSET_NAME}")
+                .andExpect { status { isOk() } }
+                .andReturn()
+                .andDeserialize()
+        assertEquals(TestUtil.TAGSET_NAME, tagset.name)
     }
 
     @Test
