@@ -1,6 +1,4 @@
 name: hug-tdn-1600-1900
-uri: https://github.com/instituutnederlandsetaal/galahad-huggingface-models/tree/master/models/galahad/tagger/pos_model_tdn_1600-1900
-version: 1.0.1
 description: INT-Hug trained on DBNL excerpts, GTB dictionary quotations, newspapers & letters as loot (1600-1900)
 language: Dutch
 period:

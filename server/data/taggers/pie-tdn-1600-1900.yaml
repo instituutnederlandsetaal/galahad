@@ -1,6 +1,4 @@
 name: pie-tdn-1600-1900
-uri: https://github.com/instituutnederlandsetaal/galahad-taggers/tree/2.0.0/pie/TDN-1600-1900
-version: 1.1.0
 description: PIE trained on DBNL excerpts, GTB dictionary quotations, newspapers & letters as loot (1600-1900)
 language: Dutch
 period:

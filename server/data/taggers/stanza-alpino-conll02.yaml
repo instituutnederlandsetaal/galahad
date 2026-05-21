@@ -1,6 +1,4 @@
 name: stanza-alpino-conll02
-uri: https://stanfordnlp.github.io/stanza/
-version: 1.10.1
 description: Stanza trained on conll02 for NER and alpino for the rest
 language: Dutch
 period:

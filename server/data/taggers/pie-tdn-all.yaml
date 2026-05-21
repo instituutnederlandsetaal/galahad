@@ -1,6 +1,4 @@
 name: pie-tdn-all
-uri: https://github.com/instituutnederlandsetaal/galahad-taggers/tree/2.0.0/pie/TDN-ALL
-version: 1.1.0
 description: PIE trained on all TDN-Core material
 language: Dutch
 period:

@@ -1,6 +1,4 @@
 name: spacy
-uri: https://github.com/explosion/spacy-models/releases/tag/nl_core_news_lg-3.8.0
-version: 3.8.5
 description: Dutch spaCy pipeline with  tok2vec, morphologizer, tagger, parser, lemmatizer, senter & ner.
 language: Dutch
 period:

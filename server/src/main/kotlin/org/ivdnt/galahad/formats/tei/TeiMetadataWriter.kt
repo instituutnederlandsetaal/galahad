@@ -153,7 +153,7 @@ class TeiMetadataWriter(val writer: PrettyXMLWriter, val export: DocumentExport)
                 *mapOf(
                         "xml:id" to export.tagger.name,
                         "ident" to export.tagger.name,
-                        "version" to export.tagger.version,
+                        // "version" to export.tagger.version,
                     )
                     .toVarArg(),
             ) {

@@ -22,13 +22,10 @@ data class Tagger(
     // So can only contain certain characters
     var name: String = "",
     var description: String = "",
+    var language: String? = "", // TODO multiple languages
     var period: CorpusMetadata.Period? = null,
     var annotations: List<AnnotationItem> = emptyList(),
     var attributions: List<LinkItem> = emptyList(),
-    var language: String? = "", // TODO multiple languages
-    // Version & URI are split from attributions because they need to be present in metadata
-    var version: String = "",
-    var uri: String = "",
 ) {
     @JsonIgnore var port: Int? = 0
 

@@ -1,6 +1,4 @@
 name: hug-tdn-all
-uri: https://github.com/instituutnederlandsetaal/galahad-huggingface-models/tree/master/models/galahad/tagger/pos_model_tdn_ALL
-version: 1.0.1
 description: INT-Hug trained on all TDN-Core material
 language: Dutch
 period:

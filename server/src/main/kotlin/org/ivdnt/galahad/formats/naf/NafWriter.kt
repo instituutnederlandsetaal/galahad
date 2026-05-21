@@ -59,7 +59,7 @@ class NafWriter(export: DocumentExport) : LayerWriter(export) {
                 setAttribute("name", export.tagger.name)
                 setAttribute("timestamp", now.toString())
                 setAttribute("hostname", "https://galahad.ivdnt.org")
-                export.tagger.version.ifBlank { null }?.let { setAttribute("version", it) }
+                // export.tagger.version.ifBlank { null }?.let { setAttribute("version", it) }
             }
         val lpTerms =
             xml.createElement("linguisticProcessors").apply { setAttribute("layer", "terms") }
