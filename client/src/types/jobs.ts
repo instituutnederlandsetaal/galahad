@@ -1,8 +1,8 @@
-import type { LayerMetadata } from "@/types/layers"
+import type { Tagger } from "@/types/taggers"
 
 export const SOURCE_LAYER: string = "source"
 
-export type Job = { layer: LayerMetadata; progress: Progress }
+export type Job = { tagger: Tagger; progress: Progress; modified: number }
 
 export type Progress = {
     untagged: number

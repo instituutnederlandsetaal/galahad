@@ -9,4 +9,5 @@
         To start a tagging job, select one of the taggers and click on
         <InlineTextButton plain>View & Tag</InlineTextButton>.
     </p>
+    <HelpLink helpLink="jobs" />
 </template>

@@ -1,6 +1,7 @@
 package org.ivdnt.galahad.web.controller
 
 import io.swagger.v3.oas.annotations.Hidden
+import java.util.*
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.jobs.JobController
@@ -10,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
-import java.util.*
-import kotlin.io.path.createTempFile
 
 typealias ProcessingID = UUID
 
@@ -45,12 +44,7 @@ class InternalJobController(val corpora: CorporaService, val config: Config) : L
         @RequestParam(value = "file_id", required = false) fileId: UUID,
         @RequestBody file: MultipartFile,
     ): String {
-        logger.info("Received result with processing id $fileId")
-        val tmpFile =
-            createTempFile(suffix = file.originalFilename).toFile().also {
-                it.outputStream().use { file.inputStream.copyTo(it) }
-            }
-        JobController.receive(fileId, tmpFile)
+        JobController.receive(fileId, file.inputStream, file.originalFilename!!)
         return "DELETE"
     }
 

@@ -15,8 +15,8 @@
                                 <b>{{ principle.name }}:</b>
                             </dt>
                             <dd>
-                                <ExternalLink :href="principle.href">
-                                    {{ principle.details ?? principle.href }}
+                                <ExternalLink :href="principle.url">
+                                    {{ principle.description ?? principle.url }}
                                 </ExternalLink>
                             </dd>
                         </template>

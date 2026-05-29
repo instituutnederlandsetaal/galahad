@@ -1,4 +1,4 @@
-import type { LayerPreview } from "@/types/jobs"
+import type { LayerPreview } from "@/types/layers"
 
 export const Format = {
     TEI_P4_LEGACY: "tei-p4-legacy",
@@ -13,11 +13,13 @@ export const Format = {
 } as const
 export type Format = (typeof Format)[keyof typeof Format]
 
+export type AnnotationsSummary = Record<string, number>
+
 export type DocumentMetadata = {
     name: string
     format: Format
     text: string
     preview: LayerPreview
-    annotations: Record<string, number>
+    annotations: AnnotationsSummary
     modified: number
 }

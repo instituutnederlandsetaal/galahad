@@ -1,7 +1,7 @@
 <template>
     <fieldset>
         <input v-model="model" :type :placeholder :list ref="inputElement" />
-        <input type="reset" value="&#10006;" :disabled="model?.length == 0" title="Clear" @click="model = ''" />
+        <input type="reset" value="&#10006;" :disabled="!model?.length" title="Clear" @click="model = ''" />
     </fieldset>
     <GValidator v-if="validator && validityDescriptor" :model :validator :validityDescriptor />
 </template>

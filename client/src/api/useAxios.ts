@@ -1,5 +1,4 @@
 import axios from "axios"
-import stores from "@/stores"
 
 export function useAxios<T>(
     urlRef: MaybeRefOrGetter<string | undefined>,
@@ -7,7 +6,6 @@ export function useAxios<T>(
     params?: MaybeRefOrGetter<Record<string, string | number | boolean>>,
     pageReloadOnError?: boolean,
 ): { data: Ref<T>; loading: Ref<boolean>; reload: () => void } {
-    const errors = stores.useErrors()
     const data = ref<T | undefined>(initial)
     const loading = ref<boolean>(false)
 

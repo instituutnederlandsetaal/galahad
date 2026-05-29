@@ -5,7 +5,7 @@
             <DifferentTagsetsHelp />
         </template>
 
-        <template #table-empty> Select a reference layer and a hypothesis layer to generate metrics. </template>
+        <template #empty> Select a reference layer and a hypothesis layer to generate metrics. </template>
 
         <template #header v-if="loading">
             <p>Generating metrics for large corpora may take a while...</p>
@@ -42,7 +42,7 @@
         >
             <div :key="cell">
                 <GButton :disabled="data.value?.count === 0" @click="openModal(data)" style="text-align: right">
-                    {{ (`${(data.value.count / data.item.count * 100).toFixed(1)}%`) }}
+                    {{ `${((data.value.count / data.item.count) * 100).toFixed(1)}%` }}
                     <i>({{ data.value.count.toString() }})</i>
                 </GButton>
             </div>
@@ -54,8 +54,8 @@
         @hide="samples = undefined"
         :samples
         @download="$emit('download', modalData)"
-        :referenceJob="jobSelection.referenceId"
-        :hypothesisJob="jobSelection.hypothesisId"
+        :referenceLayer="referenceId"
+        :hypothesisLayer="hypothesisId"
         :downloading
     />
 </template>
@@ -63,11 +63,11 @@
 <script setup lang="ts">
 // Libraries & stores
 import type { Column, Item, TableData } from "@/types/ui/table"
-import stores from "@/stores"
 import type { TermComparison, Samples, Metrics } from "@/types/evaluation"
+import useLayers from "@/stores/layers"
 
 // Stores
-const jobSelection = stores.useJobSelection()
+const { hypothesisId, referenceId } = storeToRefs(useLayers())
 
 // Props
 const {

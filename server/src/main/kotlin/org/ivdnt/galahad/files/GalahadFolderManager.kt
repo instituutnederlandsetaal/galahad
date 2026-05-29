@@ -1,7 +1,8 @@
 package org.ivdnt.galahad.files
 
-import org.apache.logging.log4j.kotlin.logger
 import java.io.File
+import org.apache.logging.log4j.kotlin.logger
+import org.ivdnt.galahad.util.lastModifiedFile
 
 /**
  * Generic base class for file system operations. Create, read and delete GalahadFiles in a folder.
@@ -23,6 +24,13 @@ import java.io.File
  */
 abstract class GalahadFolderManager<ReadType : GalahadFolder, CreateType : Any>(file: File) :
     GalahadFolder(file) {
+
+    override val modified: Long
+        get() =
+            maxOf(
+                dir.lastModifiedFile(),
+                dir.listFiles().maxOfOrNull { it.lastModifiedFile() } ?: 0L,
+            )
 
     protected abstract fun ctor(key: String): ReadType
 

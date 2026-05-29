@@ -9,20 +9,9 @@
                         <b>{{ item.name }}:</b>
                     </dt>
                     <dd>
-                        <ExternalLink :href="item.href">
-                            {{ item.details ?? item.href }}
+                        <ExternalLink :href="item.url">
+                            {{ item.description ?? item.url }}
                         </ExternalLink>
-                    </dd>
-                </dl>
-            </li>
-            <!-- always add version last -->
-            <li>
-                <dl>
-                    <dt>
-                        <b>Version:</b>
-                    </dt>
-                    <dd>
-                        {{ version }}
                     </dd>
                 </dl>
             </li>
@@ -33,7 +22,7 @@
 <script setup lang="ts">
 import type { LinkItem } from "@/types/taggers"
 
-const { items, version } = defineProps<{ items: LinkItem[]; version: string }>()
+const { items } = defineProps<{ items: LinkItem[] }>()
 const showModal = ref<boolean>()
 </script>
 

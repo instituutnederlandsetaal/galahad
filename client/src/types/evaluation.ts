@@ -40,4 +40,4 @@ export type WordForm = { literal: string; offset: number; length: number; id: nu
 
 export type EvaluationEntry = { count: number; samples: TermComparison[] }
 
-type Samples = { title: string; samples: TermComparison[] }
+export type Samples = { title: string; samples: TermComparison[] }

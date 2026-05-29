@@ -9,44 +9,44 @@ annotations:
   - annotation: lemma
     principles:
       - name: Universal Dependencies
-        details: D-COI POS-tagging and lemmatization manual
-        href: https://www.let.rug.nl/vannoord/Lassy/POS_manual.pdf
+        description: D-COI POS-tagging and lemmatization manual
+        url: https://www.let.rug.nl/vannoord/Lassy/POS_manual.pdf
   - annotation: pos
     principles:
       - name: Universal Dependencies
-        details: D-COI POS-tagging and lemmatization manual
-        href: https://www.let.rug.nl/vannoord/Lassy/POS_manual.pdf
+        description: D-COI POS-tagging and lemmatization manual
+        url: https://www.let.rug.nl/vannoord/Lassy/POS_manual.pdf
   - annotation: upos
     principles:
       - name: Universal Dependencies
-        details: UD for Dutch (v2)
-        href: https://universaldependencies.org/nl/index.html
+        description: UD for Dutch (v2)
+        url: https://universaldependencies.org/nl/index.html
   - annotation: head
     principles:
       - name: Universal Dependencies
-        details: Lassy Syntactic Annotation Manual
-        href: https://www.let.rug.nl/~vannoord/Lassy/sa-man_lassy.pdf
+        description: Lassy Syntactic Annotation Manual
+        url: https://www.let.rug.nl/~vannoord/Lassy/sa-man_lassy.pdf
   - annotation: deprel
     principles:
       - name: Universal Dependencies
-        details: Lassy Syntactic Annotation Manual
-        href: https://www.let.rug.nl/~vannoord/Lassy/sa-man_lassy.pdf
+        description: Lassy Syntactic Annotation Manual
+        url: https://www.let.rug.nl/~vannoord/Lassy/sa-man_lassy.pdf
   - annotation: ner
     principles:
       - name: OntoNotes named entities
-        details: OntoNotes Release 5.0
-        href: https://doi.org/10.35111/xmhb-2b84
+        description: OntoNotes Release 5.0
+        url: https://doi.org/10.35111/xmhb-2b84
 attributions:
   - name: Dataset
-    details: UD Dutch LassySmall v2.8, Dutch NER Annotations for UD LassySmall, UD Dutch Alpino v2.8, Explosion fastText Vectors
-    href: https://github.com/explosion/spacy-models/releases/tag/nl_core_news_lg-3.8.0
+    description: UD Dutch LassySmall v2.8, Dutch NER Annotations for UD LassySmall, UD Dutch Alpino v2.8, Explosion fastText Vectors
+    url: https://github.com/explosion/spacy-models/releases/tag/nl_core_news_lg-3.8.0
   - name: Software
-    details: spaCy 3.8.5
-    href: https://spacy.io/
+    description: spaCy 3.8.5
+    url: https://spacy.io/
   - name: Model
-    details: nl_core_news_lg-3.8.0
-    href: https://github.com/explosion/spacy-models/releases/tag/nl_core_news_lg-3.8.0
+    description: nl_core_news_lg-3.8.0
+    url: https://github.com/explosion/spacy-models/releases/tag/nl_core_news_lg-3.8.0
   - name: Trained by
-    details: spaCy
-    href: https://spacy.io/
+    description: spaCy
+    url: https://spacy.io/
 port: 8120

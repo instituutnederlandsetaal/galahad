@@ -1,9 +1,12 @@
 import { plausible } from "@/ts/plausible"
 import * as API from "@/api/documents"
 import * as Utils from "@/api/utils"
-import stores from "@/stores"
 import { type DocumentMetadata } from "@/types/documents"
 import { addContentTypeHeader, fileExtension } from "@/ts/file"
+import useCorpora from "@/stores/corpora"
+import useLayers from "@/stores/layers"
+import { SOURCE_LAYER } from "@/types/jobs"
+import useJobs from "@/stores/jobs"
 
 // Custom types
 type FileStatus = { status: "busy" | "success" | "error"; message?: string }
@@ -12,10 +15,12 @@ type FileStatus = { status: "busy" | "success" | "error"; message?: string }
  * Contains the documents for the current corpus,
  * as well as functionality for uploading, deleting and downloading documents.
  */
-const documents = defineStore("documents", () => {
+const useDocuments = defineStore("documents", () => {
     // Stores
-    const { corpusId, corpus } = storeToRefs(stores.useCorpora())
-    const { reload: reloadCorpora } = stores.useCorpora()
+    const { corpusId, corpus } = storeToRefs(useCorpora())
+    const { reload: reloadLayers } = useLayers()
+    const { reload: reloadCorpora } = useCorpora()
+    const { reload: reloadJobs } = useJobs()
 
     // Fields
     const loading = ref<boolean>(false)
@@ -32,11 +37,10 @@ const documents = defineStore("documents", () => {
     })
 
     /** Reload documents and corpora (number of docs in corpusmetadata can change). */
-    function reload(): void {
-        //reloadCorpora()
-        if (!corpusId.value) return
+    function reload(layer: string | undefined = SOURCE_LAYER): void {
+        if (!corpusId.value || !layer) return
         loading.value = true
-        API.getDocuments(corpusId.value)
+        API.getDocuments(corpusId.value, layer)
             .then((res) => (documents.value = res.data))
             .finally(() => (loading.value = false))
     }
@@ -46,7 +50,9 @@ const documents = defineStore("documents", () => {
         plausible.documentDeleted(corpus.value, getDocument(name))
         API.deleteDocument(corpusId.value, name).finally(() => {
             reload()
+            reloadLayers()
             reloadCorpora()
+            reloadJobs()
         })
     }
 
@@ -104,13 +110,13 @@ const documents = defineStore("documents", () => {
                 if (uploadBusyCount.value === 0) {
                     reload()
                     reloadCorpora()
+                    reloadLayers()
+                    reloadJobs()
                 }
             })
     }
 
-    watch(corpusId, reload)
-
-    reload()
+    watch(corpusId, () => reload())
 
     // Exports
     return {
@@ -131,4 +137,4 @@ const documents = defineStore("documents", () => {
     }
 })
 
-export default documents
+export default useDocuments

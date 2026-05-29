@@ -514,7 +514,7 @@
             <!-- H3: Datasets -->
             <h3 id="datasets">Datasets</h3>
             <p>
-                Here you can find an overview of the text sets that have been used to benchmark the taggers. The
+                Here you can find an overview of the test sets that have been used to benchmark the taggers. The
                 complete benchmark sets, including training and development sets can be found on Github:
                 <a href="https://github.com/instituutnederlandsetaal/galahad-corpus-data">galahad-corpus-data</a>.
             </p>

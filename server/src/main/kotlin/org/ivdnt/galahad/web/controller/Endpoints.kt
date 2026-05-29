@@ -12,13 +12,6 @@ object Endpoints {
         const val CORPUS: String = "$BASE/{corpus}"
     }
 
-    // Currently a shortcut to the source layer
-    object Documents {
-        const val BASE: String = "${Corpora.CORPUS}/documents"
-        const val DOCUMENT: String = "$BASE/{document}"
-        const val DOWNLOAD: String = "$DOCUMENT/download"
-    }
-
     object Layers {
         const val BASE: String = "${Corpora.CORPUS}/layers"
         const val LAYER: String = "$BASE/{layer}"
@@ -26,7 +19,6 @@ object Endpoints {
         object Documents {
             const val BASE: String = "$LAYER/documents"
             const val DOCUMENT: String = "$BASE/{document}"
-            // TODO download source document
             const val DOWNLOAD: String = "${DOCUMENT}/download"
         }
     }

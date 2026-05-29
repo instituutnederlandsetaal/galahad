@@ -10,6 +10,7 @@ import org.ivdnt.galahad.taggers.Tagger
 /** Cache-able layer metadata. */
 class CorpusLayerMetadata(
     val tagger: Tagger,
+    val documents: Int = 0,
     val preview: LayerPreview = LayerPreview.EMPTY,
     val annotations: LayerAnnotations = LayerAnnotations.EMPTY,
     var modified: Long = 0,
@@ -23,13 +24,13 @@ class CorpusLayerMetadata(
                     Tagger.readOrThrow(layers.name)
                 }
 
+            val docs = layers.documents.readAll()
             return CorpusLayerMetadata(
                 tagger = tagger,
-                preview =
-                    layers.documents.readAll().firstOrNull()?.layer?.preview ?: LayerPreview.EMPTY,
+                documents = docs.size,
+                preview = docs.firstOrNull()?.layer?.preview ?: LayerPreview.EMPTY,
                 annotations =
-                    layers.documents
-                        .readAll()
+                    docs
                         .takeUnless { it.isEmpty() }
                         ?.map { it.metadata.annotations }
                         ?.reduce { a, b -> a + b } ?: LayerAnnotations.EMPTY,

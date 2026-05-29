@@ -11,4 +11,5 @@
         When choosing TEI P5 as export format, the LAnCeLoT annotation tool is available to manually correct the
         PoS-tagging and lemmatisation of your corpus.
     </p>
+    <HelpLink helpLink="export" />
 </template>

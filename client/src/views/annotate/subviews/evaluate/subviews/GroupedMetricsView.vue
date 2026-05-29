@@ -28,18 +28,18 @@
 
 <script setup lang="ts">
 // Libraries & stores
-
 import * as API from "@/api/evaluation"
 import * as Utils from "@/api/utils"
-import stores from "@/stores"
 // API & types
-import { metricsPerPosColumns } from "@/stores/evaluation/metrics"
+import useMetrics, { metricsPerPosColumns } from "@/stores/evaluation/metrics"
 import type MetricsFilter from "@/components/tables/MetricsFilter.vue"
+import useLayers from "@/stores/layers"
+import useCorpora from "@/stores/corpora"
 
 // Stores
-const { loading, metrics } = storeToRefs(stores.useMetrics())
-const corporaStore = stores.useCorpora()
-const jobSelection = stores.useJobSelection()
+const { loading, metrics } = storeToRefs(useMetrics())
+const corporaStore = useCorpora()
+const jobSelection = useLayers()
 
 // Fields
 const downloading = ref<boolean>()

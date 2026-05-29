@@ -2,9 +2,9 @@ package org.ivdnt.galahad.web.service
 
 import java.util.*
 import org.apache.logging.log4j.kotlin.Logging
+import org.ivdnt.galahad.jobs.JobController
 import org.ivdnt.galahad.jobs.JobMetadata
 import org.ivdnt.galahad.jobs.Progress
-import org.ivdnt.galahad.layers.CorpusLayerMetadata
 import org.ivdnt.galahad.taggers.Tagger
 import org.springframework.stereotype.Service
 
@@ -16,10 +16,10 @@ class JobsService(private val corpora: CorporaService) : Logging {
         val numDocs = corpus.statistics.documents
         val allJobs =
             Tagger.taggers.mapValues {
-                JobMetadata(CorpusLayerMetadata(it.value), Progress(numDocs))
+                JobMetadata(it.value, Progress(numDocs))
             }
         // replace the entries for which a job exists
-        val jobs = corpus.jobs.readAll().map { it.metadata }.associateBy { it.layer.tagger.name }
+        val jobs = corpus.jobs.readAll().map { it.metadata }.associateBy { it.tagger.name }
         // Replacement is simply plus
         return (allJobs + jobs).values.toList()
     }
@@ -32,7 +32,7 @@ class JobsService(private val corpora: CorporaService) : Logging {
         val corpus = corpora.readOrThrow(corpus)
         val tagger = Tagger.readOrThrow(job)
         return corpus.jobs.readOrNull(job)?.metadata
-            ?: JobMetadata(CorpusLayerMetadata(tagger), Progress(corpus.statistics.documents))
+            ?: JobMetadata(tagger, Progress(corpus.statistics.documents))
     }
 
     fun createOrThrow(corpus: UUID, job: String) {
@@ -40,6 +40,9 @@ class JobsService(private val corpora: CorporaService) : Logging {
     }
 
     fun deleteOrThrow(corpus: UUID, job: String) {
-        corpora.writeOrThrow(corpus).jobs.deleteOrThrow(job)
+        // does it exist
+        val job = corpora.writeOrThrow(corpus).jobs.readOrThrow(job)
+        // stop it
+        JobController.dequeue(job)
     }
 }

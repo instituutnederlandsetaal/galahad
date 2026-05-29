@@ -40,10 +40,8 @@
 import { plausible } from "@/ts/plausible"
 import type { HelpLink } from "@/types/ui/help"
 
-// --- props ---
 const { helpLink, title } = defineProps<{ helpLink?: HelpLink | string; title?: string; article?: boolean }>()
 
-// --- data ---
 const expand = ref<boolean>()
 </script>
 

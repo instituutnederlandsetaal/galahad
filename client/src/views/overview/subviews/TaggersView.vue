@@ -1,23 +1,23 @@
 <template>
-    <GCard title="Taggers overview">
+    <GCard title="Taggers">
         <template #help>
             <p>Here you can see an overview of all available taggers within GaLAHaD.</p>
             <p>
                 For more information on the taggers, please visit
-                <ExternalLink href="https://github.com/instituutnederlandsetaal/galahad-taggers/">
-                    galahad-taggers on GitHub </ExternalLink
+                <ExternalLink href="https://github.com/instituutnederlandsetaal/galahad-taggers-dockerized/">
+                    galahad-taggers-dockerized on GitHub </ExternalLink
                 >.
             </p>
         </template>
 
         <GTable :loading :columns :items sortColumn="period">
-            <template #table-empty>
+            <template #empty>
                 No taggers appeared? That is not right! Please contact the INT at
                 <MailAddress />.
             </template>
 
             <template #cell-name="d: TableData<Tagger>">
-                <span :id="d.item.name" :class="markActive(d.item.name)">{{ d.value }}</span>
+                <span :id="d.item.name" :class="markActive(d.item.name)">{{ d.item.name }}</span>
             </template>
 
             <template #cell-annotations="d: TableData<Tagger>">
@@ -28,7 +28,7 @@
 
             <template #cell-attributions="d: TableData<Tagger>">
                 {{ Object.keys(d.item.attributions).length }} attributions
-                <AttributionsViewer :items="d.item.attributions" :version="d.item.version">
+                <AttributionsViewer :items="d.item.attributions">
                     <template #title>Attributions of {{ d.item.name }}</template>
                 </AttributionsViewer>
             </template>
@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import useTaggers from "@/stores/taggers"
+import useTaggers from "@/stores/static/taggers"
 import type { Period, Tagger } from "@/types/taggers"
 import type { Column, TableData } from "@/types/ui/table"
 

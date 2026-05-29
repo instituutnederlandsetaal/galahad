@@ -14,6 +14,19 @@
 
 <script setup lang="ts">
 import useCorpora from "@/stores/corpora"
+import useDocuments from "@/stores/documents"
+import useJobs from "@/stores/jobs"
+import useLayers from "@/stores/layers"
 
 const { corpus } = storeToRefs(useCorpora())
+
+const { reload: reloadCorpora } = useCorpora()
+const { reload: reloadLayers } = useLayers()
+const { reload: reloadDocuments } = useDocuments()
+const { reload: reloadJobs } = useJobs()
+
+onMounted(reloadCorpora)
+onMounted(reloadLayers)
+onMounted(reloadDocuments)
+onMounted(reloadJobs)
 </script>

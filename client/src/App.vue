@@ -18,9 +18,10 @@
 
 <script setup lang="ts">
 import type { Tab } from "@/types/ui/tab"
-import stores from "@/stores"
+import useErrors from "@/stores/errors"
+import useUser from "@/stores/static/user"
 
-const { errors } = storeToRefs(stores.useErrors())
+const { errors } = storeToRefs(useErrors())
 const tabs: Tab[] = [
     { id: "annotate", title: "Annotate & Evaluate" },
     { id: "overview", title: "Taggers & Datasets" },
@@ -28,5 +29,5 @@ const tabs: Tab[] = [
 ]
 
 // Load user globally to confirm connection
-stores.useUser()
+useUser()
 </script>

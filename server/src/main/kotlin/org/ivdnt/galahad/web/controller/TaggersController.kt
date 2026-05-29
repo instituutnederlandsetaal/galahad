@@ -10,7 +10,6 @@ import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.exceptions.ErrorResponse
 import org.ivdnt.galahad.jobs.JobController
 import org.ivdnt.galahad.taggers.Tagger
-import org.ivdnt.galahad.taggers.TaggerHealth
 import org.ivdnt.galahad.web.service.TaggersService
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
@@ -49,7 +48,7 @@ class TaggersController(private val taggersService: TaggersService) : Logging {
     @GetMapping(Endpoints.Taggers.HEALTH)
     fun getTaggerHealth(
         @PathVariable @Parameter(description = "Tagger name") tagger: String
-    ): TaggerHealth = taggersService.taggerHealth(tagger)
+    ): Boolean = taggersService.taggerHealth(tagger)
 
     @Operation(
         summary = "Number of active tagger jobs",

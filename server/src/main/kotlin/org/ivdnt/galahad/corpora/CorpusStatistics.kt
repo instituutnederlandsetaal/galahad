@@ -22,6 +22,7 @@ class CorpusStatistics(
     // Immutable fields
     val uuid: UUID,
     val jobs: Int,
+    val processing: Int,
     val documents: Int,
     val size: Long,
     val modified: Long,
@@ -53,6 +54,7 @@ class CorpusStatistics(
                 // Immutable fields
                 uuid = corpus.uuid,
                 jobs = corpus.jobs.readAll().size,
+                processing = corpus.jobs.readAll().count { it.metadata.progress.processing > 0 },
                 documents = corpus.documents.readAll().size,
                 size = corpus.size,
                 modified = System.currentTimeMillis(),

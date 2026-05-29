@@ -52,8 +52,8 @@ data class Tagger(
 
     data class LinkItem(
         var name: String? = null,
-        var details: String? = null,
-        var href: String? = null,
+        var description: String? = null,
+        var url: String? = null,
     )
 
     data class AnnotationItem(

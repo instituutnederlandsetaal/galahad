@@ -18,20 +18,11 @@
             :total="job.progress.total"
             :value="job.progress.processing"
         />
-        <!-- When busy, consider untagged documents pending. -->
-        <!-- Confusingly, the API already calls them pending, though. -->
-        <JobProgressSegment
-            label="pending"
-            color="var(--int-very-light-grey)"
-            :total="job.progress.total"
-            :value="job.progress.busy ? job.progress.pending : 0"
-        />
-        <!-- Otherwise, just untagged. -->
         <JobProgressSegment
             label="untagged"
             color="var(--int-very-light-grey)"
             :total="job.progress.total"
-            :value="job.progress.busy ? 0 : job.progress.pending"
+            :value="job.progress.untagged"
         />
     </div>
 </template>

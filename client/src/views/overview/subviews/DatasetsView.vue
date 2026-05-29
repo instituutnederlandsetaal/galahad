@@ -1,36 +1,39 @@
 <template>
-    <GCard title="Datasets overview">
-        <template #help>
-            <BenchmarkSetsHelp />
-        </template>
-
-        <CorpusTable :type="CorpusTableType.dataset" :corpora="datasets" selectable title="Benchmark corpora">
-            <template #table-empty>No benchmark corpora available.</template>
-        </CorpusTable>
-
-        <DocumentsTable :type="DocsTableType.dataset" :corpus="dataset" :loading :documents="datasetDocs">
+    <GCard>
+        <CorporaTable title="Datasets" :filter="(c: CorpusMetadata) => c.dataset">
             <template #help>
-                Here you can see a small preview of the documents within the selected benchmark set.
+                <BenchmarkSetsHelp />
             </template>
-        </DocumentsTable>
+            <template #empty>No dataset corpora available.</template>
+        </CorporaTable>
+
+        <DocumentsTable :corpus="dataset" :loading :documents="datasetDocs" :layer="sourceLayer"> </DocumentsTable>
     </GCard>
 </template>
 
 <script setup lang="ts">
 import useCorpora from "@/stores/corpora"
 import useDocuments from "@/stores/documents"
+import useLayers from "@/stores/layers"
 import type { CorpusMetadata } from "@/types/corpora"
 import type { DocumentMetadata } from "@/types/documents"
-import { CorpusTableType, DocsTableType } from "@/types/ui/table"
 
-const { datasets, corpus } = storeToRefs(useCorpora())
-const { reload } = useCorpora()
+const { corpus, corpusId } = storeToRefs(useCorpora())
 const { documents, loading } = storeToRefs(useDocuments())
+const { sourceLayer, layers } = storeToRefs(useLayers())
 
 const dataset = computed<CorpusMetadata | undefined>((): CorpusMetadata | undefined =>
     corpus.value?.dataset ? corpus.value : undefined,
 )
 const datasetDocs = computed<DocumentMetadata[]>((): DocumentMetadata[] => (dataset.value ? documents.value : []))
 
-onMounted(reload)
+const { reload: reloadCorpora } = useCorpora()
+
+onMounted(() => {
+    corpus.value = undefined
+    corpusId.value = undefined
+    documents.value = []
+    layers.value = []
+    reloadCorpora()
+})
 </script>

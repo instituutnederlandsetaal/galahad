@@ -34,6 +34,7 @@ import org.springframework.test.web.servlet.get
 @Import(ErrorController::class)
 @ContextConfiguration(classes = [Galahad::class, TestConfig::class])
 class LayerControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: Config) {
+    // TODO tests that check that deleting a layer also deletes its jobs and evaluations
 
     @Nested
     inner class LayerGetTest {

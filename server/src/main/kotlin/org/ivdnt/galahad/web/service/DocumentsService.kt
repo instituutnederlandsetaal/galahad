@@ -1,47 +1,49 @@
 package org.ivdnt.galahad.web.service
 
-import org.apache.logging.log4j.kotlin.Logging
-import org.ivdnt.galahad.corpora.Corpus
-import org.ivdnt.galahad.documents.Document
-import org.ivdnt.galahad.documents.DocumentMetadata
-import org.ivdnt.galahad.exceptions.FileUploadException
-import org.ivdnt.galahad.util.ThreadPoolUtil
-import org.springframework.stereotype.Service
-import org.springframework.web.multipart.MultipartFile
 import java.io.BufferedInputStream
 import java.io.InputStream
 import java.nio.file.Paths
 import java.util.*
 import java.util.zip.ZipInputStream
 import kotlin.io.path.createTempDirectory
+import org.apache.logging.log4j.kotlin.Logging
+import org.ivdnt.galahad.documents.Document
+import org.ivdnt.galahad.documents.DocumentMetadata
+import org.ivdnt.galahad.exceptions.FileUploadException
+import org.ivdnt.galahad.layers.CorpusLayer
+import org.ivdnt.galahad.util.ThreadPoolUtil
+import org.springframework.stereotype.Service
+import org.springframework.web.multipart.MultipartFile
 
 @Service
 class DocumentsService(private val corpora: CorporaService) : Logging {
-    fun readAll(corpus: UUID): List<DocumentMetadata> =
-        corpora.readOrThrow(corpus).documents.readAll().map { it.metadata }
+    fun readAll(corpus: UUID, layer: String): List<DocumentMetadata> =
+        corpora.readOrThrow(corpus).layers.readOrThrow(layer).documents.readAll().map {
+            it.metadata
+        }
 
-    fun readOrThrow(corpus: UUID, document: String): Document =
-        corpora.readOrThrow(corpus).documents.readOrThrow(document)
+    fun readOrThrow(corpus: UUID, layer: String, document: String): Document =
+        corpora.readOrThrow(corpus).layers.readOrThrow(layer).documents.readOrThrow(document)
 
-    fun createOrThrow(corpus: UUID, file: MultipartFile) {
-        val corpus: Corpus = corpora.writeOrThrow(corpus)
+    fun createOrThrow(corpus: UUID, layer: String, file: MultipartFile) {
+        val layer: CorpusLayer = corpora.writeOrThrow(corpus).layers.createOrThrow(layer)
         if (file.contentType in ZIP_TYPES) {
-            uploadZipFile(corpus, file)
+            uploadZipFile(layer, file)
         } else {
-            createOrThrow(corpus, file.originalFilename!!, file.inputStream)
+            createOrThrow(layer, file.originalFilename!!, file.inputStream)
         }
     }
 
-    fun deleteOrThrow(corpus: UUID, document: String) {
+    fun deleteOrThrow(corpus: UUID, layer: String, document: String) {
+        // try to delete the document first as it may throw not found
+        corpora.writeOrThrow(corpus).layers.readOrThrow(layer).documents.deleteOrThrow(document)
         // Delete all jobs and results of this document.
         corpora.writeOrThrow(corpus).jobs.readAll().forEach {
             it.results.deleteOrNull(document) // Doesn't matter if null.
         } // TODO: delete all evaluations
-        // Now delete it as write access
-        corpora.writeOrThrow(corpus).documents.deleteOrThrow(document)
     }
 
-    private fun uploadZipFile(corpus: Corpus, file: MultipartFile) {
+    private fun uploadZipFile(layer: CorpusLayer, file: MultipartFile) {
         logger.debug("Unzipping ${file.originalFilename}")
         val exceptions = HashMap<String, Exception>()
         val futures =
@@ -56,7 +58,7 @@ class DocumentsService(private val corpora: CorporaService) : Logging {
                                 "Unzipping ${entry.name} in thread ${Thread.currentThread().name}"
                             )
                             try {
-                                createOrThrow(corpus, fileName, entryData.inputStream())
+                                createOrThrow(layer, fileName, entryData.inputStream())
                             } catch (e: Exception) {
                                 exceptions[fileName] = e
                             }
@@ -82,10 +84,10 @@ class DocumentsService(private val corpora: CorporaService) : Logging {
         }
     }
 
-    private fun createOrThrow(corpus: Corpus, fileName: String, input: InputStream) {
+    private fun createOrThrow(layer: CorpusLayer, fileName: String, input: InputStream) {
         val file = createTempDirectory().toFile().resolve(fileName)
         input.use { input -> file.outputStream().use { output -> input.copyTo(output) } }
-        corpus.documents.createOrThrow(file)
+        layer.documents.createOrThrow(file)
     }
 
     companion object {

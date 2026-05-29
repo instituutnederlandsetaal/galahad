@@ -2,18 +2,19 @@ package org.ivdnt.galahad.files
 
 import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
+import java.io.File
+import java.nio.file.Files
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.ivdnt.galahad.files.DiskValue.Companion.cache
 import org.ivdnt.galahad.util.JsonUtil
-import java.io.File
 
 /**
  * Wrapper around serializable value stored on disk to retain between sessions. Implements a cache.
  */
 open class DiskValue<T>(val file: File) {
     val modified: Long
-        get() = file.lastModified()
+        get() = if (file.exists()) Files.getLastModifiedTime(file.toPath()).toMillis() else 0L
 
     /** Try to read value from [cache] or disk, else return null. */
     inline fun <reified T> readOrNull(): T? {

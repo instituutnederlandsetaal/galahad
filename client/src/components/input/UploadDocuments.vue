@@ -52,7 +52,7 @@
                 green
                 @click="
                     () => {
-                        documentsStore.uploadAll()
+                        uploadAll()
                         $refs.uploadInput.value = null
                     }
                 "
@@ -106,11 +106,11 @@
 </template>
 
 <script setup lang="ts">
-import stores from "@/stores"
+import useDocuments from "@/stores/documents"
 
 // Stores
-const documentsStore = stores.useDocuments()
-const { filesToUpload, illegalFiles, uploadBusyCount, uploadErrorCount, uploading } = storeToRefs(documentsStore)
+const { filesToUpload, illegalFiles, uploadBusyCount, uploadErrorCount, uploading } = storeToRefs(useDocuments())
+const { uploadAll } = useDocuments()
 
 // Fields
 const dropZone = ref<HTMLElement>()

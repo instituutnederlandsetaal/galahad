@@ -1,19 +1,21 @@
 <template>
     <AnnotateTab>
-        <GCard :title="`Evaluate corpus ${corpus.name}`" helpLink="evaluation">
-            <template #help>
-                <EvaluateHelp />
-            </template>
-            <GForm>
-                <JobSelect />
-                <JobSelect :isReference="true" />
-                <fieldset>
-                    <label for="csv-download">Download as CSV</label>
-                    <i v-if="!hypothesisId || !referenceId"> Select both layers first. </i>
-                    <DownloadButton v-else id="csv-download" wide :loading @click="downloadCSV" />
-                </fieldset>
-            </GForm>
-        </GCard>
+        <template #title>Evaluate</template>
+
+        <template #help>
+            <EvaluateHelp />
+        </template>
+
+        <GForm>
+            <JobSelect />
+            <JobSelect isReference />
+            <fieldset>
+                <label for="csv-download">Download as CSV</label>
+                <i v-if="!hypothesisId || !referenceId"> Select both layers first. </i>
+                <DownloadButton v-else id="csv-download" wide :loading @click="downloadCSV" />
+            </fieldset>
+        </GForm>
+
         <GTabs
             class="level-3"
             basePath="/annotate/evaluate"
@@ -29,12 +31,10 @@
 </template>
 
 <script setup lang="ts">
-import stores from "@/stores"
+import useEvaluation from "@/stores/evaluation"
+import useLayers from "@/stores/layers"
 
-// #stores
-const evaluationStore = stores.useEvaluation()
-const { downloadCSV } = evaluationStore
-const { loading } = storeToRefs(evaluationStore)
-const { hypothesisId, referenceId } = stores.useJobSelection()
-const { corpus } = storeToRefs(stores.useCorpora())
+const { downloadCSV } = useEvaluation()
+const { loading } = storeToRefs(useEvaluation())
+const { hypothesisId, referenceId } = useLayers()
 </script>

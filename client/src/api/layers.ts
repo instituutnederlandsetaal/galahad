@@ -6,15 +6,18 @@
 import axios, { type AxiosResponse } from "axios"
 import type { UUID } from "@/types/corpora"
 import type { LayerMetadata } from "@/types/layers"
+import { endpoints } from "@/api"
 
 type LayersResponse = AxiosResponse<LayerMetadata[]>
-
-const layersPath = (corpus: UUID): string => `/corpora/${corpus}/layers`
 
 /**
  * Fetch all layers for a corpus.
  * @param corpus UUID of the corpus.
  */
 export function getLayers(corpus: UUID): Promise<LayersResponse> {
-    return axios.get(layersPath(corpus))
+    return axios.get(endpoints.layers.base({ corpus }))
+}
+
+export function removeLayer(corpus: UUID, layer: string): Promise<AxiosResponse> {
+    return axios.delete(endpoints.layers.layer({ corpus, layer }))
 }

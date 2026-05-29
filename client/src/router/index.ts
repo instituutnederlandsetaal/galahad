@@ -30,7 +30,7 @@ import DocumentFormatsView from "@/views/help/subviews/formats/DocumentFormatsVi
 import PageNotFound from "@/views/PageNotFound.vue"
 import UserView from "@/views/UserView.vue"
 
-export type RouterQuery = { corpus?: string; referenceJob?: string; hypothesisJob?: string }
+export type RouterQuery = { corpus?: string; referenceLayer?: string; hypothesisLayer?: string }
 
 const routes = [
     { path: "/:pathMatch(.*)*", component: PageNotFound },

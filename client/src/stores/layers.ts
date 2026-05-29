@@ -1,15 +1,34 @@
 import * as API from "@/api/layers"
-import stores from "@/stores"
 import type { LayerMetadata } from "@/types/layers"
+import useCorpora from "@/stores/corpora"
+import { useRouteQuery } from "@vueuse/router"
+import type { SelectOption } from "@/types/ui/select"
+import { SOURCE_LAYER, type Job } from "@/types/jobs"
 
 /** Contains the layers for the current corpus. */
 const useLayers = defineStore("layers", () => {
     // Stores
-    const { corpusId } = storeToRefs(stores.useCorpora())
+    const { corpusId } = storeToRefs(useCorpora())
 
     // Fields
     const loading = ref<boolean>()
     const layers = ref<LayerMetadata[]>([])
+    const hypothesisId = useRouteQuery<string | undefined>("hypothesis")
+    const referenceId = useRouteQuery<string | undefined>("reference")
+
+    // Computed
+    const sourceLayer = computed<LayerMetadata | undefined>(() =>
+        layers.value.find((l: LayerMetadata) => l.tagger.name === SOURCE_LAYER),
+    )
+    const hypothesisLayer = computed<LayerMetadata | undefined>(() =>
+        layers.value.find((l: LayerMetadata) => l.tagger.name === hypothesisId.value),
+    )
+    const referenceLayer = computed<LayerMetadata | undefined>(() =>
+        layers.value.find((l: LayerMetadata) => l.tagger.name === referenceId.value),
+    )
+    const options = computed<SelectOption[]>((): SelectOption[] =>
+        layers.value.map((l: LayerMetadata) => ({ value: l.tagger.name, text: format(l) })),
+    )
 
     /** Reload layers */
     function reload(): void {
@@ -20,17 +39,35 @@ const useLayers = defineStore("layers", () => {
             .finally(() => (loading.value = false))
     }
 
-    watch(corpusId, reload)
+    /** Format as displayed in the <select> */
+    function format(l: LayerMetadata): string {
+        return `${l.tagger.name} (${l.tagger.description}) [${l.documents} documents]`
+    }
 
-    reload()
+    function resetSelection(): void {
+        hypothesisId.value = undefined
+        referenceId.value = undefined
+    }
+
+    // Reset on corpus selection
+    watch(corpusId, resetSelection)
+
+    watch(corpusId, reload)
 
     // Exports
     return {
         // Fields
         layers,
         loading,
+        sourceLayer,
+        hypothesisId,
+        referenceId,
+        hypothesisLayer,
+        referenceLayer,
+        options,
         // Methods
         reload,
+        resetSelection,
     }
 })
 

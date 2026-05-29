@@ -1,11 +1,11 @@
 package org.ivdnt.galahad.jobs
 
+import java.io.File
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.exceptions.JobNotFoundException
 import org.ivdnt.galahad.exceptions.TaggerNotFoundException
 import org.ivdnt.galahad.files.GalahadFolderManager
 import org.ivdnt.galahad.taggers.Tagger
-import java.io.File
 
 /**
  * Create, read and delete jobs in a corpus. Represents the "jobs/" folder in a corpus folder.
@@ -26,6 +26,7 @@ import java.io.File
  * ```
  */
 class Jobs(dir: File, private val corpus: Corpus) : GalahadFolderManager<Job, String>(dir) {
+
     override fun createOrThrow(key: String): Job {
         // Throw if the key is not a tagger
         if (key !in Tagger.taggers) throw TaggerNotFoundException(key)

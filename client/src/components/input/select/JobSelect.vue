@@ -14,23 +14,21 @@
 </template>
 
 <script setup lang="ts">
-import stores from "@/stores"
+import useJobs from "@/stores/jobs"
+import useLayers from "@/stores/layers"
 import type { Job } from "@/types/jobs"
-import { SelectOption } from "@/types/ui/select";
+import type { SelectOption } from "@/types/ui/select"
 
 // #props
 const { isReference = false, displayName } = defineProps<{ isReference?: boolean; displayName?: string }>()
 
 // #stores
-const { loading, layers } = storeToRefs(stores.useLayers())
+const { loading, layers } = storeToRefs(useLayers())
 const options = computed<SelectOption[]>(() =>
-    layers.value.map((l) => ({
-        value: l.tagger.name,
-        text: `${l.tagger.name} (${l.tagger.description})`,
-    })),
+    layers.value.map((l) => ({ value: l.tagger.name, text: `${l.tagger.name} (${l.tagger.description})` })),
 )
-const { jobs } = storeToRefs(stores.useJobs())
-const { hypothesisId, referenceId } = storeToRefs(stores.useJobSelection())
+const { jobs } = storeToRefs(useJobs())
+const { hypothesisId, referenceId } = storeToRefs(useLayers())
 
 // #computed
 const label = computed<string>(() => displayName ?? (isReference ? "Reference" : "Hypothesis"))

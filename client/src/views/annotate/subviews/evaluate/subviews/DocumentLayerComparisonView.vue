@@ -37,16 +37,18 @@
 
 <script setup lang="ts">
 import * as API from "@/api/evaluation"
-import stores from "@/stores"
+import useCorpora from "@/stores/corpora"
+import useDocuments from "@/stores/documents"
+import useLayers from "@/stores/layers"
 import type { Term, TermComparison } from "@/types/evaluation"
 import type { SelectOption } from "@/types/ui/select"
 
 import Paginator from "primevue/paginator"
 
 // Stores
-const documentsStore = stores.useDocuments()
-const corporaStore = stores.useCorpora()
-const jobSelection = stores.useJobSelection()
+const documentsStore = useDocuments()
+const corporaStore = useCorpora()
+const jobSelection = useLayers()
 
 // Fields
 const selectedDoc = ref<string>()

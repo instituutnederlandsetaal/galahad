@@ -1,30 +1,20 @@
-/**
- * API calls for fetching taggers and their health status.
- */
+/** API calls for fetching taggers and their health status. */
 
 import axios, { type AxiosResponse } from "axios"
-import type { Tagger, TaggerHealth } from "@/types/taggers"
+import { endpoints } from "@/api"
 
-type TaggerHealthResponse = AxiosResponse<TaggerHealth>
-type TaggersBusyResponse = AxiosResponse<number>
+type TaggerHealthResponse = AxiosResponse<boolean>
+type TaggerQueueResponse = AxiosResponse<number>
 
-export const taggersPath = "/taggers"
-
-const taggerPath = (tagger: string): string => `${taggersPath}/${tagger}`
-const taggerHealthPath = (tagger: string): string => `${taggerPath(tagger)}/health`
-
-/**
- * Get tagger health status.
- * @param tagger Tagger name.
- */
+/** Get tagger health status. */
 export function getTaggerHealth(tagger: string): Promise<TaggerHealthResponse> {
-    return axios.get(taggerHealthPath(tagger))
+    return axios.get(endpoints.taggers.health({ tagger }))
 }
 
 /**
  * Get how many docs are currently actively processing.
  * Summed over all taggers & corpora on the server.
  */
-export function getDocsAtTaggers(): Promise<TaggersBusyResponse> {
-    return axios.get(`${taggersPath}/queue`)
+export function getQueue(): Promise<TaggerQueueResponse> {
+    return axios.get(endpoints.taggers.queue())
 }

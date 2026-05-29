@@ -12,7 +12,7 @@
 
         <slot v-if="$slots.header" name="header"></slot>
 
-        <slot v-if="isEmpty && !loading" name="table-empty"></slot>
+        <slot v-if="isEmpty && !loading" name="empty"></slot>
 
         <template v-else>
             <p v-if="selectable">Click on a row to select an item.</p>

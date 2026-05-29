@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import stores from "@/stores"
-const { format } = storeToRefs(stores.useExport())
-const { options } = stores.useExport()
+import useExport from "@/stores/export"
+const { format } = storeToRefs(useExport())
+const { options } = useExport()
 </script>

@@ -7,4 +7,5 @@
             Select a corpus and click <InlineTextButton red>delete</InlineTextButton> to remove the selected corpus.
         </li>
     </ol>
+    <HelpLink helpLink="corpora" />
 </template>

@@ -6,14 +6,14 @@
 </template>
 
 <script setup lang="ts">
-import stores from "@/stores"
+import useDocuments from "@/stores/documents"
 import type { SelectOption } from "@/types/ui/select"
 
-const documentsStore = stores.useDocuments()
+const { documents } = storeToRefs(useDocuments())
 
 const model = defineModel<string>()
 
 const options = computed<SelectOption[]>(() => {
-    return documentsStore.documents.map((doc) => ({ value: doc.name, text: doc.name }))
+    return documents.value.map((doc) => ({ value: doc.name, text: doc.name }))
 })
 </script>

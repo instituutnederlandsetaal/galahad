@@ -1,7 +1,8 @@
 package org.ivdnt.galahad.util
 
-import org.ivdnt.galahad.documents.DocumentFormat
 import java.io.File
+import java.nio.file.Files
+import org.ivdnt.galahad.documents.DocumentFormat
 
 val File.withoutFormatExt: String
     get() {
@@ -14,3 +15,6 @@ val File.withoutFormatExt: String
     }
 
 fun File.asFormat(format: DocumentFormat): String = this.withoutFormatExt + "." + format.extension
+
+fun File.lastModifiedFile(): Long =
+    listFiles().maxOfOrNull { Files.getLastModifiedTime(it.toPath()).toMillis() } ?: 0L

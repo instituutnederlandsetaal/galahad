@@ -1,16 +1,16 @@
 import * as API from "@/api/export"
 import * as Utils from "@/api/utils"
-import stores from "@/stores"
 import { plausible } from "@/ts/plausible"
 import { Format } from "@/types/documents"
 import type { SelectOption } from "@/types/ui/select"
+import useCorpora from "@/stores/corpora"
+import useLayers from "@/stores/layers"
 
 /** Used to download exported corpora. */
-const useExport = defineStore("exportStore", () => {
+const useExport = defineStore("export", () => {
     // Stores
-    const corporaStore = stores.useCorpora()
-    const jobSelection = stores.useJobSelection()
-    const errors = stores.useErrors()
+    const { corpus, corpusId } = storeToRefs(useCorpora())
+    const { hypothesisId, hypothesisLayer } = storeToRefs(useLayers())
 
     // Fields
     const loading = ref<boolean>()
@@ -32,16 +32,16 @@ const useExport = defineStore("exportStore", () => {
             return
         }
         loading.value = true
-        plausible.corpusExported(corporaStore.corpus, jobSelection.hypothesisId, format.value, shouldMerge, posHeadOnly)
-        API.convertCorpus(corporaStore.corpusId, jobSelection.hypothesisId, format.value, posHeadOnly)
+        plausible.corpusExported(corpus.value, hypothesisLayer.value, format.value, shouldMerge, posHeadOnly)
+        API.convertCorpus(corpusId.value, hypothesisId.value, format.value, posHeadOnly)
             .then(Utils.browserDownloadResponseFile)
             .finally(() => (loading.value = false))
     }
 
     function merge(posHeadOnly: boolean): void {
         loading.value = true
-        plausible.corpusExported(corporaStore.corpus, jobSelection.hypothesisId, format.value, true, posHeadOnly)
-        API.mergeCorpus(corporaStore.corpusId, jobSelection.hypothesisId, format.value, posHeadOnly)
+        plausible.corpusExported(corpus.value, hypothesisLayer.value, format.value, true, posHeadOnly)
+        API.mergeCorpus(corpusId.value, hypothesisId.value, format.value, posHeadOnly)
             .then(Utils.browserDownloadResponseFile)
             .finally(() => (loading.value = false))
     }

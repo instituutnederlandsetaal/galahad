@@ -4,8 +4,8 @@
         <GTable :columns="filteredColumns" :items :title>
             <template #help>
                 <p>
-                    Here you can see a sample of how a token was tagged by <i>{{ hypothesisJob }}</i> and
-                    <i>{{ referenceJob }}</i
+                    Here you can see a sample of how a token was tagged by <i>{{ hypothesisLayer }}</i> and
+                    <i>{{ referenceLayer }}</i
                     >. The samples are a random selection of all tokens in this category.
                 </p>
             </template>
@@ -29,20 +29,14 @@
 // Libraries & stores
 
 // Types & API.
-import * as API from "@/api/evaluation"
-import * as Utils from "@/api/utils"
-import stores from "@/stores"
 import { literalsForTermComparison } from "@/ts/termcomparison"
 import type { TermComparison } from "@/types/evaluation"
-
-// Stores
-const corporaStore = stores.useCorpora()
 
 // Props
 const props = defineProps({
     samples: { type: Object },
-    referenceJob: { type: String },
-    hypothesisJob: { type: String },
+    referenceLayer: { type: String },
+    hypothesisLayer: { type: String },
     downloading: { type: Boolean, default: false },
     annotationType: { type: String },
 })
@@ -65,12 +59,12 @@ const annotations = computed(() => {
 const columns = computed(() => {
     // Currently we take annotations from the first sample of the hypothesis.
     const referenceColumns = annotations.value.map((i) => ({
-        key: `${props.referenceJob}-${i}`,
-        label: `${props.referenceJob} ${i}`,
+        key: `${props.referenceLayer}-${i}`,
+        label: `${props.referenceLayer} ${i}`,
     }))
     const hypothesisColumns = annotations.value.map((i) => ({
-        key: `${props.hypothesisJob}-${i}`,
-        label: `${props.hypothesisJob} ${i}`,
+        key: `${props.hypothesisLayer}-${i}`,
+        label: `${props.hypothesisLayer} ${i}`,
     }))
 
     return [{ key: "literal", label: "token" }, ...hypothesisColumns, ...referenceColumns]
@@ -83,8 +77,8 @@ const filteredColumns = computed(() => {
     const columnNames = ["literal"]
     for (const [annotation, visible] of Object.entries(visibleColumns.value)) {
         if (visible) {
-            columnNames.push(`${props.referenceJob}-${annotation}`)
-            columnNames.push(`${props.hypothesisJob}-${annotation}`)
+            columnNames.push(`${props.referenceLayer}-${annotation}`)
+            columnNames.push(`${props.hypothesisLayer}-${annotation}`)
         }
     }
     return columns.value.filter((i) => columnNames.includes(i.key))
@@ -94,10 +88,10 @@ const items = computed(() => {
     if (!props.samples.samples) return []
     return props.samples.samples.map((sample: TermComparison) => {
         const hypoAnnotations = Object.entries(sample.hyp.annotations).map((i) => ({
-            [`${props.hypothesisJob}-${i[0]}`]: i[1],
+            [`${props.hypothesisLayer}-${i[0]}`]: i[1],
         }))
         const refAnnotations = Object.entries(sample.ref.annotations).map((i) => ({
-            [`${props.referenceJob}-${i[0]}`]: i[1],
+            [`${props.referenceLayer}-${i[0]}`]: i[1],
         }))
 
         return {

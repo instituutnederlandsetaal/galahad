@@ -5,22 +5,17 @@
 import axios, { type AxiosResponse } from "axios"
 import type { UUID } from "@/types/corpora"
 import type { Job, Progress } from "@/types/jobs"
+import { endpoints } from "@/api"
 
 type JobsResponse = AxiosResponse<Job[]>
-type JobResponse = AxiosResponse<Job>
-export type ProgressResponse = AxiosResponse<Progress>
-
-export const jobsPath = (corpus: UUID): string => `/corpora/${corpus}/jobs`
-const jobPath = (corpus: UUID, job: string): string => `/corpora/${corpus}/jobs/${job}`
-const jobProgressPath = (corpus: UUID, job: string): string => `/corpora/${corpus}/jobs/${job}/progress`
-const jobCancelPath = (corpus: UUID, job: string): string => `/corpora/${corpus}/jobs/${job}/cancel`
-
+export type JobResponse = AxiosResponse<Job>
+export type JobProgressResponse = AxiosResponse<Progress>
 /**
  * Fetch all jobs for a corpus.
  * @param corpus UUID of the corpus.
  */
 export function getJobs(corpus: UUID): Promise<JobsResponse> {
-    return axios.get(jobsPath(corpus))
+    return axios.get(endpoints.jobs.base({ corpus }))
 }
 
 /**
@@ -28,27 +23,18 @@ export function getJobs(corpus: UUID): Promise<JobsResponse> {
  * @param corpus UUID of the corpus.
  * @param job Tagger job name.
  */
-export function postJob(corpus: UUID, job: string): Promise<ProgressResponse> {
-    return axios.post(jobPath(corpus, job))
+export function postJob(corpus: UUID, job: string): Promise<AxiosResponse> {
+    return axios.post(endpoints.jobs.job({ corpus, job }))
 }
 
-/**
- * Cancel or delete a job.
- * @param corpus UUID of the corpus.
- * @param job Tagger job name.
- * @param hard True to delete the job, false to cancel it.
- */
-export function removeJob(corpus: UUID, job: string): Promise<ProgressResponse> {
-    return axios.delete(jobPath(corpus, job))
+export function cancelJob(corpus: UUID, job: string): Promise<AxiosResponse> {
+    return axios.delete(endpoints.jobs.job({ corpus, job }))
 }
 
-export function cancelJob(corpus: UUID, job: string): Promise<ProgressResponse> {
-    return axios.post(jobCancelPath(corpus, job))
+export function getJob(corpus: UUID, job: string): Promise<JobResponse> {
+    return axios.get(endpoints.jobs.job({ corpus, job }))
 }
 
-/**
- * Poll for job progress.
- */
-export function getJobProgress(corpus: UUID, job: string): Promise<ProgressResponse> {
-    return axios.get(jobProgressPath(corpus, job))
+export function getJobProgress(corpus: UUID, job: string): Promise<JobProgressResponse> {
+    return axios.get(endpoints.jobs.progress({ corpus, job }))
 }

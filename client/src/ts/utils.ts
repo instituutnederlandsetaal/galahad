@@ -1,3 +1,5 @@
+import type { Period } from "@/types/taggers"
+
 // https://stackoverflow.com/a/18650828
 export function formatBytes(bytes: number, decimals = 0) {
     if (!+bytes || bytes < 1023) return "> 1 kB"
@@ -18,4 +20,14 @@ export function formatDate(unixtime: number) {
     const hours = String(d.getHours()).padStart(2, "0")
     const minutes = String(d.getMinutes()).padStart(2, "0")
     return `${year}-${month}-${day} ${hours}:${minutes}`
+}
+
+export function formatPeriod(period: Period): string | undefined {
+    if (period) {
+        const from = period.from ?? 0
+        const to = period.to ?? 0
+        return `${from} – ${to}`
+    } else {
+        return undefined
+    }
 }

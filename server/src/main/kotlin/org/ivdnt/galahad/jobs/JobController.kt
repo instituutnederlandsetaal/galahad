@@ -1,11 +1,12 @@
 package org.ivdnt.galahad.jobs
 
-import java.io.File
+import java.io.InputStream
 import java.util.UUID
 import kotlin.collections.ArrayDeque
 import kotlin.collections.count
 import kotlin.collections.minusAssign
 import kotlin.collections.plusAssign
+import kotlin.io.path.createTempDirectory
 import kotlin.io.path.createTempFile
 import org.ivdnt.galahad.documents.Document
 import org.ivdnt.galahad.taggers.Tagger
@@ -51,11 +52,11 @@ object JobController {
         start()
     }
 
-    fun receive(uuid: UUID, file: File) {
+    fun receive(uuid: UUID, input: InputStream, fileName: String) {
         if (task == null || uuid != task?.uuid) {
             throw Exception("No task found for UUID $uuid")
         }
-        task!!.finish(file)
+        task!!.finish(input, fileName)
         // if no untagged documents are left, remove the job from the queue and terminate the tagger
         val numUntagged =
             task!!.job.corpus.documents.readAll().count {
@@ -119,10 +120,13 @@ object JobController {
     }
 
     private class Task(val uuid: UUID, val job: Job, val doc: String) {
-        fun finish(file: File) {
+        fun finish(input: InputStream, fileName: String) {
             try {
-                job.corpus.jobs.readOrThrow(job.name).results.createOrThrow(doc)
-                job.corpus.layers.readOrThrow(job.name).documents.createOrThrow(file)
+                val ext = fileName.substring(fileName.lastIndexOf('.'))
+                val file = createTempDirectory().toFile().resolve(doc + ext)
+                input.use { input -> file.outputStream().use { output -> input.copyTo(output) } }
+                job.results.createOrThrow(doc)
+                job.corpus.layers.createOrThrow(job.name).documents.createOrThrow(file)
             } catch (exception: Exception) {
                 job.results.createOrThrow(doc).error = exception.message
             }

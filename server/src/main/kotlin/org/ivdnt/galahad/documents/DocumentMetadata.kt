@@ -3,6 +3,7 @@ package org.ivdnt.galahad.documents
 import org.ivdnt.galahad.annotations.LayerAnnotations
 import org.ivdnt.galahad.annotations.LayerPreview
 import org.ivdnt.galahad.formats.ParsedFile
+import org.ivdnt.galahad.util.withoutFormatExt
 
 data class DocumentMetadata(
     /** Name of the uploaded file including extension. Used as a working directory name. */
@@ -24,7 +25,7 @@ data class DocumentMetadata(
         fun create(file: ParsedFile): DocumentMetadata {
             val text = file.layer.toString()
             return DocumentMetadata(
-                name = file.file.name,
+                name = file.file.withoutFormatExt,
                 format = file.format,
                 text = text.take(PREVIEW_LENGTH) + if (text.length > PREVIEW_LENGTH) "..." else "",
                 preview = file.layer.preview,

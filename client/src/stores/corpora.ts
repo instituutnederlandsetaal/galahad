@@ -1,27 +1,26 @@
 import * as API from "@/api/corpora"
 import { plausible } from "@/ts/plausible"
-import stores from "@/stores"
 import type { CorpusMetadata, MutableCorpusMetadata, UUID } from "@/types/corpora"
 import { useRouteQuery } from "@vueuse/router"
+import useUser from "@/stores/static/user"
 
 /** Contains all corpora for which the user has read access. */
 const useCorpora = defineStore("corpora", () => {
     // Stores
-    const user = stores.useUser()
+    const { user } = storeToRefs(useUser())
+
+    const canWrite = computed<boolean>((): boolean => user.value?.admin || isOwner.value || isCollaborator.value)
+    const canDelete = computed<boolean>((): boolean => user.value?.admin || isOwner.value)
 
     // Fields
     const corpusId = useRouteQuery<UUID>("corpus")
     const loading = ref<boolean>(false)
     const corpora = ref<CorpusMetadata[]>([])
-    const datasets = computed<CorpusMetadata[]>((): CorpusMetadata[] => corpora.value?.filter((i) => i.dataset) ?? [])
-    const sharedCorpora = computed<CorpusMetadata[]>(
-        (): CorpusMetadata[] => corpora.value?.filter((i) => !i.dataset && i.owner !== user.user?.name) ?? [],
+    const corpus = computed<CorpusMetadata | undefined>((): CorpusMetadata | undefined =>
+        corpora.value?.find((i) => i.uuid === corpusId.value),
     )
-    const corpus = computed<CorpusMetadata>(
-        (): CorpusMetadata => corpora.value?.find((i) => i.uuid === corpusId.value) as CorpusMetadata,
-    )
-    const isCollaborator = computed((): boolean => corpus.value?.collaborators.includes(user.user?.name) ?? false)
-    const isOwner = computed<boolean>((): boolean => corpus.value?.owner === user.user?.name)
+    const isCollaborator = computed((): boolean => corpus.value?.collaborators.includes(user.value?.name) ?? false)
+    const isOwner = computed<boolean>((): boolean => corpus.value?.owner === user.value?.name)
 
     /** Reload all corpora. */
     function reload(): void {
@@ -53,20 +52,18 @@ const useCorpora = defineStore("corpora", () => {
     function update(metadata: CorpusMetadata): void {
         plausible.corpusUpdated(metadata)
         loading.value = true
-        API.patchCorpus(metadata.uuid, metadata).finally(reload)
+        API.updateCorpus(metadata.uuid, metadata).finally(reload)
     }
-
-    reload()
 
     return {
         corpora,
         loading,
-        datasets,
-        sharedCorpora,
         corpus,
         corpusId,
         isCollaborator,
         isOwner,
+        canWrite,
+        canDelete,
         reload,
         create,
         remove,

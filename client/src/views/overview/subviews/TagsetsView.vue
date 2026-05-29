@@ -1,5 +1,5 @@
 <template>
-    <GCard title="Tagsets overview">
+    <GCard title="Tagsets">
         <template #help>
             <p>Here you can see an overview of possible tagsets to annotate Dutch.</p>
             <p>
@@ -8,7 +8,7 @@
         </template>
 
         <GTable :columns :items :loading>
-            <template #table-empty>
+            <template #empty>
                 No tagsets appeared? That is not right! Please contact the INT at
                 <MailAddress />
             </template>
@@ -17,9 +17,8 @@
 </template>
 
 <script setup lang="ts">
-import useTagsets from "@/stores/tagsets"
+import useTagsets from "@/stores/static/tagsets"
 
 const { tagsets: items, loading } = storeToRefs(useTagsets())
-
 const columns = [{ key: "name" }, { key: "description" }]
 </script>

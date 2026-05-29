@@ -32,9 +32,10 @@
 
 import * as API from "@/api/evaluation"
 import * as Utils from "@/api/utils"
-import stores from "@/stores"
+import useCorpora from "@/stores/corpora"
 // API & types
-import { metricsPerPosColumns } from "@/stores/evaluation/metrics"
+import useMetrics, { metricsPerPosColumns } from "@/stores/evaluation/metrics"
+import useLayers from "@/stores/layers"
 
 // Types
 type GlobalMetricsRow = {
@@ -52,10 +53,9 @@ type GlobalMetricsRow = {
 }
 
 // Stores
-const { loading, metrics } = storeToRefs(stores.useMetrics())
-const corporaStore = stores.useCorpora()
-const jobSelection = stores.useJobSelection()
-const errors = stores.useErrors()
+const { loading, metrics } = storeToRefs(useMetrics())
+const corporaStore = useCorpora()
+const jobSelection = useLayers()
 
 // Fields
 const downloading = ref<boolean>()

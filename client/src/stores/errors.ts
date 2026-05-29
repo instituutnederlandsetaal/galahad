@@ -11,7 +11,7 @@ const useErrors = defineStore("errors", () => {
             async (error) => {
                 let message = undefined
                 try {
-                    message = JSON.parse(await error.response?.data?.text() ?? "{}").message;
+                    message = JSON.parse((await error.response?.data?.text()) ?? "{}").message
                 } catch (e) {
                     message = error.response?.data?.message
                 }

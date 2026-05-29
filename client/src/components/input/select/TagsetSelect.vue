@@ -6,11 +6,8 @@
 </template>
 
 <script setup lang="ts">
-import stores from "@/stores"
+import useTagsets from "@/stores/static/tagsets"
 
-// #model
 const model = defineModel<string>()
-
-// #stores
-const { tagsets } = storeToRefs(stores.useTagsets())
+const { tagsets } = storeToRefs(useTagsets())
 </script>

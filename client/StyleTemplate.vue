@@ -13,7 +13,7 @@
 // -- libraries --
 import axios from "axios"
 // --- stores ---
-import stores from "@/stores"
+import useMyStore from "@/stores/useMyStore"
 // --- api ---
 import * as API from "@/api"
 // --- util ---
@@ -38,7 +38,7 @@ const { foo = "bar" } = defineProps<{ foo?: string }>()
 const emit = defineEmits<{ click: [name: string]; voidExample: [] }>()
 
 // --- store data ---
-const store = stores.useMyStore()
+const store = useMyStore()
 
 // --- data ---
 const visible = ref<boolean>(true)

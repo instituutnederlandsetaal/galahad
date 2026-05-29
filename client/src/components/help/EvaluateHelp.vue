@@ -9,4 +9,5 @@
         metrics* and further information on the Pos Confusion. You can also download these evaluations as CSV files.
     </p>
     <DifferentTagsetsHelp />
+    <HelpLink helpLink="evaluation" />
 </template>

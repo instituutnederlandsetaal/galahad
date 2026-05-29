@@ -9,12 +9,12 @@
 </template>
 
 <script setup lang="ts">
-import stores from "@/stores"
+import useLayers from "@/stores/layers"
 import type { Term } from "@/types/evaluation"
 import type { Column } from "@/types/ui/table"
 
 // Stores
-const jobSelection = stores.useJobSelection()
+const { hypothesisId, referenceId } = storeToRefs(useLayers())
 
 // Custom types
 type Item = Term & { layer: string }
@@ -29,8 +29,8 @@ const ignorableAnnotations = ["token", "id", "misc"]
 // Computed
 const items: Ref<Record<string, string>[]> = computed(() => {
     return [
-        { layer: jobSelection.hypothesisId, ...props.hypoTerm.annotations },
-        { layer: jobSelection.referenceId, ...props.refTerm.annotations },
+        { layer: hypothesisId, ...props.hypoTerm.annotations },
+        { layer: referenceId, ...props.refTerm.annotations },
     ]
 })
 /** columns are simply all unique keys in term.annotations: Record<string, string> */
@@ -48,9 +48,9 @@ const columns: Ref<Column[]> = computed(() => {
 
 // Methods
 function itemEqual(data: Cell): bool {
-    if (data.item.layer === jobSelection.referenceId || data.column.key === "layer") return true // always true for source layer
+    if (data.item.layer === referenceId || data.column.key === "layer") return true // always true for source layer
 
-    const sourceItem = items.value.find((i) => i.layer === jobSelection.referenceId)
+    const sourceItem = items.value.find((i) => i.layer === referenceId)
     return annotationsEqual(data.value, sourceItem[data.column.key])
 }
 

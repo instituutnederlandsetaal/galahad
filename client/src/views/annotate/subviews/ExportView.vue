@@ -1,66 +1,65 @@
 <template>
-    <AnnotateTab :hidePermissionsError="true">
-        <GCard :title="`Export corpus ${corpus.name}`" helpLink="export">
-            <template #help>
-                <ExportHelp />
-            </template>
+    <AnnotateTab>
+        <template #title>Export</template>
 
-            <GForm vertical>
-                <JobSelect displayName="Annotation layer" />
+        <template #help>
+            <ExportHelp />
+        </template>
 
-                <FileFormatInput />
+        <GForm vertical>
+            <JobSelect displayName="Annotation layer" />
 
-                <GCheckBox v-model="posHeadOnly">Export part of speech without features</GCheckBox>
+            <FormatSelect />
 
-                <GCheckBox v-if="showMergeOption" v-model="shouldMerge">Merge encoding</GCheckBox>
+            <GCheckBox v-model="posHeadOnly">Export part of speech without features</GCheckBox>
 
-                <DownloadButton wide :disabled @click="convert(shouldMerge, posHeadOnly)" />
-            </GForm>
+            <GCheckBox v-if="showMergeOption" v-model="shouldMerge">Merge encoding</GCheckBox>
 
-            <GInfo v-if="loading" spinner>Please wait while your export is being processed.</GInfo>
+            <DownloadButton wide :disabled @click="convert(shouldMerge, posHeadOnly)" />
+        </GForm>
 
-            <template v-if="showMergeOption">
-                <GInfo>
-                    <p>
-                        You have uploaded
-                        <b>{{ format }}</b> files to this corpus and you are now exporting <b>{{ format }}</b
-                        >. It is possible to insert the annotation layer into the original file. This will retain the
-                        original encoding.
-                    </p>
-                    <p>
-                        If you do not choose the merge option, your export will ignore the original encoding of your
-                        uploaded document.
-                    </p>
-                </GInfo>
+        <GInfo v-if="loading" spinner>Please wait while your export is being processed.</GInfo>
 
-                <GInfo v-if="hasTeiP5Legacy && shouldMerge">
-                    <h4>Special notice for <b>TEI P5 legacy</b></h4>
-                    <TeiP5LegacyWarning />
-                </GInfo>
-            </template>
-        </GCard>
+        <template v-if="showMergeOption">
+            <GInfo>
+                <p>
+                    You have uploaded
+                    <b>{{ format }}</b> files to this corpus and you are now exporting <b>{{ format }}</b
+                    >. It is possible to insert the annotation layer into the original file. This will retain the
+                    original encoding.
+                </p>
+                <p>
+                    If you do not choose the merge option, your export will ignore the original encoding of your
+                    uploaded document.
+                </p>
+            </GInfo>
+
+            <GInfo v-if="hasTeiP5Legacy && shouldMerge">
+                <h4>Special notice for <b>TEI P5 legacy</b></h4>
+                <TeiP5LegacyWarning />
+            </GInfo>
+        </template>
     </AnnotateTab>
 </template>
 
 <script setup lang="ts">
-import stores from "@/stores"
+import useCorpora from "@/stores/corpora"
+import useDocuments from "@/stores/documents"
+import useExport from "@/stores/export"
+import useLayers from "@/stores/layers"
 import { Format } from "@/types/documents"
 import TeiP5LegacyWarning from "@/views/help/subviews/formats/TeiP5LegacyWarning.vue"
 
-// #stores
-const { corpus } = storeToRefs(stores.useCorpora())
-const { hypothesisId } = storeToRefs(stores.useJobSelection())
-const exportStore = stores.useExport()
-const { convert } = exportStore
-const { loading, format } = storeToRefs(exportStore)
-const documentsStore = stores.useDocuments()
-const { documents } = storeToRefs(documentsStore)
+const { corpus } = storeToRefs(useCorpora())
+const { hypothesisId } = storeToRefs(useLayers())
+const { reload } = useLayers()
+const { convert } = useExport()
+const { loading, format } = storeToRefs(useExport())
+const { documents } = storeToRefs(useDocuments())
 
-// #data
 const posHeadOnly = ref<boolean>(false)
 const shouldMerge = ref<boolean>(false)
 
-// #computed
 const showMergeOption = computed(() => {
     const f = format.value
     const formatIsMergeable = f === Format.TEI_P5 || f === Format.TSV || f === Format.FOLIA || f === Format.CONLLU

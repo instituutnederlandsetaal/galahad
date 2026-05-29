@@ -3,6 +3,7 @@ package org.ivdnt.galahad.documents
 import java.io.File
 import org.ivdnt.galahad.exceptions.DocumentNotFoundException
 import org.ivdnt.galahad.files.GalahadFolderManager
+import org.ivdnt.galahad.util.withoutFormatExt
 
 /**
  * Create, read and delete documents in a corpus. Represents the "documents/" folder in a corpus
@@ -24,7 +25,9 @@ import org.ivdnt.galahad.files.GalahadFolderManager
  * ```
  */
 class Documents(dir: File) : GalahadFolderManager<Document, File>(dir) {
-    override fun createOrThrow(key: File): Document = Document.create(dir.resolve(key.name), key)
+
+    override fun createOrThrow(key: File): Document =
+        Document.create(dir.resolve(key.withoutFormatExt), key)
 
     override fun ctor(key: String): Document = Document(dir.resolve(key))
 

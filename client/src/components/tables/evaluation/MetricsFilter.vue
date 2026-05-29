@@ -20,9 +20,6 @@
 <script setup lang="ts">
 // Libraries & stores
 
-import stores from "@/stores"
-
-const { metrics } = storeToRefs(stores.useMetrics())
 const props = defineProps(["annotations"])
 
 // Fields

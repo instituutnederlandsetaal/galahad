@@ -21,7 +21,7 @@
 </template>
 
 <style scoped lang="scss">
-// // Header top
+// Header top
 .banner {
     background-color: white;
     align-items: center;

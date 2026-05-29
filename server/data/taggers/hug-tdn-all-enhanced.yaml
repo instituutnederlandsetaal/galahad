@@ -9,25 +9,25 @@ annotations:
   - annotation: lemma
     principles:
       - name: Lemmatisation principles for GiGaNT
-        details: Lemmatiseerprincipes voor GiGaNT, het centrale lexicon van het INT
-        href: https://ivdnt.org/wp-content/uploads/2024/11/lemmatiseerprincipesV2_combi.pdf
+        description: Lemmatiseerprincipes voor GiGaNT, het centrale lexicon van het INT
+        url: https://ivdnt.org/wp-content/uploads/2024/11/lemmatiseerprincipesV2_combi.pdf
   - annotation: pos
     principles:
       - name: TDN-Core
-        details: Tagset voor Diachroon corpusmateriaal van het Nederlands
-        href: https://ivdnt.org/wp-content/uploads/2024/11/TDNV2_combi.pdf
+        description: Tagset voor Diachroon corpusmateriaal van het Nederlands
+        url: https://ivdnt.org/wp-content/uploads/2024/11/TDNV2_combi.pdf
 attributions:
   - name: Dataset
-    details: Galahad Corpus Data (all)
-    href: https://github.com/instituutnederlandsetaal/galahad-corpus-data/tree/1.0.1/combinations/ALL.combination.json
+    description: Galahad Corpus Data (all)
+    url: https://github.com/instituutnederlandsetaal/galahad-corpus-data/tree/1.0.1/combinations/ALL.combination.json
   - name: Software
-    details: INT Huggingface Tagger
-    href: https://github.com/instituutnederlandsetaal/int-huggingface-tagger/
+    description: INT Huggingface Tagger
+    url: https://github.com/instituutnederlandsetaal/int-huggingface-tagger/
   - name: Model
-    details: hug-tdn-all-enhanced
-    href: https://github.com/instituutnederlandsetaal/galahad-huggingface-models/tree/master/models/galahad/tagger/pos_model_tdn_all_enhanced
+    description: hug-tdn-all-enhanced
+    url: https://github.com/instituutnederlandsetaal/galahad-huggingface-models/tree/master/models/galahad/tagger/pos_model_tdn_all_enhanced
   - name: Trained by
-    details: Instituut voor de Nederlandse Taal
-    href: https://ivdnt.org/
+    description: Instituut voor de Nederlandse Taal
+    url: https://ivdnt.org/
 port: 8117
 

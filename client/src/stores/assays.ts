@@ -1,7 +1,6 @@
 // Libraries & stores
 
 import * as API from "@/api/benchmarks"
-import stores from "@/stores"
 // Types & API
 import type { Benchmarks } from "@/types/assays"
 
@@ -9,9 +8,6 @@ import type { Benchmarks } from "@/types/assays"
  * Contains dataset assays.
  */
 const useAssays = defineStore("assays", () => {
-    // Stores
-    const errors = stores.useErrors()
-
     // Fields
     const loading = ref<boolean>()
     const assays = ref<Benchmarks>()
@@ -24,7 +20,6 @@ const useAssays = defineStore("assays", () => {
         loading.value = true
         API.getBenchmarks()
             .then((response) => (assays.value = response.data))
-            .catch((error) => errors.handle(error))
             .finally(() => (loading.value = false))
     }
 

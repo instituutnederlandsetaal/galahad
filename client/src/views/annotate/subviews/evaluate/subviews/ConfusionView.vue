@@ -6,7 +6,7 @@
             :columns
             :items="rows"
             :loading
-            sortColumn="referenceJob"
+            sortColumn="referenceLayer"
             class="confusion"
         >
             <template #help>
@@ -32,12 +32,10 @@
                 </GForm>
             </template>
 
-            <template #table-empty>
-                Select a reference layer and a hypothesis layer to generate a confusion table.
-            </template>
+            <template #empty> Select a reference layer and a hypothesis layer to generate a confusion table. </template>
 
             <!-- top left header -->
-            <template #head-referenceJob>
+            <template #head-referenceLayer>
                 part-of-speech <br />
                 ({{ jobSelection.hypothesisId }}→)<br />
                 ({{ jobSelection.referenceId }}↓)
@@ -46,7 +44,7 @@
             <!-- custom cell rendering -->
             <template #cell="data: Cell">
                 <!-- header column -->
-                <span v-if="data.column.key == 'referenceJob'">
+                <span v-if="data.column.key == 'referenceLayer'">
                     {{ data.value }}
                 </span>
                 <GButton v-else :disabled="!data.value" :class="cssClass(data)" @click="openModal(data)">
@@ -61,29 +59,31 @@
             :samples
             :downloading
             @download="(data) => download(data)"
-            :referenceJob="jobSelection.referenceId"
-            :hypothesisJob="jobSelection.hypothesisId"
+            :referenceLayer="jobSelection.referenceId"
+            :hypothesisLayer="jobSelection.hypothesisId"
         />
     </GCard>
 </template>
 
 <script setup lang="ts">
-import stores from "@/stores"
 import * as API from "@/api/evaluation"
 import * as Utils from "@/api/utils"
-import { Confusion, type EvaluationEntry, type Samples } from "@/types/evaluation"
+import useCorpora from "@/stores/corpora"
+import useConfusion from "@/stores/evaluation/confusion"
+import useLayers from "@/stores/layers"
+import type { Confusion, EvaluationEntry, Samples } from "@/types/evaluation"
 import type { Column } from "@/types/ui/table"
 
 // Stores
-const { loading, confusions } = storeToRefs(stores.useConfusion())
-const corporaStore = stores.useCorpora()
-const jobSelection = stores.useJobSelection()
-const { hypothesisId, referenceId } = storeToRefs(stores.useJobSelection())
-const { reload } = stores.useConfusion()
+const { loading, confusions } = storeToRefs(useConfusion())
+const corporaStore = useCorpora()
+const jobSelection = useLayers()
+const { hypothesisId, referenceId } = storeToRefs(useLayers())
+const { reload } = useConfusion()
 watch([hypothesisId, referenceId], reload, { immediate: true })
 
 // Custom types
-type Item = { [key: string]: EvaluationEntry } & { referenceJob: string }
+type Item = { [key: string]: EvaluationEntry } & { referenceLayer: string }
 type Cell = { field: Column; item: Item; value: EvaluationEntry }
 
 // Fields
@@ -105,11 +105,11 @@ const columns = computed((): Column[] => {
         Object.keys(confusion.value[k1])?.forEach((k2) => (entries[k2] = true))
     })
 
-    // add referenceJob, sort, map and return
+    // add referenceLayer, sort, map and return
     const refJobField = {
-        key: "referenceJob",
+        key: "referenceLayer",
         sortOn: (value: Item) => {
-            const pos = value.referenceJob
+            const pos = value.referenceLayer
             return posToBottom(pos) ? Number.POSITIVE_INFINITY : pos
         },
     }
@@ -124,7 +124,10 @@ const columns = computed((): Column[] => {
         })
 
     const returnVal = allFields.map((field) => {
-        return { key: field, sortOn: (value) => (field !== "referenceJob" ? value[field]?.count : value?.referenceJob) }
+        return {
+            key: field,
+            sortOn: (value) => (field !== "referenceLayer" ? value[field]?.count : value?.referenceLayer),
+        }
     })
     returnVal.unshift(refJobField)
     return returnVal
@@ -133,7 +136,7 @@ const columns = computed((): Column[] => {
 const rows = computed((): Item[] => {
     if (!confusion.value) return []
     return Object.keys(confusion.value).map((k1) => {
-        const ret = { referenceJob: k1 } as { [key: string]: EvaluationEntry } & { referenceJob: string }
+        const ret = { referenceLayer: k1 } as { [key: string]: EvaluationEntry } & { referenceLayer: string }
         Object.keys(confusion.value[k1]).forEach((k2) => (ret[k2] = confusion.value[k1][k2]))
         return ret
     })
@@ -143,7 +146,7 @@ const rows = computed((): Item[] => {
 function download() {
     const data = modalData.value
     const hypothesisPos = data.column.key
-    const referencePos = data.item.referenceJob
+    const referencePos = data.item.referenceLayer
     downloading.value = true
     API.getConfusionSamples(
         corporaStore.corpusId,
@@ -170,7 +173,7 @@ function posToBottom(pos: string) {
 }
 
 function cssClass(data) {
-    const match: boolean = strEqual(data.column.key, data.item.referenceJob)
+    const match: boolean = strEqual(data.column.key, data.item.referenceLayer)
     const warnings = ["NO_POS", "MULTIPLE", "Missing match"]
     if (warnings.includes(data.column.key)) {
         return { orange: match, plain: !match }
@@ -181,10 +184,10 @@ function cssClass(data) {
 function openModal(data) {
     modalData.value = data
     samples.value = {
-        agreement: strEqual(data.column.key, data.item.referenceJob),
+        agreement: strEqual(data.column.key, data.item.referenceLayer),
         samples: data.value.samples,
         hypothesisPos: data.column.key,
-        referencePos: data.item.referenceJob,
+        referencePos: data.item.referenceLayer,
         annotationType: selectedAnnotation.value,
     }
 }

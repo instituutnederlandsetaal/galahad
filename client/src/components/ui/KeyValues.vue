@@ -10,10 +10,8 @@
 </template>
 
 <script setup lang="ts">
-// #props
 const { data } = defineProps<{ data: Record<string, string> }>()
 
-// #data
 const keys = Object.keys(data)
 </script>
 

@@ -1,7 +1,7 @@
 <template>
     <GCard>
         <GTable helpLink="evaluation" :columns :loading :items="itemsToDisplay" sortColumn="count" title="Distribution">
-            <template #table-empty>
+            <template #empty>
                 <p v-if="distribution">No results for current filter settings.</p>
                 <p v-else>Select a hypothesis layer and an annotation to view a distribution.</p>
             </template>
@@ -100,15 +100,16 @@
 </template>
 
 <script setup lang="ts">
-import stores from "@/stores"
+import useDistribution from "@/stores/evaluation/distribution"
+import useLayers from "@/stores/layers"
 import type { TypeToken } from "@/types/evaluation/distribution"
 import type { SelectOption } from "@/types/ui/select"
 import MultiSelect from "primevue/multiselect"
 
 // Stores
-const { hypothesisId } = storeToRefs(stores.useJobSelection())
-const { distributions, loading } = storeToRefs(stores.useDistribution())
-const { reload } = stores.useDistribution()
+const { hypothesisId } = storeToRefs(useLayers())
+const { distributions, loading } = storeToRefs(useDistribution())
+const { reload } = useDistribution()
 
 // Fields
 // Selected distribution.

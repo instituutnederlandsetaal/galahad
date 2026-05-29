@@ -1,9 +1,10 @@
-import type { CorporaStore, JobSelectionStore } from "@/stores"
 // API & types
 import type { UUID } from "@/types/corpora"
 // Libraries & stores
 import type { AxiosResponse } from "axios"
 import type { Ref } from "vue"
+import useCorpora from "@/stores/corpora"
+import useLayers from "@/stores/layers"
 
 /**
  * Reloads the data for an evaluation store.
@@ -41,8 +42,8 @@ export function reloadEval(
     return new Promise<void>((resolve, reject) => {
         ApiCall(corpus, hypothesis, reference)
             .then((response) => {
-                const corporaStore = stores.useCorpora()
-                const jobSelection = stores.useJobSelection()
+                const corporaStore = useCorpora()
+                const jobSelection = useLayers()
                 // Retrieve latest selections
                 const currentCorpus = corporaStore.corpusId
                 const currentHypothesis = jobSelection.hypothesisId
@@ -58,10 +59,6 @@ export function reloadEval(
                     data.value = response.data
                     resolve()
                 }
-            })
-            .catch((error) => {
-                stores.useErrors().handle(intent, error)
-                reject()
             })
             .finally(() => (loading.value = false))
     })

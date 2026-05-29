@@ -56,16 +56,16 @@
 </template>
 
 <script setup lang="ts">
-import stores from "@/stores"
 import type { Column, TableData } from "@/types/ui/table"
 import type { JobsEntities } from "@/types/evaluation/entities"
 import MultiSelect from "primevue/multiselect"
+import useEntities from "@/stores/evaluation/entities"
 
 // --- types ---
 type DocumentEntitiesRow = { document: string; [key: string]: number | string }
 
 // --- stores ---
-const { entities, loading } = storeToRefs(stores.useEntities())
+const { entities, loading } = storeToRefs(useEntities())
 
 // --- data ---
 const selectedItem = ref<TableData<any>>()

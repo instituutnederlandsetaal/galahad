@@ -26,7 +26,7 @@
                 <li v-for="(userName, i) in users" :key="i">
                     <div class="users">
                         <p>{{ userName }}</p>
-                        <GButton plain @click="userToDelete = userName" v-if="canDelete(userName)" title="Remove">
+                        <GButton plain @click="userToDelete = userName" v-if="canDelete" title="Remove">
                             <i class="fa fa-close"></i>
                         </GButton>
                     </div>
@@ -46,43 +46,31 @@
     </DeleteModal>
 </template>
 
-<script lang="ts">
-import stores from "@/stores"
+<script setup lang="ts">
+import useCorpora from "@/stores/corpora"
 
-export default defineComponent({
-    name: "UserList",
-    props: {
-        users: { type: Array<string>, default: () => [] },
-        listName: { type: String, default: "Users" },
-        showAddDialog: { type: Boolean, default: true },
-    },
-    setup() {
-        const userStore = stores.useUser()
-        return { userStore: userStore }
-    },
-    data() {
-        return { newUser: "", userToDelete: null }
-    },
-    methods: {
-        canDelete(username: string): boolean {
-            if (!this.showAddDialog) {
-                return this.userStore.user.name === username
-            }
-            return true
-        },
-        setUser(username: string) {
-            username = username.trim()
-            if (!username) return
-            this.newUser = ""
-            if (this.users.includes(username)) return
-            this.users.push(username)
-        },
-        removeUser(username: string) {
-            const removeIndex = this.users.indexOf(username)
-            this.users.splice(removeIndex, 1)
-        },
-    },
-})
+const {
+    users = [],
+    listName = "Users",
+    showAddDialog = true,
+} = defineProps<{ users: string[]; listName: string; showAddDialog: boolean }>()
+
+const { canDelete } = storeToRefs(useCorpora())
+
+const newUser = ref<string>("")
+const userToDelete = ref<string>()
+
+function setUser(username: string) {
+    username = username.trim()
+    if (!username) return
+    newUser.value = ""
+    if (users.includes(username)) return
+    users.push(username)
+}
+function removeUser(username: string) {
+    const removeIndex = users.indexOf(username)
+    users.splice(removeIndex, 1)
+}
 </script>
 
 <style scoped lang="scss">

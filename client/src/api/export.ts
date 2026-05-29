@@ -6,11 +6,7 @@
 import { getBlob, type BlobResponse } from "@/api/utils"
 import type { UUID } from "@/types/corpora"
 import type { Format } from "@/types/documents"
-
-const convertCorpusPath = (corpus: UUID, job: string, format: Format, posHeadOnly: boolean): string =>
-    `/corpora/${corpus}/layers/${job}/export/convert?format=${format}&posHeadOnly=${posHeadOnly}`
-const mergeCorpusPath = (corpus: UUID, job: string, format: Format, posHeadOnly: boolean): string =>
-    `/corpora/${corpus}/layers/${job}/export/merge?format=${format}&posHeadOnly=${posHeadOnly}`
+import { endpoints } from "@/api"
 
 /**
  * Download a corpus converted to the desired format.
@@ -19,8 +15,13 @@ const mergeCorpusPath = (corpus: UUID, job: string, format: Format, posHeadOnly:
  * @param format Use enum here.
  * @param posHeadOnly Whether to include only the head of the POS tags in the export.
  */
-export function convertCorpus(corpus: UUID, job: string, format: Format, posHeadOnly: boolean): Promise<BlobResponse> {
-    return getBlob(convertCorpusPath(corpus, job, format, posHeadOnly))
+export function convertCorpus(
+    corpus: UUID,
+    layer: string,
+    format: Format,
+    posHeadOnly: boolean,
+): Promise<BlobResponse> {
+    return getBlob(endpoints.export.convert({ corpus, layer }, { format, posHeadOnly }))
 }
 
 /**
@@ -30,6 +31,6 @@ export function convertCorpus(corpus: UUID, job: string, format: Format, posHead
  * @param format Use enum here.
  * @param posHeadOnly Whether to include only the head of the POS tags in the export.
  */
-export function mergeCorpus(corpus: UUID, job: string, format: Format, posHeadOnly: boolean): Promise<BlobResponse> {
-    return getBlob(mergeCorpusPath(corpus, job, format, posHeadOnly))
+export function mergeCorpus(corpus: UUID, layer: string, format: Format, posHeadOnly: boolean): Promise<BlobResponse> {
+    return getBlob(endpoints.export.merge({ corpus, layer }, { format, posHeadOnly }))
 }

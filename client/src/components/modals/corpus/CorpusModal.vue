@@ -6,7 +6,7 @@
         </template>
         <form @submit.prevent @keyup.enter="confirm">
             <table>
-                <template v-if="userStore.canWrite || !initial">
+                <template v-if="canWrite || !initial">
                     <tr>
                         <td>
                             <label>Name</label>
@@ -25,12 +25,12 @@
                         <td><label>Year from</label></td>
                         <td>
                             <GNumber
-                                v-model="eraFrom"
+                                v-model="periodFrom"
                                 validityDescriptor="Before end year"
                                 placeholder="YYYY"
                                 :validator="
                                     (v) => {
-                                        return (v ?? 0) <= (eraTo ?? 0)
+                                        return (v ?? 0) <= (periodTo ?? 0)
                                     }
                                 "
                             />
@@ -41,12 +41,12 @@
                         <td><label>Year to</label></td>
                         <td>
                             <GNumber
-                                v-model="eraTo"
+                                v-model="periodTo"
                                 validityDescriptor="After start year"
                                 placeholder="YYYY"
                                 :validator="
                                     (v) => {
-                                        return (v ?? 0) >= (eraFrom ?? 0)
+                                        return (v ?? 0) >= (periodFrom ?? 0)
                                     }
                                 "
                             />
@@ -69,7 +69,7 @@
                         </td>
                     </tr>
 
-                    <template v-if="userStore.user.admin">
+                    <template v-if="user.admin">
                         <tr>
                             <td colspan="2">
                                 <hr />
@@ -104,9 +104,9 @@
                         </td>
                     </tr>
 
-                    <UserList :users="collaborators" listName="Collaborators" :showAddDialog />
+                    <CorpusModalUserList :users="collaborators" listName="Collaborators" :showAddDialog />
                 </template>
-                <UserList :users="viewers" listName="Viewers" :showAddDialog />
+                <CorpusModalUserList :users="viewers" listName="Viewers" :showAddDialog />
             </table>
         </form>
 
@@ -117,11 +117,12 @@
 </template>
 
 <script setup lang="ts">
-import stores from "@/stores"
+import useCorpora from "@/stores/corpora"
+import useUser from "@/stores/static/user"
 import type { CorpusMetadata, MutableCorpusMetadata } from "@/types/corpora"
 
-const userStore = stores.useUser()
-const tagsetsStore = stores.useTagsets()
+const { user } = storeToRefs(useUser())
+const { canDelete, canWrite } = storeToRefs(useCorpora())
 
 // --- props ---
 const { initial, title } = defineProps<{ initial?: CorpusMetadata; title: string }>()
@@ -131,8 +132,8 @@ const emit = defineEmits<{ hide: []; confirm: [metadata: CorpusMetadata] }>()
 // --- data ---
 const dataset = ref<boolean>()
 const name = ref<string>()
-const eraFrom = ref<number>()
-const eraTo = ref<number>()
+const periodFrom = ref<number>()
+const periodTo = ref<number>()
 const tagset = ref<string>()
 const language = ref<string>()
 const sourceName = ref<string>()
@@ -144,7 +145,7 @@ const viewers = ref<string[]>()
 const showAddDialog = computed(() => {
     // Only show it when you're not editing (i.e. you pressed 'new')
     // Or if you did press edit, only show it when you have access
-    return !initial || userStore.canDelete
+    return !initial || canDelete.value
 })
 const disabled = computed(() => {
     const i = initial as MutableCorpusMetadata
@@ -152,23 +153,23 @@ const disabled = computed(() => {
         !isValid.value ||
         (initial &&
             name.value === i.name &&
-            eraFrom.value === i.eraFrom &&
-            eraTo.value === i.eraTo &&
+            periodFrom.value === i.period?.from &&
+            periodTo.value === i.period?.to &&
             tagset.value === i.tagset &&
             language.value === i.language &&
-            collaborators.value.join("\n") === i.collaborators.join("\n") &&
-            viewers.value.join("\n") === i.viewers.join("\n") &&
-            sourceName.value === i.sourceName &&
-            sourceUrl.value === i.sourceUrl &&
+            collaborators.value.join("\n") === (i.collaborators ?? []).join("\n") &&
+            viewers.value.join("\n") === (i.viewers ?? []).join("\n") &&
+            sourceName.value === i.source?.name &&
+            sourceUrl.value === i.source?.url &&
             dataset.value === i.dataset)
     )
 })
 const isValid = computed(() => {
     if (!validateCorpusName(name.value)) return false
     // check if eras are integer values
-    if (eraFrom.value && !Number.isInteger(eraFrom.value)) return false
-    if (eraTo.value && !Number.isInteger(eraTo.value)) return false
-    if (eraFrom.value > eraTo.value) return false
+    if (periodFrom.value && !Number.isInteger(periodFrom.value)) return false
+    if (periodTo.value && !Number.isInteger(periodTo.value)) return false
+    if (periodFrom.value > periodTo.value) return false
     return true
 })
 
@@ -178,15 +179,15 @@ watch(
     (newValue: CorpusMetadata): void => {
         if (!newValue) return
         name.value = newValue.name
-        eraFrom.value = newValue.eraFrom
-        eraTo.value = newValue.eraTo
+        periodFrom.value = newValue.period?.from
+        periodTo.value = newValue.period?.to
         tagset.value = newValue.tagset
         language.value = newValue.language
-        sourceName.value = newValue.sourceName
-        sourceUrl.value = newValue.sourceUrl
+        sourceName.value = newValue.source?.name
+        sourceUrl.value = newValue.source?.url
         dataset.value = newValue.dataset
-        collaborators.value = [...newValue.collaborators]
-        viewers.value = [...newValue.viewers]
+        collaborators.value = [...(newValue.collaborators ?? [])]
+        viewers.value = [...(newValue.viewers ?? [])]
     },
     { immediate: true, deep: true },
 )
@@ -195,8 +196,8 @@ watch(
 function confirm(): void {
     const value: CorpusMetadata = {
         name: name.value,
-        period: [eraFrom.value, eraTo.value].some((i) => i != undefined)
-            ? { from: eraFrom.value, to: eraTo.value }
+        period: [periodFrom.value, periodTo.value].some((i) => i != undefined)
+            ? { from: periodFrom.value, to: periodTo.value }
             : undefined,
         tagset: tagset.value,
         language: language.value,

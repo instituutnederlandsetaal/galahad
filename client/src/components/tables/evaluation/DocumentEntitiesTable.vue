@@ -26,7 +26,7 @@
                 </fieldset>
             </form>
         </template>
-        <template #table-empty> No entities found. </template>
+        <template #empty> No entities found. </template>
     </GTable>
 </template>
 

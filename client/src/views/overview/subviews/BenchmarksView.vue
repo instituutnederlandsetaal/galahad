@@ -15,7 +15,7 @@
         </template>
 
         <GTable headless :columns :items :loading="assaysStore.loading" sortColumn="accuracy">
-            <template #table-empty> Select a dataset to view benchmarks. </template>
+            <template #empty> Select a dataset to view benchmarks. </template>
 
             <!-- tagger name -->
 
@@ -60,19 +60,20 @@
 // Libraries & stores
 
 import type { SelectOption } from "@/types/ui/select"
-import stores from "@/stores"
 // API & Types
 import type { MetricTypeAssay } from "@/types/assays"
 import { SOURCE_LAYER } from "@/types/jobs"
 import type { TableData } from "@/types/ui/table"
 import type MetricsFilter from "@/components/tables/MetricsFilter.vue"
+import useAssays from "@/stores/assays"
+import useCorpora from "@/stores/corpora"
 
 // Types
 type AssayRow = { tagger: string; accuracy: number; precision: number; recall: number; f1: number }
 
 // Stores
-const assaysStore = stores.useAssays()
-const corporaStore = stores.useCorpora()
+const assaysStore = useAssays()
+const corporaStore = useCorpora()
 
 // Fields
 const datasetOptions = computed<SelectOption[]>(() =>

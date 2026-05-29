@@ -1,15 +1,15 @@
 package org.ivdnt.galahad.jobs
 
 import org.ivdnt.galahad.corpora.Corpus
-import org.ivdnt.galahad.layers.CorpusLayerMetadata
 import org.ivdnt.galahad.taggers.Tagger
 
-class JobMetadata(val layer: CorpusLayerMetadata, val progress: Progress) {
+class JobMetadata(val tagger: Tagger, val progress: Progress, val modified: Long = 0) {
     companion object {
         fun create(job: Job, corpus: Corpus): JobMetadata =
             JobMetadata(
-                CorpusLayerMetadata(Tagger.readOrThrow(job.name)),
+                Tagger.readOrThrow(job.name),
                 Progress.create(job, corpus),
+                System.currentTimeMillis(),
             )
     }
 }
