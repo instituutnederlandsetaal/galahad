@@ -1,52 +1,53 @@
 <template>
-    <GCard>
-        <GTable helpLink="evaluation" :columns :loading :items="itemsToDisplay" sortColumn="count" title="Distribution">
+    <GCard title="Distribution">
+        <template #help>
+            <p>
+                The distribution shows what lemma, part-of-speech pairs have been assigned to which types. When there
+                are more than five types you can click on the inspect symbol to view all types of a lemma-PoS
+                combination.
+            </p>
+        </template>
+
+        <GForm v-if="hypothesisAnnotations.length">
+            <fieldset>
+                <label for="annotation-select">Annotation</label>
+                <AnnotationSelect id="annotation-select" :options="annotationOptions" v-model="selectedAnnotation" />
+            </fieldset>
+            <fieldset v-if="distribution">
+                <label for="lemma-input">Search {{ selectedAnnotation }}</label>
+                <GInput id="lemma-input" type="text" v-model="annotationFilter" :placeholder="selectedAnnotation" />
+            </fieldset>
+            <fieldset v-if="distribution">
+                <label for="literal-input">Search types</label>
+                <GInput id="literal-input" type="text" v-model="typeFilter" placeholder="Type" />
+            </fieldset>
+            <fieldset>
+                <label for="group-select">Group by</label>
+                <AnnotationSelect id="group-select" :options="groupOptions" v-model="selectedGroup" />
+            </fieldset>
+            <fieldset v-if="distribution">
+                <label for="analysis-select">Single/multiple analyses</label>
+                <GSelect id="analysis-select" :options="analysesOptions" v-model="selectedAnalysis" />
+            </fieldset>
+            <fieldset v-if="distribution">
+                <label for="groups-select">Select {{ selectedGroup }}</label>
+                <MultiSelect
+                    id="groups-select"
+                    :options="groupsOptions"
+                    v-model="selectedGroups"
+                    :placeholder="selectedGroup"
+                    :maxSelectedLabels="5"
+                />
+            </fieldset>
+        </GForm>
+        <p v-else>First, select a hypothesis that has annotations other than <i>token</i>.</p>
+
+        <GTable v-if="distribution" :columns :loading :items sortColumn="count">
             <template #empty>
-                <p v-if="distribution">No results for current filter settings.</p>
-                <p v-else>Select a hypothesis layer and an annotation to view a distribution.</p>
-            </template>
-            <template #help>
-                <p>
-                    The distribution shows what lemma, part-of-speech pairs have been assigned to which types. When
-                    there are more than five types you can click on the inspect symbol to view all types of a lemma-PoS
-                    combination.
-                </p>
+                <p>No results for current filter settings.</p>
             </template>
 
-            <template #header>
-                <GForm v-if="distribution">
-                    <fieldset>
-                        <label for="lemma-input">Search lemma</label>
-                        <GInput if="lemma-input" type="text" v-model="lemmaFilter" placeholder="Lemma" />
-                    </fieldset>
-                    <fieldset>
-                        <label for="literal-input">Search types</label>
-                        <GInput if="literal-input" type="text" v-model="literalFilter" placeholder="Type" />
-                    </fieldset>
-                    <fieldset>
-                        <label for="annotation-select">Group by</label>
-                        <GSelect id="annotation-select" :options="distributionOptions" v-model="selectedDistribution" />
-                    </fieldset>
-                    <fieldset>
-                        <label for="analysis-select">Single/multiple analyses</label>
-                        <GSelect
-                            id="analysis-select"
-                            :options="singleMultipleOptions"
-                            v-model="selectedSingleMultiple"
-                        />
-                    </fieldset>
-                    <fieldset>
-                        <label for="pos-select">Include groups</label>
-                        <MultiSelect
-                            id="pos-select"
-                            v-model="selectedPosses"
-                            :options="filteredGroups"
-                            placeholder="Select PoS"
-                            :maxSelectedLabels="5"
-                        />
-                    </fieldset>
-                </GForm>
-            </template>
+            <template #header> </template>
 
             <!-- unique -->
             <template #cell-unique="data">
@@ -95,7 +96,13 @@
             </template>
         </GTable>
 
-        <TypeTokenModal v-if="typeToken" :typeToken @hide="typeToken = undefined" />
+        <TypeTokenModal
+            v-if="typeToken"
+            :typeToken
+            :annotation="selectedAnnotation"
+            :group="selectedGroup"
+            @hide="typeToken = undefined"
+        />
     </GCard>
 </template>
 
@@ -107,70 +114,89 @@ import type { SelectOption } from "@/types/ui/select"
 import MultiSelect from "primevue/multiselect"
 
 // Stores
-const { hypothesisId } = storeToRefs(useLayers())
-const { distributions, loading } = storeToRefs(useDistribution())
-const { reload } = useDistribution()
+const { hypothesisAnnotations } = storeToRefs(useLayers())
+const { distribution, loading, annotation: selectedAnnotation, group: selectedGroup } = storeToRefs(useDistribution())
 
-// Fields
-// Selected distribution.
-const distributionOptions = computed<SelectOption[]>(() =>
-    Object.keys(distributions.value ?? {}).map((x) => ({ value: x, text: x })),
-)
-const selectedDistribution = ref<string>()
-const distribution = computed<TypeToken[]>(() => distributions.value?.[selectedDistribution.value])
-
-const selectedPosses = ref<string[]>([])
-// Table controls.
-const lemmaFilter = ref<string>("")
-const literalFilter = ref<string>("")
-// GModal for variants
-const typeToken = ref<TypeToken>()
-
-// Filtered table items.
-const itemsToDisplay = computed((): TypeToken[] => {
-    if (!distribution.value) return []
-    return (
-        distribution.value
-            // // Case insensitive string comparison.
-            .filter((t: TypeToken) => t.lemma.toLowerCase().includes(lemmaFilter.value.toLowerCase()))
-            // // join on \n, as it can't be entered into a <input type=text>
-            .filter((t: TypeToken) =>
-                Object.keys(t.tokens).join("\n").toLowerCase().includes(literalFilter.value.toLowerCase()),
-            )
-            .filter((t: TypeToken) => selectedPosses.value.includes(t.group))
-    )
-})
-
-const columns = [
-    { key: "lemma" },
-    { key: "group" },
-    { key: "count", align: "right" },
-    { key: "unique", label: "unique", align: "right", sortOn: (t: TypeToken) => Object.keys(t.tokens).length },
-    { key: "types", noSort: true },
-]
-const singleMultipleOptions: SelectOption[] = [
+// Form
+const annotationFilter = ref<string>("")
+const typeFilter = ref<string>("")
+const analysesOptions: SelectOption[] = [
     { value: "single", text: "Single" },
     { value: "multiple", text: "Multiple" },
     { value: "both", text: "Both" },
 ]
-const selectedSingleMultiple = ref<string>(singleMultipleOptions[0].value)
-const filteredGroups = computed(() => {
-    if (selectedSingleMultiple.value === "single") {
+const selectedAnalysis = ref<string>(analysesOptions[0].value)
+const groups = computed<string[]>(() =>
+    [...new Set(Object.values(distribution.value ?? {}).map((t: TypeToken) => t.group))].sort(),
+)
+const groupsOptions = computed(() => {
+    if (selectedAnalysis.value === "single") {
         return groups.value.filter((pos) => !pos.includes("+"))
     }
-    if (selectedSingleMultiple.value === "multiple") {
+    if (selectedAnalysis.value === "multiple") {
         return groups.value.filter((pos) => pos.includes("+"))
     }
     return groups.value
 })
-const groups = computed<string[]>(() =>
-    [...new Set(Object.values(distribution.value || {}).map((t: TypeToken) => t.group))].sort(),
+const selectedGroups = ref<string[]>([])
+
+// only logical groups
+const annotationOptions = computed(() =>
+    hypothesisAnnotations.value.filter((option: SelectOption) => !["head"].includes(option.text)),
+)
+const groupOptions = computed(() =>
+    hypothesisAnnotations.value.filter((option: SelectOption) => !["lemma", "head"].includes(option.text)),
 )
 
-// Watches
-watch(hypothesisId, reload, { immediate: true })
+watch(
+    hypothesisAnnotations,
+    () => {
+        selectedAnnotation.value = hypothesisAnnotations.value[0]?.value
+        selectedGroup.value = hypothesisAnnotations.value[1]?.value
+    },
+    { immediate: true },
+)
 
-watch(distributionOptions, () => (selectedDistribution.value = distributionOptions.value[0]?.value))
+watch(
+    groupsOptions,
+    () => {
+        selectedGroups.value = groupsOptions.value
+    },
+    { immediate: true },
+)
 
-watch(filteredGroups, () => (selectedPosses.value = filteredGroups.value))
+// Fields
+// Selected distribution.
+// const distributionOptions = computed<SelectOption[]>(() =>
+//     Object.keys(distributions.value ?? {}).map((x) => ({ value: x, text: x })),
+// )
+// const selectedDistribution = ref<string>()
+// const distribution = computed<TypeToken[]>(() => distributions.value?.[selectedDistribution.value])
+
+// Table controls.
+// GModal for variants
+const typeToken = ref<TypeToken>()
+
+// Filtered table items.
+const items = computed((): TypeToken[] => {
+    if (!distribution.value) return []
+    return (
+        distribution.value
+            // // Case insensitive string comparison.
+            .filter((t: TypeToken) => t.annotation.toLowerCase().includes(annotationFilter.value.toLowerCase()))
+            // // join on \n, as it can't be entered into a <input type=text>
+            .filter((t: TypeToken) =>
+                Object.keys(t.tokens).join("\n").toLowerCase().includes(typeFilter.value.toLowerCase()),
+            )
+            .filter((t: TypeToken) => selectedGroups.value.includes(t.group))
+    )
+})
+
+const columns = computed(() => [
+    { key: "annotation", label: selectedAnnotation.value },
+    { key: "group", label: selectedGroup.value },
+    { key: "count", align: "right" },
+    { key: "unique", label: "unique", align: "right", sortOn: (t: TypeToken) => Object.keys(t.tokens).length },
+    { key: "types", noSort: true },
+])
 </script>

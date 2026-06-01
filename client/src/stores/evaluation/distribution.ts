@@ -9,21 +9,31 @@ const useDistribution = defineStore("distribution", () => {
     const { hypothesisId, hypothesisLayer } = storeToRefs(useLayers())
     const { corpusId, corpus } = storeToRefs(useCorpora())
     const loading = ref<boolean>(false)
-    const distributions = ref<Record<string, TypeToken[]>>()
+    const distribution = ref<Record<string, TypeToken[]>>()
+    const annotation = ref<string>()
+    const group = ref<string>()
 
     function reload(): void {
-        if (!corpusId.value || !hypothesisId.value) return
+        if ([corpusId.value, hypothesisId.value, annotation.value, group.value].includes(undefined)) return
         plausible.distributionEvaluated(corpus.value, hypothesisLayer.value)
         loading.value = true
-        API.getDistribution(corpusId.value, hypothesisId.value)
-            .then((res) => (distributions.value = res.data))
+        API.getDistribution(corpusId.value, hypothesisId.value, annotation.value, group.value)
+            .then((res) => (distribution.value = res.data))
             .finally(() => (loading.value = false))
     }
 
-    watch(corpusId, () => (distributions.value = undefined))
-    watch(hypothesisId, reload)
+    watch(
+        [corpusId, hypothesisId],
+        () => {
+            distribution.value = undefined
+            annotation.value = undefined
+            group.value = undefined
+        },
+        { immediate: true }, // needed to compete with watchers on DistributionView
+    )
+    watch([annotation, group], reload)
 
-    return { reload, loading, distributions }
+    return { reload, loading, distribution, annotation, group }
 })
 
 export default useDistribution

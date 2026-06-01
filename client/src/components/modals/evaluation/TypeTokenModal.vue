@@ -2,11 +2,12 @@
     <GModal @hide="$emit('hide')">
         <GTable :columns :items sortColumn="count">
             <template #title>
-                Types of lemma <i>{{ typeToken?.lemma }}</i> and group <i>{{ typeToken?.group }}</i>
+                Types of {{ annotation }} <i>{{ typeToken?.annotation }}</i> and {{ group }}
+                <i>{{ typeToken?.group }}</i>
             </template>
 
             <template #help>
-                This is an overview of all types belonging to the chosen lemma &mdash; grouped annotation pair.
+                This is an overview of all types belonging to the chosen {{ annotation }}&mdash;{{ group }} pair.
             </template>
         </GTable>
     </GModal>
@@ -16,7 +17,7 @@
 import type { TypeToken } from "@/types/evaluation/distribution"
 import type { Column } from "@/types/ui/table"
 
-const { typeToken } = defineProps<{ typeToken: TypeToken }>()
+const { typeToken, annotation, group } = defineProps<{ typeToken: TypeToken; annotation: string; group: string }>()
 
 const columns: Column<TypeToken>[] = [{ key: "type" }, { key: "count" }]
 const items = computed(() => Object.entries(typeToken.tokens).map(([type, count]) => ({ type, count })))

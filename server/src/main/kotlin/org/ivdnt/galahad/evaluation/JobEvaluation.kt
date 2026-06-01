@@ -1,6 +1,7 @@
 package org.ivdnt.galahad.evaluation
 
 import java.io.File
+import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.evaluation.confusion.JobConfusion
 import org.ivdnt.galahad.evaluation.distribution.JobDistribution
@@ -36,15 +37,18 @@ class JobEvaluation(dir: File, private val corpus: Corpus, private val jobs: Job
                 }
                 .readOrCreate()
 
-    val distribution: JobDistribution
-        get() =
-            object : ValidatedDiskValue<JobDistribution>(dir.resolve(DISTRIBUTION_FILE)) {
-                    override fun isValid(modified: Long) =
-                        modified >= maxOf(refJob.modified, hypJob.modified)
+    fun getDistribution(annotation: Annotation, group: Annotation): JobDistribution =
+        object :
+                ValidatedDiskValue<JobDistribution>(
+                    dir.resolve("distribution.$annotation.$group.json")
+                ) {
+                override fun isValid(modified: Long) =
+                    modified >= maxOf(refJob.modified, hypJob.modified)
 
-                    override fun set(): JobDistribution = JobDistribution.create(corpus, documents)
-                }
-                .readOrCreate()
+                override fun set(): JobDistribution =
+                    JobDistribution.create(corpus, documents, annotation, group)
+            }
+            .readOrCreate()
 
     val confusion: JobConfusion
         get() =
@@ -67,7 +71,6 @@ class JobEvaluation(dir: File, private val corpus: Corpus, private val jobs: Job
                 .readOrCreate()
 
     companion object {
-        private const val DISTRIBUTION_FILE = "distribution.json"
         private const val ENTITIES_FILE = "entities.json"
         private const val CONFUSION_FILE = "confusion.json"
         private const val METRICS_FILE = "metrics.json"

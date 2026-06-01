@@ -7,6 +7,7 @@ import { getBlob, type BlobResponse } from "@/api/utils"
 import type { UUID } from "@/types/corpora"
 import type { Confusion, DistributionWrapper, Metrics, TermComparison } from "@/types/evaluation"
 import type { DocumentEntities, JobEntities, JobsEntities } from "@/types/evaluation/entities"
+import { endpoints } from "."
 
 type ConfusionResponse = AxiosResponse<Confusion>
 type DistributionResponse = AxiosResponse<DistributionWrapper>
@@ -23,7 +24,8 @@ export const distributionPath = (corpus: UUID, layer: string): string => `${laye
 export const metricsPath = (corpus: UUID, layer: string): string => `${layerPath(corpus, layer)}/metrics`
 const metricsSamplesPath = (corpus: UUID): string => `${metricsPath(corpus)}/download`
 const downloadPath = (corpus: UUID): string => `${evaluationPath(corpus)}/download`
-const documentLayerComparisonPath = (corpus: UUID, document: string): string => `/corpora/${corpus}/documents/${document}/evaluation/comparison`
+const documentLayerComparisonPath = (corpus: UUID, document: string): string =>
+    `/corpora/${corpus}/documents/${document}/evaluation/comparison`
 const documentEntitiesPath = (corpus: UUID, job: string, document: string): string =>
     `/corpora/${corpus}/jobs/${job}/documents/${document}/entities`
 const jobEntitiesPath = (corpus: UUID, job: string): string => `${evaluationPath(corpus, job)}/entities`
@@ -33,8 +35,13 @@ export const jobsEntitiesPath = (corpus: UUID): string => `/corpora/${corpus}/ev
  * @param corpus UUID of the corpus.
  * @param hypothesis Tagging job name as hypothesis layer.
  */
-export function getDistribution(corpus: UUID, hypothesis: string): Promise<DistributionResponse> {
-    return axios.get(distributionPath(corpus, hypothesis))
+export function getDistribution(
+    corpus: UUID,
+    layer: string,
+    annotation: string,
+    group: string,
+): Promise<DistributionResponse> {
+    return axios.get(endpoints.evaluation.distribution({ corpus, layer }, { annotation, group }))
 }
 
 /**

@@ -13,7 +13,7 @@ import org.ivdnt.galahad.evaluation.comparison.HeadGroupTermFilter
 import org.ivdnt.galahad.evaluation.confusion.JobConfusion
 import org.ivdnt.galahad.evaluation.csv.CsvFile
 import org.ivdnt.galahad.evaluation.distribution.DocumentDistribution
-import org.ivdnt.galahad.evaluation.distribution.JobDistribution
+import org.ivdnt.galahad.evaluation.distribution.TypeToken
 import org.ivdnt.galahad.evaluation.entities.CorpusEntities
 import org.ivdnt.galahad.evaluation.metrics.DocumentMetric
 import org.ivdnt.galahad.evaluation.metrics.JobMetric
@@ -157,11 +157,12 @@ class EvaluationService(private val corpora: CorporaService) {
 
     private fun createDistributionCsv(dir: File, corpus: UUID, job: String) {
         dir.mkdirs()
-        val distributions = getLayerDistribution(corpus, job)
-        distributions.typeTokens.forEach { (annotation, distribution) ->
-            val file = CsvFile(dir.resolve("distribution-${annotation.value}.csv"))
-            file.append(JobDistribution.toCsv(distribution))
-        }
+        // val distributions = getLayerDistribution(corpus, job)
+        // TODO export
+        //        distributions.typeTokens.forEach { (annotation, distribution) ->
+        //            val file = CsvFile(dir.resolve("distribution-${annotation.value}.csv"))
+        //            file.append(JobDistribution.toCsv(distribution))
+        //        }
     }
 
     private fun createConfusionCsv(dir: File, corpus: UUID, hypothesis: String, reference: String) {
@@ -264,17 +265,28 @@ class EvaluationService(private val corpora: CorporaService) {
         return corpusObj.evaluation.entities
     }
 
-    fun getDocumentDistribution(corpus: UUID, job: String, document: String): DocumentDistribution {
+    fun getDocumentDistribution(
+        corpus: UUID,
+        layer: String,
+        document: String,
+        annotation: Annotation,
+        group: Annotation,
+    ): DocumentDistribution {
         val corpusObj = corpora.readOrThrow(corpus)
-        val jobEval = corpusObj.evaluation.createOrThrow(JobPair(job))
+        val jobEval = corpusObj.evaluation.createOrThrow(JobPair(layer))
         val docEval = jobEval.documents.createOrThrow(document)
-        return docEval.distribution
+        return docEval.getDistribution(annotation, group)
     }
 
-    fun getLayerDistribution(corpus: UUID, job: String): JobDistribution {
+    fun getLayerDistribution(
+        corpus: UUID,
+        layer: String,
+        annotation: Annotation,
+        group: Annotation,
+    ): List<TypeToken> {
         val corpusObj = corpora.readOrThrow(corpus)
-        val jobEval = corpusObj.evaluation.createOrThrow(JobPair(job))
-        return jobEval.distribution
+        val jobEval = corpusObj.evaluation.createOrThrow(JobPair(layer))
+        return jobEval.getDistribution(annotation, group).typeTokens
     }
 
     fun getJobConfusion(corpus: UUID, hypothesis: String, reference: String): JobConfusion {

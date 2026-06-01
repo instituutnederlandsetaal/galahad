@@ -7,11 +7,11 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import jakarta.servlet.http.HttpServletResponse
+import java.util.*
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER
 import org.ivdnt.galahad.evaluation.confusion.JobConfusion
-import org.ivdnt.galahad.evaluation.distribution.JobDistribution
 import org.ivdnt.galahad.evaluation.distribution.TypeToken
 import org.ivdnt.galahad.evaluation.metrics.DocumentMetric
 import org.ivdnt.galahad.evaluation.metrics.JobMetric
@@ -20,7 +20,6 @@ import org.ivdnt.galahad.util.setContentDisposition
 import org.ivdnt.galahad.web.service.EvaluationService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
-import java.util.*
 
 @RestController
 class EvaluationController(private val evaluationService: EvaluationService) : Logging {
@@ -100,7 +99,10 @@ class EvaluationController(private val evaluationService: EvaluationService) : L
         fun getLayerDistribution(
             @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
             @PathVariable @Parameter(description = "Layer name") layer: String,
-        ): JobDistribution = evaluationService.getLayerDistribution(corpus, layer)
+            @RequestParam @Parameter(description = "Annotation") annotation: Annotation,
+            @RequestParam @Parameter(description = "Group") group: Annotation,
+        ): List<TypeToken> =
+            evaluationService.getLayerDistribution(corpus, layer, annotation, group)
 
         @Operation(
             summary = "Get document distribution",
@@ -136,8 +138,12 @@ class EvaluationController(private val evaluationService: EvaluationService) : L
             @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
             @PathVariable @Parameter(description = "Layer name") layer: String,
             @PathVariable @Parameter(description = "Document name") document: String,
-        ): Map<Annotation, List<TypeToken>> =
-            evaluationService.getDocumentDistribution(corpus, layer, document).typeTokens
+            @RequestParam @Parameter(description = "Annotation") annotation: Annotation,
+            @RequestParam @Parameter(description = "Group") group: Annotation,
+        ): List<TypeToken> =
+            evaluationService
+                .getDocumentDistribution(corpus, layer, document, annotation, group)
+                .typeTokens
     }
 
     @RestController
@@ -232,7 +238,9 @@ class EvaluationController(private val evaluationService: EvaluationService) : L
             @RequestParam
             @Parameter(description = "Annotation head to filter on")
             hypoFilter: String,
-            @RequestParam @Parameter(description = "Annotation head to filter on") refFilter: String,
+            @RequestParam
+            @Parameter(description = "Annotation head to filter on")
+            refFilter: String,
         ): ByteArray =
             evaluationService
                 .getConfusionSamples(hypoFilter, refFilter, annotation, corpus, layer, reference)

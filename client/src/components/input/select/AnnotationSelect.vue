@@ -1,16 +1,16 @@
 <template>
-    <fieldset>
-        <label for="annotation-select">Annotation</label>
-        <GSelect id="annotation-select" :options v-model="model" />
-    </fieldset>
+    <GSelect :options v-model="model" />
 </template>
 
 <script setup lang="ts">
+import type { LayerMetadata } from "@/types/layers"
 import type { SelectOption } from "@/types/ui/select"
 
-// #model
 const model = defineModel<string>()
-
-// #props
-const { options } = defineProps<{ options: SelectOption[] }>()
+const { layer } = defineProps<{ layer?: LayerMetadata }>()
+const options = computed<SelectOption[]>(() =>
+    Object.keys(layer?.annotations ?? {})
+        .filter((s: string) => s != "token")
+        .map((s) => ({ value: s, text: s })),
+)
 </script>

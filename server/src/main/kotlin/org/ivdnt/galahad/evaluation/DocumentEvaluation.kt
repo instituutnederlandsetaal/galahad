@@ -59,14 +59,17 @@ class DocumentEvaluation(dir: File, private val corpus: Corpus, private val jobs
                 }
                 .readOrCreate<DocumentEntities>()
 
-    val distribution: DocumentDistribution
-        get() =
-            object : ValidatedDiskValue<DocumentDistribution>(dir.resolve(DISTRIBUTION_FILE)) {
-                    override fun isValid(modified: Long) = modified >= lastModified
+    fun getDistribution(annotation: Annotation, group: Annotation): DocumentDistribution =
+        object :
+                ValidatedDiskValue<DocumentDistribution>(
+                    dir.resolve("distribution.$annotation.$group.json")
+                ) {
+                override fun isValid(modified: Long) = modified >= lastModified
 
-                    override fun set(): DocumentDistribution = DocumentDistribution.create(refLayer)
-                }
-                .readOrCreate<DocumentDistribution>()
+                override fun set(): DocumentDistribution =
+                    DocumentDistribution.create(refLayer, annotation, group)
+            }
+            .readOrCreate()
 
     val confusion: DocumentConfusion
         get() =
@@ -109,7 +112,6 @@ class DocumentEvaluation(dir: File, private val corpus: Corpus, private val jobs
 
     companion object {
         private const val ENTITIES_FILE = "entities.json"
-        private const val DISTRIBUTION_FILE = "distribution.json"
         private const val CONFUSION_FILE = "confusion.json"
         private const val METRICS_FILE = "metrics.json"
         private const val SPANS_FILE = "spans.json"

@@ -40,7 +40,7 @@ class JobsService(private val corpora: CorporaService) : Logging {
     }
 
     fun deleteOrThrow(corpus: UUID, job: String) {
-        // does it exist
+        // does it exist?
         val job = corpora.writeOrThrow(corpus).jobs.readOrThrow(job)
         // stop it
         JobController.dequeue(job)

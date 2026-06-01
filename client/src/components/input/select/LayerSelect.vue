@@ -17,16 +17,12 @@
 import useJobs from "@/stores/jobs"
 import useLayers from "@/stores/layers"
 import type { Job } from "@/types/jobs"
-import type { SelectOption } from "@/types/ui/select"
 
 // #props
 const { isReference = false, displayName } = defineProps<{ isReference?: boolean; displayName?: string }>()
 
 // #stores
-const { loading, layers } = storeToRefs(useLayers())
-const options = computed<SelectOption[]>(() =>
-    layers.value.map((l) => ({ value: l.tagger.name, text: `${l.tagger.name} (${l.tagger.description})` })),
-)
+const { loading, options } = storeToRefs(useLayers())
 const { jobs } = storeToRefs(useJobs())
 const { hypothesisId, referenceId } = storeToRefs(useLayers())
 

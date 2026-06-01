@@ -29,6 +29,11 @@ const useLayers = defineStore("layers", () => {
     const options = computed<SelectOption[]>((): SelectOption[] =>
         layers.value.map((l: LayerMetadata) => ({ value: l.tagger.name, text: format(l) })),
     )
+    const hypothesisAnnotations = computed<SelectOption[]>((): SelectOption[] =>
+        Object.keys(hypothesisLayer.value?.annotations ?? {})
+            .filter((s: string) => s != "token")
+            .map((s) => ({ value: s, text: s })),
+    )
 
     /** Reload layers */
     function reload(): void {
@@ -64,6 +69,7 @@ const useLayers = defineStore("layers", () => {
         referenceId,
         hypothesisLayer,
         referenceLayer,
+        hypothesisAnnotations,
         options,
         // Methods
         reload,

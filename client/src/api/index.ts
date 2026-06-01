@@ -49,6 +49,7 @@ export const endpoints = {
         job: endpoint("/corpora/{corpus}/jobs/{job}"),
         progress: endpoint("/corpora/{corpus}/jobs/{job}/progress"),
     },
+    evaluation: { distribution: endpoint("/corpora/{corpus}/layers/{layer}/evaluation/distribution") },
     export: {
         convert: endpoint("/corpora/{corpus}/layers/{layer}/export/convert"),
         merge: endpoint("/corpora/{corpus}/layers/{layer}/export/merge"),
