@@ -14,6 +14,7 @@ import org.ivdnt.galahad.jobs.Progress
 import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.util.TestConfig
 import org.ivdnt.galahad.util.TestUtil
+import org.ivdnt.galahad.util.TestUtil.WEB_CORPUS
 import org.ivdnt.galahad.util.TestUtil.assignHeaders
 import org.ivdnt.galahad.util.andDeserialize
 import org.ivdnt.galahad.web.controller.ErrorController
@@ -51,8 +52,8 @@ class JobsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: Con
                     .andReturn()
                     .andDeserialize()
             val expectedTagger = Tagger.readOrThrow(TestUtil.TAGGER)
-            val untagged = TestUtil.get("formats/shared/converter").listFiles().size
-            assertEquals(expectedTagger, metadata.layer.tagger)
+            val untagged = TestUtil.get(WEB_CORPUS).listFiles().size
+            assertEquals(expectedTagger, metadata.tagger)
             assertEquals(untagged, metadata.progress.untagged)
         }
 
@@ -253,7 +254,8 @@ class JobsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: Con
             val corpus = TestUtil.createJobbedCorpus(config)
             assertEquals(1, getJobs(corpus).sumOf { it.progress.finished })
             performDeleteJob(corpus.uuid, user).andExpect { status { isNoContent() } }
-            assertEquals(0, getJobs(corpus).sumOf { it.progress.finished })
+            // finished documents are still finished
+            assertEquals(1, getJobs(corpus).sumOf { it.progress.finished })
         }
 
         @Test

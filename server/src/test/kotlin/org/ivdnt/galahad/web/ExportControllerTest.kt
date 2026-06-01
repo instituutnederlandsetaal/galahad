@@ -11,7 +11,9 @@ import org.ivdnt.galahad.documents.DocumentFormat
 import org.ivdnt.galahad.exceptions.*
 import org.ivdnt.galahad.util.TestConfig
 import org.ivdnt.galahad.util.TestUtil
+import org.ivdnt.galahad.util.TestUtil.WEB_CORPUS
 import org.ivdnt.galahad.util.TestUtil.assignHeaders
+import org.ivdnt.galahad.util.withoutFormatExt
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -34,12 +36,12 @@ class ExportControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: C
     inner class ConvertDocumentTest {
         private fun assertConvertDocument(user: String, dataset: Boolean = false) {
             val corpus = TestUtil.createFilledCorpus(config, dataset)
-            val files = TestUtil.get("formats/shared/converter").listFiles()
+            val files = TestUtil.get(WEB_CORPUS).listFiles()
             val file = files.first { it.name.endsWith(DocumentFormat.TeiP5.extension) }
             val exported =
                 performConvertDoc(
                         corpus.uuid,
-                        doc = file.name,
+                        doc = file.withoutFormatExt,
                         format = DocumentFormat.Tsv.identifier,
                         user = user,
                     )
@@ -51,7 +53,7 @@ class ExportControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: C
                     .andReturn()
                     .response
                     .contentAsString
-            val expectedFile = files.first { it.name.endsWith(DocumentFormat.Tsv.extension) }
+            val expectedFile = TestUtil.get("web/exported").listFiles().first()
             assertEquals(expectedFile.readText(), exported)
         }
 
@@ -83,7 +85,7 @@ class ExportControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: C
         @Test
         fun `Stranger can't convert document`() {
             val corpus = TestUtil.createFilledCorpus(config)
-            val file = TestUtil.get("formats/shared/converter").listFiles().first()
+            val file = TestUtil.get(WEB_CORPUS).listFiles().first()
             performConvertDoc(
                     corpus.uuid,
                     doc = file.name,
@@ -142,7 +144,7 @@ class ExportControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: C
         @Test
         fun `Can't convert non-existing format`() {
             val corpus = TestUtil.createFilledCorpus(config)
-            val file = TestUtil.get("formats/shared/converter").listFiles().first()
+            val file = TestUtil.get(WEB_CORPUS).listFiles().first()
             performConvertDoc(corpus.uuid, doc = file.name, format = "non-existing").andExpect {
                 status { isBadRequest() }
                 match { it.resolvedException is InvalidDocumentFormatException }
@@ -170,7 +172,7 @@ class ExportControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: C
                     .contentAsByteArray
             // assert that unzipping results in the same number of files (+metadata)
             // we have other tests for matching content
-            val expectedFiles = TestUtil.get("formats/shared/converter").listFiles()
+            val expectedFiles = TestUtil.get(WEB_CORPUS).listFiles()
             val actualFiles = unzip(exportedBytes)
             assertEquals(expectedFiles.size * 2 + 2, actualFiles.size)
         }

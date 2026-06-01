@@ -15,6 +15,7 @@ object TestUtil {
     const val TAGGER: String = "pie-tdn-all"
     const val TAGSET_NAME: String = "TDN-Core"
     const val USER: String = "testUser"
+    const val WEB_CORPUS: String = "web/corpus"
 
     fun get(path: String): File = File(this::class.java.classLoader.getResource(path)!!.toURI())
 
@@ -22,7 +23,7 @@ object TestUtil {
         // contains docs
         val corpus = createFilledCorpus(config, dataset)
         // add layer
-        val file = get("formats/shared/converter").listFiles().first()
+        val file = get(WEB_CORPUS).listFiles().first()
         corpus.layers.createOrThrow(TAGGER)
         // create job in progress with 1 finished
         config
@@ -31,14 +32,14 @@ object TestUtil {
             .resolve("jobs")
             .resolve(TAGGER)
             .resolve("documents")
-            .resolve(file.name)
+            .resolve(file.withoutFormatExt)
             .mkdirs()
         return corpus
     }
 
     fun createFilledCorpus(config: Config, dataset: Boolean = false): Corpus {
         val corpus = createCorpus(config, dataset)
-        val files = get("formats/shared/converter").listFiles()
+        val files = get(WEB_CORPUS).listFiles()
         files.forEach { corpus.documents.createOrThrow(it) }
         return corpus
     }

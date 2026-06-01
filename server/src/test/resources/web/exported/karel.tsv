@@ -1,0 +1,30 @@
+id	token	lemma	pos	head	deprel	ner
+karel.p1.s1.w1	Fraaie	fraai	AA(degree=pos,position=prenom)	2	amod	
+karel.p1.s1.w2	historie	historie	NOU-C(number=sg)	0	root	
+karel.p1.s1.w3	ende	en	CONJ(type=coor)	4	cc	
+karel.p1.s1.w4	alwaer	alwaar	ADV(type=reg)	2	conj	
+karel.p1.s1.w5	.		PC	2	punct	
+
+karel.p1.s2.w1	Magh	mogen	VRB(finiteness=fin,tense=pres)	4	aux	
+karel.p1.s2.w2	'k	ik	PD(type=pers,position=free)	4	nsubj	
+karel.p1.s2.w3	u	u	PD(type=pers,position=free)	4	iobj	
+karel.p1.s2.w4	vertellen	vertellen	VRB(finiteness=inf)	0	root	
+karel.p1.s2.w5	,		PC	4	punct	
+karel.p1.s2.w6	hoirt	naarhoren	VRB(finiteness=fin,tense=pres)	4	conj	
+karel.p1.s2.w7	naer	naarhoren	VRB(finiteness=fin,tense=pres)	6	advmod	
+karel.p1.s2.w8	.		PC	4	punct	
+
+
+karel.p2.s1.w1	't	het	PD(type=pers,position=free)	2	expl	
+karel.p2.s1.w2	Was	zijn	VRB(finiteness=fin,tense=past)	5	cop	
+karel.p2.s1.w3	op	op	ADP(type=pre)	5	case	
+karel.p2.s1.w4	enen	een	PD(type=indef,subtype=art,position=prenom)	5	det	
+karel.p2.s1.w5	avondstonde	avondstond	NOU-C(number=sg)	0	root	
+karel.p2.s1.w6	.		PC	5	punct	
+
+karel.p2.s2.w1	Dat	dat	CONJ(type=sub)	4	expl	
+karel.p2.s2.w2	koning	koning	NOU-C(number=sg)	4	nsubj	B-PER
+karel.p2.s2.w3	Carel	Carel	NOU-P	2	flat	I-PER
+karel.p2.s2.w4	slaepen	slaap	NOU-C(number=pl)	0	root	
+karel.p2.s2.w5	beghonde	beginnen	VRB(finiteness=fin,tense=past)	4	aux	
+karel.p2.s2.w6	.		PC	4	punct	
