@@ -1,36 +1,40 @@
 <template>
-    <div>
-        <span>
-            {{ items.map((a) => a.annotation).join(", ") }}
-        </span>
-        <InspectButton @click="showModal = true" />
-        <GModal v-if="showModal" @hide="showModal = false">
-            <template #title><slot name="title"></slot></template>
-            <ul>
-                <li v-for="item in items" :key="item.annotation">
-                    {{ item.annotation }}
-                    <dl>
-                        <template v-for="principle in item.principles" :key="principle.name">
-                            <dt>
-                                <b>{{ principle.name }}:</b>
-                            </dt>
-                            <dd>
-                                <ExternalLink :href="principle.url">
-                                    {{ principle.description ?? principle.url }}
-                                </ExternalLink>
-                            </dd>
-                        </template>
-                    </dl>
-                </li>
-            </ul>
-        </GModal>
-    </div>
+    <RightFloatCell>
+        <template #left>
+            {{ items.map((i) => i.annotation).join(", ") }}
+        </template>
+        <template #right>
+            <InspectButton @click="showModal = true" />
+        </template>
+    </RightFloatCell>
+
+    <GModal v-if="showModal" @hide="showModal = false">
+        <template #title>Annotations and principles of {{ tagger.name }}</template>
+        <ul>
+            <li v-for="item in items" :key="item.annotation">
+                {{ item.annotation }}
+                <dl>
+                    <template v-for="principle in item.principles" :key="principle.name">
+                        <dt>
+                            <b>{{ principle.name }}:</b>
+                        </dt>
+                        <dd>
+                            <ExternalLink :href="principle.url">
+                                {{ principle.description ?? principle.url }}
+                            </ExternalLink>
+                        </dd>
+                    </template>
+                </dl>
+            </li>
+        </ul>
+    </GModal>
 </template>
 
 <script setup lang="ts">
-import type { AnnotationItem } from "@/types/taggers"
+import type { AnnotationItem, Tagger } from "@/types/taggers"
 
-const { items } = defineProps<{ items: AnnotationItem[] }>()
+const { tagger } = defineProps<{ tagger: Tagger }>()
+const items = computed<AnnotationItem[]>(() => tagger.annotations)
 const showModal = ref<boolean>()
 </script>
 

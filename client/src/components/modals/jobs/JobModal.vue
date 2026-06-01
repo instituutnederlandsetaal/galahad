@@ -9,61 +9,71 @@
             <GSpinner />
             <p>Connecting to tagger...</p>
         </template>
-
         <!-- Content -->
-
         <template v-else>
-            <GInfo v-if="!healthy" error> The tagger is currently unavailable. Please try again later. </GInfo>
+            <!--Unhealthy-->
+            <template v-if="!healthy">
+                <GInfo error> The tagger is currently unavailable. Please try again later. </GInfo>
+            </template>
+            <!--Healthy-->
+            <template v-else>
+                <!--Posting-->
+                <template v-if="posting">
+                    <!-- Show load icon while posting an action-->
+                    <GSpinner />
+                </template>
+                <!-- Actions -->
+                <template v-else>
+                    <TaggerQueue />
 
-            <!-- Job duration -->
-            <TaggerQueue />
+                    <GForm gap="0.25rem">
+                        <GButton
+                            green
+                            :disabled="!job.progress.untagged"
+                            @click="
+                                () => {
+                                    tag(job)
+                                }
+                            "
+                        >
+                            <i class="fa fa-play"></i>
+                        </GButton>
+                        <GButton
+                            orange
+                            :disabled="!job.progress.processing"
+                            @click="
+                                () => {
+                                    cancel(job)
+                                }
+                            "
+                        >
+                            <i class="fa fa-pause"></i>
+                        </GButton>
+                        <DeleteButton
+                            :disabled="!job.progress.finished && !job.progress.failed"
+                            @click="deleteJob = job"
+                        />
+                    </GForm>
 
-            <!-- Show load icon while posting an action-->
-            <GSpinner v-if="jobsLoading" />
+                    <JobProgressBar :job />
 
-            <GForm v-else-if="healthy" gap="0.25rem">
-                <GButton
-                    green
-                    :disabled="!job.progress.untagged"
-                    @click="
-                        () => {
-                            tag(job)
-                        }
-                    "
-                >
-                    <i class="fa fa-play"></i>
-                </GButton>
-                <GButton
-                    orange
-                    :disabled="!job.progress.processing"
-                    @click="
-                        () => {
-                            cancel(job)
-                        }
-                    "
-                >
-                    <i class="fa fa-pause"></i>
-                </GButton>
-                <DeleteButton :disabled="!job.progress.finished && !job.progress.failed" @click="deleteJob = job" />
-            </GForm>
-
-            <!-- progress -->
-            <JobProgress :job />
-
-            <!-- errors -->
-            <GInfo v-if="job.progress.failed > 0" error>
-                The following
-                {{ job.progress.failed == 1 ? "document" : "documents" }} encountered errors:<br /><br />
-                <ol>
-                    <li v-for="(message, doc) in firstFive(job.progress.errors)" :key="doc">
-                        <b>{{ doc }}</b
-                        >:<br />
-                        {{ message }}
-                    </li>
-                </ol>
-                <div v-if="job.progress.failed > 5">... and {{ job.progress.failed - 5 }} more errors are omitted.</div>
-                <div v-if="job.progress.failed === 0">None</div>
-            </GInfo>
+                    <GInfo v-if="job.progress.failed > 0" error>
+                        The following
+                        {{ job.progress.failed == 1 ? "document" : "documents" }} encountered errors:<br /><br />
+                        <ol>
+                            <li v-for="(message, doc) in firstFive(job.progress.errors)" :key="doc">
+                                <b>{{ doc }}</b
+                                >:<br />
+                                {{ message }}
+                            </li>
+                        </ol>
+                        <div v-if="job.progress.failed > 5">
+                            ... and {{ job.progress.failed - 5 }} more errors are omitted.
+                        </div>
+                        <div v-if="job.progress.failed === 0">None</div>
+                    </GInfo>
+                </template>
+            </template>
         </template>
 
         <!-- delete job modal -->
@@ -86,21 +96,21 @@ import useJobs from "@/stores/jobs"
 import type { Job } from "@/types/jobs"
 
 // Stores
-const { loading: jobsLoading } = storeToRefs(useJobs())
+const { posting, jobs } = storeToRefs(useJobs())
 const { tag, cancel, remove } = useJobs()
 
 // Fields
-const { job } = defineProps<{ job: Job }>()
+const { jobId } = defineProps<{ jobId: string }>()
+const job = computed<Job>(() => jobs.value.find((j: Job) => j.tagger.name == jobId))
 /** Opens DeleteModal when not null. */
 const deleteJob = ref<Job>()
-/** Expected job duration based on queue size at tagger and % of documents tagged in the corpus. */
-/** Updated on an interval to keep track of the queue size. */
+/** Initial health call. */
 const healthy = ref<boolean>()
 /** When true, display job duration as still calculating. */
 const healthLoading = ref<boolean>(true)
 
 onMounted(() => {
-    API.getTaggerHealth(job.tagger.name)
+    API.getTaggerHealth(job.value.tagger.name)
         .then((res) => {
             healthy.value = res.data
         })

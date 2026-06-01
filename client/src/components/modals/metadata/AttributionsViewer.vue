@@ -1,7 +1,13 @@
 <template>
-    <InspectButton @click="showModal = true" />
+    <RightFloatCell>
+        <template #left> {{ Object.keys(items).length }} attributions </template>
+        <template #right>
+            <InspectButton @click="showModal = true" />
+        </template>
+    </RightFloatCell>
+
     <GModal v-if="showModal" @hide="showModal = false">
-        <template #title><slot name="title"></slot></template>
+        <template #title>Attributions of {{ tagger.name }}</template>
         <ul>
             <li v-for="item in items" :key="item.name">
                 <dl>
@@ -20,9 +26,10 @@
 </template>
 
 <script setup lang="ts">
-import type { LinkItem } from "@/types/taggers"
+import type { LinkItem, Tagger } from "@/types/taggers"
 
-const { items } = defineProps<{ items: LinkItem[] }>()
+const { tagger } = defineProps<{ tagger: Tagger }>()
+const items = computed<LinkItem[]>(() => tagger.attributions)
 const showModal = ref<boolean>()
 </script>
 

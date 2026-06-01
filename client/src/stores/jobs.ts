@@ -16,14 +16,15 @@ const useJobs = defineStore("jobs", () => {
 
     // Fields
     const loading = ref<boolean>(false)
+    const posting = ref<boolean>(false)
     const jobs = ref<Job[]>([])
     const pollers = {} as { [tagger: string]: number }
 
     // Methods
     /** Reload the available jobs for the current corpus. */
-    function reload(): void {
+    function reload(silent: boolean = false): void {
         if (!corpusId.value) return
-        loading.value = true
+        loading.value = !silent
         API.getJobs(corpusId.value)
             .then((res) => {
                 jobs.value = res.data
@@ -38,7 +39,7 @@ const useJobs = defineStore("jobs", () => {
 
     function tag(job: Job): void {
         plausible.jobStarted(corpus.value, job)
-        loading.value = true
+        posting.value = true
         API.postJob(corpusId.value, job.tagger.name)
             .then(() => {
                 // Fake it, because at this point all files will still be 'pending'.
@@ -47,29 +48,29 @@ const useJobs = defineStore("jobs", () => {
                 startPolling(job.tagger.name) // TODO: this is a problem, because if the state doesn't change, the polling isn't stopped.
             })
             .finally(() => {
-                loading.value = false
-                reloadCorpora()
-                reload()
+                posting.value = false
+                reloadCorpora(true)
+                reload(true)
             })
     }
 
     function cancel(job: Job): void {
         plausible.jobStopped(corpus.value, job)
-        loading.value = true
+        posting.value = true
         API.cancelJob(corpusId.value, job.tagger.name).finally(() => {
-            loading.value = false
-            reloadCorpora()
-            reload()
+            posting.value = false
+            reloadCorpora(true)
+            reload(true)
         })
     }
 
     function remove(job: Job): void {
         plausible.jobDeleted(corpus.value, job)
-        loading.value = true
+        posting.value = true
         LayerAPI.removeLayer(corpusId.value, job.tagger.name).finally(() => {
-            loading.value = false
-            reload()
-            reloadCorpora()
+            posting.value = false
+            reload(true)
+            reloadCorpora(true)
             reloadLayers()
             resetSelection()
             stopPolling(job.tagger.name)
@@ -92,7 +93,7 @@ const useJobs = defineStore("jobs", () => {
             jobs.value.find((j: Job) => j.tagger.name === job).progress = res.data
             if (!res.data.processing) {
                 stopPolling(job)
-                reloadCorpora()
+                reloadCorpora(true)
                 reloadLayers()
             }
         })
@@ -119,6 +120,7 @@ const useJobs = defineStore("jobs", () => {
         // Fields
         jobs,
         loading,
+        posting,
         // Methods
         tag,
         cancel,

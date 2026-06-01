@@ -20,6 +20,9 @@ const useDistribution = defineStore("distribution", () => {
             .finally(() => (loading.value = false))
     }
 
+    watch(corpusId, () => (distributions.value = undefined))
+    watch(hypothesisId, reload)
+
     return { reload, loading, distributions }
 })
 

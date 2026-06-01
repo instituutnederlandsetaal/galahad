@@ -22,7 +22,7 @@
 
         <!-- jobs cell -->
         <template #cell-jobs="data: TableData<CorpusMetadata>">
-            <GSpinner small v-if="data.item.processing > 0" />
+            <GSpinner small inline v-if="data.item.processing > 0" />
             {{ data.item.jobs }}
         </template>
     </GTable>
@@ -81,11 +81,3 @@ function sortShared(c: CorpusMetadata): number {
     return c.collaborators.length + c.viewers.length
 }
 </script>
-
-<style lang="scss" scoped>
-.spinner {
-    display: inline-block;
-    padding-right: 0.5rem;
-    padding-top: 0.25rem;
-}
-</style>

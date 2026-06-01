@@ -23,8 +23,8 @@ const useCorpora = defineStore("corpora", () => {
     const isOwner = computed<boolean>((): boolean => corpus.value?.owner === user.value?.name)
 
     /** Reload all corpora. */
-    function reload(): void {
-        loading.value = true
+    function reload(silent: boolean = false): void {
+        loading.value = !silent
         API.getCorpora()
             .then((res) => (corpora.value = res.data))
             .finally(() => (loading.value = false))

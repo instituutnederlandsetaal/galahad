@@ -50,24 +50,26 @@
         </template>
 
         <template #cell-annotations="d: TableData<Job>">
-            <AnnotationItemsViewer :items="d.item.tagger.annotations">
-                <template #title>Annotations and principles of {{ d.item.tagger.name }}</template>
-            </AnnotationItemsViewer>
+            <AnnotationItemsViewer :tagger="d.item.tagger" />
         </template>
 
         <template #cell-documents="d: TableData<Job>">
-            {{ d.item.progress.finished }}
-            <InspectButton v-if="d.item.progress.finished" @click="layerId = d.item.tagger.name" />
+            <RightFloatCell>
+                <template #left> {{ d.item.progress.finished }}</template>
+                <template #right>
+                    <InspectButton v-if="d.item.progress.finished" @click="layerId = d.item.tagger.name" />
+                </template>
+            </RightFloatCell>
         </template>
 
         <template #cell-progress="d: TableData<Job>">
-            <GSpinner v-if="d.item.progress.processing" small class="spinner" />
+            <GSpinner v-if="d.item.progress.processing" small inline />
             <span v-if="d.item.progress.errors.length" class="error">error</span>
             {{ d.item.progress.total === 0 ? "0%" : formatProgress(d.item.progress) }}
         </template>
 
         <template v-slot:cell-actions="d: TableData<Job>">
-            <GButton @click="job = d.item"> <i class="fa fa-cogs"></i> </GButton>
+            <GButton @click="jobId = d.item.tagger.name"> <i class="fa fa-cogs"></i> </GButton>
         </template>
     </GTable>
 
@@ -75,7 +77,7 @@
         <DocumentsTable :documents :loading="documentsLoading" :layer />
     </GModal>
 
-    <JobModal v-if="job" :job @hide="job = undefined" />
+    <JobModal v-if="jobId" :jobId @hide="jobId = undefined" />
 </template>
 
 <script setup lang="ts">
@@ -83,13 +85,11 @@ import type { Job, Progress } from "@/types/jobs"
 import type { Column, TableData } from "@/types/ui/table"
 import { formatDate, formatPeriod } from "@/ts/utils"
 import MultiSelect from "primevue/multiselect"
-import AnnotationItemsViewer from "@/components/modals/metadata/AnnotationItemsViewer.vue"
 import Slider from "primevue/slider"
 import useJobs from "@/stores/jobs"
 import useCorpora from "@/stores/corpora"
 import useLayers from "@/stores/layers"
 import type { LayerMetadata } from "@/types/layers"
-import type { AnnotationItem } from "@/types/taggers"
 import useDocuments from "@/stores/documents"
 
 const { loading, jobs } = storeToRefs(useJobs())
@@ -101,8 +101,9 @@ const { reload: reloadLayers } = useLayers()
 
 const layer = computed<LayerMetadata>(() => layers.value.find((l: LayerMetadata) => l.tagger.name == layerId.value))
 
-const job = ref<Job>()
+const jobId = ref<Job>()
 const layerId = ref<string>()
+// Load layer onClick
 watch(layerId, () => {
     reloadDocuments(layerId.value)
     reloadLayers()
@@ -169,11 +170,5 @@ function formatProgress(progress: Progress): string {
 <style scoped lang="scss">
 .error {
     color: var(--int-red);
-}
-
-.spinner {
-    display: inline-block;
-    padding-right: 0.5rem;
-    padding-top: 0.25rem;
 }
 </style>

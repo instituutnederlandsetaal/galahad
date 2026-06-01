@@ -11,8 +11,13 @@
 </template>
 
 <script setup lang="ts">
-const { error, small, still } = defineProps<{ error?: boolean; small?: boolean; still?: boolean }>()
-const classes = { error: error, small: small, still: still }
+const { error, small, still, inline } = defineProps<{
+    error?: boolean
+    small?: boolean
+    still?: boolean
+    inline?: boolean
+}>()
+const classes = { error: error, small: small, still: still, inline: inline }
 </script>
 
 <style scoped lang="scss">
@@ -23,6 +28,12 @@ const classes = { error: error, small: small, still: still }
     &.small {
         height: 20px;
         width: 20px;
+    }
+
+    &.inline {
+        display: inline-block;
+        padding-right: 0.5rem;
+        padding-top: 0.25rem;
     }
 
     .icon {

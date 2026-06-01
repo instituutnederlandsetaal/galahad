@@ -1,24 +1,24 @@
 <template>
     <div role="progressbar" class="progress">
-        <JobProgressSegment
+        <JobProgressBarSegment
             label="failed"
             color="var(--int-red)"
             :total="job.progress.total"
             :value="job.progress.failed"
         />
-        <JobProgressSegment
+        <JobProgressBarSegment
             label="finished"
             color="var(--int-green)"
             :total="job.progress.total"
             :value="job.progress.finished"
         />
-        <JobProgressSegment
+        <JobProgressBarSegment
             label="processing"
             color="var(--int-light-grey)"
             :total="job.progress.total"
             :value="job.progress.processing"
         />
-        <JobProgressSegment
+        <JobProgressBarSegment
             label="untagged"
             color="var(--int-very-light-grey)"
             :total="job.progress.total"

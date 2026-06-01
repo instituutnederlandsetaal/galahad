@@ -7,8 +7,8 @@
         </template>
 
         <GForm>
-            <JobSelect />
-            <JobSelect isReference />
+            <LayerSelect />
+            <LayerSelect isReference />
             <fieldset>
                 <label for="csv-download">Download as CSV</label>
                 <i v-if="!hypothesisId || !referenceId"> Select both layers first. </i>

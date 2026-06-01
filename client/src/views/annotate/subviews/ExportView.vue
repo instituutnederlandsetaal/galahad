@@ -7,7 +7,7 @@
         </template>
 
         <GForm vertical>
-            <JobSelect displayName="Annotation layer" />
+            <LayerSelect displayName="Annotation layer" />
 
             <FormatSelect />
 

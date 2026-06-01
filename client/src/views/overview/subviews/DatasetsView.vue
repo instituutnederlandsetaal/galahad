@@ -7,7 +7,7 @@
             <template #empty>No dataset corpora available.</template>
         </CorporaTable>
 
-        <DocumentsTable :corpus="dataset" :loading :documents="datasetDocs" :layer="sourceLayer"> </DocumentsTable>
+        <DocumentsTable :layer="sourceLayer"> </DocumentsTable>
     </GCard>
 </template>
 
@@ -16,16 +16,10 @@ import useCorpora from "@/stores/corpora"
 import useDocuments from "@/stores/documents"
 import useLayers from "@/stores/layers"
 import type { CorpusMetadata } from "@/types/corpora"
-import type { DocumentMetadata } from "@/types/documents"
 
 const { corpus, corpusId } = storeToRefs(useCorpora())
-const { documents, loading } = storeToRefs(useDocuments())
+const { documents } = storeToRefs(useDocuments())
 const { sourceLayer, layers } = storeToRefs(useLayers())
-
-const dataset = computed<CorpusMetadata | undefined>((): CorpusMetadata | undefined =>
-    corpus.value?.dataset ? corpus.value : undefined,
-)
-const datasetDocs = computed<DocumentMetadata[]>((): DocumentMetadata[] => (dataset.value ? documents.value : []))
 
 const { reload: reloadCorpora } = useCorpora()
 

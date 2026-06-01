@@ -21,16 +21,11 @@
             </template>
 
             <template #cell-annotations="d: TableData<Tagger>">
-                <AnnotationItemsViewer :items="d.item.annotations">
-                    <template #title>Annotations and principles of {{ d.item.name }}</template>
-                </AnnotationItemsViewer>
+                <AnnotationItemsViewer :tagger="d.item" />
             </template>
 
             <template #cell-attributions="d: TableData<Tagger>">
-                {{ Object.keys(d.item.attributions).length }} attributions
-                <AttributionsViewer :items="d.item.attributions">
-                    <template #title>Attributions of {{ d.item.name }}</template>
-                </AttributionsViewer>
+                <AttributionsViewer :tagger="d.item" />
             </template>
         </GTable>
     </GCard>
