@@ -1,5 +1,5 @@
 // Confusion
-export type Confusion = Record<string, Record<string, { count: number; samples: TermComparison[] }>>
+export type Confusion = Record<string, Record<string, EvaluationEntry>>
 
 // Metrics
 export type Metrics = {
@@ -24,15 +24,7 @@ export type MetricsRow = {
 export type MetricEntry = { count: number; samples: TermComparison[] }
 
 // Shared
-export type TermComparison = {
-    hyp: Term
-    ref: Term
-    equalLemma: boolean
-    equalPOS: boolean
-    equalLabel: boolean
-    fullOverlap: boolean
-    partialOverlap: boolean
-}
+export type TermComparison = { hyp: Term; ref: Term }
 
 export type Term = { id: string; offset: number; annotations: Record<string, string>; spaceAfter?: boolean }
 

@@ -9,30 +9,41 @@ import org.ivdnt.galahad.evaluation.comparison.TermComparison
 import org.ivdnt.galahad.evaluation.csv.CsvFile
 import org.ivdnt.galahad.evaluation.csv.CsvString
 import org.ivdnt.galahad.util.merge
+import org.ivdnt.galahad.util.parallelMap
 
 /**
  * Part of speech confusion of a corpus for two different tagger layers. A CorpusConfusion is the
  * sum of the [DocumentConfusion]s of all documents in the corpus.
  */
-class JobConfusion(
-    @JsonValue val confusion: Map<Annotation, Map<String, Map<String, EvaluationEntry>>>
-) {
+class JobConfusion(@JsonValue val confusion: Map<String, Map<String, EvaluationEntry>>) {
     companion object {
-        fun create(corpus: Corpus, docEvals: DocumentEvaluations): JobConfusion =
+        fun create(
+            corpus: Corpus,
+            docEvals: DocumentEvaluations,
+            annotation: Annotation,
+        ): JobConfusion =
             JobConfusion(
                 corpus.documents
-                    .readAllSequence()
-                    .map { docEvals.createOrThrow(it.name).confusion.confusion }
-                    .reduce { map1, map2 ->
-                        map1.merge(map2) { v1, v2 ->
-                            v1.merge(v2) { m1, m2 ->
-                                m1.merge(m2) { e1, e2 ->
-                                    EvaluationEntry.add(
-                                        e1,
-                                        e2,
-                                        truncate = docEvals.jobs.filter != null,
-                                    )
-                                }
+                    .readAll()
+                    .parallelMap {
+                        if (docEvals.jobs.filter == null) {
+                            docEvals.createOrThrow(it.name).getConfusion(annotation).confusion
+                        } else {
+                            DocumentConfusion.create(
+                                    docEvals.createOrThrow(it.name).layerComparison,
+                                    annotation,
+                                )
+                                .confusion
+                        }
+                    }
+                    .reduce { v1, v2 ->
+                        v1.merge(v2) { m1, m2 ->
+                            m1.merge(m2) { e1, e2 ->
+                                EvaluationEntry.add(
+                                    e1,
+                                    e2,
+                                    truncate = docEvals.jobs.filter == null,
+                                )
                             }
                         }
                     }

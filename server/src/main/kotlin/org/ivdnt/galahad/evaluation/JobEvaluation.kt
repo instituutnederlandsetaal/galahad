@@ -50,30 +50,28 @@ class JobEvaluation(dir: File, private val corpus: Corpus, private val jobs: Job
             }
             .readOrCreate()
 
-    val confusion: JobConfusion
-        get() =
-            object : ValidatedDiskValue<JobConfusion>(dir.resolve(CONFUSION_FILE)) {
-                    override fun isValid(modified: Long) =
-                        modified >= maxOf(refJob.modified, hypJob.modified)
+    fun getConfusion(annotation: Annotation): JobConfusion =
+        object : ValidatedDiskValue<JobConfusion>(dir.resolve("confusion.$annotation.json")) {
+                override fun isValid(modified: Long) =
+                    modified >= maxOf(refJob.modified, hypJob.modified)
 
-                    override fun set(): JobConfusion = JobConfusion.create(corpus, documents)
-                }
-                .readOrCreate()
+                override fun set(): JobConfusion =
+                    JobConfusion.create(corpus, documents, annotation)
+            }
+            .readOrCreate()
 
-    val metrics: JobMetric
-        get() =
-            object : ValidatedDiskValue<JobMetric>(dir.resolve(METRICS_FILE)) {
-                    override fun isValid(modified: Long) =
-                        modified >= maxOf(refJob.modified, hypJob.modified)
+    fun getMetrics(annotation: Annotation, group: Annotation): JobMetric =
+        object : ValidatedDiskValue<JobMetric>(dir.resolve("metrics.$annotation.$group.json")) {
+                override fun isValid(modified: Long) =
+                    modified >= maxOf(refJob.modified, hypJob.modified)
 
-                    override fun set(): JobMetric = JobMetric.create(corpus, documents)
-                }
-                .readOrCreate()
+                override fun set(): JobMetric =
+                    JobMetric.create(corpus, documents, annotation, group)
+            }
+            .readOrCreate()
 
     companion object {
         private const val ENTITIES_FILE = "entities.json"
-        private const val CONFUSION_FILE = "confusion.json"
-        private const val METRICS_FILE = "metrics.json"
         private const val DOCUMENTS_FOLDER = "documents"
     }
 }

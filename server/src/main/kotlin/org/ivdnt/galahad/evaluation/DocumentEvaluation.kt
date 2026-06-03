@@ -50,6 +50,14 @@ class DocumentEvaluation(dir: File, private val corpus: Corpus, private val jobs
                 .filter { it != Annotation.TOKEN }
                 .toSet()
 
+    val layerComparison: LayerComparison
+        get() =
+            LayerComparison(
+                hypLayer,
+                refLayer,
+                jobs.filter,
+            )
+
     val entities: DocumentEntities
         get() =
             object : ValidatedDiskValue<DocumentEntities>(dir.resolve(ENTITIES_FILE)) {
@@ -71,31 +79,31 @@ class DocumentEvaluation(dir: File, private val corpus: Corpus, private val jobs
             }
             .readOrCreate()
 
-    val confusion: DocumentConfusion
-        get() =
-            object : ValidatedDiskValue<DocumentConfusion>(dir.resolve(CONFUSION_FILE)) {
-                    override fun isValid(modified: Long) = modified >= lastModified
+    fun getConfusion(annotation: Annotation): DocumentConfusion =
+        object : ValidatedDiskValue<DocumentConfusion>(dir.resolve("confusion.$annotation.json")) {
+                override fun isValid(modified: Long) = modified >= lastModified
 
-                    override fun set(): DocumentConfusion =
-                        DocumentConfusion.create(
-                            LayerComparison(hypLayer, refLayer, jobs.filter),
-                            availableAnnotations,
-                        )
-                }
-                .readOrCreate<DocumentConfusion>()
+                override fun set(): DocumentConfusion =
+                    DocumentConfusion.create(
+                        layerComparison,
+                        annotation,
+                    )
+            }
+            .readOrCreate()
 
-    val metrics: DocumentMetric
-        get() =
-            object : ValidatedDiskValue<DocumentMetric>(dir.resolve(METRICS_FILE)) {
-                    override fun isValid(modified: Long) = modified >= lastModified
+    fun getMetrics(annotation: Annotation, group: Annotation): DocumentMetric =
+        object :
+                ValidatedDiskValue<DocumentMetric>(dir.resolve("metrics.$annotation.$group.json")) {
+                override fun isValid(modified: Long) = modified >= lastModified
 
-                    override fun set(): DocumentMetric =
-                        DocumentMetric.create(
-                            LayerComparison(hypLayer, refLayer, jobs.filter),
-                            availableAnnotations,
-                        )
-                }
-                .readOrCreate<DocumentMetric>()
+                override fun set(): DocumentMetric =
+                    DocumentMetric.create(
+                        layerComparison,
+                        annotation,
+                        group,
+                    )
+            }
+            .readOrCreate()
 
     val spans: DocumentSpanEvaluation
         get() =
@@ -104,7 +112,7 @@ class DocumentEvaluation(dir: File, private val corpus: Corpus, private val jobs
 
                     override fun set(): DocumentSpanEvaluation =
                         DocumentSpanEvaluation.create(
-                            LayerComparison(hypLayer, refLayer, jobs.filter),
+                            layerComparison,
                             refLayer,
                         )
                 }
@@ -112,7 +120,6 @@ class DocumentEvaluation(dir: File, private val corpus: Corpus, private val jobs
 
     companion object {
         private const val ENTITIES_FILE = "entities.json"
-        private const val CONFUSION_FILE = "confusion.json"
         private const val METRICS_FILE = "metrics.json"
         private const val SPANS_FILE = "spans.json"
     }

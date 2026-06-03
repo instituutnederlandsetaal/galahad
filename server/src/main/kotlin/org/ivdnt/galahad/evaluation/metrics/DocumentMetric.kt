@@ -87,12 +87,18 @@ class ClsClasses(
 
 class DocumentMetric(@JsonValue val classesByGroup: MutableMap<String, NewMetric>) {
     companion object {
-        fun create(layerComparison: LayerComparison, annotations: Set<Annotation>): DocumentMetric =
+        fun create(
+            layerComparison: LayerComparison,
+            annotation: Annotation,
+            group: Annotation,
+        ): DocumentMetric =
             DocumentMetric(
                 buildMap<String, MutableMap<String, ClsClasses>> {
                         layerComparison.matches.forEach { tc ->
-                            METRIC_TYPES.filter { annotations.containsAll(it.requiredAnnotations) }
-                                .forEach { metricType ->
+                            METRIC_TYPES.first {
+                                    it.groupAnnotation == group && it.mainAnnotation == annotation
+                                }
+                                .let { metricType ->
                                     if (!metricType.filterBy(tc)) return@forEach
                                     val mapsToAdd = mutableListOf<MutableMap<String, ClsClasses>>()
                                     if (tc.hyp == Term.EMPTY) {

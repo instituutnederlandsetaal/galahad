@@ -13,7 +13,7 @@ import useCorpora from "@/stores/corpora"
 
 export const metricsPerPosColumns = [
     {
-        key: "name",
+        key: "group",
         label: "group",
         sortOn: (x: MetricsRow) => (Number.isNaN(Number.parseInt(x.name)) ? x.name : Number.parseInt(x.name)),
     },

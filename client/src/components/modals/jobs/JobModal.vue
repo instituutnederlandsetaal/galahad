@@ -72,6 +72,8 @@
                         </div>
                         <div v-if="job.progress.failed === 0">None</div>
                     </GInfo>
+
+                    <LayerViewer v-if="layer?.preview?.terms" :layer />
                 </template>
             </template>
         </template>
@@ -93,15 +95,18 @@
 <script setup lang="ts">
 import * as API from "@/api/taggers"
 import useJobs from "@/stores/jobs"
+import useLayers from "@/stores/layers"
 import type { Job } from "@/types/jobs"
 
 // Stores
 const { posting, jobs } = storeToRefs(useJobs())
+const { layers } = storeToRefs(useLayers())
 const { tag, cancel, remove } = useJobs()
 
 // Fields
 const { jobId } = defineProps<{ jobId: string }>()
 const job = computed<Job>(() => jobs.value.find((j: Job) => j.tagger.name == jobId))
+const layer = computed<LayerMetadata>(() => layers.value.find((l: LayerMetadata) => l.tagger.name == jobId))
 /** Opens DeleteModal when not null. */
 const deleteJob = ref<Job>()
 /** Initial health call. */

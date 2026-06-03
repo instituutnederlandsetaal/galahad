@@ -12,6 +12,7 @@ import org.ivdnt.galahad.evaluation.comparison.ConfusionLayerFilter
 import org.ivdnt.galahad.evaluation.comparison.HeadGroupTermFilter
 import org.ivdnt.galahad.evaluation.confusion.JobConfusion
 import org.ivdnt.galahad.evaluation.csv.CsvFile
+import org.ivdnt.galahad.evaluation.csv.CsvSampleExporter.Companion.samplesToCSV
 import org.ivdnt.galahad.evaluation.distribution.DocumentDistribution
 import org.ivdnt.galahad.evaluation.distribution.TypeToken
 import org.ivdnt.galahad.evaluation.entities.CorpusEntities
@@ -28,7 +29,7 @@ class EvaluationService(private val corpora: CorporaService) {
         refFilter: String,
         annotation: Annotation,
         corpus: UUID,
-        job: String,
+        layer: String,
         reference: String,
     ): ByteArray {
         // Ensure the job has the required annotation types.
@@ -41,11 +42,16 @@ class EvaluationService(private val corpora: CorporaService) {
                 HeadGroupTermFilter(annotation, refFilter),
             )
         val corpusObj = corpora.readOrThrow(corpus)
-        val jobEval = corpusObj.evaluation.createOrThrow(JobPair(job, filter = filter))
+        val jobEval = corpusObj.evaluation.createOrThrow(JobPair(layer, reference, filter = filter))
         val fileName = "confusion-${refFilter}-${hypoFilter}.csv"
-        val csv = jobEval.confusion.confusion
-        csv.values.first()
-        return samplesToZip(corpus, job, reference, "a,b,c", fileName)
+        val confusion = JobConfusion.create(corpusObj, jobEval.documents, annotation).confusion
+        val csv =
+            samplesToCSV(
+                confusion.values.first().values.first().samples,
+                jobEval.hypJob,
+                jobEval.refJob,
+            )
+        return samplesToZip(corpus, layer, reference, csv, fileName)
     }
 
     //    fun getMetrics(corpus: UUID, job: String, reference: String?): CorpusMetrics {
@@ -167,16 +173,16 @@ class EvaluationService(private val corpora: CorporaService) {
 
     private fun createConfusionCsv(dir: File, corpus: UUID, hypothesis: String, reference: String) {
         dir.mkdirs()
-        val confusions = getJobConfusion(corpus, hypothesis, reference)
-        confusions.confusion.forEach { (annotation, confusion) ->
-            val file = CsvFile(dir.resolve("confusion-${annotation.value}.csv"))
-            file.append(JobConfusion.toCsv(confusion))
-        }
+        //        val confusions = getJobConfusion(corpus, hypothesis, reference)
+        //        confusions.confusion.forEach { (annotation, confusion) ->
+        //            val file = CsvFile(dir.resolve("confusion-${annotation.value}.csv"))
+        //            file.append(JobConfusion.toCsv(confusion))
+        //        }
     }
 
     private fun createMetricsCsv(dir: File, corpus: UUID, hypothesis: String, reference: String) {
         dir.mkdirs()
-        val metrics = getJobMetric(corpus, hypothesis, reference)
+        val metrics = getJobMetric(corpus, hypothesis, reference, Annotation.POS, Annotation.POS)
         val globFile = CsvFile(dir.resolve("metrics-global.csv"))
         globFile.append(metrics.toGlobalCsv())
 
@@ -289,10 +295,15 @@ class EvaluationService(private val corpora: CorporaService) {
         return jobEval.getDistribution(annotation, group).typeTokens
     }
 
-    fun getJobConfusion(corpus: UUID, hypothesis: String, reference: String): JobConfusion {
+    fun getJobConfusion(
+        corpus: UUID,
+        hypothesis: String,
+        reference: String,
+        annotation: Annotation,
+    ): JobConfusion {
         val corpusObj = corpora.readOrThrow(corpus)
         val jobEval = corpusObj.evaluation.createOrThrow(JobPair(hypothesis, reference))
-        return jobEval.confusion
+        return jobEval.getConfusion(annotation)
     }
 
     fun getDocumentMetric(
@@ -300,17 +311,25 @@ class EvaluationService(private val corpora: CorporaService) {
         document: String,
         hypothesis: String,
         reference: String,
+        annotation: Annotation,
+        group: Annotation,
     ): DocumentMetric {
         val corpusObj = corpora.readOrThrow(corpus)
         val jobEval = corpusObj.evaluation.createOrThrow(JobPair(hypothesis, reference))
         val docEval = jobEval.documents.createOrThrow(document)
-        return docEval.metrics
+        return docEval.getMetrics(annotation, group)
     }
 
-    fun getJobMetric(corpus: UUID, hypothesis: String, reference: String): JobMetric {
+    fun getJobMetric(
+        corpus: UUID,
+        hypothesis: String,
+        reference: String,
+        annotation: Annotation,
+        group: Annotation,
+    ): JobMetric {
         val corpusObj = corpora.readOrThrow(corpus)
         val jobEval = corpusObj.evaluation.createOrThrow(JobPair(hypothesis, reference))
-        return jobEval.metrics
+        return jobEval.getMetrics(annotation, group)
     }
 
     //

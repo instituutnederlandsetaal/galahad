@@ -1,12 +1,14 @@
 package org.ivdnt.galahad.util
 
 import java.io.BufferedOutputStream
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import kotlin.io.path.createTempFile
+import org.ivdnt.galahad.util.ThreadPoolUtil.pool
 
 typealias FileMapper = Pair<String, (OutputStream) -> Unit>
 
@@ -49,9 +51,8 @@ fun Sequence<FileMapper>.dedupeFilenames(): Sequence<FileMapper> {
  * @param includeCMDI include the GaLAHaD CMDI template files in the zip.
  * @return The flushed and closed zipfile.
  */
-fun createZipFile(files: Sequence<FileMapper>, out: OutputStream): File {
+fun createZipFile(files: Sequence<FileMapper>, out: OutputStream) {
     // Create zip and stream.
-    val zipFile = createTempFile(suffix = ".zip").toFile()
     val zipStream = ZipOutputStream(BufferedOutputStream(out))
     // Loop through the Sequence of files
     // Any transformations occur on demand.
@@ -71,7 +72,6 @@ fun createZipFile(files: Sequence<FileMapper>, out: OutputStream): File {
     // Close
     zipStream.flush()
     zipStream.close()
-    return zipFile
 }
 
 fun zipDir(dir: File): File {

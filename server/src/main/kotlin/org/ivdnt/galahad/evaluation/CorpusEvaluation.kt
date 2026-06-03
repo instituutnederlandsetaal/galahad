@@ -13,6 +13,9 @@ import org.ivdnt.galahad.files.ValidatedDiskValue
  */
 class CorpusEvaluation(dir: File, private val corpus: Corpus) :
     GalahadFolderManager<JobEvaluation, JobPair>(dir) {
+    override fun createOrThrow(key: JobPair): JobEvaluation =
+        JobEvaluation(dir.resolve(key.toString()), corpus, key)
+
     private fun ctor(key: JobPair): JobEvaluation =
         JobEvaluation(dir.resolve(key.toString()), corpus, key)
 

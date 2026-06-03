@@ -2,7 +2,7 @@
     <dl>
         <dl v-for="[key, value] in Object.entries(annotations ?? {})" :key="key">
             <dt>{{ key }}:</dt>
-            <dd>{{ value }}</dd>
+            <dd>{{ value.toLocaleString() }}</dd>
         </dl>
     </dl>
 </template>

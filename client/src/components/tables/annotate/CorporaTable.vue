@@ -13,17 +13,17 @@
         </template>
 
         <!-- source cell -->
-        <template #cell-source="data: TableData<CorpusMetadata>">
-            <ExternalLink v-if="data.item.source?.url" :href="data.item.source?.url">
-                {{ data.item.source?.name ?? data.item.source?.url }}
+        <template #cell-source="d: TableData<CorpusMetadata>">
+            <ExternalLink v-if="d.item.source?.url" :href="d.item.source?.url">
+                {{ d.item.source?.name ?? d.item.source?.url }}
             </ExternalLink>
-            <template v-else>{{ data.item.source?.name }}</template>
+            <template v-else>{{ d.item.source?.name }}</template>
         </template>
 
         <!-- jobs cell -->
-        <template #cell-jobs="data: TableData<CorpusMetadata>">
-            <GSpinner small inline v-if="data.item.processing > 0" />
-            {{ data.item.jobs }}
+        <template #cell-jobs="d: TableData<CorpusMetadata>">
+            <GSpinner small inline v-if="d.item.processing > 0" />
+            {{ d.item.jobs }}
         </template>
     </GTable>
 </template>

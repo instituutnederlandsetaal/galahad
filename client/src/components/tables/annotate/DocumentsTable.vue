@@ -21,20 +21,20 @@
             </aside>
         </template>
 
-        <template #cell-annotations="data: TableData<DocumentMetadata>">
+        <template #cell-annotations="d: TableData<DocumentMetadata>">
             <RightFloatCell>
-                <template #left> {{ data.item.annotations.token }} </template>
+                <template #left> {{ d.item.annotations.token }} </template>
                 <template #right>
-                    <InspectButton v-if="data.item.annotations.token > 0" @click="previewDocument = data.item" />
+                    <InspectButton v-if="d.item.annotations.token > 0" @click="previewDocument = d.item" />
                 </template>
             </RightFloatCell>
         </template>
 
-        <template #cell-actions="data: TableData<DocumentMetadata>">
+        <template #cell-actions="d: TableData<DocumentMetadata>">
             <GForm gap=".25rem">
-                <DownloadButton @click="download(data.item.name)" />
+                <DownloadButton @click="download(d.item.name)" />
 
-                <DeleteButton @click="deleteDocument = data.item" />
+                <DeleteButton @click="deleteDocument = d.item" />
             </GForm>
         </template>
     </GTable>

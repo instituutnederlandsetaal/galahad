@@ -1,14 +1,6 @@
 <template>
     <GCard>
-        <GTable
-            title="Confusion table"
-            helpLink="evaluation"
-            :columns
-            :items="rows"
-            :loading
-            sortColumn="referenceLayer"
-            class="confusion"
-        >
+        <GTable title="Confusion table" :columns :items :loading sortColumn="referenceAnnotation" class="confusion">
             <template #help>
                 <p>
                     In part-of-speech confusion, an overview is given of the matches (in green) and mismatches per PoS
@@ -24,97 +16,85 @@
             </template>
 
             <template #header>
-                <GForm v-if="confusion">
+                <GForm v-if="commonAnnotations.length">
                     <fieldset>
                         <label for="annotation-select">Annotation</label>
-                        <GSelect id="annotation-select" :options="annotationOptions" v-model="selectedAnnotation" />
+                        <AnnotationSelect
+                            id="annotation-select"
+                            :options="annotationOptions"
+                            v-model="selectedAnnotation"
+                        />
                     </fieldset>
                 </GForm>
+                <p v-else>Select a reference layer and a hypothesis layer</p>
             </template>
 
-            <template #empty> Select a reference layer and a hypothesis layer to generate a confusion table. </template>
-
             <!-- top left header -->
-            <template #head-referenceLayer>
-                part-of-speech <br />
-                ({{ jobSelection.hypothesisId }}→)<br />
-                ({{ jobSelection.referenceId }}↓)
+            <template #head-referenceAnnotation>
+                {{ hypothesisId }}→<br />
+                {{ referenceId }}↓
             </template>
 
             <!-- custom cell rendering -->
-            <template #cell="data: Cell">
+            <template #cell="d: TableData<ConfusionRow>">
                 <!-- header column -->
-                <span v-if="data.column.key == 'referenceLayer'">
-                    {{ data.value }}
+                <span v-if="d.column.key == 'referenceAnnotation'">
+                    {{ d.item.referenceAnnotation }}
+                    <!-- {{ d.value }} -->
                 </span>
-                <GButton v-else :disabled="!data.value" :class="cssClass(data)" @click="openModal(data)">
-                    {{ data.value ? data.value.count : 0 }}
+                <GButton v-else :disabled="!d.value" :class="cssClass(d)" @click="tableData = d">
+                    {{ d.value?.count ?? 0 }}
                 </GButton>
             </template>
         </GTable>
 
         <ComparisonModal
-            v-if="samples"
-            @hide="samples = undefined"
-            :samples
+            v-if="tableData"
+            :evaluationEntry="tableData.value"
+            :hypothesisLayer
+            :referenceLayer
+            :annotations="[selectedAnnotation]"
             :downloading
-            @download="(data) => download(data)"
-            :referenceLayer="jobSelection.referenceId"
-            :hypothesisLayer="jobSelection.hypothesisId"
-        />
+            @download="() => download(tableData)"
+            @hide="tableData = undefined"
+        >
+            <template #title>
+                Samples of {{ referenceId }} <i>{{ tableData.item.referenceAnnotation }}</i> and {{ hypothesisId }}
+                {{ tableData.column.key }}</template
+            >
+        </ComparisonModal>
     </GCard>
 </template>
 
 <script setup lang="ts">
 import * as API from "@/api/evaluation"
 import * as Utils from "@/api/utils"
-import useCorpora from "@/stores/corpora"
 import useConfusion from "@/stores/evaluation/confusion"
 import useLayers from "@/stores/layers"
 import type { Confusion, EvaluationEntry, Samples } from "@/types/evaluation"
-import type { Column } from "@/types/ui/table"
+import type { Column, TableData } from "@/types/ui/table"
+import type { SelectOption } from "@/types/ui/select"
+import useCorpora from "@/stores/corpora"
 
-// Stores
-const { loading, confusions } = storeToRefs(useConfusion())
-const corporaStore = useCorpora()
-const jobSelection = useLayers()
-const { hypothesisId, referenceId } = storeToRefs(useLayers())
-const { reload } = useConfusion()
-watch([hypothesisId, referenceId], reload, { immediate: true })
+const { commonAnnotations, hypothesisId, referenceId, hypothesisLayer, referenceLayer } = storeToRefs(useLayers())
+const { confusion, loading, annotation: selectedAnnotation } = storeToRefs(useConfusion())
+const { corpusId } = storeToRefs(useCorpora())
 
-// Custom types
-type Item = { [key: string]: EvaluationEntry } & { referenceLayer: string }
-type Cell = { field: Column; item: Item; value: EvaluationEntry }
+type ConfusionRow = { [key: string]: EvaluationEntry } & { referenceAnnotation: string }
 
-// Fields
-// Selected confusion
-const annotationOptions = computed(() => Object.keys(confusions.value ?? {}).map((key) => ({ value: key, text: key })))
-watch(annotationOptions, () => (selectedAnnotation.value = annotationOptions.value[0]?.value))
-const selectedAnnotation = ref<string>()
-const confusion = computed<Confusion>(() => confusions.value?.[selectedAnnotation.value])
+// Form
+const annotationOptions = computed(() =>
+    // only logical annotations
+    commonAnnotations.value.filter((option: SelectOption) => !["lemma", "head", "group"].includes(option.text)),
+)
 
+// modal
+const tableData = ref<TableData<any>>()
 const downloading = ref<boolean>()
-const modalData = ref({})
-const samples = ref<Samples>()
 
-const columns = computed((): Column[] => {
+const columns = computed((): Column<ConfusionRow>[] => {
     if (!confusion.value) return []
-    // add the entries
-    const entries = {} as { [key: string]: boolean }
-    Object.keys(confusion.value)?.map((k1) => {
-        Object.keys(confusion.value[k1])?.forEach((k2) => (entries[k2] = true))
-    })
-
-    // add referenceLayer, sort, map and return
-    const refJobField = {
-        key: "referenceLayer",
-        sortOn: (value: Item) => {
-            const pos = value.referenceLayer
-            return posToBottom(pos) ? Number.POSITIVE_INFINITY : pos
-        },
-    }
-
-    const allFields = Object.keys(entries)
+    const cols = [...new Set(Object.values(confusion.value).flatMap((c: Confusion) => Object.keys(c)))]
         // GTable sort also uses localeCompare. Just using sort() as is messes up the order
         // between e.g. 'NOU' & 'NO_POS'. I don't know why, though.
         .sort((a, b) => {
@@ -122,36 +102,33 @@ const columns = computed((): Column[] => {
             if (posToBottom(b)) return -1
             return a.localeCompare(b)
         })
-
-    const returnVal = allFields.map((field) => {
-        return {
-            key: field,
-            sortOn: (value) => (field !== "referenceLayer" ? value[field]?.count : value?.referenceLayer),
-        }
+        .map((key) => ({ key }))
+    cols.unshift({
+        key: "referenceAnnotation",
+        sortOn: (value: any) => {
+            const pos = value.referenceAnnotation
+            return posToBottom(pos) ? undefined : pos
+        },
     })
-    returnVal.unshift(refJobField)
-    return returnVal
+    return cols
 })
 
-const rows = computed((): Item[] => {
+const items = computed((): ConfusionRow[] => {
     if (!confusion.value) return []
-    return Object.keys(confusion.value).map((k1) => {
-        const ret = { referenceLayer: k1 } as { [key: string]: EvaluationEntry } & { referenceLayer: string }
-        Object.keys(confusion.value[k1]).forEach((k2) => (ret[k2] = confusion.value[k1][k2]))
-        return ret
-    })
+    return Object.entries(confusion.value).map((entry) => ({ ...entry[1], referenceAnnotation: entry[0] }))
 })
 
 // Methods
-function download() {
-    const data = modalData.value
+// TODO might move to confusion store
+function download(data: TableData<any>) {
     const hypothesisPos = data.column.key
-    const referencePos = data.item.referenceLayer
+    const referencePos = data.item.referenceAnnotation
     downloading.value = true
     API.getConfusionSamples(
-        corporaStore.corpusId,
-        jobSelection.hypothesisId,
-        jobSelection.referenceId,
+        // TODO plausible
+        corpusId.value,
+        hypothesisId.value,
+        referenceId.value,
         hypothesisPos,
         referencePos,
         selectedAnnotation.value,
@@ -168,36 +145,37 @@ function strEqual(a: string, b: string) {
 
 /** returns whether this pos should be sorted to the bottom. */
 function posToBottom(pos: string) {
-    const posses = ["NO_POS", "Missing match", "OTHER", "LET", "PUNCT", "PC", "MULTIPLE"]
+    const posses = ["NO_POS", "MISSING_MATCH", "OTHER", "LET", "PUNCT", "PC", "MULTIPLE"]
     return posses.includes(pos)
 }
 
-function cssClass(data) {
-    const match: boolean = strEqual(data.column.key, data.item.referenceLayer)
-    const warnings = ["NO_POS", "MULTIPLE", "Missing match"]
-    if (warnings.includes(data.column.key)) {
+function cssClass(d: TableData<any>) {
+    const match: boolean = strEqual(d.column.key, d.item.referenceAnnotation)
+    const colorless = ["MISSING_MATCH"]
+    if (colorless.includes(d.column.key) || colorless.includes(d.item.referenceAnnotation)) {
+        return { plain: true }
+    }
+    const warnings = ["NO_POS", "MULTIPLE"]
+    if (warnings.includes(d.column.key) || warnings.includes(d.item.referenceAnnotation)) {
         return { orange: match, plain: !match }
     }
     return { green: match, plain: !match }
 }
 
-function openModal(data) {
-    modalData.value = data
-    samples.value = {
-        agreement: strEqual(data.column.key, data.item.referenceLayer),
-        samples: data.value.samples,
-        hypothesisPos: data.column.key,
-        referencePos: data.item.referenceLayer,
-        annotationType: selectedAnnotation.value,
-    }
-}
+watchPostEffect(
+    // annotationOptions,
+    () => {
+        selectedAnnotation.value = annotationOptions.value[0]?.value
+    },
+    // { immediate: true },
+)
 </script>
 
 <style scoped lang="scss">
 :deep(.confusion) td {
-    padding: 0 !important;
+    padding: 0;
     span {
-        padding: 0 0.5rem !important;
+        padding: 0.4rem;
     }
     button {
         width: 100%;
@@ -216,37 +194,4 @@ function openModal(data) {
         }
     }
 }
-
-/*
-#confusionTable :deep(td) {
-    padding: 0 !important;
-    margin: 0;
-}
-
-#confusionTable :deep(.table-control) {
-    min-height: auto;
-}
-
-#confusionTable td {
-    button {
-        display: block;
-        text-align: center;
-        width: 100%;
-        height: 100%;
-        margin: 0;
-
-        &.plain {
-            background-color: transparent;
-
-            &:hover {
-                background-color: var(--int-light-grey) !important;
-            }
-
-            &:focus {
-                background-color: var(--int-light-grey-hover) !important;
-            }
-        }
-    }
-}
-    */
 </style>

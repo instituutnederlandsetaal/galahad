@@ -9,15 +9,15 @@
 
 <script setup lang="ts">
 import type { DocumentMetadata } from "@/types/documents"
-import type { Job } from "@/types/jobs"
+import type { LayerMetadata } from "@/types/layers"
 
 // # props
-const { document, job } = defineProps<{ document?: DocumentMetadata; job?: Job }>()
+const { document, layer } = defineProps<{ document?: DocumentMetadata; layer?: LayerMetadata }>()
 
 // #computed
-const name = computed(() => (document ? document.name : job?.tagger.name))
-const annotations = computed(() => (document ? document.annotations : job.annotations))
+const name = computed(() => (document ? document.name : layer?.tagger.name))
+const annotations = computed(() => (document ? document.annotations : layer.annotations))
 const columns = computed(() => Object.keys(annotations.value).map((i) => ({ key: i, label: i, noSort: true })))
-const terms = computed(() => (document ? document.preview.terms : job.preview.terms))
+const terms = computed(() => (document ? document.preview.terms : layer.preview.terms))
 const items = computed(() => terms.value.map((t) => t.annotations))
 </script>

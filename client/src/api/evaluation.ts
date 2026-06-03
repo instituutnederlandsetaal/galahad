@@ -50,8 +50,13 @@ export function getDistribution(
  * @param hypothesis Tagger job name as hypothesis layer.
  * @param reference Tagger job name as reference layer.
  */
-export function getConfusion(corpus: UUID, hypothesis: string, reference: string): Promise<ConfusionResponse> {
-    return axios.get(confusionPath(corpus), { params: { hypothesis, reference } })
+export function getConfusion(
+    corpus: UUID,
+    hypothesis: string,
+    reference: string,
+    annotation: string,
+): Promise<ConfusionResponse> {
+    return axios.get(endpoints.evaluation.confusion.base({ corpus, layer: hypothesis }, { reference, annotation }))
 }
 
 /**
@@ -64,6 +69,15 @@ export function getMetrics(corpus: UUID, hypothesis: string, reference: string):
     return axios.get(metricsPath(corpus, hypothesis), { params: { reference } })
 }
 
+export function getGroupedMetrics(
+    corpus: UUID,
+    hypothesis: string,
+    reference: string,
+    annotation: string,
+    group: string,
+): Promise<MetricsResponse> {
+    return axios.get(endpoints.evaluation.metrics.base({ corpus, layer: hypothesis }, { reference, annotation, group }))
+}
 /**
  * Download evaluation zip.
  * @param corpus UUID of the corpus.
@@ -90,9 +104,12 @@ export function getConfusionSamples(
     refFilter: string,
     annotation: string,
 ): Promise<BlobResponse> {
-    return getBlob(confusionSamplesPath(corpus), {
-        params: { hypothesis, reference, hypoFilter, refFilter, annotation },
-    })
+    return getBlob(
+        endpoints.evaluation.confusion.samples(
+            { corpus, layer: hypothesis },
+            { reference, annotation, hypoFilter, refFilter },
+        ),
+    )
 }
 
 /**

@@ -35,6 +35,7 @@ interface MetricsSettings {
     @get:JsonProperty("group") val group: String
 
     @get:JsonIgnore val groupAnnotation: Annotation
+    @get:JsonIgnore val mainAnnotation: Annotation
 }
 
 open class PosByPosMetricsSettings : MetricsSettings {
@@ -42,6 +43,7 @@ open class PosByPosMetricsSettings : MetricsSettings {
     override val annotation: String = "PoS"
     override val group: String = "PoS"
     override val groupAnnotation: Annotation = Annotation.POS
+    override val mainAnnotation: Annotation = Annotation.POS
     override val nullTerm: String = "NO_POS"
     override val requiredAnnotations: List<Annotation> = listOf(Annotation.POS)
 
@@ -69,6 +71,7 @@ open class LemmaByLemmaMetricsSettings : MetricsSettings {
     override val annotation: String = "Lemma"
     override val group: String = "Lemma"
     override val groupAnnotation: Annotation = Annotation.LEMMA
+    override val mainAnnotation: Annotation = Annotation.LEMMA
     override val nullTerm: String = "NO_LEMMA"
     override val requiredAnnotations: List<Annotation> = listOf(Annotation.LEMMA)
 
@@ -83,6 +86,7 @@ open class DeprelByDeprel : MetricsSettings {
     override val annotation: String = "Deprel"
     override val group: String = "Deprel"
     override val groupAnnotation: Annotation = Annotation.DEPREL
+    override val mainAnnotation: Annotation = Annotation.DEPREL
     override val nullTerm: String = "NO_DEPREL"
     override val requiredAnnotations: List<Annotation> = listOf(Annotation.DEPREL)
 
@@ -96,6 +100,7 @@ class HeadByHead : MetricsSettings {
     override val annotation: String = "Head"
     override val group: String = "Head"
     override val groupAnnotation: Annotation = Annotation.HEAD
+    override val mainAnnotation: Annotation = Annotation.HEAD
     override val nullTerm: String = "NO_HEAD"
     override val requiredAnnotations: List<Annotation> = listOf(Annotation.HEAD)
 
@@ -124,6 +129,7 @@ class SingleLemmaByLemmaMetricsSettings : LemmaByLemmaMetricsSettings() {
 class LemmaByPosMetricsSettings : PosByPosMetricsSettings() {
     override val id: String = "lemmaByPos"
     override val annotation: String = "Lemma"
+    override val mainAnnotation: Annotation = Annotation.LEMMA
     override val requiredAnnotations: List<Annotation> = listOf(Annotation.LEMMA, Annotation.POS)
 
     override fun termsEqual(comp: TermComparison): Boolean =
@@ -133,6 +139,7 @@ class LemmaByPosMetricsSettings : PosByPosMetricsSettings() {
 class PosByLemmaMetricsSettings : LemmaByLemmaMetricsSettings() {
     override val id: String = "posByLemma"
     override val annotation: String = "PoS"
+    override val mainAnnotation: Annotation = Annotation.POS
     override val requiredAnnotations: List<Annotation> = listOf(Annotation.LEMMA, Annotation.POS)
 
     override fun termsEqual(comp: TermComparison): Boolean = comp.equal(Annotation.POS)
@@ -170,6 +177,7 @@ class UposByUposMetricsSettings : MetricsSettings {
     override val annotation: String = "upos"
     override val group: String = "upos"
     override val groupAnnotation: Annotation = Annotation.UPOS
+    override val mainAnnotation: Annotation = Annotation.UPOS
     override val nullTerm: String = "NO_UPOS"
     override val requiredAnnotations: List<Annotation> = listOf(Annotation.UPOS)
 
@@ -183,6 +191,7 @@ class NerByNerMetricsSettings : MetricsSettings {
     override val annotation: String = "named-entity"
     override val group: String = "named-entity"
     override val groupAnnotation: Annotation = Annotation.NER
+    override val mainAnnotation: Annotation = Annotation.NER
     override val nullTerm: String = "NO_NAMED_ENTITY"
     override val requiredAnnotations: List<Annotation> = listOf(Annotation.NER)
 
@@ -199,6 +208,7 @@ class FrequencyMetricsSettings(
     override val annotation: String = metric.annotation
     override val group: String = "frequency"
     override val groupAnnotation: Annotation = metric.groupAnnotation
+    override val mainAnnotation: Annotation = Annotation.GROUP // TODO
     override val nullTerm: String = metric.nullTerm
     override val requiredAnnotations: List<Annotation> = metric.requiredAnnotations
     override val hasFalsePositive: Boolean
@@ -220,23 +230,23 @@ class FrequencyMetricsSettings(
 /** Used by [DocumentMetric] to instantiate each setting. */
 val METRIC_TYPES: List<MetricsSettings> =
     listOf(
-        //        // Pos
-        //        PosByPosMetricsSettings(),
-        //        PosByLemmaMetricsSettings(),
-        //        MultiPosByPosMetricsSettings(),
-        //        SinglePosByPosMetricsSettings(),
-        //        // Lemma
-        //        LemmaByLemmaMetricsSettings(),
-        LemmaByPosMetricsSettings()
-        //        MultiLemmaByLemmaMetricsSettings(),
-        //        SingleLemmaByLemmaMetricsSettings(),
-        //        // Lemma + Pos
-        //        LemmaPosByPosMetricsSettings(),
-        //        LemmaPosByLemmaMetricsSettings(),
-        //        // UD
-        //        DeprelByDeprel(),
-        //        HeadByHead(),
-        //        UposByUposMetricsSettings(),
-        //        DeprelHeadbyDeprelMetricsSettings(),
-        //        NerByNerMetricsSettings(),
+        // Pos
+        PosByPosMetricsSettings(),
+        PosByLemmaMetricsSettings(),
+        MultiPosByPosMetricsSettings(),
+        SinglePosByPosMetricsSettings(),
+        // Lemma
+        LemmaByLemmaMetricsSettings(),
+        LemmaByPosMetricsSettings(),
+        MultiLemmaByLemmaMetricsSettings(),
+        SingleLemmaByLemmaMetricsSettings(),
+        // Lemma + Pos
+        LemmaPosByPosMetricsSettings(),
+        LemmaPosByLemmaMetricsSettings(),
+        // UD
+        DeprelByDeprel(),
+        HeadByHead(),
+        UposByUposMetricsSettings(),
+        DeprelHeadbyDeprelMetricsSettings(),
+        NerByNerMetricsSettings(),
     )

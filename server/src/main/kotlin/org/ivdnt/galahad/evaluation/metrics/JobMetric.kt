@@ -1,6 +1,7 @@
 package org.ivdnt.galahad.evaluation.metrics
 
 import com.fasterxml.jackson.annotation.JsonValue
+import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.evaluation.DocumentEvaluations
 import org.ivdnt.galahad.evaluation.csv.CsvFile
@@ -47,11 +48,18 @@ class JobMetric(@JsonValue val classesByGroup: Map<String, NewMetric>) {
     }
 
     companion object {
-        fun create(corpus: Corpus, docEvals: DocumentEvaluations): JobMetric =
+        fun create(
+            corpus: Corpus,
+            docEvals: DocumentEvaluations,
+            annotation: Annotation,
+            group: Annotation,
+        ): JobMetric =
             JobMetric(
                 corpus.documents
                     .readAllSequence()
-                    .map { docEvals.createOrThrow(it.name).metrics.classesByGroup }
+                    .map {
+                        docEvals.createOrThrow(it.name).getMetrics(annotation, group).classesByGroup
+                    }
                     .reduce { map1, map2 ->
                         map1.merge(map2) { a, b ->
                             a.apply { grouped.merge(b.grouped) { x, y -> x.add(y) } }

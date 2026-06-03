@@ -9,7 +9,7 @@ const useDistribution = defineStore("distribution", () => {
     const { hypothesisId, hypothesisLayer } = storeToRefs(useLayers())
     const { corpusId, corpus } = storeToRefs(useCorpora())
     const loading = ref<boolean>(false)
-    const distribution = ref<Record<string, TypeToken[]>>()
+    const distribution = ref<TypeToken[]>()
     const annotation = ref<string>()
     const group = ref<string>()
 
@@ -22,15 +22,11 @@ const useDistribution = defineStore("distribution", () => {
             .finally(() => (loading.value = false))
     }
 
-    watch(
-        [corpusId, hypothesisId],
-        () => {
-            distribution.value = undefined
-            annotation.value = undefined
-            group.value = undefined
-        },
-        { immediate: true }, // needed to compete with watchers on DistributionView
-    )
+    watch([corpusId, hypothesisId], () => {
+        distribution.value = undefined
+        annotation.value = undefined
+        group.value = undefined
+    })
     watch([annotation, group], reload)
 
     return { reload, loading, distribution, annotation, group }

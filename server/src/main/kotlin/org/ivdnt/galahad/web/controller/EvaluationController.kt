@@ -53,10 +53,10 @@ class EvaluationController(private val evaluationService: EvaluationService) : L
         @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
         @PathVariable @Parameter(description = "Layer name") layer: String,
         @RequestParam @Parameter(description = "Layer name") reference: String = SOURCE_LAYER,
-    ): ByteArray =
-        evaluationService.getEvaluation(corpus, layer, reference).also {
-            setZipResponseHeader(corpus)
-        }
+    ): ByteArray {
+        setZipResponseHeader(corpus)
+        return evaluationService.getEvaluation(corpus, layer, reference)
+    }
 
     private fun setZipResponseHeader(corpus: UUID) {
         response!!.contentType = "application/zip"
@@ -183,7 +183,8 @@ class EvaluationController(private val evaluationService: EvaluationService) : L
             @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
             @PathVariable @Parameter(description = "Layer name") layer: String,
             @RequestParam @Parameter(description = "Layer name") reference: String = SOURCE_LAYER,
-        ): JobConfusion = evaluationService.getJobConfusion(corpus, layer, reference)
+            @RequestParam @Parameter(description = "Annotation") annotation: Annotation,
+        ): JobConfusion = evaluationService.getJobConfusion(corpus, layer, reference, annotation)
 
         @Operation(
             summary = "Get confusion samples",
@@ -241,10 +242,17 @@ class EvaluationController(private val evaluationService: EvaluationService) : L
             @RequestParam
             @Parameter(description = "Annotation head to filter on")
             refFilter: String,
-        ): ByteArray =
-            evaluationService
-                .getConfusionSamples(hypoFilter, refFilter, annotation, corpus, layer, reference)
-                .also { setZipResponseHeader(corpus) }
+        ): ByteArray {
+            setZipResponseHeader(corpus)
+            return evaluationService.getConfusionSamples(
+                hypoFilter,
+                refFilter,
+                annotation,
+                corpus,
+                layer,
+                reference,
+            )
+        }
     }
 
     @RestController
@@ -281,7 +289,9 @@ class EvaluationController(private val evaluationService: EvaluationService) : L
             @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
             @PathVariable @Parameter(description = "Layer name") layer: String,
             @RequestParam @Parameter(description = "Layer name") reference: String = SOURCE_LAYER,
-        ): JobMetric = evaluationService.getJobMetric(corpus, layer, reference)
+            @RequestParam @Parameter(description = "Annotation") annotation: Annotation,
+            @RequestParam @Parameter(description = "Group") group: Annotation,
+        ): JobMetric = evaluationService.getJobMetric(corpus, layer, reference, annotation, group)
 
         @CrossOrigin
         @GetMapping(Endpoints.Evaluation.Document.Metrics.BASE)
@@ -290,7 +300,17 @@ class EvaluationController(private val evaluationService: EvaluationService) : L
             @PathVariable @Parameter(description = "Layer name") layer: String,
             @PathVariable @Parameter(description = "Document name") document: String,
             @RequestParam @Parameter(description = "Layer name") reference: String = SOURCE_LAYER,
-        ): DocumentMetric = evaluationService.getDocumentMetric(corpus, document, layer, reference)
+            @RequestParam @Parameter(description = "Annotation") annotation: Annotation,
+            @RequestParam @Parameter(description = "Group") group: Annotation,
+        ): DocumentMetric =
+            evaluationService.getDocumentMetric(
+                corpus,
+                document,
+                layer,
+                reference,
+                annotation,
+                group,
+            )
 
         @Operation(
             summary = "Get metrics samples",

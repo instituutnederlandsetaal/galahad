@@ -9,18 +9,26 @@ const useConfusion = defineStore("confusion", () => {
     const { hypothesisId, referenceId, hypothesisLayer, referenceLayer } = storeToRefs(useLayers())
     const { corpusId, corpus } = storeToRefs(useCorpora())
     const loading = ref<boolean>(false)
-    const confusions = ref<Record<string, Confusion>>()
+    const confusion = ref<Confusion>()
+    const annotation = ref<string>()
 
     function reload(): void {
-        if (!corpusId.value || !hypothesisId.value || !referenceId.value) return
+        if ([corpusId.value, hypothesisId.value, referenceId.value, annotation.value].includes(undefined)) return
         plausible.confusionEvaluated(corpus.value, hypothesisLayer.value, referenceLayer.value)
         loading.value = true
-        API.getConfusion(corpusId.value, hypothesisId.value, referenceId.value)
-            .then((res) => (confusions.value = res.data))
+        API.getConfusion(corpusId.value, hypothesisId.value, referenceId.value, annotation.value)
+            .then((res) => (confusion.value = res.data))
             .finally(() => (loading.value = false))
     }
 
-    return { reload, confusions, loading }
+    watch([corpusId, hypothesisId, referenceId], () => {
+        confusion.value = undefined
+        annotation.value = undefined
+        reload()
+    })
+    watch(annotation, reload)
+
+    return { reload, confusion, loading, annotation }
 })
 
 export default useConfusion

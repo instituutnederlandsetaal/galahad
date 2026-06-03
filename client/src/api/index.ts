@@ -49,7 +49,17 @@ export const endpoints = {
         job: endpoint("/corpora/{corpus}/jobs/{job}"),
         progress: endpoint("/corpora/{corpus}/jobs/{job}/progress"),
     },
-    evaluation: { distribution: endpoint("/corpora/{corpus}/layers/{layer}/evaluation/distribution") },
+    evaluation: {
+        distribution: endpoint("/corpora/{corpus}/layers/{layer}/evaluation/distribution"),
+        confusion: {
+            base: endpoint("/corpora/{corpus}/layers/{layer}/evaluation/confusion"),
+            samples: endpoint("/corpora/{corpus}/layers/{layer}/evaluation/confusion/download"),
+        },
+        metrics: {
+            base: endpoint("/corpora/{corpus}/layers/{layer}/evaluation/metrics"),
+            download: endpoint("/corpora/{corpus}/layers/{layer}/evaluation/metrics/download"),
+        },
+    },
     export: {
         convert: endpoint("/corpora/{corpus}/layers/{layer}/export/convert"),
         merge: endpoint("/corpora/{corpus}/layers/{layer}/export/merge"),

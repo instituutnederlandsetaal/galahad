@@ -1,22 +1,26 @@
 <!-- A modal used by PoS confusion & metrics. -->
 <template>
     <GModal @hide="$emit('hide')">
-        <GTable :columns="filteredColumns" :items :title>
+        <GTable :columns="filteredColumns" :items>
+            <template #title>
+                <slot name="title"></slot>
+            </template>
+
             <template #help>
                 <p>
-                    Here you can see a sample of how a token was tagged by <i>{{ hypothesisLayer }}</i> and
-                    <i>{{ referenceLayer }}</i
+                    Here you can see a sample of how a token was tagged by <i>{{ hypothesisLayer.tagger.name }}</i> and
+                    <i>{{ referenceLayer.tagger.name }}</i
                     >. The samples are a random selection of all tokens in this category.
                 </p>
             </template>
 
             <template #header>
                 <p>Columns to display:</p>
-                <form @submit.prevent class="columnSelector">
-                    <GCheckBox v-for="annotation in annotations" :key="annotation" v-model="visibleColumns[annotation]">
-                        {{ annotation }}
+                <GForm>
+                    <GCheckBox v-for="option in annotationOptions" :key="option" v-model="visibleColumns[option]">
+                        {{ option }}
                     </GCheckBox>
-                </form>
+                </GForm>
             </template>
         </GTable>
         <!--Download-->
@@ -30,95 +34,78 @@
 
 // Types & API.
 import { literalsForTermComparison } from "@/ts/termcomparison"
-import type { TermComparison } from "@/types/evaluation"
+import type { TermComparison, EvaluationEntry } from "@/types/evaluation"
+import type { LayerMetadata } from "@/types/layers"
 
 // Props
-const props = defineProps({
-    samples: { type: Object },
-    referenceLayer: { type: String },
-    hypothesisLayer: { type: String },
-    downloading: { type: Boolean, default: false },
-    annotationType: { type: String },
-})
+const { evaluationEntry, hypothesisLayer, referenceLayer, annotations, downloading } = defineProps<{
+    evaluationEntry: EvaluationEntry
+    hypothesisLayer: LayerMetadata
+    referenceLayer: LayerMetadata
+    annotations: string[]
+    downloading: boolean
+}>()
 
-// Emits
+const annotationOptions = computed(() => [
+    ...new Set(
+        [...Object.keys(hypothesisLayer.annotations), ...Object.keys(referenceLayer.annotations)].filter(
+            (i) => i != "token",
+        ),
+    ),
+])
+
+// // Emits
 const emit = defineEmits<{ download: []; hide: [] }>()
-// Fields
-const ignorableAnnotations = ["token", "id", "misc"]
-const title = computed<string>(() => {
-    if (props.samples.title) return props.samples.title
-    return props.samples.agreement ? "PoS agree samples" : "Pos Confusion samples"
-})
-const annotations = computed(() => {
-    const firstSample = props.samples.samples[0]
-    const hypoAnnotations = Object.keys(firstSample.hyp.annotations)
-    const refAnnotations = Object.keys(firstSample.ref.annotations)
-    return [...new Set([...hypoAnnotations, ...refAnnotations])].filter((i) => !ignorableAnnotations.includes(i))
-})
 
 const columns = computed(() => {
-    // Currently we take annotations from the first sample of the hypothesis.
-    const referenceColumns = annotations.value.map((i) => ({
-        key: `${props.referenceLayer}-${i}`,
-        label: `${props.referenceLayer} ${i}`,
+    const referenceColumns = annotationOptions.value.map((i) => ({
+        key: `${referenceLayer.tagger.name}-${i}`,
+        label: `${referenceLayer.tagger.name} ${i}`,
     }))
-    const hypothesisColumns = annotations.value.map((i) => ({
-        key: `${props.hypothesisLayer}-${i}`,
-        label: `${props.hypothesisLayer} ${i}`,
+    const hypothesisColumns = annotationOptions.value.map((i) => ({
+        key: `${hypothesisLayer.tagger.name}-${i}`,
+        label: `${hypothesisLayer.tagger.name} ${i}`,
     }))
 
-    return [{ key: "literal", label: "token" }, ...hypothesisColumns, ...referenceColumns]
+    return [{ key: "token" }, ...referenceColumns, ...hypothesisColumns]
 })
-const visibleColumns = ref<Record<string, boolean>>({}) // { [annotation]: boolean }
-/**
- * columns filtered based on the visible columns selection.
- */
+const visibleColumns = ref<Record<string, boolean>>({})
+// /**
+//  * columns filtered based on the visible columns selection.
+//  */
 const filteredColumns = computed(() => {
-    const columnNames = ["literal"]
+    const columnNames = ["token"]
     for (const [annotation, visible] of Object.entries(visibleColumns.value)) {
         if (visible) {
-            columnNames.push(`${props.referenceLayer}-${annotation}`)
-            columnNames.push(`${props.hypothesisLayer}-${annotation}`)
+            columnNames.push(`${referenceLayer.tagger.name}-${annotation}`)
+            columnNames.push(`${hypothesisLayer.tagger.name}-${annotation}`)
         }
     }
     return columns.value.filter((i) => columnNames.includes(i.key))
 })
 
 const items = computed(() => {
-    if (!props.samples.samples) return []
-    return props.samples.samples.map((sample: TermComparison) => {
+    return evaluationEntry.samples.map((sample: TermComparison) => {
         const hypoAnnotations = Object.entries(sample.hyp.annotations).map((i) => ({
-            [`${props.hypothesisLayer}-${i[0]}`]: i[1],
+            [`${hypothesisLayer.tagger.name}-${i[0]}`]: i[1],
         }))
         const refAnnotations = Object.entries(sample.ref.annotations).map((i) => ({
-            [`${props.referenceLayer}-${i[0]}`]: i[1],
+            [`${referenceLayer.tagger.name}-${i[0]}`]: i[1],
         }))
 
-        return {
-            literal: literalsForTermComparison(sample),
-            ...Object.assign({}, ...hypoAnnotations, ...refAnnotations),
-        }
+        return { token: literalsForTermComparison(sample), ...Object.assign({}, ...hypoAnnotations, ...refAnnotations) }
     })
 })
 
-// Watches & mounts
 watch(
-    () => props.samples.annotationType,
-    (annotation) => {
+    () => annotations,
+    () => {
         visibleColumns.value = {} // reset
-        // annotationType is e.g. "pos" or "pos + lemma"
-        const annotations = annotation.split("+").map((i) => i.trim())
+        // annotationType is e.g. "[pos]" or "[pos, lemma]"
         for (const annotation of annotations) {
             visibleColumns.value[annotation] = true
         }
     },
+    { immediate: true },
 )
 </script>
-
-<style scoped lang="scss">
-.columnSelector {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-</style>

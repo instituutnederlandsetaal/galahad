@@ -1,6 +1,7 @@
 package org.ivdnt.galahad.web.service
 
 import jakarta.servlet.http.HttpServletRequest
+import java.util.*
 import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.User
 import org.ivdnt.galahad.corpora.Corpora
@@ -12,7 +13,6 @@ import org.ivdnt.galahad.exceptions.UserUnauthorizedException
 import org.ivdnt.galahad.files.GalahadFolder
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.util.*
 
 @Service
 class CorporaService(@Autowired config: Config) :
@@ -30,7 +30,7 @@ class CorporaService(@Autowired config: Config) :
         get() = custom.readAll() + presets.readAll()
 
     fun readAll(): List<CorpusStatistics> =
-        all.map { it.statistics }.filter { it.canRead(user, excludeAdmin = true) }
+        all.filter { it.metadata.canRead(user, excludeAdmin = true) }.map { it.statistics }
 
     fun readOrThrow(key: UUID): Corpus {
         val (corpus, _) = findOrThrow(key)

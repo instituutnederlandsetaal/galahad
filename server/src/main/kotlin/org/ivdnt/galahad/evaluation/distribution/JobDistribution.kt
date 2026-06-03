@@ -7,6 +7,7 @@ import org.ivdnt.galahad.evaluation.DocumentEvaluations
 import org.ivdnt.galahad.evaluation.csv.CsvFile
 import org.ivdnt.galahad.evaluation.csv.CsvString
 import org.ivdnt.galahad.util.merge
+import org.ivdnt.galahad.util.parallelMap
 
 /**
  * The frequency distribution of terms in a corpus for a specific tagger layer. A CorpusDistribution
@@ -22,8 +23,8 @@ class JobDistribution(@JsonValue val typeTokens: List<TypeToken>) {
         ): JobDistribution =
             JobDistribution(
                 corpus.documents
-                    .readAllSequence()
-                    .map {
+                    .readAll()
+                    .parallelMap {
                         docEvals
                             .createOrThrow(it.name)
                             .getDistribution(annotation, group)

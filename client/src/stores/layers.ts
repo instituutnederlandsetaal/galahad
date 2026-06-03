@@ -34,6 +34,16 @@ const useLayers = defineStore("layers", () => {
             .filter((s: string) => s != "token")
             .map((s) => ({ value: s, text: s })),
     )
+    const referenceAnnotations = computed<SelectOption[]>((): SelectOption[] =>
+        Object.keys(referenceLayer.value?.annotations ?? {})
+            .filter((s: string) => s != "token")
+            .map((s) => ({ value: s, text: s })),
+    )
+    const commonAnnotations = computed<SelectOption[]>((): SelectOption[] => {
+        const h = new Set(hypothesisAnnotations.value.map((o) => o.value))
+        const r = new Set(referenceAnnotations.value.map((o) => o.value))
+        return [...h.intersection(r)].map((s) => ({ value: s, text: s }))
+    })
 
     /** Reload layers */
     function reload(): void {
@@ -70,6 +80,8 @@ const useLayers = defineStore("layers", () => {
         hypothesisLayer,
         referenceLayer,
         hypothesisAnnotations,
+        referenceAnnotations,
+        commonAnnotations,
         options,
         // Methods
         reload,
