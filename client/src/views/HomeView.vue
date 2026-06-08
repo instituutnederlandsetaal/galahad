@@ -9,6 +9,11 @@
 
             <div class="flex">
                 <div class="left">
+                    <p style="color: red">
+                        Due to a hack at the Dutch Language Institute (Instituut voor de Nederlandse Taal) 
+                        corpora uploaded to <i>GaLAHaD</i> after April 15th may no longer be available.
+                        We apologize for the inconvenience.
+                    </p>
                     <p>
                         Historical texts are essential source material for both linguistic and digital humanities
                         research. Adding linguistic annotation (part of speech and modern Dutch lemma) to historical
