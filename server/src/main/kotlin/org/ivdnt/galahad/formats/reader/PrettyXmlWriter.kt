@@ -85,7 +85,11 @@ class PrettyXMLWriter(private val writer: XMLStreamWriter2) : XMLStreamWriter2 b
     }
 
     fun writeElement(localName: String, text: String? = null) {
-        writeElement(localName, text = text)
+        writeElement(
+            localName,
+            attrs = null, // this argument is mandatory for resolving the correct overload
+            text = text,
+        )
     }
 
     fun writeAttrs(attrs: Map<String, String>?) {
