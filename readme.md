@@ -11,7 +11,7 @@ Generating Linguistic Annotations for Historical Dutch
 - [galahad-taggers-dockerized](https://github.com/INL/galahad-taggers-dockerized)
 - [galahad-corpus-data](https://github.com/INL/galahad-corpus-data/)
 - [int-pie](https://github.com/INL/int-pie)
-- [int-huggingface-tagger](https://github.com/INL/huggingface-tagger) [to be released]
+- [int-huggingface-tagger](https://github.com/instituutnederlandsetaal/int-huggingface-tagger)
 
 ## Goal
 Galahad is developed as part of the CLARIAH "Improved Infrastructure for Historical Dutch" project. The goal is an application that:
