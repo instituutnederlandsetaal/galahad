@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.Hidden
 import java.util.*
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.app.Config
-import org.ivdnt.galahad.jobs.JobSchedular
+import org.ivdnt.galahad.jobs.JobScheduler
 import org.ivdnt.galahad.web.service.CorporaService
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -44,7 +44,7 @@ class InternalJobController(val corpora: CorporaService, val config: Config) : L
         @RequestParam(value = "file_id", required = false) fileId: UUID,
         @RequestBody file: MultipartFile,
     ): String {
-        JobSchedular.receive(fileId, file.inputStream, file.originalFilename!!)
+        JobScheduler.receive(fileId, file.inputStream, file.originalFilename!!)
         return "DELETE"
     }
 

@@ -31,7 +31,7 @@ class Jobs(dir: File, private val corpus: Corpus) : GalahadFolderManager<Job, St
         // Throw if the key is not a tagger
         if (key !in Tagger.taggers) throw TaggerNotFoundException(key)
         // Safe to create it now
-        return ctor(key).also { JobSchedular.queue(it) }
+        return ctor(key).also { JobScheduler.queue(it) }
     }
 
     override fun ctor(key: String): Job = Job(dir.resolve(key), corpus)
@@ -39,7 +39,7 @@ class Jobs(dir: File, private val corpus: Corpus) : GalahadFolderManager<Job, St
     override fun throwNotFound(key: String): Nothing = throw JobNotFoundException(key)
 
     override fun deleteOrThrow(key: String) {
-        JobSchedular.dequeue(readOrThrow(key))
+        JobScheduler.dequeue(readOrThrow(key))
         super.deleteOrThrow(key)
     }
 }

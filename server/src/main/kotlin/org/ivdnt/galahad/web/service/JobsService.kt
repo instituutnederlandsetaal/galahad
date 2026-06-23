@@ -3,7 +3,7 @@ package org.ivdnt.galahad.web.service
 import java.util.*
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.jobs.JobMetadata
-import org.ivdnt.galahad.jobs.JobSchedular
+import org.ivdnt.galahad.jobs.JobScheduler
 import org.ivdnt.galahad.jobs.Progress
 import org.ivdnt.galahad.taggers.Tagger
 import org.springframework.stereotype.Service
@@ -43,6 +43,6 @@ class JobsService(private val corpora: CorporaService) : Logging {
         // does it exist?
         val job = corpora.writeOrThrow(corpus).jobs.readOrThrow(job)
         // stop it
-        JobSchedular.dequeue(job)
+        JobScheduler.dequeue(job)
     }
 }

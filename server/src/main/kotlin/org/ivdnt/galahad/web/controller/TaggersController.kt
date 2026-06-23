@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.exceptions.ErrorResponse
-import org.ivdnt.galahad.jobs.JobSchedular
+import org.ivdnt.galahad.jobs.JobScheduler
 import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.web.service.TaggersService
 import org.springframework.web.bind.annotation.CrossOrigin
@@ -56,5 +56,5 @@ class TaggersController(private val taggersService: TaggersService) : Logging {
     )
     @CrossOrigin
     @GetMapping(Endpoints.Taggers.QUEUE)
-    fun activeJobs(): Int = JobSchedular.queueSize
+    fun activeJobs(): Int = JobScheduler.queueSize
 }
