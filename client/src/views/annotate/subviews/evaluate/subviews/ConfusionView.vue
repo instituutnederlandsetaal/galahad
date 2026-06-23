@@ -102,7 +102,7 @@ const columns = computed((): Column<ConfusionRow>[] => {
             if (posToBottom(b)) return -1
             return a.localeCompare(b)
         })
-        .map((key) => ({ key }))
+        .map((key) => ({ key, button: true }))
     cols.unshift({
         key: "referenceAnnotation",
         sortOn: (value: any) => {
@@ -172,26 +172,23 @@ watchPostEffect(
 </script>
 
 <style scoped lang="scss">
-:deep(.confusion) td {
-    padding: 0;
-    span {
-        padding: 0.4rem;
-    }
-    button {
-        width: 100%;
-        border: 0;
+// :deep(.confusion) td {
+//     padding: 0;
+//     span {
+//         padding: 0.4rem;
+//     }
+//     button {
+//         width: 100%;
+//         border: 0;
+//         background-color: transparent;
 
-        &.plain {
-            background-color: transparent;
+//         &:hover {
+//             background-color: var(--int-light-grey) !important;
+//         }
 
-            &:hover {
-                background-color: var(--int-light-grey) !important;
-            }
-
-            &:focus {
-                background-color: var(--int-light-grey-hover) !important;
-            }
-        }
-    }
-}
+//         &:focus {
+//             background-color: var(--int-light-grey-hover) !important;
+//         }
+//     }
+// }
 </style>

@@ -4,7 +4,7 @@
             title="Grouped Metrics"
             :loading
             :columns="metricsPerPosColumns"
-            :items
+            :items="filteredItems"
             @download="(data) => download(data)"
             :downloading
         >
@@ -118,6 +118,15 @@ const selectedAnalysis = ref<string>(analysesOptions[0].value)
 // const multiPosMetrics = computed(() => {
 //     return Object.values(posMetrics.value).filter((pos) => pos.name.includes("+"))
 // })
+const filteredItems = computed(() => {
+    if (selectedAnalysis.value === "single") {
+        return items.value.filter((i) => !i.group.includes("+"))
+    }
+    if (selectedAnalysis.value === "multiple") {
+        return items.value.filter((i) => i.group.includes("+"))
+    }
+    return items.value
+})
 const items = computed(() => {
     if (!groupedMetrics.value) return []
     const grouped = Object.values(groupedMetrics.value)[0].grouped

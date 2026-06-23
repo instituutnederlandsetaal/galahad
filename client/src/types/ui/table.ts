@@ -7,6 +7,7 @@ export type Column<T> = {
     align?: string
     hidden?: boolean
     noSort?: boolean
+    button?: boolean
     sortOn?: (value: T) => number | string | undefined
     format?: (value: T) => number | string | undefined
 }

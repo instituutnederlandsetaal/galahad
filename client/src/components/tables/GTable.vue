@@ -68,7 +68,12 @@
                             }
                         "
                     >
-                        <td v-for="column in visibleColumns" :key="column.key" :style="{ textAlign: column.align }">
+                        <td
+                            v-for="column in visibleColumns"
+                            :key="column.key"
+                            :style="{ textAlign: column.align }"
+                            :class="{ button: column.button }"
+                        >
                             <!-- specific cell rendering -->
                             <slot :name="`cell-${column.key}`" :column :item :value="item[column.key]">
                                 <!-- generic cell rendering -->
@@ -257,6 +262,22 @@ table {
 
             td {
                 padding: 0.4rem;
+                &.button {
+                    padding: 0;
+                    :deep(button) {
+                        width: 100%;
+                        border: 0;
+                        background-color: transparent;
+
+                        &:hover {
+                            background-color: var(--int-light-grey) !important;
+                        }
+
+                        &:focus {
+                            background-color: var(--int-light-grey-hover) !important;
+                        }
+                    }
+                }
             }
         }
     }

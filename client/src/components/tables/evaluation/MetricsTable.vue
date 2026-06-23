@@ -38,26 +38,31 @@
 
         <template
             v-for="cell in ['cell-falsePositive', 'cell-falseNegative', 'cell-truePositive', 'cell-noMatch']"
-            #[cell]="data"
+            #[cell]="d: TableData<any>"
+            :key="cell"
         >
-            <div :key="cell">
-                <GButton :disabled="data.value?.count === 0" @click="openModal(data)" style="text-align: right">
-                    {{ `${((data.value.count / data.item.count) * 100).toFixed(1)}%` }}
-                    <i>({{ data.value.count.toString() }})</i>
-                </GButton>
-            </div>
+            <GButton :disabled="d.value?.count === 0" @click="tableData = d" style="text-align: right">
+                {{ `${((d.value.count / d.item.count) * 100).toFixed(1)}%` }}
+                <i>({{ d.value.count.toString() }})</i>
+            </GButton>
         </template>
     </GTable>
 
     <ComparisonModal
-        v-if="samples"
-        @hide="samples = undefined"
-        :samples
-        @download="$emit('download', modalData)"
-        :referenceLayer="referenceId"
-        :hypothesisLayer="hypothesisId"
+        v-if="tableData"
+        :evaluationEntry="tableData.value"
+        :hypothesisLayer
+        :referenceLayer
+        :annotations="[selectedAnnotation]"
         :downloading
-    />
+        @download="() => download(tableData)"
+        @hide="tableData = undefined"
+    >
+        <template #title>
+            Samples of {{ referenceId }} <i>{{ tableData.item.referenceAnnotation }}</i> and {{ hypothesisId }}
+            {{ tableData.column.key }}</template
+        >
+    </ComparisonModal>
 </template>
 
 <script setup lang="ts">
@@ -67,7 +72,7 @@ import type { TermComparison, Samples, Metrics } from "@/types/evaluation"
 import useLayers from "@/stores/layers"
 
 // Stores
-const { hypothesisId, referenceId } = storeToRefs(useLayers())
+const { hypothesisId, referenceId, hypothesisLayer, referenceLayer } = storeToRefs(useLayers())
 
 // Props
 const {
@@ -91,7 +96,7 @@ const emit = defineEmits<{ download: [modalData: TableData<Metrics>] }>()
 
 // Fields
 const samples = ref<Samples>()
-const modalData = ref({})
+const tableData = ref<TableData<any>>()
 
 // Methods
 /**
@@ -108,7 +113,7 @@ function openModal(data): void {
 </script>
 
 <style scoped lang="scss">
-.metricsTable td {
+/* .metricsTable td {
     button {
         display: block;
         text-align: center;
@@ -141,5 +146,5 @@ table button {
 
 .metricsTable :deep(.table-control) {
     min-height: auto;
-}
+} */
 </style>

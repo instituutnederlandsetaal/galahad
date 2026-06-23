@@ -14,18 +14,32 @@ import useCorpora from "@/stores/corpora"
 export const metricsPerPosColumns = [
     {
         key: "group",
-        label: "group",
         sortOn: (x: MetricsRow) => (Number.isNaN(Number.parseInt(x.name)) ? x.name : Number.parseInt(x.name)),
     },
     // { key: 'accuracy', sortOn: (x: MetricsRow) => x.accuracy },
-    { key: "precision", sortOn: (x: MetricsRow) => x.precision },
-    { key: "recall", sortOn: (x: MetricsRow) => x.recall },
-    { key: "f1", sortOn: (x: MetricsRow) => x.f1 },
-    { key: "count", label: "count", sortOn: (x: MetricsRow) => x.count },
-    { key: "truePositive", label: "true positive", sortOn: (x: MetricsRow): number => x.truePositive.count },
-    { key: "falsePositive", label: "false positive", sortOn: (x: MetricsRow): number => x.falsePositive.count },
-    { key: "falseNegative", label: "false negative", sortOn: (x: MetricsRow): number => x.falseNegative.count },
-    { key: "noMatch", label: "no match", sortOn: (x: MetricsRow): number => x.noMatch.count },
+    { key: "precision", align: "right", sortOn: (x: MetricsRow) => x.precision },
+    { key: "recall", align: "right", sortOn: (x: MetricsRow) => x.recall },
+    { key: "f1", align: "right", sortOn: (x: MetricsRow) => x.f1 },
+    { key: "count", align: "right", sortOn: (x: MetricsRow) => x.count },
+    {
+        key: "truePositive",
+        label: "true positive",
+        button: true,
+        sortOn: (x: MetricsRow): number => x.truePositive.count,
+    },
+    {
+        key: "falsePositive",
+        label: "false positive",
+        button: true,
+        sortOn: (x: MetricsRow): number => x.falsePositive.count,
+    },
+    {
+        key: "falseNegative",
+        label: "false negative",
+        button: true,
+        sortOn: (x: MetricsRow): number => x.falseNegative.count,
+    },
+    { key: "noMatch", label: "no match", button: true, sortOn: (x: MetricsRow): number => x.noMatch.count },
 ]
 
 /**

@@ -73,7 +73,7 @@ button {
     }
 
     &.plain {
-        background-color: var(--white);
+        background-color: transparent;
         border: 1px solid var(--int-grey);
     }
 
