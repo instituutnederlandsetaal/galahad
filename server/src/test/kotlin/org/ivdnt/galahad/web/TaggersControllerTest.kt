@@ -9,7 +9,7 @@ import org.ivdnt.galahad.app.Config
 import org.ivdnt.galahad.app.Galahad
 import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.exceptions.TaggerNotFoundException
-import org.ivdnt.galahad.jobs.JobSchedular
+import org.ivdnt.galahad.jobs.JobScheduler
 import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.util.TestConfig
 import org.ivdnt.galahad.util.TestUtil
@@ -96,7 +96,7 @@ class TaggersControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: 
 
     @Test
     fun `Can get queue`() {
-        JobSchedular.reset()
+        JobScheduler.reset()
         assertEquals(0, getQueue())
     }
 
@@ -112,7 +112,7 @@ class TaggersControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: 
 
     @Test
     fun `Queue increases`() {
-        JobSchedular.reset()
+        JobScheduler.reset()
         val corpus = TestUtil.createFilledCorpus(config)
         increaseQueue(corpus)
         assertEquals(1, getQueue())
@@ -120,7 +120,7 @@ class TaggersControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: 
 
     @Test
     fun `Queue decreases`() {
-        JobSchedular.reset()
+        JobScheduler.reset()
         val corpus = TestUtil.createFilledCorpus(config)
         increaseQueue(corpus)
         assertEquals(1, getQueue())
