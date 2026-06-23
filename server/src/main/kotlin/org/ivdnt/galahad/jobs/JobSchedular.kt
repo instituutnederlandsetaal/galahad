@@ -19,7 +19,7 @@ import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.postForEntity
 
-object JobController {
+object JobSchedular {
     private val queue: ArrayDeque<Job> = ArrayDeque<Job>()
     private var task: Task? = null
     val queueSize: Int

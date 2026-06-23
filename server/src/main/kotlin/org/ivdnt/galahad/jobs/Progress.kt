@@ -30,7 +30,7 @@ class Progress(
                     .toMap()
             var untagged = statuses.count { it == JobStatus.UNTAGGED }
             var processing = 0
-            if (JobController.inQueue(job)) {
+            if (JobSchedular.inQueue(job)) {
                 processing = untagged
                 untagged = 0
             }
