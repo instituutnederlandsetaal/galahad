@@ -51,7 +51,10 @@ const useLayers = defineStore("layers", () => {
         loading.value = true
         API.getLayers(corpusId.value)
             .then((res) => (layers.value = res.data))
-            .finally(() => (loading.value = false))
+            .finally(() => {
+                loading.value = false
+                referenceId.value ??= "source"
+            })
     }
 
     /** Format as displayed in the <select> */
