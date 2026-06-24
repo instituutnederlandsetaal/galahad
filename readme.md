@@ -38,8 +38,6 @@ For development, add `spring.profiles.active=dev` to the environment variables. 
 
 Run `galahad/server/src/main/kotlin/org/ivdnt/galahad/app/Galahad.kt` from your IDE. Check `http://localhost:8010` to see whether see server is running.
 
-Go back to the client in the browser and try to create a corpus and upload some documents.
-
 ## Taggers
 
 In development, the application will talk to the taggers through a port-forward. The port-forwards are defined in `docker-compose.yml` from `https://github.com/INL/galahad-taggers-dockerized`. The port-forwards should be defined accordingly as `devport` in the taggers specifications at `server/data/taggers/*.yaml` to enable communication.
