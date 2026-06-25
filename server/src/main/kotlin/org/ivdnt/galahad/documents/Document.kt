@@ -18,7 +18,9 @@ import org.ivdnt.galahad.util.ThreadPoolUtil
  * - source/[name]: the source file
  */
 class Document(dir: File) : GalahadFolder(dir), Logging {
-    val sourceFile: File = dir.resolve("source").resolve(name)
+    val sourceFile: File
+        get() = dir.resolve(FILE_FOLDER).listFiles().first()
+
     val metadata: DocumentMetadata by lazy {
         try { // For sake of backwards compatibility with GaLAHaD 1.x.x, we create metadata if not
             // present.
@@ -33,12 +35,13 @@ class Document(dir: File) : GalahadFolder(dir), Logging {
         try {
             DiskValue<Layer>(dir.resolve(LAYER_FILE)).readOrThrow()
         } catch (e: Exception) {
-            logger.warn("Error reading layer file, creating empty layer", e)
+            logger.warn("Error reading layer file, reparsing sourceFile", e)
             DiskValue<Layer>(dir.resolve(LAYER_FILE)).write(ParsedFile.create(sourceFile).layer)
         }
     }
 
     internal companion object {
+        private const val FILE_FOLDER = "file"
         private const val METADATA_FILE = "metadata.json"
         private const val LAYER_FILE = "layer.json"
 
@@ -59,7 +62,9 @@ class Document(dir: File) : GalahadFolder(dir), Logging {
             DiskValue<DocumentMetadata>(dir.resolve(METADATA_FILE))
                 .write(DocumentMetadata.create(parsedFile))
             // move uploaded file in the background
-            ThreadPoolUtil.pool.execute { file.copyTo(doc.sourceFile, overwrite = true) }
+            ThreadPoolUtil.pool.execute {
+                file.copyTo(dir.resolve(FILE_FOLDER).resolve(file.name), overwrite = true)
+            }
             // The same document object is now valid: it's folder data has been filled.
             return doc
         }
