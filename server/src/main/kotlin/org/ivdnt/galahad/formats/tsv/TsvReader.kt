@@ -99,6 +99,7 @@ class TsvReader(val file: File) : LineReader() {
                 Annotation.DEPREL to listOf("deprel", "dependency"),
                 Annotation.HEAD to listOf("head"),
                 Annotation.NER to listOf("entity", "ner", "named-entity", "NamedEntity"),
+                Annotation.GROUP to listOf("group", "mwe"),
             )
     }
 }
