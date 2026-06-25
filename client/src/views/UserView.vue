@@ -1,5 +1,5 @@
 <template>
-    <GCard article :title="`Logged in as ${user.name}`">
+    <GCard :title="`Logged in as ${user.name}`">
         <p>Find information about your account here.</p>
         <dl>
             <dt>Username:</dt>
