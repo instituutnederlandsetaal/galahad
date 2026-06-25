@@ -27,7 +27,9 @@
                                 <!-- override head -->
                                 <slot :name="`head-${column.key}`" :column>
                                     <!-- default head -->
-                                    <slot name="head" :column>{{ column.label || column.key }}</slot>
+                                    <slot name="head" :column>
+                                        <span v-html="column.label || column.key"></span>
+                                    </slot>
                                 </slot>
                             </div>
 
@@ -139,7 +141,9 @@ const visibleItems = computed<T[]>(() => {
 
     // sort and then paginate
     const sortOn =
-        columns.find((column) => column.key === sortColumn.value)?.sortOn ?? ((x: T): T => x[sortColumn.value])
+        columns.find((column) => column.key === sortColumn.value)?.sortOn ??
+        columns.find((column) => column.key === sortColumn.value)?.format ??
+        ((x: T): T => x[sortColumn.value])
     const sorted = items.toSorted((a: T, b: T) => {
         const order = sortDesc.value ? -1 : 1
         return order * compareAny(sortOn(a), sortOn(b))
@@ -267,15 +271,6 @@ table {
                     :deep(button) {
                         width: 100%;
                         border: 0;
-                        background-color: transparent;
-
-                        &:hover {
-                            background-color: var(--int-light-grey) !important;
-                        }
-
-                        &:focus {
-                            background-color: var(--int-light-grey-hover) !important;
-                        }
                     }
                 }
             }

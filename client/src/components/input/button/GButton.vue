@@ -95,7 +95,7 @@ button {
             }
 
             &.plain {
-                background-color: var(--int-very-light-grey);
+                background-color: var(--int-very-light-grey-hover);
             }
         }
 
@@ -115,7 +115,7 @@ button {
             }
 
             &.plain {
-                background-color: var(--int-very-light-grey-hover);
+                background-color: var(--int-very-light-grey-active);
             }
         }
     }
