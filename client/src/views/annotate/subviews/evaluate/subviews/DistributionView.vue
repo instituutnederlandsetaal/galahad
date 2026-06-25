@@ -132,9 +132,9 @@ const groupOptions = computed(() =>
     hypothesisAnnotations.value.filter((option: SelectOption) => !["head", "token"].includes(option.text)),
 )
 const analysesOptions: SelectOption[] = [
+    { value: "both", text: "Both" },
     { value: "single", text: "Single" },
     { value: "multiple", text: "Multiple" },
-    { value: "both", text: "Both" },
 ]
 const selectedAnalysis = ref<string>(analysesOptions[0].value)
 const groups = computed<string[]>(() =>
