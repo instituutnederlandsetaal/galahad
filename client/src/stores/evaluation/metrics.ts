@@ -20,7 +20,8 @@ export const metricsPerPosColumns = [
     { key: "precision", align: "right", sortOn: (x: MetricsRow) => x.precision },
     { key: "recall", align: "right", sortOn: (x: MetricsRow) => x.recall },
     { key: "f1", align: "right", sortOn: (x: MetricsRow) => x.f1 },
-    { key: "count", align: "right", sortOn: (x: MetricsRow) => x.count },
+    { key: "hypCount", label: "count<br>(hypothesis)", align: "right", sortOn: (x: MetricsRow) => x.hypCount },
+    { key: "refCount", label: "count<br>(reference)", align: "right", sortOn: (x: MetricsRow) => x.refCount },
     {
         key: "truePositive",
         label: "true positive",

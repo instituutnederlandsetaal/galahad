@@ -1,7 +1,7 @@
 <template>
     <footer>
         <p>
-            © 2025 Dutch Language Institute, see our
+            © 2026 Dutch Language Institute, see our
             <a href="https://ivdnt.org/english/privacy-statement/">privacy statement</a> &
             <a href="https://ivdnt.org/english/terms-and-conditions/">terms and conditions</a>.
         </p>

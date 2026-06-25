@@ -67,7 +67,7 @@ const columns = computed(() => {
         label: `${hypothesisLayer.tagger.name} ${i}`,
     }))
 
-    return [{ key: "token" }, ...referenceColumns, ...hypothesisColumns]
+    return [{ key: "token" }, ...hypothesisColumns, ...referenceColumns]
 })
 const visibleColumns = ref<Record<string, boolean>>({})
 // /**

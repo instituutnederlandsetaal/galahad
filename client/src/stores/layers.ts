@@ -30,14 +30,10 @@ const useLayers = defineStore("layers", () => {
         layers.value.map((l: LayerMetadata) => ({ value: l.tagger.name, text: format(l) })),
     )
     const hypothesisAnnotations = computed<SelectOption[]>((): SelectOption[] =>
-        Object.keys(hypothesisLayer.value?.annotations ?? {})
-            .filter((s: string) => s != "token")
-            .map((s) => ({ value: s, text: s })),
+        Object.keys(hypothesisLayer.value?.annotations ?? {}).map((s) => ({ value: s, text: s })),
     )
     const referenceAnnotations = computed<SelectOption[]>((): SelectOption[] =>
-        Object.keys(referenceLayer.value?.annotations ?? {})
-            .filter((s: string) => s != "token")
-            .map((s) => ({ value: s, text: s })),
+        Object.keys(referenceLayer.value?.annotations ?? {}).map((s) => ({ value: s, text: s })),
     )
     const commonAnnotations = computed<SelectOption[]>((): SelectOption[] => {
         const h = new Set(hypothesisAnnotations.value.map((o) => o.value))

@@ -32,37 +32,30 @@
             #[cell]="data"
         >
             <div :key="cell" style="text-align: right">
-                {{ `${data.value ? parseFloat(data.value).toString().slice(0, 4) : 0}` }}
+                {{ `${data.value ? parseFloat(data.value).toString().slice(0, 5) : 0}` }}
             </div>
         </template>
 
-        <template
-            v-for="cell in ['cell-falsePositive', 'cell-falseNegative', 'cell-truePositive', 'cell-noMatch']"
-            #[cell]="d: TableData<any>"
-            :key="cell"
-        >
-            <GButton :disabled="d.value?.count === 0" @click="tableData = d" style="text-align: right">
-                {{ `${((d.value.count / d.item.count) * 100).toFixed(1)}%` }}
+        <template v-for="cell in ['cell-falsePositive', 'cell-truePositive']" #[cell]="d: TableData<any>" :key="cell">
+            <GButton :disabled="d.value?.count === 0" @click="model = d" style="text-align: right" plain>
+                {{ `${((d.value.count / d.item.hypCount) * 100).toFixed(1)}%` }}
                 <i>({{ d.value.count.toString() }})</i>
             </GButton>
         </template>
-    </GTable>
 
-    <ComparisonModal
-        v-if="tableData"
-        :evaluationEntry="tableData.value"
-        :hypothesisLayer
-        :referenceLayer
-        :annotations="[selectedAnnotation]"
-        :downloading
-        @download="() => download(tableData)"
-        @hide="tableData = undefined"
-    >
-        <template #title>
-            Samples of {{ referenceId }} <i>{{ tableData.item.referenceAnnotation }}</i> and {{ hypothesisId }}
-            {{ tableData.column.key }}</template
-        >
-    </ComparisonModal>
+        <template v-for="cell in ['cell-falseNegative']" #[cell]="d: TableData<any>" :key="cell">
+            <GButton :disabled="d.value?.count === 0" @click="model = d" style="text-align: right" plain>
+                {{ `${((d.value.count / d.item.refCount) * 100).toFixed(1)}%` }}
+                <i>({{ d.value.count.toString() }})</i>
+            </GButton>
+        </template>
+
+        <template v-for="cell in ['cell-noMatch']" #[cell]="d: TableData<any>" :key="cell">
+            <GButton :disabled="d.value?.count === 0" @click="model = d" style="text-align: right" plain>
+                {{ d.value.count.toString() }}
+            </GButton>
+        </template>
+    </GTable>
 </template>
 
 <script setup lang="ts">
@@ -70,6 +63,8 @@
 import type { Column, Item, TableData } from "@/types/ui/table"
 import type { TermComparison, Samples, Metrics } from "@/types/evaluation"
 import useLayers from "@/stores/layers"
+
+const model = defineModel()
 
 // Stores
 const { hypothesisId, referenceId, hypothesisLayer, referenceLayer } = storeToRefs(useLayers())
@@ -111,40 +106,3 @@ function openModal(data): void {
     }
 }
 </script>
-
-<style scoped lang="scss">
-/* .metricsTable td {
-    button {
-        display: block;
-        text-align: center;
-        width: 100%;
-        height: 100%;
-        margin: 0;
-        background-color: transparent;
-
-        &:hover {
-            background-color: var(--int-light-grey) !important;
-        }
-
-        &:focus {
-            background-color: var(--int-light-grey-hover) !important;
-        }
-    }
-}
-
-table button {
-    display: block;
-    width: initial;
-    white-space: initial;
-    margin: auto;
-}
-
-.metricsTable :deep(td) {
-    padding: 0 10px !important;
-    margin: 0;
-}
-
-.metricsTable :deep(.table-control) {
-    min-height: auto;
-} */
-</style>
