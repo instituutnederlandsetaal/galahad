@@ -50,6 +50,7 @@ export const endpoints = {
         progress: endpoint("/corpora/{corpus}/jobs/{job}/progress"),
     },
     evaluation: {
+        download: endpoint("/corpora/{corpus}/layers/{layer}/evaluation/download"),
         distribution: endpoint("/corpora/{corpus}/layers/{layer}/evaluation/distribution"),
         confusion: {
             base: endpoint("/corpora/{corpus}/layers/{layer}/evaluation/confusion"),

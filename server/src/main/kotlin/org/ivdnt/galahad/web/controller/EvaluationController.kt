@@ -13,8 +13,8 @@ import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER
 import org.ivdnt.galahad.evaluation.confusion.JobConfusion
 import org.ivdnt.galahad.evaluation.distribution.TypeToken
-import org.ivdnt.galahad.evaluation.metrics.DocumentMetric
-import org.ivdnt.galahad.evaluation.metrics.JobMetric
+import org.ivdnt.galahad.evaluation.metrics.DocumentMetrics
+import org.ivdnt.galahad.evaluation.metrics.JobMetrics
 import org.ivdnt.galahad.exceptions.ErrorResponse
 import org.ivdnt.galahad.util.setContentDisposition
 import org.ivdnt.galahad.web.service.EvaluationService
@@ -238,14 +238,14 @@ class EvaluationController(private val evaluationService: EvaluationService) : L
             annotation: Annotation,
             @RequestParam
             @Parameter(description = "Annotation head to filter on")
-            hypoFilter: String,
+            hypFilter: String,
             @RequestParam
             @Parameter(description = "Annotation head to filter on")
             refFilter: String,
         ): ByteArray {
             setZipResponseHeader(corpus)
             return evaluationService.getConfusionSamples(
-                hypoFilter,
+                hypFilter,
                 refFilter,
                 annotation,
                 corpus,
@@ -291,7 +291,7 @@ class EvaluationController(private val evaluationService: EvaluationService) : L
             @RequestParam @Parameter(description = "Layer name") reference: String = SOURCE_LAYER,
             @RequestParam @Parameter(description = "Annotation") annotation: Annotation,
             @RequestParam @Parameter(description = "Group") group: Annotation,
-        ): JobMetric = evaluationService.getJobMetric(corpus, layer, reference, annotation, group)
+        ): JobMetrics = evaluationService.getJobMetric(corpus, layer, reference, annotation, group)
 
         @CrossOrigin
         @GetMapping(Endpoints.Evaluation.Document.Metrics.BASE)
@@ -302,7 +302,7 @@ class EvaluationController(private val evaluationService: EvaluationService) : L
             @RequestParam @Parameter(description = "Layer name") reference: String = SOURCE_LAYER,
             @RequestParam @Parameter(description = "Annotation") annotation: Annotation,
             @RequestParam @Parameter(description = "Group") group: Annotation,
-        ): DocumentMetric =
+        ): DocumentMetrics =
             evaluationService.getDocumentMetric(
                 corpus,
                 document,
@@ -358,19 +358,24 @@ class EvaluationController(private val evaluationService: EvaluationService) : L
             @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
             @PathVariable @Parameter(description = "Layer name") layer: String,
             @RequestParam @Parameter(description = "Layer name") reference: String = SOURCE_LAYER,
+            @RequestParam @Parameter(description = "Annotation") annotation: Annotation,
+            @RequestParam @Parameter(description = "Group") group: Annotation,
             @RequestParam
-            @Parameter(description = "Metrics type (e.g. posByPos, lemmaByLemma)")
-            metricsType: String,
-            @RequestParam("class")
-            @Parameter(description = "Classification type(e.g. true positive)")
-            classType: String,
-            @RequestParam
-            @Parameter(description = "Annotation head (e.g. NOU-C)")
-            group: String? = null,
-        ): ByteArray = // TODO should this return unit and should we stream into the response out
+            @Parameter(description = "Classification type (e.g. true positive)")
+            classification: String,
+            @RequestParam @Parameter(description = "Group filter") groupFilter: String? = null,
+        ): ByteArray { // TODO should this return unit and should we stream into the response out
             // stream?
-            evaluationService
-                .getMetricsSamples(metricsType, group, corpus, layer, reference, classType)
-                .also { setZipResponseHeader(corpus) }
+            setZipResponseHeader(corpus)
+            return evaluationService.getMetricsSamples(
+                corpus,
+                layer,
+                reference,
+                annotation,
+                group,
+                classification,
+                groupFilter,
+            )
+        }
     }
 }

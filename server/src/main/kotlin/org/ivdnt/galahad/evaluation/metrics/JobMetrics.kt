@@ -7,8 +7,9 @@ import org.ivdnt.galahad.evaluation.DocumentEvaluations
 import org.ivdnt.galahad.evaluation.csv.CsvFile
 import org.ivdnt.galahad.evaluation.csv.CsvString
 import org.ivdnt.galahad.util.merge
+import org.ivdnt.galahad.util.parallelMap
 
-class JobMetric(@JsonValue val classesByGroup: Map<String, NewMetric>) {
+class JobMetrics(@JsonValue val metrics: Metrics) {
 
     fun toGlobalCsv(): CsvString = buildString {
         append(
@@ -27,24 +28,22 @@ class JobMetric(@JsonValue val classesByGroup: Map<String, NewMetric>) {
                 )
             )
         )
-        for ((_, value) in classesByGroup) {
-            append(
-                CsvFile.toCsvString(
-                    listOf(
-                        value.settings.annotation,
-                        value.settings.group,
-                        value.macro.precision,
-                        value.macro.recall,
-                        value.macro.f1,
-                        value.micro.accuracy, // todo other micros
-                        value.classes.hypCount,
-                        value.classes.truePositive.count,
-                        value.classes.falseNegative.count,
-                        value.classes.noMatch.count,
-                    )
+        append(
+            CsvFile.toCsvString(
+                listOf(
+                    metrics.settings.annotation,
+                    metrics.settings.group,
+                    metrics.macro.precision,
+                    metrics.macro.recall,
+                    metrics.macro.f1,
+                    metrics.micro.accuracy, // todo other micros
+                    metrics.classes.hypCount,
+                    metrics.classes.truePositive.count,
+                    metrics.classes.falseNegative.count,
+                    metrics.classes.noMatch.count,
                 )
             )
-        }
+        )
     }
 
     companion object {
@@ -53,22 +52,31 @@ class JobMetric(@JsonValue val classesByGroup: Map<String, NewMetric>) {
             docEvals: DocumentEvaluations,
             annotation: Annotation,
             group: Annotation,
-        ): JobMetric =
-            JobMetric(
+        ): JobMetrics =
+            JobMetrics(
                 corpus.documents
-                    .readAllSequence()
-                    .map {
-                        docEvals.createOrThrow(it.name).getMetrics(annotation, group).classesByGroup
+                    .readAll()
+                    .parallelMap {
+                        if (docEvals.jobs.filter == null) {
+                            docEvals.createOrThrow(it.name).getMetrics(annotation, group).metrics
+                        } else {
+                            DocumentMetrics.create(
+                                    docEvals.createOrThrow(it.name).layerComparison,
+                                    annotation,
+                                    group,
+                                )
+                                .metrics
+                        }
                     }
                     .reduce { map1, map2 ->
-                        map1.merge(map2) { a, b ->
-                            a.apply { grouped.merge(b.grouped) { x, y -> x.add(y) } }
-                        } as MutableMap<String, NewMetric>
+                        map1.grouped.merge(map2.grouped) { x, y ->
+                            x.add(y, truncate = docEvals.jobs.filter == null)
+                        }
+                        map1
                     }
-                    .mapValues { NewMetric(it.value.settings, it.value.grouped) }
             )
 
-        fun toCsv(metric: NewMetric): CsvString = buildString {
+        fun toCsv(metric: Metrics): CsvString = buildString {
             append(
                 CsvFile.toCsvString(
                     listOf(

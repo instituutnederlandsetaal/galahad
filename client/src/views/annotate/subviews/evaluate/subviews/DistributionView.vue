@@ -129,7 +129,7 @@ const annotationFilter = ref<string>("")
 const typeFilter = ref<string>("")
 const groupOptions = computed(() =>
     // only logical groups
-    hypothesisAnnotations.value.filter((option: SelectOption) => !["lemma", "head", "token"].includes(option.text)),
+    hypothesisAnnotations.value.filter((option: SelectOption) => !["head", "token"].includes(option.text)),
 )
 const analysesOptions: SelectOption[] = [
     { value: "single", text: "Single" },
@@ -181,7 +181,7 @@ watchPostEffect(() => {
     selectedAnnotation.value = annotationOptions.value[0]?.value
 })
 watchPostEffect(() => {
-    selectedGroup.value = groupOptions.value[0]?.value
+    selectedGroup.value = groupOptions.value[1]?.value
 })
 watchPostEffect(() => {
     selectedGroups.value = groupsOptions.value

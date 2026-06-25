@@ -6,7 +6,7 @@ import org.ivdnt.galahad.corpora.Corpus
 import org.ivdnt.galahad.evaluation.confusion.JobConfusion
 import org.ivdnt.galahad.evaluation.distribution.JobDistribution
 import org.ivdnt.galahad.evaluation.entities.JobEntities
-import org.ivdnt.galahad.evaluation.metrics.JobMetric
+import org.ivdnt.galahad.evaluation.metrics.JobMetrics
 import org.ivdnt.galahad.files.GalahadFolder
 import org.ivdnt.galahad.files.ValidatedDiskValue
 import org.ivdnt.galahad.layers.CorpusLayer
@@ -60,13 +60,13 @@ class JobEvaluation(dir: File, private val corpus: Corpus, private val jobs: Job
             }
             .readOrCreate()
 
-    fun getMetrics(annotation: Annotation, group: Annotation): JobMetric =
-        object : ValidatedDiskValue<JobMetric>(dir.resolve("metrics.$annotation.$group.json")) {
+    fun getMetrics(annotation: Annotation, group: Annotation): JobMetrics =
+        object : ValidatedDiskValue<JobMetrics>(dir.resolve("metrics.$annotation.$group.json")) {
                 override fun isValid(modified: Long) =
                     modified >= maxOf(refJob.modified, hypJob.modified)
 
-                override fun set(): JobMetric =
-                    JobMetric.create(corpus, documents, annotation, group)
+                override fun set(): JobMetrics =
+                    JobMetrics.create(corpus, documents, annotation, group)
             }
             .readOrCreate()
 

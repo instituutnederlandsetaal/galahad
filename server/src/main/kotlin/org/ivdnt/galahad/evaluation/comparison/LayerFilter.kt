@@ -5,7 +5,7 @@ package org.ivdnt.galahad.evaluation.comparison
  * samples you want.
  */
 interface LayerFilter {
-    val hypoTermFilter: TermFilter
+    val hypTermFilter: TermFilter
     val refTermFilter: TermFilter
 
     fun filter(comp: TermComparison): Boolean
@@ -17,11 +17,11 @@ interface LayerFilter {
  * logical AND.
  */
 class ConfusionLayerFilter(
-    override val hypoTermFilter: TermFilter,
+    override val hypTermFilter: TermFilter,
     override val refTermFilter: TermFilter,
 ) : LayerFilter {
     override fun filter(comp: TermComparison): Boolean =
-        hypoTermFilter.filter(comp.hyp) && refTermFilter.filter(comp.ref)
+        hypTermFilter.filter(comp.hyp) && refTermFilter.filter(comp.ref)
 }
 
 /**
@@ -30,9 +30,9 @@ class ConfusionLayerFilter(
  * (hypo:VRB, ref:NOU) false negative. Hence, a logical OR.
  */
 class MetricsLayerFilter(
-    override val hypoTermFilter: TermFilter,
+    override val hypTermFilter: TermFilter,
     override val refTermFilter: TermFilter,
 ) : LayerFilter {
     override fun filter(comp: TermComparison): Boolean =
-        hypoTermFilter.filter(comp.hyp) || refTermFilter.filter(comp.ref)
+        hypTermFilter.filter(comp.hyp) || refTermFilter.filter(comp.ref)
 }

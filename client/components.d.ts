@@ -59,7 +59,6 @@ declare module 'vue' {
     JobProgressBar: typeof import('./src/components/modals/jobs/JobProgressBar.vue')['default']
     JobProgressBarSegment: typeof import('./src/components/modals/jobs/JobProgressBarSegment.vue')['default']
     JobsHelp: typeof import('./src/components/help/JobsHelp.vue')['default']
-    JobsTable: typeof import('./src/components/tables/annotate/JobsTable.vue')['default']
     KeyValues: typeof import('./src/components/ui/KeyValues.vue')['default']
     LayerSelect: typeof import('./src/components/input/select/LayerSelect.vue')['default']
     LayerViewer: typeof import('./src/components/tables/LayerViewer.vue')['default']

@@ -52,11 +52,11 @@ export function getDistribution(
  */
 export function getConfusion(
     corpus: UUID,
-    hypothesis: string,
+    layer: string,
     reference: string,
     annotation: string,
 ): Promise<ConfusionResponse> {
-    return axios.get(endpoints.evaluation.confusion.base({ corpus, layer: hypothesis }, { reference, annotation }))
+    return axios.get(endpoints.evaluation.confusion.base({ corpus, layer }, { reference, annotation }))
 }
 
 /**
@@ -66,17 +66,17 @@ export function getConfusion(
  * @param reference Tagger job name as reference layer.
  */
 export function getMetrics(corpus: UUID, hypothesis: string, reference: string): Promise<MetricsResponse> {
-    return axios.get(metricsPath(corpus, hypothesis), { params: { reference } })
+    return axios.get(endpoints.evaluation.metrics.base({ corpus, layer: hypothesis }, { reference }))
 }
 
 export function getGroupedMetrics(
     corpus: UUID,
-    hypothesis: string,
+    layer: string,
     reference: string,
     annotation: string,
     group: string,
 ): Promise<MetricsResponse> {
-    return axios.get(endpoints.evaluation.metrics.base({ corpus, layer: hypothesis }, { reference, annotation, group }))
+    return axios.get(endpoints.evaluation.metrics.base({ corpus, layer }, { reference, annotation, group }))
 }
 /**
  * Download evaluation zip.
@@ -85,7 +85,7 @@ export function getGroupedMetrics(
  * @param reference  Tagger job name as reference layer.
  */
 export function getDownloadEvaluation(corpus: UUID, hypothesis: string, reference: string): Promise<BlobResponse> {
-    return getBlob(downloadPath(corpus), { params: { reference, hypothesis } })
+    return getBlob(endpoints.evaluation.download({ corpus, layer: hypothesis }, { reference }))
 }
 
 /**
@@ -98,69 +98,59 @@ export function getDownloadEvaluation(corpus: UUID, hypothesis: string, referenc
  */
 export function getConfusionSamples(
     corpus: UUID,
-    hypothesis: string,
+    layer: string,
     reference: string,
-    hypoFilter: string,
-    refFilter: string,
     annotation: string,
+    hypFilter: string,
+    refFilter: string,
 ): Promise<BlobResponse> {
     return getBlob(
-        endpoints.evaluation.confusion.samples(
-            { corpus, layer: hypothesis },
-            { reference, annotation, hypoFilter, refFilter },
+        endpoints.evaluation.confusion.samples({ corpus, layer }, { reference, annotation, hypFilter, refFilter }),
+    )
+}
+
+export function getMetricsSamples(
+    corpus: UUID,
+    layer: string,
+    reference: string,
+    annotation: string,
+    group: string,
+    classification: string,
+    groupFilter?: string,
+): Promise<BlobResponse> {
+    return getBlob(
+        endpoints.evaluation.metrics.download(
+            { corpus, layer },
+            { reference, annotation, group, classification, groupFilter },
         ),
     )
 }
 
-/**
- * Download metrics samples as zip.
- * @param corpus UUID of the corpus.
- * @param hypothesis Tagger job name as hypothesis layer.
- * @param reference  Tagger job name as reference layer.
- * @param setting Setting for the metrics. E.g. 'posByPos'
- * @param classType Class type for the metrics. E.g. 'truePositive'.
- * @param group Group for the metrics. E.g. 'pos' or 'lemma'.
- */
-export function getMetricsSamples(
-    corpus: UUID,
-    hypothesis: string,
-    reference: string,
-    setting: string,
-    classType: string,
-    group?: string,
-): Promise<BlobResponse> {
-    const params: Record<string, string> = { reference, metricsType: setting, class: classType }
-    if (group) {
-        params.group = group
-    }
-    return getBlob(metricsSamplesPath(corpus, hypothesis), { params })
-}
+// /**
+//  * Fetch the document layer comparison of a single document comparing the job layer to the reference layer.
+//  * @param corpus UUID of the corpus.
+//  * @param job Job name.
+//  * @param document Document name.
+//  * @param reference Reference layer name.
+//  * @returns Document layer comparison.
+//  */
+// export function getDocumentLayerComparison(
+//     corpus: UUID,
+//     job: string,
+//     document: string,
+//     reference: string,
+// ): Promise<AxiosResponse<TermComparison[]>> {
+//     return axios.get(documentLayerComparisonPath(corpus, document), { params: { reference, hypothesis: job } })
+// }
 
-/**
- * Fetch the document layer comparison of a single document comparing the job layer to the reference layer.
- * @param corpus UUID of the corpus.
- * @param job Job name.
- * @param document Document name.
- * @param reference Reference layer name.
- * @returns Document layer comparison.
- */
-export function getDocumentLayerComparison(
-    corpus: UUID,
-    job: string,
-    document: string,
-    reference: string,
-): Promise<AxiosResponse<TermComparison[]>> {
-    return axios.get(documentLayerComparisonPath(corpus, document), { params: { reference, hypothesis: job } })
-}
+// export function getDocumentEntities(corpus: UUID, job: string, document: string): Promise<DocumentEntitiesResponse> {
+//     return axios.get(documentEntitiesPath(corpus, job, document))
+// }
 
-export function getDocumentEntities(corpus: UUID, job: string, document: string): Promise<DocumentEntitiesResponse> {
-    return axios.get(documentEntitiesPath(corpus, job, document))
-}
+// export function getJobEntities(corpus: UUID, job: string): Promise<JobEntitiesResponse> {
+//     return axios.get(jobEntitiesPath(corpus, job))
+// }
 
-export function getJobEntities(corpus: UUID, job: string): Promise<JobEntitiesResponse> {
-    return axios.get(jobEntitiesPath(corpus, job))
-}
-
-export function getJobsEntities(corpus: UUID): Promise<JobsEntitiesResponse> {
-    return axios.get(jobsEntitiesPath(corpus))
-}
+// export function getJobsEntities(corpus: UUID): Promise<JobsEntitiesResponse> {
+//     return axios.get(jobsEntitiesPath(corpus))
+// }

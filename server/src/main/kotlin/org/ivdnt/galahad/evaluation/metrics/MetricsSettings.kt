@@ -227,7 +227,7 @@ class FrequencyMetricsSettings(
     }
 }
 
-/** Used by [DocumentMetric] to instantiate each setting. */
+/** Used by [DocumentMetrics] to instantiate each setting. */
 val METRIC_TYPES: List<MetricsSettings> =
     listOf(
         // Pos

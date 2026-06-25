@@ -39,11 +39,11 @@
                     </GForm>
                     <aside>
                         <p>Micro summary:</p>
-                        <AnnotationSummary :annotations="Object.values(groupedMetrics ?? {})?.[0]?.micro ?? {}" />
+                        <AnnotationSummary :annotations="groupedMetrics?.micro ?? {}" />
                     </aside>
                     <aside>
                         <p>Macro summary:</p>
-                        <AnnotationSummary :annotations="Object.values(groupedMetrics ?? {})?.[0]?.macro ?? {}" />
+                        <AnnotationSummary :annotations="groupedMetrics?.macro ?? {}" />
                     </aside>
                 </template>
                 <p v-else>Select a reference layer and a hypothesis layer</p>
@@ -82,7 +82,6 @@ import useGroupedMetrics from "@/stores/evaluation/groupedMetrics"
 import type { Column, TableData } from "@/types/ui/table"
 import type { MetricsRow } from "@/types/evaluation"
 
-// Stores
 const { commonAnnotations, hypothesisId, referenceId, hypothesisLayer, referenceLayer } = storeToRefs(useLayers())
 const {
     loading,
@@ -90,8 +89,7 @@ const {
     annotation: selectedAnnotation,
     group: selectedGroup,
 } = storeToRefs(useGroupedMetrics())
-// const corporaStore = useCorpora()
-// const jobSelection = useLayers()
+const { corpusId } = storeToRefs(useCorpora())
 
 const tableData = ref()
 
@@ -110,45 +108,6 @@ const analysesOptions: SelectOption[] = [
     { value: "both", text: "Both" },
 ]
 const selectedAnalysis = ref<string>(analysesOptions[0].value)
-
-// Fields
-// const downloading = ref<boolean>()
-// const selectedGrouping = ref<string>("lemmaByLemma")
-// const groupingOptions = computed(() => Object.keys(metrics.value ?? {}).map((key) => ({ value: key, text: key })))
-
-// const columns = computed(() => metricsPerPosColumns)
-// const metricsFilter = useTemplateRef<InstanceType<typeof MetricsFilter>>("metricsFilter")
-// const metricName = computed(() => {
-//     return metricsFilter.value?.metricName
-// })
-
-// const posMetrics = computed(() => {
-//     if (metrics.value?.[selectedGrouping.value] == null) return []
-//     console.log(metrics.value[selectedGrouping.value])
-//     // Copy over the metrics (depending on selectedMetric.value) from:
-//     // { ADJ: { ADJ: { pos : { f1, recall, ... }, lemma : { f1, recall, ... } } } } }
-//     // to:
-//     // { ADJ: { ADJ: { f1, recall, ..., } } }
-//     const ret = Object.entries(metrics.value[selectedGrouping.value]?.grouped ?? {}).map(([name, i]) => ({
-//         column: selectedGrouping.value.split("By")[1].toLowerCase(),
-//         name: name,
-//         count: i.count,
-//         truePositive: i.truePositive,
-//         falsePositive: i.falsePositive,
-//         falseNegative: i.falseNegative,
-//         noMatch: i.noMatch,
-//         precision: i.metrics.precision,
-//         recall: i.metrics.recall,
-//         f1: i.metrics.f1,
-//     }))
-//     return ret
-// })
-// const singlePosMetrics = computed(() => {
-//     return Object.values(posMetrics.value).filter((pos) => !pos.name.includes("+"))
-// })
-// const multiPosMetrics = computed(() => {
-//     return Object.values(posMetrics.value).filter((pos) => pos.name.includes("+"))
-// })
 
 // Table data
 const columns = computed((): Column<MetricsRow>[] => [
@@ -183,12 +142,10 @@ const columns = computed((): Column<MetricsRow>[] => [
     },
     { key: "noMatch", label: "no match", button: true, sortOn: (x: MetricsRow): number => x.noMatch.count },
 ])
-
 const grouped = computed(() => {
     if (!groupedMetrics.value) return []
-    return Object.values(groupedMetrics.value)[0].grouped
+    return groupedMetrics.value.grouped
 })
-
 const items = computed(() => {
     if (!grouped.value) return []
     return Object.entries(grouped.value).map((entry) => ({
@@ -209,6 +166,28 @@ const filteredItems = computed(() => {
     }
     return items.value
 })
+
+// Methods
+const downloading = ref<boolean>(false)
+function download(data: TableData<any>) {
+    const classification = data.column.key
+    const groupFilter = data.item.group
+    downloading.value = true
+    API.getMetricsSamples(
+        // TODO plausible
+        corpusId.value,
+        hypothesisId.value,
+        referenceId.value,
+        selectedAnnotation.value,
+        selectedGroup.value,
+        classification,
+        groupFilter,
+    )
+        .then((response) => {
+            Utils.browserDownloadResponseFile(response)
+        })
+        .finally(() => (downloading.value = false))
+}
 
 // Default select options
 watchPostEffect(() => {

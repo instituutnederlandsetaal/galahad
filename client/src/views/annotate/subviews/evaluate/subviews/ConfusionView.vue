@@ -131,9 +131,9 @@ function download(data: TableData<any>) {
         corpusId.value,
         hypothesisId.value,
         referenceId.value,
+        selectedAnnotation.value,
         hypothesisPos,
         referencePos,
-        selectedAnnotation.value,
     )
         .then((response) => {
             Utils.browserDownloadResponseFile(response)

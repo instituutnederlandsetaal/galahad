@@ -25,20 +25,20 @@ class CsvSampleExporter {
 
             // header
             val columns: MutableList<String> = mutableListOf("token")
-            columns.addAll(refColumns.map { "${refMeta.tagger.name} ${it.value}" })
             columns.addAll(hypoColumns.map { "${hypoMeta.tagger.name} ${it.value}" })
+            columns.addAll(refColumns.map { "${refMeta.tagger.name} ${it.value}" })
             csv += CsvFile.toCsvString(columns)
 
             // body
             comps?.forEach { termComp ->
                 val literal = termComp.hyp.token.ifEmpty { termComp.ref.token }
-                val refAnnots = refColumns.map {
-                    termComp.ref.annotations[it] ?: Term.missingName(it)
-                }
                 val hypoAnnots = hypoColumns.map {
                     termComp.hyp.annotations[it] ?: Term.missingName(it)
                 }
-                csv += CsvFile.toCsvString(listOf(literal) + refAnnots + hypoAnnots)
+                val refAnnots = refColumns.map {
+                    termComp.ref.annotations[it] ?: Term.missingName(it)
+                }
+                csv += CsvFile.toCsvString(listOf(literal) + hypoAnnots + refAnnots)
             }
             return csv
         }

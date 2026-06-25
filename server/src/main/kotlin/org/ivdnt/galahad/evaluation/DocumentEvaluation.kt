@@ -8,7 +8,7 @@ import org.ivdnt.galahad.evaluation.comparison.LayerComparison
 import org.ivdnt.galahad.evaluation.confusion.DocumentConfusion
 import org.ivdnt.galahad.evaluation.distribution.DocumentDistribution
 import org.ivdnt.galahad.evaluation.entities.DocumentEntities
-import org.ivdnt.galahad.evaluation.metrics.DocumentMetric
+import org.ivdnt.galahad.evaluation.metrics.DocumentMetrics
 import org.ivdnt.galahad.evaluation.spans.DocumentSpanEvaluation
 import org.ivdnt.galahad.files.GalahadFolder
 import org.ivdnt.galahad.files.ValidatedDiskValue
@@ -91,13 +91,15 @@ class DocumentEvaluation(dir: File, private val corpus: Corpus, private val jobs
             }
             .readOrCreate()
 
-    fun getMetrics(annotation: Annotation, group: Annotation): DocumentMetric =
+    fun getMetrics(annotation: Annotation, group: Annotation): DocumentMetrics =
         object :
-                ValidatedDiskValue<DocumentMetric>(dir.resolve("metrics.$annotation.$group.json")) {
+                ValidatedDiskValue<DocumentMetrics>(
+                    dir.resolve("metrics.$annotation.$group.json")
+                ) {
                 override fun isValid(modified: Long) = modified >= lastModified
 
-                override fun set(): DocumentMetric =
-                    DocumentMetric.create(
+                override fun set(): DocumentMetrics =
+                    DocumentMetrics.create(
                         layerComparison,
                         annotation,
                         group,

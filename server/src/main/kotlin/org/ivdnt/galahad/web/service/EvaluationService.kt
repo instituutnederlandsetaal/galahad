@@ -6,18 +6,20 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.io.path.createTempDirectory
 import org.ivdnt.galahad.annotations.Annotation
+import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER
 import org.ivdnt.galahad.corpora.CorpusStatistics
 import org.ivdnt.galahad.evaluation.JobPair
 import org.ivdnt.galahad.evaluation.comparison.ConfusionLayerFilter
 import org.ivdnt.galahad.evaluation.comparison.HeadGroupTermFilter
+import org.ivdnt.galahad.evaluation.comparison.MetricsLayerFilter
 import org.ivdnt.galahad.evaluation.confusion.JobConfusion
 import org.ivdnt.galahad.evaluation.csv.CsvFile
 import org.ivdnt.galahad.evaluation.csv.CsvSampleExporter.Companion.samplesToCSV
 import org.ivdnt.galahad.evaluation.distribution.DocumentDistribution
 import org.ivdnt.galahad.evaluation.distribution.TypeToken
 import org.ivdnt.galahad.evaluation.entities.CorpusEntities
-import org.ivdnt.galahad.evaluation.metrics.DocumentMetric
-import org.ivdnt.galahad.evaluation.metrics.JobMetric
+import org.ivdnt.galahad.evaluation.metrics.DocumentMetrics
+import org.ivdnt.galahad.evaluation.metrics.JobMetrics
 import org.ivdnt.galahad.util.toValidFileName
 import org.ivdnt.galahad.util.zipDir
 import org.springframework.stereotype.Service
@@ -25,7 +27,7 @@ import org.springframework.stereotype.Service
 @Service
 class EvaluationService(private val corpora: CorporaService) {
     fun getConfusionSamples(
-        hypoFilter: String,
+        hypFilter: String,
         refFilter: String,
         annotation: Annotation,
         corpus: UUID,
@@ -38,12 +40,12 @@ class EvaluationService(private val corpora: CorporaService) {
         //        }
         val filter =
             ConfusionLayerFilter(
-                HeadGroupTermFilter(annotation, hypoFilter),
+                HeadGroupTermFilter(annotation, hypFilter),
                 HeadGroupTermFilter(annotation, refFilter),
             )
         val corpusObj = corpora.readOrThrow(corpus)
         val jobEval = corpusObj.evaluation.createOrThrow(JobPair(layer, reference, filter = filter))
-        val fileName = "confusion-${refFilter}-${hypoFilter}.csv"
+        val fileName = "confusion-$refFilter-$hypFilter.csv"
         val confusion = JobConfusion.create(corpusObj, jobEval.documents, annotation).confusion
         val csv =
             samplesToCSV(
@@ -54,72 +56,37 @@ class EvaluationService(private val corpora: CorporaService) {
         return samplesToZip(corpus, layer, reference, csv, fileName)
     }
 
-    //    fun getMetrics(corpus: UUID, job: String, reference: String?): CorpusMetrics {
-    //        val corpusObj = corpora.readOrThrow(corpus, user)
-    //        val allAnnots = annotationTypesForTagger(job, corpus)
-    //        val settings =
-    //            METRIC_TYPES.filter { it.requiredAnnotations.all { it in allAnnots }
-    // }.toMutableList()
-    //        //        val freq = TokenFrequency(corpusObj, job)
-    //        //        val freqSettings = settings.map { FrequencyMetricsSettings(freq, it) }
-    //        //        settings.addAll(freqSettings)
-    //        val cm =
-    //            CorpusMetrics(
-    //                corpusObj,
-    //                settings = settings,
-    //                hypothesis = job,
-    //                reference = if (reference.isNullOrBlank()) SOURCE_LAYER else reference,
-    //            )
-    //        return cm
-    //    }
-
     fun getMetricsSamples(
-        metricsTypeStr: String,
-        group: String?,
         corpus: UUID,
-        job: String,
-        reference: String,
-        classType: String,
+        layer: String,
+        reference: String = SOURCE_LAYER,
+        annotation: Annotation,
+        group: Annotation,
+        classification: String,
+        groupFilter: String? = null,
     ): ByteArray {
-        return samplesToZip(corpus, job, reference, "a,b,c", "dummy.csv")
-        //        val metricsType = METRIC_TYPES.firstOrNull { it.id == metricsTypeStr }
-        //        if (metricsType == null) {
-        //            val validMetricsTypes = METRIC_TYPES.map { it.id }
-        //            throw InvalidMetricsTypeException(
-        //                "Metrics type $metricsTypeStr does not exist. Valid types are
-        // $validMetricsTypes"
-        //            )
-        //        }
-        //        val classType = ClassificationType.fromString(classType)
-        //
-        //        val layerFilter =
-        //            if (group == null) null
-        //            else {
-        //                val hypoFilter = HeadGroupTermFilter(metricsType.groupAnnotation, group)
-        //                val refFilter = HeadGroupTermFilter(metricsType.groupAnnotation, group)
-        //                MetricsLayerFilter(hypoFilter, refFilter)
-        //            }
-        //
-        //        val cm =
-        //            CorpusMetrics(
-        //                corpus = corpora.readOrThrow(corpus),
-        //                hypothesis = job,
-        //                reference = reference,
-        //                layerFilter = layerFilter,
-        //                truncate = false,
-        //                settings = listOf(metricsType),
-        //            )
-        //        val mt = cm.metricTypes.values.first()
-        //
-        //        if (group != null) {
-        //            val fileName = "metrics-$reference-$job-${classType}-${group}.csv"
-        //            val csv = mt.samplesToCsv(group, classType)
-        //            return samplesToZip(corpus, job, reference, csv, fileName)
-        //        } else {
-        //            val fileName = "metrics-$reference-$job-${mt.setting.id}-${classType}.csv"
-        //            val csv = mt.samplesToCsv(classType)
-        //            return samplesToZip(corpus, job, reference, csv, fileName)
-        //        }
+        val filter =
+            if (groupFilter != null)
+                MetricsLayerFilter(
+                    HeadGroupTermFilter(group, groupFilter),
+                    HeadGroupTermFilter(group, groupFilter),
+                )
+            else null
+        val corpusObj = corpora.readOrThrow(corpus)
+        val jobEval = corpusObj.evaluation.createOrThrow(JobPair(layer, reference, filter = filter))
+        val metrics = JobMetrics.create(corpusObj, jobEval.documents, annotation, group)
+        val csv =
+            samplesToCSV(
+                metrics.metrics.grouped.entries
+                    .first { it.key == groupFilter }
+                    .value
+                    .classification(classification)
+                    .samples,
+                jobEval.hypJob,
+                jobEval.refJob,
+            )
+        val fileName = "metrics-$annotation-$group-$classification.csv"
+        return samplesToZip(corpus, layer, reference, csv, fileName)
     }
 
     //    fun getLayerComparison(
@@ -186,10 +153,10 @@ class EvaluationService(private val corpora: CorporaService) {
         val globFile = CsvFile(dir.resolve("metrics-global.csv"))
         globFile.append(metrics.toGlobalCsv())
 
-        metrics.classesByGroup.values.forEach { mt ->
-            val file = CsvFile(dir.resolve("metrics-${mt.settings.name}.csv"))
-            file.append(JobMetric.toCsv(mt))
-        }
+        //        metrics.classesByGroup.values.forEach { mt ->
+        //            val file = CsvFile(dir.resolve("metrics-${mt.settings.name}.csv"))
+        //            file.append(JobMetric.toCsv(mt))
+        //        }
     }
 
     private fun writeMetadataToDir(
@@ -313,7 +280,7 @@ class EvaluationService(private val corpora: CorporaService) {
         reference: String,
         annotation: Annotation,
         group: Annotation,
-    ): DocumentMetric {
+    ): DocumentMetrics {
         val corpusObj = corpora.readOrThrow(corpus)
         val jobEval = corpusObj.evaluation.createOrThrow(JobPair(hypothesis, reference))
         val docEval = jobEval.documents.createOrThrow(document)
@@ -326,7 +293,7 @@ class EvaluationService(private val corpora: CorporaService) {
         reference: String,
         annotation: Annotation,
         group: Annotation,
-    ): JobMetric {
+    ): JobMetrics {
         val corpusObj = corpora.readOrThrow(corpus)
         val jobEval = corpusObj.evaluation.createOrThrow(JobPair(hypothesis, reference))
         return jobEval.getMetrics(annotation, group)
