@@ -1,6 +1,6 @@
 <template>
     <GCard>
-        <GTable title="Distribution" :columns :loading :items sortColumn="count">
+        <GTable title="Type-Token Distribution" :columns :loading :items sortColumn="count">
             <template #help>
                 <p>
                     The distribution shows what lemma, part-of-speech pairs have been assigned to which types. When
@@ -57,11 +57,6 @@
                 </GForm>
                 <p v-else>Select a hypothesis layer.</p></template
             >
-
-            <!-- unique -->
-            <template #cell-unique="d: TableData<TypeToken>">
-                <div>{{ `${Object.keys(d.item.tokens).length}` }}</div>
-            </template>
 
             <!-- types -->
             <template #cell-types="d: TableData<TypeToken>">
@@ -128,15 +123,14 @@ const { distribution, loading, annotation: selectedAnnotation, group: selectedGr
 // Form
 const annotationOptions = computed(() =>
     // only logical annotations
-    hypothesisAnnotations.value.filter((option: SelectOption) => !["head"].includes(option.text)),
+    hypothesisAnnotations.value.filter((option: SelectOption) => !["head", "token"].includes(option.text)),
 )
 const annotationFilter = ref<string>("")
 const typeFilter = ref<string>("")
 const groupOptions = computed(() =>
     // only logical groups
-    hypothesisAnnotations.value.filter((option: SelectOption) => !["lemma", "head"].includes(option.text)),
+    hypothesisAnnotations.value.filter((option: SelectOption) => !["lemma", "head", "token"].includes(option.text)),
 )
-
 const analysesOptions: SelectOption[] = [
     { value: "single", text: "Single" },
     { value: "multiple", text: "Multiple" },
@@ -157,17 +151,17 @@ const groupsOptions = computed(() => {
 })
 const selectedGroups = ref<string[]>([])
 
-// GModal for variants
+// GModal
 const typeToken = ref<TypeToken>()
 
+// Table data
 const columns = computed(() => [
     { key: "annotation", label: selectedAnnotation.value },
     { key: "group", label: selectedGroup.value },
     { key: "count", align: "right" },
-    { key: "unique", label: "unique", align: "right", sortOn: (t: TypeToken) => Object.keys(t.tokens).length },
+    { key: "unique", label: "unique", align: "right", format: (t: TypeToken) => Object.keys(t.tokens).length },
     { key: "types", noSort: true },
 ])
-
 const items = computed((): TypeToken[] => {
     if (!distribution.value) return []
     return (
@@ -182,27 +176,14 @@ const items = computed((): TypeToken[] => {
     )
 })
 
-watchPostEffect(
-    // annotationOptions,
-    () => {
-        selectedAnnotation.value = annotationOptions.value[0]?.value
-    },
-    // { immediate: true },
-)
-
-watchPostEffect(
-    // groupOptions,
-    () => {
-        selectedGroup.value = hypothesisAnnotations.value[1]?.value
-    },
-    // { immediate: true },
-)
-
-watchPostEffect(
-    // groupsOptions,
-    () => {
-        selectedGroups.value = groupsOptions.value
-    },
-    // { immediate: true },
-)
+// Default select options
+watchPostEffect(() => {
+    selectedAnnotation.value = annotationOptions.value[0]?.value
+})
+watchPostEffect(() => {
+    selectedGroup.value = groupOptions.value[0]?.value
+})
+watchPostEffect(() => {
+    selectedGroups.value = groupsOptions.value
+})
 </script>

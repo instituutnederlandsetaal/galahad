@@ -10,7 +10,7 @@
             </p>
         </template>
 
-        <GTable :loading :columns :items sortColumn="period">
+        <GTable :columns :items :loading sortColumn="period">
             <template #empty>
                 No taggers appeared? That is not right! Please contact the INT at
                 <MailAddress />.
@@ -33,7 +33,8 @@
 
 <script setup lang="ts">
 import useTaggers from "@/stores/static/taggers"
-import type { Period, Tagger } from "@/types/taggers"
+import { formatPeriod } from "@/ts/utils"
+import type { Tagger } from "@/types/taggers"
 import type { Column, TableData } from "@/types/ui/table"
 
 const { taggers: items, loading } = storeToRefs(useTaggers())
@@ -42,18 +43,10 @@ const columns: Column<Tagger>[] = [
     { key: "name" },
     { key: "description" },
     { key: "language" },
-    {
-        key: "period",
-        sortOn: (t: Tagger): string => formatPeriod(t.period),
-        format: (t: Tagger): string => formatPeriod(t.period),
-    },
+    { key: "period", format: (t: Tagger): string | undefined => formatPeriod(t.period) },
     { key: "annotations", sortOn: (t: Tagger): string => t.annotations.map((a) => a.annotation).join() },
     { key: "attributions", noSort: true },
 ]
-
-function formatPeriod(period: Period): string {
-    return `${period.from} – ${period.to}`
-}
 
 /** Mark the active row, retrieved from the url anchor. */
 function markActive(name: string): string {

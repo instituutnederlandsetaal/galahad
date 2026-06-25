@@ -85,13 +85,16 @@ type ConfusionRow = { [key: string]: EvaluationEntry } & { referenceAnnotation: 
 // Form
 const annotationOptions = computed(() =>
     // only logical annotations
-    commonAnnotations.value.filter((option: SelectOption) => !["lemma", "head", "group"].includes(option.text)),
+    commonAnnotations.value.filter(
+        (option: SelectOption) => !["lemma", "head", "group", "token"].includes(option.text),
+    ),
 )
 
-// modal
+// Gmodal
 const tableData = ref<TableData<any>>()
 const downloading = ref<boolean>()
 
+// Table data
 const columns = computed((): Column<ConfusionRow>[] => {
     if (!confusion.value) return []
     const cols = [...new Set(Object.values(confusion.value).flatMap((c: Confusion) => Object.keys(c)))]
@@ -112,7 +115,6 @@ const columns = computed((): Column<ConfusionRow>[] => {
     })
     return cols
 })
-
 const items = computed((): ConfusionRow[] => {
     if (!confusion.value) return []
     return Object.entries(confusion.value).map((entry) => ({ ...entry[1], referenceAnnotation: entry[0] }))
@@ -162,33 +164,8 @@ function cssClass(d: TableData<any>) {
     return { green: match, plain: !match }
 }
 
-watchPostEffect(
-    // annotationOptions,
-    () => {
-        selectedAnnotation.value = annotationOptions.value[0]?.value
-    },
-    // { immediate: true },
-)
+// Default select options
+watchPostEffect(() => {
+    selectedAnnotation.value = annotationOptions.value[0]?.value
+})
 </script>
-
-<style scoped lang="scss">
-// :deep(.confusion) td {
-//     padding: 0;
-//     span {
-//         padding: 0.4rem;
-//     }
-//     button {
-//         width: 100%;
-//         border: 0;
-//         background-color: transparent;
-
-//         &:hover {
-//             background-color: var(--int-light-grey) !important;
-//         }
-
-//         &:focus {
-//             background-color: var(--int-light-grey-hover) !important;
-//         }
-//     }
-// }
-</style>

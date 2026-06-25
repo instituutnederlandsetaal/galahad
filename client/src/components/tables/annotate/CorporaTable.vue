@@ -42,13 +42,13 @@ const { loading, corpusId, corpus, corpora } = storeToRefs(useCorpora())
 const columns: Column<CorpusMetadata>[] = [
     { key: "name" },
     { key: "documents", label: "docs", align: "right" },
-    { key: "size", align: "right", format: (c: CorpusMetadata): string => formatBytes(c.size) },
     {
-        key: "period",
-        align: "center",
-        sortOn: (c: CorpusMetadata): string | undefined => formatPeriod(c.period),
-        format: (c: CorpusMetadata): string | undefined => formatPeriod(c.period),
+        key: "size",
+        align: "right",
+        sortOn: (c: CorpusMetadata): number => c.size,
+        format: (c: CorpusMetadata): string => formatBytes(c.size),
     },
+    { key: "period", align: "center", format: (c: CorpusMetadata): string | undefined => formatPeriod(c.period) },
     { key: "tagset" },
     { key: "source" },
     { key: "language" },
