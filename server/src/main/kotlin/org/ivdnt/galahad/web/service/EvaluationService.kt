@@ -187,7 +187,7 @@ class EvaluationService(private val corpora: CorporaService) {
         globFile.append(metrics.toGlobalCsv())
 
         metrics.classesByGroup.values.forEach { mt ->
-            val file = CsvFile(dir.resolve("metrics-${mt.settings.id}.csv"))
+            val file = CsvFile(dir.resolve("metrics-${mt.settings.name}.csv"))
             file.append(JobMetric.toCsv(mt))
         }
     }
