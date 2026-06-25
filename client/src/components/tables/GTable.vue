@@ -22,7 +22,7 @@
             <table :class="classes">
                 <thead v-if="!isEmpty">
                     <tr>
-                        <th v-for="column in visibleColumns" :key="column.key">
+                        <th v-for="column in visibleColumns" :key="`${column.key}-header`">
                             <div>
                                 <!-- override head -->
                                 <slot :name="`head-${column.key}`" :column>
@@ -60,7 +60,7 @@
                 <tbody>
                     <tr
                         v-for="(item, i) in visibleItems"
-                        :key="i"
+                        :key="`row-${i}`"
                         @click="model = item"
                         :class="model === item ? 'selected' : ''"
                         :tabindex="selectable ? 0 : -1"
@@ -72,7 +72,7 @@
                     >
                         <td
                             v-for="column in visibleColumns"
-                            :key="column.key"
+                            :key="`row-${i}-column-${column.key}`"
                             :style="{ textAlign: column.align }"
                             :class="{ button: column.button }"
                         >
