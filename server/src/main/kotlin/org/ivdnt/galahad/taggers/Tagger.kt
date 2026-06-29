@@ -21,7 +21,7 @@ data class Tagger(
     // This name will be used as hostname
     // So can only contain certain characters
     var name: String = "",
-    var description: String = "",
+    var description: String? = "",
     var language: String? = "", // TODO multiple languages
     var period: CorpusMetadata.Period? = null,
     var annotations: List<AnnotationItem> = emptyList(),

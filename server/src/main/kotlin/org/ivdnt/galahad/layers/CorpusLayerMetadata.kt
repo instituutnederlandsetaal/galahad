@@ -1,6 +1,6 @@
 package org.ivdnt.galahad.layers
 
-import org.ivdnt.galahad.annotations.Layer
+import org.ivdnt.galahad.annotations.Layer.Companion.SOURCE_LAYER
 import org.ivdnt.galahad.annotations.LayerAnnotations
 import org.ivdnt.galahad.annotations.LayerAnnotations.Companion.plus
 import org.ivdnt.galahad.annotations.LayerPreview
@@ -18,10 +18,14 @@ class CorpusLayerMetadata(
     companion object {
         fun create(layers: CorpusLayer, corpus: Corpus): CorpusLayerMetadata {
             val tagger =
-                if (layers.name == Layer.SOURCE_LAYER) {
-                    Tagger.createSourceTagger(corpus)
-                } else {
+                try {
                     Tagger.readOrThrow(layers.name)
+                } catch (e: Exception) {
+                    if (layers.name == SOURCE_LAYER) {
+                        Tagger.createSourceTagger(corpus)
+                    } else {
+                        layers.customTagger
+                    }
                 }
 
             val docs = layers.documents.readAll()

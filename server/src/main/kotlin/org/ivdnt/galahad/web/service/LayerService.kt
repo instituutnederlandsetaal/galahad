@@ -1,9 +1,10 @@
 package org.ivdnt.galahad.web.service
 
+import java.util.*
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.layers.CorpusLayerMetadata
+import org.ivdnt.galahad.taggers.Tagger
 import org.springframework.stereotype.Service
-import java.util.*
 
 @Service
 class LayerService(private val corpora: CorporaService) : Logging {
@@ -12,6 +13,11 @@ class LayerService(private val corpora: CorporaService) : Logging {
 
     fun readOrThrow(corpus: UUID, layer: String): CorpusLayerMetadata =
         corpora.readOrThrow(corpus).layers.readOrThrow(layer).metadata
+
+    fun createOrThrow(corpus: UUID, tagger: Tagger) {
+        val layer = corpora.writeOrThrow(corpus).layers.createOrThrow(tagger.name)
+        layer.customTagger = tagger
+    }
 
     fun deleteOrThrow(corpus: UUID, layer: String) {
         // Delete all jobs for this layer

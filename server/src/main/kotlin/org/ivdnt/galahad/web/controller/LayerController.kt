@@ -5,17 +5,23 @@ import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.parameters.RequestBody as SwaggerRequestBody
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import jakarta.servlet.http.HttpServletResponse
+import java.util.*
 import org.apache.logging.log4j.kotlin.Logging
 import org.ivdnt.galahad.exceptions.ErrorResponse
 import org.ivdnt.galahad.layers.CorpusLayerMetadata
+import org.ivdnt.galahad.taggers.Tagger
 import org.ivdnt.galahad.web.service.LayerService
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.util.*
 
 @RestController
 class LayerController(private val layerService: LayerService) : Logging {
+
+    @Autowired private val response: HttpServletResponse? = null
 
     @Operation(
         summary = "List all layer metadata",
@@ -93,5 +99,19 @@ class LayerController(private val layerService: LayerService) : Logging {
     ): ResponseEntity<String> {
         layerService.deleteOrThrow(corpus, layer)
         return ResponseEntity.noContent().build()
+    }
+
+    @PostMapping(Endpoints.Layers.BASE)
+    fun postLayer(
+        @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
+        @RequestBody
+        @SwaggerRequestBody(
+            description = "Tagger metadata.",
+            content = [Content(schema = Schema(implementation = Tagger::class))],
+        )
+        tagger: Tagger,
+    ) {
+        response?.status = HttpServletResponse.SC_CREATED
+        layerService.createOrThrow(corpus, tagger)
     }
 }
