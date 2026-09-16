@@ -11,17 +11,17 @@ class Metrics(
     val settings: Settings,
     val grouped: MutableMap<String, ClassificationClasses> = mutableMapOf(),
 ) {
-    val classes: ClassificationClasses by lazy {
-        grouped.values
-            .takeIf { it.isNotEmpty() }
-            ?.reduce { a, b -> a + b }
-            ?.apply { // TODO truncate in web controller
-                truePositive.truncate()
-                falsePositive.truncate()
-                falseNegative.truncate()
-                noMatch.truncate()
-            } ?: ClassificationClasses()
-    }
+    val classes: ClassificationClasses
+        get() =
+            grouped.values
+                .takeIf { it.isNotEmpty() }
+                ?.reduce { a, b -> a + b }
+                ?.apply { // TODO truncate in web controller
+                    truePositive.truncate()
+                    falsePositive.truncate()
+                    falseNegative.truncate()
+                    noMatch.truncate()
+                } ?: ClassificationClasses()
 
     @get:JsonIgnore
     val untruncatedClasses: ClassificationClasses by lazy {

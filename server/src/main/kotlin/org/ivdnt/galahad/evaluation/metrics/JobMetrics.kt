@@ -1,6 +1,8 @@
 package org.ivdnt.galahad.evaluation.metrics
 
 import com.fasterxml.jackson.annotation.JsonValue
+import kotlin.collections.component1
+import kotlin.collections.component2
 import org.ivdnt.galahad.annotations.Analysis
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.corpora.Corpus
@@ -40,8 +42,10 @@ class JobMetrics(@JsonValue val metrics: Metrics) {
                         }
                     }
                     .reduce { map1, map2 ->
-                        map1.grouped.merge(map2.grouped) { x, y ->
-                            x.add(y, truncate = docEvals.jobs.filter == null)
+                        map2.grouped.forEach { (k, v) ->
+                            map1.grouped.merge(k, v!!) { x, y ->
+                                x.add(y, truncate = docEvals.jobs.filter == null)
+                            }
                         }
                         map1
                     }
