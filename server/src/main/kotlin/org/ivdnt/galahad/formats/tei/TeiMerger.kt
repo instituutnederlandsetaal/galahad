@@ -6,6 +6,7 @@ import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 import kotlin.collections.flatMap
 import org.ivdnt.galahad.annotations.Annotation
+import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.export.LayerMerger
 import org.ivdnt.galahad.util.XmlUtil
@@ -19,7 +20,8 @@ import org.w3c.dom.Node
 
 class TeiMerger(export: DocumentExport) : LayerMerger(export) {
     val xml = XmlUtil.builder.parse(export.sourceDocument.sourceFile)
-    val termIter = termComparisons.iterator()
+    // If there is no reference term, we won't even be able to find it in the source file.
+    val termIter = termComparisons.filter { it.ref != Term.EMPTY }.iterator()
     var termI = -1
     val termIndices =
         export.layer.documents.flatMap {
