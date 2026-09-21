@@ -1,7 +1,7 @@
 package org.ivdnt.galahad.web
 
 import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.client.WireMock.ok
+import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.stubFor
 import java.util.*
 import org.ivdnt.galahad.app.Config
@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.MockMvc
@@ -101,7 +102,14 @@ class TaggersControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: 
     }
 
     private fun increaseQueue(corpus: Corpus) {
-        stubFor(WireMock.post("/input").willReturn(ok().withBody(UUID.randomUUID().toString())))
+        stubFor(
+            WireMock.post("/input")
+                .willReturn(
+                    aResponse()
+                        .withStatus(HttpStatus.ACCEPTED.value())
+                        .withBody(UUID.randomUUID().toString())
+                )
+        )
         mvc.post("/corpora/${corpus.uuid}/jobs/${TestUtil.TAGGER}") { headers(::assignHeaders) }
             .andExpect { status { isAccepted() } }
     }

@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
 import org.springframework.context.annotation.Import
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.web.servlet.*
@@ -112,7 +113,14 @@ class JobsControllerTest(@Autowired val mvc: MockMvc, @Autowired val config: Con
     @Nested
     inner class JobCreationTest {
         private fun assertCreateJob(user: String) {
-            stubFor(post("/input").willReturn(ok().withBody(UUID.randomUUID().toString())))
+            stubFor(
+                post("/input")
+                    .willReturn(
+                        aResponse()
+                            .withStatus(HttpStatus.ACCEPTED.value())
+                            .withBody(UUID.randomUUID().toString())
+                    )
+            )
             val corpus = TestUtil.createFilledCorpus(config)
             assertEquals(0, getJobs(corpus).sumOf { it.progress.processing })
             performCreateJob(corpus.uuid, user).andExpect { status { isAccepted() } }

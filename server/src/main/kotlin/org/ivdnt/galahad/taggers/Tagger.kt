@@ -28,9 +28,12 @@ data class Tagger(
     var annotations: List<AnnotationItem> = emptyList(),
     /** Attributions related to the tagger, its training data and software. */
     var attributions: List<MetadataItem> = emptyList(),
-    /** Hosted port for local development only. */
-    @JsonIgnore var port: Int? = 0,
 ) {
+    /** Hosted port for local development only. */
+    // Note that his needs to be outside the constructor, or it will get serialized,
+    // even with an @JsonIgnore!
+    @JsonIgnore var port: Int? = 0
+
     /** Comma-separated names of principles used by the tagger. */
     @get:JsonIgnore
     val principleNames: String
