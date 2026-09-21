@@ -80,13 +80,7 @@
                     <w depN="4" depR="0:root" join="right" lemma="verdoren" pos="PROPN VRB(finiteness=inf)" xml:id="martijn.p2.s1.w4">verdoren</w>
                     <pc depN="5" depR="5:punct" pos="PUNCT PC" xml:id="martijn.p2.s1.w5">.</pc>
                 </s>
-                <s>
-                    <w depN="1" depR="2:subj" lemma="du+ne" pos="PROPN PD(type=pers,position=free)+ADV(type=reg)" xml:id="martijn.p2.s2.w1">Dune</w>
-                    <w depN="2" depR="0:root" lemma="achten" pos="PROPN VRB(finiteness=fin,tense=pres)" xml:id="martijn.p2.s2.w2">achtes</w>
-                    <w depN="3" depR="2:advmod" lemma="meer" pos="ADV PD(type=indef,position=free)" xml:id="martijn.p2.s2.w3">meer</w>
-                    <w depN="4" depR="3:conj" lemma="noch" msd="Number=Plur" pos="NOUN CONJ(type=coor)" xml:id="martijn.p2.s2.w4">no</w>
-                    <w depN="5" depR="3:cc" lemma="min" pos="ADV PD(type=indef,position=free)" xml:id="martijn.p2.s2.w5">min</w>
-                </s>
+                <s><w depN="1" depR="2:subj" lemma="du+ne" pos="PROPN PD(type=pers,position=free)+ADV(type=reg)" xml:id="martijn.p2.s2.w1">Dune</w> <w depN="2" depR="0:root" lemma="achten" pos="PROPN VRB(finiteness=fin,tense=pres)" xml:id="martijn.p2.s2.w2">achtes</w> <w depN="3" depR="2:advmod" lemma="meer" pos="ADV PD(type=indef,position=free)" xml:id="martijn.p2.s2.w3">me<hi>er</hi></w> <w depN="4" depR="3:conj" lemma="noch" msd="Number=Plur" pos="NOUN CONJ(type=coor)" xml:id="martijn.p2.s2.w4"><hi>no</hi></w> <w depN="5" depR="3:cc" lemma="min" pos="ADV PD(type=indef,position=free)" xml:id="martijn.p2.s2.w5"><hi>m</hi>in</w></s>
             </p>
         </body>
     </text>

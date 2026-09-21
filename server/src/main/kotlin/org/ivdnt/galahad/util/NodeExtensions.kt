@@ -12,6 +12,12 @@ fun NodeList.deepcopy(): ArrayList<Node> {
     return copy
 }
 
+val Node.isNotBlank: Boolean
+    get() =
+        this.children.any {
+            it.nodeType == Node.TEXT_NODE && !it.nodeValue.isNullOrBlank()
+        }
+
 val Node.children: Sequence<Node>
     get() =
         object : Sequence<Node> {
