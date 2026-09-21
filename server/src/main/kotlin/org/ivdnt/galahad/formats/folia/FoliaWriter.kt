@@ -8,11 +8,12 @@ import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.export.LayerWriter
 import org.ivdnt.galahad.formats.reader.PrettyXMLWriter
 import org.ivdnt.galahad.layer.LayerAnnotations.Companion.contains
-import org.ivdnt.galahad.util.XmlUtil.Companion.outputFactory
+import org.ivdnt.galahad.util.XmlUtil
 
 class FoliaWriter(export: DocumentExport) : LayerWriter(export) {
     override fun convert(out: OutputStream) {
-        val writer = PrettyXMLWriter(outputFactory.createXMLStreamWriter(out) as XMLStreamWriter2)
+        val writer =
+            PrettyXMLWriter(XmlUtil.outputFactory.createXMLStreamWriter(out) as XMLStreamWriter2)
 
         writer.writeStartDocument("UTF-8", "1.0")
         writer.writeStartElement("FoLiA")
