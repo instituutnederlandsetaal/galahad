@@ -16,10 +16,27 @@ class TeiReader(stream: InputStream) : XmlReader(stream) {
     override fun parseAttrs() {
         when (reader.localName) {
             in wordDataTags -> {
+                val deprelhead = reader.getAttributeValue(null, "depR")?.ifBlank { null }
+                if (deprelhead != null) {
+                    val parts = deprelhead.split(":")
+                    head = parts[0]
+                    deprel = parts[1]
+                }
                 lemma = reader.getAttributeValue(null, "lemma")?.ifBlank { null }
-                pos =
+                val posses =
                     reader.getAttributeValue(null, "pos")?.ifBlank { null }
                         ?: reader.getAttributeValue(null, "type")?.ifBlank { null }
+                if (posses != null) {
+                    val parts = posses.split(" ")
+                    if (parts.size == 2) {
+                        pos = parts[1]
+                        val mainUpos = parts[0]
+                        val feats = reader.getAttributeValue(null, "msd")?.ifBlank { null }
+                        upos = if (feats != null) "$mainUpos($feats)" else mainUpos
+                    } else {
+                        pos = parts[0]
+                    }
+                }
                 spaceAfter = reader.getAttributeValue(null, "join") !in arrayOf("right", "both")
             }
 

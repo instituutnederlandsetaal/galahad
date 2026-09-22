@@ -65,6 +65,11 @@ internal class TeiReaderTest : ReaderTest() {
         fun `Import highly intertwined tags`() {
             assertLayerAndText("formats/tei/reader/twine")
         }
+
+        @Test
+        fun `Import ud format`() {
+            assertLayerAndText("formats/tei/reader/ud")
+        }
     }
 
     @Nested

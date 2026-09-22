@@ -13,6 +13,7 @@ import org.ivdnt.galahad.util.XmlUtil
 
 abstract class XmlReader(stream: InputStream) : LayerReader() {
     protected var pos: String? = null
+    protected var upos: String? = null
     protected var lemma: String? = null
     protected var group: String? = null
     protected var literal: String = ""
@@ -22,6 +23,7 @@ abstract class XmlReader(stream: InputStream) : LayerReader() {
     protected var nerTargets: MutableList<Int> = mutableListOf()
 
     protected var deprel: String? = null
+    protected var head: String? = null
     protected var deprelFrom: String? = null
     protected var deprelTo: String? = null
 
@@ -205,7 +207,10 @@ abstract class XmlReader(stream: InputStream) : LayerReader() {
         val annotations = buildMap {
             lemma?.ifBlank { null }?.let { put(Annotation.LEMMA, it) }
             pos?.ifBlank { null }?.let { put(Annotation.POS, it) }
+            upos?.ifBlank { null }?.let { put(Annotation.UPOS, it) }
             group?.ifBlank { null }?.let { put(Annotation.GROUP, it) }
+            head?.ifBlank { null }?.let { put(Annotation.HEAD, it) }
+            deprel?.ifBlank { null }?.let { put(Annotation.DEPREL, it) }
             put(Annotation.TOKEN, literal)
         }
         // If inside span, set this term as a ner target
@@ -216,7 +221,10 @@ abstract class XmlReader(stream: InputStream) : LayerReader() {
         literal = ""
         lemma = null
         pos = null
+        upos = null
         group = null
+        deprel = null
+        head = null
     }
 
     companion object {

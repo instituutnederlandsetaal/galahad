@@ -95,7 +95,7 @@ class Term(
         /** Empty utility term for comparison. */
         val EMPTY: Term = Term("", mapOf(Annotation.TOKEN to ""))
         /** What annotations are part of speech. For handling features. */
-        private val POS_ANNOTATIONS = arrayOf(Annotation.POS, Annotation.UPOS)
+        val POS_ANNOTATIONS = arrayOf(Annotation.POS, Annotation.UPOS)
         /** What characters separate part of speech head and features. */
         private val POS_HEAD_SEPARATORS = arrayOf('(', '|')
 

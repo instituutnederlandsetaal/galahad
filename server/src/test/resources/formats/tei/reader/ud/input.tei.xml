@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+    <teiHeader>
+        <fileDesc>
+            <titleStmt>
+                <title>karel_en_martijn</title>
+            </titleStmt>
+        </fileDesc>
+    </teiHeader>
+    <text>
+        <body>
+            <p>
+                <s>
+                    <w depN="1" depR="2:amod" lemma="fraai" msd="Degree=Pos" pos="ADJ AA(degree=pos,position=prenom)" xml:id="karel.p1.s1.w1">Fraaie</w>
+                    <w depN="2" depR="0:root" lemma="historie" msd="Gender=Com|Number=Sing" pos="NOUN NOU-C(number=sg)" xml:id="karel.p1.s1.w2">historie</w>
+                    <w depN="3" depR="4:cc" lemma="en" pos="PROPN CONJ(type=coor)" xml:id="karel.p1.s1.w3">ende</w>
+                    <w depN="4" depR="2:conj" join="right" lemma="alwaar" pos="PROPN ADV(type=reg)" xml:id="karel.p1.s1.w4">alwaer.</w>
+                </s>
+                <s>
+                    <w depN="1" depR="4:aux" lemma="mogen" msd="Gender=Neut|Number=Sing" pos="PROPN VRB(finiteness=fin,tense=pres)" xml:id="karel.p1.s2.w1">Magh</w>
+                    <w depN="2" depR="4:nsubj" lemma="ik" msd="Number=Sing|Tense=Pres|VerbForm=Fin" pos="AUX PD(type=pers,position=free)" xml:id="karel.p1.s2.w2">'k</w>
+                    <w depN="3" depR="4:iobj" lemma="u" msd="Case=Acc|Person=2|PronType=Prs" pos="PRON PD(type=pers,position=free)" xml:id="karel.p1.s2.w3">u</w>
+                    <w depN="4" depR="0:root" join="right" lemma="vertellen" msd="VerbForm=Inf" pos="VERB VRB(finiteness=inf)" xml:id="karel.p1.s2.w4">vertellen</w>
+                    <pc depN="5" depR="4:punct" pos="PUNCT PC" xml:id="karel.p1.s2.w5">,</pc>
+                    <w depN="6" depR="4:conj" lemma="naarhoren" msd="Gender=Com|Number=Sing" pos="NOUN VRB(finiteness=fin,tense=pres)" xml:id="karel.p1.s2.w6">hoirt</w>
+                    <w depN="7" depR="6:advmod" join="right" lemma="naarhoren" pos="PROPN VRB(finiteness=fin,tense=pres)" xml:id="karel.p1.s2.w7">naer</w>
+                    <pc depN="8" depR="4:punct" pos="PUNCT PC" xml:id="karel.p1.s2.w8">.</pc>
+                </s>
+            </p>
+            <p>
+                <s>
+                    <w depN="1" depR="2:expl" lemma="het" msd="Person=3|PronType=Prs" pos="PRON PD(type=pers,position=free)" xml:id="karel.p2.s1.w1">'t</w>
+                    <w depN="2" depR="5:cop" lemma="zijn" msd="Number=Sing|Tense=Past|VerbForm=Fin" pos="AUX VRB(finiteness=fin,tense=past)" xml:id="karel.p2.s1.w2">Was</w>
+                    <w depN="3" depR="5:case" lemma="op" pos="ADP ADP(type=pre)" xml:id="karel.p2.s1.w3">op</w>
+                    <w depN="4" depR="5:det" lemma="een" msd="Number=Plur" pos="NOUN PD(type=indef,subtype=art,position=prenom)" xml:id="karel.p2.s1.w4">enen</w>
+                    <w depN="5" depR="0:root" join="right" lemma="avondstond" pos="PROPN NOU-C(number=sg)" xml:id="karel.p2.s1.w5">avondstonde</w>
+                    <pc depN="6" depR="5:punct" pos="PUNCT PC" xml:id="karel.p2.s1.w6">.</pc>
+                </s>
+                <s>
+                    <w depN="1" depR="4:expl" lemma="dat" pos="SCONJ CONJ(type=sub)" xml:id="karel.p2.s2.w1">Dat</w>
+                    <name type="B-PER">
+                        <w depN="2" depR="4:nsubj" lemma="koning" msd="Gender=Com|Number=Sing" pos="NOUN NOU-C(number=sg)" xml:id="karel.p2.s2.w2">koning</w>
+                    </name>
+                    <name type="I-PER">
+                        <w depN="3" depR="2:flat" lemma="Carel" pos="PROPN NOU-P" xml:id="karel.p2.s2.w3">Carel</w>
+                    </name>
+                    <w depN="4" depR="0:root" lemma="slaap" pos="PROPN NOU-C(number=pl)" xml:id="karel.p2.s2.w4">slaepen</w>
+                    <w depN="5" depR="4:aux" join="right" lemma="beginnen" msd="VerbForm=Part" pos="VERB VRB(finiteness=fin,tense=past)" xml:id="karel.p2.s2.w5">beghonde</w>
+                    <pc depN="6" depR="4:punct" pos="PUNCT PC" xml:id="karel.p2.s2.w6">.</pc>
+                </s>
+            </p>
+        </body>
+    </text>
+    <text>
+        <body>
+            <p>
+                <s>
+                    <pc depN="1" depR="4:punct" join="right" pos="PUNCT PC" xml:id="martijn.p1.s1.w1">"</pc>
+                    <name type="B-PER">
+                        <w depN="2" depR="4:nsubj" join="right" lemma="Martijn" msd="Gender=Com|Number=Sing" pos="PROPN NOU-P" xml:id="martijn.p1.s1.w2">Martijn</w>
+                    </name>
+                    <pc depN="3" depR="4:punct" pos="PUNCT PC" xml:id="martijn.p1.s1.w3">,</pc>
+                    <w depN="4" depR="0:root" join="right" lemma="slapen+du" msd="Gender=Com|Number=Sing" pos="NOUN VRB(finiteness=fin,tense=pres)+PD(type=pers,position=free)" xml:id="martijn.p1.s1.w4">slaepstu</w>
+                    <pc depN="5" depR="4:punct" pos="PUNCT PC" xml:id="martijn.p1.s1.w5">?</pc>
+                    <w depN="6" depR="4:cc" lemma="slapen" pos="PROPN VRB(finiteness=fin,tense=pres)" xml:id="martijn.p1.s1.w6">slaept</w>
+                    <w depN="7" depR="8:det" lemma="dijn" pos="SYM PD(type=poss,position=prenom)" xml:id="martijn.p1.s1.w7">dijn</w>
+                    <w depN="8" depR="6:nsubj" join="right" lemma="zin" msd="Gender=Com|Number=Sing" pos="PROPN NOU-C(number=sg)" xml:id="martijn.p1.s1.w8">sin</w>
+                    <pc depN="9" depR="4:punct" join="right" pos="PUNCT PC" xml:id="martijn.p1.s1.w9">?</pc>
+                    <pc depN="10" depR="4:punct" pos="PUNCT PC" xml:id="martijn.p1.s1.w10">"</pc>
+                </s>
+                <s>
+                    <w depN="1" depR="0:root" join="right" lemma="spreken" msd="Gender=Com|Number=Sing" pos="PROPN VRB(finiteness=fin,tense=pres)" xml:id="martijn.p1.s2.w1">Sprec</w>
+                    <pc depN="2" depR="1:punct" pos="PUNCT PC" xml:id="martijn.p1.s2.w2">!</pc>
+                    <w depN="3" depR="5:aux" lemma="inhebben+du" msd="Gender=Com|Number=Sing" pos="NOUN VRB(finiteness=fin,tense=pres)+PD(type=pers,position=free)" xml:id="martijn.p1.s2.w3">hebstu</w>
+                    <w depN="4" depR="4:det" lemma="geen" pos="PROPN PD(type=indef,subtype=oth,position=prenom)" xml:id="martijn.p1.s2.w4">gheen</w>
+                    <w depN="5" depR="3:obj" lemma="spreken" msd="VerbForm=Inf" pos="VERB NOU-C(number=sg)" xml:id="martijn.p1.s2.w5">spreken</w>
+                    <w depN="6" depR="3:compound:prt" join="right" lemma="inhebben+du" pos="ADP VRB(finiteness=fin,tense=pres)+PD(type=pers,position=free)" xml:id="martijn.p1.s2.w6">in</w>
+                    <pc depN="7" depR="1:punct" pos="PUNCT PC" xml:id="martijn.p1.s2.w7">?</pc>
+                </s>
+            </p>
+            <p>
+                <s>
+                    <w depN="1" depR="4:nsubj" lemma="du" pos="PROPN PD(type=pers,position=free)" xml:id="martijn.p2.s1.w1">Du</w>
+                    <w depN="2" depR="4:aux" lemma="dunken" pos="PROPN VRB(finiteness=fin,tense=pres)" xml:id="martijn.p2.s1.w2">dinkes</w>
+                    <w depN="3" depR="4:obj" lemma="ik" pos="PROPN PD(type=pers,position=free)" xml:id="martijn.p2.s1.w3">mi</w>
+                    <w depN="4" depR="0:root" join="right" lemma="verdoren" pos="PROPN VRB(finiteness=inf)" xml:id="martijn.p2.s1.w4">verdoren</w>
+                    <pc depN="5" depR="5:punct" pos="PUNCT PC" xml:id="martijn.p2.s1.w5">.</pc>
+                </s>
+                <s>
+                    <w depN="1" depR="2:subj" lemma="du+ne" pos="PROPN PD(type=pers,position=free)+ADV(type=reg)" xml:id="martijn.p2.s2.w1">Dune</w>
+                    <w depN="2" depR="0:root" lemma="achten" pos="PROPN VRB(finiteness=fin,tense=pres)" xml:id="martijn.p2.s2.w2">achtes</w>
+                    <w depN="3" depR="2:advmod" lemma="meer" pos="ADV PD(type=indef,position=free)" xml:id="martijn.p2.s2.w3">me
+                        <hi>er</hi>
+                    </w>
+                    <w depN="4" depR="3:conj" lemma="noch" msd="Number=Plur" pos="NOUN CONJ(type=coor)" xml:id="martijn.p2.s2.w4">
+                        <hi>no</hi>
+                    </w>
+                    <w depN="5" depR="3:cc" lemma="min" pos="ADV PD(type=indef,position=free)" xml:id="martijn.p2.s2.w5">
+                        <hi>m</hi>in
+                    </w>
+                </s>
+            </p>
+        </body>
+    </text>
+</TEI>
