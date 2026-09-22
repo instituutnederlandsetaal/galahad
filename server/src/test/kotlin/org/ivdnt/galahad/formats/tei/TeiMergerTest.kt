@@ -6,10 +6,9 @@ import org.junit.jupiter.api.Test
 
 class TeiMergerTest : MergerTest() {
     override val format: DocumentFormat = DocumentFormat.TeiP5
-    override val folder: String = "tei/merger"
 
     @Test
     fun `Merge`() {
-        merge()
+        merge("tei/merger/basic")
     }
 }

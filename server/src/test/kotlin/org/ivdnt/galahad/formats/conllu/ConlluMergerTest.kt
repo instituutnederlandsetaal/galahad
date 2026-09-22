@@ -6,10 +6,9 @@ import org.junit.jupiter.api.Test
 
 class ConlluMergerTest : MergerTest() {
     override val format: DocumentFormat = DocumentFormat.Conllu
-    override val folder: String = "conllu/merger"
 
     @Test
     fun `Merge`() {
-        merge()
+        merge("conllu/merger/basic")
     }
 }

@@ -6,10 +6,9 @@ import org.junit.jupiter.api.Test
 
 class TsvMergerTest : MergerTest() {
     override val format: DocumentFormat = DocumentFormat.Tsv
-    override val folder: String = "tsv/merger"
 
     @Test
     fun `Merge`() {
-        merge()
+        merge("tsv/merger/basic")
     }
 }

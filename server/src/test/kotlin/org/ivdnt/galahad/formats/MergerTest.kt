@@ -12,7 +12,6 @@ import org.junit.jupiter.api.BeforeEach
 
 abstract class MergerTest {
     private lateinit var corpus: Corpus
-    abstract val folder: String
     abstract val format: DocumentFormat
 
     @BeforeEach
@@ -20,7 +19,7 @@ abstract class MergerTest {
         corpus = TestUtil.createCorpus()
     }
 
-    fun merge() {
+    fun merge(folder: String) {
         val input: File = TestUtil.get("formats/$folder/input.${format.extension}")
         val merge = TestUtil.get("formats/$folder/input.json")
         val output: File = TestUtil.get("formats/$folder/output.${format.extension}")
