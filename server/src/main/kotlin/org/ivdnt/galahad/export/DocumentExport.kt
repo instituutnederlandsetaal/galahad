@@ -19,7 +19,7 @@ class DocumentExport(
     val posHead: Boolean,
 ) {
     val document: Document = layers.documents.readOrThrow(document)
-    val layer: Layer = this.document.layer
+    val layer: Layer = if (posHead) this.document.layer.toAnnotationHead() else this.document.layer
     val tagger: Tagger = layers.metadata.tagger
     val sourceDocument: Document = sourceLayers.documents.readOrThrow(document)
     val sourceLayer: Layer = sourceDocument.layer

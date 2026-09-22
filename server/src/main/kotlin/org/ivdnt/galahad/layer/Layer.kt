@@ -22,8 +22,7 @@ class Layer(
     }
 
     /** Number of each linguistic annotation. */
-    @get:JsonIgnore
-    val annotations: LayerAnnotations by lazy { LayerAnnotations.fromTerms(terms) }
+    @get:JsonIgnore val annotations: LayerAnnotations by lazy { LayerAnnotations.fromTerms(terms) }
 
     /** Number of documents, paragraphs and sentences. */
     @get:JsonIgnore
@@ -35,6 +34,44 @@ class Layer(
 
     /** Concatenate all documents with a newline in between. Unix EOF terminated (\n). */
     override fun toString(): String = documents.joinToString("\n\n") + "\n"
+
+    /** Convert POS and UPOS to head */
+    // We need to go down all the way to sentence level and reassign the list of terms. Copying
+    // annotation
+    // values except pos and upos.
+    fun toAnnotationHead(): Layer =
+        Layer(
+            documents.map { document ->
+                DocumentLayer(
+                    document.id,
+                    document.paragraphs.map { paragraph ->
+                        ParagraphLayer(
+                            paragraph.id,
+                            paragraph.sentences.map { sentence ->
+                                SentenceLayer(
+                                    sentence.id,
+                                    sentence.terms.map { term ->
+                                        Term(
+                                            term.id,
+                                            term.annotations.mapValues { (annotation, value) ->
+                                                if (annotation in Term.POS_ANNOTATIONS) {
+                                                    term.annotationHead(annotation)
+                                                } else {
+                                                    value
+                                                }
+                                            },
+                                            term.spaceAfter,
+                                        )
+                                    },
+                                    sentence.spans,
+                                )
+                            },
+                        )
+                    },
+                )
+            },
+            id,
+        )
 
     companion object {
         /** Empty utility layer for comparison. */
