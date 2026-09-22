@@ -70,6 +70,11 @@ internal class TeiReaderTest : ReaderTest() {
         fun `Import ud format`() {
             assertLayerAndText("formats/tei/reader/ud")
         }
+
+        @Test
+        fun `Import linkGrp format`() {
+            assertLayerAndText("formats/tei/reader/linkgrp")
+        }
     }
 
     @Nested
