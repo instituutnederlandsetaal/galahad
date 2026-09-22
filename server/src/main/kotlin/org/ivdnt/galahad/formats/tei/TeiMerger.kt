@@ -97,12 +97,38 @@ class TeiMerger(export: DocumentExport) : LayerMerger(export) {
             wrapper.appendChild(el)
         }
         // Move termiter.
-        val token = el.textContent
+        val token = textContent(el)
         totalChars += token.count { !it.isWhitespace() }
         while (totalChars >= termIter.chars + termIter.currentCount() && termIter.hasNext()) {
             termIter.next()
             termI++
         }
+    }
+
+    // If this <w> contains a <seg>, we readout its text content.
+    // Otherwise it is all text nodes, recursive, in non ignored nodes
+    private fun textContent(el: Element): String {
+        val seg = el.children.firstOrNull { it.localName == "seg" }
+        return if (seg != null) {
+            seg.textContent
+        } else {
+            recurseTextContent(el)
+        }
+    }
+
+    private fun recurseTextContent(el: Element): String {
+        return el.children
+            .map {
+                when (it.nodeType) {
+                    Node.TEXT_NODE -> it.nodeValue ?: ""
+                    Node.ELEMENT_NODE ->
+                        if (it.localName !in TeiReader.IGNORABLE_TAGS)
+                            recurseTextContent(it as Element)
+                        else ""
+                    else -> ""
+                }
+            }
+            .joinToString("")
     }
 
     private sealed class Token {

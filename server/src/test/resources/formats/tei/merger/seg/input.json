@@ -1,0 +1,43 @@
+{
+  "documents": [
+    {
+      "id": "d1",
+      "paragraphs": [
+        {
+          "id": "d1.p1",
+          "sentences": [
+            {
+              "id": "d1.p1.s1",
+              "terms": [
+                {
+                  "annotations": {
+                    "token": "din",
+                    "lemma": "die",
+                    "pos": "PD(type=d-p,position=free)"
+                  },
+                  "id": "d1.p1.s1.w1"
+                },
+                {
+                  "annotations": {
+                    "token": "hi",
+                    "lemma": "hij",
+                    "pos": "PD(type=pers,position=free)"
+                  },
+                  "id": "d1.p1.s1.w2"
+                },
+                {
+                  "annotations": {
+                    "token": "gereet",
+                    "lemma": "gereed",
+                    "pos": "AA(degree=pos,position=free)"
+                  },
+                  "id": "d1.p1.s1.w3"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

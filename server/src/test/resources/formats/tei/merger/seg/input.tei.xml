@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<TEI>
+    <text>
+        <body>
+            <l>
+                <w xml:id="d1.p1.s1.w1">
+                    <seg type="orth">din</seg>
+                    <fs type="TDN-core">
+                        <f name="pos">
+                            <symbol value="PD"/>
+                        </f>
+                        <f name="type">
+                            <symbol value="d-p"/>
+                        </f>
+                        <f name="position">
+                            <symbol value="free"/>
+                        </f>
+                        <f name="lemma">die</f>
+                    </fs>
+                    <note>
+                        <cit>
+                            <xr type="dictionaryLinks">
+                                <ref n="0" target="36832" type="dictionary.VMNW">
+                                    <interpGrp>
+                                        <interp type="modern_lemma">die</interp>
+                                        <interp type="lemma">die (III)</interp>
+                                        <interp type="def">die; wie</interp>
+                                        <interp type="pos">betr.vnw.</interp>
+                                    </interpGrp>
+                                </ref>
+                            </xr>
+                        </cit>
+                    </note>
+                </w>
+                <w xml:id="d1.p1.s1.w2">
+                    <seg type="orth">hi</seg>
+                    <fs type="TDN-core">
+                        <f name="pos">
+                            <symbol value="PD"/>
+                        </f>
+                        <f name="type">
+                            <symbol value="pers"/>
+                        </f>
+                        <f name="position">
+                            <symbol value="free"/>
+                        </f>
+                        <f name="lemma">hij</f>
+                    </fs>
+                    <note>
+                        <cit>
+                            <xr type="dictionaryLinks">
+                                <ref n="0" target="34" type="dictionary.VMNW">
+                                    <interpGrp>
+                                        <interp type="modern_lemma">hij</interp>
+                                        <interp type="lemma">hi</interp>
+                                        <interp type="def">hij</interp>
+                                        <interp type="pos">pers.vnw.</interp>
+                                    </interpGrp>
+                                </ref>
+                            </xr>
+                        </cit>
+                    </note>
+                </w>
+                <w xml:id="d1.p1.s1.w3">
+                    <seg type="orth">gereet</seg>
+                    <fs type="TDN-core">
+                        <f name="pos">
+                            <symbol value="AA"/>
+                        </f>
+                        <f name="degree">
+                            <symbol value="pos"/>
+                        </f>
+                        <f name="position">
+                            <symbol value="free"/>
+                        </f>
+                        <f name="lemma">gereed</f>
+                    </fs>
+                    <note>
+                        <cit>
+                            <xr type="dictionaryLinks">
+                                <ref n="0" target="64532" type="dictionary.VMNW">
+                                    <interpGrp>
+                                        <interp type="modern_lemma">gereed</interp>
+                                        <interp type="lemma">ghereet</interp>
+                                        <interp type="def">klaar; bereidwillig; ter beschikking zijn; contant; roerend</interp>
+                                        <interp type="pos">bnw.</interp>
+                                    </interpGrp>
+                                </ref>
+                            </xr>
+                        </cit>
+                    </note>
+                </w>
+            </l>
+        </body>
+    </text>
+</TEI>

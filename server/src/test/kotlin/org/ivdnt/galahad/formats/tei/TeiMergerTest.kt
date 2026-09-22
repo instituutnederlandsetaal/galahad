@@ -11,4 +11,9 @@ class TeiMergerTest : MergerTest() {
     fun `Merge`() {
         merge("tei/merger/basic")
     }
+
+    @Test
+    fun `Merge with seg and dictionary definition`() {
+        merge("tei/merger/seg")
+    }
 }
