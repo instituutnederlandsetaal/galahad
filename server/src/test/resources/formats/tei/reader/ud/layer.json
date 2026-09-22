@@ -515,7 +515,7 @@
                     "pos": "VRB(finiteness=fin,tense=pres)+PD(type=pers,position=free)",
                     "upos": "ADP",
                     "head": "3",
-                    "deprel": "compound"
+                    "deprel": "compound:prt"
                   },
                   "id": "martijn.p1.s2.w6",
                   "spaceAfter": false

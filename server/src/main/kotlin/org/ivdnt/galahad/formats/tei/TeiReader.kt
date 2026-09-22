@@ -18,7 +18,8 @@ class TeiReader(stream: InputStream) : XmlReader(stream) {
             in wordDataTags -> {
                 val deprelhead = reader.getAttributeValue(null, "depR")?.ifBlank { null }
                 if (deprelhead != null) {
-                    val parts = deprelhead.split(":")
+                    // Note the limit of 1 given 0:compound:prt -> 0, compound:prt
+                    val parts = deprelhead.split(":", limit = 2)
                     head = parts[0]
                     deprel = parts[1]
                 }
