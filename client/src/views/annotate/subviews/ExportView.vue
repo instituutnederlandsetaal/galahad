@@ -68,4 +68,5 @@ const showMergeOption = computed(() => {
 })
 const hasTeiP5Legacy = computed(() => documents.value.some((i) => i.format === Format.TEI_P5_LEGACY))
 const disabled = computed(() => format.value === undefined || hypothesisId.value === undefined || loading.value)
+watch(format, () => { shouldMerge.value = false })
 </script>
