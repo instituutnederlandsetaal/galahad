@@ -22,9 +22,11 @@ class TermIterator : Iterator<Term?> {
     override fun next(): Term? {
         // add length of now previous term
         if (current != null) {
-            chars += (current as Term).token.count { !it.isWhitespace() }
+            chars += currentCount()
         }
         current = if (iter.hasNext()) iter.next() else null
         return current
     }
+
+    fun currentCount(): Int = current?.token?.count { !it.isWhitespace() } ?: 0
 }

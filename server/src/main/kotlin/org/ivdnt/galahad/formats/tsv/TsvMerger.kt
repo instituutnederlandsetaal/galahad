@@ -5,15 +5,18 @@ import java.io.PrintWriter
 import org.ivdnt.galahad.annotations.Annotation
 import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.export.LayerMerger
+import org.ivdnt.galahad.util.TermIterator
 
 open class TsvMerger(export: DocumentExport) : LayerMerger(export) {
     protected open val columnIndices: MutableMap<Annotation, Int> = mutableMapOf()
 
     override fun merge(out: OutputStream): Unit = merge(PrintWriter(out))
 
-    protected var termIndex: Int = 0
+    protected val termIter: TermIterator = TermIterator(export.layer.terms.iterator())
+
     private var extraColumns: MutableList<Annotation> = mutableListOf()
     protected open val emptyValue: String = ""
+    var totalChars: Int = 0
 
     /**
      * Merge uploaded raw file with tagger layer. Headers indices are already determined by TSVFile.
@@ -29,13 +32,22 @@ open class TsvMerger(export: DocumentExport) : LayerMerger(export) {
                     out.println((headers + extraColumns).joinToString("\t"))
                 }
             } else if (!line.startsWith("#") && line.isNotBlank()) {
+                // Retrieve columns.
                 val columns = line.split("\t").toMutableList()
                 // Add extra columns.
                 columns.addAll(List(extraColumns.size) { "" })
                 // Swap out merging annotations, keep the rest.
                 replaceColumns(columns)
+                // Write.
                 out.println(columns.joinToString("\t"))
-                termIndex++
+                // Move termiter.
+                val token = columns[columnIndices[Annotation.TOKEN]!!]
+                totalChars += token.count { !it.isWhitespace() }
+                while (
+                    totalChars >= termIter.chars + termIter.currentCount() && termIter.hasNext()
+                ) {
+                    termIter.next()
+                }
             } else {
                 out.println(line)
             }
@@ -82,7 +94,7 @@ open class TsvMerger(export: DocumentExport) : LayerMerger(export) {
         annotation: Annotation,
         columnIndex: Int,
     ) {
-        val term = termComparisons[termIndex].hyp
+        val term = termIter.current!!
         columns[columnIndex] = term.annotations[annotation] ?: emptyValue
     }
 }

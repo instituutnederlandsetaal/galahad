@@ -2,8 +2,7 @@ id	token	lemma	notes
 d1.p1.s1.w1	Fraaie	DUMMY	example notes
 d1.p1.s1.w2	historie	DUMMY	
 d1.p1.s1.w3	ende	DUMMY	
-d1.p1.s1.w4	alwaer	DUMMY	
-d1.p1.s1.w5	.	DUMMY	
+d1.p1.s1.w4	alwaer.	DUMMY	
 
 # comment line
 d1.p1.s2.w1	Magh	DUMMY	
@@ -16,12 +15,13 @@ d1.p1.s2.w7	naer	DUMMY
 d1.p1.s2.w8	.	DUMMY	
 
 
-d1.p2.s1.w1	't	DUMMY	
-d1.p2.s1.w2	Was	DUMMY	
-d1.p2.s1.w3	op	DUMMY	
-d1.p2.s1.w4	enen	DUMMY	
-d1.p2.s1.w5	avondstonde	DUMMY	
-d1.p2.s1.w6	.	DUMMY	example notes
+d1.p2.s1.w1	'	DUMMY	
+d1.p2.s1.w2	t	DUMMY	
+d1.p2.s1.w3	Was	DUMMY	
+d1.p2.s1.w4	op	DUMMY	
+d1.p2.s1.w5	enen	DUMMY	
+d1.p2.s1.w6	avondstonde	DUMMY	
+d1.p2.s1.w7	.	DUMMY	example notes
 
 d1.p2.s2.w1	Dat	DUMMY	
 d1.p2.s2.w2	koning	DUMMY	

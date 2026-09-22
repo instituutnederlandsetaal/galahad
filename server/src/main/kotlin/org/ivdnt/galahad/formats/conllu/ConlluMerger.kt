@@ -30,7 +30,7 @@ class ConlluMerger(export: DocumentExport) : TsvMerger(export) {
 
     private fun replaceMisc(columns: MutableList<String>) {
         // construct MISC by combining NER and MISC
-        val term: Term = termComparisons[termIndex].hyp
+        val term: Term = termIter.current!!
         val ner: String? = term.annotations[Annotation.NER]?.let { "NamedEntity=$it" }
         val spaceAfter: String? = if (term.spaceAfter == false) "SpaceAfter=No" else null
         val miscField: String = listOfNotNull(spaceAfter, ner).joinToString("|")
@@ -48,7 +48,7 @@ class ConlluMerger(export: DocumentExport) : TsvMerger(export) {
             }
             Annotation.UPOS -> {
                 // Split UPOS into head and features
-                val term: Term = termComparisons[termIndex].hyp
+                val term: Term = termIter.current!!
                 val head: String = term.annotationHead(Annotation.UPOS) ?: "_"
                 val features: String = term.features(Annotation.UPOS) ?: "_"
                 columns[3] = head

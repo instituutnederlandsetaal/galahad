@@ -13,8 +13,7 @@
                     <w depN="1" depR="2:amod" lemma="fraai" msd="Degree=Pos" pos="ADJ AA(degree=pos,position=prenom)" xml:id="karel.p1.s1.w1">Fraaie</w>
                     <w depN="2" depR="0:root" lemma="historie" msd="Gender=Com|Number=Sing" pos="NOUN NOU-C(number=sg)" xml:id="karel.p1.s1.w2">historie</w>
                     <w depN="3" depR="4:cc" lemma="en" pos="PROPN CONJ(type=coor)" xml:id="karel.p1.s1.w3">ende</w>
-                    <w depN="4" depR="2:conj" join="right" lemma="alwaar" pos="PROPN ADV(type=reg)" xml:id="karel.p1.s1.w4">alwaer</w>
-                    <pc depN="5" depR="2:punct" pos="PUNCT PC" xml:id="karel.p1.s1.w5">.</pc>
+                    <w depN="4" depR="2:conj" join="right" lemma="alwaar" pos="PROPN ADV(type=reg)" xml:id="karel.p1.s1.w4">alwaer.</w>
                 </s>
                 <s>
                     <w depN="1" depR="4:aux" lemma="mogen" msd="Gender=Neut|Number=Sing" pos="PROPN VRB(finiteness=fin,tense=pres)" xml:id="karel.p1.s2.w1">Magh</w>

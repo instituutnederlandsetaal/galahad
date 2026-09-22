@@ -2,8 +2,7 @@ id	token	lemma	notes	pos	upos	head	deprel	ner
 d1.p1.s1.w1	Fraaie	fraai	example notes	AA(degree=pos,position=prenom)	ADJ(Degree=Pos)	2	amod	
 d1.p1.s1.w2	historie	historie		NOU-C(number=sg)	NOUN(Gender=Com|Number=Sing)	0	root	
 d1.p1.s1.w3	ende	en		CONJ(type=coor)	PROPN	4	cc	
-d1.p1.s1.w4	alwaer	alwaar		ADV(type=reg)	PROPN	2	conj	
-d1.p1.s1.w5	.			PC	PUNCT	2	punct	
+d1.p1.s1.w4	alwaer.	alwaar		ADV(type=reg)	PROPN	2	conj	
 
 # comment line
 d1.p1.s2.w1	Magh	mogen		VRB(finiteness=fin,tense=pres)	PROPN(Gender=Neut|Number=Sing)	4	aux	
@@ -16,12 +15,13 @@ d1.p1.s2.w7	naer	naarhoren		VRB(finiteness=fin,tense=pres)	PROPN	6	advmod
 d1.p1.s2.w8	.			PC	PUNCT	4	punct	
 
 
-d1.p2.s1.w1	't	het		PD(type=pers,position=free)	PRON(Person=3|PronType=Prs)	2	expl	
-d1.p2.s1.w2	Was	zijn		VRB(finiteness=fin,tense=past)	AUX(Number=Sing|Tense=Past|VerbForm=Fin)	5	cop	
-d1.p2.s1.w3	op	op		ADP(type=pre)	ADP	5	case	
-d1.p2.s1.w4	enen	een		PD(type=indef,subtype=art,position=prenom)	NOUN(Number=Plur)	5	det	
-d1.p2.s1.w5	avondstonde	avondstond		NOU-C(number=sg)	PROPN	0	root	
-d1.p2.s1.w6	.		example notes	PC	PUNCT	5	punct	
+d1.p2.s1.w1	'	het		PD(type=pers,position=free)	PRON(Person=3|PronType=Prs)	2	expl	
+d1.p2.s1.w2	t	het		PD(type=pers,position=free)	PRON(Person=3|PronType=Prs)	2	expl	
+d1.p2.s1.w3	Was	zijn		VRB(finiteness=fin,tense=past)	AUX(Number=Sing|Tense=Past|VerbForm=Fin)	5	cop	
+d1.p2.s1.w4	op	op		ADP(type=pre)	ADP	5	case	
+d1.p2.s1.w5	enen	een		PD(type=indef,subtype=art,position=prenom)	NOUN(Number=Plur)	5	det	
+d1.p2.s1.w6	avondstonde	avondstond		NOU-C(number=sg)	PROPN	0	root	
+d1.p2.s1.w7	.		example notes	PC	PUNCT	5	punct	
 
 d1.p2.s2.w1	Dat	dat		CONJ(type=sub)	SCONJ	4	expl	
 d1.p2.s2.w2	koning	koning		NOU-C(number=sg)	NOUN(Gender=Com|Number=Sing)	4	nsubj	B-PER

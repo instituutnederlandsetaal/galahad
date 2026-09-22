@@ -6,13 +6,12 @@ import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 import kotlin.collections.flatMap
 import org.ivdnt.galahad.annotations.Annotation
-import org.ivdnt.galahad.annotations.Term
 import org.ivdnt.galahad.export.DocumentExport
 import org.ivdnt.galahad.export.LayerMerger
+import org.ivdnt.galahad.util.TermIterator
 import org.ivdnt.galahad.util.XmlUtil
 import org.ivdnt.galahad.util.children
 import org.ivdnt.galahad.util.deepcopy
-import org.ivdnt.galahad.util.insertAfter
 import org.ivdnt.galahad.util.isNotBlank
 import org.w3c.dom.Document
 import org.w3c.dom.Element
@@ -21,14 +20,15 @@ import org.w3c.dom.Node
 class TeiMerger(export: DocumentExport) : LayerMerger(export) {
     val xml = XmlUtil.builder.parse(export.sourceDocument.sourceFile)
     // If there is no reference term, we won't even be able to find it in the source file.
-    val termIter = termComparisons.filter { it.ref != Term.EMPTY }.iterator()
-    var termI = -1
+    var termI = 0
     val termIndices =
         export.layer.documents.flatMap {
             it.paragraphs.flatMap {
                 it.sentences.flatMap { it.terms.mapIndexed { index, term -> index + 1 } }
             }
         }
+    val termIter: TermIterator = TermIterator(export.layer.terms.iterator())
+    var totalChars: Int = 0
 
     override fun merge(out: OutputStream) {
         parse(xml.documentElement as Node)
@@ -54,75 +54,40 @@ class TeiMerger(export: DocumentExport) : LayerMerger(export) {
                 }
             }
         }
-        return
-        // Snapshot children to allow safe DOM mutation during iteration
-        node.childNodes.deepcopy().forEach { child ->
-            if (child.nodeType == Node.TEXT_NODE) {
-                // Split existing texts into <w> tags
-                val words =
-                    child.nodeValue?.split(whitespace)?.filter { it.isNotBlank() } ?: emptyList()
-                if (words.isNotEmpty()) {
-                    val ns = (node as? Element)?.namespaceURI
-                    for (word in words) {
-                        val wEl =
-                            if (ns != null) xml.createElementNS(ns, "w") else xml.createElement("w")
-                        wEl.textContent = word
-                        node.insertBefore(wEl, child)
-                        // insert space to avoid formatters thinking
-                        // the absence of whitespace is significant
-                        val newline = xml.createTextNode(" ")
-                        node.insertAfter(newline, wEl)
-                        parseWord(wEl)
-                    }
-                    node.removeChild(child)
-                }
-            } else if (child.localName !in TeiReader.IGNORABLE_TAGS) {
-                if (child.localName in arrayOf("w", "pc")) {
-                    parseWord(child as Element)
-                } else {
-                    parse(child)
-                }
-            }
-        }
     }
 
     private fun parseWord(el: Element) {
-        val term = termIter.next()
-        termI += 1
-        val hyp = term.hyp
-        val ref = term.ref
-        //        if (el.textContent != ref.token) return
-
-        el.setAttribute("xml:id", term.hyp.id)
-        if (hyp.pos != null) {
-            if (hyp.upos == null) {
+        val term = termIter.current!!
+        el.setAttribute("xml:id", term.id)
+        if (term.pos != null) {
+            if (term.upos == null) {
                 // just POS
-                el.setAttribute("pos", hyp.pos)
+                el.setAttribute("pos", term.pos)
             } else {
                 // both
-                val pos = "${hyp.annotationHead(Annotation.UPOS)} ${hyp.pos}"
+                val pos = "${term.annotationHead(Annotation.UPOS)} ${term.pos}"
                 el.setAttribute("pos", pos)
             }
-        } else if (hyp.upos != null) {
+        } else if (term.upos != null) {
             // just UPOS
-            el.setAttribute("pos", hyp.annotationHead(Annotation.UPOS))
+            el.setAttribute("pos", term.annotationHead(Annotation.UPOS))
         }
-        hyp.lemma?.let { el.setAttribute("lemma", it) }
-        hyp.upos?.let { hyp.features(Annotation.UPOS)?.let { el.setAttribute("msd", it) } }
-        hyp.deprel?.let {
-            el.setAttribute("depR", "${hyp.head}:$it")
+        term.lemma?.let { el.setAttribute("lemma", it) }
+        term.upos?.let { term.features(Annotation.UPOS)?.let { el.setAttribute("msd", it) } }
+        term.deprel?.let {
+            el.setAttribute("depR", "${term.head}:$it")
             el.setAttribute("depN", termIndices[termI].toString())
         }
-        if (hyp.spaceAfter == false) {
+        if (term.spaceAfter == false) {
             el.setAttribute("join", "right")
         } else {
             el.removeAttribute("join")
         }
-        hyp.ner?.let { ner ->
+        term.ner?.let { ner ->
             val parent = el.parentNode
             // Merge with existing
             if (parent is Element && parent.localName == "name") {
-                parent.setAttribute("type", hyp.annotationHead(Annotation.NER))
+                parent.setAttribute("type", term.annotationHead(Annotation.NER))
                 return@let
             }
             // Else create
@@ -130,6 +95,13 @@ class TeiMerger(export: DocumentExport) : LayerMerger(export) {
             wrapper.setAttribute("type", ner)
             parent.replaceChild(wrapper, el)
             wrapper.appendChild(el)
+        }
+        // Move termiter.
+        val token = el.textContent
+        totalChars += token.count { !it.isWhitespace() }
+        while (totalChars >= termIter.chars + termIter.currentCount() && termIter.hasNext()) {
+            termIter.next()
+            termI++
         }
     }
 
