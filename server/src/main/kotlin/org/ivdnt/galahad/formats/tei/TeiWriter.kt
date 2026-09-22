@@ -61,6 +61,10 @@ class TeiWriter(export: DocumentExport) : LayerWriter(export) {
                             t.features(Annotation.UPOS)?.let { writer.writeAttribute("msd", it) }
                         }
                         if (t.spaceAfter == false) writer.writeAttribute("join", "right")
+                        if (t.deprel != null && t.head != null) {
+                            writer.writeAttribute("depR", "${t.head}:${t.deprel}")
+                            writer.writeAttribute("depN", (termI + 1).toString())
+                        }
 
                         if (t.group != null) {
                             writer.writeCharacters(t.token, true)
@@ -73,31 +77,6 @@ class TeiWriter(export: DocumentExport) : LayerWriter(export) {
                         if (ners?.any { termI == it.indices.last() } == true) {
                             writer.writeEndElement() // name
                         }
-                    }
-                    // TODO at some point to be replaced by @depN and @depR
-                    // at the end of a sentence, write deprels. Example:
-                    // <linkGrp targFunc="head argument" type="UD-SYN">
-                    //     <link target="#d1.p1.s1.w1 #d1.p1.s1.w2" ana="ud-syn:det"/>
-                    // </linkGrp>
-                    if (
-                        Annotation.DEPREL in export.document.metadata.annotations &&
-                            sentence.terms.any { it.deprel != null }
-                    ) {
-                        writer.writeStartElement("linkGrp")
-                        writer.writeAttribute("targFunc", "head argument")
-                        writer.writeAttribute("type", "UD-SYN")
-                        sentence.terms.forEach { t ->
-                            if (t.deprel != null && t.deprel?.lowercase() != "root") {
-                                writer.writeStartElement("link")
-                                writer.writeAttribute(
-                                    "target",
-                                    "#${sentence.terms[t.head!!.toInt() - 1].id} #${t.id}",
-                                )
-                                writer.writeAttribute("ana", "ud-syn:${t.deprel}")
-                                writer.writeEndElement(false) // link
-                            }
-                        }
-                        writer.writeEndElement() // linkGrp
                     }
                     writer.writeEndElement() // s
                 }
