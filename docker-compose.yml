@@ -17,7 +17,6 @@ services:
             - user-corpora:/data/corpora/user
             - benchmark-corpora:/data/corpora/datasets
             - admins:/data/admins
-            - ./server/data/tagsets:/data/tagsets
             - ./server/data/taggers:/data/taggers
         networks:
             - taggers
