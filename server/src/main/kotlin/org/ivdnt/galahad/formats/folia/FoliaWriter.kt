@@ -126,6 +126,6 @@ class FoliaWriter(export: DocumentExport) : LayerWriter(export) {
     }
 
     companion object {
-        private val alphaNumeric = Regex("""[a-zA-Z0-9]""")
+        val alphaNumeric = Regex("""[a-zA-Z0-9]""")
     }
 }

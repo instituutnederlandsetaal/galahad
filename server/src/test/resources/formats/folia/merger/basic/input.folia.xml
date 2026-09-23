@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FoLiA xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://ilk.uvt.nl/folia">
+    <text>
+        <part class="body">
+            <div class="div">
+                <p class="p">
+                    <t>Fraaie historie ende alwaer.</t>
+                    <lang class="nld"/>
+                </p>
+                <p class="p">
+                    <t>
+                        Magh <t-style class="bold">'k u <t-style class="italic">ver</t-style><t-style class="red"><t-style class="sub">tellen</t-style>, hoi</t-style>rt naer</t-style>.
+                    </t>
+                    <lang class="nld"/>
+                </p>
+                <p>
+                    <s>
+                        <w>
+                            <t>'t</t>
+                        </w>
+                        <w>
+                            <t>Was</t>
+                        </w>
+                        <w>
+                            <t>op</t>
+                        </w>
+                        <w>
+                            <t>enen</t>
+                        </w>
+                        <w>
+                            <t>avondstonde</t>
+                        </w>
+                        <w>
+                            <t>.</t>
+                        </w>
+                    </s>
+                    <s>
+                        <w>
+                            <t>Dat</t>
+                        </w>
+                        <w>
+                            <t>koning</t>
+                        </w>
+                        <w>
+                            <t>Carel</t>
+                        </w>
+                        <w>
+                            <t>slaepen</t>
+                        </w>
+                        <w>
+                            <t>beghonde</t>
+                        </w>
+                        <w>
+                            <t>.</t>
+                        </w>
+                    </s>
+                </p>
+            </div>
+        </part>
+    </text>
+</FoLiA>

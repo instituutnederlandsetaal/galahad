@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><FoLiA xmlns="http://ilk.uvt.nl/folia" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <text>
+        <part class="body">
+            <div class="div">
+                <p class="p">
+                    <w class="WORD" xml:id="karel.p1.s1.w1"><t>Fraaie</t><lemma class="fraai" processor="spacy"/><pos class="AA(degree=pos,position=prenom)" processor="spacy"/><upos class="ADJ(Degree=Pos)" processor="spacy" set="ud"/></w> <w class="WORD" xml:id="karel.p1.s1.w2"><t>historie</t><lemma class="historie" processor="spacy"/><pos class="NOU-C(number=sg)" processor="spacy"/><upos class="NOUN(Gender=Com|Number=Sing)" processor="spacy" set="ud"/></w> <w class="WORD" xml:id="karel.p1.s1.w3"><t>ende</t><lemma class="en" processor="spacy"/><pos class="CONJ(type=coor)" processor="spacy"/><upos class="PROPN" processor="spacy" set="ud"/></w> <w class="WORD" space="no" xml:id="karel.p1.s1.w4"><t>alwaer.</t><lemma class="alwaar" processor="spacy"/><pos class="ADV(type=reg)" processor="spacy"/><upos class="PROPN" processor="spacy" set="ud"/></w>
+                    <lang class="nld"/>
+                </p>
+                <p class="p">
+                    <w class="WORD" xml:id="karel.p1.s2.w1"><t>Magh</t><lemma class="mogen" processor="spacy"/><pos class="VRB(finiteness=fin,tense=pres)" processor="spacy"/><upos class="PROPN(Gender=Neut|Number=Sing)" processor="spacy" set="ud"/></w> <w class="WORD" xml:id="karel.p1.s2.w2"><t><t-style class="bold">'k</t-style></t><lemma class="ik" processor="spacy"/><pos class="PD(type=pers,position=free)" processor="spacy"/><upos class="AUX(Number=Sing|Tense=Pres|VerbForm=Fin)" processor="spacy" set="ud"/></w> <w class="WORD" xml:id="karel.p1.s2.w3"><t><t-style class="bold">u</t-style></t><lemma class="u" processor="spacy"/><pos class="PD(type=pers,position=free)" processor="spacy"/><upos class="PRON(Case=Acc|Person=2|PronType=Prs)" processor="spacy" set="ud"/></w> <w class="WORD" space="no" xml:id="karel.p1.s2.w4"><t><t-style class="bold"><t-style class="italic">ver</t-style><t-style class="red"><t-style class="sub">tellen</t-style>,</t-style></t-style></t><lemma class="vertellen" processor="spacy"/><pos class="VRB(finiteness=inf)" processor="spacy"/><upos class="VERB(VerbForm=Inf)" processor="spacy" set="ud"/></w> <w class="WORD" xml:id="karel.p1.s2.w6"><t><t-style class="bold"><t-style class="red">hoi</t-style>rt</t-style></t><lemma class="naarhoren" processor="spacy"/><pos class="VRB(finiteness=fin,tense=pres)" processor="spacy"/><upos class="NOUN(Gender=Com|Number=Sing)" processor="spacy" set="ud"/></w> <w class="WORD" space="no" xml:id="karel.p1.s2.w7"><t><t-style class="bold">naer</t-style>.</t><lemma class="naarhoren" processor="spacy"/><pos class="VRB(finiteness=fin,tense=pres)" processor="spacy"/><upos class="PROPN" processor="spacy" set="ud"/></w>
+                    <lang class="nld"/>
+                </p>
+                <p>
+                    <s>
+                        <w class="WORD" xml:id="karel.p2.s1.w1">
+                            <t>'t</t>
+                        <lemma class="het" processor="spacy"/><pos class="PD(type=pers,position=free)" processor="spacy"/><upos class="PRON(Person=3|PronType=Prs)" processor="spacy" set="ud"/></w>
+                        <w class="WORD" xml:id="karel.p2.s1.w2">
+                            <t>Was</t>
+                        <lemma class="zijn" processor="spacy"/><pos class="VRB(finiteness=fin,tense=past)" processor="spacy"/><upos class="AUX(Number=Sing|Tense=Past|VerbForm=Fin)" processor="spacy" set="ud"/></w>
+                        <w class="WORD" xml:id="karel.p2.s1.w3">
+                            <t>op</t>
+                        <lemma class="op" processor="spacy"/><pos class="ADP(type=pre)" processor="spacy"/><upos class="ADP" processor="spacy" set="ud"/></w>
+                        <w class="WORD" xml:id="karel.p2.s1.w4">
+                            <t>enen</t>
+                        <lemma class="een" processor="spacy"/><pos class="PD(type=indef,subtype=art,position=prenom)" processor="spacy"/><upos class="NOUN(Number=Plur)" processor="spacy" set="ud"/></w>
+                        <w class="WORD" space="no" xml:id="karel.p2.s1.w5">
+                            <t>avondstonde</t>
+                        <lemma class="avondstond" processor="spacy"/><pos class="NOU-C(number=sg)" processor="spacy"/><upos class="PROPN" processor="spacy" set="ud"/></w>
+                        <w class="PUNCTUATION" xml:id="karel.p2.s1.w6">
+                            <t>.</t>
+                        <pos class="PC" processor="spacy"/><upos class="PUNCT" processor="spacy" set="ud"/></w>
+                    </s>
+                    <s>
+                        <w class="WORD" xml:id="karel.p2.s2.w1">
+                            <t>Dat</t>
+                        <lemma class="dat" processor="spacy"/><pos class="CONJ(type=sub)" processor="spacy"/><upos class="SCONJ" processor="spacy" set="ud"/></w>
+                        <w class="WORD" xml:id="karel.p2.s2.w2">
+                            <t>koning</t>
+                        <lemma class="koning" processor="spacy"/><pos class="NOU-C(number=sg)" processor="spacy"/><upos class="NOUN(Gender=Com|Number=Sing)" processor="spacy" set="ud"/></w>
+                        <w class="WORD" xml:id="karel.p2.s2.w3">
+                            <t>Carel</t>
+                        <lemma class="Carel" processor="spacy"/><pos class="NOU-P" processor="spacy"/><upos class="PROPN" processor="spacy" set="ud"/></w>
+                        <w class="WORD" xml:id="karel.p2.s2.w4">
+                            <t>slaepen</t>
+                        <lemma class="slaap" processor="spacy"/><pos class="NOU-C(number=pl)" processor="spacy"/><upos class="PROPN" processor="spacy" set="ud"/></w>
+                        <w class="WORD" space="no" xml:id="karel.p2.s2.w5">
+                            <t>beghonde</t>
+                        <lemma class="beginnen" processor="spacy"/><pos class="VRB(finiteness=fin,tense=past)" processor="spacy"/><upos class="VERB(VerbForm=Part)" processor="spacy" set="ud"/></w>
+                        <w class="PUNCTUATION" xml:id="karel.p2.s2.w6">
+                            <t>.</t>
+                        <pos class="PC" processor="spacy"/><upos class="PUNCT" processor="spacy" set="ud"/></w>
+                    </s>
+                </p>
+            </div>
+        </part>
+    </text>
+</FoLiA>

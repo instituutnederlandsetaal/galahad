@@ -38,7 +38,7 @@ class FoliaReader(stream: InputStream) : XmlReader(stream) {
             arrayOf("text", "speech", "div", "p", "head", "list", "item", "event", "table", "part")
         private val SENTENCE_TAGS = arrayOf("s", "utt")
         private val WORD_TAGS = arrayOf("w")
-        private val IGNORABLE_TAGS =
+        val IGNORABLE_TAGS =
             arrayOf("morphology", "note", "figure", "comment", "original", "suggestion", "metadata")
         private val NER_TAGS = arrayOf("entity")
         private val DEP_TAGS = arrayOf("dependency")
