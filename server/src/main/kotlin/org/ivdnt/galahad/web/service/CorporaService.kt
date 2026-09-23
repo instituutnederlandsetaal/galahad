@@ -24,7 +24,7 @@ class CorporaService(@Autowired config: Config) :
         get() = User.fromRequest(request)
 
     private val custom: Corpora = Corpora(dir.resolve("user"))
-    private val presets: Corpora = Corpora(dir.resolve("datasets"))
+    val presets: Corpora = Corpora(dir.resolve("datasets"))
 
     private val all: List<Corpus>
         get() = custom.readAll() + presets.readAll()

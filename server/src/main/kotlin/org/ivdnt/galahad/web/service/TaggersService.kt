@@ -10,7 +10,7 @@ import org.ivdnt.galahad.util.JsonUtil
 import org.springframework.stereotype.Service
 
 @Service
-class TaggersService : Logging {
+class TaggersService(private val corpora: CorporaService) : Logging {
 
     fun read(tagger: String): Tagger? = Tagger.readOrThrow(tagger)
 
@@ -31,5 +31,12 @@ class TaggersService : Logging {
             // If we cannot connect, there is no use in tagging, so just return
             false
         }
+    }
+
+    fun runAllDatasets(tagger: String) {
+        // Does the tagger exist?
+        Tagger.readOrThrow(tagger)
+        // Run it
+        corpora.presets.readAll().forEach { it.jobs.createOrThrow(tagger) }
     }
 }

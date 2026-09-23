@@ -91,10 +91,6 @@ object Endpoints {
         }
     }
 
-    object Benchmarks {
-        const val BASE: String = "${Corpora.CORPUS}/benchmarks"
-    }
-
     object Export {
         const val BASE: String = "${Layers.LAYER}/export"
         const val CONVERT: String = "$BASE/convert"
@@ -112,6 +108,7 @@ object Endpoints {
         const val TAGGER: String = "$BASE/{tagger}"
         const val QUEUE: String = "$BASE/queue"
         const val HEALTH: String = "$TAGGER/health"
+        const val DATASETS: String = "$TAGGER/datasets"
     }
 
     object Principles {
