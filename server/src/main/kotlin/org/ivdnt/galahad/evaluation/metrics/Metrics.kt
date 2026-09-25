@@ -23,6 +23,9 @@ class Metrics(
                     noMatch.truncate()
                 } ?: ClassificationClasses()
 
+    val classCount: Int
+        get() = grouped.keys.size
+
     @get:JsonIgnore
     val untruncatedClasses: ClassificationClasses by lazy {
         grouped.values.takeIf { it.isNotEmpty() }?.reduce { a, b -> a + b }
@@ -51,7 +54,7 @@ class Metrics(
     }
 
     fun toGlobal(layer: String): GlobalMetrics =
-        GlobalMetrics(layer, settings, classes, accuracy, macro)
+        GlobalMetrics(layer, settings, classes, accuracy, macro, classCount)
 }
 
 class GlobalMetrics(
@@ -60,6 +63,7 @@ class GlobalMetrics(
     val classes: ClassificationClasses,
     val accuracy: Float,
     val macro: ClassificationMetrics,
+    val classCount: Int,
 ) {
     fun toCsv(): CsvString =
         CsvFile.toCsvString(
@@ -72,6 +76,7 @@ class GlobalMetrics(
                 macro.recall,
                 macro.f1,
                 classes.hypothesis,
+                classCount,
                 classes.truePositive.count,
                 classes.falseNegative.count,
                 classes.noMatch.count,
@@ -89,7 +94,8 @@ class GlobalMetrics(
                     "macro precision",
                     "macro recall",
                     "macro f1",
-                    "count",
+                    "token count",
+                    "class count",
                     "true positive",
                     "false negative",
                     "no match",

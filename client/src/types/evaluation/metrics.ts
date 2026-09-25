@@ -13,6 +13,8 @@ export type GlobalMetrics = {
     classes: ClassificationClasses
     accuracy: number
     macro: ClassificationMetrics
+    hypothesis: number
+    classCount: number
 }
 export type MetricsSettings = { annotations: string[]; group: string }
 export type ClassificationClasses = {

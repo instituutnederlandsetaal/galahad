@@ -193,10 +193,17 @@ const columns: Column<GlobalMetrics>[] = computed(() => [
     },
     {
         key: "hypothesis",
-        label: "count",
+        label: "token<br>count",
         align: "right",
-        format: (c: ClassificationClasses) => c.hypothesis.toLocaleString(),
-        sortOn: (c: ClassificationClasses) => c.hypothesis,
+        format: (c: GlobalMetrics) => c.hypothesis.toLocaleString(),
+        sortOn: (c: GlobalMetrics) => c.hypothesis,
+    },
+    {
+        key: "classCount",
+        label: "class<br>count",
+        align: "right",
+        format: (c: GlobalMetrics) => c.classCount.toLocaleString(),
+        sortOn: (c: GlobalMetrics) => c.classCount,
     },
     {
         key: "truePositive",
