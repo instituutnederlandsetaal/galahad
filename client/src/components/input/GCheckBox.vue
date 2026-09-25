@@ -39,13 +39,13 @@ function check(): void {
         left: 0;
         height: 25px;
         width: 25px;
-        background-color: var(--int-very-light-grey);
+        background-color: var(--int-very-light-grey-hover);
     }
 }
 
 /* On mouse-over, add a grey background color */
 .checkbox-container:hover input ~ .checkmark {
-    background-color: var(--int-very-light-grey-hover);
+    background-color: var(--int-very-light-grey-active);
 }
 
 .checkbox-container:active input ~ .checkmark {
