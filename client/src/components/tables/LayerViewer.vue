@@ -4,7 +4,6 @@
         <template #header>
             <aside>
                 <AnnotationSummary :annotations />
-                <AnnotationSummary :annotations="structure" />
             </aside>
         </template>
     </GTable>
