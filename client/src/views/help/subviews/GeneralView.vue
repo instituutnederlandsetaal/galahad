@@ -85,7 +85,7 @@
             <h2 id="background">Background</h2>
             <p>
                 Historical texts are essential source material for both linguistic and digital humanities research.
-                Adding linguistic annotation (part of speech and modern Dutch lemma) to historical text helps to make
+                Adding linguistic annotation (part of speech and modern Dutch lemmata) to historical text helps to make
                 the data more accessible. Users need not be concerned with historical spelling variation when querying
                 and analysing the data.
             </p>
@@ -176,7 +176,7 @@
             <!-- H2: Annotate & Evaluate -->
             <h2 id="annotate-evaluate">Annotate & Evaluate</h2>
             <p>
-                Click on the <router-link to="/annotate">Annotate & Evaluate</router-link> to start annotating and/or
+                Click on <router-link to="/annotate">Annotate & Evaluate</router-link> to start annotating and/or
                 evaluating.
             </p>
 
