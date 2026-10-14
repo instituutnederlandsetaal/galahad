@@ -6,9 +6,11 @@
                 <s>
                     <w lemma="zo">
                         <seg xml:id="INT_7a03aa8e-94b0-49ad-a05e-39a8d9901a3d.w.52244">So</seg>
+                        <join n="mw_zo_voer"/>
                     </w>
                     <w lemma="varen">
                         <seg xml:id="INT_7a03aa8e-94b0-49ad-a05e-39a8d9901a3d.w.52245">voer</seg>
+                        <join n="mw_zo_voer"/>
                     </w>
                     <w lemma="hij">
                         <seg xml:id="INT_7a03aa8e-94b0-49ad-a05e-39a8d9901a3d.w.52246">hi</seg>

@@ -10,9 +10,8 @@ import org.ivdnt.galahad.layer.SentenceLayer
 /**
  * Base implementation of a file parser.
  *
- * Should read individual terms and their annotations,
- * as well as structures like sentences, paragraphs and documents.
- * Reads IDs where relevant or assigns default IDs.
+ * Should read individual terms and their annotations, as well as structures like sentences,
+ * paragraphs and documents. Reads IDs where relevant or assigns default IDs.
  */
 abstract class LayerReader {
     val layer: Layer by lazy { read() }
@@ -56,6 +55,7 @@ abstract class LayerReader {
             // toList for copying
             documents.add(DocumentLayer(docID(), paragraphs.toList()))
             paragraphs.clear()
+            docID = null
         }
     }
 
@@ -65,6 +65,7 @@ abstract class LayerReader {
             // toList for copying
             paragraphs.add(ParagraphLayer(parID(), sentences.toList()))
             sentences.clear()
+            parID = null
         }
     }
 
@@ -81,8 +82,11 @@ abstract class LayerReader {
             )
             terms.clear()
             spans.clear()
+            sentID = null
         }
     }
 
-    protected open fun newWordform() {}
+    protected open fun newWordform() {
+        wordID = null
+    }
 }

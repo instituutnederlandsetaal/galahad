@@ -225,6 +225,7 @@ abstract class XmlReader(stream: InputStream) : LayerReader() {
         group = null
         deprel = null
         head = null
+        super.newWordform()
     }
 
     companion object {

@@ -59,6 +59,13 @@ class TeiReader(stream: InputStream) : XmlReader(stream) {
         }
     }
 
+    override fun newWordform() {
+        // only trigger for seg if <w> is not a parent
+        if (!(xmlPath.contains("w") && reader.localName == "seg")) {
+            super.newWordform()
+        }
+    }
+
     companion object {
         private val DOCUMENT_TAGS = arrayOf("text")
         val WORD_TAGS = arrayOf("w", "pc", "seg")

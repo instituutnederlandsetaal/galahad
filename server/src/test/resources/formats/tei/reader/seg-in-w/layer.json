@@ -12,14 +12,16 @@
                 {
                   "annotations": {
                     "token": "So",
-                    "lemma": "zo"
+                    "lemma": "zo",
+                    "group": "mw_zo_voer"
                   },
                   "id": "INT_UUID.w.52244"
                 },
                 {
                   "annotations": {
                     "token": "voer",
-                    "lemma": "varen"
+                    "lemma": "varen",
+                    "group": "mw_zo_voer"
                   },
                   "id": "INT_UUID.w.52245"
                 },

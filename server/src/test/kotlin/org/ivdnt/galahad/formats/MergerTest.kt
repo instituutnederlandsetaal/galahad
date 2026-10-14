@@ -26,10 +26,11 @@ abstract class MergerTest {
 
         val doc = corpus.documents.createOrThrow(input)
         // set merge layer as a job
-        corpus.layers.createOrThrow("spacy").documents.createOrThrow(merge)
+        corpus.layers.createOrThrow("pie-tdn-all").documents.createOrThrow(merge)
 
         // merge
-        val corpusExport = CorpusExport(corpus, "spacy", format, User.DEFAULT_USER, true, false)
+        val corpusExport =
+            CorpusExport(corpus, "pie-tdn-all", format, User.DEFAULT_USER, true, false)
         val docExport = corpusExport.document(doc)
 
         val convertedText =
