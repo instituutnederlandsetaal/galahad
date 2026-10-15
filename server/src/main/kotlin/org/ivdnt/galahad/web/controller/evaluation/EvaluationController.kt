@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import java.util.*
 import org.apache.logging.log4j.kotlin.Logging
+import org.ivdnt.galahad.evaluation.comparison.TermComparison
 import org.ivdnt.galahad.exceptions.ErrorResponse
 import org.ivdnt.galahad.layer.Layer
 import org.ivdnt.galahad.web.controller.Endpoints
@@ -49,4 +50,13 @@ class EvaluationController(private val evaluationService: EvaluationService) : L
         evaluationService.setZipResponseHeader(corpus)
         return evaluationService.getEvaluation(corpus, layer, reference)
     }
+
+    @GetMapping(Endpoints.Evaluation.Document.Comparison.BASE)
+    fun getDocumentLayerComparison(
+        @PathVariable @Parameter(description = "Corpus UUID") corpus: UUID,
+        @PathVariable @Parameter(description = "Layer name") layer: String,
+        @PathVariable @Parameter(description = "document") document: String,
+        @RequestParam @Parameter(description = "Layer name") reference: String = Layer.SOURCE_LAYER,
+    ): List<TermComparison> =
+        evaluationService.getDocumentLayerComparison(corpus, layer, document, reference)
 }

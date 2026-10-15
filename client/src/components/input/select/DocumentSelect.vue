@@ -16,4 +16,8 @@ const model = defineModel<string>()
 const options = computed<SelectOption[]>(() => {
     return documents.value.map((doc) => ({ value: doc.name, text: doc.name }))
 })
+
+watchEffect(() => {
+    model.value ??= options.value[0]?.value
+})
 </script>

@@ -88,6 +88,10 @@ object Endpoints {
                 const val BASE: String = "${Document.BASE}/distribution"
                 const val DOWNLOAD: String = "${BASE}/download"
             }
+
+            object Comparison {
+                const val BASE: String = "${Document.BASE}/comparison"
+            }
         }
     }
 

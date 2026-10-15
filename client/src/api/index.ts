@@ -65,6 +65,7 @@ export const endpoints = {
             base: endpoint("/corpora/{corpus}/layers/{layer}/evaluation/metrics"),
             download: endpoint("/corpora/{corpus}/layers/{layer}/evaluation/metrics/download"),
         },
+        comparison: { base: endpoint("/corpora/{corpus}/layers/{layer}/documents/{document}/evaluation/comparison") },
     },
     benchmarks: endpoint("/corpora/{corpus}/evaluation/metrics"),
     export: {

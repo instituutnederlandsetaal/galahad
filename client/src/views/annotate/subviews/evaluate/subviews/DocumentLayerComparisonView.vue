@@ -6,148 +6,146 @@
             annotations.
         </template>
 
-        <p v-if="loading">Loading...</p>
-
-        <GForm v-if="bothJobsSelected">
-            <DocumentSelect v-model="selectedDoc" />
-            <AnnotationSelect v-if="annotationOptions" v-model="selectedAnnotation" :options="annotationOptions" />
+        <p v-if="!commonAnnotations.length">
+            Select a reference layer, a hypothesis layer. Then, select a document and an annotation.
+        </p>
+        <GForm v-else>
+            <DocumentSelect v-model="selectedDocument" />
+            <fieldset>
+                <label for="annotation-select">Annotation</label>
+                <MultiSelect
+                    id="annotation-select"
+                    v-model="selectedAnnotations"
+                    :options="annotationOptions"
+                    optionLabel="text"
+                    optionValue="value"
+                    placeholder="Annotation"
+                    :maxSelectedLabels="5"
+                />
+            </fieldset>
         </GForm>
 
-        <div v-if="selectedDoc && selectedAnnotation" class="document">
-            <template v-for="tc in termcomps.slice(firstRecord, firstRecord + rowsToDisplay)" :key="tc.ref.id">
-                <span class="wordComparison" :class="{ incorrect: !annotationsEqual(tc) }">
+        <GSpinner v-if="loading" />
+        <!-- <SingleTermComparisonTable :hypoTerm="tc.hyp" :refTerm="tc.ref" class="tooltip" /> -->
+        <div v-if="matches?.length ?? 0" class="document">
+            <template v-for="tc in paginate(sourceMatches)" :key="tc.ref.id">
+                <span
+                    class="wordComparison"
+                    :class="{ incorrect: !annotationsEqual(tc) }"
+                    @mouseenter="
+                        (e) => {
+                            hoveredTerm = tc
+                            x = e.pageX
+                            y = e.pageY
+                        }
+                    "
+                    @mouseleave="hoveredTerm = null"
+                >
                     {{ tc.ref.annotations["token"] }}
-                    <SingleTermComparisonTable :hypoTerm="tc.hyp" :refTerm="tc.ref" class="tooltip" />
                 </span>
-
-                <!-- add newline after . -->
-                <br v-if="tc.ref.annotations['token'] == '.'" />
+                <!-- force a whitespace node in between words -->
+                <span v-html="'&#32;'"></span>
             </template>
-
-            <Paginator
-                v-if="termcomps.length > rowsToDisplay"
-                v-model:first="firstRecord"
-                :rows="rowsToDisplay"
-                :totalRecords="termcomps.length"
-            ></Paginator>
         </div>
-        <p v-else>Select a reference layer, a hypothesis layer. Then, select a document and an annotation.</p>
+
+        <!-- tooltip at mouse cursor -->
+        <!-- should set absolute pixel position based on mouse cursor -->
+        <SingleTermComparisonTable
+            v-if="hoveredTerm"
+            :hypoTerm="hoveredTerm.hyp"
+            :refTerm="hoveredTerm.ref"
+            class="tooltip"
+            :style="{ top: `${y}px`, left: `${x}px` }"
+        />
+
+        <GTablePaginator v-if="numPages > 1" v-model="page" :numPages />
     </GCard>
 </template>
 
 <script setup lang="ts">
-import * as API from "@/api/evaluation"
-import useCorpora from "@/stores/corpora"
-import useDocuments from "@/stores/documents"
+import { ref } from "vue"
+import useComparison from "@/stores/evaluation/comparison"
 import useLayers from "@/stores/layers"
-import type { Term, TermComparison } from "@/types/evaluation"
+import type { TermComparison } from "@/types/evaluation"
 import type { SelectOption } from "@/types/ui/select"
+import { useMouse } from "@vueuse/core"
 
-import Paginator from "primevue/paginator"
+import MultiSelect from "primevue/multiselect"
+import type { Term } from "@/types/annotation"
 
-// Stores
-const documentsStore = useDocuments()
-const corporaStore = useCorpora()
-const jobSelection = useLayers()
+const { commonAnnotations, hypothesisId, referenceId, hypothesisLayer, referenceLayer } = storeToRefs(useLayers())
+const { loading, matches, document: selectedDocument } = storeToRefs(useComparison())
 
+const annotationOptions = computed(() =>
+    // only logical annotations
+    commonAnnotations.value.filter((option: SelectOption) => !["token"].includes(option.text)),
+)
+const selectedAnnotations = ref<string[]>()
+const x = ref(0)
+const y = ref(0)
+/** Return items on page N */
+function paginate(items: T[]): T[] {
+    return items.slice((page.value - 1) * pageSize, page.value * pageSize)
+}
 // Fields
-const selectedDoc = ref<string>()
-const selectedAnnotation = ref<string>()
-const annotationOptions = ref<SelectOption[]>()
-const termcomps = ref<TermComparison[]>(null)
-const loading = ref<boolean>()
-/** Paginator */
-const firstRecord = ref<number>(0)
-const rowsToDisplay = ref<number>(200)
-const bothJobsSelected = computed(() => {
-    return jobSelection.hypothesisId && jobSelection.referenceId
-})
-
-// Watches & mounts
-watch(selectedDoc, async (newVal) => {
-    if (newVal) {
-        loading.value = true
-        API.getDocumentLayerComparison(
-            corporaStore.corpusId,
-            jobSelection.hypothesisId,
-            newVal,
-            jobSelection.referenceId,
-        )
-            .then((response) => {
-                termcomps.value = response.data
-            })
-            .finally(() => {
-                loading.value = false
-            })
-    }
-})
-
-watch(termcomps, () => {
-    if (!termcomps.value) return
-
-    const annotations: string[] = []
-    for (const tc of termcomps.value) {
-        for (const key in tc.ref.annotations) {
-            if (!annotations.includes(key)) annotations.push(key)
-        }
-        for (const key in tc.hyp.annotations) {
-            if (!annotations.includes(key)) annotations.push(key)
-        }
-    }
-
-    annotationOptions.value = annotations.map((key) => ({ value: key, text: key }))
-})
-
+const sourceMatches = computed(() => matches.value?.filter((m) => m.ref.annotations.token))
+const pageSize = 200
+const page = ref<number>(1)
+const numPages = computed(() => Math.ceil((sourceMatches.value?.length ?? 0) / pageSize))
+const hoveredTerm = ref<TermComparison | null>(null)
 // Methods
 function annotationsEqual(tc: TermComparison) {
-    const refAnnot = cleanAnnotation(tc.ref)
-    const hypoAnnot = cleanAnnotation(tc.hyp)
-    return refAnnot === hypoAnnot
+    for (const annotation of selectedAnnotations.value ?? []) {
+        if (tc.ref.annotations[annotation] !== tc.hyp.annotations[annotation]) {
+            return false
+        }
+    }
+    return true
 }
-
-function cleanAnnotation(term: Term) {
-    return term.annotations[selectedAnnotation.value]?.toLowerCase().replace("_", "")
-}
+watchPostEffect(() => {
+    selectedAnnotations.value ??= [annotationOptions.value[0]?.value]
+})
+watch(matches, () => {
+    page.value = 1
+})
 </script>
 
 <style scoped lang="scss">
 .document {
     padding: 2rem;
+    max-width: 80ch;
+    font-size: 1.3rem;
+    line-height: 2;
 }
 
 .wordComparison {
-    display: inline-block;
+    cursor: default;
     position: relative;
-    margin: 0;
-    padding: 0.2rem;
     text-align: center;
-    font-size: 0.8rem;
-    line-height: 0.8rem;
     &.incorrect {
         background-color: rgba(255, 0, 0, 0.1);
-    }
-
-    .tooltip {
-        min-width: fit-content;
-        min-height: fit-content;
-        visibility: hidden;
-        position: absolute;
-        z-index: 1;
-        width: max-content;
-        bottom: 100%;
-        text-align: left;
-        padding: 0;
-        margin: 0;
     }
 
     &:hover .tooltip {
         visibility: visible;
     }
-}
 
-.table-controls {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
+    &:hover {
+        text-decoration: underline;
+    }
+}
+.tooltip {
+    // font-size: 0.8rem;
+    // min-width: fit-content;
+    // min-height: fit-content;
+    // visibility: hidden;
+    position: absolute;
+    z-index: 1;
+    // width: max-content;
+    // bottom: 100%;
+    // text-align: left;
+    // padding: 0;
+    transform: translateX(-50%) translateY(-125%);
+    // margin: 0;
 }
 </style>

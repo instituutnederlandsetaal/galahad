@@ -3,6 +3,8 @@ package org.ivdnt.galahad.web.service.evaluation
 import java.io.File
 import java.util.*
 import kotlin.io.path.createTempDirectory
+import org.ivdnt.galahad.evaluation.JobPair
+import org.ivdnt.galahad.evaluation.comparison.TermComparison
 import org.ivdnt.galahad.layer.Layer
 import org.ivdnt.galahad.util.zipDir
 import org.ivdnt.galahad.web.service.CorporaService
@@ -26,5 +28,17 @@ class EvaluationService(private val corpora: CorporaService) : BaseEvaluationSer
         // zip the directory
         val zipFile = zipDir(dir)
         return zipFile.readBytes()
+    }
+
+    fun getDocumentLayerComparison(
+        corpus: UUID,
+        layer: String,
+        document: String,
+        reference: String,
+    ): List<TermComparison> {
+        val corpusObj = corpora.readOrThrow(corpus)
+        val jobEval = corpusObj.evaluation.createOrThrow(JobPair(layer, reference))
+        val docEval = jobEval.documents.createOrThrow(document)
+        return docEval.layerComparison.matches
     }
 }
