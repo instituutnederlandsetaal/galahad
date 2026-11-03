@@ -1,12 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <TEI xmlns="http://www.tei-c.org/ns/1.0" xmlns:xml="http://www.w3.org/XML/1998/namespace">
-    <teiHeader>
-        <fileDesc>
-            <titleStmt>
-                <title>karel_en_martijn</title>
-            </titleStmt>
-        </fileDesc>
-    </teiHeader>
     <text>
         <body>
             <p>

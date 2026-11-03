@@ -31,6 +31,7 @@ class TeiMerger(export: DocumentExport) : LayerMerger(export) {
     var totalChars: Int = 0
 
     override fun merge(out: OutputStream) {
+        TEIMetadataMerger(xml, export)
         parse(xml.documentElement as Node)
         // Transformer without pretty print
         TransformerFactory.newInstance()
@@ -45,8 +46,8 @@ class TeiMerger(export: DocumentExport) : LayerMerger(export) {
         } else {
             // Children are guaranteed to be non-text due to above check
             node.children.forEach { child ->
-                if (child.localName !in TeiReader.IGNORABLE_TAGS) {
-                    if (child.localName in arrayOf("w", "pc")) {
+                if (child.nodeName !in TeiReader.IGNORABLE_TAGS) {
+                    if (child.nodeName in arrayOf("w", "pc")) {
                         parseWord(child as Element)
                     } else {
                         parse(child)
